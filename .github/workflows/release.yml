@@ -94,6 +94,7 @@ jobs:
         run: |
           cat > dist-release/SIGNING_STATUS.txt <<'EOF'
           Platform binaries are generated on GitHub-hosted runners.
+          Update artifacts are signed with Tauri's minisign key if TAURI_SIGNING_PRIVATE_KEY is configured.
           Windows and macOS bundles are unsigned; macOS notarization is not enabled until maintainers configure signing/notarization secrets and document support policy.
           EOF
 
@@ -166,6 +167,8 @@ jobs:
         run: npm ci
 
       - name: Build Tauri bundle
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: npm run tauri build
 
       - name: Collect bundle artifacts
@@ -192,6 +195,7 @@ jobs:
               ".exe",
               ".msi",
               ".rpm",
+              ".sig",
           )
           allowed_double_suffixes = (".app.tar.gz",)
 
@@ -235,3 +239,129 @@ jobs:
           TAG_NAME: ${{ needs.source-release.outputs.tag_name }}
         shell: bash
         run: gh release upload "$TAG_NAME" dist-bundle/* --clobber
+
+  generate-update-manifest:
+    name: Generate update manifest
+    needs: [source-release, build-tauri]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag_name=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Download all bundle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+          pattern: olmanager-${{ needs.source-release.outputs.version }}-*
+
+      - name: Generate latest.json
+        env:
+          VERSION: ${{ needs.source-release.outputs.version }}
+          TAG_NAME: ${{ needs.source-release.outputs.tag_name }}
+        shell: python
+        run: |
+          import json
+          import pathlib
+          import re
+          from datetime import datetime, timezone
+
+          version = "${{ env.VERSION }}"
+          tag_name = "${{ env.TAG_NAME }}"
+          repo = "${{ github.repository }}"
+          base_url = f"https://github.com/{repo}/releases/download/{tag_name}"
+
+          platforms = {}
+          artifacts_dir = pathlib.Path("all-artifacts")
+
+          def read_signature(artifact_path):
+              sig_path = pathlib.Path(str(artifact_path) + ".sig")
+              if sig_path.exists():
+                  return sig_path.read_text().strip()
+              return ""
+
+          # Find Windows .exe (NSIS installer for auto-update)
+          exe_files = sorted(artifacts_dir.rglob("*-windows-*.exe"))
+          for path in exe_files:
+              if "setup" in path.name.lower():
+                  sig = read_signature(path)
+                  platforms["windows-x86_64"] = {
+                      "url": f"{base_url}/{path.name}",
+                      "signature": sig
+                  }
+                  break
+
+          # Fallback: any .exe if no "setup" found
+          if "windows-x86_64" not in platforms and exe_files:
+              sig = read_signature(exe_files[0])
+              platforms["windows-x86_64"] = {
+                  "url": f"{base_url}/{exe_files[0].name}",
+                  "signature": sig
+              }
+
+          # Find Linux .AppImage
+          appimage_files = sorted(artifacts_dir.rglob("*-linux-*.AppImage"))
+          if appimage_files:
+              sig = read_signature(appimage_files[0])
+              platforms["linux-x86_64"] = {
+                  "url": f"{base_url}/{appimage_files[0].name}",
+                  "signature": sig
+              }
+
+          # Find macOS .app.tar.gz (used by Tauri updater, NOT .dmg)
+          mac_tarball_files = sorted(artifacts_dir.rglob("*-macos-*.app.tar.gz"))
+          for path in mac_tarball_files:
+              name = path.name
+              sig = read_signature(path)
+              if "aarch64" in name or "arm64" in name:
+                  key = "darwin-aarch64"
+              elif "x64" in name or "x86_64" in name:
+                  key = "darwin-x86_64"
+              else:
+                  key = "darwin-aarch64"
+              platforms[key] = {
+                  "url": f"{base_url}/{name}",
+                  "signature": sig
+              }
+
+          # Extract release notes from CHANGELOG.md
+          changelog = pathlib.Path("CHANGELOG.md").read_text()
+          match = re.search(
+              rf"^## \[{re.escape(version)}\].*?(?=^## \[|\Z)",
+              changelog,
+              re.MULTILINE | re.DOTALL,
+          )
+          notes = match.group(0).strip() if match else f"OLManager {version}"
+
+          pub_date = datetime.now(timezone.utc).isoformat()
+
+          manifest = {
+              "version": version,
+              "notes": notes,
+              "pub_date": pub_date,
+              "platforms": platforms
+          }
+
+          pathlib.Path("latest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+          print("Generated latest.json:")
+          print(json.dumps(manifest, indent=2))
+
+      - name: Publish update manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ needs.source-release.outputs.tag_name }}
+        shell: bash
+        run: gh release upload "$TAG_NAME" latest.json --clobber

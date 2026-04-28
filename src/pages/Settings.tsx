@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore, AppSettings } from "../store/settingsStore";
+import { updateMasterVolume } from "../lib/audioManager";
 import { useTheme } from "../context/ThemeContext";
 import { ThemeToggle, Select } from "../components/ui";
 import { SUPPORTED_LANGUAGES } from "../i18n";
@@ -20,7 +21,15 @@ import {
   Type,
   Maximize,
   Minimize,
+  Volume2,
+  VolumeX,
+  Volume1,
+  RefreshCw,
+  CheckCircle2,
+  AlertCircle,
+  ExternalLink,
 } from "lucide-react";
+import { useAutoUpdate } from "../hooks/useAutoUpdate";
 
 const CURRENCY_OPTIONS = [
   { value: "EUR", label: "Euro (€)", symbol: "€" },
@@ -37,6 +46,7 @@ export default function Settings() {
   const { t, i18n } = useTranslation();
   const { settings, loaded, loadSettings, updateSettings } = useSettingsStore();
   const { theme, toggleTheme } = useTheme();
+  const updateState = useAutoUpdate();
   const [confirmClear, setConfirmClear] = useState(false);
   const [clearSuccess, setClearSuccess] = useState(false);
   const [exportPath, setExportPath] = useState<string | null>(null);
@@ -96,6 +106,11 @@ export default function Settings() {
     // Sync language with i18n
     if (partial.language) {
       i18n.changeLanguage(partial.language);
+    }
+
+    // Sync master volume with Web Audio API in real time
+    if (partial.master_volume !== undefined) {
+      updateMasterVolume();
     }
   };
 
@@ -345,6 +360,70 @@ export default function Settings() {
           </SettingRow>
         </Section>
 
+        {/* ─── Audio ─── */}
+        <Section
+          title={t("settings.audio", "Audio")}
+          icon={<Volume2 className="w-5 h-5" />}
+        >
+          <SettingRow
+            label={t("settings.masterVolume", "Master Volume")}
+            description={t(
+              "settings.masterVolumeDesc",
+              "Global volume for all sounds and music",
+            )}
+          >
+            <div className="flex items-center gap-3 w-48">
+              {settings.master_volume === 0 ? (
+                <VolumeX className="w-4 h-4 text-gray-400" />
+              ) : settings.master_volume < 0.5 ? (
+                <Volume1 className="w-4 h-4 text-gray-400" />
+              ) : (
+                <Volume2 className="w-4 h-4 text-gray-400" />
+              )}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={settings.master_volume}
+                onChange={(e) =>
+                  handleUpdate({ master_volume: parseFloat(e.target.value) })
+                }
+                className="flex-1 h-1.5 bg-gray-200 dark:bg-navy-600 rounded-full appearance-none cursor-pointer accent-primary-500"
+              />
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 w-8 text-right">
+                {Math.round(settings.master_volume * 100)}%
+              </span>
+            </div>
+          </SettingRow>
+
+          <SettingRow
+            label={t("settings.soundEffects", "Sound Effects")}
+            description={t(
+              "settings.soundEffectsDesc",
+              "Notification sounds, UI clicks, and other game sounds",
+            )}
+          >
+            <Toggle
+              checked={settings.sound_effects_enabled}
+              onChange={(v) => handleUpdate({ sound_effects_enabled: v })}
+            />
+          </SettingRow>
+
+          <SettingRow
+            label={t("settings.music", "Music")}
+            description={t(
+              "settings.musicDesc",
+              "Background music during menus and gameplay",
+            )}
+          >
+            <Toggle
+              checked={settings.music_enabled}
+              onChange={(v) => handleUpdate({ music_enabled: v })}
+            />
+          </SettingRow>
+        </Section>
+
         {/* ─── Saves & Data ─── */}
         <Section
           title={t("settings.savesData")}
@@ -414,6 +493,132 @@ export default function Settings() {
               )}
             </SettingRow>
           </div>
+        </Section>
+
+        {/* ─── Updates ─── */}
+        <Section
+          title={t("settings.updates")}
+          icon={<RefreshCw className="w-5 h-5" />}
+        >
+          <SettingRow
+            label={t("settings.currentVersion")}
+            description={t("settings.currentVersionDesc")}
+          >
+            <span className="text-sm font-heading font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+              v{updateState.currentVersion || "..."}
+            </span>
+          </SettingRow>
+
+          {updateState.status === "available" && (
+            <SettingRow
+              label={t("settings.newVersionAvailable")}
+              description={t("settings.newVersionAvailableDesc", {
+                version: updateState.newVersion,
+              })}
+            >
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-full bg-primary-500/10 text-primary-600 dark:text-primary-400 text-xs font-heading font-bold uppercase tracking-wider">
+                  v{updateState.newVersion}
+                </span>
+                <button
+                  onClick={updateState.downloadAndInstall}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
+                >
+                  {updateState.mode === "auto" ? (
+                    <Download className="w-4 h-4" />
+                  ) : (
+                    <ExternalLink className="w-4 h-4" />
+                  )}
+                  {updateState.mode === "auto"
+                    ? t("settings.downloadAndInstall")
+                    : t("settings.goToDownloads")}
+                </button>
+              </div>
+            </SettingRow>
+          )}
+
+          {updateState.status === "available" && updateState.mode === "manual" && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 -mt-2">
+              {t("settings.manualUpdateNote")}
+            </p>
+          )}
+
+          {updateState.status === "downloading" && updateState.mode === "auto" && (
+            <SettingRow
+              label={t("settings.downloadingUpdate")}
+              description={t("settings.downloadingUpdateDesc")}
+            >
+              <div className="flex items-center gap-3 w-48">
+                <div className="flex-1 h-2 bg-gray-200 dark:bg-navy-600 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary-500 rounded-full transition-all duration-300"
+                    style={{ width: `${updateState.downloadProgress}%` }}
+                  />
+                </div>
+                <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  {updateState.downloadProgress}%
+                </span>
+              </div>
+            </SettingRow>
+          )}
+
+          {updateState.status === "installing" && updateState.mode === "auto" && (
+            <SettingRow
+              label={t("settings.updateReady")}
+              description={t("settings.updateReadyDesc")}
+            >
+              <span className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 font-heading font-bold uppercase tracking-wider">
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                {t("settings.installing", "Installing...")}
+              </span>
+            </SettingRow>
+          )}
+
+          {updateState.status === "upToDate" && (
+            <SettingRow
+              label={t("settings.upToDate")}
+              description={t("settings.upToDateDesc")}
+            >
+              <span className="flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400">
+                <CheckCircle2 className="w-4 h-4" />
+                {t("settings.upToDate")}
+              </span>
+            </SettingRow>
+          )}
+
+          {updateState.status === "error" && (
+            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3">
+              <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                {updateState.errorMessage}
+              </p>
+            </div>
+          )}
+
+          {updateState.status !== "downloading" &&
+            updateState.status !== "installing" && (
+              <SettingRow
+                label={
+                  updateState.status === "checking"
+                    ? t("settings.checkingForUpdates")
+                    : t("settings.checkForUpdates")
+                }
+                description={t("settings.checkForUpdatesDesc")}
+              >
+                <button
+                  onClick={updateState.checkForUpdates}
+                  disabled={updateState.status === "checking"}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-500/10 text-primary-600 dark:text-primary-400 hover:bg-primary-500/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 ${updateState.status === "checking" ? "animate-spin" : ""}`}
+                  />
+                  {updateState.status === "checking"
+                    ? t("settings.checking")
+                    : t("settings.checkNow")}
+                </button>
+              </SettingRow>
+            )}
         </Section>
 
         {/* ─── About ─── */}
