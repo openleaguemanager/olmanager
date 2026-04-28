@@ -1642,22 +1642,35 @@ pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, 
         )
     };
 
-    let team = game
+    // Academy teams have no independent finances; charge the parent club instead.
+    let paying_team_id = if let Some(academy_team) = game.teams.iter().find(|t| t.id == owning_team_id && t.team_kind == TeamKind::Academy) {
+        academy_team.parent_team_id.clone().unwrap_or_else(|| owning_team_id.clone())
+    } else {
+        owning_team_id.clone()
+    };
+
+    let paying_team = game
         .teams
         .iter_mut()
-        .find(|team| team.id == owning_team_id)
+        .find(|team| team.id == paying_team_id)
         .ok_or_else(|| "Owning team not found".to_string())?;
 
-    if team.finance < penalty {
+    if paying_team.finance < penalty {
         return Err(format!(
             "Insufficient funds for contract termination: need €{}",
             penalty
         ));
     }
 
-    team.finance -= penalty;
-    team.season_expenses += penalty;
-    remove_player_from_team_references(team, player_id);
+    paying_team.finance -= penalty;
+    paying_team.season_expenses += penalty;
+
+    let owning_team = game
+        .teams
+        .iter_mut()
+        .find(|team| team.id == owning_team_id)
+        .ok_or_else(|| "Owning team not found".to_string())?;
+    remove_player_from_team_references(owning_team, player_id);
 
     if let Some(player) = game
         .players
