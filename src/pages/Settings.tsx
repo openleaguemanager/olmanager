@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore, AppSettings } from "../store/settingsStore";
+import { updateMasterVolume } from "../lib/audioManager";
 import { useTheme } from "../context/ThemeContext";
 import { ThemeToggle, Select } from "../components/ui";
 import { SUPPORTED_LANGUAGES } from "../i18n";
@@ -20,6 +21,9 @@ import {
   Type,
   Maximize,
   Minimize,
+  Volume2,
+  VolumeX,
+  Volume1,
 } from "lucide-react";
 
 const CURRENCY_OPTIONS = [
@@ -96,6 +100,11 @@ export default function Settings() {
     // Sync language with i18n
     if (partial.language) {
       i18n.changeLanguage(partial.language);
+    }
+
+    // Sync master volume with Web Audio API in real time
+    if (partial.master_volume !== undefined) {
+      updateMasterVolume();
     }
   };
 
@@ -341,6 +350,70 @@ export default function Settings() {
             <Toggle
               checked={settings.confirm_advance}
               onChange={(v) => handleUpdate({ confirm_advance: v })}
+            />
+          </SettingRow>
+        </Section>
+
+        {/* ─── Audio ─── */}
+        <Section
+          title={t("settings.audio", "Audio")}
+          icon={<Volume2 className="w-5 h-5" />}
+        >
+          <SettingRow
+            label={t("settings.masterVolume", "Master Volume")}
+            description={t(
+              "settings.masterVolumeDesc",
+              "Global volume for all sounds and music",
+            )}
+          >
+            <div className="flex items-center gap-3 w-48">
+              {settings.master_volume === 0 ? (
+                <VolumeX className="w-4 h-4 text-gray-400" />
+              ) : settings.master_volume < 0.5 ? (
+                <Volume1 className="w-4 h-4 text-gray-400" />
+              ) : (
+                <Volume2 className="w-4 h-4 text-gray-400" />
+              )}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={settings.master_volume}
+                onChange={(e) =>
+                  handleUpdate({ master_volume: parseFloat(e.target.value) })
+                }
+                className="flex-1 h-1.5 bg-gray-200 dark:bg-navy-600 rounded-full appearance-none cursor-pointer accent-primary-500"
+              />
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 w-8 text-right">
+                {Math.round(settings.master_volume * 100)}%
+              </span>
+            </div>
+          </SettingRow>
+
+          <SettingRow
+            label={t("settings.soundEffects", "Sound Effects")}
+            description={t(
+              "settings.soundEffectsDesc",
+              "Notification sounds, UI clicks, and other game sounds",
+            )}
+          >
+            <Toggle
+              checked={settings.sound_effects_enabled}
+              onChange={(v) => handleUpdate({ sound_effects_enabled: v })}
+            />
+          </SettingRow>
+
+          <SettingRow
+            label={t("settings.music", "Music")}
+            description={t(
+              "settings.musicDesc",
+              "Background music during menus and gameplay",
+            )}
+          >
+            <Toggle
+              checked={settings.music_enabled}
+              onChange={(v) => handleUpdate({ music_enabled: v })}
             />
           </SettingRow>
         </Section>

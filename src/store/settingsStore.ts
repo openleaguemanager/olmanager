@@ -12,6 +12,9 @@ export interface AppSettings {
   confirm_advance: boolean;
   ui_scale: "xsmall" | "small" | "normal" | "large" | "xlarge";
   high_contrast: boolean;
+  master_volume: number;
+  sound_effects_enabled: boolean;
+  music_enabled: boolean;
   lol_hybrid_open_trade_confidence_high: number;
   lol_hybrid_disengage_confidence_low: number;
 }
@@ -27,6 +30,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   confirm_advance: false,
   ui_scale: "normal",
   high_contrast: false,
+  master_volume: 0.5,
+  sound_effects_enabled: true,
+  music_enabled: true,
   lol_hybrid_open_trade_confidence_high: 0.6,
   lol_hybrid_disengage_confidence_low: 0.32,
 };
