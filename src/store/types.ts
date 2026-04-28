@@ -396,6 +396,7 @@ export interface TransferOfferData {
   suggested_counter_fee: number | null;
   status: "Pending" | "Accepted" | "Rejected" | "Withdrawn";
   date: string;
+  to_team_id?: string | null;
 }
 
 export interface StaffData {

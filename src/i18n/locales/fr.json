@@ -1227,7 +1227,10 @@
     "transferFeedbackCounterDetail": "L'offre était assez proche pour continuer à parler, mais leur camp vise plutôt un prix autour de {{fee}}.",
     "transferFeedbackRejectedHeadline": "Ils ont fermé cette manche.",
     "transferFeedbackRejectedDetail": "La proposition ne les a pas assez fait bouger. Il faudrait une somme plus forte, plus proche de {{fee}}, pour rouvrir des discussions sérieuses.",
-    "transferFeedbackPlayerRejectedDetail": "Le club a accepté, mais le joueur a refusé le transfert après avoir évalué son rôle, le salaire et le projet sportif."
+    "transferFeedbackPlayerRejectedDetail": "Le club a accepté, mais le joueur a refusé le transfert après avoir évalué son rôle, le salaire et le projet sportif.",
+    "signingDestination": "Recrutement pour",
+    "destinationMainTeam": "Équipe Principale",
+    "destinationAcademy": "Académie"
   },
   "schedule": {
     "noSchedule": "Aucun calendrier de ligue disponible.",

@@ -1221,7 +1221,10 @@
     "transferFeedbackCounterDetail": "Das Angebot war nah genug, um weiterzureden, aber ihre Seite signalisiert eher einen Preis um {{fee}}.",
     "transferFeedbackRejectedHeadline": "Diese Runde haben sie beendet.",
     "transferFeedbackRejectedDetail": "Der Vorschlag hat sie nicht genug bewegt. Du brauchst eine stärkere Summe, eher in Richtung {{fee}}, um ernste Gespräche wieder zu öffnen.",
-    "transferFeedbackPlayerRejectedDetail": "The club accepted, but the player rejected the move after reviewing role, wages, and sporting project."
+    "transferFeedbackPlayerRejectedDetail": "The club accepted, but the player rejected the move after reviewing role, wages, and sporting project.",
+    "signingDestination": "Verpflichtung für",
+    "destinationMainTeam": "Hauptmannschaft",
+    "destinationAcademy": "Akademie"
   },
   "schedule": {
     "noSchedule": "Kein Ligaspielplan verfügbar.",

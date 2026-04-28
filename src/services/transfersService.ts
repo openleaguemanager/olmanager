@@ -38,10 +38,12 @@ export interface TransferBidProjectionData {
 export async function makeTransferBid(
   playerId: string,
   fee: number,
+  toTeamId?: string | null,
 ): Promise<TransferNegotiationResponseData> {
   return invoke<TransferNegotiationResponseData>("make_transfer_bid", {
     playerId,
     fee,
+    toTeamId,
   });
 }
 
@@ -72,12 +74,14 @@ export async function counterOffer(
 export async function previewTransferBidFinancialImpact(
   playerId: string,
   fee: number,
+  toTeamId?: string | null,
 ): Promise<TransferBidProjectionData> {
   return invoke<TransferBidProjectionData>(
     "preview_transfer_bid_financial_impact",
     {
       playerId,
       fee,
+      toTeamId,
     },
   );
 }

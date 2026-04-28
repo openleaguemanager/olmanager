@@ -27,6 +27,9 @@ interface TransferBidModalProps {
   bidAmount: string;
   onBidAmountChange: (value: string) => void;
   myTeam: TeamData | null;
+  academyTeam: TeamData | null;
+  selectedDestinationId: string;
+  onDestinationChange: (teamId: string) => void;
   bidFee: number | null;
   bidProjection: TransferBidProjectionData["projection"] | null;
   bidFeedback: NegotiationFeedbackPanelData | null;
@@ -45,6 +48,9 @@ export default function TransferBidModal({
   bidAmount,
   onBidAmountChange,
   myTeam,
+  academyTeam,
+  selectedDestinationId,
+  onDestinationChange,
   bidFee,
   bidProjection,
   bidFeedback,
@@ -92,6 +98,37 @@ export default function TransferBidModal({
             {t("transfers.resumeNegotiationHint")}
           </p>
         ) : null}
+        {academyTeam && (
+          <div className="mb-3">
+            <p className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+              {t("transfers.signingDestination", { defaultValue: "Signing for" })}
+            </p>
+            <div className="flex rounded-lg border border-gray-200 dark:border-navy-600 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => onDestinationChange(myTeam?.id ?? "")}
+                className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
+                  selectedDestinationId === myTeam?.id
+                    ? "bg-primary-500 text-white"
+                    : "bg-gray-50 dark:bg-navy-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-navy-600"
+                }`}
+              >
+                {t("transfers.destinationMainTeam", { defaultValue: "Main Team" })}
+              </button>
+              <button
+                type="button"
+                onClick={() => onDestinationChange(academyTeam.id)}
+                className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
+                  selectedDestinationId === academyTeam.id
+                    ? "bg-primary-500 text-white"
+                    : "bg-gray-50 dark:bg-navy-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-navy-600"
+                }`}
+              >
+                {t("transfers.destinationAcademy", { defaultValue: "Academy" })}
+              </button>
+            </div>
+          </div>
+        )}
         <label
           htmlFor="bid-amount"
           className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 block"
