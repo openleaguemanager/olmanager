@@ -1239,7 +1239,10 @@
     "transferFeedbackCounterDetail": "A proposta ficou perto o bastante para manter a conversa, mas o lado deles aponta para um valor mais próximo de {{fee}}.",
     "transferFeedbackRejectedHeadline": "Eles encerraram esta rodada.",
     "transferFeedbackRejectedDetail": "A proposta não os moveu o suficiente. Você precisaria de um valor mais forte, mais perto de {{fee}}, para reabrir conversas sérias.",
-    "transferFeedbackPlayerRejectedDetail": "O clube aceitou, mas o jogador recusou a transferência após avaliar papel, salário e projeto esportivo."
+    "transferFeedbackPlayerRejectedDetail": "O clube aceitou, mas o jogador recusou a transferência após avaliar papel, salário e projeto esportivo.",
+    "signingDestination": "Contratando para",
+    "destinationMainTeam": "Time Principal",
+    "destinationAcademy": "Academia"
   },
   "schedule": {
     "noSchedule": "Nenhum calendário de liga disponível.",

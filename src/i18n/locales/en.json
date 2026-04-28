@@ -1233,7 +1233,10 @@
     "transferFeedbackCounterDetail": "The bid was close enough to keep talking, but their side are signalling a price nearer {{fee}}.",
     "transferFeedbackRejectedHeadline": "They shut this round down.",
     "transferFeedbackRejectedDetail": "The proposal did not move them enough. You would need a stronger fee, closer to {{fee}}, to reopen serious talks.",
-    "transferFeedbackPlayerRejectedDetail": "The club accepted, but the player rejected the move after reviewing role, wages, and sporting project."
+    "transferFeedbackPlayerRejectedDetail": "The club accepted, but the player rejected the move after reviewing role, wages, and sporting project.",
+    "signingDestination": "Signing for",
+    "destinationMainTeam": "Main Team",
+    "destinationAcademy": "Academy"
   },
   "schedule": {
     "noSchedule": "No league schedule available.",

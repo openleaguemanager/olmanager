@@ -382,6 +382,10 @@ pub struct TransferOffer {
     pub status: TransferOfferStatus,
     #[serde(default = "default_transfer_offer_date")]
     pub date: String,
+    /// Destination team for the transfer (main team or academy).
+    /// Defaults to the bidding team's own ID for backward compatibility.
+    #[serde(default)]
+    pub to_team_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
