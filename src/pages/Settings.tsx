@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore, AppSettings } from "../store/settingsStore";
-import { updateMasterVolume } from "../lib/audioManager";
 import { useTheme } from "../context/ThemeContext";
 import { ThemeToggle, Select } from "../components/ui";
 import { SUPPORTED_LANGUAGES } from "../i18n";
@@ -108,9 +107,9 @@ export default function Settings() {
       i18n.changeLanguage(partial.language);
     }
 
-    // Sync master volume with Web Audio API in real time
-    if (partial.master_volume !== undefined) {
-      updateMasterVolume();
+    // Sync language with i18n
+    if (partial.language) {
+      i18n.changeLanguage(partial.language);
     }
   };
 
