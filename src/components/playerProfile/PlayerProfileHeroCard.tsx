@@ -8,7 +8,7 @@ import type {
   ScoutAvailability,
 } from "./PlayerProfile.scouting";
 import PlayerProfileScoutAction from "./PlayerProfileScoutAction";
-import { Badge, Card } from "../ui";
+import { RoleBadge, Card } from "../ui";
 
 type TranslateFn = (
   key: string,
@@ -66,7 +66,6 @@ export default function PlayerProfileHeroCard({
   t,
 }: PlayerProfileHeroCardProps) {
   const role = primaryRole;
-  const roleVariant = getLolRoleBadgeVariant(role);
   const playerPhoto = resolvePlayerPhoto(player.id, player.match_name);
   const [insigniaBackground, setInsigniaBackground] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState(false);
@@ -202,7 +201,7 @@ export default function PlayerProfileHeroCard({
               {player.match_name}
             </h2>
             <div className="flex items-center gap-3 mt-2">
-              <Badge variant={roleVariant}>{role}</Badge>
+              <RoleBadge role={role} size="sm" />
               {isOwnClub && academyActionLabel && onAcademyAction ? (
                 <button
                   type="button"
@@ -443,21 +442,6 @@ function canLoadImage(url: string): Promise<boolean> {
     image.onerror = () => resolve(false);
     image.src = url;
   });
-}
-
-function getLolRoleBadgeVariant(role: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT") {
-  switch (role) {
-    case "TOP":
-      return "accent" as const;
-    case "JUNGLE":
-      return "success" as const;
-    case "MID":
-      return "primary" as const;
-    case "ADC":
-      return "danger" as const;
-    case "SUPPORT":
-      return "neutral" as const;
-  }
 }
 
 function QuickStat({
