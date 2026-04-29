@@ -5,7 +5,7 @@ import {
   PlayerSelectionOptions,
   TransferOfferData,
 } from "../../store/gameStore";
-import { Card, CardBody, CountryFlag, RoleBadge } from "../ui";
+import { Card, CardBody, Badge, CountryFlag, RoleBadge } from "../ui";
 import {
   Search,
   TrendingUp,

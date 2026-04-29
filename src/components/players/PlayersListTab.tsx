@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { GameStateData, PlayerSelectionOptions } from "../../store/gameStore";
-import { Card, CardBody, Select, CountryFlag, RoleBadge } from "../ui";
+import { Card, CardBody, Badge, Select, CountryFlag, RoleBadge } from "../ui";
 import {
   Search,
   Filter,
