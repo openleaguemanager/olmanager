@@ -404,7 +404,7 @@ export default function ScheduleTab({
                     return (
                       <div key={f.id}>
                         <div
-                          className={`grid grid-cols-[54px_1fr_32px] items-center px-5 py-3 transition-colors ${userResultTone || (isUserMatch ? "bg-primary-50/50 dark:bg-primary-500/5" : "")}`}
+                          className={`grid grid-cols-[54px_1fr_60px_1fr_32px] items-center px-5 py-3 transition-colors ${userResultTone || (isUserMatch ? "bg-primary-50/50 dark:bg-primary-500/5" : "")}`}
                         >
                           <div className="text-left">
                             <Badge variant="neutral" size="sm">
@@ -412,7 +412,7 @@ export default function ScheduleTab({
                             </Badge>
                           </div>
 
-                          <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => onSelectTeam(f.home_team_id)}
                               className={`inline-flex items-center gap-2 text-sm font-semibold hover:underline ${f.home_team_id === userTeamId ? "text-primary-600 dark:text-primary-400" : "text-gray-800 dark:text-gray-200"}`}
@@ -422,11 +422,13 @@ export default function ScheduleTab({
                               ) : null}
                               <span>{getTeamName(gameState.teams, f.home_team_id)}</span>
                             </button>
+                          </div>
 
-                            <span className="font-heading font-bold text-base text-gray-800 dark:text-gray-100 min-w-[50px] text-center">
-                              {score ? `${score.home} - ${score.away}` : "VS"}
-                            </span>
+                          <span className="font-heading font-bold text-base text-gray-800 dark:text-gray-100 text-center">
+                            {score ? `${score.home} - ${score.away}` : "VS"}
+                          </span>
 
+                          <div className="flex items-center justify-start gap-2">
                             <button
                               onClick={() => onSelectTeam(f.away_team_id)}
                               className={`inline-flex items-center gap-2 text-sm font-semibold hover:underline ${f.away_team_id === userTeamId ? "text-primary-600 dark:text-primary-400" : "text-gray-800 dark:text-gray-200"}`}
