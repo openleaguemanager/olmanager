@@ -7,7 +7,7 @@ import { acquireAcademyTeam, getAcademyAcquisitionOptions, promoteAcademyPlayer 
 import type { GameStateData, PlayerData } from "../../store/gameStore";
 import { findAcademyTeamForParent, getTeamAcademyRoster } from "../../store/academySelectors";
 import type { AcademyAcquisitionOptionData } from "../../store/gameStore";
-import { Badge, Button, Card, CardBody, CardHeader } from "../ui";
+import { Badge, Button, Card, CardBody, CardHeader, RoleBadge } from "../ui";
 import { resolvePlayerLolRole } from "../../lib/lolIdentity";
 import { resolveExampleTeamLogo } from "../../lib/teamLogos";
 
@@ -26,14 +26,6 @@ const ROLE_ORDER: Record<DraftRole, number> = {
   ADC: 4,
   SUPPORT: 5,
 };
-
-function roleVariant(role: DraftRole): "success" | "primary" | "accent" | "danger" | "neutral" {
-  if (role === "TOP") return "success";
-  if (role === "JUNGLE") return "primary";
-  if (role === "MID") return "accent";
-  if (role === "ADC") return "danger";
-  return "neutral";
-}
 
 function getLolOvr(player: PlayerData): number {
   const attrs = player.attributes;
@@ -353,11 +345,9 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
                           <p className="text-xs text-gray-500 dark:text-gray-400">{player.full_name}</p>
                         </div>
                       </td>
-                      <td className="py-2.5 px-4">
-                        <Badge variant={roleVariant(player.role)} size="sm">
-                          {player.role}
-                        </Badge>
-                      </td>
+                        <td className="py-2.5 px-4">
+                          <RoleBadge role={player.role} size="sm" />
+                        </td>
                       <td className="py-2.5 px-4 text-center text-sm text-gray-700 dark:text-gray-300">{player.age}</td>
                       <td className="py-2.5 px-4 text-center">
                         <span className="font-heading font-bold text-gray-800 dark:text-gray-100">{player.ovr}</span>
