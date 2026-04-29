@@ -184,7 +184,7 @@ export default function DraftResultScreen({
           <p className="mt-2 text-sm text-gray-300">
             {t("match.draftResult.mvp")}: <span className="font-bold text-cyan-300">{selectedResult.mvp.playerName}</span>
           </p>
-          {seriesGamesForTabs.length > 1 ? (
+          {seriesLength > 1 && seriesGamesForTabs.length > 1 ? (
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               {seriesGamesForTabs.map((entry) => {
                 const isSelected = entry.gameIndex === selectedGameIndex;
