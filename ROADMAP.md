@@ -1,139 +1,143 @@
 # OLManager Roadmap
 
-> Open League Manager ÔÇö Manager de Esports para League of Legends
+> Open League Manager — Manager de Esports para League of Legends
 
-[![Discord](https://img.shields.io/discord/placeholder?label=Discord&style=social)](https://discord.gg placeholder)
+[![Discord](https://img.sh.shields.io/discord/placeholder?label=Discord&style=social)](https://discord.gg/placeholder)
 [![GitHub Stars](https://img.shields.io/github/stars/placeholder?label=Stars&style=social)](https://github.com/placeholder)
 
-## Visi├│n General
+## Visión General
 
-OLManager es un manager de esports para League of Legends dise├▒ado para simular la gesti├│n de equipos en competencias profesionales tipo LEC (League of Legends European Championship). El proyecto transita desde su origen en f├║tbol (OpenFootManager) hacia un sistema completo de gesti├│n de equipos de esports.
+OLManager es un manager de esports para League of Legends diseñado para simular la gestión de equipos en competencias profesionales tipo LEC (League of Legends European Championship). El proyecto transita desde su origen en fútbol (OpenFootManager) hacia un sistema completo de gestión de equipos de esports.
 
-**Objetivo estrat├®gico:** Construir una plataforma modular y extensible que permita a los usuarios gestionar equipos, jugadores, presupuestos, estrategias de juego y estad├¡sticas en un entorno de simulaci├│n realista.
+**Objetivo estratégico:** Construir una plataforma modular y extensible que permita a los usuarios gestionar equipos, jugadores, presupuestos, estrategias de juego y estadísticas en un entorno de simulación realista.
 
 ---
 
 ## Estado Actual
 
-| M├®trica | Valor |
+| Métrica | Valor |
 |--------|-------|
-| **Versi├│n** | 0.1.1 (pre-alpha) |
+| **Versión** | 0.1.1 (pre-alpha) |
 | **Stack** | React 19 + TypeScript 6.0 + Vite 8 + TailwindCSS 4 + Tauri v2 (Rust) |
 | **DB** | SQLite (27 migraciones) |
 | **Test Files** | 106 frontend + 21 backend Rust |
 | **i18n** | 7 idiomas configurados |
 | **Commits** | Conventional commits |
 
-### Deuda T├®cnica Identificada
+### Deuda Técnica Identificada
 
-- ÔÜá´©Å Herencia de nombres/estructuras del proyecto original de f├║tbol
-- ÔÜá´©Å Documentaci├│n legacy en `docs/legacy/inherited-docs/`
-- ÔÜá´©Å 2 TODOs pendientes en `lol_sim_v2.rs` (sistema de movimiento)
-- ÔÜá´©Å Tests de Rust marcados como "experimental" en CI
+- ⚠️ Herencia de nombres/estructuras del proyecto original de fútbol
+- ⚠️ Documentación legacy en `docs/legacy/inherited-docs/`
+- ⚠️ 2 TODOs pendientes en `lol_sim_v2.rs` (sistema de movimiento)
+- ⚠️ Tests de Rust marcados como "experimental" en CI
 
 ---
 
 ## Fases del Roadmap
 
-### Fase 1: Limpieza y Foundation ÔÇö Corto Plazo (v0.2 Alpha)
+### Fase 1: Limpieza y Foundation — Corto Plazo (v0.2 Alpha)
 
-**Objetivo:** Eliminar la deuda t├®cnica de la transici├│n f├║tbolÔåÆLoL y establecer las bases para desarrollo estable.
+**Objetivo:** Eliminar la deuda técnica de la transición fútbol→LoL y establecer las bases para desarrollo estable.
 
-**Prioridad:** ­ƒö┤ Alta
+**Prioridad:** 🔴 Alta
 
-#### ­ƒÄ» Hitos
+#### 🎯 Hitos
 
-- [ ] Ô£à ~~Completar auditor├¡a de documentaci├│n heredada~~ (existe: `INHERITED_DOCS_AUDIT.md`)
-- [ ] ­ƒö▓ Finalizar limpieza de nombres y estructuras de f├║tbol
-- [ ] ­ƒö▓ Documentar Provenance de datos heredados (`DATA_PROVENANCE.md` completo)
-- [ ] ­ƒö▓ Eliminar TODOs pendientes en `lol_sim_v2.rs`
-- [ ] ­ƒö▓ Establecer CI estable (resolver tests "experimentales")
+- [ ] ✅ ~~Completar auditoría de documentación heredada~~ (existe: `INHERITED_DOCS_AUDIT.md`)
+- [ ] 🔲 Finalizar limpieza de nombres y estructuras de fútbol
+- [ ] 🔲 Documentar Provenance de datos heredados (`DATA_PROVENANCE.md` completo)
+- [ ] 🔲 Eliminar TODOs pendientes en `lol_sim_v2.rs`
+- [ ] 🔲 Establecer CI estable (resolver tests "experimentales")
 
-#### ­ƒôï Tareas
+#### 📋 Tareas
 
-- [ ] Renombrar tipos domain de "Player/Team/Football" a terminolog├¡a LoL
+- [ ] Renombrar tipos domain de "Player/Team/Football" a terminología LoL
 - [ ] Actualizar migraciones SQLite con prefijos o limpieza
 - [ ] Revisar `docs/legacy/inherited-docs/` y marcar lo obsoleto
 - [ ] Completar puerto de sistema de movimiento en lol_sim_v2.rs
 - [ ] Habilitar `cargo clippy` y `cargo test` en CI principal
-- [ ] Crear documento de migraci├│n de datos (f├║tbol ÔåÆ LoL)
-- [ ] **Migraci├│n de identidad**: `football_nation` ÔåÆ `nationality_code` + `competitive_region`
-  - [ ] Crear migraci├│n SQL v028 (RENAME COLUMN + nuevo campo competitive_region)
-  - [ ] Actualizar tipos Rust (`Player`, `Team`, `Manager`, `Staff`)
-  - [ ] Actualizar frontend (tipos TypeScript, componentes UI)
-  - [ ] Actualizar scripts de generaci├│n (`generate-lec-world.mjs`)
+- [ ] Crear documento de migración de datos (fútbol → LoL)
+- [ ] **Migración de identidad**: `football_nation` → `nationality_code` + `competitive_region`
+  - [ ] Crear migración SQL v028 (`RENAME COLUMN football_nation → nationality_code` + `ADD COLUMN competitive_region TEXT`)
+  - [ ] Actualizar tipos Rust (`Player`, `Team`, `Manager`, `Staff`) con ambos campos
+  - [ ] Actualizar frontend (tipos TypeScript, componentes UI, filtros por región)
+  - [ ] Actualizar scripts de generación (`generate-lec-world.mjs`)
+  - [ ] **Nota importante**: En LoL, "región" y "nacionalidad" son conceptos DISTINTOS:
+    - `nationality_code` → país de origen del jugador (ej: "KR", "ES", "FR")
+    - `competitive_region` → liga donde compite (ej: "LCK", "LEC", "LCS")
+    - Un jugador coreano (`nationality_code: "KR"`) puede competir en `LEC`
 
-#### M├®tricas de ├ëxito
+#### Métricas de Éxito
 
-- Ô£à 0 TODOs activos en c├│digo de producci├│n
-- Ô£à 100% coverage en CI (no m├ís "experimental")
-- Ô£à Documentaci├│n heredada auditada y categorizada
+- ✅ 0 TODOs activos en código de producción
+- ✅ 100% coverage en CI (no más "experimental")
+- ✅ Documentación heredada auditada y categorizada
 
 ---
 
-### Fase 2: Estabilizaci├│n y Features Core ÔÇö Mediano Plazo (v0.3 Beta)
+### Fase 2: Estabilización y Features Core — Mediano Plazo (v0.3 Beta)
 
 **Objetivo:** Implementar funcionalidades core del manager y estabilizar el producto para uso interno.
 
-**Prioridad:** ­ƒƒí Media
+**Prioridad:** 🟡 Media
 
-#### ­ƒÄ» Hitos
+#### 🎯 Hitos
 
-- [ ] ­ƒö▓ Sistema de roster/plantel completo (contratar/despedir jugadores)
-- [ ] ­ƒö▓ Simulaci├│n de partidos funcional (m├ís all├í de LoL-sim v2)
-- [ ] ­ƒö▓ Sistema de finanzas (presupuesto, salarios, patrocinadores)
-- [ ] ­ƒö▓ Dashboard de estad├¡sticas del equipo
-- [ ] ­ƒö▓ Primera release beta (v0.3.0-beta)
+- [ ] 🔲 Sistema de roster/plantel completo (contratar/despedir jugadores)
+- [ ] 🔲 Simulación de partidos funcional (más allá de LoL-sim v2)
+- [ ] 🔲 Sistema de finanzas (presupuesto, salarios, patrocinadores)
+- [ ] 🔲 Dashboard de estadísticas del equipo
+- [ ] 🔲 Primera release beta (v0.3.0-beta)
 
-#### ­ƒôï Tareas
+#### 📋 Tareas
 
-- [ ] Implementar modelo de jugador con stats LoL (KDA, rol, divisi├│n)
+- [ ] Implementar modelo de jugador con stats LoL (KDA, rol, división)
 - [ ] Crear sistema de contratos y salarios
-- [ ] Desarrollar motor de simulaci├│n de partidos
+- [ ] Desarrollar motor de simulación de partidos
 - [ ] Implementar sistema de calendario de temporadas
-- [ ] A├▒adir visualizaci├│n de estad├¡sticas en tiempo real
+- [ ] Añadir visualización de estadísticas en tiempo real
 - [ ] Configurar logging estructurado para debugging
 - [ ] Documentar API de comandos Tauri
 
-#### M├®tricas de ├ëxito
+#### Métricas de Éxito
 
-- Ô£à Usuario puede crear equipo, gestionar roster y simular partido
-- Ô£à Sistema de finances funcional (presupuesto > 0 despu├®s de gastos)
-- Ô£à Release beta publicada ytaggeada
+- ✅ Usuario puede crear equipo, gestionar roster y simular partido
+- ✅ Sistema de finances funcional (presupuesto > 0 después de gastos)
+- ✅ Release beta publicada y taggeada
 
 ---
 
-### Fase 3: Ecosistema y Comunidad ÔÇö Largo Plazo (v1.0 Stable)
+### Fase 3: Ecosistema y Comunidad — Largo Plazo (v1.0 Stable)
 
-**Objetivo:** Construir ecosistema completo, abrir a comunidad y alcanzar estabilidad de producci├│n.
+**Objetivo:** Construir ecosistema completo, abrir a comunidad y alcanzar estabilidad de producción.
 
-**Prioridad:** ­ƒƒó Baja
+**Prioridad:** 🟢 Baja
 
-#### ­ƒÄ» Hitos
+#### 🎯 Hitos
 
-- [ ] ­ƒö▓ Sistema de scouting (buscar jugadores en el mercado)
-- [ ] ­ƒö▓ Competiciones y rankings (simular temporadas LEC-style)
-- [ ] ­ƒö▓ Modo multijugador b├ísico (comparte equipos)
-- [ ] ­ƒö▓ Documentaci├│n completa para contribuyentes
-- [ ] ­ƒö▓ Primera release estable (v1.0.0)
-- [ ] ­ƒö▓ Publicaci├│n OSS (anuncio oficial)
+- [ ] 🔲 Sistema de scouting (buscar jugadores en el mercado)
+- [ ] 🔲 Competiciones y rankings (simular temporadas LEC-style)
+- [ ] 🔲 Modo multijugador básico (comparte equipos)
+- [ ] 🔲 Documentación completa para contribuyentes
+- [ ] 🔲 Primera release estable (v1.0.0)
+- [ ] 🔲 Publicación OSS (anuncio oficial)
 
-#### ­ƒôï Tareas
+#### 📋 Tareas
 
 - [ ] Implementar mercado de transferencias
-- [ ] Crear sistema de ligas/torneos con estad├¡sticas
-- [ ] A├▒adir modexpansions (otras regiones: LCK, LCS, LPL)
-- [ ] Desarrollar API REST p├║blica (opcional)
-- [ ] Configurar containerizaci├│n (Docker)
-- [ ] Setup CI/CD completo con releases autom├íticas
+- [ ] Crear sistema de ligas/torneos con estadísticas
+- [ ] Añadir mode expansions (otras regiones: LCK, LCS, LPL)
+- [ ] Desarrollar API REST pública (opcional)
+- [ ] Configurar containerización (Docker)
+- [ ] Setup CI/CD completo con releases automáticas
 - [ ] Escribir CONTRIBUTING.md
 - [ ] Audit de seguridad y hardening
 
-#### M├®tricas de ├ëxito
+#### Métricas de Éxito
 
-- Ô£à Comunidad puede contribuir siguiendo flow issue-first
-- Ô£à v1.0.0 publicada con changelog completo
-- Ô£à docs/ actualizada para usuarios y desarrolladores
+- ✅ Comunidad puede contribuir siguiendo flow issue-first
+- ✅ v1.0.0 publicada con changelog completo
+- ✅ docs/ actualizada para usuarios y desarrolladores
 
 ---
 
@@ -144,26 +148,26 @@ OLManager es un manager de esports para League of Legends dise├▒ado para sim
 Siguiendo [`GOVERNANCE.md`](docs/GOVERNANCE.md), el desarrollo sigue este flujo:
 
 ```
-1. Abrir issue con template ÔåÆ 2. Review de maintainer ÔåÆ 3. Apply label status:approved
-4. Crear branch desde development ÔåÆ 5. Abrir PR con type:* label ÔåÆ 6. Merge a development
+1. Abrir issue con template → 2. Review de maintainer → 3. Apply label status:approved
+4. Crear branch desde development → 5. Abrir PR con type:* label → 6. Merge a development
 ```
 
 ### Labels Utilizados
 
-| Categor├¡a | Labels |
+| Categoría | Labels |
 |-----------|--------|
 | **Status** | `status:needs-review`, `status:approved` |
 | **Type** | `type:feature`, `type:bug`, `type:docs`, `type:chore`, `type:refactor`, `type:test`, `type:release` |
 
 ### Ramas
 
-- `main` ÔÇö Estable, solo releases
-- `development` ÔÇö Integraci├│n (default para PRs)
-- `type/slug` ÔÇö Ramas de feature/fix/docs/chore
+- `main` — Estable, solo releases
+- `development` — Integración (default para PRs)
+- `type/slug` — Ramas de feature/fix/docs/chore
 
 ---
 
-## M├®tricas de Progreso
+## Métricas de Progreso
 
 ### KPIs por Fase
 
@@ -183,26 +187,26 @@ Siguiendo [`GOVERNANCE.md`](docs/GOVERNANCE.md), el desarrollo sigue este flujo:
 
 ---
 
-## C├│mo Seguir el Progreso
+## Cómo Seguir el Progreso
 
-- **Roadmap (este archivo)** ÔÇö Estado general y fases
-- **GitHub Issues** ÔÇö Tareas individuales con labels
-- **GitHub Project Board** ÔÇö Vista kanban del desarrollo
-- **GitHub Releases** ÔÇö Changelogs y downloads
-- **Discussions** ÔÇö Q&A y feedback comunitario
+- **Roadmap (este archivo)** — Estado general y fases
+- **GitHub Issues** — Tareas individuales con labels
+- **GitHub Project Board** — Vista kanban del desarrollo
+- **GitHub Releases** — Changelogs y downloads
+- **Discussions** — Q&A y feedback comunitario
 
 ---
 
-## C├│mo Contribuir
+## Cómo Contribuir
 
-┬íTodas las contribuciones son bienvenidas! Para contribuir:
+¡Todas las contribuciones son bienvenidas! Para contribuir:
 
-1. **Revisa issues abiertos** ÔÇö Busca `status:approved` para trabajo confirmado
-2. **Abre un issue** ÔÇö Usa el template para bugs o features
-3. **Espera approval** ÔÇö Un maintainer revisar├í y aplicar├í `status:approved`
-4. **Crea tu branch** ÔÇö Desde `development` con formato `type/slug`
-5. **Abre PR** ÔÇö Linkea el issue, a├▒ade un `type:*` label
-6. **Pasa CI** ÔÇö Ensure `frontend-install` y `rust-check` pasan
+1. **Revisa issues abiertos** — Busca `status:approved` para trabajo confirmado
+2. **Abre un issue** — Usa el template para bugs o features
+3. **Espera approval** — Un maintainer revisará y aplicará `status:approved`
+4. **Crea tu branch** — Desde `development` con formato `type/slug`
+5. **Abre PR** — Linkea el issue, añade un `type:*` label
+6. **Pasa CI** — Ensure `frontend-install` y `rust-check` pasan
 
 ### Requisitos de PR
 
@@ -212,7 +216,7 @@ Siguiendo [`GOVERNANCE.md`](docs/GOVERNANCE.md), el desarrollo sigue este flujo:
 - [ ] Commits conventional
 - [ ] Checks: `frontend-install` + `rust-check`
 
-### Configuraci├│n Local
+### Configuración Local
 
 ```bash
 # Frontend
@@ -223,7 +227,7 @@ npm run dev
 cargo build --workspace
 cargo test --workspace
 
-#full CI (experimental)
+# full CI (experimental)
 npm run test
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
@@ -233,13 +237,13 @@ cargo test --workspace
 
 ## Historial de Versiones
 
-| Versi├│n | Fecha | Notas |
+| Versión | Fecha | Notas |
 |---------|-------|-------|
 | 0.1.1 | 2026-04-28 | Pre-alpha actual |
-| 0.2.0-alpha | ÔÅ│ Pendiente | Alpha con deuda t├®cnica resuelta |
-| 0.3.0-beta | ÔÅ│ Pendiente | Beta con features core |
-| 1.0.0 | ÔÅ│ Pendiente | Primera stable |
+| 0.2.0-alpha | ⏳ Pendiente | Alpha con deuda técnica resuelta |
+| 0.3.0-beta | ⏳ Pendiente | Beta con features core |
+| 1.0.0 | ⏳ Pendiente | Primera stable |
 
 ---
 
-*├Ültima actualizaci├│n: 2026-04-28 ÔÇö Generado desde an├ílisis SDD*
+*Última actualización: 2026-04-29 — Actualizado con corrección de identidad (nationality_code + competitive_region)*
