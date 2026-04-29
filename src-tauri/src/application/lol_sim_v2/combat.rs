@@ -3,8 +3,14 @@ use std::cmp::Ordering;
 
 pub(super) enum ChampionObjectiveAssistPlan {
     None,
-    HardAssist { objective_key: String, objective_pos: Vec2 },
-    ObjectiveAssist { objective_key: String, objective_pos: Vec2 },
+    HardAssist {
+        objective_key: String,
+        objective_pos: Vec2,
+    },
+    ObjectiveAssist {
+        objective_key: String,
+        objective_pos: Vec2,
+    },
 }
 
 pub(super) fn champion_can_resolve_combat(champion: &ChampionRuntime, now: f64) -> bool {
@@ -26,12 +32,14 @@ pub(super) fn classify_objective_assist_plan(
     let team = normalized_team(&champion.team).to_string();
 
     let is_hard_assist = {
-        let contested = contested_dragon_attempt_for_team(&team, &runtime.champions, neutral_timers);
+        let contested =
+            contested_dragon_attempt_for_team(&team, &runtime.champions, neutral_timers);
         should_hard_assist_contested_dragon(champion, contested)
     };
 
     if is_hard_assist {
-        if let Some(dragon) = contested_dragon_attempt_for_team(&team, &runtime.champions, neutral_timers)
+        if let Some(dragon) =
+            contested_dragon_attempt_for_team(&team, &runtime.champions, neutral_timers)
         {
             return ChampionObjectiveAssistPlan::HardAssist {
                 objective_key: dragon.key.clone(),
@@ -195,10 +203,7 @@ pub(super) fn structure_fallback_score(champion: &ChampionRuntime, distance: f64
     score
 }
 
-pub(super) fn target_priority_rank_for_fight_plan(
-    fight_plan: &str,
-    enemy: &ChampionRuntime,
-) -> u8 {
+pub(super) fn target_priority_rank_for_fight_plan(fight_plan: &str, enemy: &ChampionRuntime) -> u8 {
     let enemy_is_backline = is_backline_champion(enemy);
     match fight_plan {
         "FrontToBack" => {
@@ -440,7 +445,6 @@ pub(super) fn pick_combat_target(
         ) {
             return Some(CombatTarget::Neutral(neutral_key));
         }
-        return None;
     }
 
     if now < LANE_COMBAT_UNLOCK_AT {
@@ -453,7 +457,15 @@ pub(super) fn pick_combat_target(
                     && dist(champion.pos, m.pos) <= 0.12
             })
             .min_by(|(idx_a, a), (idx_b, b)| {
-                compare_by_hp_distance_stable(champion.pos, *idx_a, a.hp, a.pos, *idx_b, b.hp, b.pos)
+                compare_by_hp_distance_stable(
+                    champion.pos,
+                    *idx_a,
+                    a.hp,
+                    a.pos,
+                    *idx_b,
+                    b.hp,
+                    b.pos,
+                )
             })
             .map(|(idx, _)| idx);
         return early_lane_minion.map(CombatTarget::Minion);
@@ -559,13 +571,44 @@ pub(super) fn pick_combat_target(
     }
 
     let objective_assist_active =
-        should_assist_objective_attempt(champion, &runtime.champions, neutral_timers);
+        should_assist_objective_attempt(champion, &runtime.champions, neutral_timers)
+            && champion.state == "objective";
     if objective_assist_active {
         if let Some(neutral_key) = nearby_neutral_objective_key(champion, neutral_timers) {
             return Some(CombatTarget::Neutral(neutral_key));
         }
     }
 
+    let lane_mult = champion_lane_damage_multiplier(champion);
+    
+    
+        let lane_skirmish_enemy = runtime
+            .champions
+            .iter()
+            .enumerate()
+            .filter(|(_, enemy)| {
+                is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
+                    && normalized_lane(&enemy.lane) == champion_lane
+                    && dist(champion.pos, enemy.pos) <= LANE_CHAMPION_TRADE_RADIUS
+                    && can_open_trade_window(
+                        champion,
+                        enemy,
+                        now,
+                        &runtime.champions,
+                        &runtime.minions,
+                        &runtime.structures,
+                        &runtime.lane_combat_state_by_champion,
+                        runtime.ai_mode,
+                        &runtime.policy,
+                    )
+            })
+            .min_by(|(idx_a, a), (idx_b, b)| {
+                compare_enemy_priority_distance(champion.pos, fight_plan, *idx_a, a, *idx_b, b)
+            })
+            .map(|(idx, _)| idx);
+        if let Some(enemy_idx) = lane_skirmish_enemy {
+            return Some(CombatTarget::Champion(enemy_idx));
+        }
     let last_hit_minion = runtime
         .minions
         .iter()
@@ -576,7 +619,7 @@ pub(super) fn pick_combat_target(
             }
             is_visible_lane_enemy_minion(runtime, champion_team, champion_lane, enemy_team, m)
                 && dist(champion.pos, m.pos) <= laner_farm_search_radius(champion)
-                && m.hp <= champion.attack_damage * CHAMPION_DAMAGE_TO_MINION_MULTIPLIER * 1.4
+                && m.hp <= (champion.attack_damage * CHAMPION_DAMAGE_TO_MINION_MULTIPLIER * lane_mult)
         })
         .min_by(|(idx_a, a), (idx_b, b)| {
             compare_by_hp_distance_stable(champion.pos, *idx_a, a.hp, a.pos, *idx_b, b.hp, b.pos)
@@ -584,34 +627,6 @@ pub(super) fn pick_combat_target(
         .map(|(idx, _)| idx);
     if let Some(minion_idx) = last_hit_minion {
         return Some(CombatTarget::Minion(minion_idx));
-    }
-
-    let lane_skirmish_enemy = runtime
-        .champions
-        .iter()
-        .enumerate()
-        .filter(|(_, enemy)| {
-            is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
-                && normalized_lane(&enemy.lane) == champion_lane
-                && dist(champion.pos, enemy.pos) <= LANE_CHAMPION_TRADE_RADIUS
-                && can_open_trade_window(
-                    champion,
-                    enemy,
-                    now,
-                    &runtime.champions,
-                    &runtime.minions,
-                    &runtime.structures,
-                    &runtime.lane_combat_state_by_champion,
-                    runtime.ai_mode,
-                    &runtime.policy,
-                )
-        })
-        .min_by(|(idx_a, a), (idx_b, b)| {
-            compare_enemy_priority_distance(champion.pos, fight_plan, *idx_a, a, *idx_b, b)
-        })
-        .map(|(idx, _)| idx);
-    if let Some(enemy_idx) = lane_skirmish_enemy {
-        return Some(CombatTarget::Champion(enemy_idx));
     }
 
     let wave_front = lane_wave_front_pos(champion, &runtime.minions, &runtime.structures);
@@ -641,7 +656,8 @@ pub(super) fn pick_combat_target(
         .filter(|(_, s)| {
             if !(s.alive
                 && normalized_team(&s.team) == enemy_team
-                && (normalized_lane(&s.lane) == normalized_lane(&champion.lane) || s.kind == "nexus")
+                && (normalized_lane(&s.lane) == normalized_lane(&champion.lane)
+                    || s.kind == "nexus")
                 && dist(champion.pos, s.pos) <= LANE_STRUCTURE_PRESSURE_RADIUS
                 && is_structure_targetable(&runtime.structures, &champion.team, s))
             {
@@ -728,9 +744,13 @@ pub(super) fn pick_combat_target(
         .filter(|(_, s)| {
             if !s.alive
                 || normalized_team(&s.team) != enemy_team
-                || !(normalized_lane(&s.lane) == normalized_lane(&champion.lane) || s.kind == "nexus")
+                || !(normalized_lane(&s.lane) == normalized_lane(&champion.lane)
+                    || s.kind == "nexus")
                 || !is_structure_targetable(&runtime.structures, &champion.team, s)
             {
+                return false;
+            }
+            if champion.role != "JGL" && !(normalized_lane(&s.lane) == normalized_lane(&champion.lane) || s.kind == "nexus") {
                 return false;
             }
             if dist(champion.pos, s.pos) > LANE_STRUCTURE_PRESSURE_RADIUS {
@@ -772,15 +792,29 @@ pub(super) fn pick_combat_target(
         })
         .map(|(idx, _)| idx);
 
+    println!("MIDLANER Pos: ({:.2},{:.2}) | Minions en radar local (0.12): {}", 
+    champion.pos.x, 
+    champion.pos.y, 
+    runtime.minions.iter().filter(|m| dist(champion.pos, m.pos) <= 0.12).count()
+);
+
     let nearest_minion = runtime
         .minions
         .iter()
         .enumerate()
-        .filter(|(_, m)| is_lane_enemy_minion(champion_lane, enemy_team, m))
+        .filter(|(_, m)| {
+            if champion.role == "JGL" {
+                // El jungla puede defender atacando cualquier minion enemigo que se cruce en su patrulla
+                m.alive && normalized_team(&m.team) == enemy_team && dist(champion.pos, m.pos) <= 0.20
+            } else {
+                is_lane_enemy_minion(champion_lane, enemy_team, m)
+            }
+        })
         .min_by(|(idx_a, a), (idx_b, b)| {
             compare_by_distance_stable(champion.pos, *idx_a, a.pos, *idx_b, b.pos)
         })
         .map(|(idx, _)| idx);
+
 
     let nearest_enemy_champion = runtime
         .champions
@@ -810,25 +844,15 @@ pub(super) fn pick_combat_target(
         })
         .map(|(idx, _)| idx);
 
-    let nearby_neutral =
-        nearest_attackable_neutral_key(champion, neutral_timers, JUNGLE_CAMP_ENGAGE_RADIUS, 0.0)
-            .filter(|key| is_jungle_camp_key(key));
-
+    let nearby_neutral = if champion.role == "JGL" {
+    nearest_attackable_neutral_key(champion, neutral_timers, JUNGLE_CAMP_ENGAGE_RADIUS, 0.0)
+        .filter(|key| is_jungle_camp_key(key))
+    } else {
+        None
+    };
     let mut fallback_candidates: Vec<FallbackCandidate> = Vec::new();
 
-    if let Some(key) = nearby_neutral {
-        if let Some(timer) = neutral_timers.entities.get(&key) {
-            let d = dist(champion.pos, timer.pos);
-            fallback_candidates.push(FallbackCandidate {
-                target: CombatTarget::Neutral(key.clone()),
-                score: neutral_fallback_score(d),
-                distance: d,
-                kind_rank: 4,
-                stable_key: key,
-            });
-        }
-    }
-
+    
     if let Some(enemy_idx) = nearest_enemy_champion {
         let enemy = &runtime.champions[enemy_idx];
         let d = dist(champion.pos, enemy.pos);
@@ -840,7 +864,7 @@ pub(super) fn pick_combat_target(
             stable_key: enemy.id.clone(),
         });
     }
-
+    
     if let Some(minion_idx) = nearest_minion {
         let minion = &runtime.minions[minion_idx];
         let distance_to_champion = dist(champion.pos, minion.pos);
@@ -867,6 +891,20 @@ pub(super) fn pick_combat_target(
             stable_key: structure.id.clone(),
         });
     }
+
+    if let Some(key) = nearby_neutral {
+        if let Some(timer) = neutral_timers.entities.get(&key) {
+            let d = dist(champion.pos, timer.pos);
+            fallback_candidates.push(FallbackCandidate {
+                target: CombatTarget::Neutral(key.clone()),
+                score: neutral_fallback_score(d),
+                distance: d,
+                kind_rank: 4,
+                stable_key: key,
+            });
+        }
+    }
+
 
     fallback_candidates.sort_by(compare_fallback_candidate);
 
@@ -947,9 +985,20 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
         }
 
         let Some(target) = pick_combat_target(runtime, idx, now, &neutral_timers) else {
+
+            // <-- AÑADIR ESTE LOG
+            if runtime.champions[idx].role == "MID" {
+                println!("[{:.1}s] MIDLANER ({}) | pick_combat_target devolvió NONE. Está ocioso.", now, runtime.champions[idx].team);
+            }
+
             continue;
         };
         if !is_local_combat_target(runtime, idx, &target) {
+            
+            // <-- AÑADIR ESTE LOG
+            if runtime.champions[idx].role == "MID" {
+                println!("[{:.1}s] MIDLANER ({}) | Objetivo encontrado pero NO es local (fuera de rango).", now, runtime.champions[idx].team);
+            }
             continue;
         }
 
@@ -1033,6 +1082,10 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                         );
                     }
                     if !open_eval.decision {
+                        // <-- AÑADIR ESTE LOG
+                        if attacker_snapshot.role == "MID" {
+                            println!("[{:.1}s] MIDLANER ({}) | ABORTA TRADE (open_eval falso). Huyendo...", now, attacker_snapshot.team);
+                        }
                         issue_lane_disengage(runtime, idx, target_snapshot.pos);
                         continue;
                     }
@@ -1059,6 +1112,11 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                     );
                 }
                 if disengage_eval.decision {
+
+                    // <-- AÑADIR ESTE LOG
+                    if attacker_snapshot.role == "MID" {
+                        println!("[{:.1}s] MIDLANER ({}) | FORZANDO DISENGAGE (disengage_eval verdadero).", now, attacker_snapshot.team);
+                    }
                     issue_lane_disengage(runtime, idx, target_snapshot.pos);
                     continue;
                 }

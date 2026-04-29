@@ -1,5 +1,7 @@
 use std::cmp::Ordering;
 
+use log::debug;
+
 use super::{
     base_position_for, clamp, closest_lane_path_index, dist, lane_path_for, normalize,
     normalized_lane, normalized_team, ChampionRuntime, LanePressure, LaneRoleProfile,
@@ -60,6 +62,9 @@ pub(super) fn choose_lane_anchor_index(
         return 0;
     }
 
+    let mid_lane_index = lane_last_idx / 2;
+
+    // 1. Dónde está el frente aliado (nuestro escudo)
     let allied_front = minions
         .iter()
         .filter(|m| {
@@ -110,27 +115,10 @@ pub(super) fn choose_lane_anchor_index(
                 .unwrap_or(Ordering::Equal)
         });
 
-    if let Some(enemy_unit) = nearest_enemy_lane_minion {
-        let enemy_idx = closest_lane_path_index(enemy_unit.pos, &lane_path);
-        let allied_lane_tower = structures
-            .iter()
-            .filter(|s| {
-                s.alive
-                    && s.kind == "tower"
-                    && normalized_team(&s.team) == normalized_team(&champion.team)
-                    && normalized_lane(&s.lane) == normalized_lane(&champion.lane)
-            })
-            .min_by(|a, b| {
-                dist(a.pos, champion.pos)
-                    .partial_cmp(&dist(b.pos, champion.pos))
-                    .unwrap_or(Ordering::Equal)
-            });
-        let wave_at_own_tower = allied_lane_tower
-            .map(|tower| dist(enemy_unit.pos, tower.pos) <= 0.11)
-            .unwrap_or(false);
-        let offset = if wave_at_own_tower { 0 } else { 1 };
-        return enemy_idx.saturating_sub(offset).clamp(1, lane_last_idx);
-    }
+    let front_idx = allied_front.map(|m| m.path_index.saturating_sub(1)).unwrap_or(0);
+    
+    // Límite de seguridad: Nos quedamos 2 índices por detrás del frente enemigo para no chocar ciegamente
+    let safety_limit_idx = enemy_front.map(|m| m.path_index.saturating_sub(2)).unwrap_or(lane_last_idx);
 
     let current_index = closest_lane_path_index(champion.pos, &lane_path);
     // Empty-lane fallback was too defensive for MID and could pin under own tower.
@@ -144,7 +132,6 @@ pub(super) fn choose_lane_anchor_index(
     let min_floor = if champion.role == "MID" { 3 } else { 1 };
     capped_current.clamp(min_floor, lane_last_idx)
 }
-
 pub(super) fn lane_anchor_pos(
     champion: &ChampionRuntime,
     minions: &[MinionRuntime],
@@ -188,7 +175,10 @@ pub(super) fn lane_fallback_pos_from_tower(
     }
 }
 
-pub(super) fn lane_pre_wave_hold_pos(champion: &ChampionRuntime, structures: &[StructureRuntime]) -> Vec2 {
+pub(super) fn lane_pre_wave_hold_pos(
+    champion: &ChampionRuntime,
+    structures: &[StructureRuntime],
+) -> Vec2 {
     let lane_path = lane_path_for(&champion.team, &champion.lane);
     let allied_lane_tower = structures
         .iter()
@@ -213,7 +203,6 @@ pub(super) fn lane_pre_wave_hold_pos(champion: &ChampionRuntime, structures: &[S
         .copied()
         .unwrap_or(base_position_for(&champion.team))
 }
-
 
 pub(super) fn lane_wave_front_pos(
     champion: &ChampionRuntime,
@@ -245,10 +234,12 @@ pub(super) fn lane_wave_front_pos(
     let allied_wave = if allied.is_empty() {
         None
     } else {
-        let sum = allied.iter().fold(super::Vec2 { x: 0.0, y: 0.0 }, |acc, m| super::Vec2 {
-            x: acc.x + m.pos.x,
-            y: acc.y + m.pos.y,
-        });
+        let sum = allied
+            .iter()
+            .fold(super::Vec2 { x: 0.0, y: 0.0 }, |acc, m| super::Vec2 {
+                x: acc.x + m.pos.x,
+                y: acc.y + m.pos.y,
+            });
         Some(super::Vec2 {
             x: sum.x / allied.len() as f64,
             y: sum.y / allied.len() as f64,
@@ -258,10 +249,12 @@ pub(super) fn lane_wave_front_pos(
     let enemy_wave = if enemy.is_empty() {
         None
     } else {
-        let sum = enemy.iter().fold(super::Vec2 { x: 0.0, y: 0.0 }, |acc, m| super::Vec2 {
-            x: acc.x + m.pos.x,
-            y: acc.y + m.pos.y,
-        });
+        let sum = enemy
+            .iter()
+            .fold(super::Vec2 { x: 0.0, y: 0.0 }, |acc, m| super::Vec2 {
+                x: acc.x + m.pos.x,
+                y: acc.y + m.pos.y,
+            });
         Some(super::Vec2 {
             x: sum.x / enemy.len() as f64,
             y: sum.y / enemy.len() as f64,
@@ -381,6 +374,8 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
         }
 
         if now >= champion.next_decision_at {
+            let old_state = champion.state.clone();
+
             super::decide_champion_state(
                 champion,
                 now,
@@ -391,8 +386,46 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
                 &super::team_tactics_for_runtime(team_tactics_snapshot.as_ref(), &champion.team),
                 &super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team),
             );
-            champion.next_decision_at =
-                now + (super::CHAMPION_DECISION_CADENCE_SEC / champion.staff_execution.clamp(0.96, 1.10));
+
+            // Set debug info for AI decisions - this gets serialized to frontend
+            let target_desc = if !champion.target_path.is_empty() {
+                format!("target=({:.2},{:.2})", 
+                    champion.target_path.last().map(|p| p.x).unwrap_or(0.0),
+                    champion.target_path.last().map(|p| p.y).unwrap_or(0.0))
+            } else {
+                "no-path".to_string()
+            };
+            champion.debug_ai_decision = format!(
+                "state:{}->{}|hp:{:.1}%|{}",
+                old_state, 
+                champion.state, 
+                (champion.hp / champion.max_hp.max(1.0) * 100.0),
+                target_desc
+            );
+
+            // Log for debugging - appears in npm run tauri dev
+            debug!(
+                "[AI] {} {} | {}",
+                champion.id, champion.team, champion.debug_ai_decision
+            );
+
+            // Keep existing println for immediate visibility
+            if champion.role == "MID" {
+                println!("[DEBUG] {} | {}", champion.id, champion.debug_ai_decision);
+            }
+            champion.next_decision_at = now
+                + (super::CHAMPION_DECISION_CADENCE_SEC
+                    / champion.staff_execution.clamp(0.96, 1.10));
+
+// Si es un Jungla, no está en base, y se quedó sin ruta (campamentos vacíos):
+            if champion.role == "JGL" && champion.state != "recall" && champion.state != "objective" {
+                if champion.target_path.is_empty() || champion.target_path_index >= champion.target_path.len().saturating_sub(1) {
+                    // Recall seguro a base. Al renacer, decide_champion_state 
+                    // creará una nueva ruta curva limpia hacia los nuevos campamentos.
+                    champion.state = "recall".to_string();
+                    champion.recall_channel_until = now + 8.0; // 8 segundos casteando el Recall
+                }
+            }
         }
 
         if champion.state == "recall" {
@@ -419,6 +452,8 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
             champion.target_path_index = champion.target_path.len().saturating_sub(1);
         }
 
+        if let Some(target) = champion.target_path.get(champion.target_path_index).copied() {
+            let pre_dist = dist(champion.pos, target);
         if let Some(target) = champion.target_path.get(champion.target_path_index).copied() {
             let pre_dist = dist(champion.pos, target);
             let buffs = super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team);

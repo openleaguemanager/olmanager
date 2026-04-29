@@ -214,6 +214,8 @@ struct ChampionRuntime {
     path_stuck_for_sec: f64,
     #[serde(default)]
     forced_lane_recall_cd_until: f64,
+    #[serde(default)]
+    debug_ai_decision: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
