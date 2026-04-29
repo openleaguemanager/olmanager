@@ -158,7 +158,7 @@ export default function ScheduleCalendarView({
               <div
                 key={cellKey}
                 className={[
-                  "min-h-[96px] rounded-md border p-1.5 flex flex-col gap-1 transition-colors",
+                  "min-h-[120px] rounded-md border p-2 flex flex-col gap-1 transition-colors",
                   inMonth
                     ? "bg-white dark:bg-navy-800 border-gray-200 dark:border-navy-600"
                     : "bg-gray-50/60 dark:bg-navy-900/40 border-gray-100 dark:border-navy-700 opacity-60",
@@ -185,7 +185,7 @@ export default function ScheduleCalendarView({
                   ) : null}
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
-                  {cellFixtures.slice(0, 2).map((f) => {
+                  {cellFixtures.slice(0, 3).map((f) => {
                     const stored = readStoredFixtureDraftResult(f.id);
                     const bo = inferBestOf(f, bestOfContext);
                     const completed = f.status === "Completed";
@@ -253,9 +253,9 @@ export default function ScheduleCalendarView({
                       </button>
                     );
                   })}
-                  {cellFixtures.length > 2 ? (
+                  {cellFixtures.length > 3 ? (
                     <span className="text-[9px] text-gray-400 dark:text-gray-500 px-1">
-                      +{cellFixtures.length - 2} {t("schedule.moreMatches", "más")}
+                      +{cellFixtures.length - 3} {t("schedule.moreMatches", "más")}
                     </span>
                   ) : null}
                 </div>
