@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
-import { GameStateData } from "../../store/gameStore";
-import { Card, CardHeader, CardBody, ProgressBar, CountryFlag } from "../ui";
+import { useEffect, useState, useRef } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { GameStateData, useGameStore } from "../../store/gameStore";
+import { Card, CardHeader, CardBody, ProgressBar, CountryFlag, Button } from "../ui";
 import { formatDate } from "../../lib/helpers";
 import { useTranslation } from "react-i18next";
-import { countryName } from "../../lib/countries";
-import { getAvatarUrl } from "../../lib/managerAvatars";
+import { countryName, allNationalities } from "../../lib/countries";
+import { getAvatarUrl, validateAvatarFile, generateAvatarFilename } from "../../lib/managerAvatars";
+import DashboardModalFrame from "../dashboard/DashboardModalFrame";
+import { Settings, X, Upload, XCircle, ChevronDown, Check, AlertCircle } from "lucide-react";
 
 const FALLBACK_MANAGER_AVATAR = "/manager-avatars/default-manager.svg";
 
@@ -13,6 +16,7 @@ interface ManagerTabProps {
 }
 
 export default function ManagerTab({ gameState }: ManagerTabProps) {
+  const setGameState = useGameStore((state) => state.setGameState);
   const { t, i18n } = useTranslation();
   const mgr = gameState.manager;
   const myTeam = gameState.teams.find(tm => tm.id === mgr.team_id);
@@ -29,6 +33,45 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
 
   const [avatarSrc, setAvatarSrc] = useState<string>(FALLBACK_MANAGER_AVATAR);
 
+  // Settings modal state
+  const [showSettings, setShowSettings] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    nickname: "",
+    firstName: "",
+    lastName: "",
+    dob: "",
+    nationality: "",
+  });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [nationalityOpen, setNationalityOpen] = useState(false);
+  const [nationalitySearch, setNationalitySearch] = useState("");
+  const nationalityRef = useRef<HTMLDivElement>(null);
+  const countriesList = allNationalities(i18n.language);
+
+  const filteredNationalities = countriesList.filter((nat) => {
+    const searchLower = nationalitySearch.toLowerCase();
+    return nat.name.toLowerCase().includes(searchLower) || 
+           nat.code.toLowerCase().includes(searchLower);
+  });
+
+  // Close nationality dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!nationalityOpen || !nationalityRef.current) return;
+      const targetNode = e.target instanceof Node ? e.target : null;
+      const clickedInside = targetNode ? nationalityRef.current.contains(targetNode) : false;
+      if (!clickedInside) {
+        setNationalityOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [nationalityOpen]);
+
   useEffect(() => {
     const loadAvatar = async () => {
       try {
@@ -41,11 +84,101 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
     loadAvatar();
   }, [mgr.avatar_path]);
 
+  // Open settings modal and populate form with current values
+  const handleOpenSettings = () => {
+    setFormData({
+      nickname: mgr.nickname || "",
+      firstName: mgr.first_name,
+      lastName: mgr.last_name,
+      dob: mgr.date_of_birth,
+      nationality: mgr.nationality,
+    });
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setAvatarError(null);
+    setShowSettings(true);
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const validation = validateAvatarFile(file);
+    if (!validation.valid) {
+      setAvatarError(validation.error || "Archivo inválido");
+      return;
+    }
+    setAvatarError(null);
+    setAvatarFile(file);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setAvatarPreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setAvatarError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    setIsSaving(true);
+    try {
+      let newAvatarPath: string | null = null;
+      
+      // Upload avatar first if selected
+      if (avatarFile) {
+        const filename = generateAvatarFilename(avatarFile.name);
+        const arrayBuffer = await avatarFile.arrayBuffer();
+        const bytes = Array.from(new Uint8Array(arrayBuffer));
+        await invoke<string>("save_manager_avatar", { filename, data: bytes });
+        newAvatarPath = filename;
+      }
+
+      // Update manager profile
+      await invoke("update_manager_profile", {
+        nickname: formData.nickname || null,
+        firstName: formData.firstName || null,
+        lastName: formData.lastName || null,
+        dob: formData.dob || null,
+        nationality: formData.nationality || null,
+        avatarPath: newAvatarPath,
+      });
+
+      // Update local game state to reflect changes immediately
+      const updatedManager = {
+        ...mgr,
+        nickname: formData.nickname || null,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        date_of_birth: formData.dob,
+        nationality: formData.nationality,
+        avatar_path: newAvatarPath || mgr.avatar_path,
+      };
+      
+      setGameState({
+        ...gameState,
+        manager: updatedManager,
+      });
+
+      setShowSettings(false);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      alert(t("manager.saveError", "Error al guardar: ") + String(error));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5">
       {/* Profile card */}
       <Card accent="primary" className="md:col-span-3">
-        <div className="bg-gradient-to-r from-navy-700 to-navy-800 p-6 rounded-t-xl flex items-center gap-6">
+        <div className="bg-gradient-to-r from-navy-700 to-navy-800 p-6 rounded-t-xl flex items-center gap-6 relative">
           <div className="w-20 h-20 rounded-xl overflow-hidden bg-primary-500/20 flex items-center justify-center border-2 border-primary-500/30">
             <img 
               src={avatarSrc} 
@@ -67,12 +200,227 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
             </p>
             {myTeam && <p className="text-primary-400 text-sm font-semibold mt-0.5">{t('manager.managerOf', { team: myTeam.name })}</p>}
           </div>
-          <div className="ml-auto text-right">
-            <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">{t('manager.reputation')}</p>
-            <p className="font-heading font-bold text-2xl text-accent-400">{mgr.reputation}</p>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">{t('manager.reputation')}</p>
+              <p className="font-heading font-bold text-2xl text-accent-400">{mgr.reputation}</p>
+            </div>
+            <button
+              onClick={handleOpenSettings}
+              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors"
+              title={t("manager.settings", "Settings")}
+            >
+              <Settings className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </Card>
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <DashboardModalFrame maxWidthClassName="max-w-lg">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-heading font-bold text-gray-900 dark:text-gray-100">
+                {t("manager.editProfile", "Editar perfil")}
+              </h3>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-navy-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Avatar Upload */}
+            <div>
+              <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                {t("createManager.avatar", "Foto de Perfil")}
+              </label>
+              <div className="flex items-center gap-4">
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-100 dark:bg-navy-700 border-2 border-gray-300 dark:border-navy-500 flex items-center justify-center">
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={avatarSrc} alt="Current avatar" className="w-full h-full object-cover" />
+                  )}
+                  {avatarPreview && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveAvatar}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-bl-md p-0.5 hover:bg-red-600 transition-colors"
+                    >
+                      <XCircle className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                    onChange={handleAvatarChange}
+                    className="hidden"
+                    id="settings-avatar-upload"
+                  />
+                  <label
+                    htmlFor="settings-avatar-upload"
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-navy-900 border border-gray-300 dark:border-navy-600 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors text-sm text-gray-700 dark:text-gray-200"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>{t("createManager.uploadAvatar", "Subir imagen")}</span>
+                  </label>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
+                    PNG, JPG, WebP o SVG (máx. 5MB)
+                  </p>
+                </div>
+              </div>
+              {avatarError && (
+                <p className="flex items-center gap-1 text-xs text-red-500 mt-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {avatarError}
+                </p>
+              )}
+            </div>
+
+            {/* Nickname */}
+            <div>
+              <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                {t("createManager.nickname", "Nick")}
+              </label>
+              <input
+                maxLength={20}
+                className="w-full bg-gray-50 dark:bg-navy-900 border border-gray-300 dark:border-navy-600 text-gray-900 dark:text-white rounded-lg p-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                value={formData.nickname}
+                onChange={(e) => setFormData((prev) => ({ ...prev, nickname: e.target.value }))}
+              />
+            </div>
+
+            {/* Name fields */}
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                  {t("createManager.firstName")}
+                </label>
+                <input
+                  maxLength={30}
+                  className="w-full bg-gray-50 dark:bg-navy-900 border border-gray-300 dark:border-navy-600 text-gray-900 dark:text-white rounded-lg p-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, firstName: e.target.value }))}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                  {t("createManager.lastName")}
+                </label>
+                <input
+                  maxLength={30}
+                  className="w-full bg-gray-50 dark:bg-navy-900 border border-gray-300 dark:border-navy-600 text-gray-900 dark:text-white rounded-lg p-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, lastName: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            {/* Date of Birth */}
+            <div>
+              <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                {t("createManager.dob")}
+              </label>
+              <input
+                type="date"
+                className="w-full bg-gray-50 dark:bg-navy-900 border border-gray-300 dark:border-navy-600 text-gray-900 dark:text-white rounded-lg p-3 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                value={formData.dob}
+                onChange={(e) => setFormData((prev) => ({ ...prev, dob: e.target.value }))}
+              />
+            </div>
+
+            {/* Nationality dropdown */}
+            <div ref={nationalityRef} className={nationalityOpen ? "relative z-50" : undefined}>
+              <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                {t("createManager.countryOfOrigin", "Country/Region of Origin")}
+              </label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setNationalityOpen(!nationalityOpen)}
+                  className="w-full flex items-center justify-between bg-gray-50 dark:bg-navy-900 border border-gray-300 dark:border-navy-600 text-left rounded-lg p-3 outline-none transition-all hover:border-primary-500"
+                >
+                  <span className={formData.nationality ? "text-gray-900 dark:text-white" : "text-gray-400"}>
+                    {formData.nationality ? (
+                      <span className="flex items-center gap-2">
+                        <CountryFlag code={formData.nationality} locale={i18n.language} className="text-lg leading-none" />
+                        <span>{countryName(formData.nationality, i18n.language) || formData.nationality}</span>
+                      </span>
+                    ) : (
+                      t("createManager.selectCountry", "Select Country/Region")
+                    )}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${nationalityOpen ? "rotate-180" : ""}`} />
+                </button>
+                {nationalityOpen && (
+                  <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white dark:bg-navy-700 rounded-lg shadow-xl border border-gray-200 dark:border-navy-600 overflow-hidden max-h-[200px] overflow-y-auto">
+                    <div className="p-2 border-b border-gray-100 dark:border-navy-600">
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder={t("createManager.searchNationalities")}
+                        value={nationalitySearch}
+                        onChange={(e) => setNationalitySearch(e.target.value)}
+                        className="w-full bg-gray-50 dark:bg-navy-800 border border-gray-200 dark:border-navy-600 text-gray-900 dark:text-white rounded-md px-3 py-2 text-sm outline-none focus:border-primary-500"
+                      />
+                    </div>
+                    {filteredNationalities.map((nat) => (
+                      <button
+                        key={nat.code}
+                        type="button"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setFormData((prev) => ({ ...prev, nationality: nat.code }));
+                          setNationalityOpen(false);
+                          setNationalitySearch("");
+                        }}
+                        className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
+                          formData.nationality === nat.code
+                            ? "bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400"
+                            : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-navy-600"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <CountryFlag code={nat.code} locale={i18n.language} className="text-lg leading-none" />
+                          <span>{nat.name}</span>
+                        </div>
+                        {formData.nationality === nat.code && <Check className="w-4 h-4 text-primary-500" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSettings(false)}
+                disabled={isSaving}
+              >
+                {t("common.cancel")}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSaveSettings}
+                disabled={isSaving}
+              >
+                {isSaving ? t("common.saving", "Guardando...") : t("common.save", "Guardar")}
+              </Button>
+            </div>
+          </div>
+        </DashboardModalFrame>
+      )}
 
       {/* Career stats */}
       <Card accent="accent" className="md:col-span-2">

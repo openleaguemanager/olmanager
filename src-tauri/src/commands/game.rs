@@ -2083,3 +2083,59 @@ pub async fn load_manager_avatar(
     info!("[cmd] load_manager_avatar: loaded {} bytes", data.len());
     Ok(data_url)
 }
+
+/// Update manager profile fields (nickname, name, dob, nationality, avatar)
+#[tauri::command]
+pub async fn update_manager_profile(
+    state: State<'_, StateManager>,
+    nickname: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    dob: Option<String>,
+    nationality: Option<String>,
+    avatar_path: Option<String>,
+) -> Result<(), String> {
+    info!("[cmd] update_manager_profile");
+    
+    let mut game = state
+        .get_game(|g: &Game| g.clone())
+        .ok_or("No active game session".to_string())?;
+
+    // Update only the provided fields (not None)
+    if let Some(nick) = nickname {
+        game.manager.nickname = Some(nick.trim().to_string());
+    }
+    if let Some(first) = first_name {
+        let trimmed = first.trim().to_string();
+        if !trimmed.is_empty() && trimmed.len() <= 30 {
+            game.manager.first_name = trimmed;
+        }
+    }
+    if let Some(last) = last_name {
+        let trimmed = last.trim().to_string();
+        if !trimmed.is_empty() && trimmed.len() <= 30 {
+            game.manager.last_name = trimmed;
+        }
+    }
+    if let Some(date) = dob {
+        // Validate date format
+        if chrono::NaiveDate::parse_from_str(&date, "%Y-%m-%d").is_ok() {
+            game.manager.date_of_birth = date;
+        }
+    }
+    if let Some(nat) = nationality {
+        let trimmed = nat.trim().to_string();
+        if !trimmed.is_empty() {
+            game.manager.nationality = trimmed;
+        }
+    }
+    if let Some(avatar) = avatar_path {
+        game.manager.avatar_path = Some(avatar);
+    }
+
+    // Save the game state back
+    state.set_game(game.clone());
+
+    info!("[cmd] update_manager_profile: completed");
+    Ok(())
+}

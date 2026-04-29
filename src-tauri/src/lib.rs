@@ -172,7 +172,8 @@ pub fn run() {
             lol_sim_v2_run_to_completion,
             lol_sim_v2_skip_to_end,
             save_manager_avatar,
-            load_manager_avatar
+            load_manager_avatar,
+            update_manager_profile
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
