@@ -1100,6 +1100,7 @@
     "important": "Important",
     "effectOutcomeLabel": "Outcome",
     "chooseResponse": "Choose your response",
+    "chooseResponseOutcomeVaries": "Choose your response — outcome varies",
     "responded": "Response sent",
     "markAllRead": "Mark all read",
     "clearOld": "Clear old",
