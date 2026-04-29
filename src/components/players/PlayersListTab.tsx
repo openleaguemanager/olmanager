@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { GameStateData, PlayerSelectionOptions } from "../../store/gameStore";
-import { Card, CardBody, Badge, Select, CountryFlag } from "../ui";
+import { Card, CardBody, Select, CountryFlag, RoleBadge } from "../ui";
 import {
   Search,
   Filter,
@@ -148,13 +148,6 @@ export default function PlayersListTab({
   });
 
   const positions: LolRole[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
-  const roleBadgeVariant: Record<LolRole, "danger" | "success" | "accent" | "primary" | "neutral"> = {
-    TOP: "danger",
-    JUNGLE: "success",
-    MID: "accent",
-    ADC: "primary",
-    SUPPORT: "neutral",
-  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -326,14 +319,7 @@ export default function PlayersListTab({
                           />
                         </td>
                         <td className="py-2.5 px-4">
-                          <Badge
-                            variant={roleBadgeVariant[getLolRoleForPlayer(player)]}
-                            size="sm"
-                          >
-                            {getLolRoleForPlayer(player) === "JUNGLE"
-                              ? "JG"
-                              : getLolRoleForPlayer(player)}
-                          </Badge>
+                          <RoleBadge role={getLolRoleForPlayer(player)} size="sm" />
                         </td>
                         <td className="py-2.5 px-4">
                           <div className="min-w-0">

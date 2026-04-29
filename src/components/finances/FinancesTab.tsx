@@ -6,7 +6,7 @@ import {
   MessageData,
   PlayerSelectionOptions,
 } from "../../store/gameStore";
-import { Card, CardHeader, CardBody, Badge, ProgressBar, Button } from "../ui";
+import { Card, CardHeader, CardBody, ProgressBar, Button, RoleBadge } from "../ui";
 import { User } from "lucide-react";
 import {
   formatVal,
@@ -87,17 +87,6 @@ interface FinancesTabProps {
   onGameUpdate?: (state: GameStateData) => void;
   onSelectPlayer?: (id: string, options?: PlayerSelectionOptions) => void;
 }
-
-const roleBadgeVariant: Record<
-  LolRole,
-  "danger" | "success" | "accent" | "primary" | "neutral"
-> = {
-  TOP: "danger",
-  JUNGLE: "success",
-  MID: "accent",
-  ADC: "primary",
-  SUPPORT: "neutral",
-};
 
 export default function FinancesTab({
   gameState,
@@ -845,9 +834,7 @@ export default function FinancesTab({
                           </span>
                         </td>
                         <td className="py-3 px-5">
-                          <Badge variant={roleBadgeVariant[lolRole]}>
-                            {lolRole === "JUNGLE" ? "JG" : lolRole}
-                          </Badge>
+                          <RoleBadge role={lolRole} size="sm" />
                         </td>
                         <td className="py-3 px-5 text-sm font-medium text-gray-700 dark:text-gray-300">
                           €{annualAmountToWeeklyCommitment(p.wage).toLocaleString()}

@@ -5,7 +5,7 @@ import {
   PlayerSelectionOptions,
   TransferOfferData,
 } from "../../store/gameStore";
-import { Card, CardBody, Badge, CountryFlag } from "../ui";
+import { Card, CardBody, CountryFlag, RoleBadge } from "../ui";
 import {
   Search,
   TrendingUp,
@@ -568,14 +568,7 @@ export default function TransfersTab({
                           />
                         </td>
                         <td className="py-2.5 px-4">
-                          <Badge
-                            variant={positionBadgeVariant(
-                              player.natural_position || player.position,
-                            )}
-                            size="sm"
-                          >
-                            {lolRole === "JUNGLE" ? "JG" : lolRole}
-                          </Badge>
+                          <RoleBadge role={lolRole} size="sm" />
                         </td>
                         <td className="py-2.5 px-4">
                           <span className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
