@@ -59,6 +59,7 @@ export interface ChampionState {
   recallAnchor: Vec2 | null;
   recallChannelUntil: number;
   realmBanishedUntil?: number;
+  debugPathIssue?: string | null;
 }
 
 export interface MinionState {

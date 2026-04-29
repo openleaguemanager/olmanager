@@ -978,7 +978,6 @@ export default function MatchSimulation() {
     }
 
     const stored = readStoredFixtureDraftResult(currentFixture.id);
-    const targetSeriesWins = seriesLength === 3 ? 2 : seriesLength === 5 ? 3 : 1;
     const fixtureIsScheduled = currentFixture.status === "Scheduled";
     const resumeFromFixtureResult =
       seriesLength <= 1 ||
@@ -994,9 +993,7 @@ export default function MatchSimulation() {
     const persistedWinsEnabled = resumeFromFixtureResult;
     const homeWins = persistedWinsEnabled ? Math.max(fromResultHome, storedHomeWins) : 0;
     const awayWins = persistedWinsEnabled ? Math.max(fromResultAway, storedAwayWins) : 0;
-    const storedSeriesComplete =
-      storedHomeWins >= targetSeriesWins || storedAwayWins >= targetSeriesWins;
-    const canReuseStoredState = (seriesLength <= 1 || storedSeriesComplete) && resumeFromFixtureResult;
+    const canReuseStoredState = seriesLength > 1 && resumeFromFixtureResult;
 
     setSeriesHomeWins(homeWins);
     setSeriesAwayWins(awayWins);
@@ -1265,7 +1262,7 @@ export default function MatchSimulation() {
     let userSeriesWins = 0;
     let opponentSeriesWins = 0;
     let seriesComplete = seriesLength === 1;
-    let nextSeriesUsedChampionIds = seriesUsedChampionIds;
+    let nextSeriesUsedChampionIds = seriesLength > 1 ? seriesUsedChampionIds : [];
 
     if (currentFixture?.id) {
       const stored = readStoredFixtureDraftResult(currentFixture.id);
@@ -1331,11 +1328,13 @@ export default function MatchSimulation() {
         ...(draftPayload?.blue.picks ?? []).map((pick) => pick.championId),
         ...(draftPayload?.red.picks ?? []).map((pick) => pick.championId),
       ];
-      nextSeriesUsedChampionIds = Array.from(new Set<string>([
-        ...(stored?.seriesUsedChampionIds ?? []),
-        ...seriesUsedChampionIds,
-        ...pickedThisMap,
-      ]));
+      nextSeriesUsedChampionIds = seriesLength > 1
+        ? Array.from(new Set<string>([
+          ...(stored?.seriesUsedChampionIds ?? []),
+          ...seriesUsedChampionIds,
+          ...pickedThisMap,
+        ]))
+        : [];
 
       const managerTeamId = gameState?.manager.team_id ?? null;
       userSeriesWins =
@@ -1694,7 +1693,7 @@ export default function MatchSimulation() {
           seriesLength={seriesLength}
           blueSeriesWins={blueSeriesWins}
           redSeriesWins={redSeriesWins}
-          lockedChampionIds={seriesUsedChampionIds}
+          lockedChampionIds={seriesLength > 1 ? seriesUsedChampionIds : []}
           gameState={gameState}
         />
       );
