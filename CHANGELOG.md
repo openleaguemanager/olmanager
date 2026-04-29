@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed the continue menu dropdown overlapping other UI elements.
 - Disabled the native browser context menu in the Tauri app so the desktop experience behaves consistently.
 - Fixed multiple transfer, potential, live-match, and match-simulation edge cases.
+- Fix to change RIIP player value to a realistic value.
 
 ### Contributors
 
