@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { ArrowLeft, Database, Image, Plus, Save, Search, Upload, User, UserCog } from "lucide-react";
+import { ArrowLeft, Database, FileSpreadsheet, Image, Plus, Save, Search, Trash2, Upload, User, UserCog } from "lucide-react";
 import type { PlayerData, StaffData, TeamData } from "../../store/gameStore";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { resolvePlayerPhoto, resolveStaffPhoto } from "../../lib/playerPhotos";
 import { Card, CardBody, ThemeToggle } from "../ui";
 
 type EditorMode = "players" | "staff";
+type PlayerListScope = "all" | "main" | "academy" | "freeAgents";
+
+type ExcelImportField = PlayerAttributeKey | "potential_base";
 
 interface WorldDataEditorModel {
   name: string;
@@ -27,6 +30,25 @@ function clampRating(value: string | number): number {
   return Math.max(1, Math.min(99, Math.round(parsed)));
 }
 
+function normalizeImportKey(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function normalizeLookupName(value: string): string {
+  return normalizeImportKey(value).replace(/[^a-z0-9]/g, "");
+}
+
+function splitExcelRow(row: string): string[] {
+  if (row.includes("\t")) return row.split("\t");
+  if (row.includes(";")) return row.split(";");
+  return row.split(",");
+}
+
 type PlayerAttributeKey = keyof PlayerData["attributes"];
 
 const LOL_PLAYER_STATS: Array<{ label: string; key: PlayerAttributeKey }> = [
@@ -40,6 +62,28 @@ const LOL_PLAYER_STATS: Array<{ label: string; key: PlayerAttributeKey }> = [
   { label: "Discipline", key: "composure" },
   { label: "Mental Resilience", key: "stamina" },
 ];
+
+const EXCEL_PLAYER_IMPORT_HEADERS: Record<string, ExcelImportField> = {
+  mecanicas: "dribbling",
+  mechanics: "dribbling",
+  "laning/pathing": "shooting",
+  laning: "shooting",
+  pathing: "shooting",
+  teamfight: "teamwork",
+  teamfighting: "teamwork",
+  macro: "vision",
+  consistencia: "decisions",
+  consistency: "decisions",
+  shotcalling: "leadership",
+  versatilidad: "agility",
+  versatility: "agility",
+  disciplina: "composure",
+  discipline: "composure",
+  mentalidad: "stamina",
+  mentality: "stamina",
+  potencial: "potential_base",
+  potential: "potential_base",
+};
 
 function applyStaffOverall(staff: StaffData, overall: number): StaffData {
   const value = clampRating(overall);
@@ -205,6 +249,7 @@ function createNewStaff(index: number): StaffData {
 export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
   const [path, setPath] = useState("");
   const [mode, setMode] = useState<EditorMode>("players");
+  const [playerScope, setPlayerScope] = useState<PlayerListScope>("all");
   const [query, setQuery] = useState("");
   const [world, setWorld] = useState<WorldDataEditorModel | null>(null);
   const [selectedPlayerId, setSelectedPlayerId] = useState("");
@@ -214,6 +259,7 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [imageCheckStatus, setImageCheckStatus] = useState<string | null>(null);
+  const [excelImportText, setExcelImportText] = useState("");
 
   const selectedPlayer = world?.players.find((player) => player.id === selectedPlayerId) ?? null;
   const selectedStaff = world?.staff.find((staff) => staff.id === selectedStaffId) ?? null;
@@ -240,11 +286,6 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
 
   async function saveWorld(): Promise<void> {
     if (!world) return;
-    if (!path.trim()) {
-      setError("Indicá un path de salida. Para releases, usá src-tauri/databases/lec_world.json.");
-      return;
-    }
-
     setIsSaving(true);
     setError(null);
     setStatus(null);
@@ -253,6 +294,7 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
         path,
         world,
       });
+      setPath(savedPath);
       setStatus(`Base guardada en ${savedPath}`);
     } catch (err) {
       setError(String(err));
@@ -266,14 +308,28 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
   }, []);
 
   const filteredPlayers = useMemo(() => {
+    if (!world) return [];
     const normalized = query.trim().toLowerCase();
-    return (world?.players ?? [])
+    return world.players
       .filter((player) => {
+        if (playerScope === "freeAgents" && player.team_id) return false;
+        if (playerScope === "academy" && !isAcademyPlayer(world, player)) return false;
+        if (playerScope === "main" && (!player.team_id || isAcademyPlayer(world, player))) return false;
         if (!normalized) return true;
-        return `${player.match_name} ${player.full_name}`.toLowerCase().includes(normalized);
+        return `${player.match_name} ${player.full_name} ${teamName(world, player.team_id)}`.toLowerCase().includes(normalized);
       })
       .slice(0, 160);
-  }, [query, world?.players]);
+  }, [playerScope, query, world]);
+
+  const playerScopeCounts = useMemo(() => {
+    const players = world?.players ?? [];
+    return {
+      all: players.length,
+      main: world ? players.filter((player) => player.team_id && !isAcademyPlayer(world, player)).length : 0,
+      academy: world ? players.filter((player) => isAcademyPlayer(world, player)).length : 0,
+      freeAgents: players.filter((player) => !player.team_id).length,
+    };
+  }, [world]);
 
   const filteredStaff = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -324,6 +380,122 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
       setMode("staff");
       setImageCheckStatus(null);
       return { ...current, staff: [...current.staff, staff] };
+    });
+  }
+
+  function deleteSelectedPlayer(): void {
+    if (!selectedPlayer) return;
+    const confirmed = window.confirm(`Borrar jugador ${selectedPlayer.match_name}? Esta accion solo se confirma al guardar el JSON.`);
+    if (!confirmed) return;
+
+    setWorld((current) => {
+      if (!current) return current;
+      const players = current.players.filter((player) => player.id !== selectedPlayer.id);
+      setSelectedPlayerId(players[0]?.id ?? "");
+      setImageCheckStatus(null);
+      return { ...current, players };
+    });
+    setStatus(`Jugador borrado: ${selectedPlayer.match_name}. Guardá el JSON para persistirlo.`);
+  }
+
+  function deleteSelectedStaff(): void {
+    if (!selectedStaff) return;
+    const confirmed = window.confirm(`Borrar staff ${selectedStaff.first_name} ${selectedStaff.last_name}? Esta accion solo se confirma al guardar el JSON.`);
+    if (!confirmed) return;
+
+    setWorld((current) => {
+      if (!current) return current;
+      const staff = current.staff.filter((staffMember) => staffMember.id !== selectedStaff.id);
+      setSelectedStaffId(staff[0]?.id ?? "");
+      setImageCheckStatus(null);
+      return { ...current, staff };
+    });
+    setStatus(`Staff borrado: ${selectedStaff.first_name} ${selectedStaff.last_name}. Guardá el JSON para persistirlo.`);
+  }
+
+  function importPlayerRatingsFromExcel(): void {
+    const rows = excelImportText
+      .split(/\r?\n/)
+      .filter((row) => row.trim().length > 0);
+
+    if (rows.length < 2) {
+      setError("Pegá al menos encabezado y una fila desde Excel.");
+      return;
+    }
+
+    const headers = splitExcelRow(rows[0]).map(normalizeImportKey);
+    const playerColumnIndex = headers.findIndex((header) => header === "player" || header === "jugador");
+    if (playerColumnIndex < 0) {
+      setError("No encontré la columna Player/Jugador en el Excel pegado.");
+      return;
+    }
+
+    const importColumns = headers
+      .map((header, index) => ({ field: EXCEL_PLAYER_IMPORT_HEADERS[header], index }))
+      .filter((column): column is { field: ExcelImportField; index: number } => Boolean(column.field));
+
+    if (importColumns.length === 0) {
+      setError("No encontré columnas importables. Usá encabezados como Mecánicas, Laning/pathing, Teamfight, Macro, Consistencia, Shotcalling, Versatilidad, Disciplina, Mentalidad y POTENCIAL.");
+      return;
+    }
+
+    setWorld((current) => {
+      if (!current) return current;
+
+      const playerByName = new Map(
+        current.players.map((player) => [normalizeLookupName(player.match_name), player.id]),
+      );
+      let updated = 0;
+      const missing: string[] = [];
+      const updates = new Map<string, Partial<PlayerData["attributes"]> & { potential_base?: number }>();
+
+      for (const row of rows.slice(1)) {
+        const cells = splitExcelRow(row).map((cell) => cell.trim());
+        const playerName = cells[playerColumnIndex] ?? "";
+        if (!playerName) continue;
+
+        const playerId = playerByName.get(normalizeLookupName(playerName));
+        if (!playerId) {
+          missing.push(playerName);
+          continue;
+        }
+
+        const rowUpdate: Partial<PlayerData["attributes"]> & { potential_base?: number } = {};
+        for (const column of importColumns) {
+          const rawValue = cells[column.index];
+          if (!rawValue) continue;
+          const parsed = Number(rawValue.replace(",", "."));
+          if (!Number.isFinite(parsed)) continue;
+          rowUpdate[column.field] = clampRating(parsed) as never;
+        }
+
+        if (Object.keys(rowUpdate).length > 0) {
+          updates.set(playerId, rowUpdate);
+        }
+      }
+
+      const players = current.players.map((player) => {
+        const update = updates.get(player.id);
+        if (!update) return player;
+        updated += 1;
+        const { potential_base, ...attributeUpdates } = update;
+        const nextPlayer = {
+          ...player,
+          attributes: {
+            ...player.attributes,
+            ...attributeUpdates,
+          },
+        };
+        const nextOvr = calculateLolOvr(nextPlayer);
+        return {
+          ...nextPlayer,
+          potential_base: potential_base == null ? player.potential_base : Math.max(potential_base, nextOvr),
+        };
+      });
+
+      setError(null);
+      setStatus(`Excel importado: ${updated} jugadores actualizados${missing.length > 0 ? `, ${missing.length} sin match (${missing.slice(0, 5).join(", ")}${missing.length > 5 ? "..." : ""})` : ""}. Guardá el JSON para persistirlo.`);
+      return { ...current, players };
     });
   }
 
@@ -421,6 +593,31 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
                 <button type="button" onClick={recalculateAllMarketValues} className="mb-4 w-full rounded-lg border border-accent-400 px-3 py-2 text-xs font-heading font-bold uppercase tracking-wider text-accent-500 hover:bg-accent-500/10">
                   Recalcular todos los valores
                 </button>
+                {mode === "players" ? (
+                  <div className="mb-4 grid grid-cols-2 gap-2">
+                    <ScopeButton active={playerScope === "all"} onClick={() => setPlayerScope("all")}>Todos ({playerScopeCounts.all})</ScopeButton>
+                    <ScopeButton active={playerScope === "main"} onClick={() => setPlayerScope("main")}>Main ({playerScopeCounts.main})</ScopeButton>
+                    <ScopeButton active={playerScope === "academy"} onClick={() => setPlayerScope("academy")}>Academia ({playerScopeCounts.academy})</ScopeButton>
+                    <ScopeButton active={playerScope === "freeAgents"} onClick={() => setPlayerScope("freeAgents")}>Free agents ({playerScopeCounts.freeAgents})</ScopeButton>
+                  </div>
+                ) : null}
+                {mode === "players" ? (
+                  <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-navy-600 dark:bg-navy-800/70">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                      <FileSpreadsheet className="h-4 w-4" /> Importar Excel
+                    </div>
+                    <textarea
+                      value={excelImportText}
+                      onChange={(event) => setExcelImportText(event.target.value)}
+                      placeholder="Pegá desde Excel: Player, Mecánicas, Laning/pathing, Teamfight, Macro, Consistencia, Shotcalling, Versatilidad, Disciplina, Mentalidad, POTENCIAL..."
+                      className="h-24 w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-navy-600 dark:bg-navy-900 dark:text-gray-100"
+                    />
+                    <button type="button" onClick={importPlayerRatingsFromExcel} disabled={!excelImportText.trim()} className="mt-2 w-full rounded-lg border border-primary-400 px-3 py-2 text-xs font-heading font-bold uppercase tracking-wider text-primary-600 hover:bg-primary-500/10 disabled:opacity-50 dark:text-primary-300">
+                      Aplicar ratings por Player
+                    </button>
+                    <p className="mt-2 text-[11px] text-gray-500 dark:text-gray-400">Busca por nombre in-game exacto normalizado. Ignora medias calculadas del Excel.</p>
+                  </div>
+                ) : null}
                 <div className="relative mb-3">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                   <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar" className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-navy-600 dark:bg-navy-800 dark:text-gray-100" />
@@ -453,7 +650,10 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
                   <div className="grid grid-cols-1 gap-5 lg:grid-cols-[180px_1fr]">
                     <ProfilePreview photo={playerPhoto} fallbackIcon={<User className="h-12 w-12" />} title={selectedPlayer.match_name} subtitle="Jugador" />
                     <div className="space-y-4">
-                      <EditorHeader title="Jugador" description="Estos cambios quedan en el JSON de mundo, no en una partida." />
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <EditorHeader title="Jugador" description="Estos cambios quedan en el JSON de mundo, no en una partida." />
+                        <DeleteButton onClick={deleteSelectedPlayer}>Borrar jugador</DeleteButton>
+                      </div>
                       <TextField label="Nombre in-game" value={selectedPlayer.match_name} onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, match_name: value }))} />
                       <TextField label="Nombre completo" value={selectedPlayer.full_name} onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, full_name: value }))} />
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -517,7 +717,10 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
                   <div className="grid grid-cols-1 gap-5 lg:grid-cols-[180px_1fr]">
                     <ProfilePreview photo={staffPhoto} fallbackIcon={<UserCog className="h-12 w-12" />} title={`${selectedStaff.first_name} ${selectedStaff.last_name}`} subtitle={selectedStaff.role} />
                     <div className="space-y-4">
-                      <EditorHeader title="Staff" description="Edición limitada para curar nombres, OVR agregado y foto." />
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <EditorHeader title="Staff" description="Edición limitada para curar nombres, OVR agregado y foto." />
+                        <DeleteButton onClick={deleteSelectedStaff}>Borrar staff</DeleteButton>
+                      </div>
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <TextField label="Nombre" value={selectedStaff.first_name} onChange={(value) => updateStaff(selectedStaff.id, (staff) => ({ ...staff, first_name: value }))} />
                         <TextField label="Apellido" value={selectedStaff.last_name} onChange={(value) => updateStaff(selectedStaff.id, (staff) => ({ ...staff, last_name: value }))} />
@@ -546,6 +749,19 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
 
 function ModeButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
   return <button type="button" onClick={onClick} className={`flex-1 rounded-lg px-3 py-2 text-xs font-heading font-bold uppercase tracking-wider ${active ? "bg-primary-500 text-white" : "bg-gray-100 text-gray-500 dark:bg-navy-700 dark:text-gray-300"}`}>{children}</button>;
+}
+
+function ScopeButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
+  return <button type="button" onClick={onClick} className={`rounded-lg px-2 py-1.5 text-[11px] font-heading font-bold uppercase tracking-wider ${active ? "bg-accent-500 text-white" : "bg-gray-100 text-gray-500 dark:bg-navy-700 dark:text-gray-300"}`}>{children}</button>;
+}
+
+function DeleteButton({ onClick, children }: { onClick: () => void; children: ReactNode }) {
+  return (
+    <button type="button" onClick={onClick} className="inline-flex items-center gap-2 rounded-lg border border-red-400 px-3 py-2 text-xs font-heading font-bold uppercase tracking-wider text-red-500 hover:bg-red-500/10">
+      <Trash2 className="h-4 w-4" />
+      {children}
+    </button>
+  );
 }
 
 function EditorHeader({ title, description }: { title: string; description: string }) {
