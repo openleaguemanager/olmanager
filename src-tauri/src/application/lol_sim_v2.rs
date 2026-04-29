@@ -2147,7 +2147,7 @@ const OBJECTIVE_SECURE_XP: i64 = 90;
 const VOIDGRUB_TOWER_DAMAGE_PER_STACK: f64 = 0.03;
 const VOIDGRUB_TOWER_DAMAGE_MAX: f64 = 0.09;
 const OBJECTIVE_NEXT_SPAWN_FALLBACK: f64 = 9_999_999.0;
-const NAV_GRID_SIZE: usize = 120;
+const NAV_GRID_SIZE: usize = 512;
 const NAV_PATH_MIN_DIRECT_DIST: f64 = 0.012;
 const NAV_PATH_TRIVIAL_NODE_EPSILON: f64 = 0.0095;
 const ITEM_COST_MULTIPLIER: f64 = 0.32;
@@ -4013,24 +4013,43 @@ impl NavGrid {
         GridCell { cx, cy }
     }
 
-    fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
-        let ax = self.to_cell(a.x);
-        let ay = self.to_cell(a.y);
-        let bx = self.to_cell(b.x);
-        let by = self.to_cell(b.y);
-        let cell_distance =
-            ((bx as f64 - ax as f64).powi(2) + (by as f64 - ay as f64).powi(2)).sqrt();
-        let steps = (cell_distance * 2.0).ceil().max(6.0) as usize;
-        for i in 0..=steps {
-            let t = i as f64 / steps as f64;
-            let p = Vec2 {
-                x: a.x + (b.x - a.x) * t,
-                y: a.y + (b.y - a.y) * t,
-            };
-            let cx = self.to_cell(p.x);
-            let cy = self.to_cell(p.y);
-            if self.is_blocked_cell(cx, cy) {
-                return false;
+fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
+        let mut x0 = self.to_cell(a.x) as isize;
+        let mut y0 = self.to_cell(a.y) as isize;
+        let x1 = self.to_cell(b.x) as isize;
+        let y1 = self.to_cell(b.y) as isize;
+
+        let dx = (x1 - x0).abs();
+        let dy = (y1 - y0).abs();
+        let sx = if x0 < x1 { 1 } else { -1 };
+        let sy = if y0 < y1 { 1 } else { -1 };
+        let mut err = dx - dy;
+
+        loop {
+            if self.is_blocked_cell(x0 as usize, y0 as usize) {
+                return false; // Line of sight is blocked by a wall
+            }
+            if x0 == x1 && y0 == y1 {
+                break; // Arrived at the target cell
+            }
+
+            let e2 = 2 * err;
+            
+            // Strictly check adjacent cells for diagonal movement to prevent corner-cutting through walls
+            if e2 > -dy && e2 < dx {
+                if self.is_blocked_cell((x0 + sx) as usize, y0 as usize) || 
+                   self.is_blocked_cell(x0 as usize, (y0 + sy) as usize) {
+                    return false;
+                }
+            }
+
+            if e2 > -dy {
+                err -= dy;
+                x0 += sx;
+            }
+            if e2 < dx {
+                err += dx;
+                y0 += sy;
             }
         }
         true
@@ -4145,8 +4164,8 @@ impl NavGrid {
                 if is_diagonal {
                     let side_x = self.is_blocked_cell((cur_x as isize + dx) as usize, cur_y);
                     let side_y = self.is_blocked_cell(cur_x, (cur_y as isize + dy) as usize);
-                    if side_x || side_y {
-                        continue;
+                    if side_x && side_y {
+                        continue; // Can't move diagonally if both adjacent sides are blocked (prevents corner-cutting through walls)
                     }
                 }
 
