@@ -6,7 +6,7 @@ import {
   MessageData,
   PlayerSelectionOptions,
 } from "../../store/gameStore";
-import { Card, CardHeader, CardBody, ProgressBar, Button, RoleBadge } from "../ui";
+import { Card, CardHeader, CardBody, Badge, ProgressBar, Button, RoleBadge } from "../ui";
 import { User } from "lucide-react";
 import {
   formatVal,
@@ -26,7 +26,7 @@ import {
 } from "../../lib/lolFinanceContracts";
 import { useTranslation } from "react-i18next";
 import ContextMenu from "../ContextMenu";
-import { getLolRoleForPlayer, type LolRole } from "../squad/SquadTab.helpers";
+import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
 import { resolveMessage } from "../../utils/backendI18n";
 
 function getFacilityUpgradeCost(level: number): number {

@@ -22,7 +22,6 @@ import {
   calcAge,
   formatVal,
   formatWeeklyAmount,
-  positionBadgeVariant,
 } from "../../lib/helpers";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";

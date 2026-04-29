@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { getRoleIconPath, getRoleBadgeVariant, getRoleAbbreviation } from "../../lib/roleIcons";
 
 interface RoleBadgeProps {
