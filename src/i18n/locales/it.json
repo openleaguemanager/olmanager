@@ -893,6 +893,7 @@
     "previousMonth": "Mese precedente",
     "nextMonth": "Mese successivo",
     "moreMatches": "altri",
+    "matchesOnDay": "Partite del giorno",
     "standings": "Classifica",
     "matchday": "Giornata {{number}}",
     "season": "Stagione {{number}}"

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, X } from "lucide-react";
 import { GameStateData, FixtureData } from "../../store/gameStore";
 import { Card, CardBody, Badge } from "../ui";
 import {
@@ -12,8 +12,9 @@ import {
   normalizeLolScore,
   parseFixtureDate,
   readStoredFixtureDraftResult,
+  type BestOfContext,
 } from "./ScheduleTab.helpers";
-import { getTeamName } from "../../lib/helpers";
+import { formatMatchDate, getTeamName } from "../../lib/helpers";
 
 interface Props {
   gameState: GameStateData;
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const WEEKDAY_REFERENCE_MONDAY = new Date(Date.UTC(2024, 0, 1));
+const MAX_FIXTURES_PER_CELL = 3;
 
 function buildMonthGrid(viewMonth: Date): Date[] {
   const firstOfMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 1);
@@ -50,6 +52,129 @@ function pickInitialMonth(currentDateStr: string, fixtures: FixtureData[]): Date
   return new Date(today.getFullYear(), today.getMonth(), 1);
 }
 
+function sortFixturesUserFirst(
+  fixtures: FixtureData[],
+  userTeamId: string,
+): FixtureData[] {
+  return [...fixtures].sort((a, b) => {
+    const aIsUser = a.home_team_id === userTeamId || a.away_team_id === userTeamId;
+    const bIsUser = b.home_team_id === userTeamId || b.away_team_id === userTeamId;
+    if (aIsUser && !bIsUser) return -1;
+    if (!aIsUser && bIsUser) return 1;
+    return a.matchday - b.matchday;
+  });
+}
+
+interface FixtureChipProps {
+  fixture: FixtureData;
+  gameState: GameStateData;
+  bestOfContext: BestOfContext;
+  userTeamId: string;
+  onOpenFixtureResult: (stored: StoredFixtureDraftResult) => void;
+  size?: "compact" | "full";
+}
+
+function FixtureChip({
+  fixture,
+  gameState,
+  bestOfContext,
+  userTeamId,
+  onOpenFixtureResult,
+  size = "compact",
+}: FixtureChipProps) {
+  const stored = readStoredFixtureDraftResult(fixture.id);
+  const bo = inferBestOf(fixture, bestOfContext);
+  const completed = fixture.status === "Completed";
+  const score = normalizeLolScore(fixture, stored, userTeamId, bo);
+  const homeLogo = getTeamLogoPath(gameState.teams, fixture.home_team_id);
+  const awayLogo = getTeamLogoPath(gameState.teams, fixture.away_team_id);
+  const isUserMatch =
+    fixture.home_team_id === userTeamId || fixture.away_team_id === userTeamId;
+  const userIsHome = fixture.home_team_id === userTeamId;
+  const userResultTone = (() => {
+    if (!isUserMatch || !completed || !score) return "";
+    const userWins = userIsHome
+      ? score.home > score.away
+      : score.away > score.home;
+    return userWins
+      ? "bg-blue-500/15 dark:bg-blue-500/20 border-blue-500/30"
+      : "bg-red-500/15 dark:bg-red-500/20 border-red-500/30";
+  })();
+
+  const clickable = completed && stored !== null;
+  const isFull = size === "full";
+
+  const homeName = getTeamName(gameState.teams, fixture.home_team_id);
+  const awayName = getTeamName(gameState.teams, fixture.away_team_id);
+
+  return (
+    <button
+      type="button"
+      disabled={!clickable}
+      onClick={() => clickable && stored && onOpenFixtureResult(stored)}
+      className={[
+        "group flex items-center gap-1 rounded border text-left transition-colors",
+        isFull ? "px-3 py-2 gap-2" : "px-1 py-0.5",
+        userResultTone ||
+          (isUserMatch
+            ? "bg-primary-50/70 dark:bg-primary-500/10 border-primary-400/30"
+            : "bg-gray-50 dark:bg-navy-700/50 border-gray-200/60 dark:border-navy-600"),
+        clickable ? "hover:border-primary-400 cursor-pointer" : "cursor-default",
+      ].join(" ")}
+      title={`${homeName} ${score ? `${score.home}-${score.away}` : "vs"} ${awayName}`}
+    >
+      {homeLogo ? (
+        <img
+          src={homeLogo}
+          alt=""
+          className={`object-contain shrink-0 ${isFull ? "w-5 h-5" : "w-3.5 h-3.5"}`}
+          loading="lazy"
+        />
+      ) : (
+        <span className={`shrink-0 ${isFull ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
+      )}
+      {isFull ? (
+        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">
+          {homeName}
+        </span>
+      ) : null}
+      <span
+        className={`font-heading font-bold tabular-nums text-gray-700 dark:text-gray-200 ${
+          isFull ? "text-sm px-2" : "text-[10px] px-0.5"
+        }`}
+      >
+        {score ? `${score.home}-${score.away}` : "vs"}
+      </span>
+      {isFull ? (
+        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">
+          {awayName}
+        </span>
+      ) : null}
+      {awayLogo ? (
+        <img
+          src={awayLogo}
+          alt=""
+          className={`object-contain shrink-0 ${isFull ? "w-5 h-5" : "w-3.5 h-3.5"}`}
+          loading="lazy"
+        />
+      ) : (
+        <span className={`shrink-0 ${isFull ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
+      )}
+      <Badge
+        variant="neutral"
+        size="sm"
+        className={
+          isFull
+            ? "ml-auto"
+            : "ml-auto !text-[8px] !px-1 !py-0"
+        }
+      >
+        BO{bo}
+      </Badge>
+    </button>
+  );
+}
+
 export default function ScheduleCalendarView({
   gameState,
   fixtures,
@@ -62,6 +187,7 @@ export default function ScheduleCalendarView({
   const [viewMonth, setViewMonth] = useState<Date>(() =>
     pickInitialMonth(gameState.clock?.current_date ?? "", fixtures),
   );
+  const [openDayKey, setOpenDayKey] = useState<string | null>(null);
 
   const bestOfContext = useMemo(() => buildBestOfContext(fixtures), [fixtures]);
 
@@ -73,9 +199,11 @@ export default function ScheduleCalendarView({
       list.push(f);
       map.set(key, list);
     });
-    map.forEach((list) => list.sort((a, b) => a.matchday - b.matchday));
+    map.forEach((list, key) => {
+      map.set(key, sortFixturesUserFirst(list, userTeamId));
+    });
     return map;
-  }, [fixtures]);
+  }, [fixtures, userTeamId]);
 
   const monthCells = useMemo(() => buildMonthGrid(viewMonth), [viewMonth]);
 
@@ -99,6 +227,8 @@ export default function ScheduleCalendarView({
   const goNext = () => setViewMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1));
   const goToday = () =>
     setViewMonth(pickInitialMonth(gameState.clock?.current_date ?? "", fixtures));
+
+  const openDayFixtures = openDayKey ? fixturesByDay.get(openDayKey) ?? [] : [];
 
   return (
     <Card>
@@ -153,6 +283,7 @@ export default function ScheduleCalendarView({
             const hasUserMatch = cellFixtures.some(
               (f) => f.home_team_id === userTeamId || f.away_team_id === userTeamId,
             );
+            const overflow = cellFixtures.length - MAX_FIXTURES_PER_CELL;
 
             return (
               <div
@@ -185,78 +316,24 @@ export default function ScheduleCalendarView({
                   ) : null}
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
-                  {cellFixtures.slice(0, 3).map((f) => {
-                    const stored = readStoredFixtureDraftResult(f.id);
-                    const bo = inferBestOf(f, bestOfContext);
-                    const completed = f.status === "Completed";
-                    const score = normalizeLolScore(f, stored, userTeamId, bo);
-                    const homeLogo = getTeamLogoPath(gameState.teams, f.home_team_id);
-                    const awayLogo = getTeamLogoPath(gameState.teams, f.away_team_id);
-                    const isUserMatch =
-                      f.home_team_id === userTeamId || f.away_team_id === userTeamId;
-                    const userIsHome = f.home_team_id === userTeamId;
-                    const userResultTone = (() => {
-                      if (!isUserMatch || !completed || !score) return "";
-                      const userWins = userIsHome
-                        ? score.home > score.away
-                        : score.away > score.home;
-                      return userWins
-                        ? "bg-blue-500/15 dark:bg-blue-500/20 border-blue-500/30"
-                        : "bg-red-500/15 dark:bg-red-500/20 border-red-500/30";
-                    })();
-
-                    const clickable = completed && stored;
-                    return (
-                      <button
-                        type="button"
-                        key={f.id}
-                        disabled={!clickable}
-                        onClick={() => clickable && onOpenFixtureResult(stored)}
-                        className={[
-                          "group flex items-center gap-1 px-1 py-0.5 rounded border text-left transition-colors",
-                          userResultTone ||
-                            (isUserMatch
-                              ? "bg-primary-50/70 dark:bg-primary-500/10 border-primary-400/30"
-                              : "bg-gray-50 dark:bg-navy-700/50 border-gray-200/60 dark:border-navy-600"),
-                          clickable ? "hover:border-primary-400 cursor-pointer" : "cursor-default",
-                        ].join(" ")}
-                        title={`${getTeamName(gameState.teams, f.home_team_id)} ${
-                          score ? `${score.home}-${score.away}` : "vs"
-                        } ${getTeamName(gameState.teams, f.away_team_id)}`}
-                      >
-                        {homeLogo ? (
-                          <img
-                            src={homeLogo}
-                            alt=""
-                            className="w-3.5 h-3.5 object-contain shrink-0"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <span className="w-3.5 h-3.5 shrink-0" />
-                        )}
-                        <span className="text-[10px] font-heading font-bold tabular-nums text-gray-700 dark:text-gray-200 px-0.5">
-                          {score ? `${score.home}-${score.away}` : "vs"}
-                        </span>
-                        {awayLogo ? (
-                          <img
-                            src={awayLogo}
-                            alt=""
-                            className="w-3.5 h-3.5 object-contain shrink-0"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <span className="w-3.5 h-3.5 shrink-0" />
-                        )}
-                        <Badge variant="neutral" size="sm" className="ml-auto !text-[8px] !px-1 !py-0">
-                          BO{bo}
-                        </Badge>
-                      </button>
-                    );
-                  })}
-                  {cellFixtures.length > 3 ? (
-                    <span className="text-[9px] text-gray-400 dark:text-gray-500 px-1">
-                      +{cellFixtures.length - 3} {t("schedule.moreMatches", "más")}
-                    </span>
+                  {cellFixtures.slice(0, MAX_FIXTURES_PER_CELL).map((f) => (
+                    <FixtureChip
+                      key={f.id}
+                      fixture={f}
+                      gameState={gameState}
+                      bestOfContext={bestOfContext}
+                      userTeamId={userTeamId}
+                      onOpenFixtureResult={onOpenFixtureResult}
+                    />
+                  ))}
+                  {overflow > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => setOpenDayKey(cellKey)}
+                      className="text-[9px] font-heading font-bold uppercase tracking-wider text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 px-1 text-left transition-colors"
+                    >
+                      +{overflow} {t("schedule.moreMatches", "más")}
+                    </button>
                   ) : null}
                 </div>
               </div>
@@ -264,6 +341,53 @@ export default function ScheduleCalendarView({
           })}
         </div>
       </CardBody>
+
+      {openDayKey && openDayFixtures.length > 0 ? (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setOpenDayKey(null)}
+        >
+          <div
+            className="bg-white dark:bg-navy-800 rounded-xl shadow-2xl border border-gray-200 dark:border-navy-600 w-full max-w-lg max-h-[80vh] flex flex-col"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 dark:border-navy-600">
+              <div className="flex flex-col gap-0.5">
+                <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  {t("schedule.matchesOnDay", "Partidos del día")}
+                </h3>
+                <p className="text-base font-heading font-bold text-gray-800 dark:text-gray-100">
+                  {formatMatchDate(openDayKey, i18n.language)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpenDayKey(null)}
+                aria-label={t("common.close", "Cerrar")}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 p-5 overflow-y-auto">
+              {openDayFixtures.map((f) => (
+                <FixtureChip
+                  key={f.id}
+                  fixture={f}
+                  gameState={gameState}
+                  bestOfContext={bestOfContext}
+                  userTeamId={userTeamId}
+                  onOpenFixtureResult={(stored) => {
+                    setOpenDayKey(null);
+                    onOpenFixtureResult(stored);
+                  }}
+                  size="full"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </Card>
   );
 }

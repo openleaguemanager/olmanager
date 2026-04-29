@@ -1250,6 +1250,7 @@
     "previousMonth": "Mes anterior",
     "nextMonth": "Mes siguiente",
     "moreMatches": "más",
+    "matchesOnDay": "Partidos del día",
     "standings": "Clasificación",
     "viewResult": "Ver resultado",
     "matchday": "Jornada {{number}}",

@@ -1244,6 +1244,7 @@
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
     "moreMatches": "more",
+    "matchesOnDay": "Matches on this day",
     "standings": "Standings",
     "viewResult": "View result",
     "matchday": "Matchday {{number}}",
