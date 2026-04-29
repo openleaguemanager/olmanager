@@ -2103,7 +2103,7 @@ pub async fn update_manager_profile(
 
     // Update only the provided fields (not None)
     if let Some(nick) = nickname {
-        game.manager.nickname = Some(nick.trim().to_string());
+        game.manager.nickname = nick.trim().to_string();
     }
     if let Some(first) = first_name {
         let trimmed = first.trim().to_string();
