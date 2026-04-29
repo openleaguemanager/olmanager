@@ -63,19 +63,19 @@ impl Default for SimulatorPolicyConfig {
 }
 
 fn default_no_dive_hp_min() -> f64 {
-    0.45
+    0.38
 }
 fn default_trade_retreat_hp_ratio() -> f64 {
-    0.36
+    0.42
 }
 fn default_trade_hp_disadvantage_allowance() -> f64 {
-    0.2
+    0.14
 }
 fn default_lane_chase_leash_radius() -> f64 {
     0.11
 }
 fn default_hybrid_open_trade_confidence_high() -> f64 {
-    0.60
+    0.68
 }
 fn default_hybrid_disengage_confidence_low() -> f64 {
     0.32
@@ -2039,7 +2039,7 @@ const LANE_COMBAT_UNLOCK_AT: f64 = MINION_FIRST_WAVE_AT + 8.0;
 const FIRST_WAVE_CONTEST_UNTIL: f64 = MINION_FIRST_WAVE_AT + 45.0;
 const CHAMPION_DECISION_CADENCE_SEC: f64 = 0.8;
 const MINION_DAMAGE_TO_MINION_MULTIPLIER: f64 = 0.52;
-const MINION_DAMAGE_TO_CHAMPION_MULTIPLIER: f64 = 0.44;
+const MINION_DAMAGE_TO_CHAMPION_MULTIPLIER: f64 = 0.32;
 const CHAMPION_DAMAGE_TO_MINION_MULTIPLIER: f64 = 0.6;
 const RECALL_TRIGGER_HP_RATIO: f64 = 0.34;
 const RECALL_CHANNEL_SEC: f64 = 6.5;
@@ -2068,22 +2068,22 @@ const TRADE_SCORE_WEIGHT_TOWER_DISTANCE: f64 = 0.56;
 const TRADE_SCORE_WEIGHT_ENEMY_OVEREXTENDED: f64 = 0.74;
 const TRADE_SCORE_WEIGHT_FIRST_WAVE: f64 = -0.22;
 const ASSIST_RADIUS: f64 = 0.11;
-const CHAMPION_KILL_GOLD: i64 = 300;
-const CHAMPION_ASSIST_GOLD_TOTAL: i64 = 150;
-const CHAMPION_KILL_XP: i64 = 220;
+const CHAMPION_KILL_GOLD: i64 = 260;
+const CHAMPION_ASSIST_GOLD_TOTAL: i64 = 110;
+const CHAMPION_KILL_XP: i64 = 180;
 const CHAMPION_LAST_DAMAGE_KILL_CREDIT_SEC: f64 = 60.0;
 const CHAMPION_KILL_GOLD_MIN: i64 = 170;
 const CHAMPION_KILL_GOLD_MAX: i64 = 650;
 const CHAMPION_KILL_XP_MIN: i64 = 150;
 const CHAMPION_KILL_XP_MAX: i64 = 360;
-const CHAMPION_RESPAWN_BASE_SEC: f64 = 14.0;
-const CHAMPION_RESPAWN_PER_LEVEL_SEC: f64 = 1.35;
+const CHAMPION_RESPAWN_BASE_SEC: f64 = 18.0;
+const CHAMPION_RESPAWN_PER_LEVEL_SEC: f64 = 1.8;
 const BARON_BUFF_DURATION_SEC: f64 = 180.0;
 const ELDER_BUFF_DURATION_SEC: f64 = 150.0;
 const ELDER_EXECUTE_HP_RATIO: f64 = 0.20;
 const BARON_MINION_AURA_RADIUS: f64 = 0.12;
-const BARON_MINION_DAMAGE_MULTIPLIER: f64 = 1.35;
-const BARON_MINION_DAMAGE_REDUCTION: f64 = 0.35;
+const BARON_MINION_DAMAGE_MULTIPLIER: f64 = 1.12;
+const BARON_MINION_DAMAGE_REDUCTION: f64 = 0.22;
 const CHAMPION_MAX_LEVEL: i64 = 18;
 const CHAMPION_LEVEL_UP_HP_GAIN: f64 = 92.0;
 const CHAMPION_LEVEL_UP_AD_GAIN: f64 = 3.8;
@@ -2094,9 +2094,9 @@ const TOWER_NEXUS_HP: f64 = 2700.0;
 const INHIBITOR_HP: f64 = 4000.0;
 const NEXUS_HP: f64 = 5500.0;
 const EARLY_TOWER_FORTIFICATION_END_AT: f64 = 14.0 * 60.0;
-const EARLY_TOWER_DAMAGE_REDUCTION: f64 = 0.82;
-const CHAMPION_ATTACK_CADENCE_SEC: f64 = 0.85;
-const TOWER_SHOT_DAMAGE: f64 = 32.0;
+const EARLY_TOWER_DAMAGE_REDUCTION: f64 = 0.90;
+const CHAMPION_ATTACK_CADENCE_SEC: f64 = 1.0;
+const TOWER_SHOT_DAMAGE: f64 = 40.0;
 const TOWER_SHOT_DAMAGE_TO_MINION: f64 = 24.0;
 const TOWER_ATTACK_RANGE: f64 = 0.08;
 const TOWER_ATTACK_CADENCE_SEC: f64 = 1.0;
@@ -2108,12 +2108,12 @@ const SKIP_FAST_MODE_EXTRA_KEY: &str = "skipFastMode";
 const MINION_MELEE_MAX_HP: f64 = 118.0;
 const MINION_MELEE_MOVE_SPEED: f64 = 0.068;
 const MINION_MELEE_ATTACK_RANGE: f64 = 0.035;
-const MINION_MELEE_ATTACK_DAMAGE: f64 = 6.0;
+const MINION_MELEE_ATTACK_DAMAGE: f64 = 5.0;
 const MINION_MELEE_ATTACK_CADENCE: f64 = 1.05;
 const MINION_RANGED_MAX_HP: f64 = 92.0;
 const MINION_RANGED_MOVE_SPEED: f64 = 0.071;
 const MINION_RANGED_ATTACK_RANGE: f64 = 0.055;
-const MINION_RANGED_ATTACK_DAMAGE: f64 = 7.0;
+const MINION_RANGED_ATTACK_DAMAGE: f64 = 5.5;
 const MINION_RANGED_ATTACK_CADENCE: f64 = 1.14;
 const MINION_STRUCTURE_AGGRO_RANGE: f64 = 0.05;
 const MINION_STRUCTURE_BLOCKER_APPROACH_RANGE: f64 = 0.24;
@@ -2138,10 +2138,10 @@ const VOIDGRUBS_SOFT_CLOSE_AT: f64 = 14.0 * 60.0 + 45.0;
 const VOIDGRUBS_HARD_CLOSE_AT: f64 = 14.0 * 60.0 + 55.0;
 const HERALD_SOFT_CLOSE_AT: f64 = 19.0 * 60.0 + 45.0;
 const HERALD_HARD_CLOSE_AT: f64 = 19.0 * 60.0 + 55.0;
-const DRAGON_SECURE_GOLD: i64 = 55;
-const DRAGON_SECURE_XP: i64 = 110;
-const BARON_SECURE_GOLD: i64 = 80;
-const BARON_SECURE_XP: i64 = 140;
+const DRAGON_SECURE_GOLD: i64 = 40;
+const DRAGON_SECURE_XP: i64 = 90;
+const BARON_SECURE_GOLD: i64 = 60;
+const BARON_SECURE_XP: i64 = 120;
 const OBJECTIVE_SECURE_GOLD: i64 = 45;
 const OBJECTIVE_SECURE_XP: i64 = 90;
 const VOIDGRUB_TOWER_DAMAGE_PER_STACK: f64 = 0.03;
@@ -2153,6 +2153,7 @@ const NAV_PATH_TRIVIAL_NODE_EPSILON: f64 = 0.0095;
 const ITEM_COST_MULTIPLIER: f64 = 0.32;
 const ITEM_COST_MIN: i64 = 300;
 const SUPPORT_CS_MIN_INTERVAL_SEC: f64 = 24.0;
+const MINION_XP_SHARE_RADIUS: f64 = 0.11;
 const SUPPORT_ROAM_UNLOCK_AT_SEC: f64 = 15.0 * 60.0;
 const SUPPORT_OPEN_ROAM_AT_SEC: f64 = 15.0 * 60.0;
 const SUMMONER_FLASH_CD_SEC: f64 = 300.0;
@@ -3619,7 +3620,8 @@ fn stat_delta(score: f64) -> f64 {
 
 fn champion_micro_damage_multiplier(champion: &ChampionRuntime) -> f64 {
     let gameplay = stat_delta(champion.gameplay_score);
-    (1.0 + gameplay * 0.09).clamp(0.88, 1.16)
+    let role_penalty = if champion.role == "JGL" { 0.92 } else { 1.0 };
+    ((1.0 + gameplay * 0.07) * role_penalty).clamp(0.84, 1.10)
 }
 
 fn champion_lane_damage_multiplier(champion: &ChampionRuntime) -> f64 {
@@ -5186,10 +5188,31 @@ fn evaluate_open_trade_window(
     policy: &SimulatorPolicyConfig,
 ) -> TradeDecisionEvaluation {
     if champion.role == "JGL" {
+        let self_hp = if champion.max_hp <= 0.0 {
+            1.0
+        } else {
+            champion.hp / champion.max_hp
+        };
+        let enemy_hp = if enemy.max_hp <= 0.0 {
+            1.0
+        } else {
+            enemy.hp / enemy.max_hp
+        };
+        let pressure = lane_pressure_at(
+            champion,
+            enemy.pos,
+            champions,
+            minions,
+            LANE_LOCAL_PRESSURE_RADIUS,
+        );
+        let can_force = self_hp >= 0.42
+            && (enemy_hp <= 0.50
+                || pressure.ally_champions >= pressure.enemy_champions
+                || pressure.ally_score >= pressure.enemy_score + 0.2);
         return TradeDecisionEvaluation {
-            decision: true,
-            rule_decision: true,
-            confidence: 1.0,
+            decision: can_force,
+            rule_decision: can_force,
+            confidence: if can_force { 0.9 } else { 0.1 },
             flipped_by_hybrid: false,
         };
     }
@@ -5398,9 +5421,20 @@ fn evaluate_disengage_champion_trade(
     policy: &SimulatorPolicyConfig,
 ) -> TradeDecisionEvaluation {
     if champion.role == "JGL" {
+        let self_hp_ratio = if champion.max_hp <= 0.0 {
+            1.0
+        } else {
+            champion.hp / champion.max_hp
+        };
+        let enemy_hp_ratio = if enemy.max_hp <= 0.0 {
+            1.0
+        } else {
+            enemy.hp / enemy.max_hp
+        };
+        let should_back_off = self_hp_ratio < 0.30 || self_hp_ratio + 0.02 < enemy_hp_ratio;
         return TradeDecisionEvaluation {
-            decision: false,
-            rule_decision: false,
+            decision: should_back_off,
+            rule_decision: should_back_off,
             confidence: 1.0,
             flipped_by_hybrid: false,
         };
@@ -7913,10 +7947,6 @@ fn pick_combat_target(
                 return false;
             }
 
-            if champion.role == "JGL" {
-                return true;
-            }
-
             let has_allied_wave_at_structure = runtime.minions.iter().any(|m| {
                 m.alive
                     && normalized_team(&m.team) == normalized_team(&champion.team)
@@ -7924,6 +7954,20 @@ fn pick_combat_target(
                     && dist(m.pos, s.pos) <= 0.1
             });
             if !has_allied_wave_at_structure {
+                return false;
+            }
+
+            let allied_wave_count = runtime
+                .minions
+                .iter()
+                .filter(|m| {
+                    m.alive
+                        && normalized_team(&m.team) == normalized_team(&champion.team)
+                        && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
+                        && dist(m.pos, s.pos) <= 0.1
+                })
+                .count();
+            if team_has_active_baron_buff(runtime, &champion.team) && allied_wave_count < 3 {
                 return false;
             }
 
@@ -7937,7 +7981,35 @@ fn pick_combat_target(
                         && dist(m.pos, s.pos) <= 0.08
                 })
                 .count();
-            enemy_wave_at_structure < 2
+            if enemy_wave_at_structure >= 2 {
+                return false;
+            }
+
+            if team_has_active_baron_buff(runtime, &champion.team) {
+                let allied_champions_near = runtime
+                    .champions
+                    .iter()
+                    .filter(|ally| {
+                        ally.alive
+                            && normalized_team(&ally.team) == normalized_team(&champion.team)
+                            && dist(ally.pos, s.pos) <= 0.12
+                    })
+                    .count();
+                let enemy_champions_near = runtime
+                    .champions
+                    .iter()
+                    .filter(|enemy| {
+                        enemy.alive
+                            && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                            && dist(enemy.pos, s.pos) <= 0.12
+                    })
+                    .count();
+                if allied_champions_near < enemy_champions_near {
+                    return false;
+                }
+            }
+
+            true
         })
         .min_by(|(idx_a, a), (idx_b, b)| {
             dist(champion.pos, a.pos)
@@ -7964,32 +8036,37 @@ fn pick_combat_target(
             {
                 return false;
             }
-            if champion.role != "JGL" {
-                if dist(champion.pos, s.pos) > LANE_STRUCTURE_PRESSURE_RADIUS {
-                    return false;
-                }
-                let has_allied_wave = runtime.minions.iter().any(|m| {
+            if dist(champion.pos, s.pos) > LANE_STRUCTURE_PRESSURE_RADIUS {
+                return false;
+            }
+            let allied_wave_count = runtime
+                .minions
+                .iter()
+                .filter(|m| {
                     m.alive
                         && normalized_team(&m.team) == normalized_team(&champion.team)
                         && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
                         && dist(m.pos, s.pos) <= 0.09
-                });
-                if !has_allied_wave {
-                    return false;
-                }
-                let enemy_wave_at_structure = runtime
-                    .minions
-                    .iter()
-                    .filter(|m| {
-                        m.alive
-                            && normalized_team(&m.team) != normalized_team(&champion.team)
-                            && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
-                            && dist(m.pos, s.pos) <= 0.08
-                    })
-                    .count();
-                if enemy_wave_at_structure >= 2 {
-                    return false;
-                }
+                })
+                .count();
+            if allied_wave_count == 0 {
+                return false;
+            }
+            if team_has_active_baron_buff(runtime, &champion.team) && allied_wave_count < 3 {
+                return false;
+            }
+            let enemy_wave_at_structure = runtime
+                .minions
+                .iter()
+                .filter(|m| {
+                    m.alive
+                        && normalized_team(&m.team) != normalized_team(&champion.team)
+                        && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
+                        && dist(m.pos, s.pos) <= 0.08
+                })
+                .count();
+            if enemy_wave_at_structure >= 2 {
+                return false;
             }
             true
         })
@@ -10767,30 +10844,37 @@ fn apply_level_scaling(champion: &mut ChampionRuntime) {
 
 fn champion_respawn_seconds(level: i64, now_sec: f64) -> f64 {
     let time_factor = if now_sec >= 30.0 * 60.0 {
-        1.15
+        1.25
     } else if now_sec >= 20.0 * 60.0 {
-        1.08
+        1.14
     } else {
         1.0
     };
     ((CHAMPION_RESPAWN_BASE_SEC + (level.max(1) - 1) as f64 * CHAMPION_RESPAWN_PER_LEVEL_SEC)
         * time_factor)
-        .clamp(10.0, 42.0)
+        .clamp(14.0, 58.0)
 }
 
 fn champion_kill_rewards(killer: &ChampionRuntime, victim: &ChampionRuntime) -> (i64, i64) {
     let level_gap = victim.level - killer.level;
     let victim_streak = (victim.kills as i64 - victim.deaths as i64).max(0);
     let killer_ahead = (killer.kills as i64 - killer.deaths as i64).max(0);
+    let killer_kills = killer.kills.max(0) as i64;
 
     let mut gold = CHAMPION_KILL_GOLD + level_gap * 18 + victim_streak * 35;
-    if killer_ahead >= 4 {
-        gold -= ((killer_ahead - 3) * 24).min(150);
+    if killer_ahead >= 2 {
+        gold -= ((killer_ahead - 1) * 32).min(210);
+    }
+    if killer_kills >= 6 {
+        gold -= ((killer_kills - 5) * 12).min(84);
     }
 
     let mut xp = CHAMPION_KILL_XP + level_gap * 12 + victim_streak * 10;
-    if killer_ahead >= 4 {
-        xp -= ((killer_ahead - 3) * 10).min(60);
+    if killer_ahead >= 2 {
+        xp -= ((killer_ahead - 1) * 12).min(96);
+    }
+    if killer_kills >= 6 {
+        xp -= ((killer_kills - 5) * 6).min(42);
     }
 
     (
@@ -11059,6 +11143,30 @@ fn baron_push_rally_target(
         return Some(siege_target);
     }
 
+    let allied_wave_anchor = minions
+        .iter()
+        .filter(|minion| {
+            minion.alive
+                && normalized_team(&minion.team) == normalized_team(team)
+                && normalized_lane(&minion.lane) == normalized_lane(lane)
+        })
+        .min_by(|a, b| {
+            dist(a.pos, siege_target)
+                .partial_cmp(&dist(b.pos, siege_target))
+                .unwrap_or(Ordering::Equal)
+        });
+
+    if let Some(anchor) = allied_wave_anchor {
+        let dir = normalize(Vec2 {
+            x: anchor.pos.x - siege_target.x,
+            y: anchor.pos.y - siege_target.y,
+        });
+        return Some(Vec2 {
+            x: clamp(anchor.pos.x + dir.x * 0.012, 0.01, 0.99),
+            y: clamp(anchor.pos.y + dir.y * 0.012, 0.01, 0.99),
+        });
+    }
+
     let wave_front = lane_wave_front_pos(champion, minions, structures);
     let dir = normalize(Vec2 {
         x: wave_front.x - siege_target.x,
@@ -11212,6 +11320,9 @@ fn register_minion_death(runtime: &mut RuntimeState, minion_idx: usize) {
         return;
     }
     let last_hit = runtime.minions[minion_idx].last_hit_by_champion_id.clone();
+    let minion_team = runtime.minions[minion_idx].team.clone();
+    let minion_lane = runtime.minions[minion_idx].lane.clone();
+    let minion_pos = runtime.minions[minion_idx].pos;
     let gold = if runtime.minions[minion_idx].kind == "ranged" {
         16
     } else {
@@ -11223,6 +11334,30 @@ fn register_minion_death(runtime: &mut RuntimeState, minion_idx: usize) {
         58
     };
 
+    // XP soak: allies near the dying minion receive shared XP even without last-hit.
+    let xp_recipients: Vec<usize> = runtime
+        .champions
+        .iter()
+        .enumerate()
+        .filter(|(_, champion)| {
+            champion.alive
+                && normalized_team(&champion.team) != normalized_team(&minion_team)
+                && normalized_lane(&champion.lane) == normalized_lane(&minion_lane)
+                && dist(champion.pos, minion_pos) <= MINION_XP_SHARE_RADIUS
+        })
+        .map(|(idx, _)| idx)
+        .collect();
+
+    if !xp_recipients.is_empty() {
+        let shared_xp = (xp / xp_recipients.len() as i64).max(1);
+        for idx in xp_recipients {
+            if let Some(champion) = runtime.champions.get_mut(idx) {
+                champion.xp += shared_xp;
+                apply_level_scaling(champion);
+            }
+        }
+    }
+
     if let Some(champion_id) = last_hit {
         let now = runtime.time_sec;
         if let Some(champion) = runtime
@@ -11230,20 +11365,22 @@ fn register_minion_death(runtime: &mut RuntimeState, minion_idx: usize) {
             .iter_mut()
             .find(|champion| champion.id == champion_id)
         {
-            if champion.role == "SUP"
-                && (now - champion.last_support_cs_at) < SUPPORT_CS_MIN_INTERVAL_SEC
-            {
-                return;
+            let support_cs_blocked = champion.role == "SUP"
+                && (now - champion.last_support_cs_at) < SUPPORT_CS_MIN_INTERVAL_SEC;
+
+            if !support_cs_blocked {
+                champion.gold += gold;
+                champion.cs += 1;
+                if champion.role == "SUP" {
+                    champion.last_support_cs_at = now;
+                }
+                let team_stats = team_stats_mut(&mut runtime.stats, &champion.team);
+                team_stats.gold += gold;
             }
-            champion.gold += gold;
-            champion.xp += xp;
-            champion.cs += 1;
-            if champion.role == "SUP" {
-                champion.last_support_cs_at = now;
-            }
+
+            // Last-hit bonus XP on top of soak (keeps last-hit meaningful without breaking pacing).
+            champion.xp += (xp as f64 * 0.35).round() as i64;
             apply_level_scaling(champion);
-            let team_stats = team_stats_mut(&mut runtime.stats, &champion.team);
-            team_stats.gold += gold;
         }
     }
 }
@@ -11915,16 +12052,16 @@ fn team_has_active_elder_buff(runtime: &RuntimeState, team: &str) -> bool {
 
 fn team_damage_multiplier(runtime: &RuntimeState, team: &str, target_hp_ratio: f64) -> f64 {
     let buffs = team_buffs_for_runtime(runtime.extra.get("teamBuffs"), team);
-    let mut mult = 1.0 + buffs.infernal_stacks as f64 * 0.02;
-    mult += buffs.hextech_stacks as f64 * 0.01;
+    let mut mult = 1.0 + buffs.infernal_stacks as f64 * 0.014;
+    mult += buffs.hextech_stacks as f64 * 0.008;
     if target_hp_ratio <= 0.5 {
-        mult += buffs.chemtech_stacks as f64 * 0.012;
+        mult += buffs.chemtech_stacks as f64 * 0.008;
     }
     if let Some(soul) = buffs.soul_kind.as_deref() {
         match soul {
-            "infernal" => mult += 0.08,
-            "hextech" => mult += 0.05,
-            "chemtech" if target_hp_ratio <= 0.5 => mult += 0.06,
+            "infernal" => mult += 0.05,
+            "hextech" => mult += 0.03,
+            "chemtech" if target_hp_ratio <= 0.5 => mult += 0.04,
             _ => {}
         }
     }
