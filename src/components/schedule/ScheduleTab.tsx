@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GameStateData, FixtureData } from "../../store/gameStore";
 import { Card, CardBody, Badge } from "../ui";
 import {
@@ -34,6 +34,28 @@ export default function ScheduleTab({
 }: ScheduleTabProps) {
   const { t } = useTranslation();
   const [view, setView] = useState<"fixtures" | "calendar" | "standings">("fixtures");
+  const [isDesktop, setIsDesktop] = useState<boolean>(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return true;
+    }
+    return window.matchMedia("(min-width: 768px)").matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return;
+    }
+    const mql = window.matchMedia("(min-width: 768px)");
+    const handler = (event: MediaQueryListEvent) => setIsDesktop(event.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop && view === "calendar") {
+      setView("fixtures");
+    }
+  }, [isDesktop, view]);
   const [fixtureResultView, setFixtureResultView] = useState<StoredFixtureDraftResult | null>(null);
   const league = gameState.league;
   const userTeamId = gameState.manager.team_id;
@@ -169,7 +191,7 @@ export default function ScheduleTab({
         </button>
         <button
           onClick={() => setView("calendar")}
-          className={`px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all ${
+          className={`hidden md:inline-block px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all ${
             view === "calendar"
               ? "bg-primary-500 text-white shadow-md shadow-primary-500/20"
               : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 border border-gray-200 dark:border-navy-600"
