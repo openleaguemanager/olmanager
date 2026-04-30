@@ -1,7 +1,7 @@
 use crate::game::Game;
 use crate::schedule::{
-    LecSplit, append_fixtures, generate_preseason_friendlies,
-    generate_single_round_league_with_offsets_and_bo, parse_lec_split, regular_best_of,
+    append_fixtures, generate_preseason_friendlies,
+    generate_single_round_league_with_offsets_and_bo, parse_lec_split, regular_best_of, LecSplit,
 };
 use crate::season_awards::compute_season_awards;
 use chrono::{TimeZone, Utc};
@@ -292,7 +292,7 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                 team_id,
                 team_name,
                 appearances: player.stats.appearances,
-                goals: player.stats.goals,
+                goals: player.stats.kills,
                 assists: player.stats.assists,
             });
         }

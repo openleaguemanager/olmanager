@@ -378,7 +378,7 @@ fn player_stats_reset() {
 
     let p1 = game.players.iter().find(|p| p.id == "p1").unwrap();
     assert_eq!(p1.stats.appearances, 0);
-    assert_eq!(p1.stats.goals, 0);
+    assert_eq!(p1.stats.kills, 0);
     assert_eq!(p1.stats.assists, 0);
 }
 
@@ -937,12 +937,10 @@ fn next_season_generation_ignores_academy_team_ids() {
 
     let next_league = game.league.as_ref().expect("next league should exist");
     assert_eq!(next_league.standings.len(), 10);
-    assert!(
-        !next_league
-            .standings
-            .iter()
-            .any(|entry| entry.team_id == "academy-1")
-    );
+    assert!(!next_league
+        .standings
+        .iter()
+        .any(|entry| entry.team_id == "academy-1"));
 }
 
 // ---------------------------------------------------------------------------
