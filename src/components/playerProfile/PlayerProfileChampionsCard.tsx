@@ -1,6 +1,5 @@
 import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { Card, CardBody, CardHeader } from "../ui";
 
 interface ChampionMasteryItem {
@@ -14,18 +13,18 @@ interface ChampionMasteryItem {
 
 interface PlayerProfileChampionsCardProps {
   champions: ChampionMasteryItem[];
+  onViewChampion?: (championKey: string) => void;
 }
 
 function championPortraitUrl(championId: string): string {
   return `https://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${championId}_0.jpg`;
 }
 
-export default function PlayerProfileChampionsCard({ champions }: PlayerProfileChampionsCardProps) {
+export default function PlayerProfileChampionsCard({ champions, onViewChampion }: PlayerProfileChampionsCardProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const handleChampionClick = (championId: string) => {
-    navigate(`/champion/${championId}`);
+    onViewChampion?.(championId);
   };
 
   return (

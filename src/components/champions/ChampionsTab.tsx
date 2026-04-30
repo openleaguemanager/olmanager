@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { Sparkles, Clock3, Search } from "lucide-react";
 import type { GameStateData } from "../../store/gameStore";
 import championsSeed from "../../../data/lec/draft/champions.json";
@@ -15,6 +14,7 @@ import { t } from "i18next";
 interface ChampionsTabProps {
   gameState: GameStateData;
   onGameUpdate: (state: GameStateData) => void;
+  onViewChampion: (championKey: string) => void;
 }
 
 type ChampionRolesMap = Record<string, string[]>;
@@ -240,9 +240,8 @@ function expectedGainBadge(slotIndex: number, focus: string | null | undefined):
 const TIER_ORDER: Array<"S" | "A" | "B" | "C" | "D"> = ["S", "A", "B", "C", "D"];
 const TIER_SORT_WEIGHT: Record<string, number> = { S: 0, A: 1, B: 2, C: 3, D: 4 };
 
-export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabProps) {
+export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }: ChampionsTabProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [submittingKey, setSubmittingKey] = useState<string | null>(null);
   const [metaRoleFilter, setMetaRoleFilter] = useState<"ALL" | UiRole>("ALL");
   const managerTeamId = gameState.manager.team_id;
@@ -489,7 +488,7 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
                         <button
                           type="button"
                           key={`${tier}-${entry.champion_id}-${entry.role}`}
-                          onClick={() => navigate(`/champion/${entry.champion_id}`)}
+                          onClick={() => onViewChampion(entry.champion_id)}
                           className="relative group cursor-pointer"
                         >
                           <div className="h-14 w-24 rounded-md border border-navy-500/80 bg-navy-800 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-yellow-300 overflow-hidden">

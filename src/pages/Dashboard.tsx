@@ -45,6 +45,7 @@ import {
 } from "../lib/helpers";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../store/settingsStore";
+import ChampionPage from "../pages/ChampionPage";
 
 const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Champions", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
 
@@ -92,6 +93,7 @@ export default function Dashboard(): JSX.Element {
   const [isSaving, setIsSaving] = useState(false);
   const [saveFlash, setSaveFlash] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [viewingChampionKey, setViewingChampionKey] = useState<string | null>(null);
   const [profileNavigation, setProfileNavigation] = useState(() =>
     createDashboardProfileNavigationState("Home"),
   );
@@ -121,6 +123,25 @@ export default function Dashboard(): JSX.Element {
 
     fetchState();
   }, [hasActiveGame, navigate, setGameState]);
+
+  // Load champions once when game loads (if not already in gameState)
+  useEffect(() => {
+    if (!gameState) return;
+    if (gameState.champions && gameState.champions.length > 0) return;
+
+    const loadChampions = async () => {
+      try {
+        console.log("[Dashboard] Loading champions for world tab...");
+        const champions = await invoke<import("../store/types").ChampionData[]>("get_champions");
+        setGameState({ ...gameState, champions });
+        console.log(`[Dashboard] Loaded ${champions.length} champions`);
+      } catch (err) {
+        console.error("Failed to load champions:", err);
+      }
+    };
+
+    loadChampions();
+  }, [gameState]);
 
   const isUnemployed = gameState?.manager.team_id === null;
   const todayMatchFixture = gameState ? getTodayMatchFixture(gameState) : null;
@@ -407,6 +428,7 @@ export default function Dashboard(): JSX.Element {
       onSelectTeam: selectTeam,
       onGameUpdate: setGameState,
       onNavigate: handleNavigate,
+      onViewChampion: (championKey: string) => setViewingChampionKey(championKey),
     },
   });
 
@@ -496,6 +518,9 @@ export default function Dashboard(): JSX.Element {
           onSelectTeam={selectTeam}
           onGameUpdate={setGameState}
           isUnemployed={isUnemployed ?? false}
+          viewingChampionKey={viewingChampionKey}
+          onCloseChampion={() => setViewingChampionKey(null)}
+          onViewChampion={(championKey: string) => setViewingChampionKey(championKey)}
         />
       </main>
     </div>

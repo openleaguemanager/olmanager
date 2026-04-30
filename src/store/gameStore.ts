@@ -57,6 +57,7 @@ export type {
   ChampionMetaEntryData,
   ChampionPatchNoteData,
   ChampionPatchStateData,
+  ChampionData,
   GameStateData,
 } from './types';
 

@@ -1,9 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameStore";
 import { ROLE_ICON_PATHS } from "../lib/roleIcons";
+
+export interface ChampionPageProps {
+  championKey: string;
+  onClose: () => void;
+}
 
 /**
  * Maps DB role names to ROLE_ICON_PATHS keys (uppercase)
@@ -60,31 +64,29 @@ function inferRoleHints(items: CounterpickOrSynergyItem[]): string[] {
   return Array.from(rolesSet);
 }
 
-export default function ChampionPage() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+export default function ChampionPage({ championKey, onClose }: ChampionPageProps) {
   const { t } = useTranslation();
   const [showFullImage, setShowFullImage] = useState(false);
 
   // Get champions from game store - stable selector
   const champions = useGameStore((state) => state.gameState?.champions);
 
-  // Find champion by ID - memoized to avoid re-computing on every render
+  // Find champion by champion_key
   const champion = useMemo(() => {
-    if (!champions || !id) return undefined;
-    return champions.find((c) => c.id.toString() === id);
-  }, [champions, id]);
+    if (!champions || !championKey) return undefined;
+    return champions.find((c) => c.champion_key === championKey);
+  }, [champions, championKey]);
 
   // Handle keyboard escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        navigate(-1);
+        onClose();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [navigate]);
+  }, [onClose]);
 
   // Don't render if no champion (show loading or not found)
   if (!champions) {
@@ -102,7 +104,7 @@ export default function ChampionPage() {
           <p className="text-gray-400 text-lg">{t("champions.notFound", "Campeón no encontrado")}</p>
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={onClose}
             className="flex items-center gap-2 mx-auto text-primary-400 hover:text-primary-300 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -137,7 +139,7 @@ export default function ChampionPage() {
         <div className="max-w-6xl mx-auto px-4 py-3">
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={onClose}
             className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />

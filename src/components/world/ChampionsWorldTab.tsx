@@ -1,18 +1,16 @@
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import ChampionsGrid from "../champions/ChampionsGrid";
 import type { ChampionData } from "../../store/types";
 
 interface ChampionsWorldTabProps {
   champions?: ChampionData[];
+  onViewChampion: (championKey: string) => void;
 }
 
-export default function ChampionsWorldTab({ champions }: ChampionsWorldTabProps) {
-  const navigate = useNavigate();
-
+export default function ChampionsWorldTab({ champions, onViewChampion }: ChampionsWorldTabProps) {
   const handleChampionClick = useCallback((championKey: string) => {
-    navigate(`/champion/${championKey}`);
-  }, [navigate]);
+    onViewChampion(championKey);
+  }, [onViewChampion]);
 
   return (
     <div className="space-y-6">

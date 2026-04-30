@@ -39,6 +39,7 @@ export default function DashboardTabContent({
       onNavigate,
       onSelectPlayer,
       onSelectTeam,
+      onViewChampion,
     },
   } = viewModel;
 
@@ -79,8 +80,8 @@ export default function DashboardTabContent({
         <TrainingTab gameState={gameState} onGameUpdate={onGameUpdate} />
       )}
 
-      {activeTab === "Champions" && (
-        <ChampionsTab gameState={gameState} onGameUpdate={onGameUpdate} />
+      {activeTab === "Meta" && (
+        <ChampionsTab gameState={gameState} onGameUpdate={onGameUpdate} onViewChampion={onViewChampion} />
       )}
 
       {activeTab === "Schedule" && (
@@ -121,7 +122,7 @@ export default function DashboardTabContent({
       )}
 
       {activeTab === "ChampionsWorld" && (
-        <ChampionsWorldTab champions={gameState.champions} />
+        <ChampionsWorldTab champions={gameState.champions} onViewChampion={onViewChampion} />
       )}
 
       {activeTab === "Staff" && (
