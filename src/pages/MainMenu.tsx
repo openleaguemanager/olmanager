@@ -16,6 +16,7 @@ import {
   ChevronDown,
   Check,
   Power,
+  Database,
 } from "lucide-react";
 import { countryName, allNationalities } from "../lib/countries";
 
@@ -417,6 +418,19 @@ export default function MainMenu() {
                   </span>
                 </div>
                 <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-gray-400" />
+              </button>
+
+              <button
+                onClick={() => navigate("/world-editor")}
+                className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-primary-400 dark:hover:border-primary-400 shadow-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <Database className="w-6 h-6 text-primary-500 dark:text-primary-400" />
+                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
+                    World Editor
+                  </span>
+                </div>
+                <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-primary-500" />
               </button>
 
               <button

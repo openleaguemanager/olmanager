@@ -66,7 +66,8 @@ export default function PlayerProfileHeroCard({
   t,
 }: PlayerProfileHeroCardProps) {
   const role = primaryRole;
-  const playerPhoto = resolvePlayerPhoto(player.id, player.match_name);
+  const roleVariant = getLolRoleBadgeVariant(role);
+  const playerPhoto = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
   const [insigniaBackground, setInsigniaBackground] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState(false);
   const potentialRevealed = player.potential_revealed ?? null;
@@ -451,3 +452,14 @@ function MobileQuickStat({
     </div>
   );
 }
+function getLolRoleBadgeVariant(role: string) {
+  const roleVariants: Record<string, string> = {
+    TOP: "top",
+    JUNGLE: "jungle",
+    MID: "mid",
+    ADC: "adc",
+    SUPPORT: "support",
+  };
+  return roleVariants[role] || "top";
+}
+

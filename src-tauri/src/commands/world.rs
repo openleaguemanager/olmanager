@@ -4,6 +4,94 @@ use tauri::State;
 
 use ofm_core::state::StateManager;
 
+use crate::commands::game::{
+    apply_seed_potential_defaults, bootstrap_example_academy_pool_from_example,
+    inject_seed_free_agents, remove_free_agents_shadowed_by_academy,
+};
+
+fn resolve_default_world_editor_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+    let cwd = std::env::current_dir().map_err(|e| format!("Failed to read current dir: {}", e))?;
+    let candidates = [
+        cwd.join("src-tauri").join("databases").join("lec_world.json"),
+        cwd.join("databases").join("lec_world.json"),
+        app_handle
+            .path()
+            .resource_dir()
+            .map(|dir| dir.join("databases").join("lec_world.json"))
+            .unwrap_or_else(|_| std::path::PathBuf::new()),
+    ];
+
+    for candidate in candidates {
+        if candidate.exists() {
+            return Ok(candidate);
+        }
+    }
+
+    Err("Default LEC world database not found (lec_world.json).".to_string())
+}
+
+fn enrich_world_for_editor(world: &mut ofm_core::generator::WorldData) {
+    bootstrap_example_academy_pool_from_example(
+        &mut world.teams,
+        &mut world.players,
+        "2025-01-01",
+    );
+    remove_free_agents_shadowed_by_academy(&mut world.players, &world.teams);
+    inject_seed_free_agents(&mut world.players);
+}
+
+fn writable_world_editor_database_dir(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+    if let Ok(user_profile) = std::env::var("USERPROFILE") {
+        return Ok(std::path::PathBuf::from(user_profile)
+            .join("Documents")
+            .join("Open League Manager")
+            .join("databases"));
+    }
+
+    Ok(app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| format!("Failed to resolve writable app data directory: {}", e))?
+        .join("databases"))
+}
+
+fn writable_world_editor_database_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+    Ok(writable_world_editor_database_dir(app_handle)?.join("lec_world.json"))
+}
+
+fn write_world_database_with_fallback(
+    app_handle: &tauri::AppHandle,
+    path: &std::path::Path,
+    json: &str,
+) -> Result<std::path::PathBuf, String> {
+    if let Some(parent) = path.parent() {
+        match std::fs::create_dir_all(parent) {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied => {}
+            Err(error) => {
+                return Err(format!("Failed to create world database directory: {}", error));
+            }
+        }
+    }
+
+    match std::fs::write(path, json) {
+        Ok(()) => Ok(path.to_path_buf()),
+        Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied => {
+            let fallback_dir = writable_world_editor_database_dir(app_handle)?;
+            std::fs::create_dir_all(&fallback_dir)
+                .map_err(|e| format!("Failed to create writable database directory: {}", e))?;
+            let fallback_path = fallback_dir.join(
+                path.file_name()
+                    .unwrap_or_else(|| std::ffi::OsStr::new("lec_world.json")),
+            );
+            std::fs::write(&fallback_path, json)
+                .map_err(|e| format!("Failed to write fallback world database: {}", e))?;
+            Ok(fallback_path)
+        }
+        Err(error) => Err(format!("Failed to write world database: {}", error)),
+    }
+}
+
 fn export_world_database_internal(
     state: &StateManager,
     export_path: &std::path::Path,
@@ -104,6 +192,51 @@ pub fn write_temp_database(app_handle: tauri::AppHandle, json: String) -> Result
         .map_err(|e| e.to_string())?;
     let db_dir = app_data_dir.join("databases");
     write_database_json_to_dir(&db_dir, &json)
+}
+
+#[tauri::command]
+pub fn load_world_editor_database(
+    app_handle: tauri::AppHandle,
+    path: Option<String>,
+) -> Result<ofm_core::generator::WorldData, String> {
+    let path = match path.map(|value| value.trim().to_string()).filter(|value| !value.is_empty()) {
+        Some(path) if path == "lec-default" => resolve_default_world_editor_path(&app_handle)?,
+        Some(path) => std::path::PathBuf::from(path.strip_prefix("file:").unwrap_or(&path)),
+        None => resolve_default_world_editor_path(&app_handle)?,
+    };
+
+    info!("[cmd] load_world_editor_database: path={}", path.display());
+    let json = std::fs::read_to_string(&path)
+        .map_err(|e| format!("Failed to read world database: {}", e))?;
+    let has_explicit_potential_base = json.contains("\"potential_base\"");
+    let mut world = ofm_core::generator::load_world_from_json(&json)?;
+    if !has_explicit_potential_base {
+        apply_seed_potential_defaults(&mut world.players);
+    }
+    enrich_world_for_editor(&mut world);
+    Ok(world)
+}
+
+#[tauri::command]
+pub fn save_world_editor_database(
+    app_handle: tauri::AppHandle,
+    path: String,
+    world: ofm_core::generator::WorldData,
+) -> Result<String, String> {
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let path = path.trim();
+        let path = if path.is_empty() || path == "lec-default" {
+            writable_world_editor_database_path(&app_handle)?
+        } else {
+            std::path::PathBuf::from(path.strip_prefix("file:").unwrap_or(path))
+        };
+        info!("[cmd] save_world_editor_database: path={}", path.display());
+        let json = ofm_core::generator::export_world_to_json(&world)?;
+        let saved_path = write_world_database_with_fallback(&app_handle, &path, &json)?;
+        Ok(saved_path.to_string_lossy().to_string())
+    }));
+
+    result.unwrap_or_else(|_| Err("World Editor save failed unexpectedly. No changes were written.".to_string()))
 }
 
 #[cfg(test)]

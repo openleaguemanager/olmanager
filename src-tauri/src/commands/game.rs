@@ -409,6 +409,25 @@ fn generated_academy_potential(player_name: &str, ovr: u8) -> u8 {
     potential.min(90)
 }
 
+fn round_seed_market_value(value: u64) -> u64 {
+    value.max(50_000).div_ceil(10_000) * 10_000
+}
+
+fn suggested_seed_market_value(ovr: u8, potential: u8, is_academy: bool) -> u64 {
+    let skill_gap = u64::from(ovr.saturating_sub(60));
+    let potential_gap = u64::from(potential.saturating_sub(ovr));
+    let skill_value = 50_000 + skill_gap * skill_gap * 300;
+    let potential_value = potential_gap * if is_academy { 3_000 } else { 6_000 };
+    let raw_value = skill_value + potential_value;
+    let adjusted_value = if is_academy {
+        raw_value * 70 / 100
+    } else {
+        raw_value
+    };
+
+    round_seed_market_value(adjusted_value)
+}
+
 fn academy_overview_message(
     parent_team: &Team,
     academy_team: &Team,
@@ -512,8 +531,9 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
                 potential: Some(potential),
                 salary: Some(8_000),
                 contract_end: Some("2028-11-30".to_string()),
-                market_value: Some(220_000 + u64::from(ovr.saturating_sub(60)) * 20_000),
+                market_value: Some(suggested_seed_market_value(ovr, potential, true)),
                 reputation: Some(62),
+                photo: seed_profile_image_url((!seed_player.image_url.is_empty()).then_some(seed_player.image_url.as_str())),
             };
 
             let attributes = build_attributes_from_seed(&seed);
@@ -536,6 +556,7 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
             player.wage = seed.salary.unwrap_or(8_000);
             player.market_value = seed.market_value.unwrap_or(240_000);
             player.potential_base = potential;
+            player.profile_image_url = seed.photo.clone();
             player.morale = 68;
             player.condition = 100;
 
@@ -626,6 +647,7 @@ pub(crate) fn ensure_example_academy_pool(game: &mut Game) {
         &mut game.players,
         &bootstrap_date,
     );
+    remove_free_agents_shadowed_by_academy(&mut game.players, &game.teams);
 }
 
 fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
@@ -685,6 +707,7 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
     Err("Default LEC world database not found (lec_world.json).".to_string())
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Copy)]
 struct LolSeedRatings {
     mechanics: u8,
@@ -705,6 +728,7 @@ struct DraftSeedRoot {
 
 #[derive(Debug, Deserialize)]
 struct DraftSeedData {
+    #[allow(dead_code)]
     rostered_seeds: Vec<DraftPlayerSeed>,
     #[serde(default)]
     free_agent_seeds: Vec<DraftPlayerSeed>,
@@ -742,6 +766,19 @@ struct DraftPlayerSeed {
     market_value: Option<u64>,
     #[serde(default)]
     reputation: Option<u8>,
+    #[serde(default)]
+    photo: Option<String>,
+}
+
+fn seed_profile_image_url(photo: Option<&str>) -> Option<String> {
+    let value = photo?.trim();
+    if value.is_empty() {
+        return None;
+    }
+    if value.starts_with("/images/") {
+        return Some(format!("/data/lec{}", value));
+    }
+    Some(value.to_string())
 }
 
 fn load_draft_seed_root() -> DraftSeedRoot {
@@ -821,6 +858,7 @@ fn draft_seed_root() -> &'static DraftSeedRoot {
     ROOT.get_or_init(load_draft_seed_root)
 }
 
+#[allow(dead_code)]
 fn draft_potential_map() -> &'static HashMap<String, u8> {
     static POTENTIALS: OnceLock<HashMap<String, u8>> = OnceLock::new();
     POTENTIALS.get_or_init(|| {
@@ -842,7 +880,7 @@ fn draft_potential_map() -> &'static HashMap<String, u8> {
     })
 }
 
-fn potential_seed_for_player(match_name: &str) -> Option<u8> {
+pub(crate) fn potential_seed_for_player(match_name: &str) -> Option<u8> {
     let key = normalize_seed_name(match_name);
     draft_potential_map().get(&key).copied().or_else(
         || {
@@ -855,6 +893,48 @@ fn potential_seed_for_player(match_name: &str) -> Option<u8> {
     )
 }
 
+pub(crate) fn apply_seed_potential_defaults(players: &mut [Player]) {
+    for player in players.iter_mut() {
+        let Some(seed_potential) = potential_seed_for_player(&player.match_name) else {
+            continue;
+        };
+        let current_ovr = ofm_core::potential::calculate_lol_ovr(player);
+        player.potential_base = seed_potential.max(current_ovr).min(99);
+        player.potential_revealed = None;
+        player.potential_research_started_on = None;
+        player.potential_research_eta_days = None;
+    }
+}
+
+#[allow(dead_code)]
+fn draft_photo_map() -> &'static HashMap<String, String> {
+    static PHOTOS: OnceLock<HashMap<String, String>> = OnceLock::new();
+    PHOTOS.get_or_init(|| {
+        let parsed = draft_seed_root();
+
+        let mut all_seeds = parsed.data.rostered_seeds.clone();
+        all_seeds.extend(parsed.data.free_agent_seeds.clone());
+
+        all_seeds
+            .into_iter()
+            .filter_map(|seed| {
+                let key = normalize_seed_name(&seed.ign);
+                let photo = seed_profile_image_url(seed.photo.as_deref())?;
+                if key.is_empty() {
+                    return None;
+                }
+                Some((key, photo))
+            })
+            .collect()
+    })
+}
+
+#[allow(dead_code)]
+fn photo_seed_for_player(match_name: &str) -> Option<String> {
+    let key = normalize_seed_name(match_name);
+    draft_photo_map().get(&key).cloned()
+}
+
 fn normalize_seed_name(value: &str) -> String {
     value
         .trim()
@@ -864,6 +944,7 @@ fn normalize_seed_name(value: &str) -> String {
         .collect()
 }
 
+#[allow(dead_code)]
 fn lol_ratings_seed_for_player(match_name: &str) -> Option<LolSeedRatings> {
     let key = normalize_seed_name(match_name);
     let ratings = match key.as_str() {
@@ -1423,7 +1504,8 @@ fn lol_ratings_seed_for_player(match_name: &str) -> Option<LolSeedRatings> {
     Some(ratings)
 }
 
-fn apply_lol_seed_ratings(players: &mut [Player]) {
+#[allow(dead_code)]
+pub(crate) fn apply_lol_seed_ratings(players: &mut [Player]) {
     for player in players.iter_mut() {
         let Some(seed) = lol_ratings_seed_for_player(&player.match_name) else {
             continue;
@@ -1444,13 +1526,16 @@ fn apply_lol_seed_ratings(players: &mut [Player]) {
         if let Some(potential_base) = potential_seed_for_player(&player.match_name) {
             player.potential_base = potential_base.min(99);
         }
+        if player.profile_image_url.is_none() {
+            player.profile_image_url = photo_seed_for_player(&player.match_name);
+        }
         player.potential_revealed = None;
         player.potential_research_started_on = None;
         player.potential_research_eta_days = None;
     }
 }
 
-fn apply_default_initial_contract_end(players: &mut [Player]) {
+pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
     const DEFAULT_INITIAL_CONTRACT_END: &str = "2025-12-20";
 
     for player in players.iter_mut() {
@@ -1607,7 +1692,11 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
     player.team_id = None;
     player.transfer_listed = true;
     player.loan_listed = false;
-    player.market_value = seed.market_value.unwrap_or(300_000);
+    let seed_ovr = seed.rating.unwrap_or(70);
+    let seed_potential = seed.potential.unwrap_or(seed_ovr).max(seed_ovr);
+    player.market_value = seed
+        .market_value
+        .unwrap_or_else(|| suggested_seed_market_value(seed_ovr, seed_potential, false));
     player.wage = seed.salary.unwrap_or(40_000);
     player.contract_end = seed.contract_end.clone();
     player.condition = 100;
@@ -1616,11 +1705,12 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
         .potential
         .unwrap_or(seed.rating.unwrap_or(70))
         .clamp(45, 99);
+    player.profile_image_url = seed_profile_image_url(seed.photo.as_deref());
 
     Some(player)
 }
 
-fn inject_seed_free_agents(players: &mut Vec<Player>) {
+pub(crate) fn inject_seed_free_agents(players: &mut Vec<Player>) {
     let existing_ids: HashSet<String> = players
         .iter()
         .map(|player| normalize_seed_name(&player.match_name))
@@ -1642,6 +1732,39 @@ fn inject_seed_free_agents(players: &mut Vec<Player>) {
             existing_ids.insert(seed_key);
         }
     }
+}
+
+pub(crate) fn remove_free_agents_shadowed_by_academy(players: &mut Vec<Player>, teams: &[Team]) {
+    let academy_team_ids: HashSet<&str> = teams
+        .iter()
+        .filter(|team| team.team_kind == TeamKind::Academy)
+        .map(|team| team.id.as_str())
+        .collect();
+
+    if academy_team_ids.is_empty() {
+        return;
+    }
+
+    let academy_names: HashSet<String> = players
+        .iter()
+        .filter(|player| {
+            player
+                .team_id
+                .as_deref()
+                .map(|team_id| academy_team_ids.contains(team_id))
+                .unwrap_or(false)
+        })
+        .map(|player| normalize_seed_name(&player.match_name))
+        .filter(|key| !key.is_empty())
+        .collect();
+
+    if academy_names.is_empty() {
+        return;
+    }
+
+    players.retain(|player| {
+        player.team_id.is_some() || !academy_names.contains(&normalize_seed_name(&player.match_name))
+    });
 }
 
 /// Step 1: Create manager + generate world. No team assigned yet.
@@ -1712,23 +1835,31 @@ pub async fn start_new_game(
         let path = resolve_default_world_path(&app_handle)?;
         let json = std::fs::read_to_string(&path)
             .map_err(|e| format!("Failed to read default LEC world database: {}", e))?;
-        let world = ofm_core::generator::load_world_from_json(&json)?;
+        let has_explicit_potential_base = json.contains("\"potential_base\"");
+        let mut world = ofm_core::generator::load_world_from_json(&json)?;
+        if !has_explicit_potential_base {
+            apply_seed_potential_defaults(&mut world.players);
+        }
         (world.teams, world.players, world.staff)
     } else {
         // Try to load from file path (strip "file:" prefix if present)
         let path = world_source.strip_prefix("file:").unwrap_or(&world_source);
         let json = std::fs::read_to_string(path)
             .map_err(|e| format!("Failed to read world database: {}", e))?;
-        let world = ofm_core::generator::load_world_from_json(&json)?;
+        let has_explicit_potential_base = json.contains("\"potential_base\"");
+        let mut world = ofm_core::generator::load_world_from_json(&json)?;
+        if !has_explicit_potential_base {
+            apply_seed_potential_defaults(&mut world.players);
+        }
         (world.teams, world.players, world.staff)
     };
 
-    inject_seed_free_agents(&mut players);
-    apply_lol_seed_ratings(&mut players);
-    apply_default_initial_contract_end(&mut players);
     let academy_bootstrap_date = clock.current_date.format("%Y-%m-%d").to_string();
     let mut teams = teams;
     bootstrap_example_academy_pool_from_example(&mut teams, &mut players, &academy_bootstrap_date);
+    remove_free_agents_shadowed_by_academy(&mut players, &teams);
+    inject_seed_free_agents(&mut players);
+    apply_default_initial_contract_end(&mut players);
 
     let new_game = Game::new(clock, manager, teams, players, staff, vec![]);
 
@@ -1918,8 +2049,8 @@ pub async fn load_game(
         .lock()
         .map_err(|e| format!("Lock error: {}", e))?;
     let mut game = sm.load_game(&save_id)?;
+    remove_free_agents_shadowed_by_academy(&mut game.players, &game.teams);
     inject_seed_free_agents(&mut game.players);
-    apply_lol_seed_ratings(&mut game.players);
     ofm_core::champions::bootstrap_champion_state(&mut game);
     let stats_state = sm.load_stats_state(&save_id)?;
     ofm_core::season_context::refresh_game_context(&mut game);

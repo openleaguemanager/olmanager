@@ -812,4 +812,60 @@ describe("MatchSimulation", function (): void {
 
     expect(navigateMock).not.toHaveBeenCalledWith("/dashboard");
   });
+
+  it("does not carry stored picked champions into a new BO1 draft", async function (): Promise<void> {
+    locationState = {
+      mode: "spectator",
+      snapshot: makeSnapshot(),
+    };
+
+    const gameStateWithBo1 = makeGameState();
+    gameStateWithBo1.league = {
+      id: "league-1",
+      name: "Test League",
+      season: 1,
+      fixtures: [
+        {
+          id: "fixture-bo1-clean",
+          matchday: 4,
+          date: "2026-08-01",
+          home_team_id: "home1",
+          away_team_id: "away1",
+          competition: "Regular Season",
+          best_of: 1,
+          status: "Scheduled",
+          result: {
+            home_wins: 1,
+            away_wins: 0,
+          },
+        },
+      ],
+      standings: [],
+    };
+
+    gameStoreState = {
+      gameState: gameStateWithBo1,
+      setGameState: setGameStateMock,
+    };
+
+    localStorage.setItem(
+      "fixture-draft-result:fixture-bo1-clean",
+      JSON.stringify({
+        snapshot: makeSnapshot(),
+        controlledSide: "blue",
+        result: { winnerSide: "blue" },
+        homeSeriesWins: 1,
+        awaySeriesWins: 0,
+        seriesUsedChampionIds: ["Aatrox", "Ahri"],
+      }),
+    );
+
+    mockedInvoke.mockResolvedValueOnce(makeSnapshot());
+
+    render(<MatchSimulation />);
+
+    await waitFor(function (): void {
+      expect(screen.getByTestId("champion-draft")).toHaveTextContent("Complete Draft (0)");
+    });
+  });
 });

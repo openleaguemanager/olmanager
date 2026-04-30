@@ -11,6 +11,8 @@ pub struct Player {
     pub football_nation: String,
     #[serde(default)]
     pub birth_country: Option<String>,
+    #[serde(default)]
+    pub profile_image_url: Option<String>,
 
     pub position: Position,
 
@@ -519,6 +521,7 @@ impl Player {
             nationality,
             football_nation,
             birth_country,
+            profile_image_url: None,
             natural_position: position.clone(),
             position,
             alternate_positions: Vec::new(),

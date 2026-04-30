@@ -11,6 +11,8 @@ pub struct Staff {
     pub football_nation: String,
     #[serde(default)]
     pub birth_country: Option<String>,
+    #[serde(default)]
+    pub profile_image_url: Option<String>,
     pub role: StaffRole,
 
     // Attributes 0-100
@@ -72,6 +74,7 @@ impl Staff {
             nationality: String::new(),
             football_nation: String::new(),
             birth_country: None,
+            profile_image_url: None,
             role,
             attributes,
             team_id: None,
