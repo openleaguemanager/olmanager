@@ -121,7 +121,7 @@ export default function DashboardTabContent({
       )}
 
       {activeTab === "ChampionsWorld" && (
-        <ChampionsWorldTab />
+        <ChampionsWorldTab champions={gameState.champions} />
       )}
 
       {activeTab === "Staff" && (

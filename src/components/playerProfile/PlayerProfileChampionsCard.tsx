@@ -1,5 +1,6 @@
 import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Card, CardBody, CardHeader } from "../ui";
 
 interface ChampionMasteryItem {
@@ -21,6 +22,11 @@ function championPortraitUrl(championId: string): string {
 
 export default function PlayerProfileChampionsCard({ champions }: PlayerProfileChampionsCardProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleChampionClick = (championId: string) => {
+    navigate(`/champion/${championId}`);
+  };
 
   return (
     <Card className="lg:col-span-2 min-h-[304px]">
@@ -28,9 +34,11 @@ export default function PlayerProfileChampionsCard({ champions }: PlayerProfileC
       <CardBody className="py-4 px-5">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2.5">
           {champions.map((item) => (
-            <div
+            <button
+              type="button"
               key={`${item.rank}-${item.championId}`}
-              className="relative rounded-xl overflow-hidden border border-[#22345d] min-h-[192px] bg-[#111f3d]"
+              onClick={() => handleChampionClick(item.championId)}
+              className="relative rounded-xl overflow-hidden border border-[#22345d] min-h-[192px] bg-[#111f3d] text-left cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,191,36,0.2)] hover:border-yellow-400"
             >
               <div
                 className="absolute inset-0 bg-cover bg-center"
@@ -65,7 +73,7 @@ export default function PlayerProfileChampionsCard({ champions }: PlayerProfileC
                   </div>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </CardBody>
