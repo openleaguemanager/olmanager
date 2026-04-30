@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
@@ -66,23 +66,14 @@ export default function ChampionPage() {
   const { t } = useTranslation();
   const [showFullImage, setShowFullImage] = useState(false);
 
-  // Get champions from game store
+  // Get champions from game store - stable selector
   const champions = useGameStore((state) => state.gameState?.champions);
 
-  // Find champion by ID
-  const champion = champions?.find((c) => c.id.toString() === id);
-
-  // Handle champion not found
-  useEffect(() => {
-    if (!champion && !champions) {
-      // Still loading, wait
-      return;
-    }
-    if (!champion && id) {
-      // Champion not found, navigate back
-      navigate(-1);
-    }
-  }, [champion, champions, id, navigate]);
+  // Find champion by ID - memoized to avoid re-computing on every render
+  const champion = useMemo(() => {
+    if (!champions || !id) return undefined;
+    return champions.find((c) => c.id.toString() === id);
+  }, [champions, id]);
 
   // Handle keyboard escape
   useEffect(() => {
@@ -95,11 +86,29 @@ export default function ChampionPage() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [navigate]);
 
-  // Don't render if no champion
-  if (!champion) {
+  // Don't render if no champion (show loading or not found)
+  if (!champions) {
     return (
       <div className="min-h-screen bg-navy-900 flex items-center justify-center">
         <div className="text-gray-400">{t("common.loading", "Cargando...")}</div>
+      </div>
+    );
+  }
+
+  if (!champion) {
+    return (
+      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-gray-400 text-lg">{t("champions.notFound", "Campeón no encontrado")}</p>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 mx-auto text-primary-400 hover:text-primary-300 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span className="font-heading">{t("common.back", "Volver")}</span>
+          </button>
+        </div>
       </div>
     );
   }
