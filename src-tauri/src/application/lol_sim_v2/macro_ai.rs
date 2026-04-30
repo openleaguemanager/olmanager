@@ -8,8 +8,8 @@ use super::{
     start_recall, stat_delta,
     ChampionRuntime, MinionRuntime, NeutralTimerRuntime, NeutralTimersRuntime, RuntimeTeamBuffState,
     RuntimeTeamTactics, StructureRuntime, Vec2, BASE_DEFENSE_RECALL_DISTANCE,
-    LANE_COMBAT_UNLOCK_AT, LANE_HEALTHY_RETREAT_HP_RATIO,
-    LANE_LOCAL_PRESSURE_RADIUS, LANE_STRONG_UNFAVORABLE_PRESSURE_DELTA, RECALL_CHANNEL_SEC,
+    JUNGLE_CAMP_WAIT_FOR_SPAWN_SEC, JUNGLE_STICKY_CAMP_RADIUS, LANE_COMBAT_UNLOCK_AT, LANE_HEALTHY_RETREAT_HP_RATIO,
+    LANE_LOCAL_PRESSURE_RADIUS, LANE_STRONG_UNFAVORABLE_PRESSURE_DELTA, LANE_STRUCTURE_PRESSURE_RADIUS, RECALL_CHANNEL_SEC,
     RECALL_CANCEL_ENEMY_RADIUS, RECALL_REACH_BUFFER_SEC, RECALL_TRIGGER_HP_RATIO,
     SUPPORT_OPEN_ROAM_AT_SEC, SUPPORT_ROAM_UNLOCK_AT_SEC,
     MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS, OBJECTIVE_ASSIST_RADIUS, OBJECTIVE_ATTEMPT_RADIUS,
@@ -463,6 +463,35 @@ pub(super) fn decide_champion_state(
         return;
     }
 
+    if champion.role == "JGL" {
+        if let Some(timers) = neutral_timers {
+            if let Some(objective_pos) = pick_live_neutral_objective_pos(champion, timers) {
+                champion.state = "objective".to_string();
+                set_champion_direct_path_hysteresis(
+                    champion,
+                    objective_pos,
+                    OBJECTIVE_PATH_MIN_TARGET_DELTA,
+                );
+                return;
+            }
+
+            if let Some(camp_pos) = pick_sticky_or_next_jungle_camp_pos(
+                champion,
+                timers,
+                &team_tactics.jungle_pathing,
+                now,
+            ) {
+                champion.state = "jungle".to_string();
+                set_champion_direct_path_hysteresis(
+                    champion,
+                    camp_pos,
+                    OBJECTIVE_PATH_MIN_TARGET_DELTA,
+                );
+                return;
+            }
+        }
+    }
+
     // Hard anti-stuck rule:
     // if a laner drifts behind their own lane tower after opening phase,
     // force immediate recall (ignore threat/range heuristics).
@@ -621,23 +650,42 @@ pub(super) fn decide_champion_state(
     if champion.role == "JGL" {
         champion.state = "jungle".to_string();
         if let Some(timers) = neutral_timers {
-            for key in jungler_macro_jungle_priority_for_team(&champion.team, &team_tactics.jungle_pathing) {
-                if is_enemy_jungle_camp_key_for_team(key, &champion.team) {
-                    continue;
-                }
-                let Some(camp) = timers.entities.get(key) else {
-                    continue;
-                };
-                if !camp.alive || !camp.unlocked || !is_jungle_camp_key(&camp.key) {
-                    continue;
-                }
+            if let Some(objective_pos) = pick_live_neutral_objective_pos(champion, timers) {
+                champion.state = "objective".to_string();
                 set_champion_direct_path_hysteresis(
                     champion,
-                    camp.pos,
+                    objective_pos,
                     OBJECTIVE_PATH_MIN_TARGET_DELTA,
                 );
                 return;
             }
+
+            if let Some(camp_pos) = pick_sticky_or_next_jungle_camp_pos(
+                champion,
+                timers,
+                &team_tactics.jungle_pathing,
+                now,
+            ) {
+                set_champion_direct_path_hysteresis(
+                    champion,
+                    camp_pos,
+                    OBJECTIVE_PATH_MIN_TARGET_DELTA,
+                );
+                return;
+            }
+
+            if neutral_objective_alive(timers) {
+                return;
+            }
+        }
+
+        if let Some(gank_pos) = pick_jungler_gank_pos(champion, champions, structures) {
+            set_champion_direct_path_hysteresis(
+                champion,
+                gank_pos,
+                OBJECTIVE_PATH_MIN_TARGET_DELTA,
+            );
+            return;
         }
         return;
     }
@@ -832,6 +880,118 @@ fn is_enemy_jungle_camp_key_for_team(key: &str, team: &str) -> bool {
     }
     let own_suffix = if normalized_team(team) == "blue" { "-blue" } else { "-red" };
     (key.ends_with("-blue") || key.ends_with("-red")) && !key.ends_with(own_suffix)
+}
+
+fn is_own_jungle_camp_key_for_team(key: &str, team: &str) -> bool {
+    if !is_jungle_camp_key(key) {
+        return false;
+    }
+    let own_suffix = if normalized_team(team) == "blue" { "-blue" } else { "-red" };
+    key.ends_with(own_suffix)
+}
+
+fn pick_sticky_or_next_jungle_camp_pos(
+    champion: &ChampionRuntime,
+    neutral_timers: &NeutralTimersRuntime,
+    jungle_pathing: &str,
+    now: f64,
+) -> Option<Vec2> {
+    if let Some(current_camp) = neutral_timers
+        .entities
+        .values()
+        .filter(|timer| {
+            timer.alive
+                && timer.unlocked
+                && is_own_jungle_camp_key_for_team(&timer.key, &champion.team)
+                && dist(champion.pos, timer.pos) <= JUNGLE_STICKY_CAMP_RADIUS
+        })
+        .min_by(|a, b| {
+            dist(champion.pos, a.pos)
+                .partial_cmp(&dist(champion.pos, b.pos))
+                .unwrap_or(Ordering::Equal)
+                .then_with(|| a.key.cmp(&b.key))
+        })
+    {
+        return Some(current_camp.pos);
+    }
+
+    for key in jungler_macro_jungle_priority_for_team(&champion.team, jungle_pathing) {
+        if !is_own_jungle_camp_key_for_team(key, &champion.team) {
+            continue;
+        }
+        let Some(camp) = neutral_timers.entities.get(key) else {
+            continue;
+        };
+        let spawning_soon = camp
+            .next_spawn_at
+            .map(|spawn_at| spawn_at >= now && spawn_at - now <= JUNGLE_CAMP_WAIT_FOR_SPAWN_SEC)
+            .unwrap_or(false);
+        if camp.unlocked && (camp.alive || spawning_soon) {
+            return Some(camp.pos);
+        }
+    }
+
+    None
+}
+
+fn neutral_objective_alive(neutral_timers: &NeutralTimersRuntime) -> bool {
+    neutral_timers
+        .entities
+        .values()
+        .any(|timer| timer.alive && timer.unlocked && is_objective_neutral_key(&timer.key))
+}
+
+fn pick_live_neutral_objective_pos(
+    champion: &ChampionRuntime,
+    neutral_timers: &NeutralTimersRuntime,
+) -> Option<Vec2> {
+    neutral_timers
+        .entities
+        .values()
+        .filter(|timer| timer.alive && timer.unlocked && is_objective_neutral_key(&timer.key))
+        .min_by(|a, b| {
+            dist(champion.pos, a.pos)
+                .partial_cmp(&dist(champion.pos, b.pos))
+                .unwrap_or(Ordering::Equal)
+                .then_with(|| a.key.cmp(&b.key))
+        })
+        .map(|timer| timer.pos)
+}
+
+fn pick_jungler_gank_pos(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    structures: &[StructureRuntime],
+) -> Option<Vec2> {
+    let enemy_team = if normalized_team(&champion.team) == "blue" { "red" } else { "blue" };
+    champions
+        .iter()
+        .filter(|enemy| {
+            enemy.alive
+                && normalized_team(&enemy.team) == enemy_team
+                && enemy.role != "JGL"
+                && champions.iter().any(|ally| {
+                    ally.alive
+                        && ally.role != "JGL"
+                        && normalized_team(&ally.team) == normalized_team(&champion.team)
+                        && normalized_lane(&ally.lane) == normalized_lane(&enemy.lane)
+                        && dist(ally.pos, enemy.pos) <= 0.17
+                })
+                && !structures.iter().any(|structure| {
+                    structure.alive
+                        && structure.kind == "tower"
+                        && normalized_team(&structure.team) == enemy_team
+                        && normalized_lane(&structure.lane) == normalized_lane(&enemy.lane)
+                        && dist(structure.pos, enemy.pos) <= LANE_STRUCTURE_PRESSURE_RADIUS + 0.04
+                })
+        })
+        .min_by(|a, b| {
+            dist(champion.pos, a.pos)
+                .partial_cmp(&dist(champion.pos, b.pos))
+                .unwrap_or(Ordering::Equal)
+                .then_with(|| a.id.cmp(&b.id))
+        })
+        .map(|enemy| enemy.pos)
 }
 
 pub(super) fn contested_dragon_attempt_for_team<'a>(

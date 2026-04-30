@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
 use std::cmp::Ordering;
-use std::collections::{HashMap, VecDeque};
+use std::collections::{BinaryHeap, HashMap, VecDeque};
 use std::sync::OnceLock;
 
 mod api;
@@ -102,7 +102,7 @@ struct SnapshotPlayer {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct RuntimeState {
+pub(crate) struct RuntimeState {
     time_sec: f64,
     running: bool,
     speed: f64,
@@ -511,6 +511,7 @@ const ELDER_EXECUTE_HP_RATIO: f64 = 0.20;
 const BARON_MINION_AURA_RADIUS: f64 = 0.12;
 const BARON_MINION_DAMAGE_MULTIPLIER: f64 = 1.28;
 const BARON_MINION_DAMAGE_REDUCTION: f64 = 0.58;
+const BARON_SIEGE_CHAMPION_MINION_DAMAGE_MULTIPLIER: f64 = 1.35;
 const CHAMPION_MAX_LEVEL: i64 = 18;
 const CHAMPION_LEVEL_UP_HP_GAIN: f64 = 92.0;
 const CHAMPION_LEVEL_UP_AD_GAIN: f64 = 3.8;
@@ -553,6 +554,9 @@ const MINION_CHAMPION_AGGRO_MIN_RANGE: f64 = 0.055;
 const JUNGLE_INITIAL_SPAWN_AT: f64 = MINION_FIRST_WAVE_AT;
 const SCUTTLE_INITIAL_SPAWN_AT: f64 = 210.0;
 const JUNGLE_CAMP_ENGAGE_RADIUS: f64 = 0.09;
+const JUNGLE_CAMP_ATTACK_RADIUS: f64 = 0.062;
+const JUNGLE_STICKY_CAMP_RADIUS: f64 = 0.13;
+const JUNGLE_CAMP_WAIT_FOR_SPAWN_SEC: f64 = 35.0;
 const OBJECTIVE_ATTEMPT_RADIUS: f64 = 0.12;
 const OBJECTIVE_ASSIST_RADIUS: f64 = 0.24;
 const MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS: f64 = 0.52;
@@ -2274,21 +2278,24 @@ fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
         let mut g_score = vec![f64::INFINITY; total];
         let mut parent = vec![usize::MAX; total];
         let mut closed = vec![false; total];
-        let mut in_open = vec![false; total];
-        let mut open: Vec<usize> = Vec::new();
+        let mut open: BinaryHeap<OpenNode> = BinaryHeap::new();
 
         let start_idx = self.idx(s.cx, s.cy);
         let end_idx = self.idx(e.cx, e.cy);
 
         g_score[start_idx] = 0.0;
-        open.push(start_idx);
-        in_open[start_idx] = true;
 
         let heuristic = |idx: usize| -> f64 {
             let cx = idx % self.grid_size;
             let cy = idx / self.grid_size;
             ((e.cx as f64 - cx as f64).powi(2) + (e.cy as f64 - cy as f64).powi(2)).sqrt()
         };
+        let start_h = heuristic(start_idx);
+        open.push(OpenNode {
+            idx: start_idx,
+            f_score: start_h,
+            h_score: start_h,
+        });
 
         let dirs: [(isize, isize, f64); 8] = [
             (1, 0, 1.0),
@@ -2301,22 +2308,11 @@ fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
             (-1, 1, 1.414),
         ];
 
-        while !open.is_empty() {
-            open.sort_by(|a, b| {
-                let f_a = g_score[*a] + heuristic(*a);
-                let f_b = g_score[*b] + heuristic(*b);
-                f_a.partial_cmp(&f_b)
-                    .unwrap_or(Ordering::Equal)
-                    .then_with(|| {
-                        heuristic(*a)
-                            .partial_cmp(&heuristic(*b))
-                            .unwrap_or(Ordering::Equal)
-                    })
-                    .then_with(|| a.cmp(b))
-            });
-
-            let current = open.remove(0);
-            in_open[current] = false;
+        while let Some(node) = open.pop() {
+            let current = node.idx;
+            if closed[current] {
+                continue;
+            }
             if current == end_idx {
                 let mut cell_path = Vec::new();
                 let mut at = current;
@@ -2336,7 +2332,6 @@ fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
                 cell_path.reverse();
                 return self.smooth_path(cell_path);
             }
-
             closed[current] = true;
             let cur_x = current % self.grid_size;
             let cur_y = current / self.grid_size;
@@ -2372,15 +2367,56 @@ fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
                 if tentative_g < g_score[neighbor_idx] {
                     g_score[neighbor_idx] = tentative_g;
                     parent[neighbor_idx] = current;
-                    if !in_open[neighbor_idx] {
-                        in_open[neighbor_idx] = true;
-                        open.push(neighbor_idx);
-                    }
+                    let h_score = heuristic(neighbor_idx);
+                    open.push(OpenNode {
+                        idx: neighbor_idx,
+                        f_score: tentative_g + h_score,
+                        h_score,
+                    });
                 }
             }
         }
 
         vec![start, end]
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+struct OpenNode {
+    idx: usize,
+    f_score: f64,
+    h_score: f64,
+}
+
+impl PartialEq for OpenNode {
+    fn eq(&self, other: &Self) -> bool {
+        self.idx == other.idx
+            && self.f_score.to_bits() == other.f_score.to_bits()
+            && self.h_score.to_bits() == other.h_score.to_bits()
+    }
+}
+
+impl Eq for OpenNode {}
+
+impl PartialOrd for OpenNode {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for OpenNode {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other
+            .f_score
+            .partial_cmp(&self.f_score)
+            .unwrap_or(Ordering::Equal)
+            .then_with(|| {
+                other
+                    .h_score
+                    .partial_cmp(&self.h_score)
+                    .unwrap_or(Ordering::Equal)
+            })
+            .then_with(|| other.idx.cmp(&self.idx))
     }
 }
 
@@ -2412,10 +2448,24 @@ fn set_champion_direct_path(champion: &mut ChampionRuntime, target: Vec2) {
         }
     }
 
-    let mut path = nav_grid().find_path(champion.pos, target);
+    let grid = nav_grid();
+    if grid.has_line_of_sight(champion.pos, target) {
+        champion.target_path = vec![target];
+        champion.target_path_index = 0;
+        champion.path_stuck_for_sec = 0.0;
+        return;
+    }
 
-    while path.len() > 1 && dist(path[0], champion.pos) < NAV_PATH_TRIVIAL_NODE_EPSILON {
-        path.remove(0);
+    let mut path = grid.find_path(champion.pos, target);
+
+    if path.len() > 1 {
+        let first_useful = path
+            .iter()
+            .position(|node| dist(*node, champion.pos) >= NAV_PATH_TRIVIAL_NODE_EPSILON)
+            .unwrap_or_else(|| path.len().saturating_sub(1));
+        if first_useful > 0 {
+            path.drain(0..first_useful);
+        }
     }
 
     if path.len() <= 1 && dist(champion.pos, target) > NAV_PATH_MIN_DIRECT_DIST {
@@ -3179,6 +3229,40 @@ fn recall_fallback_toward_base(
     macro_ai::recall_fallback_toward_base(champion, threat)
 }
 
+fn safe_recall_anchor(champion: &ChampionRuntime, proposed: Vec2, structures: &[StructureRuntime]) -> Vec2 {
+    if champion.role == "JGL" {
+        return proposed;
+    }
+
+    let enemy_tower = structures
+        .iter()
+        .filter(|structure| {
+            structure.alive
+                && structure.kind == "tower"
+                && normalized_team(&structure.team) != normalized_team(&champion.team)
+                && dist(proposed, structure.pos) <= TOWER_ATTACK_RANGE + 0.045
+        })
+        .min_by(|a, b| {
+            dist(proposed, a.pos)
+                .partial_cmp(&dist(proposed, b.pos))
+                .unwrap_or(Ordering::Equal)
+        });
+
+    let Some(tower) = enemy_tower else {
+        return proposed;
+    };
+
+    let base = base_position_for(&champion.team);
+    let away_from_tower_to_base = normalize(Vec2 {
+        x: base.x - tower.pos.x,
+        y: base.y - tower.pos.y,
+    });
+    Vec2 {
+        x: clamp(tower.pos.x + away_from_tower_to_base.x * (TOWER_ATTACK_RANGE + 0.065), 0.01, 0.99),
+        y: clamp(tower.pos.y + away_from_tower_to_base.y * (TOWER_ATTACK_RANGE + 0.065), 0.01, 0.99),
+    }
+}
+
 fn start_recall(
     champion: &mut ChampionRuntime,
     now: f64,
@@ -3195,7 +3279,7 @@ fn start_recall(
     champion.target_path.clear();
     champion.target_path_index = 0;
     champion.recall_anchor = if should_recall_in_place(champion, champions) {
-        Some(champion.pos)
+        Some(safe_recall_anchor(champion, champion.pos, structures))
     } else {
         let nearest =
             nearest_enemy_champion_snapshot(champion, champions, RECALL_SAFE_ENEMY_RADIUS)
@@ -3204,20 +3288,26 @@ fn start_recall(
             if champion.role == "JGL" {
                 Some(recall_fallback_toward_base(champion, Some(threat)))
             } else {
-                Some(lane_retreat_anchor_pos(
-                    champion, threat.pos, now, champions, minions, structures,
+                Some(safe_recall_anchor(
+                    champion,
+                    lane_retreat_anchor_pos(champion, threat.pos, now, champions, minions, structures),
+                    structures,
                 ))
             }
         } else {
             if champion.role == "JGL" {
                 Some(base_position_for(&champion.team))
             } else {
-                Some(lane_retreat_anchor_pos(
+                Some(safe_recall_anchor(
                     champion,
-                    champion.pos,
-                    now,
-                    champions,
-                    minions,
+                    lane_retreat_anchor_pos(
+                        champion,
+                        champion.pos,
+                        now,
+                        champions,
+                        minions,
+                        structures,
+                    ),
                     structures,
                 ))
             }
@@ -3280,7 +3370,12 @@ fn tick_recall(
         return true;
     }
 
-    let anchor = champion.recall_anchor.unwrap_or(champion.pos);
+    let anchor = safe_recall_anchor(
+        champion,
+        champion.recall_anchor.unwrap_or(champion.pos),
+        structures,
+    );
+    champion.recall_anchor = Some(anchor);
     if dist(champion.pos, anchor) > 0.012 {
         set_champion_direct_path(champion, anchor);
         return true;
@@ -3293,7 +3388,11 @@ fn tick_recall(
             recall_fallback_toward_base(champion, threat)
         } else {
             let threat_pos = threat.map(|enemy| enemy.pos).unwrap_or(champion.pos);
-            lane_retreat_anchor_pos(champion, threat_pos, now, champions, minions, structures)
+            safe_recall_anchor(
+                champion,
+                lane_retreat_anchor_pos(champion, threat_pos, now, champions, minions, structures),
+                structures,
+            )
         };
         champion.recall_anchor = Some(fallback_anchor);
         set_champion_direct_path(champion, fallback_anchor);
@@ -4513,14 +4612,7 @@ fn nearest_attackable_neutral_key(
         .entities
         .values()
         .filter(|timer| timer.alive && timer.unlocked)
-        .filter(|timer| {
-            let max_range = if is_objective_neutral_key(&timer.key) {
-                objective_radius
-            } else {
-                camp_radius
-            };
-            dist(champion.pos, timer.pos) <= max_range
-        })
+        .filter(|timer| neutral_is_attackable_by_champion(champion, timer, camp_radius, objective_radius))
         .collect();
 
     candidates.sort_by(|a, b| {
@@ -4531,6 +4623,24 @@ fn nearest_attackable_neutral_key(
     });
 
     candidates.first().map(|timer| timer.key.clone())
+}
+
+fn neutral_is_attackable_by_champion(
+    champion: &ChampionRuntime,
+    timer: &NeutralTimerRuntime,
+    camp_radius: f64,
+    objective_radius: f64,
+) -> bool {
+    let is_objective = is_objective_neutral_key(&timer.key);
+    let max_range = if is_objective {
+        objective_radius
+    } else {
+        camp_radius
+    };
+    if dist(champion.pos, timer.pos) > max_range {
+        return false;
+    }
+    is_objective || nav_grid().has_line_of_sight(champion.pos, timer.pos)
 }
 
 fn mark_neutral_taken(
@@ -4735,12 +4845,13 @@ fn attack_neutral_if_in_range(
     }
 
     let distance = dist(runtime.champions[champion_idx].pos, timer.pos);
-    let max_range = if is_objective_neutral_key(key) {
+    let is_objective = is_objective_neutral_key(key);
+    let max_range = if is_objective {
         OBJECTIVE_ATTEMPT_RADIUS
     } else {
-        JUNGLE_CAMP_ENGAGE_RADIUS
+        JUNGLE_CAMP_ATTACK_RADIUS
     };
-    if distance > max_range {
+    if distance > max_range || (!is_objective && !nav_grid().has_line_of_sight(runtime.champions[champion_idx].pos, timer.pos)) {
         return false;
     }
 

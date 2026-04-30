@@ -33,6 +33,31 @@ fn is_enemy_jungle_camp_key_for_team(key: &str, team: &str) -> bool {
     (key.ends_with("-blue") || key.ends_with("-red")) && !key.ends_with(own_suffix)
 }
 
+fn own_jungle_camps_available_or_pending(
+    neutral_timers: &NeutralTimersRuntime,
+    team: &str,
+    now: f64,
+) -> bool {
+    neutral_timers.entities.values().any(|timer| {
+        let spawning_soon = timer
+            .next_spawn_at
+            .map(|spawn_at| spawn_at >= now && spawn_at - now <= JUNGLE_CAMP_WAIT_FOR_SPAWN_SEC)
+            .unwrap_or(false);
+        timer.unlocked
+            && is_jungle_camp_key(&timer.key)
+            && !is_objective_neutral_key(&timer.key)
+            && !is_enemy_jungle_camp_key_for_team(&timer.key, team)
+            && (timer.alive || spawning_soon)
+    })
+}
+
+fn neutral_objective_alive(neutral_timers: &NeutralTimersRuntime) -> bool {
+    neutral_timers
+        .entities
+        .values()
+        .any(|timer| timer.alive && timer.unlocked && is_objective_neutral_key(&timer.key))
+}
+
 pub(super) enum ChampionObjectiveAssistPlan {
     None,
     HardAssist {
@@ -256,19 +281,22 @@ pub(super) fn target_priority_rank_for_fight_plan(fight_plan: &str, enemy: &Cham
     }
 }
 
-pub(super) fn combat_target_pos(runtime: &RuntimeState, target: &CombatTarget) -> Option<Vec2> {
+pub(super) fn combat_target_pos(
+    runtime: &RuntimeState,
+    neutral_timers: &NeutralTimersRuntime,
+    target: &CombatTarget,
+) -> Option<Vec2> {
     match target {
         CombatTarget::Champion(idx) => runtime.champions.get(*idx).map(|c| c.pos),
         CombatTarget::Minion(idx) => runtime.minions.get(*idx).map(|m| m.pos),
         CombatTarget::Structure(idx) => runtime.structures.get(*idx).map(|s| s.pos),
-        CombatTarget::Neutral(key) => decode_neutral_timers_state(&runtime.neutral_timers)
-            .and_then(|timers| timers.entities.get(key).cloned())
-            .map(|timer| timer.pos),
+        CombatTarget::Neutral(key) => neutral_timers.entities.get(key).map(|timer| timer.pos),
     }
 }
 
 pub(super) fn is_local_combat_target(
     runtime: &RuntimeState,
+    neutral_timers: &NeutralTimersRuntime,
     champion_idx: usize,
     target: &CombatTarget,
 ) -> bool {
@@ -276,7 +304,7 @@ pub(super) fn is_local_combat_target(
         return false;
     }
     let champion = &runtime.champions[champion_idx];
-    let Some(target_pos) = combat_target_pos(runtime, target) else {
+    let Some(target_pos) = combat_target_pos(runtime, neutral_timers, target) else {
         return false;
     };
 
@@ -290,12 +318,16 @@ pub(super) fn is_local_combat_target(
         return false;
     }
     if let CombatTarget::Neutral(key) = target {
-        let max_range = if is_objective_neutral_key(key) {
+        let is_objective = is_objective_neutral_key(key);
+        let max_range = if is_objective {
             OBJECTIVE_ATTEMPT_RADIUS
         } else {
-            JUNGLE_CAMP_ENGAGE_RADIUS
+            JUNGLE_CAMP_ATTACK_RADIUS
         };
         if target_distance > max_range {
+            return false;
+        }
+        if !is_objective && !nav_grid().has_line_of_sight(champion.pos, target_pos) {
             return false;
         }
     }
@@ -435,6 +467,49 @@ pub(super) fn pick_combat_target(
         "blue"
     };
 
+    // Junglers finish their current/next camp route before considering ganks.
+    if champion.role == "JGL" {
+        if neutral_objective_alive(neutral_timers) {
+            if let Some(neutral_key) = nearest_attackable_neutral_key(
+                champion,
+                neutral_timers,
+                0.0,
+                OBJECTIVE_ATTEMPT_RADIUS,
+            ) {
+                return Some(CombatTarget::Neutral(neutral_key));
+            }
+            return None;
+        }
+
+        if own_jungle_camps_available_or_pending(neutral_timers, &champion.team, now) {
+            if let Some(neutral_key) = nearest_attackable_neutral_key(
+                champion,
+                neutral_timers,
+                JUNGLE_CAMP_ATTACK_RADIUS,
+                0.0,
+            ) {
+                return Some(CombatTarget::Neutral(neutral_key));
+            }
+            return None;
+        }
+
+        let gank_target = runtime
+            .champions
+            .iter()
+            .enumerate()
+            .filter(|(idx, enemy)| {
+                *idx != champion_idx
+                    && is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
+                    && dist(champion.pos, enemy.pos) <= LANE_CHAMPION_TRADE_RADIUS
+                    && has_credible_kill_chance(runtime, champion_idx, *idx, now)
+            })
+            .min_by(|(idx_a, a), (idx_b, b)| {
+                compare_enemy_priority_hp_distance(champion.pos, fight_plan, *idx_a, a, *idx_b, b)
+            })
+            .map(|(idx, _)| idx);
+        return gank_target.map(CombatTarget::Champion);
+    }
+
     if team_has_active_baron_buff(runtime, &champion.team) {
         let baron_siege_structure = runtime
             .structures
@@ -458,60 +533,37 @@ pub(super) fn pick_combat_target(
                             && dist(m.pos, s.pos) <= 0.12
                     })
                     .count();
-                allied_wave_count >= 2
+                allied_wave_count >= 1
             })
             .min_by(|(idx_a, a), (idx_b, b)| {
                 compare_by_distance_stable(champion.pos, *idx_a, a.pos, *idx_b, b.pos)
             })
             .map(|(idx, _)| idx);
         if let Some(structure_idx) = baron_siege_structure {
+            let should_clear_wave = champion.role == "ADC" || champion.role == "MID";
+            if should_clear_wave {
+                let siege_pos = runtime.structures[structure_idx].pos;
+                if let Some(minion_idx) = runtime
+                    .minions
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, minion)| {
+                        minion.alive
+                            && normalized_team(&minion.team) == enemy_team
+                            && normalized_lane(&minion.lane) == champion_lane
+                            && dist(minion.pos, siege_pos) <= 0.1
+                            && dist(champion.pos, minion.pos) <= laner_farm_search_radius(champion)
+                    })
+                    .min_by(|(idx_a, a), (idx_b, b)| {
+                        compare_by_hp_distance_stable(champion.pos, *idx_a, a.hp, a.pos, *idx_b, b.hp, b.pos)
+                    })
+                    .map(|(idx, _)| idx)
+                {
+                    return Some(CombatTarget::Minion(minion_idx));
+                }
+            }
             return Some(CombatTarget::Structure(structure_idx));
         }
-    }
-
-    // Hard jungle priority: neutrals only (no champion targets from combat picker).
-    if champion.role == "JGL" {
-        let own_camps_alive = neutral_timers.entities.values().any(|timer| {
-            timer.alive
-                && is_jungle_camp_key(&timer.key)
-                && !is_enemy_jungle_camp_key_for_team(&timer.key, &champion.team)
-        });
-
-        if own_camps_alive {
-            if let Some(neutral_key) = nearest_attackable_neutral_key(
-                champion,
-                neutral_timers,
-                JUNGLE_CAMP_ENGAGE_RADIUS,
-                OBJECTIVE_ATTEMPT_RADIUS,
-            ) {
-                return Some(CombatTarget::Neutral(neutral_key));
-            }
-            return None;
-        }
-
-        if let Some(neutral_key) = nearest_attackable_neutral_key(
-            champion,
-            neutral_timers,
-            JUNGLE_CAMP_ENGAGE_RADIUS,
-            OBJECTIVE_ATTEMPT_RADIUS,
-        ) {
-            return Some(CombatTarget::Neutral(neutral_key));
-        }
-        return None;
-    }
-
-    // Temporary safety rule: disable jungler ganks outside objective windows.
-    // Junglers only path/fight for neutral camps unless they are already in objective mode.
-    if champion.role == "JGL" && champion.state != "objective" {
-        if let Some(neutral_key) = nearest_attackable_neutral_key(
-            champion,
-            neutral_timers,
-            JUNGLE_CAMP_ENGAGE_RADIUS,
-            OBJECTIVE_ATTEMPT_RADIUS,
-        ) {
-            return Some(CombatTarget::Neutral(neutral_key));
-        }
-        return None;
     }
 
     let allied_group_engage = runtime
@@ -884,7 +936,7 @@ pub(super) fn pick_combat_target(
                         && dist(m.pos, s.pos) <= 0.1
                 })
                 .count();
-            if team_has_active_baron_buff(runtime, &champion.team) && allied_wave_count < 3 {
+            if team_has_active_baron_buff(runtime, &champion.team) && allied_wave_count < 1 {
                 return false;
             }
 
@@ -898,7 +950,7 @@ pub(super) fn pick_combat_target(
                         && dist(m.pos, s.pos) <= 0.08
                 })
                 .count();
-            if enemy_wave_at_structure >= 2 {
+            if !team_has_active_baron_buff(runtime, &champion.team) && enemy_wave_at_structure >= 2 {
                 return false;
             }
 
@@ -969,7 +1021,7 @@ pub(super) fn pick_combat_target(
             if allied_wave_count == 0 {
                 return false;
             }
-            if team_has_active_baron_buff(runtime, &champion.team) && allied_wave_count < 3 {
+            if team_has_active_baron_buff(runtime, &champion.team) && allied_wave_count < 1 {
                 return false;
             }
             let enemy_wave_at_structure = runtime
@@ -982,7 +1034,7 @@ pub(super) fn pick_combat_target(
                         && dist(m.pos, s.pos) <= 0.08
                 })
                 .count();
-            if enemy_wave_at_structure >= 2 {
+            if !team_has_active_baron_buff(runtime, &champion.team) && enemy_wave_at_structure >= 2 {
                 return false;
             }
             true
@@ -1234,12 +1286,12 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
 
             continue;
         };
-        if !is_local_combat_target(runtime, idx, &target) {
+        if !is_local_combat_target(runtime, &neutral_timers, idx, &target) {
             continue;
         }
 
         let attacker_snapshot = runtime.champions[idx].clone();
-        let Some(target_pos) = combat_target_pos(runtime, &target) else {
+        let Some(target_pos) = combat_target_pos(runtime, &neutral_timers, &target) else {
             continue;
         };
 
@@ -1416,10 +1468,19 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                 let lane_mult = champion_lane_damage_multiplier(&runtime.champions[idx]);
                 let defender_empowered = minion_is_baron_empowered(runtime, &runtime.minions[minion_idx]);
                 let baron_defense_mult = if defender_empowered { 0.42 } else { 1.0 };
+                let baron_siege_clear_mult = if team_has_active_baron_buff(runtime, &runtime.champions[idx].team)
+                    && normalized_team(&runtime.minions[minion_idx].team)
+                        != normalized_team(&runtime.champions[idx].team)
+                {
+                    BARON_SIEGE_CHAMPION_MINION_DAMAGE_MULTIPLIER
+                } else {
+                    1.0
+                };
                 let damage = runtime.champions[idx].attack_damage
                     * CHAMPION_DAMAGE_TO_MINION_MULTIPLIER
                     * lane_mult
-                    * baron_defense_mult;
+                    * baron_defense_mult
+                    * baron_siege_clear_mult;
                 runtime.minions[minion_idx].hp -= damage;
                 runtime.minions[minion_idx].last_hit_by_champion_id =
                     Some(runtime.champions[idx].id.clone());

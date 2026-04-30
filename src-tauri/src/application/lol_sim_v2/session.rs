@@ -5,7 +5,7 @@ use serde_json::Value;
 
 use super::{
     LanerCombatStateRuntime, LolChampionCombatProfileInput, LolChampionUltimateInput,
-    SimulatorAiMode, SimulatorPolicyConfig,
+    RuntimeState, SimulatorAiMode, SimulatorPolicyConfig,
 };
 
 #[derive(Default)]
@@ -18,7 +18,7 @@ pub struct LolSimV2StoreState {
 pub struct LolSimV2Session {
     pub id: String,
     pub seed: String,
-    pub state: Value,
+    pub state: RuntimeState,
     pub tick_index: u64,
     pub wave_spawn_at: f64,
     pub next_minion_id: u64,

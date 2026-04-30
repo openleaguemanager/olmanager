@@ -187,57 +187,45 @@ pub(super) fn lane_wave_front_pos(
     minions: &[MinionRuntime],
     structures: &[StructureRuntime],
 ) -> super::Vec2 {
-    let mut allied: Vec<&MinionRuntime> = minions
-        .iter()
-        .filter(|m| {
+    let champion_team = normalized_team(&champion.team);
+    let champion_lane = normalized_lane(&champion.lane);
+    let sample_wave = |allied: bool| -> Option<super::Vec2> {
+        let mut front: [Option<(usize, super::Vec2)>; 3] = [None, None, None];
+        for minion in minions.iter().filter(|m| {
             m.alive
-                && normalized_team(&m.team) == normalized_team(&champion.team)
-                && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
-        })
-        .collect();
-    allied.sort_by(|a, b| b.path_index.cmp(&a.path_index));
-    allied.truncate(3);
+                && normalized_lane(&m.lane) == champion_lane
+                && (normalized_team(&m.team) == champion_team) == allied
+        }) {
+            let entry = (minion.path_index, minion.pos);
+            for slot in 0..front.len() {
+                if front[slot]
+                    .map(|(path_index, _)| entry.0 > path_index)
+                    .unwrap_or(true)
+                {
+                    for shift in ((slot + 1)..front.len()).rev() {
+                        front[shift] = front[shift - 1];
+                    }
+                    front[slot] = Some(entry);
+                    break;
+                }
+            }
+        }
 
-    let mut enemy: Vec<&MinionRuntime> = minions
-        .iter()
-        .filter(|m| {
-            m.alive
-                && normalized_team(&m.team) != normalized_team(&champion.team)
-                && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
-        })
-        .collect();
-    enemy.sort_by(|a, b| b.path_index.cmp(&a.path_index));
-    enemy.truncate(3);
-
-    let allied_wave = if allied.is_empty() {
-        None
-    } else {
-        let sum = allied
-            .iter()
-            .fold(super::Vec2 { x: 0.0, y: 0.0 }, |acc, m| super::Vec2 {
-                x: acc.x + m.pos.x,
-                y: acc.y + m.pos.y,
-            });
-        Some(super::Vec2 {
-            x: sum.x / allied.len() as f64,
-            y: sum.y / allied.len() as f64,
+        let mut count = 0usize;
+        let mut sum = super::Vec2 { x: 0.0, y: 0.0 };
+        for (_, pos) in front.into_iter().flatten() {
+            count += 1;
+            sum.x += pos.x;
+            sum.y += pos.y;
+        }
+        (count > 0).then_some(super::Vec2 {
+            x: sum.x / count as f64,
+            y: sum.y / count as f64,
         })
     };
 
-    let enemy_wave = if enemy.is_empty() {
-        None
-    } else {
-        let sum = enemy
-            .iter()
-            .fold(super::Vec2 { x: 0.0, y: 0.0 }, |acc, m| super::Vec2 {
-                x: acc.x + m.pos.x,
-                y: acc.y + m.pos.y,
-            });
-        Some(super::Vec2 {
-            x: sum.x / enemy.len() as f64,
-            y: sum.y / enemy.len() as f64,
-        })
-    };
+    let allied_wave = sample_wave(true);
+    let enemy_wave = sample_wave(false);
 
     match (allied_wave, enemy_wave) {
         (Some(a), Some(e)) => super::Vec2 {
@@ -365,35 +353,19 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
                 &super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team),
             );
 
-            // Set debug info for AI decisions - this gets serialized to frontend
-            let target_desc = if !champion.target_path.is_empty() {
-                format!("target=({:.2},{:.2})", 
-                    champion.target_path.last().map(|p| p.x).unwrap_or(0.0),
-                    champion.target_path.last().map(|p| p.y).unwrap_or(0.0))
-            } else {
-                "no-path".to_string()
-            };
-            champion.debug_ai_decision = format!(
-                "state:{}->{}|hp:{:.1}%|{}",
-                old_state, 
-                champion.state, 
-                (champion.hp / champion.max_hp.max(1.0) * 100.0),
-                target_desc
-            );
+            if old_state != champion.state || champion.debug_ai_decision.is_empty() {
+                champion.debug_ai_decision = format!(
+                    "state:{}->{}|hp:{:.0}%",
+                    old_state,
+                    champion.state,
+                    champion.hp / champion.max_hp.max(1.0) * 100.0,
+                );
+            }
 
             champion.next_decision_at = now
                 + (super::CHAMPION_DECISION_CADENCE_SEC
                     / champion.staff_execution.clamp(0.96, 1.10));
 
-// Si es un Jungla, no está en base, y se quedó sin ruta (campamentos vacíos):
-            if champion.role == "JGL" && champion.state != "recall" && champion.state != "objective" {
-                if champion.target_path.is_empty() || champion.target_path_index >= champion.target_path.len().saturating_sub(1) {
-                    // Recall seguro a base. Al renacer, decide_champion_state 
-                    // creará una nueva ruta curva limpia hacia los nuevos campamentos.
-                    champion.state = "recall".to_string();
-                    champion.recall_channel_until = now + 8.0; // 8 segundos casteando el Recall
-                }
-            }
         }
 
         if champion.state == "recall" {
@@ -453,13 +425,8 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
                 champion.path_stuck_for_sec = 0.0;
                 champion.next_decision_at = now;
                 if champion.role == "JGL" {
-                    super::start_recall(
-                        champion,
-                        now,
-                        &champion_snapshot,
-                        &runtime.minions,
-                        &runtime.structures,
-                    );
+                    champion.target_path.clear();
+                    champion.target_path_index = 0;
                     continue;
                 }
                 champion.target_path.clear();

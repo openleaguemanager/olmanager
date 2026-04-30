@@ -20,10 +20,11 @@ pub fn init(
         request.ai_mode,
     );
     ensure_runtime_state_defaults(&mut state);
+    let runtime_state = decode_runtime_state(state.clone())?;
     let session = LolSimV2Session {
         id: request.session_id.clone(),
         seed: request.seed,
-        state: state.clone(),
+        state: runtime_state,
         tick_index: 0,
         wave_spawn_at: MINION_FIRST_WAVE_AT,
         next_minion_id: 1,
@@ -61,10 +62,7 @@ pub fn tick(
         .get_mut(&request.session_id)
         .ok_or_else(|| format!("lol sim v2 session not found: {}", request.session_id))?;
 
-    ensure_runtime_state_defaults(&mut session.state);
-
-    let mut runtime: RuntimeState = serde_json::from_value(session.state.clone())
-        .map_err(|err| format!("failed to decode lol_sim_v2 runtime state: {err}"))?;
+    let mut runtime = session.state.clone();
     runtime.lane_combat_state_by_champion = session.lane_combat_state_by_champion.clone();
     runtime.ai_mode = session.ai_mode;
     runtime.policy = session.policy.clone();
@@ -79,22 +77,20 @@ pub fn tick(
 
     if !runtime.running {
         session.lane_combat_state_by_champion = runtime.lane_combat_state_by_champion.clone();
-        session.state = serde_json::to_value(runtime)
-            .map_err(|err| format!("failed to encode lol_sim_v2 runtime state: {err}"))?;
+        session.state = runtime;
         return Ok(LolSimV2StateResponse {
             session_id: session.id.clone(),
-            state: session.state.clone(),
+            state: encode_runtime_state(&session.state)?,
         });
     }
 
     let dt = request.dt_sec.clamp(0.0, 0.05) * speed;
     if dt <= 0.0 {
         session.lane_combat_state_by_champion = runtime.lane_combat_state_by_champion.clone();
-        session.state = serde_json::to_value(runtime)
-            .map_err(|err| format!("failed to encode lol_sim_v2 runtime state: {err}"))?;
+        session.state = runtime;
         return Ok(LolSimV2StateResponse {
             session_id: session.id.clone(),
-            state: session.state.clone(),
+            state: encode_runtime_state(&session.state)?,
         });
     }
 
@@ -117,12 +113,11 @@ pub fn tick(
     }
 
     session.lane_combat_state_by_champion = runtime.lane_combat_state_by_champion.clone();
-    session.state = serde_json::to_value(runtime)
-        .map_err(|err| format!("failed to encode lol_sim_v2 runtime state: {err}"))?;
+    session.state = runtime;
 
     Ok(LolSimV2StateResponse {
         session_id: session.id.clone(),
-        state: session.state.clone(),
+        state: encode_runtime_state(&session.state)?,
     })
 }
 
@@ -140,7 +135,7 @@ pub fn reset(
         .ok_or_else(|| format!("lol sim v2 session not found: {}", request.session_id))?;
 
     session.seed = request.seed;
-    session.state = create_initial_state(
+    let mut state = create_initial_state(
         &session.seed,
         &session.snapshot,
         &session.champion_by_player_id,
@@ -153,14 +148,15 @@ pub fn reset(
         session.policy = policy;
     }
     session.tick_index = 0;
-    ensure_runtime_state_defaults(&mut session.state);
+    ensure_runtime_state_defaults(&mut state);
+    session.state = decode_runtime_state(state)?;
     session.wave_spawn_at = MINION_FIRST_WAVE_AT;
     session.next_minion_id = 1;
     session.lane_combat_state_by_champion.clear();
 
     Ok(LolSimV2StateResponse {
         session_id: session.id.clone(),
-        state: session.state.clone(),
+        state: encode_runtime_state(&session.state)?,
     })
 }
 
@@ -259,10 +255,10 @@ pub fn skip_to_end(
 
         return Ok(LolSimV2SkipToEndResponse {
             session_id: request.session_id,
-            winner: read_winner(&session.state),
-            elapsed_simulated_sec: read_time_sec(&session.state),
+            winner: session.state.winner.clone(),
+            elapsed_simulated_sec: session.state.time_sec,
             ticks: 0,
-            state: session.state.clone(),
+            state: encode_runtime_state(&session.state)?,
         });
     }
 
@@ -275,10 +271,7 @@ pub fn skip_to_end(
         .get_mut(&request.session_id)
         .ok_or_else(|| format!("lol sim v2 session not found: {}", request.session_id))?;
 
-    ensure_runtime_state_defaults(&mut session.state);
-
-    let mut runtime: RuntimeState = serde_json::from_value(session.state.clone())
-        .map_err(|err| format!("failed to decode lol_sim_v2 runtime state: {err}"))?;
+    let mut runtime = session.state.clone();
     runtime.lane_combat_state_by_champion = session.lane_combat_state_by_champion.clone();
     runtime.ai_mode = session.ai_mode;
     runtime.policy = session.policy.clone();
@@ -290,14 +283,13 @@ pub fn skip_to_end(
     if dt <= 0.0 {
         runtime.extra.remove(SKIP_FAST_MODE_EXTRA_KEY);
         session.lane_combat_state_by_champion = runtime.lane_combat_state_by_champion.clone();
-        session.state = serde_json::to_value(runtime)
-            .map_err(|err| format!("failed to encode lol_sim_v2 runtime state: {err}"))?;
+        session.state = runtime;
         return Ok(LolSimV2SkipToEndResponse {
             session_id: request.session_id,
-            winner: read_winner(&session.state),
-            elapsed_simulated_sec: read_time_sec(&session.state),
+            winner: session.state.winner.clone(),
+            elapsed_simulated_sec: session.state.time_sec,
             ticks: 0,
-            state: session.state.clone(),
+            state: encode_runtime_state(&session.state)?,
         });
     }
 
@@ -335,16 +327,25 @@ pub fn skip_to_end(
 
     runtime.extra.remove(SKIP_FAST_MODE_EXTRA_KEY);
     session.lane_combat_state_by_champion = runtime.lane_combat_state_by_champion.clone();
-    session.state = serde_json::to_value(runtime)
-        .map_err(|err| format!("failed to encode lol_sim_v2 runtime state: {err}"))?;
+    session.state = runtime;
 
     Ok(LolSimV2SkipToEndResponse {
         session_id: request.session_id,
-        winner: read_winner(&session.state),
-        elapsed_simulated_sec: read_time_sec(&session.state),
+        winner: session.state.winner.clone(),
+        elapsed_simulated_sec: session.state.time_sec,
         ticks,
-        state: session.state.clone(),
+        state: encode_runtime_state(&session.state)?,
     })
+}
+
+fn decode_runtime_state(state: Value) -> Result<RuntimeState, String> {
+    serde_json::from_value(state)
+        .map_err(|err| format!("failed to decode lol_sim_v2 runtime state: {err}"))
+}
+
+fn encode_runtime_state(state: &RuntimeState) -> Result<Value, String> {
+    serde_json::to_value(state)
+        .map_err(|err| format!("failed to encode lol_sim_v2 runtime state: {err}"))
 }
 
 fn next_run_to_completion_suffix() -> u128 {
