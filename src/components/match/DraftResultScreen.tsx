@@ -34,6 +34,28 @@ export interface DraftResultSeriesGame {
 }
 
 const TEAM_SEEDS: TeamSeed[] = ((teamsSeed as { data?: { teams?: TeamSeed[] } }).data?.teams ?? []) as TeamSeed[];
+const GOLD_CHART_CENTER_Y = 36;
+const GOLD_CHART_HALF_HEIGHT = 28;
+
+type GoldDiffPoint = { minute: number; diff: number };
+
+export type GoldChartPoint = GoldDiffPoint & { x: number; y: number };
+
+export function buildGoldAdvantageChartPoints(timeline: GoldDiffPoint[]): GoldChartPoint[] {
+  const orderedTimeline = [...timeline]
+    .filter((point) => Number.isFinite(point.minute) && Number.isFinite(point.diff))
+    .sort((left, right) => left.minute - right.minute);
+  const maxAbsGold = Math.max(...orderedTimeline.map((point) => Math.abs(point.diff)), 1000) || 1000;
+
+  return orderedTimeline.map((point, idx) => {
+    const x = 6 + (idx / Math.max(1, orderedTimeline.length - 1)) * 88;
+    // diff is always blue gold minus red gold. In SVG, lower y renders higher,
+    // so a larger blue-side advantage MUST move visually up, while red recovery
+    // and red-side leads move down through/below the center line.
+    const y = GOLD_CHART_CENTER_Y - (point.diff / maxAbsGold) * GOLD_CHART_HALF_HEIGHT;
+    return { ...point, x, y };
+  });
+}
 
 const TEAM_BRAND_MAP: Record<string, { tricode: string }> = {
   "g2 esports": { tricode: "G2" },
@@ -92,6 +114,16 @@ function eventPillClass(event: DraftTimelineEvent): string {
   return sideBase;
 }
 
+function formatGoldDiff(value: number): string {
+  const absValue = Math.abs(Math.round(value));
+  if (absValue >= 1000) {
+    const thousands = absValue / 1000;
+    return `${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}k`;
+  }
+
+  return absValue.toString();
+}
+
 export default function DraftResultScreen({
   snapshot,
   controlledSide,
@@ -144,25 +176,62 @@ export default function DraftResultScreen({
   const blueRows = selectedResult.playerResults.filter((row) => row.side === "blue");
   const redRows = selectedResult.playerResults.filter((row) => row.side === "red");
 
-  const maxAbsGold =
-    Math.max(...selectedResult.goldDiffTimeline.map((point) => Math.abs(point.diff)), 1000) ||
-    1000;
+  const chartPoints = buildGoldAdvantageChartPoints(selectedResult.goldDiffTimeline);
+  const maxAbsGold = Math.max(...chartPoints.map((point) => Math.abs(point.diff)), 1000) || 1000;
+  const finalGoldDiff = chartPoints[chartPoints.length - 1]?.diff ?? 0;
+  const leadingSide = finalGoldDiff > 0 ? "blue" : finalGoldDiff < 0 ? "red" : null;
+  const leadingTri = leadingSide === "blue" ? blueTri : leadingSide === "red" ? redTri : null;
+  const peakGoldDiff = chartPoints.reduce(
+    (peak, point) => (Math.abs(point.diff) > Math.abs(peak.diff) ? point : peak),
+    { minute: 0, diff: 0 },
+  );
+  const chartIdSuffix = `${selectedGameIndex}-${blueTri}-${redTri}`.replace(/[^A-Za-z0-9_-]/g, "");
+  const goldAxisLabel = `${t("match.draftResult.goldAdvantage")} (+ ${blueTri}, - ${redTri})`;
 
-  const points = selectedResult.goldDiffTimeline
-    .map((point, idx) => {
-      const x = (idx / Math.max(1, selectedResult.goldDiffTimeline.length - 1)) * 100;
-      const y = 50 - (point.diff / maxAbsGold) * 45;
-      return `${x},${y}`;
-    })
-    .join(" ");
+  const points = chartPoints.map((point) => `${point.x},${point.y}`).join(" ");
+  const areaPath = chartPoints.length > 0
+    ? `M ${chartPoints[0].x},${GOLD_CHART_CENTER_Y} L ${chartPoints.map((point) => `${point.x},${point.y}`).join(" L ")} L ${chartPoints[chartPoints.length - 1].x},${GOLD_CHART_CENTER_Y} Z`
+    : "";
 
   const mvpPhoto = resolvePlayerPhoto(selectedResult.mvp.playerId, selectedResult.mvp.playerName);
-  const nextGameLabel = `${Math.min(seriesLength, seriesGameIndex + 1)}/${seriesLength}`;
+  const playedSeriesGames = Math.max(latestSeriesGame?.gameIndex ?? 1, seriesGamesForTabs.length);
+  const nextGameLabel = `${Math.min(seriesLength, playedSeriesGames + 1)}/${seriesLength}`;
   const targetSeriesWins = seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
+  const seriesWinsFromGames = seriesGamesForTabs.reduce(
+    (score, entry) => {
+      if (entry.winnerSide === controlledSide) {
+        return { ...score, user: score.user + 1 };
+      }
+
+      if (entry.winnerSide === "blue" || entry.winnerSide === "red") {
+        return { ...score, opponent: score.opponent + 1 };
+      }
+
+      return score;
+    },
+    { user: 0, opponent: 0 },
+  );
+  const propSeriesWins = userSeriesWins + opponentSeriesWins;
+  const gameSeriesWins = seriesWinsFromGames.user + seriesWinsFromGames.opponent;
+  const propsClaimFinished = userSeriesWins >= targetSeriesWins || opponentSeriesWins >= targetSeriesWins;
+  const propsSupportedByGames =
+    propsClaimFinished &&
+    propSeriesWins <= seriesLength &&
+    gameSeriesWins >= propSeriesWins;
+  const shouldUseSeriesGamesScore =
+    seriesLength > 1 &&
+    gameSeriesWins > 0 &&
+    (propSeriesWins === 0 || !propsSupportedByGames);
+  const displayedUserSeriesWins = shouldUseSeriesGamesScore ? seriesWinsFromGames.user : userSeriesWins;
+  const displayedOpponentSeriesWins = shouldUseSeriesGamesScore ? seriesWinsFromGames.opponent : opponentSeriesWins;
+  const displayedSeriesWins = displayedUserSeriesWins + displayedOpponentSeriesWins;
+  const displayedWinnerReachedTarget =
+    displayedUserSeriesWins >= targetSeriesWins || displayedOpponentSeriesWins >= targetSeriesWins;
+  const displayedScoreSupportedByGames =
+    displayedSeriesWins <= seriesLength && gameSeriesWins >= displayedSeriesWins;
   const isSeriesFinished =
     seriesLength === 1 ||
-    userSeriesWins >= targetSeriesWins ||
-    opponentSeriesWins >= targetSeriesWins;
+    (displayedWinnerReachedTarget && displayedScoreSupportedByGames);
 
   return (
     <div className="min-h-screen bg-[#050608] text-white p-4 md:p-6">
@@ -184,7 +253,7 @@ export default function DraftResultScreen({
           <p className="mt-2 text-sm text-gray-300">
             {t("match.draftResult.mvp")}: <span className="font-bold text-cyan-300">{selectedResult.mvp.playerName}</span>
           </p>
-          {seriesGamesForTabs.length > 1 ? (
+          {seriesLength > 1 && seriesGamesForTabs.length > 1 ? (
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               {seriesGamesForTabs.map((entry) => {
                 const isSelected = entry.gameIndex === selectedGameIndex;
@@ -203,7 +272,7 @@ export default function DraftResultScreen({
           ) : null}
           {seriesLength > 1 ? (
             <p className="mt-1 text-xs text-gray-400">
-              {t("match.draftResult.series")} ({seriesLength === 3 ? "Bo3" : "Bo5"}) · {userSeriesWins} - {opponentSeriesWins}
+              {t("match.draftResult.series")} ({seriesLength === 3 ? "Bo3" : "Bo5"}) · {displayedUserSeriesWins} - {displayedOpponentSeriesWins}
             </p>
           ) : null}
         </header>
@@ -234,22 +303,124 @@ export default function DraftResultScreen({
               </div>
             </div>
 
-            <div className="rounded-xl border border-cyan-400/25 bg-[#0a1433] p-4">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-cyan-200">{t("match.draftResult.goldAdvantage")}</p>
-              <div className="mt-3 rounded-md bg-[#081028] border border-white/10 p-2">
-                <svg viewBox="0 0 100 100" className="w-full h-36">
-                  <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.2)" strokeDasharray="2 2" />
-                  <polyline
-                    fill="none"
-                    stroke="#22d3ee"
-                    strokeWidth="2"
-                    points={points}
-                  />
-                </svg>
+            <div className="overflow-hidden rounded-xl border border-cyan-400/25 bg-[#0a1433] p-4 shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-cyan-200">{t("match.draftResult.goldAdvantage")}</p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {t("match.draftResult.duration")}: {selectedResult.durationMinutes}m
+                  </p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-gray-400" aria-label={goldAxisLabel}>
+                    <span className="text-cyan-200">+ {blueTri}</span>
+                    <span className="mx-1 text-gray-600">·</span>
+                    <span className="text-orange-200">- {redTri}</span>
+                  </p>
+                </div>
+                <div className={`rounded-lg border px-3 py-2 text-right ${leadingSide === "red" ? "border-orange-400/35 bg-orange-500/10" : leadingSide === "blue" ? "border-cyan-400/35 bg-cyan-500/10" : "border-white/15 bg-white/5"}`}>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-gray-400">{t("match.draftResult.finalGold")}</p>
+                  <p className={`font-heading text-lg font-black ${leadingSide === "red" ? "text-orange-200" : leadingSide === "blue" ? "text-cyan-200" : "text-gray-200"}`}>
+                    {leadingTri ? `${leadingTri} +${formatGoldDiff(finalGoldDiff)}` : t("match.draftResult.evenGold")}
+                  </p>
+                </div>
               </div>
-              <p className="text-xs text-gray-400 mt-2">
-                {t("match.draftResult.duration")}: {selectedResult.durationMinutes}m
-              </p>
+
+              <div className="mt-4 rounded-xl border border-white/10 bg-[#061126] p-3 shadow-inner shadow-black/30">
+                <div className="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em]">
+                  <span className="text-cyan-200">{blueTri}</span>
+                  <span className="text-gray-500">+{formatGoldDiff(maxAbsGold)}</span>
+                </div>
+                <svg viewBox="0 0 100 72" className="h-40 w-full overflow-visible" role="img" aria-label={goldAxisLabel}>
+                  <defs>
+                    <linearGradient id={`gold-line-${chartIdSuffix}`} x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stopColor="#67e8f9" />
+                      <stop offset="48%" stopColor="#22d3ee" />
+                      <stop offset="52%" stopColor="#fb923c" />
+                      <stop offset="100%" stopColor="#fdba74" />
+                    </linearGradient>
+                    <linearGradient id={`gold-area-${chartIdSuffix}`} x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.32" />
+                      <stop offset="50%" stopColor="#22d3ee" stopOpacity="0.06" />
+                      <stop offset="100%" stopColor="#fb923c" stopOpacity="0.22" />
+                    </linearGradient>
+                    <clipPath id={`gold-blue-clip-${chartIdSuffix}`}>
+                      <rect x="0" y="0" width="100" height={GOLD_CHART_CENTER_Y} />
+                    </clipPath>
+                    <clipPath id={`gold-red-clip-${chartIdSuffix}`}>
+                      <rect x="0" y={GOLD_CHART_CENTER_Y} width="100" height={72 - GOLD_CHART_CENTER_Y} />
+                    </clipPath>
+                    <filter id={`gold-glow-${chartIdSuffix}`} x="-20%" y="-30%" width="140%" height="160%">
+                      <feGaussianBlur stdDeviation="1.7" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  <rect x="6" y="8" width="88" height="56" rx="3" fill="rgba(255,255,255,0.02)" />
+                  {[8, 22, 36, 50, 64].map((y) => (
+                    <line key={`gold-grid-${y}`} x1="6" y1={y} x2="94" y2={y} stroke="rgba(255,255,255,0.08)" strokeDasharray={y === 36 ? "0" : "2 3"} />
+                  ))}
+                  <line x1="6" y1="36" x2="94" y2="36" stroke="rgba(255,255,255,0.32)" strokeWidth="0.7" />
+                  <text x="2" y="11" fill="rgba(255,255,255,0.45)" fontSize="4">+{formatGoldDiff(maxAbsGold)}</text>
+                  <text x="2" y="37.5" fill="rgba(255,255,255,0.45)" fontSize="4">0</text>
+                  <text x="2" y="65" fill="rgba(255,255,255,0.45)" fontSize="4">-{formatGoldDiff(maxAbsGold)}</text>
+
+                  {areaPath ? <path d={areaPath} fill={`url(#gold-area-${chartIdSuffix})`} /> : null}
+                  {points ? (
+                    <>
+                      <polyline
+                        fill="none"
+                        stroke="#67e8f9"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2.6"
+                        filter={`url(#gold-glow-${chartIdSuffix})`}
+                        clipPath={`url(#gold-blue-clip-${chartIdSuffix})`}
+                        points={points}
+                      />
+                      <polyline
+                        fill="none"
+                        stroke="#fb923c"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2.6"
+                        filter={`url(#gold-glow-${chartIdSuffix})`}
+                        clipPath={`url(#gold-red-clip-${chartIdSuffix})`}
+                        points={points}
+                      />
+                    </>
+                  ) : null}
+                  {chartPoints.length > 0 ? (
+                    <circle
+                      cx={chartPoints[chartPoints.length - 1].x}
+                      cy={chartPoints[chartPoints.length - 1].y}
+                      r="2.2"
+                      fill={leadingSide === "red" ? "#fb923c" : "#67e8f9"}
+                      stroke="#061126"
+                      strokeWidth="1.2"
+                    />
+                  ) : null}
+                </svg>
+                <div className="mt-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em]">
+                  <span className="text-gray-500">0m</span>
+                  <span className="text-gray-500">-{formatGoldDiff(maxAbsGold)}</span>
+                  <span className="text-orange-200">{redTri}</span>
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2">
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-gray-500">{t("match.draftResult.peakGold")}</p>
+                  <p className={`mt-1 font-bold ${peakGoldDiff.diff < 0 ? "text-orange-200" : "text-cyan-200"}`}>
+                    {(peakGoldDiff.diff < 0 ? redTri : blueTri)} +{formatGoldDiff(peakGoldDiff.diff)} · {peakGoldDiff.minute}m
+                  </p>
+                </div>
+                <div className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2">
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-gray-500">{t("match.draftResult.goldScale")}</p>
+                  <p className="mt-1 font-bold text-gray-200">±{formatGoldDiff(maxAbsGold)}</p>
+                </div>
+              </div>
             </div>
           </aside>
 
@@ -322,7 +493,7 @@ export default function DraftResultScreen({
 
         <div className="flex justify-end">
           <div className="flex items-center gap-2">
-            {onPressConference ? (
+            {onPressConference && isSeriesFinished ? (
               <button
                 className="rounded-md border border-white/20 bg-white/5 hover:bg-white/10 text-white font-heading font-bold uppercase tracking-wide px-4 py-2"
                 onClick={onPressConference}

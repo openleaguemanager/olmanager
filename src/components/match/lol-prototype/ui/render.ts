@@ -332,6 +332,20 @@ export function renderSimulation(
     ctx.globalAlpha = c.alive ? 1 : 0.35;
     const px = c.pos.x * width;
     const py = c.pos.y * height;
+
+    if (c.alive && c.state === "recall" && c.recallChannelUntil > state.timeSec) {
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(96, 165, 250, 0.95)";
+      ctx.lineWidth = 2.4;
+      ctx.arc(px, py, CHAMPION_DRAW_RADIUS + 5.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(191, 219, 254, 0.45)";
+      ctx.lineWidth = 4.8;
+      ctx.arc(px, py, CHAMPION_DRAW_RADIUS + 9, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
     ctx.beginPath();
     ctx.fillStyle = c.team === "blue" ? "#0ea5e9" : "#e11d48";
     ctx.strokeStyle = "#f8fafc";

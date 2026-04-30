@@ -89,6 +89,8 @@ pub fn run() {
             start_new_game,
             export_world_database,
             write_temp_database,
+            load_world_editor_database,
+            save_world_editor_database,
             select_team,
             get_saves,
             load_game,
@@ -168,9 +170,11 @@ pub fn run() {
             lol_sim_v2_tick,
             lol_sim_v2_reset,
             lol_sim_v2_dispose,
-            lol_sim_v2_clear_telemetry_files,
             lol_sim_v2_run_to_completion,
-            lol_sim_v2_skip_to_end
+            lol_sim_v2_skip_to_end,
+            save_manager_avatar,
+            load_manager_avatar,
+            update_manager_profile
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

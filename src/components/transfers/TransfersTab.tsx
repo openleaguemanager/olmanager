@@ -5,7 +5,7 @@ import {
   PlayerSelectionOptions,
   TransferOfferData,
 } from "../../store/gameStore";
-import { Card, CardBody, Badge, CountryFlag } from "../ui";
+import { Card, CardBody, Badge, CountryFlag, RoleBadge } from "../ui";
 import {
   Search,
   TrendingUp,
@@ -16,15 +16,18 @@ import {
   Gavel,
   Check,
   X,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
 } from "lucide-react";
 import {
   getTeamName,
   calcAge,
   formatVal,
   formatWeeklyAmount,
-  positionBadgeVariant,
 } from "../../lib/helpers";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import {
   annualAmountToWeeklyCommitment,
 } from "../../lib/finance";
@@ -42,6 +45,7 @@ import {
   makeTransferBid,
   previewTransferBidFinancialImpact,
   respondToOffer,
+  type TransferDestinationData,
   type TransferBidProjectionData,
   type TransferNegotiationResponseData,
 } from "../../services/transfersService";
@@ -57,6 +61,9 @@ import {
   deriveTransferCollections,
   filterTransferPlayers,
   getCurrentTransferList,
+  sortTransferPlayers,
+  type TransferSortKey,
+  type TransferSortState,
   type TransferTabView,
 } from "./TransfersTab.model";
 
@@ -88,11 +95,39 @@ export default function TransfersTab({
   const [view, setView] = useState<TransferTabView>("my_list");
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState<string | null>(null);
+  const [sort, setSort] = useState<TransferSortState | null>(null);
+
+  const toggleSort = (key: TransferSortKey) => {
+    setSort((current) => {
+      if (!current || current.key !== key) {
+        return { key, direction: "desc" };
+      }
+      if (current.direction === "desc") {
+        return { key, direction: "asc" };
+      }
+      return null;
+    });
+  };
+
+  const renderSortIcon = (key: TransferSortKey) => {
+    if (!sort || sort.key !== key) {
+      return (
+        <ArrowUpDown className="w-3 h-3 text-gray-400 dark:text-gray-500 opacity-60 group-hover/sort:opacity-100 transition-opacity" />
+      );
+    }
+    return sort.direction === "desc" ? (
+      <ArrowDown className="w-3 h-3 text-primary-500" />
+    ) : (
+      <ArrowUp className="w-3 h-3 text-primary-500" />
+    );
+  };
   const [bidTarget, setBidTarget] = useState<PlayerData | null>(null);
   const [bidAmount, setBidAmount] = useState("");
   const [bidResult, setBidResult] = useState<
     TransferNegotiationResponseData["decision"] | "error" | null
   >(null);
+  const [bidDestination, setBidDestination] =
+    useState<TransferDestinationData>("main");
   const [bidLoading, setBidLoading] = useState(false);
   const [bidFeedback, setBidFeedback] =
     useState<TransferNegotiationFeedbackData | null>(null);
@@ -112,8 +147,18 @@ export default function TransfersTab({
 
   const openBidNegotiation = (player: PlayerData) => {
     const existingOffer = getOutgoingNegotiationOffer(player, userTeamId);
+    const userAcademyTeamId = gameState.teams.find(
+      (team) => team.id === userTeamId,
+    )?.academy_team_id ?? gameState.teams.find(
+      (team) => team.team_kind === "Academy" && team.parent_team_id === userTeamId,
+    )?.id;
 
     setBidTarget(player);
+    setBidDestination(
+      existingOffer?.destination_team_id === userAcademyTeamId
+        ? "academy"
+        : "main",
+    );
     setBidAmount(
       String(
         Math.round(
@@ -151,7 +196,7 @@ export default function TransfersTab({
     setBidFeedback(null);
     try {
       const fee = Math.round(parseFloat(bidAmount));
-      const res = await makeTransferBid(bidTarget.id, fee);
+      const res = await makeTransferBid(bidTarget.id, fee, bidDestination);
       setBidResult(res.decision);
       setBidFeedback(res.feedback);
       if (onGameUpdate) onGameUpdate(res.game);
@@ -228,6 +273,11 @@ export default function TransfersTab({
   const myTeam = gameState.teams.find(
     (team) => team.id === gameState.manager.team_id,
   );
+  const academyTeam = gameState.teams.find(
+    (team) => team.id === myTeam?.academy_team_id,
+  ) ?? gameState.teams.find(
+    (team) => team.team_kind === "Academy" && team.parent_team_id === myTeam?.id,
+  ) ?? null;
   const activeBidOffer = bidTarget
     ? getOutgoingNegotiationOffer(bidTarget, userTeamId)
     : null;
@@ -310,7 +360,10 @@ export default function TransfersTab({
     ];
 
   const currentList = getCurrentTransferList(view, transferCollections);
-  const filteredList = filterTransferPlayers(currentList, search, posFilter);
+  const filteredList = sortTransferPlayers(
+    filterTransferPlayers(currentList, search, posFilter),
+    sort,
+  );
   const weeklyWageBudget = myTeam
     ? annualAmountToWeeklyCommitment(myTeam.wage_budget)
     : 0;
@@ -332,6 +385,7 @@ export default function TransfersTab({
         const result = await previewTransferBidFinancialImpact(
           bidTarget.id,
           bidFee,
+          bidDestination,
         );
 
         if (!cancelled) {
@@ -349,7 +403,7 @@ export default function TransfersTab({
     return () => {
       cancelled = true;
     };
-  }, [bidFee, bidTarget]);
+  }, [bidDestination, bidFee, bidTarget]);
 
   const bidSubmitDisabled =
     bidLoading ||
@@ -448,16 +502,18 @@ export default function TransfersTab({
           <button
             onClick={() => setPosFilter(null)}
             className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${!posFilter ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
+            title="All roles"
           >
-            {t("common.all")}
+            <img src="/role-icons/allroles.png" alt="All roles" className="h-3.5 w-3.5" />
           </button>
           {positions.map((pos) => (
             <button
               key={pos}
               onClick={() => setPosFilter(posFilter === pos ? null : pos)}
               className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${posFilter === pos ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
+              title={pos}
             >
-              {pos === "JUNGLE" ? "JG" : pos}
+              <RoleBadge role={pos} size="sm" />
             </button>
           ))}
         </div>
@@ -505,6 +561,9 @@ export default function TransfersTab({
                 <thead>
                   <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      {t("common.photo", "Foto")}
+                    </th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       {t("common.position")}
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -517,13 +576,37 @@ export default function TransfersTab({
                       {t("common.team")}
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.value")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("value")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByValue", "Ordenar por valor")}
+                      >
+                        {t("common.value")}
+                        {renderSortIcon("value")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.wage")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("wage")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByWage", "Ordenar por salario")}
+                      >
+                        {t("common.wage")}
+                        {renderSortIcon("wage")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.ovr")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("ovr")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByOvr", "Ordenar por OVR")}
+                      >
+                        {t("common.ovr")}
+                        {renderSortIcon("ovr")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       {t("common.status")}
@@ -546,6 +629,7 @@ export default function TransfersTab({
                     const age = calcAge(player.date_of_birth);
                     const offersForThisPlayer = player.transfer_offers;
                     const lolRole = getLolRoleForPlayer(player);
+                    const photoSrc = resolvePlayerPhoto(player.id, player.match_name);
                     return (
                       <tr
                         key={player.id}
@@ -553,14 +637,17 @@ export default function TransfersTab({
                         onClick={() => onSelectPlayer(player.id)}
                       >
                         <td className="py-2.5 px-4">
-                          <Badge
-                            variant={positionBadgeVariant(
-                              player.natural_position || player.position,
-                            )}
-                            size="sm"
-                          >
-                            {lolRole === "JUNGLE" ? "JG" : lolRole}
-                          </Badge>
+                          <img
+                            src={photoSrc ?? "/player-photos/107455908655055017.png"}
+                            alt={player.match_name}
+                            className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/player-photos/107455908655055017.png";
+                            }}
+                          />
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <RoleBadge role={lolRole} size="sm" />
                         </td>
                         <td className="py-2.5 px-4">
                           <span className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
@@ -580,17 +667,23 @@ export default function TransfersTab({
                         <td className="py-2.5 px-4 text-sm text-gray-600 dark:text-gray-400 tabular-nums">
                           {age}
                         </td>
-                        <td className="py-2.5 px-4">
+                      <td className="py-2.5 px-4">
+                        {player.team_id ? (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (player.team_id) onSelectTeam(player.team_id);
+                              onSelectTeam(player.team_id!);
                             }}
-                            className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 hover:underline transition-colors"
+                            className="text-left hover:text-primary-500 transition-colors font-medium text-gray-900 dark:text-gray-100"
                           >
-                            {getTeamName(gameState.teams, player.team_id)}
+                            {getTeamName(gameState.teams, player.team_id!)}
                           </button>
-                        </td>
+                        ) : (
+                          <span className="text-gray-500 dark:text-gray-400 italic">
+                            {t("common.freeAgent")}
+                          </span>
+                        )}
+                      </td>
                         <td className="py-2.5 px-4 text-sm text-gray-600 dark:text-gray-400 font-medium tabular-nums">
                           {formatVal(player.market_value)}
                         </td>
@@ -742,6 +835,9 @@ export default function TransfersTab({
           teams={gameState.teams}
           bidAmount={bidAmount}
           onBidAmountChange={setBidAmount}
+          destination={bidDestination}
+          onDestinationChange={setBidDestination}
+          academyTeam={academyTeam}
           myTeam={myTeam ?? null}
           bidFee={bidFee}
           bidProjection={bidProjection}

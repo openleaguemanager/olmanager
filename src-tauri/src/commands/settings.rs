@@ -16,6 +16,8 @@ pub struct AppSettings {
     pub ui_scale: String, // "xsmall" | "small" | "normal" | "large" | "xlarge"
     #[serde(default)]
     pub high_contrast: bool,
+    #[serde(default)]
+    pub debug_tools_enabled: bool,
     #[serde(default = "default_lol_hybrid_open_trade_confidence_high")]
     pub lol_hybrid_open_trade_confidence_high: f64,
     #[serde(default = "default_lol_hybrid_disengage_confidence_low")]
@@ -48,6 +50,7 @@ impl Default for AppSettings {
             confirm_advance: false,
             ui_scale: "normal".to_string(),
             high_contrast: false,
+            debug_tools_enabled: false,
             lol_hybrid_open_trade_confidence_high: default_lol_hybrid_open_trade_confidence_high(),
             lol_hybrid_disengage_confidence_low: default_lol_hybrid_disengage_confidence_low(),
         }

@@ -28,10 +28,12 @@ import {
 import {
   lolSimV2RunToCompletion,
 } from "../components/match/lol-prototype/backend/tauri-client";
-import type {
-  LolSimV1MatchReportInput,
-  LolSimV1PolicyConfig,
-  LolSimV1RuntimeState,
+import {
+  createDefaultObjectivesState,
+  createEmptyNeutralTimersState,
+  type LolSimV1MatchReportInput,
+  type LolSimV1PolicyConfig,
+  type LolSimV1RuntimeState,
 } from "../components/match/lol-prototype/backend/contract-v1";
 import { computeRoleModifiers, ROLE_ORDER, type DraftRole } from "../lib/lolTactics";
 import { getLolStaffEffectsForTeam } from "../lib/lolStaffEffects";
@@ -667,6 +669,68 @@ function readSeriesWins(value: unknown): number {
   return Math.max(0, Math.floor(value));
 }
 
+function getTargetSeriesWins(seriesLength: 1 | 3 | 5): number {
+  return seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
+}
+
+function hasTeamReachedSeriesTarget(
+  seriesLength: 1 | 3 | 5,
+  homeWins: number,
+  awayWins: number,
+): boolean {
+  const targetSeriesWins = getTargetSeriesWins(seriesLength);
+  return homeWins >= targetSeriesWins || awayWins >= targetSeriesWins;
+}
+
+function hasSeriesGamesSupportingScore(
+  seriesLength: 1 | 3 | 5,
+  homeWins: number,
+  awayWins: number,
+  games: StoredSeriesGameResult[],
+): boolean {
+  if (seriesLength <= 1) return true;
+
+  const totalWins = homeWins + awayWins;
+  const decidedGameCount = normalizeStoredSeriesGames(games).filter(
+    (entry) => entry.winnerSide === "blue" || entry.winnerSide === "red",
+  ).length;
+
+  return totalWins > 0 && totalWins <= seriesLength && decidedGameCount >= totalWins;
+}
+
+function hasEnoughSeriesGamesForScore(
+  seriesLength: 1 | 3 | 5,
+  homeWins: number,
+  awayWins: number,
+  games: StoredSeriesGameResult[],
+): boolean {
+  const totalWins = homeWins + awayWins;
+
+  return (
+    totalWins >= getTargetSeriesWins(seriesLength) &&
+    hasSeriesGamesSupportingScore(seriesLength, homeWins, awayWins, games)
+  );
+}
+
+function isSupportedSeriesComplete(
+  seriesLength: 1 | 3 | 5,
+  homeWins: number,
+  awayWins: number,
+  games: StoredSeriesGameResult[],
+): boolean {
+  return (
+    seriesLength <= 1 ||
+    (hasTeamReachedSeriesTarget(seriesLength, homeWins, awayWins) &&
+      hasEnoughSeriesGamesForScore(seriesLength, homeWins, awayWins, games))
+  );
+}
+
+function getNextSeriesGameIndex(games: StoredSeriesGameResult[]): number {
+  const normalizedGames = normalizeStoredSeriesGames(games);
+  const latestGameIndex = Math.max(0, ...normalizedGames.map((entry) => entry.gameIndex));
+  return latestGameIndex + 1;
+}
+
 function normalizeStoredSeriesGames(value: unknown): StoredSeriesGameResult[] {
   if (!Array.isArray(value)) return [];
 
@@ -940,13 +1004,29 @@ export default function MatchSimulation() {
       return;
     }
 
-    const targetSeriesWins = seriesLength === 3 ? 2 : 3;
     const homeWins = readSeriesWins(stored.homeSeriesWins);
     const awayWins = readSeriesWins(stored.awaySeriesWins);
-    const isSeriesComplete =
-      homeWins >= targetSeriesWins || awayWins >= targetSeriesWins;
+    const storedSeriesGames = normalizeStoredSeriesGames(stored.seriesGames);
+    const isSeriesComplete = isSupportedSeriesComplete(seriesLength, homeWins, awayWins, storedSeriesGames);
 
     if (isSeriesComplete) {
+      markActiveSeriesSession(currentFixture.id);
+      try {
+        window.sessionStorage.setItem(getSeriesSessionKey(currentFixture.id), DRAFT_RUNTIME_SESSION_ID);
+      } catch {
+        // no-op
+      }
+      return;
+    }
+
+    const fixtureHomeWins = readSeriesWins(currentFixture.result?.home_wins) || readSeriesWins(currentFixture.result?.home_goals);
+    const fixtureAwayWins = readSeriesWins(currentFixture.result?.away_wins) || readSeriesWins(currentFixture.result?.away_goals);
+    const storedMatchesFixtureScore = fixtureHomeWins === homeWins && fixtureAwayWins === awayWins;
+    if (
+      currentFixture.status !== "Scheduled" &&
+      storedMatchesFixtureScore &&
+      hasSeriesGamesSupportingScore(seriesLength, homeWins, awayWins, storedSeriesGames)
+    ) {
       markActiveSeriesSession(currentFixture.id);
       try {
         window.sessionStorage.setItem(getSeriesSessionKey(currentFixture.id), DRAFT_RUNTIME_SESSION_ID);
@@ -966,7 +1046,15 @@ export default function MatchSimulation() {
     // We keep only completed series results.
     clearStoredFixtureDraftResult(currentFixture.id);
     clearActiveSeriesSession(currentFixture.id);
-  }, [currentFixture?.id, seriesLength]);
+  }, [
+    currentFixture?.id,
+    currentFixture?.result?.away_goals,
+    currentFixture?.result?.away_wins,
+    currentFixture?.result?.home_goals,
+    currentFixture?.result?.home_wins,
+    currentFixture?.status,
+    seriesLength,
+  ]);
 
   useEffect(() => {
     if (!currentFixture?.id) {
@@ -978,7 +1066,6 @@ export default function MatchSimulation() {
     }
 
     const stored = readStoredFixtureDraftResult(currentFixture.id);
-    const targetSeriesWins = seriesLength === 3 ? 2 : seriesLength === 5 ? 3 : 1;
     const fixtureIsScheduled = currentFixture.status === "Scheduled";
     const resumeFromFixtureResult =
       seriesLength <= 1 ||
@@ -991,12 +1078,13 @@ export default function MatchSimulation() {
       : 0;
     const storedHomeWins = readSeriesWins(stored?.homeSeriesWins);
     const storedAwayWins = readSeriesWins(stored?.awaySeriesWins);
-    const persistedWinsEnabled = resumeFromFixtureResult;
+    const storedSeriesGames = normalizeStoredSeriesGames(stored?.seriesGames);
+    const storedSeriesIsComplete =
+      seriesLength > 1 && isSupportedSeriesComplete(seriesLength, storedHomeWins, storedAwayWins, storedSeriesGames);
+    const persistedWinsEnabled = resumeFromFixtureResult || storedSeriesIsComplete;
     const homeWins = persistedWinsEnabled ? Math.max(fromResultHome, storedHomeWins) : 0;
     const awayWins = persistedWinsEnabled ? Math.max(fromResultAway, storedAwayWins) : 0;
-    const storedSeriesComplete =
-      storedHomeWins >= targetSeriesWins || storedAwayWins >= targetSeriesWins;
-    const canReuseStoredState = (seriesLength <= 1 || storedSeriesComplete) && resumeFromFixtureResult;
+    const canReuseStoredState = seriesLength > 1 && resumeFromFixtureResult;
 
     setSeriesHomeWins(homeWins);
     setSeriesAwayWins(awayWins);
@@ -1106,8 +1194,8 @@ export default function MatchSimulation() {
         : seriesHomeWins
       : seriesAwayWins;
 
-  const targetSeriesWins = seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
-  const isSeriesComplete = seriesLength === 1 || userSeriesWins >= targetSeriesWins || opponentSeriesWins >= targetSeriesWins;
+  const isSeriesComplete = isSupportedSeriesComplete(seriesLength, seriesHomeWins, seriesAwayWins, seriesGames);
+  const canOpenPressConference = seriesLength <= 1 || isSeriesComplete;
 
   // Callbacks for stage transitions
   const handleStartMatch = useCallback(() => {
@@ -1219,6 +1307,12 @@ export default function MatchSimulation() {
 
     const snapshotForResult = renderSnapshotWithTactics ?? snapshot;
     if (!snapshotForResult) {
+      if (seriesLength > 1) {
+        console.warn("[MatchSimulation] handleFullTime:blockedSeriesFinalizeWithoutSnapshot", { seriesLength });
+        setStage("draft_result");
+        return;
+      }
+
       void (async () => {
         const finalized = await finalizeMatch(buildLolMatchReport(finalRuntimeState));
         if (finalized) {
@@ -1228,7 +1322,10 @@ export default function MatchSimulation() {
       return;
     }
 
-    setSnapshot(mergeRuntimeEventsIntoSnapshot(snapshotForResult, finalRuntimeState.events));
+    // Keep the canonical fixture home/away snapshot intact. `snapshotForResult` can be
+    // side-swapped to render the user's selected LoL side, and storing that swapped
+    // shape as the base snapshot corrupts subsequent home/away series win tracking.
+    setSnapshot(mergeRuntimeEventsIntoSnapshot(snapshot ?? snapshotForResult, finalRuntimeState.events));
 
     const runtimeBasedResult = buildDraftResultFromRuntime({
       runtime: finalRuntimeState,
@@ -1259,27 +1356,25 @@ export default function MatchSimulation() {
       setDraftResultSimulation(null);
     }
 
-    const targetSeriesWins = seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
+    const targetSeriesWins = getTargetSeriesWins(seriesLength);
     let homeSeriesWins = seriesHomeWins;
     let awaySeriesWins = seriesAwayWins;
     let userSeriesWins = 0;
     let opponentSeriesWins = 0;
     let seriesComplete = seriesLength === 1;
-    let nextSeriesUsedChampionIds = seriesUsedChampionIds;
+    let nextSeriesUsedChampionIds = seriesLength > 1 ? seriesUsedChampionIds : [];
 
     if (currentFixture?.id) {
       const stored = readStoredFixtureDraftResult(currentFixture.id);
       const storedHomeWins = readSeriesWins(stored?.homeSeriesWins);
       const storedAwayWins = readSeriesWins(stored?.awaySeriesWins);
-      const resultHomeWins = readSeriesWins(currentFixture.result?.home_wins) || readSeriesWins(currentFixture.result?.home_goals);
-      const resultAwayWins = readSeriesWins(currentFixture.result?.away_wins) || readSeriesWins(currentFixture.result?.away_goals);
       const existingHomeWins = Math.min(
         targetSeriesWins,
-        Math.max(resultHomeWins, storedHomeWins, seriesHomeWins),
+        Math.max(storedHomeWins, seriesHomeWins),
       );
       const existingAwayWins = Math.min(
         targetSeriesWins,
-        Math.max(resultAwayWins, storedAwayWins, seriesAwayWins),
+        Math.max(storedAwayWins, seriesAwayWins),
       );
 
       const winnerTeamId =
@@ -1331,11 +1426,13 @@ export default function MatchSimulation() {
         ...(draftPayload?.blue.picks ?? []).map((pick) => pick.championId),
         ...(draftPayload?.red.picks ?? []).map((pick) => pick.championId),
       ];
-      nextSeriesUsedChampionIds = Array.from(new Set<string>([
-        ...(stored?.seriesUsedChampionIds ?? []),
-        ...seriesUsedChampionIds,
-        ...pickedThisMap,
-      ]));
+      nextSeriesUsedChampionIds = seriesLength > 1
+        ? Array.from(new Set<string>([
+          ...(stored?.seriesUsedChampionIds ?? []),
+          ...seriesUsedChampionIds,
+          ...pickedThisMap,
+        ]))
+        : [];
 
       const managerTeamId = gameState?.manager.team_id ?? null;
       userSeriesWins =
@@ -1353,10 +1450,8 @@ export default function MatchSimulation() {
 
       setSeriesHomeWins(homeSeriesWins);
       setSeriesAwayWins(awaySeriesWins);
-      setSeriesGameIndex(homeSeriesWins + awaySeriesWins);
       setSeriesUsedChampionIds(nextSeriesUsedChampionIds);
 
-      const currentSeriesGameIndex = homeSeriesWins + awaySeriesWins;
       const nextSeriesGamesByIndex = new Map<number, StoredSeriesGameResult>();
       normalizeStoredSeriesGames(stored?.seriesGames).forEach((entry) => {
         nextSeriesGamesByIndex.set(entry.gameIndex, entry);
@@ -1364,6 +1459,7 @@ export default function MatchSimulation() {
       seriesGames.forEach((entry) => {
         nextSeriesGamesByIndex.set(entry.gameIndex, entry);
       });
+      const currentSeriesGameIndex = getNextSeriesGameIndex(Array.from(nextSeriesGamesByIndex.values()));
       nextSeriesGamesByIndex.set(currentSeriesGameIndex, {
         gameIndex: currentSeriesGameIndex,
         result: resultToPersist,
@@ -1373,6 +1469,7 @@ export default function MatchSimulation() {
         (left, right) => left.gameIndex - right.gameIndex,
       );
       setSeriesGames(nextSeriesGames);
+      setSeriesGameIndex(currentSeriesGameIndex);
 
       persistFixtureDraftResult(currentFixture.id, {
         snapshot: snapshotForResult,
@@ -1388,7 +1485,7 @@ export default function MatchSimulation() {
         seriesUsedChampionIds: nextSeriesUsedChampionIds,
       });
 
-      seriesComplete = homeSeriesWins >= targetSeriesWins || awaySeriesWins >= targetSeriesWins;
+      seriesComplete = isSupportedSeriesComplete(seriesLength, homeSeriesWins, awaySeriesWins, nextSeriesGames);
       if (seriesComplete && currentFixture?.id) {
         clearActiveSeriesSession(currentFixture.id);
       }
@@ -1493,8 +1590,8 @@ export default function MatchSimulation() {
           champions: [],
           minions: [],
           structures: [],
-          objectives: {},
-          neutralTimers: {},
+          objectives: createDefaultObjectivesState(),
+          neutralTimers: createEmptyNeutralTimersState(),
           stats: {
             blue: { kills: simulated.blueKills, towers: 0, dragons: 0, barons: 0, gold: 0 },
             red: { kills: simulated.redKills, towers: 0, dragons: 0, barons: 0, gold: 0 },
@@ -1538,8 +1635,8 @@ export default function MatchSimulation() {
         champions: [],
         minions: [],
         structures: [],
-        objectives: {},
-        neutralTimers: {},
+        objectives: createDefaultObjectivesState(),
+        neutralTimers: createEmptyNeutralTimersState(),
         stats: {
           blue: { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 },
           red: { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 },
@@ -1588,23 +1685,51 @@ export default function MatchSimulation() {
 
   const handlePressConference = useCallback(() => {
     console.info("[MatchSimulation] handlePressConference");
+    if (!canOpenPressConference) {
+      return;
+    }
+
     setStage("press");
-  }, []);
+  }, [canOpenPressConference]);
 
   const handleFinishMatch = useCallback(async () => {
     console.info("[MatchSimulation] handleFinishMatch:start");
+    if (seriesLength > 1 && !isSeriesComplete) {
+      console.warn("[MatchSimulation] handleFinishMatch:blockedIncompleteSeries", {
+        seriesAwayWins,
+        seriesGameCount: seriesGames.length,
+        seriesHomeWins,
+        seriesLength,
+      });
+      return;
+    }
+
     const finalized = await finalizeMatch();
     if (finalized) {
       navigate("/dashboard");
     }
-  }, [finalizeMatch, navigate]);
+  }, [finalizeMatch, isSeriesComplete, navigate, seriesAwayWins, seriesGames.length, seriesHomeWins, seriesLength]);
 
   const handleDraftResultContinue = useCallback((nextUserSide?: "blue" | "red") => {
     if (nextUserSide) {
       setUserSelectedSide(nextUserSide);
     }
 
-    if (!isSeriesComplete && seriesLength > 1) {
+    const stored = currentFixture?.id ? readStoredFixtureDraftResult(currentFixture.id) : null;
+    const latestHomeWins = Math.max(seriesHomeWins, readSeriesWins(stored?.homeSeriesWins));
+    const latestAwayWins = Math.max(seriesAwayWins, readSeriesWins(stored?.awaySeriesWins));
+    const latestSeriesGames = normalizeStoredSeriesGames([
+      ...normalizeStoredSeriesGames(stored?.seriesGames),
+      ...seriesGames,
+    ]);
+    const seriesIsComplete = isSupportedSeriesComplete(
+      seriesLength,
+      latestHomeWins,
+      latestAwayWins,
+      latestSeriesGames,
+    );
+
+    if (!seriesIsComplete && seriesLength > 1) {
       setDraftPayload(null);
       setDraftResultSimulation(null);
       setChampionSelections(null);
@@ -1615,7 +1740,7 @@ export default function MatchSimulation() {
     }
 
     void handleFinishMatch();
-  }, [handleFinishMatch, isSeriesComplete, seriesLength]);
+  }, [currentFixture?.id, handleFinishMatch, seriesAwayWins, seriesGames, seriesHomeWins, seriesLength]);
 
   useEffect(() => {
     if (matchMode !== "delegate") return;
@@ -1694,7 +1819,7 @@ export default function MatchSimulation() {
           seriesLength={seriesLength}
           blueSeriesWins={blueSeriesWins}
           redSeriesWins={redSeriesWins}
-          lockedChampionIds={seriesUsedChampionIds}
+          lockedChampionIds={seriesLength > 1 ? seriesUsedChampionIds : []}
           gameState={gameState}
         />
       );
@@ -1733,7 +1858,7 @@ export default function MatchSimulation() {
               seriesGameIndex={Math.max(1, seriesGameIndex)}
               userSeriesWins={userSeriesWins}
               opponentSeriesWins={opponentSeriesWins}
-              onPressConference={handlePressConference}
+              onPressConference={canOpenPressConference ? handlePressConference : undefined}
               onContinue={handleDraftResultContinue}
             />
           );

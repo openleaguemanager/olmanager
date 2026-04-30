@@ -10,9 +10,9 @@ pub fn upsert_staff(conn: &Connection, s: &Staff) -> Result<(), String> {
 
     conn.execute(
         "INSERT OR REPLACE INTO staff
-         (id, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, role,
-          attributes, team_id, specialization, wage, contract_end)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)",
+          (id, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, profile_image_url, role,
+           attributes, team_id, specialization, wage, contract_end)
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)",
         params![
             s.id,
             s.first_name,
@@ -21,6 +21,7 @@ pub fn upsert_staff(conn: &Connection, s: &Staff) -> Result<(), String> {
             s.nationality,
             s.football_nation,
             s.birth_country,
+            s.profile_image_url,
             role_str,
             attrs_json,
             s.team_id,
@@ -68,7 +69,7 @@ fn parse_specialization(s: &str) -> Option<CoachingSpecialization> {
 pub fn load_all_staff(conn: &Connection) -> Result<Vec<Staff>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, role,
+            "SELECT id, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, profile_image_url, role,
                     attributes, team_id, specialization, wage, contract_end
              FROM staff",
         )
@@ -86,9 +87,9 @@ pub fn load_all_staff(conn: &Connection) -> Result<Vec<Staff>, String> {
 }
 
 fn row_to_staff(row: &rusqlite::Row) -> rusqlite::Result<Staff> {
-    let role_str: String = row.get(7)?;
-    let attrs_json: String = row.get(8)?;
-    let spec_str: Option<String> = row.get(10)?;
+    let role_str: String = row.get(8)?;
+    let attrs_json: String = row.get(9)?;
+    let spec_str: Option<String> = row.get(11)?;
 
     Ok(Staff {
         id: row.get(0)?,
@@ -98,6 +99,7 @@ fn row_to_staff(row: &rusqlite::Row) -> rusqlite::Result<Staff> {
         nationality: row.get(4)?,
         football_nation: row.get(5)?,
         birth_country: row.get(6)?,
+        profile_image_url: row.get(7)?,
         role: parse_role(&role_str),
         attributes: serde_json::from_str(&attrs_json).unwrap_or(StaffAttributes {
             coaching: 50,
@@ -105,10 +107,10 @@ fn row_to_staff(row: &rusqlite::Row) -> rusqlite::Result<Staff> {
             judging_potential: 50,
             physiotherapy: 50,
         }),
-        team_id: row.get(9)?,
+        team_id: row.get(10)?,
         specialization: spec_str.and_then(|s| parse_specialization(&s)),
-        wage: row.get(11)?,
-        contract_end: row.get(12)?,
+        wage: row.get(12)?,
+        contract_end: row.get(13)?,
     })
 }
 

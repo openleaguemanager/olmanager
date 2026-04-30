@@ -1,6 +1,6 @@
 [package]
 name = "openleaguemanager"
-version = "0.1.1"
+version = "0.1.2"
 description = "Open League Manager"
 authors = ["KOI Noboris Development Team <noboriskoi@gmail.com>"]
 edition = "2021"
@@ -33,3 +33,4 @@ engine = { path = "crates/engine" }
 db = { path = "crates/db" }
 chrono = "0.4.44"
 rand = "0.10"
+base64 = "0.22"

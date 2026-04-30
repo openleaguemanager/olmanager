@@ -69,11 +69,25 @@ const EXAMPLE_PHOTO_MAP = new Map<string, string>([
   ...parseExamplePhotoMap(primeLeagueExampleRaw).entries(),
 ]);
 
-export function resolvePlayerPhoto(playerId: string, matchName?: string): string | null {
+function normalizeProfileImageUrl(url?: string | null): string | null {
+  const value = String(url ?? "").trim();
+  if (!value) return null;
+  if (value.startsWith("/images/")) return `/data/lec${value}`;
+  return value;
+}
+
+export function resolvePlayerPhoto(playerId: string, matchName?: string, profileImageUrl?: string | null): string | null {
+  const explicit = normalizeProfileImageUrl(profileImageUrl);
+  if (explicit) return explicit;
+
   const legacy = playerId.match(/^lec-player-(.+)$/);
   if (legacy) return `/player-photos/${legacy[1]}.png`;
 
   const key = normalizeKey(matchName ?? "");
   if (!key) return FALLBACK_PLAYER_PHOTO;
   return PHOTO_BY_IGN.get(key) ?? EXAMPLE_PHOTO_MAP.get(key) ?? FALLBACK_PLAYER_PHOTO;
+}
+
+export function resolveStaffPhoto(profileImageUrl?: string | null): string | null {
+  return normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_PLAYER_PHOTO;
 }

@@ -12,14 +12,6 @@ import type { MatchState, TeamId } from "../engine/types";
 export type LolSimV1EventType = "kill" | "tower" | "dragon" | "baron" | "nexus" | "spawn" | "recall" | "info";
 export type LolSimV1AiMode = "rules" | "hybrid";
 
-export interface LolSimV1TelemetryConfig {
-  enabled?: boolean;
-  sampleEveryTicks?: number;
-  outcomeWindowTicks?: number;
-  decisionChangeOnly?: boolean;
-  outputPath?: string;
-}
-
 export interface LolChampionUltimateProfile {
   archetype: string;
   icon: string;
@@ -60,12 +52,26 @@ export type LolSimV1RuntimeState = Pick<
   goldDiffTimeline?: Array<{ minute: number; diff: number }>;
 };
 
+export function createEmptyNeutralTimersState(): LolSimV1RuntimeState["neutralTimers"] {
+  return {
+    dragonSoulUnlocked: false,
+    elderUnlocked: false,
+    entities: {} as LolSimV1RuntimeState["neutralTimers"]["entities"],
+  };
+}
+
+export function createDefaultObjectivesState(): LolSimV1RuntimeState["objectives"] {
+  return {
+    dragon: { key: "dragon", pos: { x: 0.68, y: 0.58 }, alive: false, nextSpawnAt: 5 * 60 },
+    baron: { key: "baron", pos: { x: 0.32, y: 0.42 }, alive: false, nextSpawnAt: 20 * 60 },
+  };
+}
+
 export interface LolSimV1InitRequest {
   sessionId: string;
   seed: string;
   aiMode?: LolSimV1AiMode;
   policy?: LolSimV1PolicyConfig;
-  telemetry?: LolSimV1TelemetryConfig;
   snapshot: MatchSnapshot;
   championByPlayerId: Record<string, string>;
   championProfilesById: Record<string, ChampionCombatProfile>;
@@ -94,7 +100,6 @@ export interface LolSimV1ResetRequest {
   seed: string;
   aiMode?: LolSimV1AiMode;
   policy?: LolSimV1PolicyConfig;
-  telemetry?: LolSimV1TelemetryConfig;
   initialState?: LolSimV1RuntimeState;
 }
 
@@ -111,7 +116,6 @@ export interface LolSimV1RunToCompletionRequest {
   seed: string;
   aiMode?: LolSimV1AiMode;
   policy?: LolSimV1PolicyConfig;
-  telemetry?: LolSimV1TelemetryConfig;
   snapshot: MatchSnapshot;
   championByPlayerId: Record<string, string>;
   championProfilesById: Record<string, ChampionCombatProfile>;

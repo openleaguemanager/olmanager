@@ -25,6 +25,7 @@ import {
   formatStaffEffectPercent,
   getLolStaffEffectsForTeam,
 } from "../../lib/lolStaffEffects";
+import { resolveStaffPhoto } from "../../lib/playerPhotos";
 
 interface StaffTabProps {
   gameState: GameStateData;
@@ -308,6 +309,7 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
             const ovr = ovrRating(staff);
             const best = bestAttr(staff);
             const impactRows = getStaffImpactRows(staff);
+            const photo = resolveStaffPhoto(staff.profile_image_url);
 
             return (
               <Card key={staff.id}>
@@ -315,9 +317,9 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
                   <div className="flex items-start gap-4">
                     {/* Avatar */}
                     <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center ${roleColor} bg-gray-100 dark:bg-navy-700`}
+                      className={`w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center ${roleColor} bg-gray-100 dark:bg-navy-700`}
                     >
-                      {roleIcon}
+                      {photo ? <img src={photo} alt={`${staff.first_name} ${staff.last_name}`} className="w-full h-full object-cover" loading="lazy" /> : roleIcon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

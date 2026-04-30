@@ -11,6 +11,8 @@ pub struct Player {
     pub football_nation: String,
     #[serde(default)]
     pub birth_country: Option<String>,
+    #[serde(default)]
+    pub profile_image_url: Option<String>,
 
     pub position: Position,
 
@@ -336,6 +338,10 @@ fn default_transfer_offer_round() -> u8 {
     0
 }
 
+fn default_transfer_offer_destination_team_id() -> Option<String> {
+    None
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(default)]
 pub struct PlayerSeasonStats {
@@ -370,6 +376,8 @@ pub struct CareerEntry {
 pub struct TransferOffer {
     pub id: String,
     pub from_team_id: String,
+    #[serde(default = "default_transfer_offer_destination_team_id")]
+    pub destination_team_id: Option<String>,
     pub fee: u64,
     pub wage_offered: u32,
     #[serde(default)]
@@ -519,6 +527,7 @@ impl Player {
             nationality,
             football_nation,
             birth_country,
+            profile_image_url: None,
             natural_position: position.clone(),
             position,
             alternate_positions: Vec::new(),

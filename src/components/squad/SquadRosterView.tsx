@@ -235,7 +235,7 @@ export default function SquadRosterView({
           {sortedRoster.map((player) => {
             const role = resolveRole(player);
             const ovr = calculateLolOvr(player);
-            const photo = resolvePlayerPhoto(player.id, player.match_name);
+            const photo = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
             const fallbackChampion = fallbackChampionForRole(player.id, role);
             const championNames = masteryTopChampionsByPlayer.get(player.id)
               ?? TOP_3_CHAMPIONS_BY_IGN.get(normalizeKey(player.match_name))

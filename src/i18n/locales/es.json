@@ -1106,6 +1106,7 @@
     "important": "Importante",
     "effectOutcomeLabel": "Resultado",
     "chooseResponse": "Elige tu respuesta",
+    "chooseResponseOutcomeVaries": "Elige tu respuesta — el resultado puede variar",
     "responded": "Respuesta enviada",
     "markAllRead": "Marcar todo como leído",
     "clearOld": "Borrar antiguas",
@@ -1173,8 +1174,8 @@
   "boardObjectives": {
     "objective": {
       "LeaguePosition": "Termina entre los {{target}} primeros",
-      "Wins": "Gana al menos {{target}} partidos",
-      "GoalsScored": "Marca al menos {{target}} goles"
+      "Wins": "Gana al menos {{target}} series",
+      "GoalsScored": "Gana al menos {{target}} mapas"
     }
   },
   "transfers": {
@@ -1192,6 +1193,9 @@
     "noTransferMarket": "Sin jugadores disponibles para fichar.",
     "noErlMarket": "Sin jugadores ERL disponibles para fichar.",
     "noLoanMarket": "Sin jugadores disponibles para cesión.",
+    "sortByValue": "Ordenar por valor",
+    "sortByWage": "Ordenar por salario",
+    "sortByOvr": "Ordenar por OVR",
     "transfer": "Fichaje",
     "loan": "Cesión",
     "none": "Ninguna",
@@ -1245,12 +1249,23 @@
     "noSchedule": "No hay calendario de liga disponible.",
     "noLeague": "No hay calendario de liga disponible.",
     "fixtures": "Partidos",
+    "calendar": "Calendario",
+    "today": "Hoy",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "moreMatches": "más",
+    "matchesOnDay": "Partidos del día",
+    "playoffsStartEstimate": "Inicio playoffs (est.)",
+    "playoffsStartEstimateHint": "Fecha estimada — los emparejamientos se generan al cerrar la liga regular.",
+    "seasonStart": "Inicio de temporada",
+    "seasonStartHint": "Día de inicio de la temporada regular.",
     "standings": "Clasificación",
     "viewResult": "Ver resultado",
     "matchday": "Jornada {{number}}",
     "playoffs": "Playoffs",
     "round": "Ronda {{number}}",
-    "season": "Temporada {{number}}"
+    "season": "Temporada {{number}}",
+    "lastResult": "Último resultado"
   },
   "players": {
     "searchPlaceholder": "Buscar por nombre o nacionalidad...",
@@ -1297,6 +1312,8 @@
     "winRateShort": "WR",
     "killsShort": "K",
     "deathsShort": "D",
+    "mapScore": "Mapas",
+    "mapsDiff": "Dif. Mapas",
     "playoffBracketTitle": "Cuadro de playoffs",
     "upperBracket": "Upper Bracket",
     "lowerBracket": "Lower Bracket",
@@ -1811,6 +1828,10 @@
       "bestOfMatch": "Mejor del partido",
       "goldAdvantage": "Ventaja de oro",
       "duration": "Duración",
+      "finalGold": "Final",
+      "evenGold": "Igualado",
+      "peakGold": "Pico",
+      "goldScale": "Escala",
       "performance": "Rendimiento",
       "gameTimeline": "Cronología de la partida",
       "blueNext": "Azul siguiente",
@@ -1860,6 +1881,7 @@
     "viewDetails": "Ver detalles",
     "matchDetails": "Detalles del Partido",
     "scorers": "Goleadores",
+    "tactics":"Preparación de táctica",
     "noGoals": "No se marcaron goles.",
     "matchComplete": "Partido completado.",
     "addressPress": "Atiende a la prensa o regresa.",
@@ -2069,7 +2091,10 @@
     "seasonComplete": "Temporada Completa",
     "champions": "¡Campeones!",
     "position": "Posición",
+    "finalPosition": "Posición final",
     "points": "Puntos",
+    "regularPhaseSummary": "Resumen de fase regular",
+    "regularPhaseStandings": "Clasificación de fase regular (Top 5)",
     "finalStandings": "Clasificación Final (Top 5)",
     "leagueChampions": "Campeones de Liga",
     "startNextSeason": "Iniciar Siguiente Temporada",
@@ -2110,7 +2135,10 @@
       "scout": "Ojeador",
       "performanceStaff": "Staff de Rendimiento",
       "coachingStaff": "Cuerpo Técnico",
-      "academyCoordinator": "Coordinador de Academia"
+      "academyCoordinator": "Coordinador de Academia",
+      "esportmaniacos": "Esportmaníacos",
+      "allioPodcast": "Al Lío Podcast",
+      "elYuste": "el_yuste"
     },
     "role": {
       "chairman": "Presidente",
@@ -2127,7 +2155,10 @@
       "scout": "Ojeador",
       "performanceStaff": "Staff de Rendimiento",
       "coachingStaff": "Cuerpo Técnico",
-      "academyCoordinator": "Coordinador de Academia"
+      "academyCoordinator": "Coordinador de Academia",
+      "esportmaniacos": "Tertulianos",
+      "allioPodcast": "Eros",
+      "elYuste": "el_yuste"
     },
     "source": {
       "sportsGazette": "Dot Esports",
@@ -2185,12 +2216,16 @@
       },
       "boardExpect": {
         "subject": "{{team}} — Objetivos de Temporada",
-        "body": "La junta ha establecido las siguientes expectativas para esta temporada:\n\n• Terminar en la mitad superior de la tabla\n• Mantener la estabilidad financiera\n• Desarrollar jóvenes talentos de la cantera\n\nCumplir estos objetivos fortalecerá su posición. No cumplir las expectativas mínimas puede resultar en una revisión de su cargo.\n\nConfiamos en sus capacidades.",
+        "body": "La junta ha establecido las siguientes expectativas para esta temporada:\n\n• Terminar en la mitad superior de la tabla de LEC\n• Mantener la estabilidad financiera\n• Desarrollar talento de academia para el proyecto de roster\n\nCumplir estos objetivos fortalecerá su posición. No cumplir las expectativas mínimas puede resultar en una revisión de su cargo.\n\nConfiamos en sus capacidades.",
         "actionAccept": "Aceptar Objetivos"
       },
       "boardObjectives": {
         "subject": "Temporada {{season}} — Objetivos de la directiva",
-        "body": "La directiva ha establecido los siguientes objetivos para esta temporada:\n\n1. Terminar entre los primeros {{expectedPos}}\n2. Ganar al menos {{winTarget}} partidos\n3. Marcar al menos {{goalsTarget}} goles\n\nCumplir estos objetivos mejorará la confianza de la directiva en tu gestión. No alcanzar las expectativas puede dar lugar a recortes de presupuesto u otras consecuencias."
+        "body": "La directiva ha establecido los siguientes objetivos para este split:\n\n1. Terminar entre los primeros {{expectedPos}}\n2. Ganar al menos {{winTarget}} series\n3. Ganar al menos {{goalsTarget}} mapas\n\nCumplir estos objetivos mejorará la confianza de la directiva en tu gestión del roster, preparación de draft y rendimiento en escenario. No alcanzar las expectativas puede dar lugar a recortes de presupuesto u otras consecuencias."
+      },
+      "boardObjectiveReview": {
+        "subject": "Temporada {{season}} — Revisión de objetivos de la directiva",
+        "body": "La directiva ha completado su revisión de objetivos de final de split. Has cumplido {{metCount}}/{{total}} objetivos.\n\nImpacto en la satisfacción del mánager: {{satisfactionDelta}}.\n\nEsta revisión refleja el rendimiento competitivo durante el split: clasificación final, victorias en series, mapas ganados, preparación de draft y ejecución del roster."
       },
       "financeCritical": {
         "subject": "URGENTE: Club endeudado",
@@ -2548,6 +2583,49 @@
         "subject": "Reporte semanal de academia: {{academy}}",
         "body": "Resumen semanal de academia:\n- Jugadores activos: {{activePlayers}}\n- OVR promedio: {{avgOvr}}\n- Talentos altos (>= 80): {{highPotential}}\n- Destacados: {{highlights}}\n- Posición ERL actual: #{{position}} de {{total}}\n- Tabla rápida: {{tablePreview}}",
         "bodyWithPromotion": "Resumen semanal de academia:\n- Jugadores activos: {{activePlayers}}\n- OVR promedio: {{avgOvr}}\n- Talentos altos (>= 80): {{highPotential}}\n- Destacados: {{highlights}}\n- Posición ERL actual: #{{position}} de {{total}}\n- Tabla rápida: {{tablePreview}}\n\nRecomendación: {{promotionCount}} jugador(es) listos para promoción -> {{promotionList}}."
+      },
+      "esportmaniacos": {
+        "positive": {
+          "subject0": "Esportmaníacos elogia a {{player}} — la tertulia se pone de acuerdo",
+          "body0": "Los tertulianos de Esportmaníacos han dedicado un buen rato del directo de hoy a hablar de {{player}} en {{team}}.\n\n\"Esta semana no hay nada que criticar. El tío está dominando de una manera bestial.\" Difícil rebatirlo. La cobertura positiva debería subir el ambiente en el vestuario.",
+          "subject1": "Esportmaníacos: {{player}} está cargando a {{team}} este split",
+          "body1": "Los tertulianos de Esportmaníacos rara vez están de acuerdo, pero {{player}} se ha llevado un pase limpio: \"Constante, sólido, sin bajones. Uno de los mejores jugadores de la liga ahora mismo. {{team}} debería hacer lo que fuera por renovarle.\"\n\nBueno para la moral y para el valor de mercado."
+        },
+        "negative": {
+          "subject0": "Esportmaníacos va a por {{player}} — la tertulia no tiene piedad",
+          "body0": "Los tertulianos de Esportmaníacos no se han cortado hoy con {{player}}: \"El tío ha desaparecido por completo. ¿Qué le ha pasado este split? {{team}} no puede seguir dependiendo de un jugador que rinde así.\"\n\nEste tipo de cobertura suele golpear fuerte la moral. Merece la pena hablar con el jugador.",
+          "subject1": "Esportmaníacos cuestiona la consistencia de {{player}} en {{team}}",
+          "body1": "La tertulia de Esportmaníacos de hoy se ha convertido en un análisis a fondo del rendimiento reciente de {{player}}. El veredicto: \"Irregular. Sin constancia. Algunos días está a tope, otros días desaparece. {{team}} merece más de un jugador en ese rol.\"\n\nHay que estar atentos a la moral del jugador."
+        }
+      },
+      "allio": {
+        "subject0": "Al Lío Podcast — Rumor de traspaso: {{player}} en el radar",
+        "body0": "Eros ha soltado un hint de mercato en el último episodio de Al Lío: \"Me están llegando cosas sobre {{player}}. Varios equipos han estado preguntando. Nada confirmado todavía, pero el mercato alrededor de {{team}} se está calentando.\"\n\nTenlo en cuenta al planificar tu plantilla para el próximo split.",
+        "subject1": "Al Lío Podcast — Eros insinúa un movimiento entrante para {{team}}",
+        "body1": "Eros lleva días soltando hints en Al Lío: \"Me han dicho que hay conversaciones alrededor de {{team}}. Algo se está cocinando. No puedo dar nombres todavía, pero estad atentos — este mercato no ha terminado.\"\n\nPuede ser ruido o puede ser real. Vale la pena estar pendiente.",
+        "subject2": "Al Lío Podcast — Leak de formato de liga, Eros lo explica todo",
+        "body2": "El episodio de Al Lío de hoy se ha salido del guion cuando Eros ha revelado un posible leak: \"Me han dicho que la liga está planificando cambios en el formato del split. No es oficial, pero mis fuentes suelen ser fiables. Esto podría cambiar la manera en que los equipos construyen sus plantillas.\"\n\nSi es verdad, puede afectar a tu planificación a largo plazo.",
+        "subject3": "Al Lío Podcast — Bombazo en el mercato, la liga se mueve",
+        "body3": "Eros ha entrado en directo en Al Lío con lo que ha llamado un \"bombazo\": \"Hay un movimiento grande de jugador a punto de ocurrir en la liga que nadie está hablando todavía. Solo os digo esto — algunos equipos van a tener que repensar sus plantillas por completo.\"\n\nMantente alerta — el mercato se mueve.",
+        "rivalInterest": {
+          "subject": "Al Lío Podcast — {{player}} en la órbita de {{rival}}",
+          "body0": "Eros ha abierto el último episodio de Al Lío con una bomba: \"Tengo información de que {{rival}} ha empezado a moverse por {{player}}. Sus analistas llevan semanas revisando sus últimas series y datos de solo queue. No hay oferta formal todavía, pero la cosa se está calentando rápido.\"\n\n¿Cuál es vuestra postura si hacen contacto?",
+          "body1": "Al Lío Podcast ha publicado en exclusiva que {{player}} está en la órbita concreta de {{rival}}.\n\nSegún Eros, el jugador llamó la atención por sus últimos rendimientos en stage. Aún no hay oferta oficial, pero la presión viene creciendo rápido.\n\n¿Cuál es tu postura?"
+        }
+      },
+      "yuste": {
+        "up": {
+          "subject0": "el_yuste — hasta Yuste lo admite: los viewers suben esta semana",
+          "body0": "Yuste ha sorprendido a su stream con una opinión positiva de las que no abundan: \"Voy a ser honesto — los números están subiendo esta semana y no voy a hacerme el tonto. Cuando las partidas son buenas, el público viene. Así de simple.\"\n\nBuen momento para la escena.",
+          "subject1": "el_yuste — las partidas de esta semana hasta han animado a Yuste",
+          "body1": "No es algo que se escuche todos los días: Yuste se ha puesto entusiasta en su stream matinal. \"Esta semana ha entregado. Partidas de verdad, stakes reales, viewers que se han quedado hasta el final. Esto es lo que puede ser la liga cuando se lo propone.\"\n\nBuena semana para estar en los esports."
+        },
+        "down": {
+          "subject0": "el_yuste — los viewers de la liga caen en picado y nadie hace nada",
+          "body0": "Antonio Yuste ha abierto su stream matinal con una queja en toda regla: \"Los números no mienten. Los viewers caen semana tras semana y la liga sigue haciendo lo mismo esperando resultados distintos. C'est fini si no cambian algo.\"\n\nRuido de fondo — pero cuando Yuste habla, la comunidad escucha.",
+          "subject1": "el_yuste — el producto de la liga está roto, según Yuste",
+          "body1": "Yuste ha dedicado una media hora de su stream matinal a analizar el descenso de engagement de la liga: \"Llevo meses diciéndolo. El producto no es suficientemente bueno. El formato aburre, el calendario mata el momentum. Los datos son claros.\"\n\nDuro, pero la audiencia de Yuste se lo toma en serio."
+        }
       }
     },
     "news": {
