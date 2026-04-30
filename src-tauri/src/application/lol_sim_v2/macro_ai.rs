@@ -194,7 +194,7 @@ pub(super) fn allied_wave_ready_for_baron_siege(
             minion.alive
                 && normalized_team(&minion.team) == normalized_team(team)
                 && normalized_lane(&minion.lane) == normalized_lane(lane)
-                && dist(minion.pos, target_pos) <= 0.095
+                && dist(minion.pos, target_pos) <= 0.12
         })
         .count()
         >= 2
@@ -498,6 +498,44 @@ pub(super) fn decide_champion_state(
     }
 
     if let Some(timers) = neutral_timers {
+        if champion.state == "objective" {
+            let allied_nearby = champions
+                .iter()
+                .filter(|ally| {
+                    ally.alive
+                        && normalized_team(&ally.team) == normalized_team(&champion.team)
+                        && dist(ally.pos, champion.pos) <= OBJECTIVE_ASSIST_RADIUS
+                })
+                .count();
+            let enemy_nearby = champions
+                .iter()
+                .filter(|enemy| {
+                    enemy.alive
+                        && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                        && dist(enemy.pos, champion.pos) <= OBJECTIVE_ASSIST_RADIUS
+                })
+                .count();
+            if allied_nearby >= 2 && enemy_nearby >= 1 {
+                if let Some(enemy) = champions
+                    .iter()
+                    .filter(|enemy| {
+                        enemy.alive
+                            && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                            && dist(enemy.pos, champion.pos) <= OBJECTIVE_ASSIST_RADIUS
+                    })
+                    .min_by(|a, b| a.hp.partial_cmp(&b.hp).unwrap_or(Ordering::Equal))
+                {
+                    champion.state = "objective".to_string();
+                    set_champion_direct_path_hysteresis(
+                        champion,
+                        enemy.pos,
+                        OBJECTIVE_PATH_MIN_TARGET_DELTA,
+                    );
+                    return;
+                }
+            }
+        }
+
         let contested_dragon = contested_dragon_attempt_for_team(&champion.team, champions, timers);
         if should_hard_assist_contested_dragon(champion, contested_dragon) {
             if let Some(dragon) = contested_dragon {
@@ -578,6 +616,30 @@ pub(super) fn decide_champion_state(
                 }
             }
         }
+    }
+
+    if champion.role == "JGL" {
+        champion.state = "jungle".to_string();
+        if let Some(timers) = neutral_timers {
+            for key in jungler_macro_jungle_priority_for_team(&champion.team, &team_tactics.jungle_pathing) {
+                if is_enemy_jungle_camp_key_for_team(key, &champion.team) {
+                    continue;
+                }
+                let Some(camp) = timers.entities.get(key) else {
+                    continue;
+                };
+                if !camp.alive || !camp.unlocked || !is_jungle_camp_key(&camp.key) {
+                    continue;
+                }
+                set_champion_direct_path_hysteresis(
+                    champion,
+                    camp.pos,
+                    OBJECTIVE_PATH_MIN_TARGET_DELTA,
+                );
+                return;
+            }
+        }
+        return;
     }
 
     champion.state = "lane".to_string();
@@ -741,7 +803,10 @@ fn maybe_xp_soak_anchor(
 }
 
 pub(super) fn is_objective_neutral_key(key: &str) -> bool {
-    matches!(key, "dragon" | "baron" | "herald" | "voidgrubs" | "elder")
+    matches!(
+        key,
+        "dragon" | "baron" | "herald" | "voidgrubs" | "elder" | "scuttle-top" | "scuttle-bot"
+    )
 }
 
 fn objective_adjacent_lanes(key: &str) -> &'static [&'static str] {
@@ -845,6 +910,28 @@ pub(super) fn active_objective_attempt_for_team<'a>(
         })
         .min_by(|(a, d_a), (b, d_b)| d_a.partial_cmp(d_b).unwrap_or(Ordering::Equal).then_with(|| a.key.cmp(&b.key)))
         .map(|(timer, _)| timer)
+        .or_else(|| {
+            // Proactive setup around objective windows: if jungler is already near,
+            // laners can rotate to create/force the fight even before objective damage starts.
+            neutral_timers
+                .entities
+                .values()
+                .filter(|timer| timer.alive && is_objective_neutral_key(&timer.key))
+                .filter(|timer| dist(allied_jungler.pos, timer.pos) <= OBJECTIVE_ASSIST_RADIUS)
+                .filter(|timer| {
+                    champions.iter().any(|enemy| {
+                        enemy.alive
+                            && normalized_team(&enemy.team) == enemy_team
+                            && dist(enemy.pos, timer.pos) <= MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS
+                    })
+                })
+                .min_by(|a, b| {
+                    dist(allied_jungler.pos, a.pos)
+                        .partial_cmp(&dist(allied_jungler.pos, b.pos))
+                        .unwrap_or(Ordering::Equal)
+                        .then_with(|| a.key.cmp(&b.key))
+                })
+        })
 }
 
 pub(super) fn should_assist_objective_attempt(
@@ -1075,15 +1162,15 @@ pub(super) fn jungler_macro_jungle_priority_for_team(team: &str, jungle_pathing:
     let (own_top, own_bot, enemy_top, enemy_bot): ([&str; 3], [&str; 3], [&str; 3], [&str; 3]) =
         if normalized_team(team) == "red" {
             (
-                ["blue-buff-red", "wolves-red", "gromp-red"],
-                ["red-buff-red", "raptors-red", "krugs-red"],
+                ["gromp-red", "blue-buff-red", "wolves-red"],
+                ["krugs-red", "red-buff-red", "raptors-red"],
                 ["blue-buff-blue", "wolves-blue", "gromp-blue"],
                 ["red-buff-blue", "raptors-blue", "krugs-blue"],
             )
         } else {
             (
-                ["blue-buff-blue", "wolves-blue", "gromp-blue"],
-                ["red-buff-blue", "raptors-blue", "krugs-blue"],
+                ["gromp-blue", "blue-buff-blue", "wolves-blue"],
+                ["krugs-blue", "red-buff-blue", "raptors-blue"],
                 ["blue-buff-red", "wolves-red", "gromp-red"],
                 ["red-buff-red", "raptors-red", "krugs-red"],
             )

@@ -465,7 +465,8 @@ const CHAMPION_DECISION_CADENCE_SEC: f64 = 0.85;
 const MINION_DAMAGE_TO_MINION_MULTIPLIER: f64 = 0.52;
 const MINION_DAMAGE_TO_CHAMPION_MULTIPLIER: f64 = 0.24;
 const MINION_DAMAGE_TO_STRUCTURE_MULTIPLIER: f64 = 0.58;
-const CHAMPION_DAMAGE_TO_MINION_MULTIPLIER: f64 = 1.1;
+const CHAMPION_DAMAGE_TO_MINION_MULTIPLIER: f64 = 2.2;
+const CHAMPION_DAMAGE_TO_CHAMPION_MULTIPLIER: f64 = 1.12;
 const RECALL_TRIGGER_HP_RATIO: f64 = 0.34;
 const RECALL_CHANNEL_SEC: f64 = 6.5;
 const RECALL_REACH_BUFFER_SEC: f64 = 0.8;
@@ -508,8 +509,8 @@ const BARON_BUFF_DURATION_SEC: f64 = 180.0;
 const ELDER_BUFF_DURATION_SEC: f64 = 150.0;
 const ELDER_EXECUTE_HP_RATIO: f64 = 0.20;
 const BARON_MINION_AURA_RADIUS: f64 = 0.12;
-const BARON_MINION_DAMAGE_MULTIPLIER: f64 = 1.12;
-const BARON_MINION_DAMAGE_REDUCTION: f64 = 0.22;
+const BARON_MINION_DAMAGE_MULTIPLIER: f64 = 1.28;
+const BARON_MINION_DAMAGE_REDUCTION: f64 = 0.58;
 const CHAMPION_MAX_LEVEL: i64 = 18;
 const CHAMPION_LEVEL_UP_HP_GAIN: f64 = 92.0;
 const CHAMPION_LEVEL_UP_AD_GAIN: f64 = 3.8;
@@ -557,7 +558,7 @@ const OBJECTIVE_ASSIST_RADIUS: f64 = 0.24;
 const MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS: f64 = 0.52;
 const BASE_DEFENSE_RECALL_DISTANCE: f64 = 0.34;
 const NEXUS_DEFENSE_THREAT_RADIUS: f64 = 0.13;
-const ALLY_HELP_RADIUS: f64 = 0.17;
+const ALLY_HELP_RADIUS: f64 = 0.205;
 const ALLY_HELP_DAMAGE_RECENT_SEC: f64 = 3.2;
 const OFFROLE_JUNGLE_REWARD_MULTIPLIER: f64 = 0.65;
 const JGL_JUNGLE_GOLD_MULTIPLIER: f64 = 0.78;
@@ -1304,24 +1305,24 @@ fn seed_team(
             if normalized_team(team) == "blue" {
                 if team_tactics.jungle_pathing == "BotToTop" {
                     Vec2 {
-                        x: 0.5266927083333334,
-                        y: 0.7421875,
+                        x: 0.568359375,
+                        y: 0.828125,
                     }
                 } else {
                     Vec2 {
-                        x: 0.24934895833333334,
-                        y: 0.4622395833333333,
+                        x: 0.14908854166666666,
+                        y: 0.43359375,
                     }
                 }
             } else if team_tactics.jungle_pathing == "BotToTop" {
                 Vec2 {
-                    x: 0.7545572916666666,
-                    y: 0.5403645833333334,
+                    x: 0.8483072916666666,
+                    y: 0.56640625,
                 }
             } else {
                 Vec2 {
-                    x: 0.478515625,
-                    y: 0.26171875,
+                    x: 0.4381510416666667,
+                    y: 0.16536458333333334,
                 }
             }
         } else {
@@ -1334,7 +1335,7 @@ fn seed_team(
             Vec::new()
         };
         let initial_state = if role_seed.role == "JGL" {
-            "objective"
+            "jungle"
         } else {
             "lane"
         };
@@ -3904,6 +3905,9 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
     }
 
     let champion_snapshot = runtime.champions[champion_idx].clone();
+    if champion_snapshot.role == "JGL" {
+        return false;
+    }
     if champion_snapshot.level < ULTIMATE_UNLOCK_LEVEL || !ultimate_ready(&champion_snapshot, now) {
         return false;
     }
@@ -4849,6 +4853,23 @@ fn should_engage_enemy_champion(
         })
         .count();
 
+    if attacker.role == "MID" {
+        let target_hp_ratio = if target.max_hp <= 0.0 {
+            1.0
+        } else {
+            target.hp / target.max_hp
+        };
+        if hp_ratio < 0.68 {
+            return false;
+        }
+        if target_hp_ratio > 0.42 {
+            return false;
+        }
+        if ally_nearby <= enemy_nearby {
+            return false;
+        }
+    }
+
     if attacker.role == "JGL" {
         if hp_ratio <= 0.35 {
             return false;
@@ -4872,6 +4893,38 @@ fn should_engage_enemy_champion(
         return false;
     }
 
+    if attacker.role == "JGL" {
+        if attacker.state != "objective" {
+            return false;
+        }
+
+        let own_suffix = if normalized_team(&attacker.team) == "blue" {
+            "-blue"
+        } else {
+            "-red"
+        };
+        let own_camps_alive = decode_neutral_timers_state(&runtime.neutral_timers)
+            .map(|timers| {
+                timers.entities.values().any(|timer| {
+                    timer.alive
+                        && is_jungle_camp_key(&timer.key)
+                        && timer.key.ends_with(own_suffix)
+                })
+            })
+            .unwrap_or(false);
+        if own_camps_alive {
+            return false;
+        }
+    }
+
+    if attacker.state == "objective"
+        && ally_nearby >= 2
+        && enemy_nearby >= 1
+        && enemy_hp_ratio <= 0.65
+    {
+        return true;
+    }
+
     let target_under_defending_tower = runtime.structures.iter().any(|structure| {
         structure.alive
             && structure.kind == "tower"
@@ -4879,6 +4932,14 @@ fn should_engage_enemy_champion(
             && dist(structure.pos, target.pos) <= TOWER_AGGRO_VICTIM_RADIUS
             && dist(structure.pos, attacker.pos) <= TOWER_AGGRO_ATTACKER_RADIUS
     });
+
+    if target_under_defending_tower && fight_plan != "Dive" {
+        let secure_under_tower = enemy_hp_ratio <= 0.25
+            || (ally_nearby >= enemy_nearby + 1 && hp_ratio >= enemy_hp_ratio + 0.15);
+        if !secure_under_tower {
+            return false;
+        }
+    }
 
     let pick_force_open = fight_plan == "Pick"
         && (attacker.role == "MID" || attacker.role == "JGL" || attacker.role == "SUP")
@@ -5076,7 +5137,10 @@ fn attack_enemy_champion(runtime: &mut RuntimeState, attacker_idx: usize, target
         let attacker = &mut left[attacker_idx];
         let defender = &mut right[0];
 
-        let outgoing = attacker.attack_damage * attack_damage_multiplier * attacker_micro_mult;
+        let outgoing = attacker.attack_damage
+            * CHAMPION_DAMAGE_TO_CHAMPION_MULTIPLIER
+            * attack_damage_multiplier
+            * attacker_micro_mult;
         defender.hp -= outgoing;
         defender.last_damaged_by_champion_id = Some(attacker.id.clone());
         defender.last_damaged_by_champion_at = now;
@@ -5110,7 +5174,10 @@ fn attack_enemy_champion(runtime: &mut RuntimeState, attacker_idx: usize, target
         let defender = &mut left[target_idx];
         let attacker = &mut right[0];
 
-        let outgoing = attacker.attack_damage * attack_damage_multiplier * attacker_micro_mult;
+        let outgoing = attacker.attack_damage
+            * CHAMPION_DAMAGE_TO_CHAMPION_MULTIPLIER
+            * attack_damage_multiplier
+            * attacker_micro_mult;
         defender.hp -= outgoing;
         defender.last_damaged_by_champion_id = Some(attacker.id.clone());
         defender.last_damaged_by_champion_at = now;

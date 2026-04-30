@@ -1,7 +1,5 @@
 use std::cmp::Ordering;
 
-use log::debug;
-
 use super::{
     base_position_for, clamp, closest_lane_path_index, dist, lane_path_for, normalize,
     normalized_lane, normalized_team, ChampionRuntime, LanePressure, LaneRoleProfile,
@@ -51,7 +49,7 @@ pub(super) fn is_first_wave_contest_active(champion: &ChampionRuntime, now: f64)
 pub(super) fn choose_lane_anchor_index(
     champion: &ChampionRuntime,
     minions: &[MinionRuntime],
-    structures: &[StructureRuntime],
+    _structures: &[StructureRuntime],
 ) -> usize {
     let lane_path = lane_path_for(&champion.team, &champion.lane);
     if lane_path.is_empty() {
@@ -61,8 +59,6 @@ pub(super) fn choose_lane_anchor_index(
     if lane_last_idx == 0 {
         return 0;
     }
-
-    let mid_lane_index = lane_last_idx / 2;
 
     // 1. Dónde está el frente aliado (nuestro escudo)
     let allied_front = minions
@@ -101,24 +97,6 @@ pub(super) fn choose_lane_anchor_index(
 
         return idx;
     }
-
-    let nearest_enemy_lane_minion = minions
-        .iter()
-        .filter(|m| {
-            m.alive
-                && normalized_team(&m.team) != normalized_team(&champion.team)
-                && normalized_lane(&m.lane) == normalized_lane(&champion.lane)
-        })
-        .min_by(|a, b| {
-            dist(a.pos, champion.pos)
-                .partial_cmp(&dist(b.pos, champion.pos))
-                .unwrap_or(Ordering::Equal)
-        });
-
-    let front_idx = allied_front.map(|m| m.path_index.saturating_sub(1)).unwrap_or(0);
-    
-    // Límite de seguridad: Nos quedamos 2 índices por detrás del frente enemigo para no chocar ciegamente
-    let safety_limit_idx = enemy_front.map(|m| m.path_index.saturating_sub(2)).unwrap_or(lane_last_idx);
 
     let current_index = closest_lane_path_index(champion.pos, &lane_path);
     // Empty-lane fallback was too defensive for MID and could pin under own tower.
@@ -403,16 +381,6 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
                 target_desc
             );
 
-            // Log for debugging - appears in npm run tauri dev
-            debug!(
-                "[AI] {} {} | {}",
-                champion.id, champion.team, champion.debug_ai_decision
-            );
-
-            // Keep existing println for immediate visibility
-            if champion.role == "MID" {
-                println!("[DEBUG] {} | {}", champion.id, champion.debug_ai_decision);
-            }
             champion.next_decision_at = now
                 + (super::CHAMPION_DECISION_CADENCE_SEC
                     / champion.staff_execution.clamp(0.96, 1.10));
@@ -444,6 +412,10 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
         }
 
         if champion.target_path.is_empty() {
+            if champion.role == "JGL" {
+                champion.next_decision_at = now;
+                continue;
+            }
             champion.target_path = lane_path_for(&champion.team, &champion.lane);
             champion.target_path_index = 1;
         }
@@ -452,8 +424,6 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
             champion.target_path_index = champion.target_path.len().saturating_sub(1);
         }
 
-        if let Some(target) = champion.target_path.get(champion.target_path_index).copied() {
-            let pre_dist = dist(champion.pos, target);
         if let Some(target) = champion.target_path.get(champion.target_path_index).copied() {
             let pre_dist = dist(champion.pos, target);
             let buffs = super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team);
