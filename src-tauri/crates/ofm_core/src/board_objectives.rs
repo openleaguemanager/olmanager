@@ -1,7 +1,10 @@
 use crate::end_of_season;
 use crate::game::{BoardObjective, Game, ObjectiveType};
+use crate::player_rating::natural_ovr;
 use domain::league::FixtureStatus;
 use domain::message::*;
+use domain::player::Player;
+use domain::team::Team;
 use std::collections::HashMap;
 
 struct ObjectiveTargets {
@@ -10,42 +13,89 @@ struct ObjectiveTargets {
     goals_target: u32,
 }
 
-fn objective_targets(reputation: u32, num_teams: u32) -> ObjectiveTargets {
-    let expected_pos = if reputation >= 80 {
-        1
-    } else if reputation >= 70 {
-        (num_teams / 4).max(2)
-    } else if reputation >= 55 {
-        num_teams / 2
-    } else {
-        (num_teams * 3 / 4).max(num_teams / 2 + 1)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ObjectiveProfile {
+    TitleContender,
+    PlayoffContender,
+    MidTable,
+    Survival,
+}
+
+fn team_strength_score(team: &Team, players: &[Player]) -> f64 {
+    let mut roster_scores = players
+        .iter()
+        .filter(|player| player.team_id.as_deref() == Some(team.id.as_str()))
+        .map(natural_ovr)
+        .collect::<Vec<_>>();
+
+    if roster_scores.is_empty() {
+        return team.reputation as f64;
+    }
+
+    roster_scores.sort_by(|a, b| b.total_cmp(a));
+    let starter_count = roster_scores.len().min(5);
+    roster_scores.iter().take(starter_count).sum::<f64>() / starter_count as f64
+}
+
+fn expected_league_rank(user_team_id: &str, teams: &[Team], players: &[Player]) -> u32 {
+    let Some(user_team) = teams.iter().find(|team| team.id == user_team_id) else {
+        return teams.len().max(1) as u32;
     };
+
+    let user_score = team_strength_score(user_team, players);
+    1 + teams
+        .iter()
+        .filter(|team| team.id != user_team_id)
+        .filter(|team| team_strength_score(team, players) > user_score)
+        .count() as u32
+}
+
+fn objective_profile_for_rank(expected_rank: u32, num_teams: u32) -> ObjectiveProfile {
+    if num_teams <= 2 || expected_rank <= ((num_teams + 4) / 5).max(1) {
+        ObjectiveProfile::TitleContender
+    } else if expected_rank <= num_teams.div_ceil(2) {
+        ObjectiveProfile::PlayoffContender
+    } else if expected_rank <= (num_teams * 3).div_ceil(4) {
+        ObjectiveProfile::MidTable
+    } else {
+        ObjectiveProfile::Survival
+    }
+}
+
+fn objective_targets(expected_rank: u32, num_teams: u32) -> ObjectiveTargets {
+    let profile = objective_profile_for_rank(expected_rank, num_teams);
+    let expected_pos = match profile {
+        ObjectiveProfile::TitleContender => expected_rank.max(1),
+        ObjectiveProfile::PlayoffContender => expected_rank.max(num_teams.div_ceil(2).max(2)),
+        ObjectiveProfile::MidTable => expected_rank.max((num_teams * 3).div_ceil(4).max(2)),
+        ObjectiveProfile::Survival => num_teams.saturating_sub(1).max(1),
+    }
+    .min(num_teams.max(1));
 
     let total_matchdays = if num_teams > 1 {
         (num_teams - 1) * 2
     } else {
         0
     };
-    let win_target = if reputation >= 80 {
-        (total_matchdays * 60 / 100).max(1)
-    } else if reputation >= 65 {
-        (total_matchdays * 45 / 100).max(1)
-    } else {
-        (total_matchdays * 30 / 100).max(1)
+
+    let win_target = match profile {
+        ObjectiveProfile::TitleContender => total_matchdays * 60 / 100,
+        ObjectiveProfile::PlayoffContender => total_matchdays * 45 / 100,
+        ObjectiveProfile::MidTable => total_matchdays * 35 / 100,
+        ObjectiveProfile::Survival => total_matchdays * 25 / 100,
     };
 
-    let goals_target = if reputation >= 75 {
-        (total_matchdays * 2).max(10)
-    } else if reputation >= 55 {
-        (total_matchdays * 3 / 2).max(8)
-    } else {
-        total_matchdays.max(5)
+    let goals_target = match profile {
+        ObjectiveProfile::TitleContender => total_matchdays * 2,
+        ObjectiveProfile::PlayoffContender => total_matchdays * 3 / 2,
+        ObjectiveProfile::MidTable => total_matchdays * 5 / 4,
+        ObjectiveProfile::Survival => total_matchdays,
     };
 
     ObjectiveTargets {
         expected_pos,
-        win_target,
-        goals_target,
+        win_target: win_target.max(1),
+        goals_target: goals_target.max(1),
     }
 }
 
@@ -122,8 +172,8 @@ pub fn generate_objectives(game: &mut Game) {
     };
 
     let num_teams = game.teams.len() as u32;
-    let reputation = team.reputation;
-    let targets = objective_targets(reputation, num_teams);
+    let expected_rank = expected_league_rank(&team.id, &game.teams, &game.players);
+    let targets = objective_targets(expected_rank, num_teams);
 
     game.board_objectives = vec![
         BoardObjective {
@@ -242,7 +292,10 @@ pub fn evaluate_objective_result(game: &Game) -> ObjectiveEvaluation {
 
 #[cfg(test)]
 mod tests {
-    use super::{evaluate_objectives, generate_objectives, update_objective_progress};
+    use super::{
+        ObjectiveProfile, evaluate_objectives, expected_league_rank, generate_objectives,
+        objective_profile_for_rank, update_objective_progress,
+    };
     use crate::clock::GameClock;
     use crate::game::{BoardObjective, Game, ObjectiveType};
     use chrono::{TimeZone, Utc};
@@ -251,6 +304,7 @@ mod tests {
     };
     use domain::manager::Manager;
     use domain::message::{InboxMessage, MessageCategory, MessagePriority};
+    use domain::player::{Player, PlayerAttributes, Position};
     use domain::team::Team;
 
     fn make_team(id: &str, name: &str, reputation: u32) -> Team {
@@ -296,6 +350,90 @@ mod tests {
             season,
             &team_ids,
         ));
+        game
+    }
+
+    fn make_player(id: &str, team_id: &str, overall: u8) -> Player {
+        let attrs = PlayerAttributes {
+            pace: overall,
+            stamina: overall,
+            strength: overall,
+            agility: overall,
+            passing: overall,
+            shooting: overall,
+            tackling: overall,
+            dribbling: overall,
+            defending: overall,
+            positioning: overall,
+            vision: overall,
+            decisions: overall,
+            composure: overall,
+            aggression: overall,
+            teamwork: overall,
+            leadership: overall,
+            handling: overall,
+            reflexes: overall,
+            aerial: overall,
+        };
+        let mut player = Player::new(
+            id.to_string(),
+            id.to_string(),
+            format!("Full {id}"),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            Position::Forward,
+            attrs,
+        );
+        player.team_id = Some(team_id.to_string());
+        player.condition = 100;
+        player
+    }
+
+    fn add_roster(game: &mut Game, team_id: &str, overall: u8) {
+        for idx in 0..5 {
+            game.players.push(make_player(
+                &format!("{team_id}_player_{idx}"),
+                team_id,
+                overall,
+            ));
+        }
+    }
+
+    fn make_ranked_strength_game(user_team_id: &str, user_overall: u8) -> Game {
+        let clock = GameClock::new(Utc.with_ymd_and_hms(2025, 8, 1, 12, 0, 0).unwrap());
+        let mut manager = Manager::new(
+            "mgr1".to_string(),
+            "Alex".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "England".to_string(),
+        );
+        manager.hire(user_team_id.to_string());
+
+        let teams: Vec<Team> = (1..=10)
+            .map(|idx| make_team(&format!("team{idx}"), &format!("Team {idx}"), 50))
+            .collect();
+        let team_ids: Vec<String> = teams.iter().map(|team| team.id.clone()).collect();
+        let mut game = Game::new(clock, manager, teams, vec![], vec![], vec![]);
+        game.league = Some(League::new(
+            "league1".to_string(),
+            "Test League".to_string(),
+            1,
+            &team_ids,
+        ));
+
+        let opponent_strengths = [88, 82, 76, 70, 64, 58, 52, 46, 40];
+        for idx in 1..=10 {
+            let team_id = format!("team{idx}");
+            let overall = if team_id == user_team_id {
+                user_overall
+            } else {
+                let opponent_idx = if idx == 1 { 0 } else { idx - 2 };
+                opponent_strengths[opponent_idx]
+            };
+            add_roster(&mut game, &team_id, overall);
+        }
+
         game
     }
 
@@ -414,6 +552,71 @@ mod tests {
                 .count(),
             1
         );
+    }
+
+    #[test]
+    fn expected_league_rank_uses_roster_strength_over_reputation() {
+        let game = make_ranked_strength_game("team1", 90);
+
+        assert_eq!(expected_league_rank("team1", &game.teams, &game.players), 1);
+        assert_eq!(
+            objective_profile_for_rank(1, 10),
+            ObjectiveProfile::TitleContender
+        );
+
+        let game = make_ranked_strength_game("team5", 67);
+
+        assert_eq!(expected_league_rank("team5", &game.teams, &game.players), 5);
+        assert_eq!(
+            objective_profile_for_rank(5, 10),
+            ObjectiveProfile::PlayoffContender
+        );
+
+        let game = make_ranked_strength_game("team10", 35);
+
+        assert_eq!(
+            expected_league_rank("team10", &game.teams, &game.players),
+            10
+        );
+        assert_eq!(
+            objective_profile_for_rank(10, 10),
+            ObjectiveProfile::Survival
+        );
+    }
+
+    #[test]
+    fn generate_objectives_scales_targets_for_strong_mid_and_weak_rosters() {
+        let mut strong_game = make_ranked_strength_game("team1", 90);
+        generate_objectives(&mut strong_game);
+
+        let strong_position = objective_by_id(&strong_game, "obj_position").target;
+        let strong_wins = objective_by_id(&strong_game, "obj_wins").target;
+        let strong_maps = objective_by_id(&strong_game, "obj_goals").target;
+
+        assert_eq!(strong_position, 1);
+
+        let mut mid_game = make_ranked_strength_game("team5", 67);
+        generate_objectives(&mut mid_game);
+
+        let mid_position = objective_by_id(&mid_game, "obj_position").target;
+        let mid_wins = objective_by_id(&mid_game, "obj_wins").target;
+        let mid_maps = objective_by_id(&mid_game, "obj_goals").target;
+
+        assert!(mid_position > strong_position);
+        assert!(mid_wins < strong_wins);
+        assert!(mid_maps < strong_maps);
+
+        let mut weak_game = make_ranked_strength_game("team10", 35);
+        generate_objectives(&mut weak_game);
+
+        let weak_position = objective_by_id(&weak_game, "obj_position").target;
+        let weak_wins = objective_by_id(&weak_game, "obj_wins").target;
+        let weak_maps = objective_by_id(&weak_game, "obj_goals").target;
+
+        assert!(weak_position > mid_position);
+        assert!(weak_wins < mid_wins);
+        assert!(weak_maps < mid_maps);
+        assert_eq!(weak_position, 9);
     }
 
     #[test]
