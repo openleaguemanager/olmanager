@@ -17,6 +17,7 @@ import {
   Trash2,
   Download,
   Globe,
+  Bug,
   Type,
   Maximize,
   Minimize,
@@ -342,6 +343,22 @@ export default function Settings() {
               checked={settings.confirm_advance}
               onChange={(v) => handleUpdate({ confirm_advance: v })}
             />
+          </SettingRow>
+
+          <SettingRow
+            label={t("settings.debugTools", "Debug tools")}
+            description={t(
+              "settings.debugToolsDesc",
+              "Enable internal tools like draft skip and World Editor",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <Bug className="w-4 h-4 text-gray-400" />
+              <Toggle
+                checked={settings.debug_tools_enabled}
+                onChange={(v) => handleUpdate({ debug_tools_enabled: v })}
+              />
+            </div>
           </SettingRow>
         </Section>
 

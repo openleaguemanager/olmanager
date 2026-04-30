@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { MatchSnapshot } from "./types";
 import type { GameStateData } from "../../store/gameStore";
+import { useSettingsStore } from "../../store/settingsStore";
 import { getChampionTiming } from "../../lib/championTiming";
 import { getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
@@ -664,6 +665,9 @@ export default function ChampionDraft({
   gameState,
 }: ChampionDraftProps) {
   const { t } = useTranslation();
+  const debugToolsEnabled = useSettingsStore(
+    (state) => state.settings.debug_tools_enabled,
+  );
   const [champions, setChampions] = useState<ChampionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -2784,7 +2788,7 @@ export default function ChampionDraft({
                 ) : null}
               </div>
 
-              {!finished ? (
+              {!finished && debugToolsEnabled ? (
                 <div className="relative flex justify-end">
                   <button
                     type="button"

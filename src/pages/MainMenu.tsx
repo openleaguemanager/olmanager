@@ -4,6 +4,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameStore";
+import { useSettingsStore } from "../store/settingsStore";
 import { Button, ThemeToggle, DatePicker, CountryFlag } from "../components/ui";
 import SavesList from "../components/menu/SavesList";
 import {
@@ -117,6 +118,9 @@ function logNationalityDebug(
 export default function MainMenu() {
   const navigate = useNavigate();
   const setGameActive = useGameStore((state) => state.setGameActive);
+  const debugToolsEnabled = useSettingsStore(
+    (state) => state.settings.debug_tools_enabled,
+  );
   const { t, i18n } = useTranslation();
 
   const [menuState, setMenuState] = useState<
@@ -421,16 +425,29 @@ export default function MainMenu() {
               </button>
 
               <button
-                onClick={() => navigate("/world-editor")}
-                className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-primary-400 dark:hover:border-primary-400 shadow-sm"
+                onClick={() => {
+                  if (debugToolsEnabled) navigate("/world-editor");
+                }}
+                disabled={!debugToolsEnabled}
+                aria-disabled={!debugToolsEnabled}
+                title={
+                  debugToolsEnabled
+                    ? "World Editor"
+                    : "Enable debug tools in Settings to access World Editor"
+                }
+                className={`group flex items-center justify-between w-full p-4 rounded-xl transition-all duration-300 border shadow-sm ${
+                  debugToolsEnabled
+                    ? "bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-navy-600 hover:border-primary-400 dark:hover:border-primary-400"
+                    : "bg-gray-100 dark:bg-navy-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-navy-700 opacity-60 cursor-not-allowed"
+                }`}
               >
                 <div className="flex items-center gap-3">
-                  <Database className="w-6 h-6 text-primary-500 dark:text-primary-400" />
+                  <Database className={`w-6 h-6 ${debugToolsEnabled ? "text-primary-500 dark:text-primary-400" : "text-gray-400 dark:text-gray-600"}`} />
                   <span className="font-heading font-bold text-lg uppercase tracking-wide">
                     World Editor
                   </span>
                 </div>
-                <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-primary-500" />
+                <ChevronRight className={`w-5 h-5 transition-all ${debugToolsEnabled ? "opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 text-primary-500" : "opacity-30 text-gray-400"}`} />
               </button>
 
               <button
