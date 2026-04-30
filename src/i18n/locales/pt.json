@@ -1306,6 +1306,8 @@
     "winRateShort": "WR",
     "killsShort": "K",
     "deathsShort": "D",
+    "mapScore": "Mapas",
+    "mapsDiff": "Dif. Mapas",
     "playoffBracketTitle": "Chave dos playoffs",
     "upperBracket": "Chave superior",
     "lowerBracket": "Chave inferior",
