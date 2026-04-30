@@ -24,34 +24,28 @@ mod vision;
 mod waves;
 
 pub use api::*;
+use economy::{champion_kill_rewards, jungle_camp_cs_reward, jungle_camp_reward};
+use events::{log_event, push_event};
+use layout::{
+    BASE_POSITION_BLUE, BASE_POSITION_RED, LANE_PATH_BOT_BLUE, LANE_PATH_MID_BLUE,
+    LANE_PATH_TOP_BLUE, ROLE_SEEDS, STRUCTURE_LAYOUT,
+};
+use objectives::{
+    process_dragon_capture, resolve_neutral_capture_decision, sync_objectives_from_neutral_timers,
+    tick_neutral_timers, NeutralCaptureKind,
+};
 pub use runtime::{dispose, init, reset, run_to_completion, skip_to_end, tick};
 pub use session::*;
-pub use types::*;
-use events::{log_event, push_event};
-use layout::{BASE_POSITION_BLUE, BASE_POSITION_RED, LANE_PATH_BOT_BLUE, LANE_PATH_MID_BLUE, LANE_PATH_TOP_BLUE, ROLE_SEEDS, STRUCTURE_LAYOUT};
-use economy::{champion_kill_rewards, jungle_camp_cs_reward, jungle_camp_reward};
-use objectives::{
-    process_dragon_capture,
-    resolve_neutral_capture_decision,
-    sync_objectives_from_neutral_timers,
-    tick_neutral_timers,
-    NeutralCaptureKind,
-};
-use state_init::{
-    build_neutral_timers_state, create_initial_state, ensure_runtime_state_defaults,
-};
+use state_init::{build_neutral_timers_state, create_initial_state, ensure_runtime_state_defaults};
 use structures::{
-    apply_damage_to_structure,
-    create_structures, is_structure_targetable,
-    resolve_structure_combat,
+    apply_damage_to_structure, create_structures, is_structure_targetable, resolve_structure_combat,
 };
+pub use types::*;
 use types::{
     RuntimeEvent, RuntimeStats, RuntimeSummonerSpellSlot, RuntimeTeamStats, RuntimeUltimateSlot,
     Vec2, WardRuntime,
 };
-use util::{
-    as_mut_object, clamp, dist, normalize, ratio_or_zero, read_time_sec, read_winner,
-};
+use util::{as_mut_object, clamp, dist, normalize, ratio_or_zero, read_time_sec, read_winner};
 use vision::{place_wards, process_sweepers, team_has_vision_at};
 
 fn default_visible_stat() -> f64 {
@@ -61,8 +55,6 @@ fn default_visible_stat() -> f64 {
 fn default_staff_execution() -> f64 {
     1.0
 }
-
-
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "lowercase")]
@@ -81,7 +73,6 @@ impl SimulatorAiMode {
     }
 }
 
- 
 #[derive(Clone)]
 struct SnapshotPlayer {
     id: String,
@@ -2002,7 +1993,6 @@ fn team_buffs_ref<'a>(buffs: &'a RuntimeBuffState, team: &str) -> &'a RuntimeTea
     }
 }
 
-
 fn normalize_attack_type(raw: &str) -> &'static str {
     if raw.eq_ignore_ascii_case("ranged") {
         "ranged"
@@ -2207,7 +2197,7 @@ impl NavGrid {
         GridCell { cx, cy }
     }
 
-fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
+    fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
         let mut x0 = self.to_cell(a.x) as isize;
         let mut y0 = self.to_cell(a.y) as isize;
         let x1 = self.to_cell(b.x) as isize;
@@ -2228,11 +2218,12 @@ fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
             }
 
             let e2 = 2 * err;
-            
+
             // Strictly check adjacent cells for diagonal movement to prevent corner-cutting through walls
             if e2 > -dy && e2 < dx {
-                if self.is_blocked_cell((x0 + sx) as usize, y0 as usize) || 
-                   self.is_blocked_cell(x0 as usize, (y0 + sy) as usize) {
+                if self.is_blocked_cell((x0 + sx) as usize, y0 as usize)
+                    || self.is_blocked_cell(x0 as usize, (y0 + sy) as usize)
+                {
                     return false;
                 }
             }
@@ -3229,7 +3220,11 @@ fn recall_fallback_toward_base(
     macro_ai::recall_fallback_toward_base(champion, threat)
 }
 
-fn safe_recall_anchor(champion: &ChampionRuntime, proposed: Vec2, structures: &[StructureRuntime]) -> Vec2 {
+fn safe_recall_anchor(
+    champion: &ChampionRuntime,
+    proposed: Vec2,
+    structures: &[StructureRuntime],
+) -> Vec2 {
     if champion.role == "JGL" {
         return proposed;
     }
@@ -3258,8 +3253,16 @@ fn safe_recall_anchor(champion: &ChampionRuntime, proposed: Vec2, structures: &[
         y: base.y - tower.pos.y,
     });
     Vec2 {
-        x: clamp(tower.pos.x + away_from_tower_to_base.x * (TOWER_ATTACK_RANGE + 0.065), 0.01, 0.99),
-        y: clamp(tower.pos.y + away_from_tower_to_base.y * (TOWER_ATTACK_RANGE + 0.065), 0.01, 0.99),
+        x: clamp(
+            tower.pos.x + away_from_tower_to_base.x * (TOWER_ATTACK_RANGE + 0.065),
+            0.01,
+            0.99,
+        ),
+        y: clamp(
+            tower.pos.y + away_from_tower_to_base.y * (TOWER_ATTACK_RANGE + 0.065),
+            0.01,
+            0.99,
+        ),
     }
 }
 
@@ -3290,7 +3293,9 @@ fn start_recall(
             } else {
                 Some(safe_recall_anchor(
                     champion,
-                    lane_retreat_anchor_pos(champion, threat.pos, now, champions, minions, structures),
+                    lane_retreat_anchor_pos(
+                        champion, threat.pos, now, champions, minions, structures,
+                    ),
                     structures,
                 ))
             }
@@ -3665,7 +3670,6 @@ fn set_spell_cd(champion: &mut ChampionRuntime, key: &str, now: f64, cooldown_se
 fn champion_is_banished(champion: &ChampionRuntime) -> bool {
     champion.realm_banished_until > 0.0
 }
-
 
 fn maybe_upgrade_trinket_to_oracle(champion: &mut ChampionRuntime, now: f64) {
     if champion.trinket_swapped || now < TRINKET_SWAP_UNLOCK_AT_SEC {
@@ -4612,7 +4616,9 @@ fn nearest_attackable_neutral_key(
         .entities
         .values()
         .filter(|timer| timer.alive && timer.unlocked)
-        .filter(|timer| neutral_is_attackable_by_champion(champion, timer, camp_radius, objective_radius))
+        .filter(|timer| {
+            neutral_is_attackable_by_champion(champion, timer, camp_radius, objective_radius)
+        })
         .collect();
 
     candidates.sort_by(|a, b| {
@@ -4726,8 +4732,7 @@ fn mark_neutral_taken(
             NeutralCaptureKind::Dragon => {
                 team_stats_mut(&mut runtime.stats, &killer_team).dragons += 1;
                 add_gold_xp_to_champion(runtime, &killer_id, DRAGON_SECURE_GOLD, DRAGON_SECURE_XP);
-                let dragon_kind =
-                    process_dragon_capture(runtime, neutral_timers, &killer_team);
+                let dragon_kind = process_dragon_capture(runtime, neutral_timers, &killer_team);
                 log_event(
                     runtime,
                     &format!(
@@ -4747,7 +4752,10 @@ fn mark_neutral_taken(
                 set_runtime_buffs(runtime, &buffs);
                 log_event(
                     runtime,
-                    &format!("{} secured baron", normalized_team(&killer_team).to_uppercase()),
+                    &format!(
+                        "{} secured baron",
+                        normalized_team(&killer_team).to_uppercase()
+                    ),
                     decision.event_type,
                 );
             }
@@ -4764,7 +4772,10 @@ fn mark_neutral_taken(
                 set_runtime_buffs(runtime, &buffs);
                 log_event(
                     runtime,
-                    &format!("{} secured elder", normalized_team(&killer_team).to_uppercase()),
+                    &format!(
+                        "{} secured elder",
+                        normalized_team(&killer_team).to_uppercase()
+                    ),
                     decision.event_type,
                 );
             }
@@ -4851,7 +4862,10 @@ fn attack_neutral_if_in_range(
     } else {
         JUNGLE_CAMP_ATTACK_RADIUS
     };
-    if distance > max_range || (!is_objective && !nav_grid().has_line_of_sight(runtime.champions[champion_idx].pos, timer.pos)) {
+    if distance > max_range
+        || (!is_objective
+            && !nav_grid().has_line_of_sight(runtime.champions[champion_idx].pos, timer.pos))
+    {
         return false;
     }
 
@@ -5017,9 +5031,7 @@ fn should_engage_enemy_champion(
         let own_camps_alive = decode_neutral_timers_state(&runtime.neutral_timers)
             .map(|timers| {
                 timers.entities.values().any(|timer| {
-                    timer.alive
-                        && is_jungle_camp_key(&timer.key)
-                        && timer.key.ends_with(own_suffix)
+                    timer.alive && is_jungle_camp_key(&timer.key) && timer.key.ends_with(own_suffix)
                 })
             })
             .unwrap_or(false);
@@ -5488,7 +5500,6 @@ fn champion_respawn_seconds(level: i64, now_sec: f64) -> f64 {
         .clamp(14.0, 58.0)
 }
 
-
 fn add_dragon_stack_for_kind(team_buffs: &mut RuntimeTeamBuffState, kind: &str) {
     match kind {
         "infernal" => team_buffs.infernal_stacks += 1,
@@ -5803,17 +5814,14 @@ pub(super) fn champion_can_afford_next_item(champion: &ChampionRuntime) -> bool 
     let plan = champion_item_plan(&champion.role, &champion.champion_id);
     let has_boots = champion.items.iter().any(|item| is_boots_item_key(item));
     let next_item = if !has_boots {
-        plan
-            .iter()
+        plan.iter()
             .find(|candidate| is_boots_item_key(candidate.key))
             .or_else(|| {
-                plan
-                    .iter()
+                plan.iter()
                     .find(|candidate| !champion.items.iter().any(|owned| owned == candidate.key))
             })
     } else {
-        plan
-            .iter()
+        plan.iter()
             .find(|candidate| !champion.items.iter().any(|owned| owned == candidate.key))
     };
 
@@ -6161,8 +6169,6 @@ fn try_auto_buy_items(runtime: &mut RuntimeState) {
     }
 }
 
-
-
 fn team_stats_mut<'a>(stats: &'a mut RuntimeStats, team: &str) -> &'a mut RuntimeTeamStats {
     if normalized_team(team) == "red" {
         &mut stats.red
@@ -6252,8 +6258,6 @@ fn move_entity(pos: &mut Vec2, target: Vec2, speed: f64, dt: f64) {
     pos.x += ((target.x - pos.x) / dd) * step;
     pos.y += ((target.y - pos.y) / dd) * step;
 }
-
-
 
 #[cfg(test)]
 mod test_helpers;

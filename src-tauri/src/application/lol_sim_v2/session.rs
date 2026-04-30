@@ -4,8 +4,8 @@ use std::sync::Mutex;
 use serde_json::Value;
 
 use super::{
-    LanerCombatStateRuntime, LolChampionCombatProfileInput, LolChampionUltimateInput,
-    RuntimeState, SimulatorAiMode, SimulatorPolicyConfig,
+    LanerCombatStateRuntime, LolChampionCombatProfileInput, LolChampionUltimateInput, RuntimeState,
+    SimulatorAiMode, SimulatorPolicyConfig,
 };
 
 #[derive(Default)]

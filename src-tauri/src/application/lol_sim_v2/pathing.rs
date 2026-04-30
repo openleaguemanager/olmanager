@@ -365,7 +365,6 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
             champion.next_decision_at = now
                 + (super::CHAMPION_DECISION_CADENCE_SEC
                     / champion.staff_execution.clamp(0.96, 1.10));
-
         }
 
         if champion.state == "recall" {
@@ -396,7 +395,11 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
             champion.target_path_index = champion.target_path.len().saturating_sub(1);
         }
 
-        if let Some(target) = champion.target_path.get(champion.target_path_index).copied() {
+        if let Some(target) = champion
+            .target_path
+            .get(champion.target_path_index)
+            .copied()
+        {
             let pre_dist = dist(champion.pos, target);
             let buffs = super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team);
             let mut speed_multiplier =

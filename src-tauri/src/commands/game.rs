@@ -533,7 +533,9 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
                 contract_end: Some("2028-11-30".to_string()),
                 market_value: Some(suggested_seed_market_value(ovr, potential, true)),
                 reputation: Some(62),
-                photo: seed_profile_image_url((!seed_player.image_url.is_empty()).then_some(seed_player.image_url.as_str())),
+                photo: seed_profile_image_url(
+                    (!seed_player.image_url.is_empty()).then_some(seed_player.image_url.as_str()),
+                ),
             };
 
             let attributes = build_attributes_from_seed(&seed);
@@ -1763,7 +1765,8 @@ pub(crate) fn remove_free_agents_shadowed_by_academy(players: &mut Vec<Player>, 
     }
 
     players.retain(|player| {
-        player.team_id.is_some() || !academy_names.contains(&normalize_seed_name(&player.match_name))
+        player.team_id.is_some()
+            || !academy_names.contains(&normalize_seed_name(&player.match_name))
     });
 }
 
@@ -2157,20 +2160,19 @@ pub async fn save_manager_avatar(
     data: Vec<u8>,
 ) -> Result<String, String> {
     info!("[cmd] save_manager_avatar: filename={}", filename);
-    
+
     let app_data_dir = app_handle
         .path()
         .app_data_dir()
         .map_err(|e| format!("Failed to get app data dir: {}", e))?;
-    
+
     let avatar_dir = app_data_dir.join("manager-avatars");
     std::fs::create_dir_all(&avatar_dir)
         .map_err(|e| format!("Failed to create avatar directory: {}", e))?;
-    
+
     let file_path = avatar_dir.join(&filename);
-    std::fs::write(&file_path, &data)
-        .map_err(|e| format!("Failed to write avatar file: {}", e))?;
-    
+    std::fs::write(&file_path, &data).map_err(|e| format!("Failed to write avatar file: {}", e))?;
+
     info!("[cmd] save_manager_avatar: saved to {:?}", file_path);
     Ok(file_path.to_string_lossy().to_string())
 }
@@ -2182,21 +2184,21 @@ pub async fn load_manager_avatar(
     filename: String,
 ) -> Result<String, String> {
     info!("[cmd] load_manager_avatar: filename={}", filename);
-    
+
     let app_data_dir = app_handle
         .path()
         .app_data_dir()
         .map_err(|e| format!("Failed to get app data dir: {}", e))?;
-    
+
     let file_path = app_data_dir.join("manager-avatars").join(&filename);
-    
+
     if !file_path.exists() {
         return Err(format!("Avatar file not found: {}", filename));
     }
-    
-    let data = std::fs::read(&file_path)
-        .map_err(|e| format!("Failed to read avatar file: {}", e))?;
-    
+
+    let data =
+        std::fs::read(&file_path).map_err(|e| format!("Failed to read avatar file: {}", e))?;
+
     // Determine MIME type from extension
     let mime_type = match filename.rsplit('.').next() {
         Some("png") => "image/png",
@@ -2205,12 +2207,12 @@ pub async fn load_manager_avatar(
         Some("svg") => "image/svg+xml",
         _ => "application/octet-stream",
     };
-    
+
     // Use modern base64 API (0.22+)
     use base64::Engine;
     let base64_data = base64::engine::general_purpose::STANDARD.encode(&data);
     let data_url = format!("data:{};base64,{}", mime_type, base64_data);
-    
+
     info!("[cmd] load_manager_avatar: loaded {} bytes", data.len());
     Ok(data_url)
 }
@@ -2227,7 +2229,7 @@ pub async fn update_manager_profile(
     avatar_path: Option<String>,
 ) -> Result<(), String> {
     info!("[cmd] update_manager_profile");
-    
+
     let mut game = state
         .get_game(|g: &Game| g.clone())
         .ok_or("No active game session".to_string())?;

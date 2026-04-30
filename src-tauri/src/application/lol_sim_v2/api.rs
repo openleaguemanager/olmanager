@@ -166,9 +166,21 @@ pub struct LolSimV2SkipToEndResponse {
     pub elapsed_simulated_sec: f64,
 }
 
-fn default_run_to_completion_dt_sec() -> f64 { 0.2 }
-fn default_run_to_completion_speed() -> f64 { 12.0 }
-fn default_run_to_completion_max_ticks() -> u64 { 3600 }
-fn default_skip_to_end_dt_sec() -> f64 { default_run_to_completion_dt_sec() }
-fn default_skip_to_end_speed() -> f64 { default_run_to_completion_speed() }
-fn default_skip_to_end_max_ticks() -> u64 { default_run_to_completion_max_ticks() }
+fn default_run_to_completion_dt_sec() -> f64 {
+    0.2
+}
+fn default_run_to_completion_speed() -> f64 {
+    12.0
+}
+fn default_run_to_completion_max_ticks() -> u64 {
+    3600
+}
+fn default_skip_to_end_dt_sec() -> f64 {
+    default_run_to_completion_dt_sec()
+}
+fn default_skip_to_end_speed() -> f64 {
+    default_run_to_completion_speed()
+}
+fn default_skip_to_end_max_ticks() -> u64 {
+    default_run_to_completion_max_ticks()
+}
