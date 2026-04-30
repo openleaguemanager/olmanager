@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import DraftResultScreen, { type DraftResultSeriesGame } from "./DraftResultScreen";
+import DraftResultScreen, { buildGoldAdvantageChartPoints, type DraftResultSeriesGame } from "./DraftResultScreen";
 import type { DraftMatchResult } from "./draftResultSimulator";
 import type { MatchSnapshot } from "./types";
 
@@ -142,5 +142,74 @@ describe("DraftResultScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: "Game 1" }));
 
     expect(screen.getAllByText("Alpha Mid").length).toBeGreaterThan(0);
+  });
+
+  it("plots blue gold advantage above center and red advantage below center", () => {
+    const result = createResult({
+      goldDiffTimeline: [
+        { minute: 0, diff: -1000 },
+        { minute: 10, diff: 0 },
+        { minute: 20, diff: 1000 },
+      ],
+    });
+
+    const { container } = render(
+      <DraftResultScreen
+        snapshot={snapshot}
+        controlledSide="blue"
+        result={result}
+        onContinue={vi.fn()}
+      />,
+    );
+
+    expect(screen.getAllByLabelText("match.draftResult.goldAdvantage (+ AF, - BF)").length).toBeGreaterThan(0);
+    expect(screen.getByText("+ AF")).toBeInTheDocument();
+    expect(screen.getByText("- BF")).toBeInTheDocument();
+
+    const polyline = container.querySelector("polyline");
+    expect(polyline).not.toBeNull();
+    expect(polyline?.getAttribute("points")).toBe("6,64 50,36 94,8");
+  });
+
+  it("maps blue advantage climbing up and red comeback falling below center", () => {
+    const chartPoints = buildGoldAdvantageChartPoints([
+      { minute: 0, diff: 1000 },
+      { minute: 10, diff: 2000 },
+      { minute: 20, diff: 500 },
+      { minute: 30, diff: -500 },
+      { minute: 40, diff: -1500 },
+    ]);
+
+    expect(chartPoints.map(({ x, y }) => `${x},${y}`)).toEqual([
+      "6,22",
+      "28,8",
+      "50,29",
+      "72,43",
+      "94,57",
+    ]);
+
+    expect(chartPoints[1].y).toBeLessThan(chartPoints[0].y);
+    expect(chartPoints[2].y).toBeGreaterThan(chartPoints[1].y);
+    expect(chartPoints[3].y).toBeGreaterThan(36);
+    expect(chartPoints[4].y).toBeGreaterThan(chartPoints[3].y);
+  });
+
+  it("uses chronological minutes instead of input order for the gold chart", () => {
+    const chartPoints = buildGoldAdvantageChartPoints([
+      { minute: 20, diff: 500 },
+      { minute: 0, diff: 1000 },
+      { minute: 40, diff: -1500 },
+      { minute: 10, diff: 2000 },
+      { minute: 30, diff: -500 },
+    ]);
+
+    expect(chartPoints.map((point) => point.minute)).toEqual([0, 10, 20, 30, 40]);
+    expect(chartPoints.map(({ x, y }) => `${x},${y}`)).toEqual([
+      "6,22",
+      "28,8",
+      "50,29",
+      "72,43",
+      "94,57",
+    ]);
   });
 });
