@@ -47,8 +47,6 @@ pub fn seed_from_json(conn: &Connection, json_content: &str) -> Result<usize, St
     let roles_map = roles
         .as_object()
         .ok_or_else(|| "roles is not an object".to_string())?;
-    let counterpicks_json = counterpicks.map(|v| serde_json::to_string(v).unwrap_or_default());
-    let synergies_json = synergies.map(|v| serde_json::to_string(v).unwrap_or_default());
 
     let display_aliases = json
         .get("data")
@@ -86,12 +84,54 @@ pub fn seed_from_json(conn: &Connection, json_content: &str) -> Result<usize, St
         let roles_json = serde_json::to_string(roles_vec)
             .map_err(|e| format!("Failed to serialize roles for {}: {}", champion_key, e))?;
 
+        // Filter counterpicks/synergies where this champion is "a" (the subject)
+        let champ_counterpicks = counterpicks
+            .map(|arr| {
+                arr.as_array()
+                    .map(|items| {
+                        let filtered: Vec<_> = items
+                            .iter()
+                            .filter(|item| {
+                                item.get("a").and_then(|v| v.as_str()) == Some(champion_key)
+                            })
+                            .cloned()
+                            .collect();
+                        serde_json::to_string(&filtered).unwrap_or_default()
+                    })
+                    .unwrap_or_default()
+            })
+            .unwrap_or_default();
+        let champ_synergies = synergies
+            .map(|arr| {
+                arr.as_array()
+                    .map(|items| {
+                        let filtered: Vec<_> = items
+                            .iter()
+                            .filter(|item| {
+                                item.get("a").and_then(|v| v.as_str()) == Some(champion_key)
+                            })
+                            .cloned()
+                            .collect();
+                        serde_json::to_string(&filtered).unwrap_or_default()
+                    })
+                    .unwrap_or_default()
+            })
+            .unwrap_or_default();
+
         let new_champ = NewChampion {
             name,
             champion_key: champion_key.to_string(),
             roles_json,
-            counterpicks_json: counterpicks_json.clone(),
-            synergies_json: synergies_json.clone(),
+            counterpicks_json: if champ_counterpicks.is_empty() {
+                None
+            } else {
+                Some(champ_counterpicks)
+            },
+            synergies_json: if champ_synergies.is_empty() {
+                None
+            } else {
+                Some(champ_synergies)
+            },
             image_tile_url: Some(format!(
                 "https://ddragon.leagueoflegends.com/cdn/img/champion/tiles/{}_0.jpg",
                 champion_key

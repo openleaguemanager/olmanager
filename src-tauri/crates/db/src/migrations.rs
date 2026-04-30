@@ -1,7 +1,7 @@
 use rusqlite_migration::{Migrations, M};
 
 /// Number of migrations defined. Keep in sync with the vec in `all_migrations`.
-pub const MIGRATION_COUNT: usize = 29;
+pub const MIGRATION_COUNT: usize = 31;
 
 /// All migrations for a per-save game database.
 /// Each save `.db` file gets this schema applied via `rusqlite_migration`.
@@ -67,6 +67,8 @@ pub fn all_migrations() -> Migrations<'static> {
         // (Historically in v028_champion_progression_state.sql, now handled by ofm_core)
         // V30: Champions table for world champions catalog
         M::up(include_str!("sql/v030_champions_table.sql")),
+        // V31: Fix champion counterpicks/synergies seed (was storing all data in every champion)
+        M::up(include_str!("sql/v031_fix_champion_seed.sql")),
     ])
 }
 

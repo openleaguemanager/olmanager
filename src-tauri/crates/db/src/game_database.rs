@@ -130,7 +130,16 @@ impl GameDatabase {
                 error!("[game_db] failed to create champions table: {}", e);
                 format!("Failed to create champions table: {}", e)
             })?;
+        }
 
+        // Seed if table is empty (covers both new creation and V31 migration reset)
+        let champ_count: i64 = self
+            .conn
+            .query_row("SELECT COUNT(*) FROM champions", [], |row| row.get(0))
+            .unwrap_or(0);
+
+        if champ_count == 0 {
+            info!("[game_db] champions table is empty, seeding...");
             // Seed from embedded JSON
             let json_content = include_str!("../../../../data/lec/draft/champions.json");
             match crate::repositories::champion_repo::seed_from_json(&self.conn, json_content) {
@@ -143,7 +152,10 @@ impl GameDatabase {
                 }
             }
         } else {
-            debug!("[game_db] champions table already exists");
+            debug!(
+                "[game_db] champions table already exists with {} champions",
+                champ_count
+            );
         }
 
         self.champions_loaded = true;
