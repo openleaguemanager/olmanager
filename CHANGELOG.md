@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added end-of-season board objective review message with objectives completed count and satisfaction delta.
 - Added visible gold advantage chart with proper LoL-style formatting (blue advantage rises, red advantage falls) and chronological timeline plotting.
 - Added i18n keys for board objective review messages (`be.msg.boardObjectiveReview.subject`, `be.msg.boardObjectiveReview.body`).
+- Added roster destination selection for new signings: users can now choose to assign a new signing to either the Main Team or the Academy squad.
+- Added updated world data with recalibrated player statistics and market costs.
 
 ### Changed
 
@@ -20,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Adapted tournament and schedule standings tables to LoL format: removed "drawn" column and "points", replaced goals with "Maps" (e.g., "12-4") and "Map Diff" (e.g., "+8", "-3").
 - Changed series objective calculation to use roster skill comparison: strong teams get title-contender objectives, mid-table teams get playoff objectives, weak teams get survival objectives.
 - NeutralTimersState now uses typed fallbacks instead of empty objects to satisfy TypeScript requirements.
+- Refactored world data loading: the system now reads world data exclusively from `lec_world.json`.
+- Improved Draft AI logic: refined pick selection to prevent nonsensical choices and ensure bans do not target roles already picked.
 
 ### Fixed
 
@@ -34,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed football/soccer terminology in initial season objectives email: replaced football terms (matches, goals, top half) with LoL/esports terms (split, series, maps, LEC table).
 - Fixed gold advantage chart trajectory: the chart now correctly plots blue advantage going up, red advantage going down, and crossing the centerline appropriately.
 - Fixed standings table format: converted from soccer-style (drawn, goals for/against, points) to LoL-style (played, won, lost, maps, map difference) in both TournamentsTab and ScheduleTab.
+- Fixed position swapping during the draft phase: players can now correctly change positions and roles.
 
 ### Contributors
 
