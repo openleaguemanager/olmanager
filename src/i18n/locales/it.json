@@ -904,7 +904,8 @@
     "seasonStartHint": "Primo giorno della stagione regolare.",
     "standings": "Classifica",
     "matchday": "Giornata {{number}}",
-    "season": "Stagione {{number}}"
+    "season": "Stagione {{number}}",
+    "lastResult": "Ultimo risultato"
   },
   "players": {
     "searchPlaceholder": "Cerca per nome o nazionalità...",

@@ -1264,7 +1264,8 @@
     "matchday": "Jornada {{number}}",
     "playoffs": "Playoffs",
     "round": "Ronda {{number}}",
-    "season": "Temporada {{number}}"
+    "season": "Temporada {{number}}",
+    "lastResult": "Último resultado"
   },
   "players": {
     "searchPlaceholder": "Buscar por nombre o nacionalidad...",

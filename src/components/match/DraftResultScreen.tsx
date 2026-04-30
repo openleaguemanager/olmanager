@@ -194,12 +194,44 @@ export default function DraftResultScreen({
     : "";
 
   const mvpPhoto = resolvePlayerPhoto(selectedResult.mvp.playerId, selectedResult.mvp.playerName);
-  const nextGameLabel = `${Math.min(seriesLength, seriesGameIndex + 1)}/${seriesLength}`;
+  const playedSeriesGames = Math.max(latestSeriesGame?.gameIndex ?? 1, seriesGamesForTabs.length);
+  const nextGameLabel = `${Math.min(seriesLength, playedSeriesGames + 1)}/${seriesLength}`;
   const targetSeriesWins = seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
+  const seriesWinsFromGames = seriesGamesForTabs.reduce(
+    (score, entry) => {
+      if (entry.winnerSide === controlledSide) {
+        return { ...score, user: score.user + 1 };
+      }
+
+      if (entry.winnerSide === "blue" || entry.winnerSide === "red") {
+        return { ...score, opponent: score.opponent + 1 };
+      }
+
+      return score;
+    },
+    { user: 0, opponent: 0 },
+  );
+  const propSeriesWins = userSeriesWins + opponentSeriesWins;
+  const gameSeriesWins = seriesWinsFromGames.user + seriesWinsFromGames.opponent;
+  const propsClaimFinished = userSeriesWins >= targetSeriesWins || opponentSeriesWins >= targetSeriesWins;
+  const propsSupportedByGames =
+    propsClaimFinished &&
+    propSeriesWins <= seriesLength &&
+    gameSeriesWins >= propSeriesWins;
+  const shouldUseSeriesGamesScore =
+    seriesLength > 1 &&
+    gameSeriesWins > 0 &&
+    (propSeriesWins === 0 || !propsSupportedByGames);
+  const displayedUserSeriesWins = shouldUseSeriesGamesScore ? seriesWinsFromGames.user : userSeriesWins;
+  const displayedOpponentSeriesWins = shouldUseSeriesGamesScore ? seriesWinsFromGames.opponent : opponentSeriesWins;
+  const displayedSeriesWins = displayedUserSeriesWins + displayedOpponentSeriesWins;
+  const displayedWinnerReachedTarget =
+    displayedUserSeriesWins >= targetSeriesWins || displayedOpponentSeriesWins >= targetSeriesWins;
+  const displayedScoreSupportedByGames =
+    displayedSeriesWins <= seriesLength && gameSeriesWins >= displayedSeriesWins;
   const isSeriesFinished =
     seriesLength === 1 ||
-    userSeriesWins >= targetSeriesWins ||
-    opponentSeriesWins >= targetSeriesWins;
+    (displayedWinnerReachedTarget && displayedScoreSupportedByGames);
 
   return (
     <div className="min-h-screen bg-[#050608] text-white p-4 md:p-6">
@@ -240,7 +272,7 @@ export default function DraftResultScreen({
           ) : null}
           {seriesLength > 1 ? (
             <p className="mt-1 text-xs text-gray-400">
-              {t("match.draftResult.series")} ({seriesLength === 3 ? "Bo3" : "Bo5"}) · {userSeriesWins} - {opponentSeriesWins}
+              {t("match.draftResult.series")} ({seriesLength === 3 ? "Bo3" : "Bo5"}) · {displayedUserSeriesWins} - {displayedOpponentSeriesWins}
             </p>
           ) : null}
         </header>
@@ -461,7 +493,7 @@ export default function DraftResultScreen({
 
         <div className="flex justify-end">
           <div className="flex items-center gap-2">
-            {onPressConference ? (
+            {onPressConference && isSeriesFinished ? (
               <button
                 className="rounded-md border border-white/20 bg-white/5 hover:bg-white/10 text-white font-heading font-bold uppercase tracking-wide px-4 py-2"
                 onClick={onPressConference}
