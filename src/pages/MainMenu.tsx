@@ -16,6 +16,8 @@ import {
   ChevronDown,
   Check,
   Power,
+  Upload,
+  XCircle,
 } from "lucide-react";
 import { countryName, allNationalities } from "../lib/countries";
 
@@ -269,37 +271,6 @@ export default function MainMenu() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [nationalityOpen]);
 
-  const handleStartGame = async () => {
-    setIsStarting(true);
-    try {
-      if (!canUseTauriInvoke()) {
-        throw new Error(
-          "Backend Tauri no disponible. Cerrá cualquier `npm run dev` suelto y ejecutá `npm run tauri dev`.",
-        );
-      }
-
-      const worldSource = "lec-default";
-
-      await invoke<string>("start_new_game", {
-        nickname: formData.nickname,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        dob: formData.dob,
-        nationality: formData.nationality,
-        worldSource,
-      });
-      const displayName = formData.nickname?.trim() || `${formData.firstName} ${formData.lastName}`;
-      setGameActive(true, displayName.trim());
-      console.debug("[MainMenu] start_new_game completed, navigating to /select-team");
-      navigate("/select-team");
-    } catch (error) {
-      console.error("Failed to start game:", error);
-      alert(t("menu.failedStartGame", { error: String(error) }));
-    } finally {
-      setIsStarting(false);
-    }
-  };
-
   const handleOpenLoadMenu = async () => {
     setMenuState("load");
     setIsLoadingSaves(true);
@@ -437,7 +408,7 @@ export default function MainMenu() {
               className="flex flex-col gap-4"
             >
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white transition-colors">
+                <h2 className="text-xl font-sans font-bold uppercase tracking-wide text-gray-900 dark:text-white transition-colors">
                   {t("createManager.title")}
                 </h2>
                 <button

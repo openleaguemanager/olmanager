@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { GameStateData, PlayerSelectionOptions } from "../../store/gameStore";
-import { Card, CardBody, Badge, Select, CountryFlag } from "../ui";
+import { Card, CardBody, Badge, Select, CountryFlag, RoleBadge } from "../ui";
 import {
   Search,
   Filter,
@@ -17,6 +17,7 @@ import {
 } from "../../lib/helpers";
 import { useTranslation } from "react-i18next";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import {
   getLolRoleForPlayer,
   LolRole,
@@ -28,7 +29,7 @@ interface PlayersListTabProps {
   onSelectTeam: (id: string) => void;
 }
 
-type SortKey = "name" | "position" | "age" | "ovr" | "value" | "team";
+type SortKey = "photo" | "name" | "position" | "age" | "ovr" | "value" | "team";
 
 function normalizeNick(value: string): string {
   return value
@@ -118,6 +119,10 @@ export default function PlayersListTab({
   filtered.sort((a, b) => {
     let cmp = 0;
     switch (sortKey) {
+      case "photo":
+        // Photo column doesn't have a meaningful sort, fallback to name
+        cmp = a.match_name.localeCompare(b.match_name);
+        break;
       case "name":
         cmp = a.match_name.localeCompare(b.match_name);
         break;
@@ -143,13 +148,6 @@ export default function PlayersListTab({
   });
 
   const positions: LolRole[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
-  const roleBadgeVariant: Record<LolRole, "danger" | "success" | "accent" | "primary" | "neutral"> = {
-    TOP: "danger",
-    JUNGLE: "success",
-    MID: "accent",
-    ADC: "primary",
-    SUPPORT: "neutral",
-  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -174,8 +172,9 @@ export default function PlayersListTab({
                 ? "bg-primary-500 text-white shadow-sm"
                 : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
             }`}
+            title="All roles"
           >
-            {t("players.allPos")}
+            <img src="/role-icons/allroles.png" alt="All roles" className="h-3.5 w-3.5" />
           </button>
           {positions.map((pos) => (
             <button
@@ -186,8 +185,9 @@ export default function PlayersListTab({
                   ? "bg-primary-500 text-white shadow-sm"
                   : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
               }`}
+              title={pos}
             >
-              {pos === "JUNGLE" ? "JG" : pos}
+              <RoleBadge role={pos} size="sm" />
             </button>
           ))}
         </div>
@@ -238,64 +238,72 @@ export default function PlayersListTab({
         <CardBody className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
-                  <SortHeader
-                    label={t("common.position")}
-                    sortKey="position"
-                    current={sortKey}
-                    asc={sortAsc}
-                    onClick={handleSort}
-                  />
-                  <SortHeader
-                    label={t("common.name")}
-                    sortKey="name"
-                    current={sortKey}
-                    asc={sortAsc}
-                    onClick={handleSort}
-                  />
-                  <SortHeader
-                    label={t("common.age")}
-                    sortKey="age"
-                    current={sortKey}
-                    asc={sortAsc}
-                    onClick={handleSort}
-                  />
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    {t("common.nationality")}
-                  </th>
-                  <SortHeader
-                    label={t("common.team")}
-                    sortKey="team"
-                    current={sortKey}
-                    asc={sortAsc}
-                    onClick={handleSort}
-                  />
-                  <SortHeader
-                    label={t("common.value")}
-                    sortKey="value"
-                    current={sortKey}
-                    asc={sortAsc}
-                    onClick={handleSort}
-                  />
-                  <SortHeader
-                    label={t("common.ovr")}
-                    sortKey="ovr"
-                    current={sortKey}
-                    asc={sortAsc}
-                    onClick={handleSort}
-                  />
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    {t("common.status")}
-                  </th>
-                </tr>
-              </thead>
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
+                    <SortHeader
+                      label=""
+                      sortKey="photo"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <SortHeader
+                      label={t("common.position")}
+                      sortKey="position"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <SortHeader
+                      label={t("common.name")}
+                      sortKey="name"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <SortHeader
+                      label={t("common.age")}
+                      sortKey="age"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      {t("common.nationality")}
+                    </th>
+                    <SortHeader
+                      label={t("common.team")}
+                      sortKey="team"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <SortHeader
+                      label={t("common.value")}
+                      sortKey="value"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <SortHeader
+                      label={t("common.ovr")}
+                      sortKey="ovr"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                      {t("common.status")}
+                    </th>
+                  </tr>
+                </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
                 {filtered
                   .slice((page - 1) * pageSize, page * pageSize)
                   .map((player) => {
                     const ovr = calculateLolOvr(player);
                     const age = calcAge(player.date_of_birth);
+                    const photoSrc = resolvePlayerPhoto(player.id, player.match_name);
                     return (
                       <tr
                         key={player.id}
@@ -303,14 +311,17 @@ export default function PlayersListTab({
                         className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer group"
                       >
                         <td className="py-2.5 px-4">
-                          <Badge
-                            variant={roleBadgeVariant[getLolRoleForPlayer(player)]}
-                            size="sm"
-                          >
-                            {getLolRoleForPlayer(player) === "JUNGLE"
-                              ? "JG"
-                              : getLolRoleForPlayer(player)}
-                          </Badge>
+                          <img
+                            src={photoSrc ?? "/player-photos/107455908655055017.png"}
+                            alt={player.match_name}
+                            className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/player-photos/107455908655055017.png";
+                            }}
+                          />
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <RoleBadge role={getLolRoleForPlayer(player)} size="sm" />
                         </td>
                         <td className="py-2.5 px-4">
                           <div className="min-w-0">
@@ -335,16 +346,21 @@ export default function PlayersListTab({
                           />
                         </td>
                         <td className="py-2.5 px-4">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (player.team_id) onSelectTeam(player.team_id);
-                            }}
-                            disabled={!player.team_id}
-                            className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 hover:underline transition-colors"
-                          >
-                            {getTeamName(gameState.teams, player.team_id)}
-                          </button>
+                          {player.team_id ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectTeam(player.team_id!);
+                              }}
+                              className="text-left hover:text-primary-500 transition-colors font-medium text-gray-900 dark:text-gray-100"
+                            >
+                              {getTeamName(gameState.teams, player.team_id!)}
+                            </button>
+                          ) : (
+                            <span className="text-gray-500 dark:text-gray-400 italic">
+                              {t("common.freeAgent")}
+                            </span>
+                          )}
                         </td>
                         <td className="py-2.5 px-4 text-sm text-gray-600 dark:text-gray-400 font-medium">
                           {formatVal(player.market_value)}

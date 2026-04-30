@@ -8,7 +8,7 @@ import type {
   ScoutAvailability,
 } from "./PlayerProfile.scouting";
 import PlayerProfileScoutAction from "./PlayerProfileScoutAction";
-import { Badge, Card } from "../ui";
+import { RoleBadge, Card } from "../ui";
 
 type TranslateFn = (
   key: string,
@@ -66,7 +66,6 @@ export default function PlayerProfileHeroCard({
   t,
 }: PlayerProfileHeroCardProps) {
   const role = primaryRole;
-  const roleVariant = getLolRoleBadgeVariant(role);
   const playerPhoto = resolvePlayerPhoto(player.id, player.match_name);
   const [insigniaBackground, setInsigniaBackground] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState(false);
@@ -202,7 +201,7 @@ export default function PlayerProfileHeroCard({
               {player.match_name}
             </h2>
             <div className="flex items-center gap-3 mt-2">
-              <Badge variant={roleVariant}>{role}</Badge>
+              <RoleBadge role={role} size="sm" />
               {isOwnClub && academyActionLabel && onAcademyAction ? (
                 <button
                   type="button"
@@ -290,57 +289,12 @@ export default function PlayerProfileHeroCard({
           ) : null}
 
           <div className="hidden md:flex items-center gap-3">
-            <div className={isOwnClub && potentialRevealed === null ? "min-w-[170px]" : ""}>
-              {isOwnClub && potentialRevealed === null ? (
-                <div className="bg-black/42 border border-white/20 rounded-xl px-4 py-3 text-center backdrop-blur-xs">
-                  <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">
-                    {t("common.potential", { defaultValue: "Potencial" })}
-                  </p>
-                  <p className="font-heading font-bold text-xl mt-0.5 text-gray-200">{potentialValueLabel}</p>
-
-                  {potentialActive ? (
-                    <p className="text-xs text-primary-300 font-semibold mt-1">
-                      {t("playerProfile.potentialResearchProgress", {
-                        defaultValue: "Investigando… {{progress}}/7",
-                        progress: potentialProgress,
-                      })}
-                    </p>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={onStartPotentialResearch}
-                      disabled={!canStartPotentialResearch}
-                      className={`mt-1 w-full px-2.5 py-1.5 rounded-md text-[11px] font-heading font-bold uppercase tracking-wide border transition-colors ${
-                        canStartPotentialResearch
-                          ? "bg-primary-500/20 border-primary-400 text-primary-200 hover:bg-primary-500/30"
-                          : "bg-gray-700/40 border-gray-600 text-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      {potentialResearchSubmitting
-                        ? t("common.loading", { defaultValue: "Cargando…" })
-                        : t("playerProfile.startPotentialResearch", {
-                            defaultValue: "Investigar potencial",
-                          })}
-                    </button>
-                  )}
-
-                  {isPotentialResearchBlockedByOther ? (
-                    <p className="text-[11px] text-gray-400 mt-1">
-                      {t("playerProfile.potentialResearchBusy", {
-                        defaultValue: "Ya hay otra investigación de potencial activa.",
-                      })}
-                    </p>
-                  ) : null}
-                </div>
-              ) : (
-                <QuickStat
-                  label={t("common.potential", { defaultValue: "Potencial" })}
-                  value={potentialValueLabel}
-                  color="text-gray-200"
-                />
-              )}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3 flex-1">
+              <QuickStat
+                label={t("common.ovr")}
+                value={String(ovr)}
+                color="text-accent-300"
+              />
               <QuickStat
                 label={t("common.condition", { defaultValue: "Condition" })}
                 value={`${player.condition}%`}
@@ -350,6 +304,11 @@ export default function PlayerProfileHeroCard({
                 label={t("common.morale")}
                 value={`${player.morale}%`}
                 color={player.morale >= 70 ? "text-primary-400" : "text-accent-400"}
+              />
+              <QuickStat
+                label={t("common.potential", { defaultValue: "Potencial" })}
+                value={potentialValueLabel}
+                color="text-gray-200"
               />
               <QuickStat
                 label={t("common.value")}
@@ -366,9 +325,14 @@ export default function PlayerProfileHeroCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
+      <div className="grid grid-cols-3 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
         <MobileQuickStat
-          label={t("common.energy", { defaultValue: "Energía" })}
+          label={t("common.ovr")}
+          value={String(ovr)}
+          color="text-accent-500"
+        />
+        <MobileQuickStat
+          label={t("common.condition", { defaultValue: "Energía" })}
           value={`${player.condition}%`}
           color={player.condition >= 70 ? "text-primary-500" : "text-red-500"}
         />
@@ -376,6 +340,11 @@ export default function PlayerProfileHeroCard({
           label={t("common.morale")}
           value={`${player.morale}%`}
           color={player.morale >= 70 ? "text-primary-500" : "text-accent-500"}
+        />
+        <MobileQuickStat
+          label={t("common.potential", { defaultValue: "Potencial" })}
+          value={potentialValueLabel}
+          color="text-gray-700 dark:text-gray-200"
         />
         <MobileQuickStat
           label={t("common.value")}
@@ -443,21 +412,6 @@ function canLoadImage(url: string): Promise<boolean> {
     image.onerror = () => resolve(false);
     image.src = url;
   });
-}
-
-function getLolRoleBadgeVariant(role: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT") {
-  switch (role) {
-    case "TOP":
-      return "accent" as const;
-    case "JUNGLE":
-      return "success" as const;
-    case "MID":
-      return "primary" as const;
-    case "ADC":
-      return "danger" as const;
-    case "SUPPORT":
-      return "neutral" as const;
-  }
 }
 
 function QuickStat({

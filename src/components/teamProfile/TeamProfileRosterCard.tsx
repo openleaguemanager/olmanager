@@ -5,7 +5,7 @@ import {
 } from "../../lib/helpers";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import type { PlayerData } from "../../store/gameStore";
-import { Badge, Card, CardBody, CardHeader, CountryFlag, ProgressBar } from "../ui";
+import { Card, CardBody, CardHeader, CountryFlag, ProgressBar, RoleBadge } from "../ui";
 import { getLolRoleForPlayer, type LolRole } from "../squad/SquadTab.helpers";
 import type { TeamProfileTranslate } from "./TeamProfile.types";
 
@@ -24,14 +24,6 @@ export default function TeamProfileRosterCard({
   t,
   onSelectPlayer,
 }: TeamProfileRosterCardProps) {
-  const roleBadgeVariant: Record<LolRole, "primary" | "accent" | "success" | "danger" | "neutral"> = {
-    TOP: "danger",
-    JUNGLE: "success",
-    MID: "accent",
-    ADC: "primary",
-    SUPPORT: "neutral",
-  };
-
   return (
     <Card className="lg:col-span-3">
       <CardHeader>
@@ -80,11 +72,7 @@ export default function TeamProfileRosterCard({
                     className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer group"
                   >
                     <td className="py-3 px-5">
-                      <Badge
-                        variant={roleBadgeVariant[lolRole]}
-                      >
-                        {lolRole}
-                      </Badge>
+                      <RoleBadge role={lolRole} size="sm" />
                     </td>
                     <td className="py-3 px-5">
                       <span className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">

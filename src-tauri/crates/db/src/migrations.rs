@@ -61,6 +61,8 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up(include_str!("sql/v026_fixture_best_of.sql")),
         // V27: Persist academy team kind, affiliation links, and ERL metadata
         M::up(include_str!("sql/v027_academy_team_metadata.sql")),
+        // V28: Add avatar_path column to managers table for profile avatar persistence
+        M::up(include_str!("sql/v028_avatar_path.sql")),
         // V28: Champion mastery + patch progression persistence
         M::up(include_str!("sql/v028_champion_progression_state.sql")),
     ])

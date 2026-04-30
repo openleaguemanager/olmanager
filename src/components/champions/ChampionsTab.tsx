@@ -8,6 +8,7 @@ import { setPlayerChampionTrainingTarget } from "../../services/playerService";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
 import { t } from "i18next";
 
 interface ChampionsTabProps {
@@ -29,14 +30,15 @@ const ROLE_ORDER: Record<UiRole, number> = {
   Support: 5,
 };
 
+/**
+ * Maps UiRole to local icon paths (using ROLE_ICON_PATHS which expects uppercase keys)
+ */
 const ROLE_ICON_URLS: Record<UiRole, string> = {
-  Top: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
-  Jungle:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
-  Mid: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
-  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
-  Support:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+  Top: ROLE_ICON_PATHS.TOP,
+  Jungle: ROLE_ICON_PATHS.JUNGLE,
+  Mid: ROLE_ICON_PATHS.MID,
+  ADC: ROLE_ICON_PATHS.ADC,
+  Support: ROLE_ICON_PATHS.SUPPORT,
 };
 
 const CHAMPIONS_BY_ROLE = Object.entries(CHAMPION_ROLES).reduce<Record<UiRole, string[]>>(
