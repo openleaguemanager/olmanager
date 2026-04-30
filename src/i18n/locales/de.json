@@ -1100,6 +1100,7 @@
     "important": "Wichtig",
     "effectOutcomeLabel": "Ergebnis",
     "chooseResponse": "Wähle deine Antwort",
+    "chooseResponseOutcomeVaries": "Wähle deine Antwort — das Ergebnis kann variieren",
     "responded": "Antwort gesendet",
     "markAllRead": "Alle als gelesen markieren",
     "clearOld": "Alte löschen",
