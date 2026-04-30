@@ -449,7 +449,7 @@
       "short_name": "SK",
       "country": "DE",
       "football_nation": "DE",
-      "city": "Cologne",
+      "city": "Berlin",
       "stadium_name": "SK Gaming Arena",
       "stadium_capacity": 28000,
       "finance": 3000000,
@@ -25197,7 +25197,7 @@
     },
     {
       "id": "lec-shifters-staff-0",
-      "first_name": "SHFT",
+      "first_name": "SFT",
       "last_name": "Staff 1",
       "date_of_birth": "1988-01-01",
       "nationality": "EUN",
@@ -25218,7 +25218,7 @@
     },
     {
       "id": "lec-shifters-staff-1",
-      "first_name": "SHFT",
+      "first_name": "SFT",
       "last_name": "Staff 2",
       "date_of_birth": "1988-01-01",
       "nationality": "EUN",
@@ -25239,7 +25239,7 @@
     },
     {
       "id": "lec-shifters-staff-2",
-      "first_name": "SHFT",
+      "first_name": "SFT",
       "last_name": "Staff 3",
       "date_of_birth": "1988-01-01",
       "nationality": "EUN",
@@ -25260,7 +25260,7 @@
     },
     {
       "id": "lec-shifters-staff-3",
-      "first_name": "SHFT",
+      "first_name": "SFT",
       "last_name": "Staff 4",
       "date_of_birth": "1988-01-01",
       "nationality": "EUN",
