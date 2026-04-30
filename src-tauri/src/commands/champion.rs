@@ -26,7 +26,9 @@ pub fn get_champions(
         .lock()
         .map_err(|e| format!("Lock error: {}", e))?;
 
-    let db = sm.open_game_db(&save_id)?;
+    // Use cached database - returns Arc<Mutex<GameDatabase>>
+    let db_arc = sm.open_game_db(&save_id)?;
+    let db = db_arc.lock().map_err(|e| format!("Lock error: {}", e))?;
     let conn = db.conn();
 
     // Read champions - no lazy seed needed (seed happens in write_game)
@@ -51,7 +53,9 @@ pub fn get_champion_by_id(
         .lock()
         .map_err(|e| format!("Lock error: {}", e))?;
 
-    let db = sm.open_game_db(&save_id)?;
+    // Use cached database - returns Arc<Mutex<GameDatabase>>
+    let db_arc = sm.open_game_db(&save_id)?;
+    let db = db_arc.lock().map_err(|e| format!("Lock error: {}", e))?;
     champion_repo::get_champion_by_id(db.conn(), id)
 }
 

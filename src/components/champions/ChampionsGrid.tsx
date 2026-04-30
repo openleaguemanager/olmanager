@@ -1,10 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import ChampionCard from "./ChampionCard";
 import type { Champion } from "./ChampionProfile";
-
-// Module-level cache to persist champions data across tab switches
-let cachedChampions: Champion[] | null = null;
 
 interface ChampionsGridProps {
   onChampionClick: (champion: Champion) => void;
@@ -21,17 +18,10 @@ function parseRoles(rolesJson: string): string[] {
 }
 
 export default function ChampionsGrid({ onChampionClick }: ChampionsGridProps) {
-  const [champions, setChampions] = useState<Champion[]>(cachedChampions || []);
-  const [isLoading, setIsLoading] = useState(!cachedChampions);
+  const [champions, setChampions] = useState<Champion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // If we already have cached data, skip the fetch
-    if (cachedChampions) {
-      console.log("[ChampionsGrid] Using cached champions data");
-      setIsLoading(false);
-      return;
-    }
-
     let cancelled = false;
 
     const fetchChampions = async (): Promise<void> => {
@@ -39,10 +29,9 @@ export default function ChampionsGrid({ onChampionClick }: ChampionsGridProps) {
         console.log("[ChampionsGrid] Fetching champions from backend...");
         const result = await invoke<Champion[]>("get_champions");
         if (!cancelled) {
-          cachedChampions = result; // Store in module-level cache
           setChampions(result);
           setIsLoading(false);
-          console.log(`[ChampionsGrid] Cached ${result.length} champions`);
+          console.log(`[ChampionsGrid] Loaded ${result.length} champions`);
         }
       } catch (err) {
         console.error("Failed to load champions:", err);

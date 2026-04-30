@@ -4,6 +4,7 @@ use log::{debug, info};
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 
 use domain::player::{Player, Position};
 use ofm_core::game::Game;
@@ -21,8 +22,9 @@ pub struct SaveManager {
     saves_dir: PathBuf,
     save_index: SaveIndexManager,
     /// Cached database connections, keyed by save_id.
-    /// Avoids re-opening the DB and re-running migrations on every read.
-    db_cache: HashMap<String, GameDatabase>,
+    /// Uses Arc<Mutex<GameDatabase>> to allow shared ownership
+    /// across threads and avoid borrow checker issues.
+    db_cache: HashMap<String, Arc<Mutex<GameDatabase>>>,
 }
 
 impl SaveManager {
@@ -47,7 +49,9 @@ impl SaveManager {
     /// Open the GameDatabase for a specific save_id.
     /// Returns the open database for reading champion data, etc.
     /// Uses a cache to avoid re-opening and re-migrating on every call.
-    pub fn open_game_db(&mut self, save_id: &str) -> Result<&GameDatabase, String> {
+    /// Returns Arc<Mutex<GameDatabase>> to avoid borrow checker issues
+    /// with returning references to HashMap values, and to be Send+Sync.
+    pub fn open_game_db(&mut self, save_id: &str) -> Result<Arc<Mutex<GameDatabase>>, String> {
         use std::collections::hash_map::Entry;
 
         // Ensure the save exists first
@@ -56,13 +60,17 @@ impl SaveManager {
             .find(save_id)
             .ok_or_else(|| format!("Save '{}' not found", save_id))?;
 
-        // Use Entry API to avoid borrow checker issues
+        // Use Entry API - if cached, return the existing Arc
+        // If not, open the database and wrap in Arc<Mutex<>>
         match self.db_cache.entry(save_id.to_string()) {
-            Entry::Occupied(cache_entry) => Ok(cache_entry.into_mut()),
+            Entry::Occupied(cache_entry) => Ok(Arc::clone(cache_entry.get())),
             Entry::Vacant(cache_entry) => {
                 let db_path = self.saves_dir.join(&save_entry.db_filename);
                 let db = GameDatabase::open(&db_path)?;
-                Ok(cache_entry.insert(db))
+                let db_arc = Arc::new(Mutex::new(db));
+                // insert returns &mut V, need to clone the Arc
+                cache_entry.insert(Arc::clone(&db_arc));
+                Ok(db_arc)
             }
         }
     }
@@ -70,6 +78,7 @@ impl SaveManager {
     /// Invalidate the cached database for a save_id.
     /// Call this after modifying the save (e.g., after save_game).
     pub fn invalidate_cache(&mut self, save_id: &str) {
+        debug!("[save_manager] invalidating cache for save {}", save_id);
         self.db_cache.remove(save_id);
     }
 
@@ -181,8 +190,9 @@ impl SaveManager {
 
     pub fn load_stats_state(&mut self, save_id: &str) -> Result<StatsState, String> {
         // Use cached database connection to avoid reopening on every read
-        let db = self.open_game_db(save_id)?;
-        GamePersistenceReader::read_stats_state(db)
+        let db_arc = self.open_game_db(save_id)?;
+        let db = db_arc.lock().map_err(|e| format!("Lock error: {}", e))?;
+        GamePersistenceReader::read_stats_state(&db)
     }
 
     /// Load a Game from a save database.
