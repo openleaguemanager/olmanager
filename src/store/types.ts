@@ -308,25 +308,24 @@ export interface PlayerData {
   weak_foot?: number;
   training_focus: string | null;
   attributes: {
-    pace: number;
-    stamina: number;
-    strength: number;
-    agility: number;
-    passing: number;
-    shooting: number;
-    tackling: number;
-    dribbling: number;
-    defending: number;
-    positioning: number;
-    vision: number;
-    decisions: number;
-    composure: number;
-    aggression: number;
-    teamwork: number;
-    leadership: number;
-    handling: number;
-    reflexes: number;
-    aerial: number;
+    /** Technical skill and champion execution (formerly dribbling) */
+    mechanics: number;
+    /** 1v1 and 2v2 lane phase performance (formerly shooting) */
+    laning: number;
+    /** Coordination in 5v5 engagements (formerly teamwork) */
+    teamfighting: number;
+    /** Map awareness and objective control (formerly vision) */
+    macro_play: number;
+    /** Performance stability across games (formerly decisions) */
+    consistency: number;
+    /** In-game leadership and calls (formerly leadership) */
+    shotcalling: number;
+    /** Champion versatility and mastery (formerly agility) */
+    champion_pool: number;
+    /** Focus and tilt resistance (formerly composure) */
+    discipline: number;
+    /** Pressure handling and recovery (formerly stamina) */
+    mental_resilience: number;
   };
   condition: number;
   morale: number;

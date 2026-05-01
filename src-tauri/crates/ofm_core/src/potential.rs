@@ -166,19 +166,22 @@ pub fn effective_potential_cap(player: &Player) -> u8 {
         .min(99)
 }
 
+/// Calculate overall rating directly from LoL stats.
+/// Averages all 9 LoL stats: mechanics, laning, teamfighting, macro_play,
+/// consistency, shotcalling, champion_pool, discipline, mental_resilience
 pub fn calculate_lol_ovr(player: &Player) -> u8 {
     let attrs = &player.attributes;
-    let avg = (attrs.dribbling as f64
-        + attrs.shooting as f64
-        + attrs.teamwork as f64
-        + attrs.vision as f64
-        + attrs.decisions as f64
-        + attrs.leadership as f64
-        + attrs.agility as f64
-        + attrs.composure as f64
-        + attrs.stamina as f64)
+    let avg = (attrs.mechanics as f64
+        + attrs.laning as f64
+        + attrs.teamfighting as f64
+        + attrs.macro_play as f64
+        + attrs.consistency as f64
+        + attrs.shotcalling as f64
+        + attrs.champion_pool as f64
+        + attrs.discipline as f64
+        + attrs.mental_resilience as f64)
         / 9.0;
-    avg.round().clamp(1.0, 99.0) as u8
+    avg.round().clamp(25.0, 99.0) as u8
 }
 
 fn compute_revealed_potential(player: &Player, team_average_morale: u8) -> u8 {
@@ -233,25 +236,15 @@ mod tests {
 
     fn attrs(stat: u8) -> PlayerAttributes {
         PlayerAttributes {
-            pace: stat,
-            stamina: stat,
-            strength: stat,
-            agility: stat,
-            passing: stat,
-            shooting: stat,
-            tackling: stat,
-            dribbling: stat,
-            defending: stat,
-            positioning: stat,
-            vision: stat,
-            decisions: stat,
-            composure: stat,
-            aggression: stat,
-            teamwork: stat,
-            leadership: stat,
-            handling: stat,
-            reflexes: stat,
-            aerial: stat,
+            mechanics: stat,
+            laning: stat,
+            teamfighting: stat,
+            macro_play: stat,
+            consistency: stat,
+            shotcalling: stat,
+            champion_pool: stat,
+            discipline: stat,
+            mental_resilience: stat,
         }
     }
 

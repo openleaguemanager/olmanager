@@ -538,7 +538,7 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
                 ),
             };
 
-            let attributes = build_attributes_from_seed(&seed);
+            let attributes = build_lol_stats_from_seed(&seed);
             let position = role_to_position(seed.role.as_deref());
             let player_id = format!("{}-player-{}", academy_id, player_index + 1);
 
@@ -1571,7 +1571,9 @@ fn clamp_stat(value: i16) -> u8 {
     value.clamp(25, 99) as u8
 }
 
-fn build_lol_stats_from_seed(seed: &DraftPlayerSeed) -> [u8; 9] {
+/// Build PlayerAttributes directly from seed data.
+/// Returns PlayerAttributes with 9 LoL stats instead of [u8; 9].
+fn build_lol_stats_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
     let target = i16::from(seed.rating.unwrap_or(60).clamp(45, 95));
     let role_key = normalize_seed_name(seed.role.as_deref().unwrap_or(""));
     let role_bias: [i16; 9] = match role_key.as_str() {
@@ -1606,57 +1608,16 @@ fn build_lol_stats_from_seed(seed: &DraftPlayerSeed) -> [u8; 9] {
         cursor = (cursor + 1) % 9;
     }
 
-    [
-        clamp_stat(values[0]),
-        clamp_stat(values[1]),
-        clamp_stat(values[2]),
-        clamp_stat(values[3]),
-        clamp_stat(values[4]),
-        clamp_stat(values[5]),
-        clamp_stat(values[6]),
-        clamp_stat(values[7]),
-        clamp_stat(values[8]),
-    ]
-}
-
-fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
-    let [mechanics, laning, teamfighting, macro_play, consistency, shotcalling, champion_pool, discipline, mental_resilience] =
-        build_lol_stats_from_seed(seed);
-
-    let role_key = normalize_seed_name(seed.role.as_deref().unwrap_or(""));
-
-    let defending = if role_key == "top" || role_key == "support" {
-        clamp_stat(((i16::from(teamfighting) + i16::from(discipline)) / 2) + 4)
-    } else {
-        clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2)
-    };
-
     PlayerAttributes {
-        pace: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
-        stamina: mental_resilience,
-        strength: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
-        agility: champion_pool,
-        passing: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
-        shooting: laning,
-        tackling: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
-        dribbling: mechanics,
-        defending,
-        positioning: clamp_stat((i16::from(macro_play) + i16::from(consistency)) / 2),
-        vision: macro_play,
-        decisions: consistency,
-        composure: discipline,
-        aggression: clamp_stat((i16::from(teamfighting) + i16::from(mental_resilience)) / 2 - 4),
-        teamwork: teamfighting,
-        leadership: shotcalling,
-        handling: 20,
-        reflexes: 22,
-        aerial: if role_key == "top" {
-            68
-        } else if role_key == "support" {
-            64
-        } else {
-            52
-        },
+        mechanics: clamp_stat(values[0]),
+        laning: clamp_stat(values[1]),
+        teamfighting: clamp_stat(values[2]),
+        macro_play: clamp_stat(values[3]),
+        consistency: clamp_stat(values[4]),
+        shotcalling: clamp_stat(values[5]),
+        champion_pool: clamp_stat(values[6]),
+        discipline: clamp_stat(values[7]),
+        mental_resilience: clamp_stat(values[8]),
     }
 }
 
@@ -1677,7 +1638,7 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
     let dob = seed.dob.clone().unwrap_or_else(|| "2002-01-01".to_string());
     let nationality = seed.nationality.clone().unwrap_or_else(|| "KR".to_string());
     let position = role_to_position(seed.role.as_deref());
-    let attributes = build_attributes_from_seed(seed);
+    let attributes = build_lol_stats_from_seed(seed);
 
     let seed_key = normalize_seed_name(ign);
     let id = format!("lec-fa-{}-{}", seed_key, index + 1);

@@ -147,42 +147,189 @@ pub enum Footedness {
     Both,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Player attributes for League of Legends themed manager.
+/// Replaces 19 football-specific attributes with 9 LoL stats.
+/// Uses serde aliases for backward compatibility with legacy save files.
+#[derive(Debug, Clone, Serialize)]
 pub struct PlayerAttributes {
-    // Physical
-    pub pace: u8,
-    pub stamina: u8,
-    pub strength: u8,
-    #[serde(default = "default_attr")]
-    pub agility: u8,
+    /// Technical skill and champion execution (formerly dribbling)
+    #[serde(alias = "dribbling", default = "default_attr")]
+    pub mechanics: u8,
 
-    // Technical
-    pub passing: u8,
-    pub shooting: u8,
-    pub tackling: u8,
-    pub dribbling: u8,
-    pub defending: u8,
+    /// 1v1 and 2v2 lane phase performance (formerly shooting)
+    #[serde(alias = "shooting", default = "default_attr")]
+    pub laning: u8,
 
-    // Mental
-    pub positioning: u8,
-    pub vision: u8,
-    pub decisions: u8,
-    #[serde(default = "default_attr")]
-    pub composure: u8,
-    #[serde(default = "default_attr")]
-    pub aggression: u8,
-    #[serde(default = "default_attr")]
-    pub teamwork: u8,
-    #[serde(default = "default_attr")]
-    pub leadership: u8,
+    /// Coordination in 5v5 engagements (formerly teamwork)
+    #[serde(alias = "teamwork", default = "default_attr")]
+    pub teamfighting: u8,
 
-    // Goalkeeper
-    #[serde(default = "default_attr")]
-    pub handling: u8,
-    #[serde(default = "default_attr")]
-    pub reflexes: u8,
-    #[serde(default = "default_attr")]
-    pub aerial: u8,
+    /// Map awareness and objective control (formerly vision)
+    #[serde(alias = "vision", default = "default_attr")]
+    pub macro_play: u8,
+
+    /// Performance stability across games (formerly decisions)
+    #[serde(alias = "decisions", default = "default_attr")]
+    pub consistency: u8,
+
+    /// In-game leadership and calls (formerly leadership)
+    #[serde(alias = "leadership", default = "default_attr")]
+    pub shotcalling: u8,
+
+    /// Champion versatility and mastery (formerly agility)
+    #[serde(alias = "agility", default = "default_attr")]
+    pub champion_pool: u8,
+
+    /// Focus and tilt resistance (formerly composure)
+    #[serde(alias = "composure", default = "default_attr")]
+    pub discipline: u8,
+
+    /// Pressure handling and recovery (formerly stamina)
+    #[serde(alias = "stamina", default = "default_attr")]
+    pub mental_resilience: u8,
+}
+
+/// Legacy 19-field attribute structure for backward compatibility deserialization
+#[derive(Debug, Clone, Deserialize)]
+struct LegacyAttributes {
+    // Physical (4)
+    #[serde(default)]
+    pace: Option<u8>,
+    stamina: Option<u8>,
+    strength: Option<u8>,
+    agility: Option<u8>,
+
+    // Technical (5)
+    passing: Option<u8>,
+    shooting: Option<u8>,
+    tackling: Option<u8>,
+    dribbling: Option<u8>,
+    defending: Option<u8>,
+
+    // Mental (7)
+    positioning: Option<u8>,
+    vision: Option<u8>,
+    decisions: Option<u8>,
+    composure: Option<u8>,
+    aggression: Option<u8>,
+    teamwork: Option<u8>,
+    leadership: Option<u8>,
+
+    // Goalkeeper (3)
+    handling: Option<u8>,
+    reflexes: Option<u8>,
+    aerial: Option<u8>,
+
+    // New LoL fields (for forward compatibility)
+    mechanics: Option<u8>,
+    laning: Option<u8>,
+    teamfighting: Option<u8>,
+    macro_play: Option<u8>,
+    consistency: Option<u8>,
+    shotcalling: Option<u8>,
+    champion_pool: Option<u8>,
+    discipline: Option<u8>,
+    mental_resilience: Option<u8>,
+}
+
+impl<'de> serde::Deserialize<'de> for PlayerAttributes {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let legacy = LegacyAttributes::deserialize(deserializer)?;
+
+        // If new format present (all 9 fields), use directly
+        if let (
+            Some(m),
+            Some(l),
+            Some(t),
+            Some(mp),
+            Some(c),
+            Some(s),
+            Some(cp),
+            Some(d),
+            Some(mr),
+        ) = (
+            legacy.mechanics,
+            legacy.laning,
+            legacy.teamfighting,
+            legacy.macro_play,
+            legacy.consistency,
+            legacy.shotcalling,
+            legacy.champion_pool,
+            legacy.discipline,
+            legacy.mental_resilience,
+        ) {
+            return Ok(PlayerAttributes {
+                mechanics: m,
+                laning: l,
+                teamfighting: t,
+                macro_play: mp,
+                consistency: c,
+                shotcalling: s,
+                champion_pool: cp,
+                discipline: d,
+                mental_resilience: mr,
+            });
+        }
+
+        // Otherwise, map from legacy format
+        // Mapping table from design.md:
+        // pace + dribbling -> mechanics
+        // shooting -> laning
+        // teamwork -> teamfighting
+        // vision -> macro_play
+        // decisions -> consistency
+        // leadership -> shotcalling
+        // agility -> champion_pool
+        // composure -> discipline
+        // stamina -> mental_resilience
+
+        let mechanics = match (legacy.pace, legacy.dribbling) {
+            (Some(p), Some(d)) => (p + d) / 2,
+            (Some(p), None) => p,
+            (None, Some(d)) => d,
+            (None, None) => 50,
+        };
+
+        let laning = legacy.shooting.unwrap_or(50);
+        let teamfighting = legacy.teamwork.unwrap_or(50);
+        let macro_play = legacy.vision.unwrap_or(50);
+        let consistency = legacy.decisions.unwrap_or(50);
+        let shotcalling = legacy.leadership.unwrap_or(50);
+        let champion_pool = legacy.agility.unwrap_or(50);
+        let discipline = legacy.composure.unwrap_or(50);
+        let mental_resilience = legacy.stamina.unwrap_or(50);
+
+        Ok(PlayerAttributes {
+            mechanics,
+            laning,
+            teamfighting,
+            macro_play,
+            consistency,
+            shotcalling,
+            champion_pool,
+            discipline,
+            mental_resilience,
+        })
+    }
+}
+
+impl Default for PlayerAttributes {
+    fn default() -> Self {
+        PlayerAttributes {
+            mechanics: 50,
+            laning: 50,
+            teamfighting: 50,
+            macro_play: 50,
+            consistency: 50,
+            shotcalling: 50,
+            champion_pool: 50,
+            discipline: 50,
+            mental_resilience: 50,
+        }
+    }
 }
 
 fn default_attr() -> u8 {
@@ -429,77 +576,107 @@ pub enum PlayerTrait {
     SetPieceSpecialist, // passing >= 80 && shooting >= 75 && vision >= 75
 }
 
-/// Derive traits purely from a player's attributes (position-independent).
+/// Derive traits purely from a player's LoL attributes.
+/// Maps from football attribute conditions to LoL stats:
+/// - Speedster: pace >= 85 -> mechanics >= 85
+/// - Tank: strength >= 85 && stamina >= 75 -> teamfighting >= 85 && mental_resilience >= 75
+/// - Agile: agility >= 85 -> champion_pool >= 85
+/// - Tireless: stamina >= 90 -> mental_resilience >= 90
+/// - Playmaker: passing >= 80 && vision >= 80 -> macro_play >= 80 && shotcalling >= 80
+/// - Sharpshooter: shooting >= 85 -> laning >= 85
+/// - Dribbler: dribbling >= 85 -> mechanics >= 85
+/// - BallWinner: tackling >= 80 && aggression >= 70 -> discipline >= 80 && teamfighting >= 70
+/// - Rock: defending >= 85 && positioning >= 75 -> teamfighting >= 85 && macro_play >= 75
+/// - Leader: leadership >= 85 && teamwork >= 75 -> shotcalling >= 85 && teamfighting >= 75
+/// - CoolHead: composure >= 85 && decisions >= 80 -> discipline >= 85 && consistency >= 80
+/// - Visionary: vision >= 85 -> macro_play >= 85
+/// - HotHead: aggression >= 85 && composure < 50 -> low discipline, high teamfighting
+/// - TeamPlayer: teamwork >= 85 -> teamfighting >= 85
+/// - CompleteForward: shooting >= 75 && dribbling >= 75 && pace >= 70 && strength >= 70 -> mechanics >= 75 && laning >= 75 && champion_pool >= 70
+/// - Engine: stamina >= 85 && pace >= 70 && teamwork >= 75 -> mental_resilience >= 85 && mechanics >= 70 && teamfighting >= 75
+/// - SetPieceSpecialist: passing >= 80 && shooting >= 75 && vision >= 75 -> macro_play >= 80 && laning >= 75 && shotcalling >= 75
 pub fn compute_traits(attrs: &PlayerAttributes, _position: &Position) -> Vec<PlayerTrait> {
     let mut traits = Vec::new();
 
-    // Physical
-    if attrs.pace >= 85 {
+    // Mechanical stats
+    if attrs.mechanics >= 85 {
         traits.push(PlayerTrait::Speedster);
+        traits.push(PlayerTrait::Dribbler);
     }
-    if attrs.strength >= 85 && attrs.stamina >= 75 {
+
+    // Teamfighting + Mental Resilience -> Tank
+    if attrs.teamfighting >= 85 && attrs.mental_resilience >= 75 {
         traits.push(PlayerTrait::Tank);
     }
-    if attrs.agility >= 85 {
+
+    // Champion Pool -> Agile
+    if attrs.champion_pool >= 85 {
         traits.push(PlayerTrait::Agile);
     }
-    if attrs.stamina >= 90 {
+
+    // Mental Resilience -> Tireless
+    if attrs.mental_resilience >= 90 {
         traits.push(PlayerTrait::Tireless);
     }
 
-    // Technical
-    if attrs.passing >= 80 && attrs.vision >= 80 {
+    // Macro Play + Shotcalling -> Playmaker
+    if attrs.macro_play >= 80 && attrs.shotcalling >= 80 {
         traits.push(PlayerTrait::Playmaker);
     }
-    if attrs.shooting >= 85 {
+
+    // Laning -> Sharpshooter
+    if attrs.laning >= 85 {
         traits.push(PlayerTrait::Sharpshooter);
     }
-    if attrs.dribbling >= 85 {
-        traits.push(PlayerTrait::Dribbler);
-    }
-    if attrs.tackling >= 80 && attrs.aggression >= 70 {
+
+    // Discipline + Teamfighting -> BallWinner
+    if attrs.discipline >= 80 && attrs.teamfighting >= 70 {
         traits.push(PlayerTrait::BallWinner);
     }
-    if attrs.defending >= 85 && attrs.positioning >= 75 {
+
+    // Teamfighting + Macro Play -> Rock
+    if attrs.teamfighting >= 85 && attrs.macro_play >= 75 {
         traits.push(PlayerTrait::Rock);
     }
 
-    // Mental
-    if attrs.leadership >= 85 && attrs.teamwork >= 75 {
+    // Shotcalling + Teamfighting -> Leader
+    if attrs.shotcalling >= 85 && attrs.teamfighting >= 75 {
         traits.push(PlayerTrait::Leader);
     }
-    if attrs.composure >= 85 && attrs.decisions >= 80 {
+
+    // Discipline + Consistency -> CoolHead
+    if attrs.discipline >= 85 && attrs.consistency >= 80 {
         traits.push(PlayerTrait::CoolHead);
     }
-    if attrs.vision >= 85 {
+
+    // Macro Play -> Visionary
+    if attrs.macro_play >= 85 {
         traits.push(PlayerTrait::Visionary);
     }
-    if attrs.aggression >= 85 && attrs.composure < 50 {
+
+    // HotHead: High teamfighting + low discipline
+    if attrs.teamfighting >= 75 && attrs.discipline < 50 {
         traits.push(PlayerTrait::HotHead);
     }
-    if attrs.teamwork >= 85 {
+
+    // Teamfighting -> TeamPlayer
+    if attrs.teamfighting >= 85 {
         traits.push(PlayerTrait::TeamPlayer);
     }
 
-    // Goalkeeper-oriented (any player with high GK stats can earn these)
-    if attrs.handling >= 85 {
-        traits.push(PlayerTrait::SafeHands);
-    }
-    if attrs.reflexes >= 85 {
-        traits.push(PlayerTrait::CatReflexes);
-    }
-    if attrs.aerial >= 85 {
-        traits.push(PlayerTrait::AerialDominance);
-    }
-
-    // Combo / Special — purely attribute-based
-    if attrs.shooting >= 75 && attrs.dribbling >= 75 && attrs.pace >= 70 && attrs.strength >= 70 {
+    // Combo traits
+    // CompleteForward: mechanics >= 75 && laning >= 75 && champion_pool >= 70
+    if attrs.mechanics >= 75 && attrs.laning >= 75 && attrs.champion_pool >= 70 {
         traits.push(PlayerTrait::CompleteForward);
     }
-    if attrs.stamina >= 85 && attrs.pace >= 70 && attrs.teamwork >= 75 {
+
+    // Engine: mental_resilience >= 85 && mechanics >= 70 && teamfighting >= 75
+    if attrs.mental_resilience >= 85 && attrs.mechanics >= 70 && attrs.teamfighting >= 75 {
         traits.push(PlayerTrait::Engine);
     }
-    if attrs.passing >= 80 && attrs.shooting >= 75 && attrs.vision >= 75 {
+
+    // SetPieceSpecialist: macro_play >= 80 && laning >= 75 && shotcalling >= 75
+    if attrs.macro_play >= 80 && attrs.laning >= 75 && attrs.shotcalling >= 75 {
         traits.push(PlayerTrait::SetPieceSpecialist);
     }
 
@@ -566,25 +743,15 @@ mod tests {
 
     fn sample_attributes() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 70,
-            stamina: 72,
-            strength: 65,
-            agility: 68,
-            passing: 74,
-            shooting: 61,
-            tackling: 58,
-            dribbling: 69,
-            defending: 56,
-            positioning: 67,
-            vision: 73,
-            decisions: 71,
-            composure: 66,
-            aggression: 54,
-            teamwork: 76,
-            leadership: 49,
-            handling: 20,
-            reflexes: 24,
-            aerial: 44,
+            mechanics: 70,
+            laning: 72,
+            teamfighting: 65,
+            macro_play: 68,
+            consistency: 74,
+            shotcalling: 61,
+            champion_pool: 58,
+            discipline: 69,
+            mental_resilience: 56,
         }
     }
 
