@@ -1,10 +1,10 @@
 use engine::LolRole;
 use engine::{
-    simulate_with_rng, EventType, MatchConfig, MatchEvent, PlayStyle, PlayerData, Side, TeamData,
-    Zone,
+    EventType, MatchConfig, MatchEvent, PlayStyle, PlayerData, Side, TeamData, Zone,
+    simulate_with_rng,
 };
-use rand::rngs::StdRng;
 use rand::SeedableRng;
+use rand::rngs::StdRng;
 
 // ---------------------------------------------------------------------------
 // Test helpers

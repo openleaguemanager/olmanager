@@ -10,6 +10,7 @@ pub mod types;
 pub use engine::simulate;
 pub use engine::simulate_with_rng;
 pub use event::{EventType, MatchEvent};
+pub use live_match::LolRole;
 pub use live_match::{
     LiveMatchState, MatchCommand, MatchPhase, MatchSnapshot, MinuteResult, SetPieceTakers,
     SubstitutionRecord,
@@ -17,5 +18,4 @@ pub use live_match::{
 pub use report::{
     GoalDetail, KillDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats,
 };
-pub use live_match::LolRole;
 pub use types::{MatchConfig, PlayStyle, PlayerData, Side, TeamData, Zone};

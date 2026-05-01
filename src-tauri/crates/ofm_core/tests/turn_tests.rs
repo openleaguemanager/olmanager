@@ -7,8 +7,8 @@ use domain::player::{
 };
 use domain::stats::LolRole;
 use domain::team::Team;
-use engine::report::{GoalDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
 use engine::Side;
+use engine::report::{GoalDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::turn;

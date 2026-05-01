@@ -1,12 +1,12 @@
 use rand::{Rng, RngExt};
 
 use crate::event::{EventType, MatchEvent};
-use crate::shared::{home_mod, play_style_modifier, trait_bonus, PlayStylePhase, TraitContext};
+use crate::shared::{PlayStylePhase, TraitContext, home_mod, play_style_modifier, trait_bonus};
 use crate::types::{LolRole, Side, Zone};
 
+use super::MatchContext;
 use super::fouls::maybe_foul;
 use super::snap_player;
-use super::MatchContext;
 
 // ---------------------------------------------------------------------------
 // Action resolution per zone

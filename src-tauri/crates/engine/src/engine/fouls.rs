@@ -1,11 +1,11 @@
 use rand::{Rng, RngExt};
 
 use crate::event::{EventType, MatchEvent};
-use crate::shared::{trait_bonus, PlayerSnap, TraitContext};
+use crate::shared::{PlayerSnap, TraitContext, trait_bonus};
 use crate::types::{LolRole, Side, Zone};
 
-use super::snap_player;
 use super::MatchContext;
+use super::snap_player;
 
 /// `fouled_snap` is the player who was fouled; `fouler_snap` committed the foul.
 /// `fouling_side` is the side that committed the foul.

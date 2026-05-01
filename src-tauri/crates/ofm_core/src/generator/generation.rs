@@ -1,7 +1,7 @@
 use domain::player::{Player, PlayerAttributes};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
-use domain::team::PlayStyle;
 use domain::stats::LolRole;
+use domain::team::PlayStyle;
 use rand::{Rng, RngExt};
 use uuid::Uuid;
 
@@ -190,23 +190,63 @@ pub(super) fn generate_random_player_from_def(
     let attributes = PlayerAttributes {
         pace: rng.random_range(40..95),
         stamina: rng.random_range(40..95),
-        strength: if is_support { rng.random_range(50..90) } else { rng.random_range(40..95) },
+        strength: if is_support {
+            rng.random_range(50..90)
+        } else {
+            rng.random_range(40..95)
+        },
         agility: rng.random_range(40..95),
-        passing: if is_support { rng.random_range(55..95) } else { rng.random_range(40..95) },
+        passing: if is_support {
+            rng.random_range(55..95)
+        } else {
+            rng.random_range(40..95)
+        },
         shooting: if is_adc {
             rng.random_range(55..95)
         } else {
             rng.random_range(40..95)
         },
-        tackling: if is_support { rng.random_range(45..85) } else { rng.random_range(40..95) },
-        dribbling: if is_adc { rng.random_range(55..95) } else { rng.random_range(40..95) },
-        defending: if is_support || is_jungle { rng.random_range(45..85) } else { rng.random_range(40..95) },
-        positioning: if is_adc || is_support { rng.random_range(55..95) } else { rng.random_range(40..95) },
-        vision: if is_support || is_jungle { rng.random_range(55..95) } else { rng.random_range(40..95) },
-        decisions: if is_jungle { rng.random_range(55..95) } else { rng.random_range(40..95) },
-        composure: if is_adc { rng.random_range(55..90) } else { rng.random_range(40..95) },
+        tackling: if is_support {
+            rng.random_range(45..85)
+        } else {
+            rng.random_range(40..95)
+        },
+        dribbling: if is_adc {
+            rng.random_range(55..95)
+        } else {
+            rng.random_range(40..95)
+        },
+        defending: if is_support || is_jungle {
+            rng.random_range(45..85)
+        } else {
+            rng.random_range(40..95)
+        },
+        positioning: if is_adc || is_support {
+            rng.random_range(55..95)
+        } else {
+            rng.random_range(40..95)
+        },
+        vision: if is_support || is_jungle {
+            rng.random_range(55..95)
+        } else {
+            rng.random_range(40..95)
+        },
+        decisions: if is_jungle {
+            rng.random_range(55..95)
+        } else {
+            rng.random_range(40..95)
+        },
+        composure: if is_adc {
+            rng.random_range(55..90)
+        } else {
+            rng.random_range(40..95)
+        },
         aggression: rng.random_range(30..90),
-        teamwork: if is_support { rng.random_range(55..95) } else { rng.random_range(45..95) },
+        teamwork: if is_support {
+            rng.random_range(55..95)
+        } else {
+            rng.random_range(45..95)
+        },
         leadership: rng.random_range(30..90),
         handling: rng.random_range(10..35),
         reflexes: rng.random_range(20..50),

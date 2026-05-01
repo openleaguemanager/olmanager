@@ -11,8 +11,8 @@ use domain::team::{Team, TeamKind};
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::transfers::{
-    counter_offer, generate_incoming_transfer_offers, make_transfer_bid, respond_to_offer,
-    TransferDestination, TransferNegotiationDecision,
+    TransferDestination, TransferNegotiationDecision, counter_offer,
+    generate_incoming_transfer_offers, make_transfer_bid, respond_to_offer,
 };
 
 fn default_attrs() -> PlayerAttributes {

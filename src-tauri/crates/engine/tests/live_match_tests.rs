@@ -1,10 +1,10 @@
-use engine::ai::{ai_decide, AiProfile};
+use engine::ai::{AiProfile, ai_decide};
 use engine::{
     EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase, MatchSnapshot,
     MinuteResult, PlayStyle, PlayerData, Side, TeamData,
 };
-use rand::rngs::StdRng;
 use rand::SeedableRng;
+use rand::rngs::StdRng;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -138,10 +138,12 @@ fn first_step_emits_kick_off() {
     let result = state.step_minute(&mut rng);
     assert_eq!(result.minute, 0);
     assert!(!result.is_finished);
-    assert!(result
-        .events
-        .iter()
-        .any(|e| e.event_type == EventType::KickOff));
+    assert!(
+        result
+            .events
+            .iter()
+            .any(|e| e.event_type == EventType::KickOff)
+    );
     assert_eq!(state.phase(), MatchPhase::FirstHalf);
 }
 
@@ -396,16 +398,20 @@ fn substitution_replaces_player() {
 
     let snap_after = state.snapshot();
     assert_eq!(snap_after.home_subs_made, 1);
-    assert!(snap_after
-        .home_team
-        .players
-        .iter()
-        .any(|p| p.id == player_on_id));
-    assert!(!snap_after
-        .home_team
-        .players
-        .iter()
-        .any(|p| p.id == player_off_id));
+    assert!(
+        snap_after
+            .home_team
+            .players
+            .iter()
+            .any(|p| p.id == player_on_id)
+    );
+    assert!(
+        !snap_after
+            .home_team
+            .players
+            .iter()
+            .any(|p| p.id == player_off_id)
+    );
 }
 
 #[test]

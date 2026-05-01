@@ -6,8 +6,8 @@ use domain::stats::LolRole;
 use domain::team::Team;
 use ofm_core::clock::GameClock;
 use ofm_core::contracts::{
-    delegate_renewals, evaluate_renewal_offer, propose_renewal, DelegatedRenewalOptions,
-    DelegatedRenewalResultStatus, RenewalDecision, RenewalOffer,
+    DelegatedRenewalOptions, DelegatedRenewalResultStatus, RenewalDecision, RenewalOffer,
+    delegate_renewals, evaluate_renewal_offer, propose_renewal,
 };
 use ofm_core::game::Game;
 
