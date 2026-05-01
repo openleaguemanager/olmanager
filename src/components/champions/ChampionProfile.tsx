@@ -1,8 +1,20 @@
 import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
-import { X } from "lucide-react";
+import {
+  Crosshair,
+  Heart,
+  Shield,
+  Sword,
+  Trophy,
+  TrendingUp,
+  Target,
+  Users,
+  AlertTriangle,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
+import { Card, CardBody, CardHeader } from "../ui";
 
 export interface Champion {
   id: number;
@@ -65,14 +77,40 @@ interface CounterpickOrSynergyItem {
   reason?: string;
 }
 
-function inferRoleHints(items: CounterpickOrSynergyItem[]): string[] {
-  const rolesSet = new Set<string>();
-  items.forEach((item) => {
-    if (item.role) {
-      rolesSet.add(item.role);
-    }
-  });
-  return Array.from(rolesSet);
+/**
+ * InfoRow component matching player profile style
+ */
+function InfoRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-navy-600 last:border-0">
+      <div className="text-gray-400 dark:text-gray-500">{icon}</div>
+      <span className="text-sm text-gray-500 dark:text-gray-400 flex-1">
+        {label}
+      </span>
+      <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+        {value}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Placeholder value for fields not yet implemented
+ */
+function Placeholder({ text }: { text: string }) {
+  return (
+    <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+      {text}
+    </span>
+  );
 }
 
 export default function ChampionProfile({ champion, onClose }: ChampionProfileProps) {
@@ -126,9 +164,9 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
           <X className="h-5 w-5" />
         </button>
 
-        {/* Splash/Tile Image */}
+        {/* Splash/Tile Image Header */}
         <div
-          className="relative h-64 w-full cursor-pointer overflow-hidden"
+          className="relative h-48 w-full cursor-pointer overflow-hidden"
           onClick={() => setShowFullImage(!showFullImage)}
         >
           <img
@@ -168,115 +206,172 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
           </div>
         </div>
 
-        {/* Content */}
-        <div className="max-h-[calc(90vh-16rem)] overflow-y-auto p-6 space-y-6">
-          {/* Counterpicks Section */}
-          {counterpicks.length > 0 && (
-            <section className="rounded-xl border border-red-400/30 bg-red-500/5 p-4">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-heading font-bold uppercase tracking-wider text-red-300">
-                {t("champions.counterpicks", "Counterpicks")}
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {counterpicks.map((cp, idx) => {
-                  const champKey = cp.champion_key || cp.champion_name || `unknown-${idx}`;
-                  const imgUrl = fallbackTileUrl(champKey);
-                  return (
-                    <div
-                      key={`cp-${idx}`}
-                      className="flex items-center gap-2 rounded-lg border border-red-400/20 bg-navy-800/50 p-2"
-                    >
-                      <img
-                        src={imgUrl}
-                        alt={cp.champion_name || champKey}
-                        className="h-10 w-10 rounded object-cover"
-                        onError={(e) => {
-                          const img = e.currentTarget;
-                          img.onerror = null;
-                          img.src = fallbackTileUrl(champKey);
-                        }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-heading font-semibold text-gray-100 truncate">
-                          {cp.champion_name || champKey}
-                        </p>
-                        {cp.role && (
-                          <p className="text-[10px] text-gray-400">
-                            {cp.role}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+        {/* Content - Player Profile Style Cards */}
+        <div className="max-h-[calc(90vh-12rem)] overflow-y-auto p-6 space-y-4">
+          {/* Stats Card */}
+          <Card>
+            <CardHeader>{t("champions.stats", "Estadísticas")}</CardHeader>
+            <CardBody>
+              <div className="flex flex-col gap-0">
+                <InfoRow
+                  icon={<Trophy className="w-4 h-4" />}
+                  label={t("champions.winRate", "Win Rate")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<TrendingUp className="w-4 h-4" />}
+                  label={t("champions.pickRate", "Pick Rate")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<Target className="w-4 h-4" />}
+                  label={t("champions.banRate", "Ban Rate")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<Crosshair className="w-4 h-4" />}
+                  label={t("champions.kda", "KDA Promedio")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<Sparkles className="w-4 h-4" />}
+                  label={t("champions.tier", "Tier")}
+                  value={<Placeholder text="Por implementar" />}
+                />
               </div>
-              {inferRoleHints(counterpicks).length > 0 && (
-                <p className="mt-2 text-xs text-gray-400">
-                  <span className="font-heading">Roles: </span>
-                  {inferRoleHints(counterpicks).join(", ")}
-                </p>
-              )}
-            </section>
-          )}
+            </CardBody>
+          </Card>
 
-          {/* Synergies Section */}
-          {synergies.length > 0 && (
-            <section className="rounded-xl border border-emerald-400/30 bg-emerald-500/5 p-4">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-heading font-bold uppercase tracking-wider text-emerald-300">
-                {t("champions.synergies", "Sinergias")}
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {synergies.map((syn, idx) => {
-                  const champKey = syn.champion_key || syn.champion_name || `unknown-${idx}`;
-                  const imgUrl = fallbackTileUrl(champKey);
-                  return (
-                    <div
-                      key={`syn-${idx}`}
-                      className="flex items-center gap-2 rounded-lg border border-emerald-400/20 bg-navy-800/50 p-2"
-                    >
-                      <img
-                        src={imgUrl}
-                        alt={syn.champion_name || champKey}
-                        className="h-10 w-10 rounded object-cover"
-                        onError={(e) => {
-                          const img = e.currentTarget;
-                          img.onerror = null;
-                          img.src = fallbackTileUrl(champKey);
-                        }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-heading font-semibold text-gray-100 truncate">
-                          {syn.champion_name || champKey}
-                        </p>
-                        {syn.role && (
-                          <p className="text-[10px] text-gray-400">
-                            {syn.role}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+          {/* Attributes Card */}
+          <Card>
+            <CardHeader>{t("champions.attributes", "Atributos")}</CardHeader>
+            <CardBody>
+              <div className="flex flex-col gap-0">
+                <InfoRow
+                  icon={<Sword className="w-4 h-4" />}
+                  label={t("champions.damage", "Daño")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<Shield className="w-4 h-4" />}
+                  label={t("champions.toughness", "Resistencia")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<Heart className="w-4 h-4" />}
+                  label={t("champions.utility", "Utilidad")}
+                  value={<Placeholder text="Por implementar" />}
+                />
+                <InfoRow
+                  icon={<AlertTriangle className="w-4 h-4" />}
+                  label={t("champions.difficulty", "Dificultad")}
+                  value={<Placeholder text="Por implementar" />}
+                />
               </div>
-              {inferRoleHints(synergies).length > 0 && (
-                <p className="mt-2 text-xs text-gray-400">
-                  <span className="font-heading">Roles: </span>
-                  {inferRoleHints(synergies).join(", ")}
-                </p>
-              )}
-            </section>
-          )}
+            </CardBody>
+          </Card>
 
-          {/* Empty state if no counterpicks or synergies */}
-          {counterpicks.length === 0 && synergies.length === 0 && (
-            <div className="rounded-xl border border-navy-600 bg-navy-800/50 p-6 text-center">
-              <p className="text-sm text-gray-400">
-                {t(
-                  "champions.noData",
-                  "No hay información de counterpicks o sinergias disponible.",
-                )}
-              </p>
-            </div>
-          )}
+          {/* Counterpicks Card */}
+          <Card>
+            <CardHeader>
+              <span className="text-red-400">{t("champions.counterpicks", "Counterpicks")}</span>
+            </CardHeader>
+            <CardBody>
+              {counterpicks.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {counterpicks.map((cp, idx) => {
+                    const champKey = cp.champion_key || cp.champion_name || `unknown-${idx}`;
+                    const imgUrl = fallbackTileUrl(champKey);
+                    return (
+                      <div
+                        key={`cp-${idx}`}
+                        className="flex items-center gap-2 rounded-lg border border-red-400/20 bg-navy-800/50 p-2"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={cp.champion_name || champKey}
+                          className="h-10 w-10 rounded object-cover"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            img.onerror = null;
+                            img.src = fallbackTileUrl(champKey);
+                          }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">
+                            {cp.champion_name || champKey}
+                          </p>
+                          {cp.role && (
+                            <p className="text-[10px] text-gray-400">
+                              {cp.role}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <AlertTriangle className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    {t("champions.noCounterpicks", "Sin counterpicks registrados")}
+                  </p>
+                </div>
+              )}
+            </CardBody>
+          </Card>
+
+          {/* Synergies Card */}
+          <Card>
+            <CardHeader>
+              <span className="text-emerald-400">{t("champions.synergies", "Sinergias")}</span>
+            </CardHeader>
+            <CardBody>
+              {synergies.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {synergies.map((syn, idx) => {
+                    const champKey = syn.champion_key || syn.champion_name || `unknown-${idx}`;
+                    const imgUrl = fallbackTileUrl(champKey);
+                    return (
+                      <div
+                        key={`syn-${idx}`}
+                        className="flex items-center gap-2 rounded-lg border border-emerald-400/20 bg-navy-800/50 p-2"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={syn.champion_name || champKey}
+                          className="h-10 w-10 rounded object-cover"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            img.onerror = null;
+                            img.src = fallbackTileUrl(champKey);
+                          }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">
+                            {syn.champion_name || champKey}
+                          </p>
+                          {syn.role && (
+                            <p className="text-[10px] text-gray-400">
+                              {syn.role}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <Users className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    {t("champions.noSynergies", "Sin sinergias registradas")}
+                  </p>
+                </div>
+              )}
+            </CardBody>
+          </Card>
         </div>
       </div>
     </div>
