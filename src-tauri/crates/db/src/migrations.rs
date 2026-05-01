@@ -64,7 +64,18 @@ pub fn all_migrations() -> Migrations<'static> {
         // V28: Add avatar_path column to managers table for profile avatar persistence
         M::up(include_str!("sql/v028_avatar_path.sql")),
         // V29: Champion progression state (patch + masteries)
-        // (Historically in v028_champion_progression_state.sql, now handled by ofm_core)
+        // Conditional — only creates table if it doesn't exist
+        M::up_with_hook("SELECT 1;", |tx: &rusqlite::Transaction| {
+            let exists: bool = tx.query_row(
+                "SELECT COUNT(*) > 0 FROM sqlite_master WHERE type='table' AND name='champion_progression_state'",
+                [],
+                |row| row.get(0),
+            )?;
+            if !exists {
+                tx.execute_batch(include_str!("sql/v028_champion_progression_state.sql"))?;
+            }
+            Ok(())
+        }),
         // V30: Champions table for world champions catalog
         M::up(include_str!("sql/v030_champions_table.sql")),
         // V31: Fix champion counterpicks/synergies seed (was storing all data in every champion)
