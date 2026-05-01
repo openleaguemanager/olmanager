@@ -60,18 +60,57 @@ interface CounterpickOrSynergyItem {
 
 /**
  * Extracts the opposing champion key from a counterpick/synergy entry.
- * The backend stores { a: "Aatrox", b: "Chogath", value: 1 } where "a" is the
- * subject champion and "b" is the counter/synergy target.
  */
 function extractOpponentKey(item: CounterpickOrSynergyItem, subjectKey: string): string {
-  // Prefer explicit champion_key if present
   if (item.champion_key) return item.champion_key;
-  // Backend format: { a, b, value } — return "b" if "a" matches subject
   if (item.a === subjectKey && item.b) return item.b;
-  // Fallback: if only one of a/b is present and doesn't match subject, use it
   if (item.b && item.b !== subjectKey) return item.b;
   if (item.a && item.a !== subjectKey) return item.a;
   return item.champion_name || "";
+}
+
+/**
+ * QuickStat matching PlayerProfileHeroCard style
+ */
+function QuickStat({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) {
+  return (
+    <div className="bg-black/42 border border-white/20 rounded-xl px-5 py-3 text-center min-w-25 backdrop-blur-xs">
+      <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">
+        {label}
+      </p>
+      <p className={`font-heading font-bold text-xl mt-0.5 ${color}`}>{value}</p>
+    </div>
+  );
+}
+
+/**
+ * MobileQuickStat matching PlayerProfileHeroCard style
+ */
+function MobileQuickStat({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) {
+  return (
+    <div className="bg-white dark:bg-navy-800 p-3 text-center">
+      <p className="text-xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+        {label}
+      </p>
+      <p className={`font-heading font-bold text-lg mt-0.5 ${color}`}>{value}</p>
+    </div>
+  );
 }
 
 export default function ChampionPage({ championKey, onClose }: ChampionPageProps) {
@@ -141,60 +180,6 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
     champion.image_splash_url || fallbackSplashUrl(champion.champion_key);
   const tileUrl =
     champion.image_tile_url || fallbackTileUrl(champion.champion_key);
-
-  // Render a list of counterpick/synergy items
-  function renderChampionList(
-    items: CounterpickOrSynergyItem[],
-    sectionClass: string,
-    titleKey: string,
-    titleDefault: string,
-  ) {
-    if (items.length === 0) return null;
-    return (
-      <section className={sectionClass}>
-        <h3 className="mb-4 flex items-center gap-2 text-xl font-heading font-bold uppercase tracking-wider">
-          {t(titleKey, titleDefault)}
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-          {items.map((item, idx) => {
-            const champKey = extractOpponentKey(item, champion.champion_key);
-            const imgUrl = champKey ? fallbackTileUrl(champKey) : "";
-            return (
-              <div
-                key={`item-${idx}`}
-                className="flex items-center gap-3 rounded-lg border border-navy-600/30 bg-navy-800/50 p-3"
-              >
-                {imgUrl ? (
-                  <img
-                    src={imgUrl}
-                    alt={champKey}
-                    className="h-12 w-12 rounded object-cover"
-                    onError={(e) => {
-                      const img = e.currentTarget;
-                      img.onerror = null;
-                      img.src = champKey ? fallbackTileUrl(champKey) : "";
-                    }}
-                  />
-                ) : (
-                  <div className="h-12 w-12 rounded bg-navy-700" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-heading font-semibold text-gray-100 truncate">
-                    {champKey}
-                  </p>
-                  {item.value !== undefined && (
-                    <p className="text-xs text-gray-400">
-                      {item.value} {item.value === 1 ? "game" : "games"}
-                    </p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-navy-900">
@@ -315,23 +300,97 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
             </div>
           </div>
 
-        {/* Content Sections */}
-        <div className="space-y-6">
-          {/* Counterpicks Section */}
-          {renderChampionList(
-            counterpicks,
-            "rounded-xl border border-red-400/30 bg-red-500/5 p-6",
-            "champions.counterpicks",
-            "Counterpicks",
-          )}
+          {/* QuickStats - Mobile */}
+          <div className="grid grid-cols-3 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
+            <MobileQuickStat
+              label={t("champions.winRate", "Win Rate")}
+              value="--"
+              color="text-accent-500"
+            />
+            <MobileQuickStat
+              label={t("champions.pickRate", "Pick Rate")}
+              value="--"
+              color="text-primary-500"
+            />
+            <MobileQuickStat
+              label={t("champions.banRate", "Ban Rate")}
+              value="--"
+              color="text-red-500"
+            />
+            <MobileQuickStat
+              label={t("champions.kda", "KDA")}
+              value="--"
+              color="text-gray-700 dark:text-gray-200"
+            />
+            <MobileQuickStat
+              label={t("champions.tier", "Tier")}
+              value="--"
+              color="text-gray-700 dark:text-gray-200"
+            />
+            <MobileQuickStat
+              label={t("champions.difficulty", "Dificultad")}
+              value="--"
+              color="text-gray-700 dark:text-gray-200"
+            />
+          </div>
+        </Card>
 
-          {/* Synergies Section */}
-          {renderChampionList(
-            synergies,
-            "rounded-xl border border-emerald-400/30 bg-emerald-500/5 p-6",
-            "champions.synergies",
-            "Sinergias",
-          )}
+        {/* Main content grid - matching PlayerProfile layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* Left column - Counterpicks */}
+          <Card>
+            <CardHeader>
+              <span className="text-red-400">{t("champions.counterpicks", "Counterpicks")}</span>
+            </CardHeader>
+            <CardBody>
+              {counterpicks.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  {counterpicks.map((item, idx) => {
+                    const champKey = extractOpponentKey(item, champion.champion_key);
+                    const imgUrl = champKey ? fallbackTileUrl(champKey) : "";
+                    return (
+                      <div
+                        key={`cp-${idx}`}
+                        className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-navy-600 last:border-0"
+                      >
+                        {imgUrl ? (
+                          <img
+                            src={imgUrl}
+                            alt={champKey}
+                            className="h-10 w-10 rounded object-cover"
+                            onError={(e) => {
+                              const img = e.currentTarget;
+                              img.onerror = null;
+                              img.src = champKey ? fallbackTileUrl(champKey) : "";
+                            }}
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded bg-navy-700" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">
+                            {champKey}
+                          </p>
+                          {item.value !== undefined && (
+                            <p className="text-xs text-gray-400">
+                              {item.value} {item.value === 1 ? "game" : "games"}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <AlertTriangle className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    {t("champions.noCounterpicks", "Sin counterpicks registrados")}
+                  </p>
+                </div>
+              )}
+            </CardBody>
+          </Card>
 
           {/* Right column - Synergies + Stats placeholder */}
           <div className="lg:col-span-2 flex flex-col gap-5">
