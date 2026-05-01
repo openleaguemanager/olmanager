@@ -1,29 +1,20 @@
 use crate::game::{Game, ScoutingAssignment};
 use domain::message::*;
 use domain::staff::StaffRole;
+use domain::stats::LolRole;
 use domain::team::MainFacilityModuleKind;
 use rand::RngExt;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-fn lol_role_from_position(position: &domain::player::Position) -> &'static str {
-    use domain::player::Position;
-
-    match position {
-        Position::Defender
-        | Position::RightBack
-        | Position::CenterBack
-        | Position::LeftBack
-        | Position::RightWingBack
-        | Position::LeftWingBack => "TOP",
-        Position::AttackingMidfielder | Position::RightMidfielder | Position::LeftMidfielder => {
-            "MID"
-        }
-        Position::Forward | Position::RightWinger | Position::LeftWinger | Position::Striker => {
-            "ADC"
-        }
-        Position::Goalkeeper | Position::DefensiveMidfielder => "SUPPORT",
-        Position::Midfielder | Position::CentralMidfielder => "JUNGLE",
+fn lol_role_to_string(role: &LolRole) -> &'static str {
+    match role {
+        LolRole::Top => "TOP",
+        LolRole::Jungle => "JUNGLE",
+        LolRole::Mid => "MID",
+        LolRole::Adc => "ADC",
+        LolRole::Support => "SUPPORT",
+        LolRole::Unknown => "UNKNOWN",
     }
 }
 
@@ -181,7 +172,7 @@ pub fn process_scouting(game: &mut Game) {
                 &player.match_name,
                 &player.nationality,
                 &player.date_of_birth,
-                lol_role_from_position(&player.natural_position),
+                lol_role_to_string(&player.natural_position),
                 &player.attributes,
                 player.morale,
                 player.condition,

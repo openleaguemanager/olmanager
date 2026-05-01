@@ -41,7 +41,7 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
 
     conn.execute(
         "INSERT OR REPLACE INTO teams
-         (id, name, short_name, country, football_nation, city, stadium_name, stadium_capacity,
+         (id, name, short_name, country, football_nation, city, arena_name, arena_capacity,
            finance, manager_id, reputation, wage_budget, transfer_budget,
           season_income, season_expenses, formation, play_style,
           training_focus, training_intensity, training_schedule,
@@ -56,8 +56,8 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
             t.country,
             t.football_nation,
             t.city,
-            t.stadium_name,
-            t.stadium_capacity,
+            t.arena_name,
+            t.arena_capacity,
             t.finance,
             t.manager_id,
             t.reputation,
@@ -178,8 +178,8 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         country: row.get(3)?,
         football_nation: row.get(4)?,
         city: row.get(5)?,
-        stadium_name: row.get(6)?,
-        stadium_capacity: row.get(7)?,
+        arena_name: row.get(6)?,
+        arena_capacity: row.get(7)?,
         finance: row.get(8)?,
         manager_id: row.get(9)?,
         reputation: row.get(10)?,
@@ -225,7 +225,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
 pub fn load_all_teams(conn: &Connection) -> Result<Vec<Team>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, name, short_name, country, football_nation, city, stadium_name, stadium_capacity,
+            "SELECT id, name, short_name, country, football_nation, city, arena_name, arena_capacity,
                     finance, manager_id, reputation, wage_budget, transfer_budget,
                     season_income, season_expenses, formation, play_style,
                     training_focus, training_intensity, training_schedule,
@@ -251,7 +251,7 @@ pub fn load_all_teams(conn: &Connection) -> Result<Vec<Team>, String> {
 pub fn load_team(conn: &Connection, id: &str) -> Result<Option<Team>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, name, short_name, country, football_nation, city, stadium_name, stadium_capacity,
+            "SELECT id, name, short_name, country, football_nation, city, arena_name, arena_capacity,
                     finance, manager_id, reputation, wage_budget, transfer_budget,
                     season_income, season_expenses, formation, play_style,
                     training_focus, training_intensity, training_schedule,
@@ -314,7 +314,7 @@ mod tests {
         assert_eq!(loaded.football_nation, "GB");
         assert_eq!(loaded.play_style, PlayStyle::Possession);
         assert_eq!(loaded.finance, 5_000_000);
-        assert_eq!(loaded.stadium_capacity, 50000);
+        assert_eq!(loaded.arena_capacity, 50000);
     }
 
     #[test]

@@ -72,10 +72,10 @@ pub fn generate_world(
         } else {
             tdef.short_name.clone()
         };
-        let stadium = if tdef.stadium_name.is_empty() {
+        let stadium = if tdef.arena_name.is_empty() {
             format!("{} Arena", tdef.city)
         } else {
-            tdef.stadium_name.clone()
+            tdef.arena_name.clone()
         };
 
         let rep_range = tdef.reputation_range.unwrap_or([300, 900]);
@@ -169,7 +169,7 @@ pub fn generate_world(
 mod tests {
     use super::data::{NATIONALITY_POOLS, TEAM_TEMPLATES};
     use super::*;
-    use domain::player::Position;
+    use domain::stats::{LolRole, Position};
 
     #[test]
     fn test_generate_world_team_count() {
@@ -203,7 +203,7 @@ mod tests {
             assert_eq!(team_players.len(), 22);
             let gk = team_players
                 .iter()
-                .filter(|p| p.position == Position::Goalkeeper)
+                .filter(|p| p.position == LolRole::Support)
                 .count();
             assert!(gk >= 2, "Team {} has only {} GK", team.name, gk);
         }

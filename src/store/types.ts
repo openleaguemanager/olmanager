@@ -139,8 +139,8 @@ export interface TeamData {
   short_name: string;
   country: string;
   city: string;
-  stadium_name: string;
-  stadium_capacity: number;
+  arena_name: string;
+  arena_capacity: number;
   finance: number;
   manager_id: string | null;
   reputation: number;
@@ -179,7 +179,7 @@ export type MatchOutcome = "Win" | "Loss";
 
 export type TeamSide = "Blue" | "Red";
 
-export type LolRole = "Top" | "Jungle" | "Mid" | "ADC" | "Support";
+export type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
 export type MatchEndReason = "NexusDestroyed" | "Surrender";
 
@@ -298,12 +298,13 @@ export interface PlayerData {
   full_name: string;
   date_of_birth: string;
   nationality: string;
-  football_nation?: string;
+  nationality_code?: string;
+  competitive_region?: string;
   birth_country?: string | null;
   profile_image_url?: string | null;
-  position: string;
-  natural_position: string;
-  alternate_positions: string[];
+  position: LolRole;
+  natural_position: LolRole;
+  alternate_positions: LolRole[];
   footedness?: string;
   weak_foot?: number;
   training_focus: string | null;

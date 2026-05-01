@@ -46,7 +46,7 @@ pub struct TeamDef {
     #[serde(default = "default_play_style")]
     pub play_style: String,
     #[serde(default)]
-    pub stadium_name: String,
+    pub arena_name: String,
     #[serde(default)]
     pub reputation_range: Option<[u32; 2]>,
     #[serde(default)]
@@ -119,7 +119,7 @@ pub(super) fn default_teams_definition() -> TeamsDefinition {
                     secondary: t.colors.1.to_string(),
                 },
                 play_style: t.play_style.to_string(),
-                stadium_name: format!("{} Arena", t.city),
+                arena_name: format!("{} Arena", t.city),
                 reputation_range: Some([300, 900]),
                 finance_range: Some([500_000, 10_000_000]),
             })

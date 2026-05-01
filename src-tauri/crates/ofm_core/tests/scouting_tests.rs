@@ -1,8 +1,9 @@
 use chrono::{TimeZone, Utc};
 use domain::manager::Manager;
 use domain::message::*;
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
+use domain::stats::LolRole;
 use domain::team::Team;
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
@@ -43,7 +44,7 @@ fn make_player(id: &str, name: &str, team_id: &str) -> Player {
         name.to_string(),
         "1998-03-15".to_string(),
         "BR".to_string(),
-        Position::Midfielder,
+        LolRole::Jungle,
         default_attrs(),
     );
     p.team_id = Some(team_id.to_string());

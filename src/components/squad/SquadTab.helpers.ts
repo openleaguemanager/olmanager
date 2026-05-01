@@ -215,32 +215,12 @@ export function translatePositionAbbreviation(
   });
 }
 
-export function getLolRoleFromPosition(position?: string | null): LolRole {
-  const pos = canonicalPosition(position);
-  if (
-    pos === "Defender" ||
-    pos === "RightBack" ||
-    pos === "LeftBack" ||
-    pos === "CenterBack" ||
-    pos === "RightWingBack" ||
-    pos === "LeftWingBack"
-  ) {
-    return "TOP";
-  }
-  if (pos === "AttackingMidfielder" || pos === "RightMidfielder" || pos === "LeftMidfielder") {
-    return "MID";
-  }
-  if (pos === "Forward" || pos === "Striker" || pos === "RightWinger" || pos === "LeftWinger") {
-    return "ADC";
-  }
-  if (pos === "DefensiveMidfielder" || pos === "Goalkeeper") {
-    return "SUPPORT";
-  }
-  return "JUNGLE";
-}
-
+/**
+ * Get the LolRole for a player directly from their natural_position
+ * (no mapping needed - already LolRole from backend)
+ */
 export function getLolRoleForPlayer(player: PlayerData): LolRole {
-  return getLolRoleFromPosition(player.natural_position || player.position);
+  return player.natural_position;
 }
 
 export function getPreferredPositions(player: PlayerData): string[] {

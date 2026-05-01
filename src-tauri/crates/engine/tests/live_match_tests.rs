@@ -1,5 +1,8 @@
-use ::engine::ai::{AiProfile, ai_decide};
-use ::engine::*;
+use engine::ai::{AiProfile, ai_decide};
+use engine::{
+    EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase, MatchSnapshot,
+    MinuteResult, PlayStyle, PlayerData, Side, TeamData,
+};
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 
@@ -7,16 +10,29 @@ use rand::rngs::StdRng;
 // Helpers
 // ---------------------------------------------------------------------------
 
+/// Map football Position to LoL role for test data
+fn football_position_to_lol_role(position: &str) -> LolRole {
+    match position {
+        "Goalkeeper" | "DefensiveMidfielder" => LolRole::Support,
+        "Defender" | "RightBack" | "CenterBack" | "LeftBack" | "RightWingBack" | "LeftWingBack" => {
+            LolRole::Top
+        }
+        "Midfielder" | "CentralMidfielder" => LolRole::Jungle,
+        "AttackingMidfielder" | "RightMidfielder" | "LeftMidfielder" => LolRole::Mid,
+        "Forward" | "Striker" | "RightWinger" | "LeftWinger" => LolRole::Adc,
+        _ => LolRole::Mid, // default
+    }
+}
+
 fn seeded_rng(seed: u64) -> StdRng {
     StdRng::seed_from_u64(seed)
 }
 
-fn make_player(id: &str, name: &str, pos: Position, skill: u8) -> PlayerData {
+fn make_player(id: &str, name: &str, pos: &str, skill: u8) -> PlayerData {
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
-        position: pos,
-        lol_role: None,
+        role: football_position_to_lol_role(pos),
         condition: 90,
         fitness: 75,
         pace: skill,
@@ -44,17 +60,17 @@ fn make_player(id: &str, name: &str, pos: Position, skill: u8) -> PlayerData {
 
 fn make_team(id: &str, name: &str, skill: u8, style: PlayStyle) -> TeamData {
     let players = vec![
-        make_player(&format!("{}_gk", id), "GK", Position::Goalkeeper, skill),
-        make_player(&format!("{}_def1", id), "DEF1", Position::Defender, skill),
-        make_player(&format!("{}_def2", id), "DEF2", Position::Defender, skill),
-        make_player(&format!("{}_def3", id), "DEF3", Position::Defender, skill),
-        make_player(&format!("{}_def4", id), "DEF4", Position::Defender, skill),
-        make_player(&format!("{}_mid1", id), "MID1", Position::Midfielder, skill),
-        make_player(&format!("{}_mid2", id), "MID2", Position::Midfielder, skill),
-        make_player(&format!("{}_mid3", id), "MID3", Position::Midfielder, skill),
-        make_player(&format!("{}_mid4", id), "MID4", Position::Midfielder, skill),
-        make_player(&format!("{}_fwd1", id), "FWD1", Position::Forward, skill),
-        make_player(&format!("{}_fwd2", id), "FWD2", Position::Forward, skill),
+        make_player(&format!("{}_gk", id), "GK", "Goalkeeper", skill),
+        make_player(&format!("{}_def1", id), "DEF1", "Defender", skill),
+        make_player(&format!("{}_def2", id), "DEF2", "Defender", skill),
+        make_player(&format!("{}_def3", id), "DEF3", "Defender", skill),
+        make_player(&format!("{}_def4", id), "DEF4", "Defender", skill),
+        make_player(&format!("{}_mid1", id), "MID1", "Midfielder", skill),
+        make_player(&format!("{}_mid2", id), "MID2", "Midfielder", skill),
+        make_player(&format!("{}_mid3", id), "MID3", "Midfielder", skill),
+        make_player(&format!("{}_mid4", id), "MID4", "Midfielder", skill),
+        make_player(&format!("{}_fwd1", id), "FWD1", "Forward", skill),
+        make_player(&format!("{}_fwd2", id), "FWD2", "Forward", skill),
     ];
     TeamData {
         id: id.to_string(),
@@ -67,36 +83,11 @@ fn make_team(id: &str, name: &str, skill: u8, style: PlayStyle) -> TeamData {
 
 fn make_bench(id: &str, skill: u8) -> Vec<PlayerData> {
     vec![
-        make_player(
-            &format!("{}_sub_gk", id),
-            "SUB_GK",
-            Position::Goalkeeper,
-            skill,
-        ),
-        make_player(
-            &format!("{}_sub_def", id),
-            "SUB_DEF",
-            Position::Defender,
-            skill,
-        ),
-        make_player(
-            &format!("{}_sub_mid", id),
-            "SUB_MID",
-            Position::Midfielder,
-            skill,
-        ),
-        make_player(
-            &format!("{}_sub_fwd1", id),
-            "SUB_FWD1",
-            Position::Forward,
-            skill,
-        ),
-        make_player(
-            &format!("{}_sub_fwd2", id),
-            "SUB_FWD2",
-            Position::Forward,
-            skill,
-        ),
+        make_player(&format!("{}_sub_gk", id), "SUB_GK", "Goalkeeper", skill),
+        make_player(&format!("{}_sub_def", id), "SUB_DEF", "Defender", skill),
+        make_player(&format!("{}_sub_mid", id), "SUB_MID", "Midfielder", skill),
+        make_player(&format!("{}_sub_fwd1", id), "SUB_FWD1", "Forward", skill),
+        make_player(&format!("{}_sub_fwd2", id), "SUB_FWD2", "Forward", skill),
     ]
 }
 
@@ -564,7 +555,7 @@ fn set_piece_takers_stored() {
         .home_team
         .players
         .iter()
-        .find(|p| p.position == Position::Forward)
+        .find(|p| p.role == LolRole::Adc)
         .unwrap()
         .id
         .clone();
@@ -1021,19 +1012,19 @@ fn formation_change_redistributes_positions() {
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Defender)
+        .filter(|p| p.role == LolRole::Top)
         .count();
     let mids = snap
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Midfielder)
+        .filter(|p| p.role == LolRole::Jungle)
         .count();
     let fwds = snap
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Forward)
+        .filter(|p| p.role == LolRole::Adc)
         .count();
 
     assert_eq!(defs, 3, "Should have 3 defenders");
@@ -1062,19 +1053,19 @@ fn formation_change_four_part() {
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Defender)
+        .filter(|p| p.role == LolRole::Top)
         .count();
     let mids = snap
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Midfielder)
+        .filter(|p| p.role == LolRole::Jungle)
         .count();
     let fwds = snap
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Forward)
+        .filter(|p| p.role == LolRole::Adc)
         .count();
 
     assert_eq!(defs, 4, "Should have 4 defenders");
@@ -1101,7 +1092,7 @@ fn formation_invalid_falls_back_to_442() {
         .home_team
         .players
         .iter()
-        .filter(|p| p.position == Position::Defender)
+        .filter(|p| p.role == LolRole::Top)
         .count();
     assert_eq!(defs, 4);
 }
@@ -1121,7 +1112,7 @@ fn set_free_kick_taker_stored() {
         .home_team
         .players
         .iter()
-        .find(|p| p.position == Position::Midfielder)
+        .find(|p| p.role == LolRole::Jungle)
         .unwrap()
         .id
         .clone();
@@ -1148,7 +1139,7 @@ fn set_corner_taker_stored() {
         .home_team
         .players
         .iter()
-        .find(|p| p.position == Position::Midfielder)
+        .find(|p| p.role == LolRole::Jungle)
         .unwrap()
         .id
         .clone();
@@ -1206,15 +1197,14 @@ fn play_style_variations_produce_results() {
 fn make_player_with_traits(
     id: &str,
     name: &str,
-    pos: Position,
+    pos: &str,
     skill: u8,
     traits: Vec<&str>,
 ) -> PlayerData {
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
-        position: pos,
-        lol_role: None,
+        role: football_position_to_lol_role(pos),
         condition: 90,
         fitness: 75,
         pace: skill,
@@ -1245,77 +1235,77 @@ fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> 
         make_player_with_traits(
             &format!("{}_gk", id),
             "GK",
-            Position::Goalkeeper,
+            "Goalkeeper",
             skill,
             vec!["SafeHands", "CatReflexes"],
         ),
         make_player_with_traits(
             &format!("{}_def1", id),
             "DEF1",
-            Position::Defender,
+            "Defender",
             skill,
             vec!["BallWinner", "Rock"],
         ),
         make_player_with_traits(
             &format!("{}_def2", id),
             "DEF2",
-            Position::Defender,
+            "Defender",
             skill,
             traits.clone(),
         ),
         make_player_with_traits(
             &format!("{}_def3", id),
             "DEF3",
-            Position::Defender,
+            "Defender",
             skill,
             traits.clone(),
         ),
         make_player_with_traits(
             &format!("{}_def4", id),
             "DEF4",
-            Position::Defender,
+            "Defender",
             skill,
             traits.clone(),
         ),
         make_player_with_traits(
             &format!("{}_mid1", id),
             "MID1",
-            Position::Midfielder,
+            "Midfielder",
             skill,
             vec!["Engine", "Playmaker"],
         ),
         make_player_with_traits(
             &format!("{}_mid2", id),
             "MID2",
-            Position::Midfielder,
+            "Midfielder",
             skill,
             vec!["TeamPlayer", "Visionary"],
         ),
         make_player_with_traits(
             &format!("{}_mid3", id),
             "MID3",
-            Position::Midfielder,
+            "Midfielder",
             skill,
             vec!["Tireless"],
         ),
         make_player_with_traits(
             &format!("{}_mid4", id),
             "MID4",
-            Position::Midfielder,
+            "Midfielder",
             skill,
             traits.clone(),
         ),
         make_player_with_traits(
             &format!("{}_fwd1", id),
             "FWD1",
-            Position::Forward,
+            "Forward",
             skill,
             vec!["Sharpshooter", "CompleteForward"],
         ),
         make_player_with_traits(
             &format!("{}_fwd2", id),
             "FWD2",
-            Position::Forward,
+            "Forward",
             skill,
             vec!["Dribbler", "Speedster", "CoolHead"],
         ),
@@ -1660,7 +1650,7 @@ fn away_set_pieces_stored() {
         .away_team
         .players
         .iter()
-        .find(|p| p.position == Position::Forward)
+        .find(|p| p.role == LolRole::Adc)
         .unwrap()
         .id
         .clone();
