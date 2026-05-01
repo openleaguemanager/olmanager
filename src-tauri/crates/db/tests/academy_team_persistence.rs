@@ -2,7 +2,8 @@ use db::game_database::GameDatabase;
 use db::migrations::MIGRATION_COUNT;
 use db::repositories::team_repo::{load_team, upsert_team};
 use domain::team::{
-    AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, PlayStyle, Team, TeamKind,
+    AcademyLifecycle, AcademyMetadata, DraftStrategy, ErlAssignment, ErlAssignmentRule, Team,
+    TeamKind,
 };
 
 fn test_db() -> GameDatabase {
@@ -19,7 +20,7 @@ fn sample_team(id: &str, name: &str) -> Team {
         "Academy Lab".to_string(),
         12_000,
     );
-    team.play_style = PlayStyle::Possession;
+    team.draft_strategy = DraftStrategy::Scaling;
     team.finance = 3_000_000;
     team
 }

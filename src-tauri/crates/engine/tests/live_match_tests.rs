@@ -1,7 +1,7 @@
-use ::engine::ai::{AiProfile, ai_decide};
-use ::engine::*;
-use rand::SeedableRng;
+use engine::ai::{ai_decide, AiProfile};
+use engine::*;
 use rand::rngs::StdRng;
+use rand::SeedableRng;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -42,7 +42,7 @@ fn make_player(id: &str, name: &str, pos: Position, skill: u8) -> PlayerData {
     }
 }
 
-fn make_team(id: &str, name: &str, skill: u8, style: PlayStyle) -> TeamData {
+fn make_team(id: &str, name: &str, skill: u8, style: DraftStrategy) -> TeamData {
     let players = vec![
         make_player(&format!("{}_gk", id), "GK", Position::Goalkeeper, skill),
         make_player(&format!("{}_def1", id), "DEF1", Position::Defender, skill),
@@ -60,7 +60,7 @@ fn make_team(id: &str, name: &str, skill: u8, style: PlayStyle) -> TeamData {
         id: id.to_string(),
         name: name.to_string(),
         formation: "4-4-2".to_string(),
-        play_style: style,
+        draft_strategy: style,
         players,
     }
 }
@@ -101,8 +101,8 @@ fn make_bench(id: &str, skill: u8) -> Vec<PlayerData> {
 }
 
 fn make_live_match(allows_extra_time: bool) -> LiveMatchState {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let home_bench = make_bench("home", 65);
     let away_bench = make_bench("away", 65);
     LiveMatchState::new(
@@ -147,12 +147,10 @@ fn first_step_emits_kick_off() {
     let result = state.step_minute(&mut rng);
     assert_eq!(result.minute, 0);
     assert!(!result.is_finished);
-    assert!(
-        result
-            .events
-            .iter()
-            .any(|e| e.event_type == EventType::KickOff)
-    );
+    assert!(result
+        .events
+        .iter()
+        .any(|e| e.event_type == EventType::KickOff));
     assert_eq!(state.phase(), MatchPhase::FirstHalf);
 }
 
@@ -407,20 +405,16 @@ fn substitution_replaces_player() {
 
     let snap_after = state.snapshot();
     assert_eq!(snap_after.home_subs_made, 1);
-    assert!(
-        snap_after
-            .home_team
-            .players
-            .iter()
-            .any(|p| p.id == player_on_id)
-    );
-    assert!(
-        !snap_after
-            .home_team
-            .players
-            .iter()
-            .any(|p| p.id == player_off_id)
-    );
+    assert!(snap_after
+        .home_team
+        .players
+        .iter()
+        .any(|p| p.id == player_on_id));
+    assert!(!snap_after
+        .home_team
+        .players
+        .iter()
+        .any(|p| p.id == player_off_id));
 }
 
 #[test]
@@ -537,20 +531,20 @@ fn change_formation_works() {
 }
 
 #[test]
-fn change_play_style_works() {
+fn change_draft_strategy_works() {
     let mut state = make_live_match(false);
     let mut rng = seeded_rng(42);
     state.step_minute(&mut rng);
 
     state
-        .apply_command(MatchCommand::ChangePlayStyle {
+        .apply_command(MatchCommand::ChangeDraftStrategy {
             side: Side::Away,
-            play_style: PlayStyle::Attacking,
+            draft_strategy: DraftStrategy::Aggressive,
         })
         .unwrap();
 
     let snap = state.snapshot();
-    assert_eq!(snap.away_team.play_style, PlayStyle::Attacking);
+    assert_eq!(snap.away_team.draft_strategy, DraftStrategy::Aggressive);
 }
 
 #[test]
@@ -739,8 +733,8 @@ fn strong_team_advantage() {
     let trials = 50;
 
     for seed in 0..trials {
-        let strong = make_team("home", "Strong FC", 85, PlayStyle::Balanced);
-        let weak = make_team("away", "Weak FC", 55, PlayStyle::Balanced);
+        let strong = make_team("home", "Strong FC", 85, DraftStrategy::Balanced);
+        let weak = make_team("away", "Weak FC", 55, DraftStrategy::Balanced);
         let home_bench = make_bench("home", 80);
         let away_bench = make_bench("away", 50);
         let mut state = LiveMatchState::new(
@@ -1169,19 +1163,19 @@ fn set_corner_taker_stored() {
 // ===========================================================================
 
 #[test]
-fn play_style_variations_produce_results() {
+fn draft_strategy_variations_produce_results() {
     let styles = [
-        PlayStyle::Attacking,
-        PlayStyle::Defensive,
-        PlayStyle::Possession,
-        PlayStyle::Counter,
-        PlayStyle::HighPress,
-        PlayStyle::Balanced,
+        DraftStrategy::Aggressive,
+        DraftStrategy::Passive,
+        DraftStrategy::Scaling,
+        DraftStrategy::CounterPick,
+        DraftStrategy::Aggressive,
+        DraftStrategy::Balanced,
     ];
 
     for &style in &styles {
         let home = make_team("home", "Home FC", 70, style);
-        let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+        let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
         let home_bench = make_bench("home", 65);
         let away_bench = make_bench("away", 65);
         let mut state = LiveMatchState::new(
@@ -1324,7 +1318,7 @@ fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> 
         id: id.to_string(),
         name: name.to_string(),
         formation: "4-4-2".to_string(),
-        play_style: PlayStyle::Balanced,
+        draft_strategy: DraftStrategy::Balanced,
         players,
     }
 }
@@ -1332,7 +1326,7 @@ fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> 
 #[test]
 fn traits_are_exercised_during_match() {
     let home = make_team_with_traits("home", "Trait FC", 70, vec![]);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let home_bench = make_bench("home", 65);
     let away_bench = make_bench("away", 65);
     let mut state = LiveMatchState::new(
@@ -1362,7 +1356,7 @@ fn hot_head_trait_increases_foul_likelihood() {
     for seed in 0..trials {
         // Team with HotHead traits
         let home = make_team_with_traits("home", "Angry FC", 70, vec!["HotHead"]);
-        let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+        let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
         let mut state = LiveMatchState::new(
             home,
             away,
@@ -1381,8 +1375,8 @@ fn hot_head_trait_increases_foul_likelihood() {
             .count() as u32;
 
         // Team without traits
-        let home2 = make_team("home2", "Calm FC", 70, PlayStyle::Balanced);
-        let away2 = make_team("away2", "Away2 FC", 70, PlayStyle::Balanced);
+        let home2 = make_team("home2", "Calm FC", 70, DraftStrategy::Balanced);
+        let away2 = make_team("away2", "Away2 FC", 70, DraftStrategy::Balanced);
         let mut state2 = LiveMatchState::new(
             home2,
             away2,
@@ -1445,8 +1439,8 @@ fn sent_off_players_tracked() {
     config.red_card_probability = 0.3;
 
     for seed in 0..200 {
-        let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-        let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+        let home = make_team("home", "Home FC", 70, DraftStrategy::Balanced);
+        let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
         let mut state = LiveMatchState::new(
             home,
             away,
@@ -1706,8 +1700,8 @@ fn custom_config_affects_match() {
     let mut config = MatchConfig::default();
     config.home_advantage = 1.5; // extreme home advantage
 
-    let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let mut state = LiveMatchState::new(
         home,
         away,
@@ -1727,8 +1721,8 @@ fn custom_config_affects_match() {
 
 #[test]
 fn very_weak_team_still_finishes() {
-    let home = make_team("home", "Home FC", 99, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 10, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 99, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 10, DraftStrategy::Passive);
     let mut state = LiveMatchState::new(
         home,
         away,

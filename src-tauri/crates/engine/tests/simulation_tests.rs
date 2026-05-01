@@ -1,6 +1,6 @@
-use ::engine::*;
-use rand::SeedableRng;
+use engine::*;
 use rand::rngs::StdRng;
+use rand::SeedableRng;
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -37,12 +37,12 @@ fn make_player(id: &str, name: &str, position: Position, skill: u8) -> PlayerDat
     }
 }
 
-fn make_team(id: &str, name: &str, skill: u8, play_style: PlayStyle) -> TeamData {
+fn make_team(id: &str, name: &str, skill: u8, draft_strategy: DraftStrategy) -> TeamData {
     TeamData {
         id: id.to_string(),
         name: name.to_string(),
         formation: "4-4-2".to_string(),
-        play_style,
+        draft_strategy,
         players: vec![
             make_player(&format!("{id}_gk1"), "GK1", Position::Goalkeeper, skill),
             make_player(&format!("{id}_def1"), "DEF1", Position::Defender, skill),
@@ -83,7 +83,7 @@ fn player_effective_overall_accounts_for_condition() {
 
 #[test]
 fn team_position_counts() {
-    let team = make_team("t1", "Test FC", 60, PlayStyle::Balanced);
+    let team = make_team("t1", "Test FC", 60, DraftStrategy::Balanced);
     assert_eq!(team.count_position(Position::Goalkeeper), 1);
     assert_eq!(team.count_position(Position::Defender), 4);
     assert_eq!(team.count_position(Position::Midfielder), 4);
@@ -92,7 +92,7 @@ fn team_position_counts() {
 
 #[test]
 fn team_ratings_non_zero() {
-    let team = make_team("t1", "Test FC", 65, PlayStyle::Balanced);
+    let team = make_team("t1", "Test FC", 65, DraftStrategy::Balanced);
     assert!(team.defense_rating() > 0.0);
     assert!(team.midfield_rating() > 0.0);
     assert!(team.attack_rating() > 0.0);
@@ -101,8 +101,8 @@ fn team_ratings_non_zero() {
 
 #[test]
 fn team_ratings_scale_with_skill() {
-    let weak = make_team("w", "Weak", 30, PlayStyle::Balanced);
-    let strong = make_team("s", "Strong", 90, PlayStyle::Balanced);
+    let weak = make_team("w", "Weak", 30, DraftStrategy::Balanced);
+    let strong = make_team("s", "Strong", 90, DraftStrategy::Balanced);
     assert!(strong.defense_rating() > weak.defense_rating());
     assert!(strong.midfield_rating() > weak.midfield_rating());
     assert!(strong.attack_rating() > weak.attack_rating());
@@ -231,8 +231,8 @@ fn non_goal_events_not_goal() {
 
 #[test]
 fn simulation_produces_report() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let mut rng = seeded_rng(42);
 
@@ -264,8 +264,8 @@ fn simulation_produces_report() {
 
 #[test]
 fn simulation_deterministic_with_same_seed() {
-    let home = make_team("home", "Home FC", 60, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 60, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 60, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 60, DraftStrategy::Passive);
     let config = MatchConfig::default();
 
     let report1 = simulate_with_rng(&home, &away, &config, &mut seeded_rng(123));
@@ -278,8 +278,8 @@ fn simulation_deterministic_with_same_seed() {
 
 #[test]
 fn simulation_different_seeds_vary() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
 
     // Run many simulations and check we get different results
@@ -296,8 +296,8 @@ fn simulation_different_seeds_vary() {
 
 #[test]
 fn goals_in_report_match_score() {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 50, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 50, DraftStrategy::Passive);
     let config = MatchConfig::default();
 
     for seed in 0..20 {
@@ -327,8 +327,8 @@ fn goals_in_report_match_score() {
 
 #[test]
 fn goal_events_have_scorer() {
-    let home = make_team("home", "Home FC", 75, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 45, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 75, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 45, DraftStrategy::Balanced);
     let config = MatchConfig::default();
 
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(99));
@@ -344,8 +344,8 @@ fn goal_events_have_scorer() {
 
 #[test]
 fn possession_adds_up() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Possession);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Scaling);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(7));
 
@@ -361,8 +361,8 @@ fn possession_adds_up() {
 
 #[test]
 fn total_minutes_at_least_90() {
-    let home = make_team("home", "Home FC", 60, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 60, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 60, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 60, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(55));
     assert!(
@@ -374,8 +374,8 @@ fn total_minutes_at_least_90() {
 
 #[test]
 fn report_tracks_minutes_for_all_starters() {
-    let home = make_team("home", "Home FC", 60, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 60, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 60, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 60, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(55));
 
@@ -399,8 +399,8 @@ fn report_tracks_minutes_for_all_starters() {
 
 #[test]
 fn strong_team_wins_more_often() {
-    let strong = make_team("strong", "Strong FC", 90, PlayStyle::Balanced);
-    let weak = make_team("weak", "Weak FC", 30, PlayStyle::Balanced);
+    let strong = make_team("strong", "Strong FC", 90, DraftStrategy::Balanced);
+    let weak = make_team("weak", "Weak FC", 30, DraftStrategy::Balanced);
     let config = MatchConfig::default();
 
     let mut strong_wins = 0u32;
@@ -422,8 +422,8 @@ fn strong_team_wins_more_often() {
 
 #[test]
 fn equal_teams_roughly_even() {
-    let team_a = make_team("a", "Team A", 65, PlayStyle::Balanced);
-    let team_b = make_team("b", "Team B", 65, PlayStyle::Balanced);
+    let team_a = make_team("a", "Team A", 65, DraftStrategy::Balanced);
+    let team_b = make_team("b", "Team B", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         home_advantage: 1.0,
         ..MatchConfig::default()
@@ -453,7 +453,7 @@ fn equal_teams_roughly_even() {
 
 #[test]
 fn home_advantage_helps() {
-    let team = make_team("t", "Team", 65, PlayStyle::Balanced);
+    let team = make_team("t", "Team", 65, DraftStrategy::Balanced);
     let config_with = MatchConfig {
         home_advantage: 1.15,
         ..MatchConfig::default()
@@ -489,8 +489,8 @@ fn home_advantage_helps() {
 
 #[test]
 fn possession_style_has_more_possession() {
-    let poss_team = make_team("poss", "Poss FC", 65, PlayStyle::Possession);
-    let counter_team = make_team("counter", "Counter FC", 65, PlayStyle::Counter);
+    let poss_team = make_team("poss", "Poss FC", 65, DraftStrategy::Scaling);
+    let counter_team = make_team("counter", "Counter FC", 65, DraftStrategy::CounterPick);
     let config = MatchConfig {
         home_advantage: 1.0,
         ..MatchConfig::default()
@@ -515,8 +515,8 @@ fn possession_style_has_more_possession() {
 
 #[test]
 fn player_stats_populated() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(77));
 
@@ -538,8 +538,8 @@ fn player_stats_populated() {
 
 #[test]
 fn team_stats_shots_consistent() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Passive);
     let config = MatchConfig::default();
 
     for seed in 0..10 {
@@ -559,8 +559,8 @@ fn team_stats_shots_consistent() {
 
 #[test]
 fn events_are_chronological() {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let config = MatchConfig::default();
 
     // Run multiple seeds to increase confidence
@@ -585,8 +585,8 @@ fn events_are_chronological() {
 
 #[test]
 fn pass_accuracy_in_range() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(88));
 
@@ -608,8 +608,8 @@ fn pass_accuracy_in_range() {
 
 #[test]
 fn zero_stoppage_time_produces_valid_report() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         stoppage_time_max: 0,
         ..MatchConfig::default()
@@ -624,8 +624,8 @@ fn zero_stoppage_time_produces_valid_report() {
 
 #[test]
 fn high_foul_probability_produces_cards() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.95,
         yellow_card_probability: 0.90,
@@ -650,8 +650,8 @@ fn high_foul_probability_produces_cards() {
 
 #[test]
 fn report_serializes_to_json() {
-    let home = make_team("home", "Home FC", 60, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 60, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 60, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 60, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(42));
 
@@ -669,8 +669,8 @@ fn report_serializes_to_json() {
 
 #[test]
 fn goal_events_match_report_goals() {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 50, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 50, DraftStrategy::Passive);
     let config = MatchConfig::default();
 
     for seed in 0..30 {
@@ -692,8 +692,8 @@ fn goal_events_match_report_goals() {
 
 #[test]
 fn average_goals_realistic() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
 
     let trials = 500;
@@ -716,8 +716,8 @@ fn average_goals_realistic() {
 
 #[test]
 fn high_foul_rate_produces_fouls_and_free_kicks() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.95,
         yellow_card_probability: 0.01,
@@ -752,8 +752,8 @@ fn high_foul_rate_produces_fouls_and_free_kicks() {
 
 #[test]
 fn high_red_card_probability_produces_red_cards() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.90,
         yellow_card_probability: 0.90,
@@ -774,8 +774,8 @@ fn high_red_card_probability_produces_red_cards() {
 
 #[test]
 fn second_yellow_produces_sending_off() {
-    let home = make_team("home", "Home FC", 80, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 80, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 80, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 80, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.80,
         yellow_card_probability: 0.80,
@@ -804,8 +804,8 @@ fn second_yellow_produces_sending_off() {
 
 #[test]
 fn high_injury_probability_produces_injuries() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.90,
         injury_probability: 0.90,
@@ -833,8 +833,8 @@ fn high_injury_probability_produces_injuries() {
 
 #[test]
 fn corners_occur_in_simulation() {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let config = MatchConfig::default();
 
     let mut total_corners = 0u32;
@@ -853,8 +853,8 @@ fn corners_occur_in_simulation() {
 fn sent_off_players_excluded() {
     // Run many sims with high foul/red card rate and verify the report still
     // produces valid data (no crashes from sent-off player selection).
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.80,
         yellow_card_probability: 0.80,
@@ -874,14 +874,14 @@ fn sent_off_players_excluded() {
 // ---------------------------------------------------------------------------
 
 #[test]
-fn all_play_styles_produce_valid_report() {
+fn all_draft_strategys_produce_valid_report() {
     let styles = [
-        PlayStyle::Balanced,
-        PlayStyle::Attacking,
-        PlayStyle::Defensive,
-        PlayStyle::Possession,
-        PlayStyle::Counter,
-        PlayStyle::HighPress,
+        DraftStrategy::Balanced,
+        DraftStrategy::Aggressive,
+        DraftStrategy::Passive,
+        DraftStrategy::Scaling,
+        DraftStrategy::CounterPick,
+        DraftStrategy::Aggressive,
     ];
 
     for home_style in &styles {
@@ -920,7 +920,7 @@ fn minimal_team_doesnt_crash() {
         id: "min".to_string(),
         name: "Minimal FC".to_string(),
         formation: "1-1-1-1".to_string(),
-        play_style: PlayStyle::Balanced,
+        draft_strategy: DraftStrategy::Balanced,
         players: vec![
             make_player("gk", "GK", Position::Goalkeeper, 50),
             make_player("def", "DEF", Position::Defender, 50),
@@ -928,7 +928,7 @@ fn minimal_team_doesnt_crash() {
             make_player("fwd", "FWD", Position::Forward, 50),
         ],
     };
-    let normal = make_team("normal", "Normal FC", 60, PlayStyle::Balanced);
+    let normal = make_team("normal", "Normal FC", 60, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&minimal, &normal, &config, &mut seeded_rng(1));
     assert!(report.total_minutes >= 90);
@@ -940,8 +940,8 @@ fn minimal_team_doesnt_crash() {
 
 #[test]
 fn extreme_skill_disparity_no_crash() {
-    let elite = make_team("elite", "Elite FC", 99, PlayStyle::Attacking);
-    let amateur = make_team("amateur", "Amateur FC", 1, PlayStyle::Defensive);
+    let elite = make_team("elite", "Elite FC", 99, DraftStrategy::Aggressive);
+    let amateur = make_team("amateur", "Amateur FC", 1, DraftStrategy::Passive);
     let config = MatchConfig::default();
 
     for seed in 0..10 {
@@ -961,8 +961,8 @@ fn extreme_skill_disparity_no_crash() {
 
 #[test]
 fn player_ratings_computed_for_active_players() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig::default();
     let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(42));
 
@@ -983,8 +983,8 @@ fn player_ratings_computed_for_active_players() {
 
 #[test]
 fn free_kicks_occur_in_simulation() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 65, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 65, DraftStrategy::Balanced);
     let config = MatchConfig {
         foul_probability: 0.80,
         ..MatchConfig::default()
@@ -1008,8 +1008,8 @@ fn free_kicks_occur_in_simulation() {
 
 #[test]
 fn dribble_events_occur() {
-    let home = make_team("home", "Home FC", 80, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 40, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 80, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 40, DraftStrategy::Passive);
     let config = MatchConfig::default();
 
     let mut total_dribbles = 0u32;

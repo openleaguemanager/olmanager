@@ -1,7 +1,7 @@
 use crate::game::Game;
 use crate::potential::calculate_lol_ovr;
 use domain::player::Position as DomainPosition;
-use engine::{PlayStyle, PlayerData, Position, TeamData};
+use engine::{DraftStrategy, PlayerData, Position, TeamData};
 
 // ---------------------------------------------------------------------------
 // Domain → Engine conversion (LoL: 5 titulares + banca)
@@ -9,20 +9,20 @@ use engine::{PlayStyle, PlayerData, Position, TeamData};
 
 pub(super) fn build_team_with_bench(game: &Game, team_id: &str) -> (TeamData, Vec<PlayerData>) {
     let team = game.teams.iter().find(|t| t.id == team_id);
-    let (name, formation, play_style) = match team {
+    let (name, formation, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
             t.formation.clone(),
-            match t.play_style {
-                domain::team::PlayStyle::Attacking => PlayStyle::Attacking,
-                domain::team::PlayStyle::Defensive => PlayStyle::Defensive,
-                domain::team::PlayStyle::Possession => PlayStyle::Possession,
-                domain::team::PlayStyle::Counter => PlayStyle::Counter,
-                domain::team::PlayStyle::HighPress => PlayStyle::HighPress,
-                _ => PlayStyle::Balanced,
+            match t.draft_strategy {
+                domain::team::DraftStrategy::Aggressive => DraftStrategy::Aggressive,
+                domain::team::DraftStrategy::Passive => DraftStrategy::Passive,
+                domain::team::DraftStrategy::Scaling => DraftStrategy::Scaling,
+                domain::team::DraftStrategy::CounterPick => DraftStrategy::CounterPick,
+                domain::team::DraftStrategy::PriorityBans => DraftStrategy::PriorityBans,
+                _ => DraftStrategy::Balanced,
             },
         ),
-        None => ("Unknown".into(), "4-4-2".into(), PlayStyle::Balanced),
+        None => ("Unknown".into(), "4-4-2".into(), DraftStrategy::Balanced),
     };
 
     // Collect all players for this team.
@@ -69,7 +69,7 @@ pub(super) fn build_team_with_bench(game: &Game, team_id: &str) -> (TeamData, Ve
         id: team_id.to_string(),
         name,
         formation,
-        play_style,
+        draft_strategy,
         players: starting_xi,
     };
 

@@ -41,7 +41,8 @@ pub struct Team {
 
     // Tactical
     pub formation: String,
-    pub play_style: PlayStyle,
+    #[serde(rename = "play_style")]
+    pub draft_strategy: DraftStrategy,
     #[serde(default)]
     pub lol_tactics: LolTactics,
 
@@ -471,14 +472,19 @@ pub struct TeamColors {
     pub secondary: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum PlayStyle {
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum DraftStrategy {
+    #[default]
     Balanced,
-    Attacking,
-    Defensive,
-    Possession,
-    Counter,
-    HighPress,
+    #[serde(rename = "Attacking", alias = "HighPress")]
+    Aggressive,
+    #[serde(rename = "Defensive")]
+    Passive,
+    #[serde(rename = "Possession")]
+    Scaling,
+    #[serde(rename = "Counter")]
+    CounterPick,
+    PriorityBans,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -762,7 +768,7 @@ impl Facilities {
 
 #[cfg(test)]
 mod facility_compatibility_tests {
-    use super::{Facilities, MainFacilityModuleKind, main_facility_module_catalog};
+    use super::{main_facility_module_catalog, Facilities, MainFacilityModuleKind};
 
     #[test]
     fn canonical_module_catalog_is_the_single_source_for_hub_order_and_levels() {
@@ -903,9 +909,7 @@ mod facility_compatibility_tests {
         let mut facilities = Facilities::default();
 
         assert_eq!(facilities.as_main_facility_hub().level, 1);
-        assert!(
-            !facilities.can_upgrade_main_facility_module(MainFacilityModuleKind::RecoverySuite)
-        );
+        assert!(!facilities.can_upgrade_main_facility_module(MainFacilityModuleKind::RecoverySuite));
 
         facilities.main_hub_level = 2;
         let hub = facilities.as_main_facility_hub();
@@ -921,9 +925,7 @@ mod facility_compatibility_tests {
 
         assert_eq!(facilities.as_main_facility_hub().level, 3);
         assert!(facilities.can_upgrade_main_facility_module(MainFacilityModuleKind::ScoutingLab));
-        assert!(
-            !facilities.can_upgrade_main_facility_module(MainFacilityModuleKind::RecoverySuite)
-        );
+        assert!(!facilities.can_upgrade_main_facility_module(MainFacilityModuleKind::RecoverySuite));
     }
 
     #[test]
@@ -1031,7 +1033,7 @@ impl Team {
             sponsorship: None,
             facilities: Facilities::default(),
             formation: "4-4-2".to_string(),
-            play_style: PlayStyle::Balanced,
+            draft_strategy: DraftStrategy::Balanced,
             lol_tactics: LolTactics::default(),
             training_focus: TrainingFocus::default(),
             training_intensity: TrainingIntensity::default(),

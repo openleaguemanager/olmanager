@@ -310,9 +310,9 @@ export const FORMATIONS = ["4-4-2", "4-3-3", "3-5-2", "4-5-1", "4-2-3-1", "3-4-3
 
 export const PLAY_STYLES = [
   { id: "Balanced", label: "Balanced" },
-  { id: "Attacking", label: "Attacking" },
-  { id: "Defensive", label: "Defensive" },
-  { id: "Possession", label: "Possession" },
-  { id: "Counter", label: "Counter" },
-  { id: "HighPress", label: "High Press" },
+  { id: "Attacking", label: "Aggressive" },
+  { id: "Defensive", label: "Passive" },
+  { id: "Possession", label: "Scaling" },
+  { id: "Counter", label: "Counter Pick" },
+  { id: "HighPress", label: "Priority Bans" },
 ];

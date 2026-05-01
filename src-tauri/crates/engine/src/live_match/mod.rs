@@ -8,7 +8,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::event::MatchEvent;
 use crate::report::MatchReport;
-use crate::types::{MatchConfig, PlayStyle, PlayerData, Side, TeamData, Zone};
+use crate::types::{DraftStrategy, MatchConfig, PlayerData, Side, TeamData, Zone};
 pub use lol_map::{
     LolDragonKind, LolDragonState, LolGrubsState, LolLaneState, LolMapState, LolObjectiveState,
     LolObjectivesState, LolRole, LolTask, LolTeamStructuresState, LolUnitState,
@@ -51,7 +51,7 @@ pub enum MatchCommand {
     },
     ChangePlayStyle {
         side: Side,
-        play_style: PlayStyle,
+        draft_strategy: DraftStrategy,
     },
     SetFreeKickTaker {
         side: Side,
@@ -259,8 +259,11 @@ impl LiveMatchState {
                 self.team_mut(side).formation = formation;
                 Ok(())
             }
-            MatchCommand::ChangePlayStyle { side, play_style } => {
-                self.team_mut(side).play_style = play_style;
+            MatchCommand::ChangePlayStyle {
+                side,
+                draft_strategy,
+            } => {
+                self.team_mut(side).draft_strategy = draft_strategy;
                 Ok(())
             }
             MatchCommand::SetFreeKickTaker { side, player_id } => {

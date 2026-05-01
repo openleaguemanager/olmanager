@@ -1,4 +1,4 @@
-use crate::types::{MatchConfig, PlayStyle, PlayerData, Side};
+use crate::types::{DraftStrategy, MatchConfig, PlayerData, Side};
 
 // ---------------------------------------------------------------------------
 // PlayerSnap — lightweight snapshot of a player to avoid borrow conflicts
@@ -173,7 +173,7 @@ pub(crate) enum PlayStylePhase {
 }
 
 pub(crate) fn play_style_modifier(
-    style: PlayStyle,
+    style: DraftStrategy,
     phase: PlayStylePhase,
     is_own_phase: bool,
 ) -> f64 {
@@ -181,16 +181,15 @@ pub(crate) fn play_style_modifier(
         return 1.0;
     }
     match (style, phase) {
-        (PlayStyle::Attacking, PlayStylePhase::Attack) => 1.12,
-        (PlayStyle::Attacking, PlayStylePhase::Defense) => 0.93,
-        (PlayStyle::Defensive, PlayStylePhase::Defense) => 1.12,
-        (PlayStyle::Defensive, PlayStylePhase::Attack) => 0.93,
-        (PlayStyle::Possession, PlayStylePhase::Midfield) => 1.15,
-        (PlayStyle::Possession, PlayStylePhase::Attack) => 0.97,
-        (PlayStyle::Counter, PlayStylePhase::Attack) => 1.18,
-        (PlayStyle::Counter, PlayStylePhase::Midfield) => 0.92,
-        (PlayStyle::HighPress, PlayStylePhase::Press) => 1.20,
-        (PlayStyle::HighPress, PlayStylePhase::Defense) => 0.95,
+        (DraftStrategy::Aggressive, PlayStylePhase::Attack) => 1.12,
+        (DraftStrategy::Aggressive, PlayStylePhase::Press) => 1.20,
+        (DraftStrategy::Aggressive, PlayStylePhase::Defense) => 0.95,
+        (DraftStrategy::Passive, PlayStylePhase::Defense) => 1.12,
+        (DraftStrategy::Passive, PlayStylePhase::Attack) => 0.93,
+        (DraftStrategy::Scaling, PlayStylePhase::Midfield) => 1.15,
+        (DraftStrategy::Scaling, PlayStylePhase::Attack) => 0.97,
+        (DraftStrategy::CounterPick, PlayStylePhase::Attack) => 1.18,
+        (DraftStrategy::CounterPick, PlayStylePhase::Midfield) => 0.92,
         _ => 1.0,
     }
 }

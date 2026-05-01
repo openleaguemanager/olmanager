@@ -1861,6 +1861,7 @@ export class PrototypeSimulation {
       case "Possession": return 1.04;
       case "Defensive": return 0.9;
       case "Counter": return 0.96;
+      case "PriorityBans": return 1.0;
       default: return 1.0;
     }
   }

@@ -1,6 +1,6 @@
 use domain::player::{Player, PlayerAttributes, Position};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
-use domain::team::PlayStyle;
+use domain::team::DraftStrategy;
 use rand::{Rng, RngExt};
 use uuid::Uuid;
 
@@ -126,14 +126,14 @@ pub(super) fn country_to_iso(country: &str) -> &str {
     }
 }
 
-pub(super) fn play_style_from_str(s: &str) -> PlayStyle {
+pub(super) fn play_style_from_str(s: &str) -> DraftStrategy {
     match s {
-        "Attacking" => PlayStyle::Attacking,
-        "Defensive" => PlayStyle::Defensive,
-        "Possession" => PlayStyle::Possession,
-        "Counter" => PlayStyle::Counter,
-        "HighPress" => PlayStyle::HighPress,
-        _ => PlayStyle::Balanced,
+        "Attacking" | "HighPress" => DraftStrategy::Aggressive,
+        "Defensive" => DraftStrategy::Passive,
+        "Possession" => DraftStrategy::Scaling,
+        "Counter" => DraftStrategy::CounterPick,
+        "Balanced" => DraftStrategy::Balanced,
+        _ => DraftStrategy::Balanced,
     }
 }
 

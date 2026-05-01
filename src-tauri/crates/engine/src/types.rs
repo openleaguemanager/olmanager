@@ -13,17 +13,22 @@ pub enum Position {
 }
 
 // ---------------------------------------------------------------------------
-// PlayStyle — mirrors domain::team::PlayStyle
+// DraftStrategy — mirrors domain::team::DraftStrategy
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PlayStyle {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum DraftStrategy {
+    #[default]
     Balanced,
-    Attacking,
-    Defensive,
-    Possession,
-    Counter,
-    HighPress,
+    #[serde(rename = "Attacking", alias = "HighPress")]
+    Aggressive,
+    #[serde(rename = "Defensive")]
+    Passive,
+    #[serde(rename = "Possession")]
+    Scaling,
+    #[serde(rename = "Counter")]
+    CounterPick,
+    PriorityBans,
 }
 
 // ---------------------------------------------------------------------------
@@ -122,7 +127,8 @@ pub struct TeamData {
     pub id: String,
     pub name: String,
     pub formation: String,
-    pub play_style: PlayStyle,
+    #[serde(rename = "play_style")]
+    pub draft_strategy: DraftStrategy,
     pub players: Vec<PlayerData>,
 }
 

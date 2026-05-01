@@ -126,16 +126,16 @@ pub fn set_play_style(state: State<'_, StateManager>, play_style: String) -> Res
         .ok_or("No team assigned".to_string())?;
 
     let style = match play_style.as_str() {
-        "Attacking" => domain::team::PlayStyle::Attacking,
-        "Defensive" => domain::team::PlayStyle::Defensive,
-        "Possession" => domain::team::PlayStyle::Possession,
-        "Counter" => domain::team::PlayStyle::Counter,
-        "HighPress" => domain::team::PlayStyle::HighPress,
-        _ => domain::team::PlayStyle::Balanced,
+        "Attacking" | "HighPress" => domain::team::DraftStrategy::Aggressive,
+        "Defensive" => domain::team::DraftStrategy::Passive,
+        "Possession" => domain::team::DraftStrategy::Scaling,
+        "Counter" => domain::team::DraftStrategy::CounterPick,
+        "Balanced" => domain::team::DraftStrategy::Balanced,
+        _ => domain::team::DraftStrategy::Balanced,
     };
 
     if let Some(team) = game.teams.iter_mut().find(|t| t.id == team_id) {
-        team.play_style = style;
+        team.draft_strategy = style;
     }
 
     state.set_game(game.clone());

@@ -34,6 +34,8 @@ export const PLAY_STYLE_DESCRIPTION_FALLBACKS: Record<string, string> = {
     "Invites your team to break forward quickly after regaining the ball, attacking space before the opponent resets.",
   HighPress:
     "Asks your team to close down earlier, win the ball higher up the pitch, and keep opponents under pressure.",
+  PriorityBans:
+    "Focuses on banning opponent's key champions to gain draft advantage.",
 };
 
 export type SortDirection = "asc" | "desc";

@@ -148,23 +148,23 @@ pub fn finish_live_match_day(game: &mut Game) {
 
 fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
     let team = game.teams.iter().find(|t| t.id == team_id);
-    let (name, formation, play_style) = match team {
+    let (name, formation, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
             t.formation.clone(),
-            match t.play_style {
-                domain::team::PlayStyle::Attacking => engine::PlayStyle::Attacking,
-                domain::team::PlayStyle::Defensive => engine::PlayStyle::Defensive,
-                domain::team::PlayStyle::Possession => engine::PlayStyle::Possession,
-                domain::team::PlayStyle::Counter => engine::PlayStyle::Counter,
-                domain::team::PlayStyle::HighPress => engine::PlayStyle::HighPress,
-                _ => engine::PlayStyle::Balanced,
+            match t.draft_strategy {
+                domain::team::DraftStrategy::Aggressive => engine::DraftStrategy::Aggressive,
+                domain::team::DraftStrategy::Passive => engine::DraftStrategy::Passive,
+                domain::team::DraftStrategy::Scaling => engine::DraftStrategy::Scaling,
+                domain::team::DraftStrategy::CounterPick => engine::DraftStrategy::CounterPick,
+                domain::team::DraftStrategy::PriorityBans => engine::DraftStrategy::PriorityBans,
+                _ => engine::DraftStrategy::Balanced,
             },
         ),
         None => (
             "Unknown".into(),
             "4-4-2".into(),
-            engine::PlayStyle::Balanced,
+            engine::DraftStrategy::Balanced,
         ),
     };
 
@@ -215,7 +215,7 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
         id: team_id.to_string(),
         name,
         formation,
-        play_style,
+        draft_strategy,
         players,
     }
 }

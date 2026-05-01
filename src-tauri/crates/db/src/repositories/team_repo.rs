@@ -1,8 +1,8 @@
 use domain::team::{
-    AcademyMetadata, Facilities, FinancialTransaction, LolTactics, PlayStyle, Sponsorship, Team,
-    TeamColors, TeamKind, TrainingFocus, TrainingIntensity, TrainingSchedule,
+    AcademyMetadata, DraftStrategy, Facilities, FinancialTransaction, LolTactics, Sponsorship,
+    Team, TeamColors, TeamKind, TrainingFocus, TrainingIntensity, TrainingSchedule,
 };
-use rusqlite::{Connection, params};
+use rusqlite::{params, Connection};
 
 /// Insert or replace a team row.
 pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
@@ -27,7 +27,7 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
         .facilities
         .to_persisted_json_string()
         .map_err(|e| format!("JSON error: {}", e))?;
-    let play_style_str = format!("{:?}", t.play_style);
+    let play_style_str = format!("{:?}", t.draft_strategy);
     let training_focus_str = t.training_focus.as_id().to_string();
     let training_intensity_str = format!("{:?}", t.training_intensity);
     let training_schedule_str = format!("{:?}", t.training_schedule);
@@ -105,14 +105,14 @@ pub fn upsert_teams(conn: &Connection, teams: &[Team]) -> Result<(), String> {
     Ok(())
 }
 
-fn parse_play_style(s: &str) -> PlayStyle {
+fn parse_play_style(s: &str) -> DraftStrategy {
     match s {
-        "Attacking" => PlayStyle::Attacking,
-        "Defensive" => PlayStyle::Defensive,
-        "Possession" => PlayStyle::Possession,
-        "Counter" => PlayStyle::Counter,
-        "HighPress" => PlayStyle::HighPress,
-        _ => PlayStyle::Balanced,
+        "Attacking" | "HighPress" => DraftStrategy::Aggressive,
+        "Defensive" => DraftStrategy::Passive,
+        "Possession" => DraftStrategy::Scaling,
+        "Counter" => DraftStrategy::CounterPick,
+        "Balanced" => DraftStrategy::Balanced,
+        _ => DraftStrategy::Balanced,
     }
 }
 
@@ -197,7 +197,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
             .unwrap_or_default(),
         facilities: Facilities::from_persisted_json(&facilities_json),
         formation: row.get(15)?,
-        play_style: parse_play_style(&play_style_str),
+        draft_strategy: parse_play_style(&play_style_str),
         lol_tactics: LolTactics::default(),
         training_focus: parse_training_focus(&training_focus_str),
         training_intensity: parse_training_intensity(&training_intensity_str),
@@ -293,7 +293,7 @@ mod tests {
             "Test Arena".to_string(),
             50000,
         );
-        team.play_style = PlayStyle::Possession;
+        team.draft_strategy = DraftStrategy::Scaling;
         team.finance = 5_000_000;
         team.wage_budget = 200_000;
         team.transfer_budget = 500_000;
@@ -312,7 +312,7 @@ mod tests {
         assert_eq!(loaded.name, "London FC");
         assert_eq!(loaded.short_name, "TST");
         assert_eq!(loaded.football_nation, "GB");
-        assert_eq!(loaded.play_style, PlayStyle::Possession);
+        assert_eq!(loaded.draft_strategy, DraftStrategy::Scaling);
         assert_eq!(loaded.finance, 5_000_000);
         assert_eq!(loaded.stadium_capacity, 50000);
     }

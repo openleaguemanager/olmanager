@@ -99,7 +99,7 @@ pub fn generate_world(
             primary: tdef.colors.primary.clone(),
             secondary: tdef.colors.secondary.clone(),
         };
-        team.play_style = play_style_from_str(&tdef.play_style);
+        team.draft_strategy = play_style_from_str(&tdef.play_style);
         teams_out.push(team);
 
         // Generate 22 players

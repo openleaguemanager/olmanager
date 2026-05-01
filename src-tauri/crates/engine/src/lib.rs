@@ -17,4 +17,4 @@ pub use live_match::{
 pub use report::{
     GoalDetail, KillDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats,
 };
-pub use types::{MatchConfig, PlayStyle, PlayerData, Position, Side, TeamData, Zone};
+pub use types::{MatchConfig, DraftStrategy, PlayerData, Position, Side, TeamData, Zone};
