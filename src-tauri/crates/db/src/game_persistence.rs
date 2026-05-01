@@ -1,5 +1,6 @@
 use chrono::Utc;
 use domain::stats::StatsState;
+use log::debug;
 
 use ofm_core::clock::GameClock;
 use ofm_core::game::{BoardObjective, Game, ObjectiveType, ScoutingAssignment};
@@ -91,13 +92,18 @@ pub struct GamePersistenceReader;
 
 impl GamePersistenceReader {
     pub fn read_game(db: &mut GameDatabase) -> Result<Game, String> {
+        debug!("[read_game] START - reading game from database");
         // Ensure champions table exists and is seeded (for old saves)
+        debug!("[read_game] calling ensure_champions");
         db.ensure_champions()?;
+        debug!("[read_game] ensure_champions returned, getting conn");
 
         let conn = db.conn();
+        debug!("[read_game] conn obtained, loading meta");
 
         let meta = meta_repo::load_meta(conn)?
             .ok_or_else(|| "No game_meta found in database".to_string())?;
+        debug!("[read_game] meta loaded: save_name={}", meta.save_name);
 
         let start_date = chrono::DateTime::parse_from_rfc3339(&meta.start_date)
             .map_err(|error| format!("Invalid start_date: {}", error))?
