@@ -1,16 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Crosshair,
-  Heart,
-  Shield,
-  Sword,
-  Trophy,
-  TrendingUp,
-  Target,
   Users,
   AlertTriangle,
-  Sparkles,
   X,
 } from "lucide-react";
 import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
@@ -78,44 +70,51 @@ interface CounterpickOrSynergyItem {
 }
 
 /**
- * InfoRow component matching player profile style
+ * QuickStat matching PlayerProfileHeroCard style
  */
-function InfoRow({
-  icon,
+function QuickStat({
   label,
   value,
+  color,
 }: {
-  icon: React.ReactNode;
   label: string;
-  value: React.ReactNode;
+  value: string;
+  color: string;
 }) {
   return (
-    <div className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-navy-600 last:border-0">
-      <div className="text-gray-400 dark:text-gray-500">{icon}</div>
-      <span className="text-sm text-gray-500 dark:text-gray-400 flex-1">
+    <div className="bg-black/42 border border-white/20 rounded-xl px-5 py-3 text-center min-w-25 backdrop-blur-xs">
+      <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">
         {label}
-      </span>
-      <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-        {value}
-      </span>
+      </p>
+      <p className={`font-heading font-bold text-xl mt-0.5 ${color}`}>{value}</p>
     </div>
   );
 }
 
 /**
- * Placeholder value for fields not yet implemented
+ * MobileQuickStat matching PlayerProfileHeroCard style
  */
-function Placeholder({ text }: { text: string }) {
+function MobileQuickStat({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) {
   return (
-    <span className="text-xs text-gray-400 dark:text-gray-500 italic">
-      {text}
-    </span>
+    <div className="bg-white dark:bg-navy-800 p-3 text-center">
+      <p className="text-xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+        {label}
+      </p>
+      <p className={`font-heading font-bold text-lg mt-0.5 ${color}`}>{value}</p>
+    </div>
   );
 }
 
 export default function ChampionProfile({ champion, onClose }: ChampionProfileProps) {
   const { t } = useTranslation();
-  const [showFullImage, setShowFullImage] = useState(false);
 
   // Parse JSON fields
   const roles = parseJsonField<string[]>(champion.roles_json, []);
@@ -164,113 +163,144 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
           <X className="h-5 w-5" />
         </button>
 
-        {/* Splash/Tile Image Header */}
-        <div
-          className="relative h-48 w-full cursor-pointer overflow-hidden"
-          onClick={() => setShowFullImage(!showFullImage)}
-        >
-          <img
-            src={showFullImage ? splashUrl : tileUrl}
-            alt={champion.name}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/50 to-transparent" />
+        {/* Hero Banner - matching PlayerProfileHeroCard style */}
+        <Card accent="primary" className="mb-0 rounded-b-none border-0">
+          <div className="relative p-8 rounded-t-xl overflow-hidden">
+            {splashUrl ? (
+              <>
+                <div
+                  className="absolute inset-0 bg-cover opacity-100"
+                  style={{
+                    backgroundImage: `url(${splashUrl})`,
+                    backgroundPosition: "center 12%",
+                  }}
+                />
+                <div className="absolute inset-0 bg-linear-to-r from-black/88 via-black/28 to-transparent" />
+              </>
+            ) : (
+              <div className="absolute inset-0 bg-linear-to-r from-navy-700 to-navy-800" />
+            )}
 
-          {/* Champion Name Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <h2 className="text-3xl font-heading font-bold text-white">
-              {champion.name}
-            </h2>
-            <div className="flex gap-2 mt-2">
-              {roles.map((role) => {
-                const iconPath = mapRoleToIconPath(role);
-                if (!iconPath) return null;
-                return (
-                  <div
-                    key={role}
-                    className="flex items-center gap-1 rounded-lg bg-black/40 px-2 py-1"
-                  >
-                    <img
-                      src={iconPath}
-                      alt={role}
-                      className="h-5 w-5"
-                      title={role}
-                    />
-                    <span className="text-xs font-heading text-gray-200">
-                      {role}
-                    </span>
-                  </div>
-                );
-              })}
+            <div className="relative z-10 flex items-center gap-6">
+              {/* Champion Avatar */}
+              <div className="relative w-24 h-24 shrink-0">
+                <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-primary-500/40">
+                  <img
+                    src={tileUrl}
+                    alt={champion.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Champion Info */}
+              <div className="flex-1">
+                <h2 className="text-3xl font-heading font-bold text-white uppercase tracking-wide">
+                  {champion.name}
+                </h2>
+                <div className="flex items-center gap-3 mt-2">
+                  {roles.map((role) => {
+                    const iconPath = mapRoleToIconPath(role);
+                    if (!iconPath) return null;
+                    return (
+                      <div
+                        key={role}
+                        className="flex items-center gap-1 rounded-lg bg-black/40 px-2 py-1"
+                      >
+                        <img
+                          src={iconPath}
+                          alt={role}
+                          className="h-5 w-5"
+                          title={role}
+                        />
+                        <span className="text-xs font-heading text-gray-200">
+                          {role}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-gray-400 text-sm mt-2">
+                  {champion.champion_key}
+                </p>
+              </div>
+
+              {/* QuickStats - Desktop */}
+              <div className="hidden md:flex items-center gap-3">
+                <div className="grid grid-cols-3 gap-3 flex-1">
+                  <QuickStat
+                    label={t("champions.winRate", "Win Rate")}
+                    value="--"
+                    color="text-accent-300"
+                  />
+                  <QuickStat
+                    label={t("champions.pickRate", "Pick Rate")}
+                    value="--"
+                    color="text-primary-400"
+                  />
+                  <QuickStat
+                    label={t("champions.banRate", "Ban Rate")}
+                    value="--"
+                    color="text-red-400"
+                  />
+                  <QuickStat
+                    label={t("champions.kda", "KDA")}
+                    value="--"
+                    color="text-gray-200"
+                  />
+                  <QuickStat
+                    label={t("champions.tier", "Tier")}
+                    value="--"
+                    color="text-white"
+                  />
+                  <QuickStat
+                    label={t("champions.difficulty", "Dificultad")}
+                    value="--"
+                    color="text-white"
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Content - Player Profile Style Cards */}
-        <div className="max-h-[calc(90vh-12rem)] overflow-y-auto p-6 space-y-4">
-          {/* Stats Card */}
-          <Card>
-            <CardHeader>{t("champions.stats", "Estadísticas")}</CardHeader>
-            <CardBody>
-              <div className="flex flex-col gap-0">
-                <InfoRow
-                  icon={<Trophy className="w-4 h-4" />}
-                  label={t("champions.winRate", "Win Rate")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<TrendingUp className="w-4 h-4" />}
-                  label={t("champions.pickRate", "Pick Rate")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<Target className="w-4 h-4" />}
-                  label={t("champions.banRate", "Ban Rate")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<Crosshair className="w-4 h-4" />}
-                  label={t("champions.kda", "KDA Promedio")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<Sparkles className="w-4 h-4" />}
-                  label={t("champions.tier", "Tier")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-              </div>
-            </CardBody>
-          </Card>
+          {/* QuickStats - Mobile */}
+          <div className="grid grid-cols-3 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
+            <MobileQuickStat
+              label={t("champions.winRate", "Win Rate")}
+              value="--"
+              color="text-accent-500"
+            />
+            <MobileQuickStat
+              label={t("champions.pickRate", "Pick Rate")}
+              value="--"
+              color="text-primary-500"
+            />
+            <MobileQuickStat
+              label={t("champions.banRate", "Ban Rate")}
+              value="--"
+              color="text-red-500"
+            />
+            <MobileQuickStat
+              label={t("champions.kda", "KDA")}
+              value="--"
+              color="text-gray-700 dark:text-gray-200"
+            />
+            <MobileQuickStat
+              label={t("champions.tier", "Tier")}
+              value="--"
+              color="text-gray-700 dark:text-gray-200"
+            />
+            <MobileQuickStat
+              label={t("champions.difficulty", "Dificultad")}
+              value="--"
+              color="text-gray-700 dark:text-gray-200"
+            />
+          </div>
+        </Card>
 
-          {/* Attributes Card */}
-          <Card>
-            <CardHeader>{t("champions.attributes", "Atributos")}</CardHeader>
-            <CardBody>
-              <div className="flex flex-col gap-0">
-                <InfoRow
-                  icon={<Sword className="w-4 h-4" />}
-                  label={t("champions.damage", "Daño")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<Shield className="w-4 h-4" />}
-                  label={t("champions.toughness", "Resistencia")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<Heart className="w-4 h-4" />}
-                  label={t("champions.utility", "Utilidad")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-                <InfoRow
-                  icon={<AlertTriangle className="w-4 h-4" />}
-                  label={t("champions.difficulty", "Dificultad")}
-                  value={<Placeholder text="Por implementar" />}
-                />
-              </div>
-            </CardBody>
-          </Card>
-
+        {/* Content - Cards below banner */}
+        <div className="max-h-[calc(90vh-18rem)] overflow-y-auto p-6 space-y-4">
           {/* Counterpicks Card */}
           <Card>
             <CardHeader>
