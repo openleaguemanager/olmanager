@@ -1,7 +1,8 @@
 use chrono::{TimeZone, Utc};
 use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
 use domain::manager::Manager;
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes};
+use domain::stats::LolRole;
 use domain::team::Team;
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
@@ -11,27 +12,17 @@ use ofm_core::live_match_manager::{self, MatchMode};
 // Test helpers
 // ---------------------------------------------------------------------------
 
-fn default_attrs(pos: Position) -> PlayerAttributes {
-    let group = pos.to_group_position();
-    let is_gk = matches!(group, Position::Goalkeeper);
-    let is_def = matches!(group, Position::Defender);
-    let is_fwd = matches!(group, Position::Forward);
+fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
         pace: 65,
         stamina: 65,
         strength: 65,
         agility: 65,
         passing: 65,
-        shooting: if is_gk { 30 } else { 65 },
-        tackling: if is_gk || is_fwd { 35 } else { 65 },
-        dribbling: if is_gk { 30 } else { 65 },
-        defending: if is_gk {
-            30
-        } else if is_def {
-            75
-        } else {
-            55
-        },
+        shooting: 65,
+        tackling: 55,
+        dribbling: 65,
+        defending: 55,
         positioning: 65,
         vision: 65,
         decisions: 65,
@@ -39,14 +30,14 @@ fn default_attrs(pos: Position) -> PlayerAttributes {
         aggression: 50,
         teamwork: 65,
         leadership: 50,
-        handling: if is_gk { 75 } else { 20 },
-        reflexes: if is_gk { 75 } else { 30 },
+        handling: 20,
+        reflexes: 30,
         aerial: 60,
     }
 }
 
-fn make_player(id: &str, name: &str, team_id: &str, pos: Position) -> Player {
-    let attrs = default_attrs(pos.clone());
+fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
+    let attrs = default_attrs();
     let mut p = Player::new(
         id.to_string(),
         name.to_string(),
@@ -83,7 +74,7 @@ fn make_squad(team_id: &str) -> Vec<Player> {
             &format!("{}_gk{}", team_id, i),
             &format!("GK{}", i),
             team_id,
-            Position::Goalkeeper,
+            LolRole::Support,
         ));
     }
     // 7 DEF
@@ -92,7 +83,7 @@ fn make_squad(team_id: &str) -> Vec<Player> {
             &format!("{}_def{}", team_id, i),
             &format!("Def{}", i),
             team_id,
-            Position::Defender,
+            LolRole::Top,
         ));
     }
     // 7 MID
@@ -101,7 +92,7 @@ fn make_squad(team_id: &str) -> Vec<Player> {
             &format!("{}_mid{}", team_id, i),
             &format!("Mid{}", i),
             team_id,
-            Position::Midfielder,
+            LolRole::Jungle,
         ));
     }
     // 6 FWD
@@ -110,7 +101,7 @@ fn make_squad(team_id: &str) -> Vec<Player> {
             &format!("{}_fwd{}", team_id, i),
             &format!("Fwd{}", i),
             team_id,
-            Position::Forward,
+            LolRole::Adc,
         ));
     }
     players
@@ -344,7 +335,7 @@ fn auto_select_set_pieces_excludes_gk_from_penalty() {
     let gk_ids: Vec<String> = game
         .players
         .iter()
-        .filter(|p| p.team_id.as_deref() == Some("team1") && p.position == Position::Goalkeeper)
+        .filter(|p| p.team_id.as_deref() == Some("team1") && p.position == LolRole::Support)
         .map(|p| p.id.clone())
         .collect();
 
@@ -460,8 +451,8 @@ fn slot_aware_xi_selection_prefers_true_fullback_for_fullback_slot() {
         .iter_mut()
         .find(|player| player.id == "team1_def0")
         .unwrap();
-    specialist_rb.position = Position::RightBack;
-    specialist_rb.natural_position = Position::RightBack;
+    specialist_rb.position = LolRole::Top;
+    specialist_rb.natural_position = LolRole::Top;
     specialist_rb.attributes.pace = 86;
     specialist_rb.attributes.stamina = 84;
     specialist_rb.attributes.tackling = 80;
@@ -475,8 +466,8 @@ fn slot_aware_xi_selection_prefers_true_fullback_for_fullback_slot() {
         .iter_mut()
         .find(|player| player.id == "team1_def1")
         .unwrap();
-    stronger_cb.position = Position::CenterBack;
-    stronger_cb.natural_position = Position::CenterBack;
+    stronger_cb.position = LolRole::Top;
+    stronger_cb.natural_position = LolRole::Top;
     stronger_cb.attributes.defending = 90;
     stronger_cb.attributes.tackling = 88;
     stronger_cb.attributes.positioning = 86;

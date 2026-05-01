@@ -1,16 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-// ---------------------------------------------------------------------------
-// Position — mirrors domain::player::Position but kept independent
-// ---------------------------------------------------------------------------
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum Position {
-    Goalkeeper,
-    Defender,
-    Midfielder,
-    Forward,
-}
+// Re-export LolRole from live_match module for use in this crate
+pub use crate::live_match::LolRole;
 
 // ---------------------------------------------------------------------------
 // PlayStyle — mirrors domain::team::PlayStyle
@@ -34,9 +25,8 @@ pub enum PlayStyle {
 pub struct PlayerData {
     pub id: String,
     pub name: String,
-    pub position: Position,
-    #[serde(default)]
-    pub lol_role: Option<String>,
+    /// Player's LoL role (Top, Jungle, Mid, Adc, Support)
+    pub role: LolRole,
     pub condition: u8, // 0-100
     /// Long-term physical shape (0-100). Multiplies stamina depletion rate in-match.
     #[serde(default = "default_fitness")]
@@ -127,56 +117,59 @@ pub struct TeamData {
 }
 
 impl TeamData {
-    /// Count players by position.
-    pub fn count_position(&self, pos: Position) -> usize {
-        self.players.iter().filter(|p| p.position == pos).count()
+    /// Count players by role.
+    pub fn count_role(&self, role: LolRole) -> usize {
+        self.players.iter().filter(|p| p.role == role).count()
     }
 
-    /// Average of a specific attribute among players in the given position.
-    pub fn position_attr_avg(&self, pos: Position, attr_fn: fn(&PlayerData) -> u8) -> f64 {
-        let players: Vec<_> = self.players.iter().filter(|p| p.position == pos).collect();
+    /// Average of a specific attribute among players in the given role.
+    pub fn role_attr_avg(&self, role: LolRole, attr_fn: fn(&PlayerData) -> u8) -> f64 {
+        let players: Vec<_> = self.players.iter().filter(|p| p.role == role).collect();
         if players.is_empty() {
             return 40.0; // fallback
         }
         players.iter().map(|p| attr_fn(p) as f64).sum::<f64>() / players.len() as f64
     }
 
-    /// Composite defense rating (from defenders + goalkeeper).
+    /// Composite defense rating (from Top + Support).
     pub fn defense_rating(&self) -> f64 {
-        let def_avg = self.position_attr_avg(Position::Defender, |p| {
+        let top_avg = self.role_attr_avg(LolRole::Top, |p| {
             ((p.defending as u16 + p.tackling as u16 + p.positioning as u16 + p.strength as u16)
                 / 4) as u8
         });
-        let gk_avg = self.position_attr_avg(Position::Goalkeeper, |p| {
-            ((p.positioning as u16 + p.decisions as u16 + p.strength as u16 + p.pace as u16) / 4)
-                as u8
+        let support_avg = self.role_attr_avg(LolRole::Support, |p| {
+            ((p.vision as u16 + p.positioning as u16 + p.teamwork as u16) / 3) as u8
         });
-        def_avg * 0.7 + gk_avg * 0.3
+        top_avg * 0.7 + support_avg * 0.3
     }
 
-    /// Composite midfield rating.
+    /// Composite mid/jungle rating.
     pub fn midfield_rating(&self) -> f64 {
-        self.position_attr_avg(Position::Midfielder, |p| {
+        let mid_avg = self.role_attr_avg(LolRole::Mid, |p| {
             ((p.passing as u16 + p.vision as u16 + p.decisions as u16 + p.stamina as u16) / 4) as u8
-        })
+        });
+        let jg_avg = self.role_attr_avg(LolRole::Jungle, |p| {
+            ((p.decisions as u16 + p.vision as u16 + p.positioning as u16) / 3) as u8
+        });
+        mid_avg * 0.6 + jg_avg * 0.4
     }
 
-    /// Composite attack rating (from forwards + midfielders).
+    /// Composite attack rating (from ADC + Mid).
     pub fn attack_rating(&self) -> f64 {
-        let fwd_avg = self.position_attr_avg(Position::Forward, |p| {
+        let adc_avg = self.role_attr_avg(LolRole::Adc, |p| {
             ((p.shooting as u16 + p.dribbling as u16 + p.pace as u16 + p.positioning as u16) / 4)
                 as u8
         });
-        let mid_contrib = self.position_attr_avg(Position::Midfielder, |p| {
+        let mid_contrib = self.role_attr_avg(LolRole::Mid, |p| {
             ((p.shooting as u16 + p.passing as u16 + p.vision as u16) / 3) as u8
         });
-        fwd_avg * 0.75 + mid_contrib * 0.25
+        adc_avg * 0.75 + mid_contrib * 0.25
     }
 
-    /// Goalkeeper save rating.
-    pub fn goalkeeper_rating(&self) -> f64 {
-        self.position_attr_avg(Position::Goalkeeper, |p| {
-            ((p.positioning as u16 + p.decisions as u16 + p.pace as u16 + p.strength as u16) / 4)
+    /// Support contribution rating (Vision + Teamwork).
+    pub fn support_rating(&self) -> f64 {
+        self.role_attr_avg(LolRole::Support, |p| {
+            ((p.vision as u16 + p.positioning as u16 + p.teamwork as u16 + p.passing as u16) / 4)
                 as u8
         })
     }

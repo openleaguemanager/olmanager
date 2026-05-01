@@ -3,7 +3,8 @@ use domain::league::{
     Fixture, FixtureCompetition, FixtureStatus, League, MatchResult, StandingEntry,
 };
 use domain::manager::Manager;
-use domain::player::{Player, PlayerAttributes, PlayerSeasonStats, Position};
+use domain::player::{Player, PlayerAttributes, PlayerSeasonStats};
+use domain::stats::LolRole;
 use domain::team::{FinancialTransactionKind, Team, TeamKind};
 use ofm_core::clock::GameClock;
 use ofm_core::end_of_season::{is_season_complete, process_end_of_season};
@@ -25,7 +26,7 @@ fn make_team(id: &str, name: &str) -> Team {
     )
 }
 
-fn make_player(id: &str, name: &str, team_id: &str, pos: Position) -> Player {
+fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
     let attrs = PlayerAttributes {
         pace: 65,
         stamina: 65,
@@ -119,7 +120,7 @@ fn make_completed_season_game() -> Game {
     let team1 = make_team("team1", "Test FC");
     let team2 = make_team("team2", "Rival FC");
 
-    let mut p1 = make_player("p1", "Star", "team1", Position::Forward);
+    let mut p1 = make_player("p1", "Star", "team1", LolRole::Adc);
     p1.stats = PlayerSeasonStats {
         appearances: 30,
         goals: 20,
@@ -132,7 +133,7 @@ fn make_completed_season_game() -> Game {
         ..PlayerSeasonStats::default()
     };
 
-    let mut p2 = make_player("p2", "Rival", "team2", Position::Forward);
+    let mut p2 = make_player("p2", "Rival", "team2", LolRole::Adc);
     p2.stats = PlayerSeasonStats {
         appearances: 28,
         goals: 15,
@@ -386,7 +387,7 @@ fn player_stats_reset() {
 fn player_with_zero_appearances_no_career_entry() {
     let mut game = make_completed_season_game();
     // Add a player with 0 appearances
-    let p3 = make_player("p3", "Bench", "team1", Position::Defender);
+    let p3 = make_player("p3", "Bench", "team1", LolRole::Top);
     game.players.push(p3);
 
     process_end_of_season(&mut game);

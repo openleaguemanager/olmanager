@@ -3,8 +3,9 @@ use domain::league::{
     Fixture, FixtureCompetition, FixtureStatus, League, MatchResult, StandingEntry,
 };
 use domain::manager::Manager;
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
+use domain::stats::LolRole;
 use domain::team::{
     Facilities, MainFacilityModuleKind, Sponsorship, SponsorshipBonusCriterion, Team,
 };
@@ -59,7 +60,7 @@ fn make_player(id: &str, team_id: &str, wage: u32) -> Player {
         format!("Full {}", id),
         "1995-01-01".to_string(),
         "GB".to_string(),
-        Position::Midfielder,
+        LolRole::Jungle,
         attrs,
     );
     p.team_id = Some(team_id.to_string());

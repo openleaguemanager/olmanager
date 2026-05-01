@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+// Re-export both LolRole and Position for backward compatibility
+pub use crate::stats::{LolRole, Position};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player {
     pub id: String,
@@ -14,16 +17,18 @@ pub struct Player {
     #[serde(default)]
     pub profile_image_url: Option<String>,
 
-    pub position: Position,
+    /// Player's current role in the team (set by formation)
+    pub position: LolRole,
 
-    // The player's natural/preferred position (never changed by formation logic)
+    /// The player's natural/preferred role (never changed by formation logic)
     #[serde(default)]
-    pub natural_position: Position,
+    pub natural_position: LolRole,
 
-    // Alternate positions this player can also play (with reduced effectiveness)
+    /// Alternate roles this player can also play (with reduced effectiveness)
     #[serde(default)]
-    pub alternate_positions: Vec<Position>,
+    pub alternate_positions: Vec<LolRole>,
 
+    /// Deprecated: LoL roles are lane-agnostic, footedness no longer affects ratings
     #[serde(default)]
     pub footedness: Footedness,
 
@@ -86,59 +91,8 @@ pub struct Player {
     pub champion_training_targets: Vec<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-pub enum Position {
-    #[default]
-    Goalkeeper,
-    Defender,
-    Midfielder,
-    Forward,
-    RightBack,
-    CenterBack,
-    LeftBack,
-    RightWingBack,
-    LeftWingBack,
-    DefensiveMidfielder,
-    CentralMidfielder,
-    AttackingMidfielder,
-    RightMidfielder,
-    LeftMidfielder,
-    RightWinger,
-    LeftWinger,
-    Striker,
-}
-
-impl Position {
-    pub fn is_legacy_bucket(&self) -> bool {
-        matches!(
-            self,
-            Position::Goalkeeper | Position::Defender | Position::Midfielder | Position::Forward
-        )
-    }
-
-    pub fn to_group_position(&self) -> Position {
-        match self {
-            Position::Goalkeeper => Position::Goalkeeper,
-            Position::Defender
-            | Position::RightBack
-            | Position::CenterBack
-            | Position::LeftBack
-            | Position::RightWingBack
-            | Position::LeftWingBack => Position::Defender,
-            Position::Midfielder
-            | Position::DefensiveMidfielder
-            | Position::CentralMidfielder
-            | Position::AttackingMidfielder
-            | Position::RightMidfielder
-            | Position::LeftMidfielder => Position::Midfielder,
-            Position::Forward
-            | Position::RightWinger
-            | Position::LeftWinger
-            | Position::Striker => Position::Forward,
-        }
-    }
-}
-
+/// Footedness is deprecated - LoL roles are lane-agnostic
+/// Kept for backward compatibility with legacy save files
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum Footedness {
     Left,
@@ -429,8 +383,8 @@ pub enum PlayerTrait {
     SetPieceSpecialist, // passing >= 80 && shooting >= 75 && vision >= 75
 }
 
-/// Derive traits purely from a player's attributes (position-independent).
-pub fn compute_traits(attrs: &PlayerAttributes, _position: &Position) -> Vec<PlayerTrait> {
+/// Derive traits purely from a player's attributes (role-independent).
+pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTrait> {
     let mut traits = Vec::new();
 
     // Physical
@@ -507,16 +461,17 @@ pub fn compute_traits(attrs: &PlayerAttributes, _position: &Position) -> Vec<Pla
 }
 
 impl Player {
-    pub fn new(
+    pub fn new<R: Into<LolRole>>(
         id: String,
         match_name: String,
         full_name: String,
         date_of_birth: String,
         nationality: String,
-        position: Position,
+        role: R,
         attributes: PlayerAttributes,
     ) -> Self {
-        let traits = compute_traits(&attributes, &position);
+        let role: LolRole = role.into();
+        let traits = compute_traits(&attributes, &role);
         let football_nation = crate::identity::normalize_football_nation_code(&nationality);
         let birth_country = crate::identity::derive_birth_country_code(&nationality);
         Self {
@@ -528,8 +483,8 @@ impl Player {
             football_nation,
             birth_country,
             profile_image_url: None,
-            natural_position: position.clone(),
-            position,
+            natural_position: role,
+            position: role,
             alternate_positions: Vec::new(),
             footedness: Footedness::default(),
             weak_foot: default_weak_foot(),
@@ -596,7 +551,7 @@ mod tests {
             "John Smith".to_string(),
             "2000-01-15".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Mid,
             sample_attributes(),
         );
 
@@ -605,17 +560,9 @@ mod tests {
     }
 
     #[test]
-    fn position_group_conversion_maps_granular_positions_back_to_legacy_groups() {
-        assert_eq!(Position::RightBack.to_group_position(), Position::Defender);
-        assert_eq!(
-            Position::AttackingMidfielder.to_group_position(),
-            Position::Midfielder,
-        );
-        assert_eq!(Position::LeftWinger.to_group_position(), Position::Forward);
-    }
-
-    #[test]
-    fn player_deserialization_defaults_missing_foot_fields() {
+    fn legacy_football_position_deserializes_to_lol_role() {
+        // Test that legacy Position strings are correctly mapped to LolRole
+        // "Midfielder" (legacy) -> LolRole::Jungle (as per spec)
         let player: Player = serde_json::from_value(serde_json::json!({
             "id": "p-legacy",
             "match_name": "J. Legacy",
@@ -645,8 +592,47 @@ mod tests {
 
         assert_eq!(player.footedness, Footedness::Right);
         assert_eq!(player.weak_foot, 2);
-        assert_eq!(player.natural_position, Position::Midfielder);
+        // "Midfielder" should map to LolRole::Jungle per the spec
+        assert_eq!(player.natural_position, LolRole::Jungle);
         assert_eq!(player.potential_base, 99);
         assert_eq!(player.potential_revealed, None);
+    }
+
+    #[test]
+    fn new_lol_role_string_deserializes_directly() {
+        // Test that new LolRole strings deserialize correctly
+        let player: Player = serde_json::from_value(serde_json::json!({
+            "id": "p-new",
+            "match_name": "J. New",
+            "full_name": "John New",
+            "date_of_birth": "2000-01-15",
+            "nationality": "GB",
+            "position": "Top",
+            "natural_position": "Top",
+            "alternate_positions": ["Jungle", "Mid"],
+            "attributes": sample_attributes(),
+            "condition": 100,
+            "morale": 100,
+            "injury": null,
+            "team_id": null,
+            "traits": [],
+            "contract_end": null,
+            "wage": 0,
+            "market_value": 0,
+            "stats": {},
+            "career": [],
+            "transfer_listed": false,
+            "loan_listed": false,
+            "transfer_offers": [],
+            "morale_core": {}
+        }))
+        .expect("new player json should deserialize");
+
+        assert_eq!(player.position, LolRole::Top);
+        assert_eq!(player.natural_position, LolRole::Top);
+        assert_eq!(
+            player.alternate_positions,
+            vec![LolRole::Jungle, LolRole::Mid]
+        );
     }
 }

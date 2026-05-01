@@ -290,7 +290,7 @@ fn minimum_main_roster_blocker(roster: &[&domain::player::Player]) -> Option<ser
 fn main_role_coverage_blocker(roster: &[&domain::player::Player]) -> Option<serde_json::Value> {
     let role_set: std::collections::HashSet<&'static str> = roster
         .iter()
-        .map(|player| lol_role_for_position(&player.natural_position))
+        .map(|player| role_to_string(&player.natural_position))
         .collect();
     let required_roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
     let missing_roles: Vec<&str> = required_roles
@@ -312,23 +312,15 @@ fn main_role_coverage_blocker(roster: &[&domain::player::Player]) -> Option<serd
     })
 }
 
-fn lol_role_for_position(position: &domain::player::Position) -> &'static str {
-    use domain::player::Position;
-    match position {
-        Position::Defender
-        | Position::RightBack
-        | Position::CenterBack
-        | Position::LeftBack
-        | Position::RightWingBack
-        | Position::LeftWingBack => "TOP",
-        Position::AttackingMidfielder | Position::RightMidfielder | Position::LeftMidfielder => {
-            "MID"
-        }
-        Position::Forward | Position::RightWinger | Position::LeftWinger | Position::Striker => {
-            "ADC"
-        }
-        Position::Goalkeeper | Position::DefensiveMidfielder => "SUPPORT",
-        Position::Midfielder | Position::CentralMidfielder => "JUNGLE",
+fn role_to_string(role: &domain::stats::LolRole) -> &'static str {
+    use domain::stats::LolRole;
+    match role {
+        LolRole::Top => "TOP",
+        LolRole::Jungle => "JUNGLE",
+        LolRole::Mid => "MID",
+        LolRole::Adc => "ADC",
+        LolRole::Support => "SUPPORT",
+        LolRole::Unknown => "UNKNOWN",
     }
 }
 
@@ -350,7 +342,7 @@ fn academy_role_coverage_blocker(
         .players
         .iter()
         .filter(|player| player.team_id.as_deref() == Some(academy_team_id.as_str()))
-        .map(|player| lol_role_for_position(&player.natural_position))
+        .map(|player| role_to_string(&player.natural_position))
         .collect();
     let required_roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
     let missing_roles: Vec<&str> = required_roles

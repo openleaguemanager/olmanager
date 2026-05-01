@@ -6,8 +6,9 @@ use domain::manager::Manager;
 use domain::message::{ActionOption, ActionType, MessageAction, MessageContext};
 use domain::player::{
     Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, PlayerMoraleCore, PlayerPromise,
-    PlayerPromiseKind, Position, RenewalSessionOutcome, RenewalSessionStatus,
+    PlayerPromiseKind, RenewalSessionOutcome, RenewalSessionStatus,
 };
+use domain::stats::LolRole;
 use domain::team::Team;
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
@@ -41,7 +42,7 @@ fn default_attrs() -> PlayerAttributes {
     }
 }
 
-fn make_player(id: &str, name: &str, team_id: &str, pos: Position) -> Player {
+fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
     let mut p = Player::new(
         id.to_string(),
         name.to_string(),
@@ -84,13 +85,13 @@ fn make_game() -> Game {
     let team1 = make_team("team1", "Test FC");
     let mut players = Vec::new();
     // GK + 4 DEF + 4 MID + 2 FWD
-    players.push(make_player("p_gk", "GK", "team1", Position::Goalkeeper));
+    players.push(make_player("p_gk", "GK", "team1", LolRole::Support));
     for i in 0..4 {
         players.push(make_player(
             &format!("p_def{}", i),
             &format!("Def{}", i),
             "team1",
-            Position::Defender,
+            LolRole::Top,
         ));
     }
     for i in 0..4 {
@@ -98,7 +99,7 @@ fn make_game() -> Game {
             &format!("p_mid{}", i),
             &format!("Mid{}", i),
             "team1",
-            Position::Midfielder,
+            LolRole::Jungle,
         ));
     }
     for i in 0..2 {
@@ -106,7 +107,7 @@ fn make_game() -> Game {
             &format!("p_fwd{}", i),
             &format!("Fwd{}", i),
             "team1",
-            Position::Forward,
+            LolRole::Adc,
         ));
     }
 
@@ -936,13 +937,13 @@ fn recent_player_talk_enters_cooldown_and_blocks_same_day_repeat() {
 
 #[test]
 fn weighted_response_bias_changes_with_player_context() {
-    let mut volatile = make_player("volatile", "Volatile", "team1", Position::Forward);
+    let mut volatile = make_player("volatile", "Volatile", "team1", LolRole::Adc);
     volatile.attributes.aggression = 95;
     volatile.attributes.composure = 20;
     volatile.attributes.leadership = 20;
     volatile.morale_core.manager_trust = 30;
 
-    let mut composed = make_player("composed", "Composed", "team1", Position::Forward);
+    let mut composed = make_player("composed", "Composed", "team1", LolRole::Adc);
     composed.attributes.aggression = 20;
     composed.attributes.composure = 95;
     composed.attributes.leadership = 95;
@@ -970,9 +971,9 @@ fn weighted_response_bias_changes_with_player_context() {
 
 #[test]
 fn repeated_identical_talk_reduces_positive_weight() {
-    let fresh = make_player("fresh", "Fresh", "team1", Position::Forward);
+    let fresh = make_player("fresh", "Fresh", "team1", LolRole::Adc);
 
-    let mut repeated = make_player("repeated", "Repeated", "team1", Position::Forward);
+    let mut repeated = make_player("repeated", "Repeated", "team1", LolRole::Adc);
     repeated.morale_core.recent_treatment = Some(domain::player::RecentTreatmentMemory {
         action_key: "morale_talk:encourage".to_string(),
         times_recently_used: 2,

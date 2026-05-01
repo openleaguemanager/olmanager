@@ -2141,6 +2141,11 @@
       "elYuste": "el_yuste"
     },
     "role": {
+      "top": "Top",
+      "jungle": "Jungla",
+      "mid": "Mid",
+      "adc": "ADC",
+      "support": "Soporte",
       "chairman": "Presidente",
       "competitionSecretary": "Secretario de Competición",
       "assistantManager": "Segundo Entrenador",

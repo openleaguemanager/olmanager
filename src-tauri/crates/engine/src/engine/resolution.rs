@@ -2,7 +2,7 @@ use rand::{Rng, RngExt};
 
 use crate::event::{EventType, MatchEvent};
 use crate::shared::{PlayStylePhase, TraitContext, home_mod, play_style_modifier, trait_bonus};
-use crate::types::{Position, Side, Zone};
+use crate::types::{LolRole, Side, Zone};
 
 use super::MatchContext;
 use super::fouls::maybe_foul;
@@ -41,7 +41,7 @@ fn resolve_buildup<R: Rng>(
     def_side: Side,
     rng: &mut R,
 ) {
-    let passer = snap_player(ctx, att_side, Position::Defender, rng);
+    let passer = snap_player(ctx, att_side, LolRole::Top, rng);
     let pass_skill = (passer.passing as f64
         + passer.vision as f64
         + passer.composure as f64
@@ -59,7 +59,7 @@ fn resolve_buildup<R: Rng>(
         );
         ctx.ball_zone = Zone::Midfield;
     } else {
-        let interceptor = snap_player(ctx, def_side, Position::Midfielder, rng);
+        let interceptor = snap_player(ctx, def_side, LolRole::Jungle, rng);
         ctx.emit(
             MatchEvent::new(minute, EventType::PassIntercepted, att_side, ball_zone)
                 .with_player(&passer.id),
@@ -79,8 +79,8 @@ fn resolve_midfield<R: Rng>(
     def_side: Side,
     rng: &mut R,
 ) {
-    let attacker = snap_player(ctx, att_side, Position::Midfielder, rng);
-    let defender = snap_player(ctx, def_side, Position::Midfielder, rng);
+    let attacker = snap_player(ctx, att_side, LolRole::Mid, rng);
+    let defender = snap_player(ctx, def_side, LolRole::Jungle, rng);
 
     let att_rating = (attacker.dribbling as f64
         + attacker.passing as f64
@@ -148,8 +148,8 @@ fn resolve_attacking_third<R: Rng>(
     def_side: Side,
     rng: &mut R,
 ) {
-    let attacker = snap_player(ctx, att_side, Position::Forward, rng);
-    let defender = snap_player(ctx, def_side, Position::Defender, rng);
+    let attacker = snap_player(ctx, att_side, LolRole::Adc, rng);
+    let defender = snap_player(ctx, def_side, LolRole::Top, rng);
 
     let att_rating = (attacker.dribbling as f64
         + attacker.pace as f64
@@ -213,9 +213,9 @@ fn resolve_attacking_third<R: Rng>(
 
 fn resolve_shot<R: Rng>(ctx: &mut MatchContext, minute: u8, att_side: Side, rng: &mut R) {
     let def_side = att_side.opposite();
-    let shooter = snap_player(ctx, att_side, Position::Forward, rng);
-    let assister = snap_player(ctx, att_side, Position::Midfielder, rng);
-    let goalkeeper = snap_player(ctx, def_side, Position::Goalkeeper, rng);
+    let shooter = snap_player(ctx, att_side, LolRole::Adc, rng);
+    let assister = snap_player(ctx, att_side, LolRole::Mid, rng);
+    let goalkeeper = snap_player(ctx, def_side, LolRole::Support, rng);
 
     let shoot_rating =
         (shooter.shooting as f64 + shooter.composure as f64 + shooter.decisions as f64) / 3.0
@@ -273,7 +273,7 @@ pub(super) fn effective_midfield(ctx: &MatchContext, side: Side) -> f64 {
 
 fn effective_press(ctx: &MatchContext, pressing_side: Side) -> f64 {
     let team = ctx.team(pressing_side);
-    let base = team.position_attr_avg(Position::Midfielder, |p| {
+    let base = team.role_attr_avg(LolRole::Jungle, |p| {
         ((p.stamina as u16 + p.tackling as u16 + p.pace as u16) / 3) as u8
     });
     let modifier = play_style_modifier(team.play_style, PlayStylePhase::Press, true);

@@ -2,9 +2,9 @@ use crate::finances::calc_annual_wages;
 use crate::game::Game;
 use chrono::{Datelike, NaiveDate};
 use domain::negotiation::{NegotiationFeedback, NegotiationMood};
-use domain::player::Position;
 use domain::player::TransferOfferStatus;
 use domain::season::TransferWindowStatus;
+use domain::stats::LolRole;
 use domain::team::TeamKind;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
@@ -736,7 +736,7 @@ fn simulate_ai_free_agent_signings(game: &mut Game, user_team_id: &str) {
             .players
             .iter()
             .filter(|player| player.team_id.is_none())
-            .filter(|player| lol_role_for_position(&player.natural_position) == preferred_role)
+            .filter(|player| lol_role_to_string(&player.natural_position) == preferred_role)
             .filter_map(|player| {
                 let asking_price = (player.market_value as i64).max(25_000) / 5;
                 (asking_price > 0 && asking_price <= budget_cap).then_some((
@@ -802,7 +802,7 @@ fn simulate_ai_club_to_club_transfers(game: &mut Game, user_team_id: &str) {
             .players
             .iter()
             .filter_map(|player| {
-                if lol_role_for_position(&player.natural_position) != preferred_role {
+                if lol_role_to_string(&player.natural_position) != preferred_role {
                     return None;
                 }
 
@@ -892,7 +892,7 @@ fn ai_team_priority_role(game: &Game, team_id: &str) -> &'static str {
             continue;
         }
 
-        let role = lol_role_for_position(&player.natural_position);
+        let role = lol_role_to_string(&player.natural_position);
         if let Some(index) = LOL_CORE_ROLES
             .iter()
             .position(|candidate| *candidate == role)
@@ -1767,33 +1767,25 @@ pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, 
     Ok(penalty)
 }
 
-fn lol_role_for_position(position: &Position) -> &'static str {
-    match position {
-        Position::Defender
-        | Position::RightBack
-        | Position::CenterBack
-        | Position::LeftBack
-        | Position::RightWingBack
-        | Position::LeftWingBack => "TOP",
-        Position::AttackingMidfielder | Position::RightMidfielder | Position::LeftMidfielder => {
-            "MID"
-        }
-        Position::Forward | Position::RightWinger | Position::LeftWinger | Position::Striker => {
-            "ADC"
-        }
-        Position::Goalkeeper | Position::DefensiveMidfielder => "SUPPORT",
-        Position::Midfielder | Position::CentralMidfielder => "JUNGLE",
+fn lol_role_to_string(role: &LolRole) -> &'static str {
+    match role {
+        LolRole::Top => "TOP",
+        LolRole::Jungle => "JUNGLE",
+        LolRole::Mid => "MID",
+        LolRole::Adc => "ADC",
+        LolRole::Support => "SUPPORT",
+        LolRole::Unknown => "UNKNOWN",
     }
 }
 
-fn position_for_lol_role(role: &str) -> Position {
+fn string_to_lol_role(role: &str) -> LolRole {
     match role {
-        "TOP" => Position::Defender,
-        "JUNGLE" => Position::Midfielder,
-        "MID" => Position::AttackingMidfielder,
-        "ADC" => Position::Forward,
-        "SUPPORT" => Position::DefensiveMidfielder,
-        _ => Position::Midfielder,
+        "TOP" => LolRole::Top,
+        "JUNGLE" => LolRole::Jungle,
+        "MID" => LolRole::Mid,
+        "ADC" => LolRole::Adc,
+        "SUPPORT" => LolRole::Support,
+        _ => LolRole::Unknown,
     }
 }
 
@@ -1801,7 +1793,7 @@ fn academy_role_count(game: &Game, academy_team_id: &str, role: &str) -> usize {
     game.players
         .iter()
         .filter(|player| player.team_id.as_deref() == Some(academy_team_id))
-        .filter(|player| lol_role_for_position(&player.natural_position) == role)
+        .filter(|player| lol_role_to_string(&player.natural_position) == role)
         .count()
 }
 
@@ -1810,7 +1802,7 @@ fn try_assign_free_agent_by_role(game: &mut Game, academy_team_id: &str, role: &
         .players
         .iter()
         .filter(|player| player.team_id.is_none())
-        .filter(|player| lol_role_for_position(&player.natural_position) == role)
+        .filter(|player| lol_role_to_string(&player.natural_position) == role)
         .max_by_key(|player| player.market_value)
         .map(|player| player.id.clone());
 
@@ -1849,7 +1841,7 @@ fn spawn_academy_replacement(
         match_name,
         "2006-01-01".to_string(),
         template.nationality.clone(),
-        position_for_lol_role(role),
+        string_to_lol_role(role),
         template.attributes.clone(),
     );
     replacement.team_id = Some(academy_team_id.to_string());
@@ -1885,7 +1877,7 @@ fn ensure_academy_roster_continuity(
         }
 
         let target_role =
-            missing_role.unwrap_or_else(|| lol_role_for_position(&template.natural_position));
+            missing_role.unwrap_or_else(|| lol_role_to_string(&template.natural_position));
         if !try_assign_free_agent_by_role(game, academy_team_id, target_role) {
             spawn_academy_replacement(game, academy_team_id, template, target_role);
         }

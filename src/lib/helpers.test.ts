@@ -58,8 +58,8 @@ const makePlayer = (overrides: Partial<PlayerData> = {}): PlayerData => ({
   full_name: "Test Player Full",
   date_of_birth: "1996-01-15",
   nationality: "England",
-  position: "Midfielder",
-  natural_position: "Midfielder",
+  position: "MID",
+  natural_position: "MID",
   alternate_positions: [],
   training_focus: null,
   attributes: {
@@ -387,8 +387,8 @@ describe("getLocale", () => {
 describe("calcOvr", () => {
   it("calculates positional overall from the player's natural role", () => {
     const player = makePlayer({
-      position: "CentralMidfielder",
-      natural_position: "CentralMidfielder",
+      position: "MID",
+      natural_position: "MID",
     });
 
     expect(calcOvr(player)).toBe(68);
@@ -396,8 +396,8 @@ describe("calcOvr", () => {
 
   it("rounds positional overall to the nearest integer", () => {
     const player = makePlayer({
-      position: "CentralMidfielder",
-      natural_position: "CentralMidfielder",
+      position: "MID",
+      natural_position: "MID",
       attributes: {
         ...makePlayer().attributes,
         passing: 73,
@@ -455,17 +455,15 @@ describe("formatWeeklyAmount", () => {
 
 describe("positionBadgeVariant", () => {
   it("returns correct variant for each position", () => {
-    expect(positionBadgeVariant("Goalkeeper")).toBe("accent");
-    expect(positionBadgeVariant("Defender")).toBe("primary");
-    expect(positionBadgeVariant("CenterBack")).toBe("primary");
-    expect(positionBadgeVariant("Midfielder")).toBe("success");
-    expect(positionBadgeVariant("AttackingMidfielder")).toBe("success");
-    expect(positionBadgeVariant("Forward")).toBe("danger");
-    expect(positionBadgeVariant("Striker")).toBe("danger");
+    expect(positionBadgeVariant("TOP")).toBe("danger");
+    expect(positionBadgeVariant("JUNGLE")).toBe("success");
+    expect(positionBadgeVariant("MID")).toBe("primary");
+    expect(positionBadgeVariant("ADC")).toBe("accent");
+    expect(positionBadgeVariant("SUPPORT")).toBe("neutral");
   });
 
   it("returns 'primary' for unknown position", () => {
-    expect(positionBadgeVariant("Unknown")).toBe("primary");
+    expect(positionBadgeVariant("UNKNOWN")).toBe("primary");
   });
 });
 

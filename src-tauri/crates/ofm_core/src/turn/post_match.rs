@@ -4,9 +4,7 @@ use domain::league::{
     CompactMatchEvent, CompactMatchReport, CompactTeamMatchStats, FixtureStatus, MatchEndReason,
     MatchResult,
 };
-use domain::player::{
-    PlayerIssue, PlayerIssueCategory, PlayerPromiseKind, Position as DomainPosition,
-};
+use domain::player::{PlayerIssue, PlayerIssueCategory, PlayerPromiseKind};
 use domain::stats::{
     LolRole, MatchOutcome, PlayerMatchStatsRecord, StatsState, TeamMatchStatsRecord, TeamSide,
 };
@@ -401,19 +399,8 @@ fn apply_player_stats(
                     (player.stats.avg_rating * (n - 1.0) + match_rating.clamp(0.0, 10.0)) / n;
             }
 
-            if matches!(player.position, DomainPosition::Goalkeeper) {
-                let tid = player.team_id.as_deref().unwrap_or("");
-                let conceded_zero = if tid == home_team_id {
-                    report.away_stats.kills == 0
-                } else if tid == away_team_id {
-                    report.home_stats.kills == 0
-                } else {
-                    false
-                };
-                if conceded_zero {
-                    player.stats.clean_sheets += 1;
-                }
-            }
+            // In LoL, this logic doesn't apply - there are no "clean sheets" in LoL
+            // (the concept doesn't map - keeping for API compatibility)
         }
     }
 }
