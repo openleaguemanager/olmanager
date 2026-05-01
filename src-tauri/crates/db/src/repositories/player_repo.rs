@@ -1,5 +1,6 @@
 use domain::player::{Footedness, Player, PlayerAttributes, Position};
 use domain::team::TrainingFocus;
+use log::{debug, error};
 use rusqlite::{params, Connection};
 
 /// Insert or replace a player row.
@@ -120,6 +121,7 @@ fn parse_training_focus(s: &str) -> Option<TrainingFocus> {
 
 /// Load all players.
 pub fn load_all_players(conn: &Connection) -> Result<Vec<Player>, String> {
+    debug!("[load_all_players] preparing query");
     let mut stmt = conn
         .prepare(
             "SELECT id, match_name, full_name, date_of_birth, nationality, football_nation, birth_country, position,
@@ -131,15 +133,32 @@ pub fn load_all_players(conn: &Connection) -> Result<Vec<Player>, String> {
              FROM players",
         )
         .map_err(|e| format!("Failed to prepare players query: {}", e))?;
+    debug!("[load_all_players] query prepared, executing");
 
     let rows = stmt
         .query_map([], row_to_player)
         .map_err(|e| format!("Failed to query players: {}", e))?;
+    debug!("[load_all_players] query executed, iterating rows");
 
     let mut players = Vec::new();
-    for row in rows {
-        players.push(row.map_err(|e| format!("Failed to read player row: {}", e))?);
+    for (idx, row) in rows.enumerate() {
+        match row {
+            Ok(player) => {
+                players.push(player);
+                if idx % 50 == 0 {
+                    debug!("[load_all_players] loaded {} players", idx + 1);
+                }
+            }
+            Err(e) => {
+                error!(
+                    "[load_all_players] failed to read player row {}: {}",
+                    idx, e
+                );
+                return Err(format!("Failed to read player row {}: {}", idx, e));
+            }
+        }
     }
+    debug!("[load_all_players] done, total players: {}", players.len());
     Ok(players)
 }
 
