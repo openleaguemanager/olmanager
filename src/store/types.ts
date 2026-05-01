@@ -139,8 +139,8 @@ export interface TeamData {
   short_name: string;
   country: string;
   city: string;
-  stadium_name: string;
-  stadium_capacity: number;
+  arena_name: string;
+  arena_capacity: number;
   finance: number;
   manager_id: string | null;
   reputation: number;

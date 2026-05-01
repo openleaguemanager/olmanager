@@ -72,10 +72,10 @@ pub fn generate_world(
         } else {
             tdef.short_name.clone()
         };
-        let stadium = if tdef.stadium_name.is_empty() {
+        let stadium = if tdef.arena_name.is_empty() {
             format!("{} Arena", tdef.city)
         } else {
-            tdef.stadium_name.clone()
+            tdef.arena_name.clone()
         };
 
         let rep_range = tdef.reputation_range.unwrap_or([300, 900]);

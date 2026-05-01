@@ -9,8 +9,8 @@ pub struct Team {
     #[serde(default)]
     pub football_nation: String,
     pub city: String,
-    pub stadium_name: String,
-    pub stadium_capacity: u32,
+    pub arena_name: String,
+    pub arena_capacity: u32,
 
     // Current state
     pub finance: i64,
@@ -345,8 +345,8 @@ mod academy_team_metadata_tests {
             "short_name": "FNC",
             "country": "GB",
             "city": "London",
-            "stadium_name": "Fnatic HQ",
-            "stadium_capacity": 5000,
+            "arena_name": "Fnatic HQ",
+            "arena_capacity": 5000,
             "finance": 1000000,
             "manager_id": null,
             "reputation": 500,
@@ -1003,8 +1003,8 @@ impl Team {
         short_name: String,
         country: String,
         city: String,
-        stadium_name: String,
-        stadium_capacity: u32,
+        arena_name: String,
+        arena_capacity: u32,
     ) -> Self {
         let football_nation = crate::identity::normalize_football_nation_code(&country);
         Self {
@@ -1014,8 +1014,8 @@ impl Team {
             country,
             football_nation,
             city,
-            stadium_name,
-            stadium_capacity,
+            arena_name,
+            arena_capacity,
             finance: 1_000_000,
             manager_id: None,
             reputation: 500,
