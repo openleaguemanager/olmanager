@@ -69,6 +69,8 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up(include_str!("sql/v030_champions_table.sql")),
         // V31: Fix champion counterpicks/synergies seed (was storing all data in every champion)
         M::up(include_str!("sql/v031_fix_champion_seed.sql")),
+        // V32: Re-seed champions with fixed name generation (camelCase bug: 'Taliyah' -> '. aliyah')
+        M::up(include_str!("sql/v032_fix_champion_names.sql")),
     ])
 }
 
