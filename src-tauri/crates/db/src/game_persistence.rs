@@ -105,24 +105,43 @@ impl GamePersistenceReader {
             .ok_or_else(|| "No game_meta found in database".to_string())?;
         debug!("[read_game] meta loaded: save_name={}", meta.save_name);
 
+        debug!("[read_game] parsing start_date: {}", meta.start_date);
         let start_date = chrono::DateTime::parse_from_rfc3339(&meta.start_date)
             .map_err(|error| format!("Invalid start_date: {}", error))?
             .with_timezone(&Utc);
+        debug!("[read_game] parsing game_date: {}", meta.game_date);
         let game_date = chrono::DateTime::parse_from_rfc3339(&meta.game_date)
             .map_err(|error| format!("Invalid game_date: {}", error))?
             .with_timezone(&Utc);
+        debug!("[read_game] dates parsed, creating GameClock");
 
         let mut clock = GameClock::new(start_date);
         clock.current_date = game_date;
+        debug!("[read_game] loading manager: {}", meta.manager_id);
 
         let manager = manager_repo::load_manager(conn, &meta.manager_id)?
             .ok_or_else(|| format!("Manager '{}' not found", meta.manager_id))?;
+        debug!("[read_game] manager loaded, loading teams");
+
         let teams = team_repo::load_all_teams(conn)?;
+        debug!("[read_game] teams loaded: count={}", teams.len());
+        debug!("[read_game] loading players");
+
         let players = player_repo::load_all_players(conn)?;
+        debug!("[read_game] players loaded: count={}", players.len());
+        debug!("[read_game] loading staff");
+
         let staff = staff_repo::load_all_staff(conn)?;
+        debug!("[read_game] loading messages");
+
         let messages = message_repo::load_all_messages(conn)?;
+        debug!("[read_game] loading news");
+
         let news = news_repo::load_all_news(conn)?;
+        debug!("[read_game] loading league");
+
         let league = league_repo::load_league(conn)?;
+        debug!("[read_game] league loaded");
 
         let objective_rows = objective_repo::load_all_objectives(conn)?;
         let board_objectives: Vec<BoardObjective> = objective_rows
