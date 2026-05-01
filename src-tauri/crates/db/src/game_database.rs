@@ -92,12 +92,14 @@ impl GameDatabase {
     /// For OLD saves (pre-champions feature), the table won't exist and will be created + seeded.
     /// For NEW saves, the table exists via migration and this is a no-op.
     pub fn ensure_champions(&mut self) -> Result<(), String> {
+        debug!("[game_db] ensure_champions called");
         // Already loaded — skip
         if self.champions_loaded {
             debug!("[game_db] champions already loaded, skipping");
             return Ok(());
         }
 
+        debug!("[game_db] checking if champions table exists");
         // Check if champions table exists
         let table_exists: bool = self
             .conn
@@ -107,6 +109,8 @@ impl GameDatabase {
                 |row| row.get::<_, String>(0).map(|_| true),
             )
             .unwrap_or(false);
+
+        debug!("[game_db] champions table exists: {}", table_exists);
 
         if !table_exists {
             warn!("[game_db] champions table not found, creating and seeding...");
@@ -144,7 +148,9 @@ impl GameDatabase {
             );
         }
 
+        debug!("[game_db] setting champions_loaded = true");
         self.champions_loaded = true;
+        debug!("[game_db] ensure_champions returning Ok");
         Ok(())
     }
 }
