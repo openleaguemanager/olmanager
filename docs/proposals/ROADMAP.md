@@ -123,47 +123,80 @@ OLManager es un manager de esports para League of Legends diseñado para simular
 
 ---
 
-### Fase 2: Estabilización y Features Core — Mediano Plazo (v0.3 Beta)
+### Fase 2: Estabilización, Features Core y Release Beta — Mediano Plazo (v0.3 Beta)
 
-**Objetivo:** Implementar funcionalidades core del manager y estabilizar el producto para uso interno.
+**Objetivo:** Pagar deuda técnica restante de Fase 1, estabilizar simulación, implementar features core de gestión y release beta.
 
 **Prioridad:** 🟡 Media
 
 #### 🎯 Hitos
 
-- [ ] 🔲 Sistema de roster/plantel completo (contratar/despedir)
-- [ ] 🔲 Motor de simulación LoL estable (lol_sim_v2 + live_match)
-- [ ] 🔲 Sistema de finanzas (presupuesto, salarios, patrocinadores)
-- [ ] 🔲 Dashboard de estadísticas del equipo
-- [ ] 🔲 Manejo de errores estructurado (`AppError` con `thiserror` + códigos i18n)
-- [ ] 🔲 Logging con `tracing` y spans por comando
-- [ ] 🔲 Primera release beta (v0.3.0-beta)
+- [ ] 🔲 **Fase 1 cleanup**: completar items que quedaron pendientes
+- [ ] 🔲 **Motor de simulación**: lol_sim_v2 compilando + live_match funcional
+- [ ] 🔲 **AppError + i18n**: migración completa de todos los comandos
+- [ ] 🔲 **Sistema de temporada completa**: Winter/Spring/Summer/Season Finals
+- [ ] 🔲 **Sistema de finanzas**: presupuesto, salarios, transferencias
+- [ ] 🔲 **Dashboard de estadísticas del equipo**
+- [ ] 🔲 **Release beta**: v0.3.0-beta taggeada y publicada
 
 #### 📋 Tareas
 
-- [ ] **AppError**: definir enum con `thiserror`, serializar a JSON (`code` + `message` + `details`)
-- [ ] **i18n de errores**: frontend mapea errores por `code`, no por string
-- [ ] **`tracing`**: migrar de `log` a `tracing` + `tracing-subscriber` con spans por comando
-- [ ] **Logging en release**: `Info` por defecto, `Debug` opt-in, rotación `KeepN(10)` (50 MB tope)
-- [ ] **Modelo de datos**: migrar campos consultables de JSON-en-TEXT a columnas reales (atributos de player)
+##### 🧹 Fase 1 Cleanup (prioridad: 🔴 alta)
+
+- [ ] **Cross-stack type generation (#93)**: annotar ~58 tipos restantes con `#[derive(TS)]`, generar `bindings.ts`
+- [ ] **AppError full migration**: migrar todos los comandos (>50) de `Result<T, String>` a `Result<T, AppError>`
+- [ ] **i18n de errores**: frontend mapea errores por `code` en vez de string libre
+- [ ] **Input validation expansion**: extender `validator` + Zod a más comandos (transferencias, staff, squad)
+- [ ] **`lol_sim_v2` test compilation**: fixear funciones faltantes (`baron_push_target_for_lane`, `pick_combat_target`, etc.)
+- [ ] **Pre-existing clippy cleanup**: resolver ~100 warnings heredados en workspace (empezar por `domain`, luego `engine`, luego `ofm_core`)
+
+##### 🏗️ Arquitectura y DX (prioridad: 🟡 media)
+
+- [ ] **`tracing` migration**: reemplazar `log` por `tracing` + `tracing-subscriber` con spans por comando Tauri
+- [ ] **Logging config**: `Info` en release, `Debug` opt-in, rotación `KeepN(10)` (50 MB tope)
+- [ ] **Modelo de datos**: migrar campos consultables de JSON-en-TEXT a columnas reales (atributos de player: `pace`, `stamina`, etc.)
 - [ ] **Índices SQLite**: añadir índices funcionales con `json_extract` donde aún haya JSON
-- [ ] **Componentes monolíticos**: romper `ChampionDraft.tsx`, `MatchSimulation.tsx` en Container/Presentational
+- [ ] **Componentes monolíticos frontend**: romper `ChampionDraft.tsx` (3.149 LOC), `MatchSimulation.tsx` (1.922 LOC) en Container/Presentational
 - [ ] **`useEffect` audit**: activar `eslint-plugin-react-hooks/exhaustive-deps: error`, migrar fetch a TanStack Query
-- [ ] **`ChampionRuntime` visibility**: fixear warning `private_interfaces` en `lol_sim_v2.rs`
-- [ ] Actualizar `CONTRIBUTING.md` con los nuevos gates de CI
-- [ ] Implementar modo espectador funcional en match simulation
-- [ ] Implementar sistema de contratos y salarios
-- [ ] Implementar calendario de temporada (LEC Winter/Spring/Summer/Season Finals)
-- [ ] Añadir visualización de estadísticas en tiempo real
-- [ ] Documentar API de comandos Tauri
+- [ ] **Fix `ChampionRuntime` visibility**: warning `private_interfaces` en `lol_sim_v2.rs`
+- [ ] **Rust profile tuning**: añadir `[profile.release]` con LTO, strip, panic=abort
+
+##### 🎮 Features Core (prioridad: 🟡 media)
+
+- [ ] **Calendario de temporada**: implementar splits LEC (Winter/Spring/Summer) + Season Finals
+  - [ ] Generación de fixtures para Spring y Summer split
+  - [ ] Playoffs por split (top 6/8)
+  - [ ] Season Finals con Championship Points
+  - [ ] UI de calendario en Dashboard
+- [ ] **Sistema de finanzas**:
+  - [ ] Presupuesto por temporada (salary cap)
+  - [ ] Contratos multi-año con incrementos
+  - [ ] Renovaciones y cláusulas de rescisión
+  - [ ] Patrocinadores con objetivos
+- [ ] **Mercado de transferencias**:
+  - [ ] Ventana de transferencias (Offseason / Mid-season)
+  - [ ] Free agency con negociación
+  - [ ] Trades entre equipos
+  - [ ] UI de mercado en TransfersTab
+- [ ] **Modo espectador**: ver partidos sin interactuar (skip mode existente, pulir visualización)
+- [ ] **Dashboard de estadísticas**: visualizaciones de rendimiento del equipo (KDA, gold dif, visión, etc.)
+- [ ] **Staff management**: contratar/despedir coaches, scouts, analysts con efectos en gameplay
+- [ ] **Documentar API de comandos Tauri**: listado de comandos, params, returns
+
+##### 🧪 Testing (prioridad: 🟢 baja)
+
+- [ ] Añadir **Playwright** smoke tests (5 flujos críticos: crear → avanzar → simular → guardar → recargar)
+- [ ] Añadir **`proptest`** para propiedades del motor de simulación
 
 #### Métricas de Éxito
 
-- ✅ Usuario puede crear equipo, gestionar roster y simular partido completo
+- ✅ Todos los comandos usan `AppError` con códigos i18n
+- ✅ `lol_sim_v2` compila y pasa tests
+- ✅ Usuario puede completar temporada completa (Winter→Spring→Summer→Season Finals)
 - ✅ Sistema de finanzas funcional (presupuesto > 0 después de gastos)
-- ✅ `cargo clippy -- -D warnings` pasa sin excepciones
-- ✅ Release beta publicada y taggeada
-- ✅ Logging estructurado operativo (span por comando)
+- ✅ Ventana de transferencias operativa
+- ✅ Release beta (v0.3.0-beta) taggeada y publicada
+- ✅ Logging estructurado con spans por comando
 
 ---
 
@@ -240,8 +273,8 @@ Siguiendo [`GOVERNANCE.md`](docs/GOVERNANCE.md), el desarrollo sigue este flujo:
 
 | Fase | KPI Principal | KPI Secundario |
 |------|---------------|----------------|
-| **Fase 1** | `unwrap()` producción: 0 | CI tests: 100% pass (0 rotos) |
-| **Fase 2** | Features core: 5 | Beta users: N/A |
+| **Fase 1** | ✅ 7/9 completado. Pendiente: cross-stack types, unwrap audit | CI tests: core crates pasan |
+| **Fase 2** | Features core: 6 (season, finances, transfers, sim, dashboard, staff) | Release beta publicada |
 | **Fase 3** | v1.0.0 released | Auto-updater funcional |
 
 ### Badges de Progreso
@@ -307,9 +340,9 @@ cargo test --workspace
 
 | Versión | Fecha | Notas |
 |---------|-------|-------|
-| 0.1.2 | 2026-05-02 | Pre-alpha actual (con `analisis.md`) |
-| 0.2.0-alpha | ⏳ Pendiente | Alpha con hardening y deuda técnica resuelta |
-| 0.3.0-beta | ⏳ Pendiente | Beta con features core + `AppError` |
+| 0.1.2 | 2026-05-02 | Pre-alpha actual. Fase 1: 7/9 completado |
+| 0.2.0-alpha | ⏳ Pendiente | Alpha con Phase 1 cleanup completado |
+| 0.3.0-beta | ⏳ Pendiente | Beta con features core + release |
 | 1.0.0 | ⏳ Pendiente | Primera stable con auto-updater |
 
 ---
