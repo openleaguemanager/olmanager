@@ -128,6 +128,38 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - [ ] **Fix `ChampionRuntime` visibility**: warning `private_interfaces` en `lol_sim_v2.rs`
 - [ ] **Rust profile tuning**: añadir `[profile.release]` con LTO, strip, panic=abort
 
+##### 🎮 Gameplay Engine — LoL Simulation (prioridad: 🔴 alta)
+
+- [ ] **Sistema de ítems**: items afectan stats reales (AD, AP, armor, etc.)
+  - [ ] Struct `Item` con stats, costo, build path
+  - [ ] Auto-buy inteligente por rol
+  - [ ] Items de soporte con gold generation
+  - [ ] Componentes y items completos (recetas)
+- [ ] **Champion abilities diferenciadas**
+  - [ ] Pasiva + Q/W/E/R con scalings (AD/AP)
+  - [ ] Tipos de daño: físico, mágico, verdadero
+  - [ ] Ultimates con cooldown largo y momento decisivo
+  - [ ] Unique passives por champion
+- [ ] **Wave management + farmeo**
+  - [ ] Oleadas de minions cada 30s
+  - [ ] Last hit da gold (no solo gold pasivo)
+  - [ ] Congelar / pushear líneas como decisión táctica
+  - [ ] CS como métrica de rendimiento
+- [ ] **Jungla + objetivos neutros**
+  - [ ] Campamentos con respawn (Gromp, Wolves, Raptors, Krugs, Blue/Red)
+  - [ ] Pathing y ganks tempranos
+  - [ ] Dragones elementales (Infernal, Mountain, Cloud, Ocean, Hextech, Chemtech)
+  - [ ] Herald y Baron con buffs reales
+- [ ] **Sistema de visión**
+  - [ ] Wards trinket (amarilla) y control ward (rosa)
+  - [ ] Vision score como métrica
+  - [ ] Stealth y detección
+- [ ] **Power spikes por fase del juego**
+  - [ ] Early game (0-15 min): fase de líneas
+  - [ ] Mid game (15-30 min): rotaciones, objectives
+  - [ ] Late game (30+ min): team fights decisivos
+  - [ ] Escalado por nivel de champion
+
 ##### 🎮 Features Core (prioridad: 🟡 media)
 
 - [ ] **Calendario de temporada**: implementar splits LEC (Winter/Spring/Summer) + Season Finals
