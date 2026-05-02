@@ -99,28 +99,32 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 
 #### 📋 Tareas
 
-##### 🧹 Fase 1 Cleanup (prioridad: 🔴 alta)
+##### ✅ Phase 1: LoL Migration — COMPLETE
+
+- [x] **Engine crate cleanup (#109)**: terminología de fútbol eliminada del engine (EventType, TeamStats, MatchConfig, Snapshot, PlayerMatchStats, fouls.rs → eliminado, resolution.rs → eliminado)
+- [x] **Legacy engine reemplazado (#113)**: `engine::simulate()` → `simulate_lol()` basado en `LiveMatchState`
+- [x] **home_goals/away_goals eliminados (#111)**: campos redundantes quitados de `MatchReport`
+- [x] **SetPieceTakers → TeamRoles (#112)**: reemplazado en engine + domain + DB + frontend
+- [x] **Domain football fields eliminados (#114)**: `goals`/`yellow_cards`/`red_cards`/`fouls_committed` de `PlayerSeasonStats`
+- [x] **MatchRoles → TeamRoles**: V41 migration + domain rename + frontend types
+- [x] **V42 migration**: columnas muertas eliminadas de `teams` (`football_nation`, `match_roles`, `nationality_code`)
+- [x] **Seed data convertido**: `lec_world.json` posiciones de fútbol → roles LoL
+- [x] **Bug fixes post-migración**: role vs position (7 componentes frontend), PreMatchSetup, ChampionDraft, etc.
+- [x] **ts-rs typegen**: binary + derives para generación de tipos TypeScript
+
+##### 🧹 Fase 2 Cleanup (prioridad: 🔴 alta)
 
 - [ ] **Cross-stack type generation (#93)**: annotar ~58 tipos restantes con `#[derive(TS)]`, generar `bindings.ts`
 - [ ] **AppError full migration**: migrar todos los comandos (>50) de `Result<T, String>` a `Result<T, AppError>`
-- [ ] **i18n de errores**: frontend mapea errores por `code` en vez de string libre
-- [ ] **Input validation expansion**: extender `validator` + Zod a más comandos (transferencias, staff, squad)
-- [ ] **`lol_sim_v2` test compilation**: fixear funciones faltantes (`baron_push_target_for_lane`, `pick_combat_target`, etc.)
-- [ ] **Pre-existing clippy cleanup**: resolver ~100 warnings heredados en workspace (empezar por `domain`, luego `engine`, luego `ofm_core`)
+- [ ] **Bug fixes pendientes**: #88 (split review), #84 (OVR formulas), #38 (player persistence), #39 (season progression), #37 (BO3 repeat), #35 (6-man roster), #33 (gold/items), #2 (MacOS)
+- [ ] **Pre-existing clippy cleanup**: resolver ~100 warnings heredados en workspace
 
 ##### 🏗️ Arquitectura y DX (prioridad: 🟡 media)
 
 - [ ] **`tracing` migration**: reemplazar `log` por `tracing` + `tracing-subscriber` con spans por comando Tauri
 - [ ] **Logging config**: `Info` en release, `Debug` opt-in, rotación `KeepN(10)` (50 MB tope)
-- [ ] **Modelo de datos**: migrar campos consultables de JSON-en-TEXT a columnas reales (atributos de player: `pace`, `stamina`, etc.)
-- [ ] **Índices SQLite**: añadir índices funcionales con `json_extract` donde aún haya JSON
 - [ ] **Componentes monolíticos frontend**: romper `ChampionDraft.tsx` (3.149 LOC), `MatchSimulation.tsx` (1.922 LOC) en Container/Presentational
 - [ ] **`useEffect` audit**: activar `eslint-plugin-react-hooks/exhaustive-deps: error`, migrar fetch a TanStack Query
-- [x] **Engine crate cleanup (#109)**: terminología de fútbol eliminada del engine (EventType, TeamStats, MatchConfig, Snapshot, PlayerMatchStats, fouls.rs). PR #110 mergeado.
-- [ ] **Remover home_goals/away_goals de MatchReport (#111)**: campos duplicados con home_wins/away_wins
-- [x] **Replace SetPieceTakers con LoL roles (#112)**: reemplazado por TeamRoles { captain, shotcaller }. PR #118
-- [x] **Replace legacy football engine para AI (#113)**: engine::simulate() reemplazado por simulate_lol(). resolution.rs eliminado. PR #117
-- [ ] **Domain football fields cleanup (#114)**: eliminar goals/yellow_cards/red_cards/fouls_committed de PlayerSeasonStats + DB migration
 - [ ] **Fix `ChampionRuntime` visibility**: warning `private_interfaces` en `lol_sim_v2.rs`
 - [ ] **Rust profile tuning**: añadir `[profile.release]` con LTO, strip, panic=abort
 
