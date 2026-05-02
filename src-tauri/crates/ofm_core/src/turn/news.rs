@@ -835,20 +835,20 @@ mod tests {
         let alpha = standing_mut(&mut game, "team1");
         alpha.played = 10;
         alpha.points = 25;
-        alpha.goals_for = 18;
-        alpha.goals_against = 8;
+        alpha.kills_for = 18;
+        alpha.kills_against = 8;
 
         let beta = standing_mut(&mut game, "team2");
         beta.played = 10;
         beta.points = 24;
-        beta.goals_for = 16;
-        beta.goals_against = 9;
+        beta.kills_for = 16;
+        beta.kills_against = 9;
 
         let gamma = standing_mut(&mut game, "team3");
         gamma.played = 10;
         gamma.points = 7;
-        gamma.goals_for = 6;
-        gamma.goals_against = 15;
+        gamma.kills_for = 6;
+        gamma.kills_against = 15;
 
         team_mut(&mut game, "team1").form = vec![
             "D".to_string(),
@@ -949,20 +949,20 @@ mod tests {
         let alpha = standing_mut(&mut game, "team1");
         alpha.played = 10;
         alpha.points = 25;
-        alpha.goals_for = 18;
-        alpha.goals_against = 8;
+        alpha.kills_for = 18;
+        alpha.kills_against = 8;
 
         let beta = standing_mut(&mut game, "team2");
         beta.played = 10;
         beta.points = 24;
-        beta.goals_for = 16;
-        beta.goals_against = 9;
+        beta.kills_for = 16;
+        beta.kills_against = 9;
 
         let gamma = standing_mut(&mut game, "team3");
         gamma.played = 10;
         gamma.points = 7;
-        gamma.goals_for = 6;
-        gamma.goals_against = 15;
+        gamma.kills_for = 6;
+        gamma.kills_against = 15;
 
         team_mut(&mut game, "team1").form = vec![
             "D".to_string(),

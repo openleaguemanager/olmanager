@@ -442,7 +442,7 @@ mod tests {
             won: 18,
             drawn: 7,
             lost: 5,
-            goals_for: 55,
+            kills_for: 55,
             goals_against: 30,
         });
 

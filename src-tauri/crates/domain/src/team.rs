@@ -487,8 +487,8 @@ pub struct TeamSeasonRecord {
     pub won: u32,
     pub drawn: u32,
     pub lost: u32,
-    pub goals_for: u32,
-    pub goals_against: u32,
+    pub kills_for: u32,
+    pub kills_against: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
