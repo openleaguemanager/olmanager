@@ -63,6 +63,29 @@ fn migrate_stadium_to_arena_capacity(tx: &Transaction<'_>) -> HookResult {
     Ok(())
 }
 
+/// V40 hook: audit football legacy columns in teams table and log findings.
+/// This is a non-destructive audit — columns are NOT removed yet.
+/// If the audit shows all defaults, columns can be removed in a future migration.
+fn migrate_audit_teams_legacy(tx: &Transaction<'_>) -> HookResult {
+    let non_default: i64 = tx.query_row(
+        "SELECT COUNT(*) FROM teams WHERE formation != '4-4-2' OR wage_budget != 0 OR transfer_budget != 0 OR season_income != 0 OR season_expenses != 0",
+        [],
+        |row| row.get(0),
+    )?;
+
+    if non_default > 0 {
+        log::info!(
+            "[migration] V40 audit: {} teams use legacy columns — deferring cleanup",
+            non_default
+        );
+    } else {
+        log::info!(
+            "[migration] V40 audit: no teams use legacy columns — safe to remove"
+        );
+    }
+    Ok(())
+}
+
 fn connection_column_exists(
     conn: &Connection,
     table: &str,
@@ -102,7 +125,7 @@ pub fn ensure_compatible_schema(conn: &Connection) -> rusqlite::Result<()> {
 }
 
 /// Number of migrations defined. Keep in sync with the vec in `all_migrations`.
-pub const MIGRATION_COUNT: usize = 37;
+pub const MIGRATION_COUNT: usize = 40;
 
 /// All migrations for a per-save game database.
 /// Each save `.db` file gets this schema applied via `rusqlite_migration`.
@@ -162,26 +185,34 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up(include_str!("sql/v026_fixture_best_of.sql")),
         // V27: Persist academy team kind, affiliation links, and ERL metadata
         M::up(include_str!("sql/v027_academy_team_metadata.sql")),
-        // V28: Add avatar_path column to managers table for profile avatar persistence
+        // V28: Add avatar_path column to managers table (note: v028_avatar_path.sql
+        // is an orphan file — the actual migration uses the hook below)
         M::up_with_hook("SELECT 1;", migrate_manager_avatar_path),
         // V29: Champion mastery + patch progression persistence
         M::up(include_str!("sql/v028_champion_progression_state.sql")),
         // V30: Optional unified profile image URLs for players and staff
         M::up_with_hook("SELECT 1;", migrate_profile_image_urls),
-        // V30: Champions table for LoL champion data
+        // V30 (second): Champions table for LoL champion data
         M::up(include_str!("sql/v030_champions_table.sql")),
         // V31: Fix champion seed data
         M::up(include_str!("sql/v031_fix_champion_seed.sql")),
         // V32: Fix champion names
         M::up(include_str!("sql/v032_fix_champion_names.sql")),
-        // V33: Add profile_image_url to players (idempotent, handled by hook)
+        // V33: Add profile_image_url to players (no-op: already handled by V29 hook)
         M::up("SELECT 1;"),
-        // V34: Add profile_image_url to staff (idempotent, handled by hook)
+        // V34: Add profile_image_url to staff (no-op: already handled by V29 hook)
         M::up("SELECT 1;"),
         // V35: Rename stadium_name to arena_name for LoL terminology
         M::up_with_hook("SELECT 1;", migrate_stadium_to_arena),
         // V36: Rename stadium_capacity to arena_capacity for LoL terminology
         M::up_with_hook("SELECT 1;", migrate_stadium_to_arena_capacity),
+        // V37: Rename legacy football stat tables to _deprecated_ prefix
+        M::up(include_str!("sql/v037_rename_legacy_stats.sql")),
+        // V38: Drop deprecated legacy stat tables
+        M::up(include_str!("sql/v038_drop_deprecated_stats.sql")),
+        // V39: (reserved for future — remove football_nation from tables)
+        // V40: Audit football legacy columns in teams (non-destructive)
+        M::up_with_hook("SELECT 1;", migrate_audit_teams_legacy),
     ])
 }
 
@@ -221,17 +252,13 @@ mod tests {
         assert!(tables.contains(&"teams".to_string()), "missing teams");
         assert!(tables.contains(&"players".to_string()), "missing players");
         assert!(
-            tables.contains(&"player_match_stats".to_string()),
-            "missing player_match_stats"
-        );
-        assert!(
             tables.contains(&"lol_player_match_stats".to_string()),
             "missing lol_player_match_stats"
         );
         assert!(tables.contains(&"staff".to_string()), "missing staff");
         assert!(
-            tables.contains(&"team_match_stats".to_string()),
-            "missing team_match_stats"
+            tables.contains(&"lol_team_match_stats".to_string()),
+            "missing lol_team_match_stats"
         );
         assert!(
             tables.contains(&"lol_team_match_stats".to_string()),
