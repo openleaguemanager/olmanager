@@ -437,7 +437,7 @@ mod tests {
               "contract_end": null,
               "wage": 0,
               "market_value": 0,
-              "stats": { "appearances": 0, "goals": 0, "assists": 0, "clean_sheets": 0, "yellow_cards": 0, "red_cards": 0, "avg_rating": 0.0, "minutes_played": 0 },
+              "stats": { "appearances": 0, "goals": 0, "assists": 0, "clean_sheets": 0, "avg_rating": 0.0, "minutes_played": 0 },
               "career": [],
               "training_focus": null,
               "transfer_listed": false,

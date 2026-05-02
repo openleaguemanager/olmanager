@@ -128,8 +128,6 @@ fn make_completed_season_game() -> Game {
         clean_sheets: 0,
         avg_rating: 7.5,
         minutes_played: 2700,
-        yellow_cards: 3,
-        red_cards: 0,
         ..PlayerSeasonStats::default()
     };
 
@@ -141,8 +139,6 @@ fn make_completed_season_game() -> Game {
         clean_sheets: 0,
         avg_rating: 7.0,
         minutes_played: 2500,
-        yellow_cards: 1,
-        red_cards: 0,
         ..PlayerSeasonStats::default()
     };
 

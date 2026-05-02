@@ -514,7 +514,6 @@ mod tests {
         player.stats.passes_attempted = 612;
         player.stats.tackles_won = 33;
         player.stats.interceptions = 19;
-        player.stats.fouls_committed = 14;
 
         upsert_player(db.conn(), &player).unwrap();
         let loaded = load_all_players(db.conn()).unwrap();
@@ -528,7 +527,6 @@ mod tests {
         assert_eq!(loaded[0].stats.passes_attempted, 612);
         assert_eq!(loaded[0].stats.tackles_won, 33);
         assert_eq!(loaded[0].stats.interceptions, 19);
-        assert_eq!(loaded[0].stats.fouls_committed, 14);
     }
 
     #[test]
@@ -564,7 +562,6 @@ mod tests {
         assert_eq!(loaded_player.stats.passes_attempted, 0);
         assert_eq!(loaded_player.stats.tackles_won, 0);
         assert_eq!(loaded_player.stats.interceptions, 0);
-        assert_eq!(loaded_player.stats.fouls_committed, 0);
     }
 
     #[test]
