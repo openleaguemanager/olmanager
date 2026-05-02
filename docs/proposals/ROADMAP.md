@@ -116,6 +116,7 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - [ ] **Índices SQLite**: añadir índices funcionales con `json_extract` donde aún haya JSON
 - [ ] **Componentes monolíticos frontend**: romper `ChampionDraft.tsx` (3.149 LOC), `MatchSimulation.tsx` (1.922 LOC) en Container/Presentational
 - [ ] **`useEffect` audit**: activar `eslint-plugin-react-hooks/exhaustive-deps: error`, migrar fetch a TanStack Query
+- [ ] **Engine crate cleanup (#109)**: renombrar/eliminar términos de fútbol en `EventType` (Goal, Foul, FreeKick, YellowCard, RedCard, etc.), limpiar `TeamStats` fields, reescribir/remover `engine/fouls.rs`
 - [ ] **Fix `ChampionRuntime` visibility**: warning `private_interfaces` en `lol_sim_v2.rs`
 - [ ] **Rust profile tuning**: añadir `[profile.release]` con LTO, strip, panic=abort
 
@@ -153,6 +154,7 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - ✅ Usuario puede completar temporada completa (Winter→Spring→Summer→Season Finals)
 - ✅ Sistema de finanzas funcional (presupuesto > 0 después de gastos)
 - ✅ Ventana de transferencias operativa
+- ✅ `engine` crate sin terminología de fútbol (EventType, TeamStats, fouls.rs)
 - ✅ Release beta (v0.3.0-beta) taggeada y publicada
 - ✅ Logging estructurado con spans por comando
 
