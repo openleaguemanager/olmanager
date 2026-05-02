@@ -4,6 +4,7 @@ use log::{debug, info};
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 
 use domain::player::{LolRole, Player};
 use ofm_core::game::Game;
@@ -20,6 +21,9 @@ use crate::save_index_manager::SaveIndexManager;
 pub struct SaveManager {
     saves_dir: PathBuf,
     save_index: SaveIndexManager,
+    /// Cache of opened game databases keyed by save_id.
+    /// Prevents redundant file open + migration on repeated access.
+    game_db_cache: HashMap<String, Arc<Mutex<GameDatabase>>>,
 }
 
 impl SaveManager {
@@ -32,6 +36,7 @@ impl SaveManager {
         Ok(Self {
             saves_dir: saves_dir.to_path_buf(),
             save_index,
+            game_db_cache: HashMap::new(),
         })
     }
 
@@ -150,6 +155,28 @@ impl SaveManager {
         let db_path = self.saves_dir.join(&entry.db_filename);
         let db = GameDatabase::open(&db_path)?;
         GamePersistenceReader::read_stats_state(&db)
+    }
+
+    /// Open (or retrieve from cache) a game database by save_id.
+    /// Returns a cached `Arc<Mutex<GameDatabase>>` to avoid repeated file opens.
+    pub fn open_game_db(&mut self, save_id: &str) -> Result<Arc<Mutex<GameDatabase>>, String> {
+        if let Some(cached) = self.game_db_cache.get(save_id) {
+            return Ok(Arc::clone(cached));
+        }
+
+        let entry = self
+            .save_index
+            .find(save_id)
+            .ok_or_else(|| format!("Save '{}' not found", save_id))?
+            .clone();
+
+        let db_path = self.saves_dir.join(&entry.db_filename);
+        let db = GameDatabase::open(&db_path)?;
+        let db_arc = Arc::new(Mutex::new(db));
+        self.game_db_cache
+            .insert(save_id.to_string(), Arc::clone(&db_arc));
+        info!("[save_manager] open_game_db: cached for save {}", save_id);
+        Ok(db_arc)
     }
 
     /// Load a Game from a save database.
