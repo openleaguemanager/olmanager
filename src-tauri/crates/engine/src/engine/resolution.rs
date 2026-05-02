@@ -249,7 +249,7 @@ fn resolve_shot<R: Rng>(ctx: &mut MatchContext, minute: u8, att_side: Side, rng:
 
     if rng.random_range(0.0..1.0f64) < conversion {
         ctx.emit(
-            MatchEvent::new(minute, EventType::Goal, att_side, zone)
+            MatchEvent::new(minute, EventType::Kill, att_side, zone)
                 .with_player(&shooter.id)
                 .with_secondary(&assister.id),
         );

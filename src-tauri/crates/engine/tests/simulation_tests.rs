@@ -220,29 +220,15 @@ fn default_config_values_in_range() {
 
 #[test]
 fn match_event_builder() {
-    let evt = MatchEvent::new(45, EventType::Goal, Side::Home, Zone::AwayBox)
+    let evt = MatchEvent::new(45, EventType::Kill, Side::Home, Zone::AwayBox)
         .with_player("p1")
         .with_secondary("p2");
 
     assert_eq!(evt.minute, 45);
-    assert_eq!(evt.event_type, EventType::Goal);
+    assert_eq!(evt.event_type, EventType::Kill);
     assert_eq!(evt.player_id.as_deref(), Some("p1"));
     assert_eq!(evt.secondary_player_id.as_deref(), Some("p2"));
-    assert!(evt.is_goal());
-}
-
-#[test]
-fn penalty_goal_is_goal() {
-    let evt = MatchEvent::new(78, EventType::PenaltyGoal, Side::Away, Zone::HomeBox);
-    assert!(evt.is_goal());
-}
-
-#[test]
-fn non_goal_events_not_goal() {
-    let shot = MatchEvent::new(10, EventType::ShotOnTarget, Side::Home, Zone::AwayBox);
-    assert!(!shot.is_goal());
-    let foul = MatchEvent::new(20, EventType::Foul, Side::Away, Zone::Midfield);
-    assert!(!foul.is_goal());
+    assert!(evt.is_kill());
 }
 
 // ---------------------------------------------------------------------------
@@ -696,7 +682,7 @@ fn goal_events_match_report_goals() {
     for seed in 0..30 {
         let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
 
-        let event_goals: u8 = report.events.iter().filter(|e| e.is_goal()).count() as u8;
+        let event_goals: u8 = report.events.iter().filter(|e| e.is_kill()).count() as u8;
 
         let report_total = report.home_goals + report.away_goals;
         assert_eq!(
@@ -731,40 +717,8 @@ fn average_goals_realistic() {
 }
 
 // ---------------------------------------------------------------------------
-// High foul rate produces fouls and free kicks
+// (Legacy foul/red card tests removed — fouls don't exist in LoL)
 // ---------------------------------------------------------------------------
-
-#[test]
-fn high_foul_rate_produces_fouls_and_free_kicks() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.95,
-        yellow_card_probability: 0.01,
-        ..MatchConfig::default()
-    };
-
-    let mut total_fouls = 0u32;
-    let mut total_free_kicks = 0u32;
-    for seed in 0..30 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        for e in &report.events {
-            match e.event_type {
-                EventType::Foul => total_fouls += 1,
-                EventType::FreeKick => total_free_kicks += 1,
-                _ => {}
-            }
-        }
-    }
-    assert!(
-        total_fouls > 0,
-        "With 95% foul probability, fouls should occur"
-    );
-    assert!(
-        total_free_kicks > 0,
-        "Fouls outside box should produce free kicks"
-    );
-}
 
 // ---------------------------------------------------------------------------
 // Red card and second yellow coverage
@@ -793,31 +747,8 @@ fn high_red_card_probability_produces_red_cards() {
 }
 
 #[test]
-fn second_yellow_produces_sending_off() {
-    let home = make_team("home", "Home FC", 80, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 80, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.80,
-        yellow_card_probability: 0.80,
-        red_card_probability: 0.001, // Low direct red so we get second yellows
-        ..MatchConfig::default()
-    };
-
-    let mut second_yellows = 0u32;
-    for seed in 0..100 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        second_yellows += report
-            .events
-            .iter()
-            .filter(|e| e.event_type == EventType::SecondYellow)
-            .count() as u32;
-    }
-    assert!(
-        second_yellows > 0,
-        "With many yellows and low red rate, second yellows should occur"
-    );
-}
-
+// ---------------------------------------------------------------------------
+// Injury from foul coverage
 // ---------------------------------------------------------------------------
 // Injury from foul coverage
 // ---------------------------------------------------------------------------

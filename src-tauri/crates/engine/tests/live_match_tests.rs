@@ -337,42 +337,8 @@ fn no_extra_time_when_not_allowed() {
 }
 
 // ===========================================================================
-// Tests: Penalty shootout
-// ===========================================================================
-
-#[test]
-fn penalty_shootout_resolves_drawn_et() {
-    // Force a draw by making teams identical and searching for a seed that
-    // goes to penalties
-    for seed in 0..500 {
-        let mut state = make_live_match(true);
-        let mut rng = seeded_rng(seed);
-        run_to_finish(&mut state, &mut rng);
-
-        let snap = state.snapshot();
-        let had_penalties = snap.events.iter().any(|e| {
-            e.event_type == EventType::PenaltyGoal || e.event_type == EventType::PenaltyMiss
-        });
-
-        if had_penalties {
-            // Verify the match is finished with a winner
-            assert!(state.is_finished());
-            // In a penalty shootout the final score includes penalty goals
-            // so home_score != away_score (someone won)
-            // Actually after a shootout one side has more penalty goals
-            assert_ne!(
-                snap.home_score, snap.away_score,
-                "After penalties, scores should differ. Seed: {seed}"
-            );
-            return;
-        }
-    }
-    // Penalties may not trigger in 500 seeds if teams don't draw often enough
-    // That's OK — the mechanism is tested structurally
-}
-
-// ===========================================================================
 // Tests: Substitutions
+// ===========================================================================
 // ===========================================================================
 
 #[test]
@@ -705,18 +671,12 @@ fn goals_in_events_match_score() {
     let home_goals = snap
         .events
         .iter()
-        .filter(|e| {
-            e.side == Side::Home
-                && (e.event_type == EventType::Goal || e.event_type == EventType::PenaltyGoal)
-        })
+        .filter(|e| e.side == Side::Home && e.event_type == EventType::Kill)
         .count() as u8;
     let away_goals = snap
         .events
         .iter()
-        .filter(|e| {
-            e.side == Side::Away
-                && (e.event_type == EventType::Goal || e.event_type == EventType::PenaltyGoal)
-        })
+        .filter(|e| e.side == Side::Away && e.event_type == EventType::Kill)
         .count() as u8;
 
     assert_eq!(home_goals, snap.home_score);
@@ -1342,126 +1302,7 @@ fn traits_are_exercised_during_match() {
     assert!(!snap.events.is_empty());
 }
 
-#[test]
-fn hot_head_trait_increases_foul_likelihood() {
-    // Run many matches and check if aggressive-traited team fouls more
-    let mut fouls_with_hotheads = 0u32;
-    let mut fouls_without = 0u32;
-    let trials = 20;
-
-    for seed in 0..trials {
-        // Team with HotHead traits
-        let home = make_team_with_traits("home", "Angry FC", 70, vec!["HotHead"]);
-        let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
-        let mut state = LiveMatchState::new(
-            home,
-            away,
-            MatchConfig::default(),
-            make_bench("home", 65),
-            make_bench("away", 65),
-            false,
-        );
-        let mut rng = seeded_rng(seed);
-        run_to_finish(&mut state, &mut rng);
-        let snap = state.snapshot();
-        fouls_with_hotheads += snap
-            .events
-            .iter()
-            .filter(|e| e.event_type == EventType::Foul && e.side == Side::Home)
-            .count() as u32;
-
-        // Team without traits
-        let home2 = make_team("home2", "Calm FC", 70, PlayStyle::Balanced);
-        let away2 = make_team("away2", "Away2 FC", 70, PlayStyle::Balanced);
-        let mut state2 = LiveMatchState::new(
-            home2,
-            away2,
-            MatchConfig::default(),
-            make_bench("home2", 65),
-            make_bench("away2", 65),
-            false,
-        );
-        let mut rng2 = seeded_rng(seed);
-        run_to_finish(&mut state2, &mut rng2);
-        let snap2 = state2.snapshot();
-        fouls_without += snap2
-            .events
-            .iter()
-            .filter(|e| e.event_type == EventType::Foul && e.side == Side::Home)
-            .count() as u32;
-    }
-
-    // HotHead team should foul at least as much (not strict due to RNG)
-    // But across 20 matches the trend should show
-    assert!(
-        fouls_with_hotheads >= fouls_without / 2,
-        "HotHead team fouls: {fouls_with_hotheads}, normal: {fouls_without}"
-    );
-}
-
-// ===========================================================================
-// Tests: Discipline (cards, red cards, sent off)
-// ===========================================================================
-
-#[test]
-fn yellow_cards_tracked_in_snapshot() {
-    // Run many seeds to find one that produces a yellow card
-    for seed in 0..100 {
-        let mut state = make_live_match(false);
-        let mut rng = seeded_rng(seed);
-        run_to_finish(&mut state, &mut rng);
-
-        let snap = state.snapshot();
-        let has_yellow = snap
-            .events
-            .iter()
-            .any(|e| e.event_type == EventType::YellowCard);
-        if has_yellow {
-            let total_yellows: u8 =
-                snap.home_yellows.values().sum::<u8>() + snap.away_yellows.values().sum::<u8>();
-            assert!(total_yellows > 0, "Snapshot should track yellow cards");
-            return;
-        }
-    }
-    // Acceptable if no yellow card in 100 seeds
-}
-
-#[test]
-fn sent_off_players_tracked() {
-    // Use high-aggression config to increase foul/card chance
-    let mut config = MatchConfig::default();
-    config.foul_probability = 0.5;
-    config.yellow_card_probability = 0.8;
-    config.red_card_probability = 0.3;
-
-    for seed in 0..200 {
-        let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-        let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
-        let mut state = LiveMatchState::new(
-            home,
-            away,
-            config.clone(),
-            make_bench("home", 65),
-            make_bench("away", 65),
-            false,
-        );
-        let mut rng = seeded_rng(seed);
-        run_to_finish(&mut state, &mut rng);
-
-        let snap = state.snapshot();
-        let has_red = snap
-            .events
-            .iter()
-            .any(|e| e.event_type == EventType::RedCard || e.event_type == EventType::SecondYellow);
-        if has_red {
-            assert!(
-                !snap.sent_off.is_empty(),
-                "Sent off set should be populated after red/second yellow"
-            );
-            return;
-        }
-    }
-}
+// (Legacy foul/card/sent-off tests removed — fouls and cards don't exist in LoL)
 
 // ===========================================================================
 // Tests: Substitution on away side

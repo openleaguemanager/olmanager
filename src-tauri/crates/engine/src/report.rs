@@ -194,7 +194,7 @@ impl MatchReport {
             let pid = event.player_id.as_deref().unwrap_or("");
 
             match &event.event_type {
-                EventType::Kill | EventType::Goal | EventType::PenaltyGoal => {
+                EventType::Kill => {
                     stats.kills += 1;
                     opposing_stats.deaths += 1;
                     kill_feed.push(KillDetail {
@@ -208,13 +208,7 @@ impl MatchReport {
                     if !pid.is_empty() {
                         player_stats.entry(pid.to_string()).or_default().kills += 1;
                     }
-                    if matches!(&event.event_type, EventType::Goal)
-                        && let Some(assist_id) = event.secondary_player_id.as_ref()
-                    {
-                        player_stats.entry(assist_id.clone()).or_default().assists += 1;
-                    }
-                    if matches!(&event.event_type, EventType::Kill)
-                        && let Some(victim_id) = event.secondary_player_id.as_ref()
+                    if let Some(victim_id) = event.secondary_player_id.as_ref()
                     {
                         player_stats.entry(victim_id.clone()).or_default().deaths += 1;
                     }
@@ -376,15 +370,6 @@ fn populate_duration_seconds(
                         player_on_id.clone(),
                         total_minutes.saturating_sub(event.minute),
                     );
-                }
-            }
-            EventType::RedCard | EventType::SecondYellow => {
-                if let Some(player_id) = event.player_id.as_ref() {
-                    let dismissed_at = event.minute.min(total_minutes);
-                    minutes_by_player
-                        .entry(player_id.clone())
-                        .and_modify(|minutes| *minutes = (*minutes).min(dismissed_at))
-                        .or_insert(dismissed_at);
                 }
             }
             _ => {}
