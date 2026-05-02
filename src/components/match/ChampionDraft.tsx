@@ -853,13 +853,22 @@ export default function ChampionDraft({
 
       return roleOrderedSnapshotPlayersWithResolver(snapshot.home_team.players, (player) => {
         const fromState = gameState?.players.find((candidate) => candidate.id === player.id);
-        if (fromState) return resolvePlayerLolRole(fromState) as Role;
+        if (fromState) {
+          const role = resolvePlayerLolRole(fromState) as Role;
+          console.debug("[ChampionDraft] resolve:fromState", { playerId: player.id, name: player.name, naturalPosition: fromState.natural_position, role, fromStateId: fromState.id, snapRole: player.role });
+          return role;
+        }
 
         const fromSeed = homeSeedByIgn.get(normalizeKey((player as { name?: string }).name ?? ""));
         const mappedSeedRole = fromSeed ? mapSeedRoleToDraftRole(String(fromSeed.role ?? "")) : null;
-        if (mappedSeedRole) return mappedSeedRole;
+        if (mappedSeedRole) {
+          console.debug("[ChampionDraft] resolve:fromSeed", { playerId: player.id, name: player.name, seedRole: fromSeed?.role, mappedRole: mappedSeedRole });
+          return mappedSeedRole;
+        }
 
-        return mapSnapshotPositionToDraftRole(player.role ?? player.position ?? "");
+        const fallbackRole = mapSnapshotPositionToDraftRole(player.role ?? player.position ?? "");
+        console.debug("[ChampionDraft] resolve:fallback", { playerId: player.id, name: player.name, engineRole: player.role, position: player.position, fallbackRole });
+        return fallbackRole;
       });
     },
     [gameState?.players, snapshot.home_team.name, snapshot.home_team.players],
