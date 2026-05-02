@@ -1804,6 +1804,19 @@ export default function MatchSimulation() {
     case "prematch":
       console.debug("[MatchSimulation] render:prematch", { userSide, currentFixture });
       return (
+        <PreMatchSetup
+          snapshot={snapshot}
+          gameState={gameState}
+          currentFixture={currentFixture}
+          userSide={userSide || "Home"}
+          onStart={handleStartMatch}
+          onUpdateSnapshot={handleSnapshotUpdate}
+        />
+      );
+
+    case "draft":
+      console.debug("[MatchSimulation] render:draft", { userSide, allAi: effectiveMatchMode === "spectator" });
+      return (
         <ChampionDraft
           snapshot={renderSnapshotWithTactics ?? renderSnapshot ?? snapshot}
           onComplete={handleDraftComplete}
