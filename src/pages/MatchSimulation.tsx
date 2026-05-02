@@ -864,6 +864,7 @@ export default function MatchSimulation() {
           homeTeam: snap.home_team.name,
           phase: snap.phase,
         });
+        console.debug("[MatchSimulation] fetchSnapshot:full", JSON.parse(JSON.stringify(snap)));
         if (!isCancelled) {
           setSnapshot(snap);
         }
@@ -1768,6 +1769,9 @@ export default function MatchSimulation() {
       currentMinute: snap.current_minute,
       homePlayers: snap.home_team.players.length,
       phase: snap.phase,
+      homeRoles: snap.home_roles,
+      awayRoles: snap.away_roles,
+      hasLolMap: !!snap.lol_map,
     });
     setSnapshot(snap);
   }, []);
@@ -1796,20 +1800,11 @@ export default function MatchSimulation() {
   }
 
   // Render the current stage
-  switch (stage) {
+  console.debug("[MatchSimulation] render:stage", { stage, hasSnapshot: !!snapshot, hasGameState: !!gameState, userSide });
+  try {
+    switch (stage) {
     case "prematch":
-      return (
-        <PreMatchSetup
-          snapshot={snapshot}
-          gameState={gameState}
-          currentFixture={currentFixture}
-          userSide={userSide || "Home"}
-          onStart={handleStartMatch}
-          onUpdateSnapshot={handleSnapshotUpdate}
-        />
-      );
-
-    case "draft":
+      console.debug("[MatchSimulation] render:prematch", { userSide, currentFixture });
       return (
         <ChampionDraft
           snapshot={renderSnapshotWithTactics ?? renderSnapshot ?? snapshot}
@@ -1917,6 +1912,25 @@ export default function MatchSimulation() {
       );
 
     default:
+      console.warn("[MatchSimulation] unknown stage", { stage });
       return null;
+  }
+  } catch (renderError) {
+    console.error("[MatchSimulation] render:error", { stage, error: renderError });
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center p-8">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-2xl">
+          <h2 className="text-lg font-heading font-bold text-red-700 dark:text-red-400 mb-2">
+            Render Error
+          </h2>
+          <p className="text-red-600 dark:text-red-300 text-sm font-mono whitespace-pre-wrap">
+            {String(renderError)}
+          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-xs mt-4">
+            Stage: {stage}
+          </p>
+        </div>
+      </div>
+    );
   }
 }

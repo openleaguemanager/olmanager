@@ -452,8 +452,9 @@ pub fn get_match_snapshot(state: &StateManager) -> Result<engine::MatchSnapshot,
         .ok_or_else(|| "No active live match".to_string())?;
 
     info!(
-        "[cmd] get_match_snapshot: phase={:?}, minute={}, home_team={}, away_team={}",
-        snapshot.phase, snapshot.current_minute, snapshot.home_team.name, snapshot.away_team.name
+        "[cmd] get_match_snapshot: phase={:?}, minute={}, home_team={}, away_team={}, home_roles={:?}, away_roles={:?}, events={}",
+        snapshot.phase, snapshot.current_minute, snapshot.home_team.name, snapshot.away_team.name,
+        snapshot.home_roles, snapshot.away_roles, snapshot.events.len()
     );
 
     Ok(snapshot)
