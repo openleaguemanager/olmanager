@@ -47,9 +47,9 @@ import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../store/settingsStore";
 import ChampionPage from "../pages/ChampionPage";
 
-const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Champions", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
+const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Meta", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
 
-const WORLD_TABS = new Set(["Players", "Teams", "Tournaments", "ChampionsWorld"]);
+const WORLD_TABS = new Set(["Players", "Teams", "Tournaments"]);
 
 const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Home: "dashboard.home",
@@ -58,7 +58,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Squad: "dashboard.squad",
   Tactics: "dashboard.tactics",
   Training: "dashboard.training",
-  Champions: "dashboard.champions",
+  Meta: "dashboard.meta",
   Staff: "dashboard.staff",
   Finances: "dashboard.finances",
   Transfers: "dashboard.transfers",
