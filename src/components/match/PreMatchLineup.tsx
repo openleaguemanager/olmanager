@@ -37,20 +37,30 @@ export const ROLE_KEY_STATS: Record<LolRole, { label: string; key: string }[]> =
 };
 
 export function getPlayerLolRole(player: EnginePlayerData): LolRole {
+  // Engine sends role as PascalCase (Top, Jungle, Mid, Adc, Support)
+  const engineRole = String(player.role || "")
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "");
+  if (engineRole === "TOP") return "TOP";
+  if (engineRole === "JUNGLE") return "JUNGLE";
+  if (engineRole === "MID") return "MID";
+  if (engineRole === "ADC") return "ADC";
+  if (engineRole === "SUPPORT") return "SUPPORT";
+
+  // Fallback: check explicit lol_role field
   const explicitRole = String(player.lol_role || "")
     .toUpperCase()
     .replace(/[^A-Z]/g, "");
-
   if (explicitRole === "TOP") return "TOP";
   if (explicitRole === "JUNGLE" || explicitRole === "JG") return "JUNGLE";
   if (explicitRole === "MID") return "MID";
   if (explicitRole === "ADC") return "ADC";
   if (explicitRole === "SUPPORT" || explicitRole === "SUP") return "SUPPORT";
 
+  // Fallback: legacy position field (may still exist in old saves)
   const key = String(player.position || "")
     .toLowerCase()
     .replace(/[^a-z]/g, "");
-
   if (
     key === "defender" ||
     key === "rightback" ||
