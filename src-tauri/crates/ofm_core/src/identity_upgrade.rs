@@ -108,7 +108,7 @@ mod tests {
 
         let mut player = Player::new(
             "p1".to_string(), "J. Smith".to_string(), "John Smith".to_string(),
-            "2000-01-01".to_string(), "GB".to_string(),
+            "2000-01-01".to_string(), "English".to_string(),
             LolRole::Mid, sample_attrs(),
         );
         player.birth_country = None;
@@ -127,6 +127,6 @@ mod tests {
         let changed = upgrade_game_football_identities(&mut game);
 
         assert!(changed);
-        assert_eq!(game.players[0].birth_country, Some("GB".to_string()));
+        assert_eq!(game.players[0].birth_country, Some("ENG".to_string()));
     }
 }
