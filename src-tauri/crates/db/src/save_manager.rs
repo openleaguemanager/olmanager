@@ -790,19 +790,13 @@ mod tests {
 
         let mut sm = SaveManager::init(&saves_dir).unwrap();
         let mut game = sample_game();
-        game.manager.football_nation.clear();
         game.manager.birth_country = None;
-        game.teams[0].football_nation.clear();
-        game.players[0].football_nation.clear();
         game.players[0].birth_country = None;
 
         let save_id = sm.create_save(&game, "Legacy Identity Career").unwrap();
         let loaded = sm.load_game(&save_id).unwrap();
 
-        assert_eq!(loaded.manager.football_nation, "ENG");
         assert_eq!(loaded.manager.birth_country, None);
-        assert_eq!(loaded.teams[0].football_nation, "ENG");
-        assert_eq!(loaded.players[0].football_nation, "GB");
         assert_eq!(loaded.players[0].birth_country, None);
     }
 

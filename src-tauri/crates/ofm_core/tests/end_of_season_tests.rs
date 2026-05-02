@@ -97,8 +97,8 @@ fn make_standing(
         won,
         drawn,
         lost,
-        goals_for: gf,
-        goals_against: ga,
+        kills_for: gf,
+        kills_against: ga,
         points: won * 3 + drawn,
     }
 }

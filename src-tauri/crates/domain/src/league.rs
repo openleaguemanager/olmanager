@@ -104,8 +104,8 @@ pub struct StandingEntry {
     pub won: u32,
     pub drawn: u32,
     pub lost: u32,
-    pub goals_for: u32,
-    pub goals_against: u32,
+    pub kills_for: u32,
+    pub kills_against: u32,
     pub points: u32,
 }
 
@@ -117,24 +117,24 @@ impl StandingEntry {
             won: 0,
             drawn: 0,
             lost: 0,
-            goals_for: 0,
-            goals_against: 0,
+            kills_for: 0,
+            kills_against: 0,
             points: 0,
         }
     }
 
     pub fn goal_difference(&self) -> i32 {
-        self.goals_for as i32 - self.goals_against as i32
+        self.kills_for as i32 - self.kills_against as i32
     }
 
-    pub fn record_result(&mut self, goals_for: u8, goals_against: u8) {
+    pub fn record_result(&mut self, kills_for: u8, kills_against: u8) {
         self.played += 1;
-        self.goals_for += goals_for as u32;
-        self.goals_against += goals_against as u32;
-        if goals_for > goals_against {
+        self.kills_for += kills_for as u32;
+        self.kills_against += kills_against as u32;
+        if kills_for > kills_against {
             self.won += 1;
             self.points += 3;
-        } else if goals_for == goals_against {
+        } else if kills_for == kills_against {
             self.drawn += 1;
             self.points += 1;
         } else {
@@ -171,7 +171,7 @@ impl League {
             b.points
                 .cmp(&a.points)
                 .then(b.goal_difference().cmp(&a.goal_difference()))
-                .then(b.goals_for.cmp(&a.goals_for))
+                .then(b.kills_for.cmp(&a.kills_for))
         });
         sorted
     }

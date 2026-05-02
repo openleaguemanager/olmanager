@@ -30,8 +30,8 @@ export interface TeamSeasonRecord {
   won: number;
   drawn: number;
   lost: number;
-  goals_for: number;
-  goals_against: number;
+  kills_for: number;
+  kills_against: number;
 }
 
 export interface TeamRolesData {
@@ -607,8 +607,8 @@ export interface StandingData {
   won: number;
   drawn: number;
   lost: number;
-  goals_for: number;
-  goals_against: number;
+  kills_for: number;
+  kills_against: number;
   points: number;
 }
 

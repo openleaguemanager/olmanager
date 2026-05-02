@@ -512,8 +512,8 @@ fn apply_match_report_updates_standings() {
     assert_eq!(home.played, 1);
     assert_eq!(home.won, 1);
     assert_eq!(home.points, 3);
-    assert_eq!(home.goals_for, 2);
-    assert_eq!(home.goals_against, 1);
+    assert_eq!(home.kills_for, 2);
+    assert_eq!(home.kills_against, 1);
 
     assert_eq!(away.played, 1);
     assert_eq!(away.lost, 1);
@@ -1417,8 +1417,8 @@ fn standing_entry(
     team_id: &str,
     played: u32,
     points: u32,
-    goals_for: u32,
-    goals_against: u32,
+    kills_for: u32,
+    kills_against: u32,
 ) -> StandingEntry {
     StandingEntry {
         team_id: team_id.to_string(),
@@ -1426,8 +1426,8 @@ fn standing_entry(
         won: 0,
         drawn: 0,
         lost: 0,
-        goals_for,
-        goals_against,
+        kills_for,
+        kills_against,
         points,
     }
 }

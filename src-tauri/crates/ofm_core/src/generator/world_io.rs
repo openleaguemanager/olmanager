@@ -165,8 +165,6 @@ mod tests {
 
         let world = load_world_from_json(json).unwrap();
 
-        assert_eq!(world.teams[0].football_nation, "ENG");
-        assert_eq!(world.players[0].football_nation, "ENG");
         assert_eq!(world.players[0].birth_country, None);
     }
 
@@ -174,7 +172,6 @@ mod tests {
     fn export_world_to_json_writes_canonical_football_identity_fields() {
         let mut world = generate_world_data(None);
         world.teams[0].country = "GB".to_string();
-        world.teams[0].football_nation.clear();
 
         if let Some(player) = world
             .players
@@ -182,13 +179,11 @@ mod tests {
             .find(|player| player.team_id.as_deref() == Some(world.teams[0].id.as_str()))
         {
             player.nationality = "GB".to_string();
-            player.football_nation.clear();
             player.birth_country = None;
         }
 
         let json = export_world_to_json(&world).unwrap();
         let reparsed: WorldData = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(reparsed.teams[0].football_nation, "ENG");
     }
 }

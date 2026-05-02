@@ -6,8 +6,6 @@ pub struct Team {
     pub name: String,
     pub short_name: String,
     pub country: String,
-    #[serde(default)]
-    pub football_nation: String,
     pub city: String,
     pub arena_name: String,
     pub arena_capacity: u32,
@@ -486,8 +484,8 @@ pub struct TeamSeasonRecord {
     pub won: u32,
     pub drawn: u32,
     pub lost: u32,
-    pub goals_for: u32,
-    pub goals_against: u32,
+    pub kills_for: u32,
+    pub kills_against: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -992,13 +990,11 @@ impl Team {
         arena_name: String,
         arena_capacity: u32,
     ) -> Self {
-        let football_nation = crate::identity::normalize_football_nation_code(&country);
         Self {
             id,
             name,
             short_name,
             country,
-            football_nation,
             city,
             arena_name,
             arena_capacity,

@@ -298,17 +298,17 @@ fn maybe_push_weekly_academy_report(game: &mut Game, today: &str) {
                     won: 0,
                     drawn: 0,
                     lost: 0,
-                    goals_for: 0,
-                    goals_against: 0,
+                    kills_for: 0,
+                    kills_against: 0,
                 });
             let points = record.won.saturating_mul(3).saturating_add(record.drawn);
-            let goal_diff = record.goals_for as i32 - record.goals_against as i32;
+            let goal_diff = record.kills_for as i32 - record.kills_against as i32;
             (
                 team.id.clone(),
                 team.name.clone(),
                 points,
                 goal_diff,
-                record.goals_for,
+                record.kills_for,
                 record.won,
                 record.lost,
             )
@@ -525,8 +525,8 @@ fn ensure_team_season_record(team: &mut Team, season: u32) -> &mut TeamSeasonRec
         won: 0,
         drawn: 0,
         lost: 0,
-        goals_for: 0,
-        goals_against: 0,
+        kills_for: 0,
+        kills_against: 0,
     });
     let last_index = team.history.len().saturating_sub(1);
     &mut team.history[last_index]
@@ -548,8 +548,8 @@ fn register_parallel_result(
 
     let record = ensure_team_season_record(team, season);
     record.played = record.played.saturating_add(1);
-    record.goals_for = record.goals_for.saturating_add(u32::from(scored));
-    record.goals_against = record.goals_against.saturating_add(u32::from(conceded));
+    record.kills_for = record.kills_for.saturating_add(u32::from(scored));
+    record.kills_against = record.kills_against.saturating_add(u32::from(conceded));
     if won_series {
         record.won = record.won.saturating_add(1);
     } else {
@@ -760,10 +760,10 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                 b.points
                     .cmp(&a.points)
                     .then(
-                        (b.goals_for as i32 - b.goals_against as i32)
-                            .cmp(&(a.goals_for as i32 - a.goals_against as i32)),
+                        (b.kills_for as i32 - b.kills_against as i32)
+                            .cmp(&(a.kills_for as i32 - a.kills_against as i32)),
                     )
-                    .then(b.goals_for.cmp(&a.goals_for))
+                    .then(b.kills_for.cmp(&a.kills_for))
             });
             if sorted.len() >= 4 {
                 let next_matchday = league
