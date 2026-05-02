@@ -7,6 +7,8 @@ use ts_rs::TS;
 
 /// Stats state container
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct StatsState {
     pub player_matches: Vec<PlayerMatchStatsRecord>,
@@ -71,6 +73,8 @@ pub enum LolRole {
 /// Legacy Position enum - now maps to LolRole
 /// This provides backward compatibility for code using Position variants
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(rename_all = "PascalCase")]
 pub enum Position {
     #[default]

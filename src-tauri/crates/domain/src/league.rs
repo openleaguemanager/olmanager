@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "typescript")]
+use ts_rs::TS;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub struct League {
     pub id: String,
     pub name: String,
@@ -10,6 +14,8 @@ pub struct League {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub enum FixtureCompetition {
     #[default]
     League,
@@ -19,6 +25,8 @@ pub enum FixtureCompetition {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct Fixture {
     pub id: String,
@@ -38,6 +46,8 @@ fn default_best_of() -> u8 {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub enum FixtureStatus {
     Scheduled,
     InProgress,
@@ -45,6 +55,8 @@ pub enum FixtureStatus {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub enum MatchEndReason {
     NexusDestroyed,
     TimeLimit,
@@ -53,6 +65,8 @@ pub enum MatchEndReason {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct MatchResult {
     #[serde(alias = "home_goals")]
@@ -65,6 +79,8 @@ pub struct MatchResult {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct CompactMatchReport {
     #[serde(default, skip_serializing)]
@@ -76,6 +92,8 @@ pub struct CompactMatchReport {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct CompactTeamMatchStats {
     #[serde(default, skip_serializing)]
@@ -88,6 +106,8 @@ pub struct CompactTeamMatchStats {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct CompactMatchEvent {
     pub minute: u8,
@@ -98,6 +118,8 @@ pub struct CompactMatchEvent {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub struct StandingEntry {
     pub team_id: String,
     pub played: u32,
