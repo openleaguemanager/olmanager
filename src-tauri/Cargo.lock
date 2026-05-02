@@ -2676,6 +2676,7 @@ dependencies = [
  "rand 0.10.1",
  "serde",
  "serde_json",
+ "ts-rs",
  "uuid",
 ]
 
@@ -2716,6 +2717,7 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-opener",
  "thiserror 2.0.18",
+ "ts-rs",
  "validator",
 ]
 
