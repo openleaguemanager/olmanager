@@ -504,7 +504,7 @@ fn instant_mode_completes() {
         live_match_manager::create_live_match(&game, 0, MatchMode::Instant, false).unwrap();
     let results = session.run_to_completion();
     assert!(session.is_finished());
-    assert!(results.len() >= 90, "Match should have at least 90 minutes");
+    assert!(results.len() >= 55, "Match should reach time limit (~60 min)");
 }
 
 // ---------------------------------------------------------------------------

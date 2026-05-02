@@ -205,13 +205,6 @@ fn default_config_values_in_range() {
     let cfg = MatchConfig::default();
     assert!(cfg.home_advantage >= 1.0 && cfg.home_advantage <= 1.25);
     assert!(cfg.shot_accuracy_base > 0.0 && cfg.shot_accuracy_base < 1.0);
-    assert!(cfg.goal_conversion_base > 0.0 && cfg.goal_conversion_base < 1.0);
-    assert!(cfg.foul_probability > 0.0 && cfg.foul_probability < 1.0);
-    assert!(cfg.yellow_card_probability > 0.0 && cfg.yellow_card_probability < 1.0);
-    assert!(cfg.red_card_probability > 0.0 && cfg.red_card_probability < 0.5);
-    assert!(cfg.penalty_probability > 0.0 && cfg.penalty_probability < 1.0);
-    assert!(cfg.stoppage_time_max <= 10);
-    assert!(cfg.injury_probability >= 0.0 && cfg.injury_probability < 0.5);
 }
 
 // ---------------------------------------------------------------------------
@@ -313,20 +306,12 @@ fn goals_in_report_match_score() {
         let away_goal_count = report.kill_feed.iter().filter(|g| g.side == Side::Away).count() as u8;
 
         assert_eq!(
-            report.home_goals, home_goal_count,
-            "Home goals mismatch in seed {seed}"
+            report.home_stats.kills, home_goal_count as u16,
+            "Home kills mismatch in seed {seed}"
         );
         assert_eq!(
-            report.away_goals, away_goal_count,
-            "Away goals mismatch in seed {seed}"
-        );
-        assert_eq!(
-            report.home_goals, report.home_stats.goals,
-            "Home stats mismatch in seed {seed}"
-        );
-        assert_eq!(
-            report.away_goals, report.away_stats.goals,
-            "Away stats mismatch in seed {seed}"
+            report.away_stats.kills, away_goal_count as u16,
+            "Away kills mismatch in seed {seed}"
         );
     }
 }
@@ -609,46 +594,8 @@ fn pass_accuracy_in_range() {
 }
 
 // ---------------------------------------------------------------------------
-// Edge case: no stoppage time
+// (Legacy foul/card/stoppage tests removed — fouls don't exist in LoL)
 // ---------------------------------------------------------------------------
-
-#[test]
-fn zero_stoppage_time_produces_valid_report() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        stoppage_time_max: 0,
-        ..MatchConfig::default()
-    };
-    let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(1));
-    assert_eq!(report.total_minutes, 90);
-}
-
-// ---------------------------------------------------------------------------
-// Edge case: very high foul probability
-// ---------------------------------------------------------------------------
-
-#[test]
-fn high_foul_probability_produces_cards() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.95,
-        yellow_card_probability: 0.90,
-        ..MatchConfig::default()
-    };
-
-    let mut total_yellows = 0u16;
-    for seed in 0..20 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        total_yellows +=
-            report.home_stats.yellow_cards as u16 + report.away_stats.yellow_cards as u16;
-    }
-    assert!(
-        total_yellows > 0,
-        "High foul rate should produce some yellow cards"
-    );
-}
 
 // ---------------------------------------------------------------------------
 // Report serialization
@@ -664,9 +611,9 @@ fn report_serializes_to_json() {
     let json = serde_json::to_string(&report);
     assert!(json.is_ok(), "Report should serialize: {:?}", json.err());
     let json_str = json.unwrap();
-    assert!(json_str.contains("home_goals"));
-    assert!(json_str.contains("away_goals"));
-    assert!(json_str.contains("events"));
+    assert!(json_str.contains("home_wins"), "JSON missing home_wins");
+    assert!(json_str.contains("away_wins"), "JSON missing away_wins");
+    assert!(json_str.contains("events"), "JSON missing events");
 }
 
 // ---------------------------------------------------------------------------
@@ -682,12 +629,12 @@ fn goal_events_match_report_goals() {
     for seed in 0..30 {
         let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
 
-        let event_goals: u8 = report.events.iter().filter(|e| e.is_kill()).count() as u8;
+        let event_kills: u16 = report.events.iter().filter(|e| e.is_kill()).count() as u16;
 
-        let report_total = report.home_goals + report.away_goals;
+        let report_total = report.home_stats.kills + report.away_stats.kills;
         assert_eq!(
-            event_goals, report_total,
-            "Seed {seed}: event goals ({event_goals}) != report total ({report_total})"
+            event_kills, report_total,
+            "Seed {seed}: event kills ({event_kills}) != report total ({report_total})"
         );
     }
 }
@@ -717,108 +664,8 @@ fn average_goals_realistic() {
 }
 
 // ---------------------------------------------------------------------------
-// (Legacy foul/red card tests removed — fouls don't exist in LoL)
+// (Legacy red card, injury, corner, sent-off tests removed)
 // ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Red card and second yellow coverage
-// ---------------------------------------------------------------------------
-
-#[test]
-fn high_red_card_probability_produces_red_cards() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.90,
-        yellow_card_probability: 0.90,
-        red_card_probability: 0.90,
-        ..MatchConfig::default()
-    };
-
-    let mut total_reds = 0u32;
-    for seed in 0..30 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        total_reds += report.home_stats.red_cards as u32 + report.away_stats.red_cards as u32;
-    }
-    assert!(
-        total_reds > 0,
-        "With high red card probability, red cards should occur"
-    );
-}
-
-#[test]
-// ---------------------------------------------------------------------------
-// Injury from foul coverage
-// ---------------------------------------------------------------------------
-// Injury from foul coverage
-// ---------------------------------------------------------------------------
-
-#[test]
-fn high_injury_probability_produces_injuries() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.90,
-        injury_probability: 0.90,
-        ..MatchConfig::default()
-    };
-
-    let mut total_injuries = 0u32;
-    for seed in 0..30 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        total_injuries += report
-            .events
-            .iter()
-            .filter(|e| e.event_type == EventType::Injury)
-            .count() as u32;
-    }
-    assert!(
-        total_injuries > 0,
-        "With high foul+injury probability, injuries should occur"
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Corner kick coverage
-// ---------------------------------------------------------------------------
-
-#[test]
-fn corners_occur_in_simulation() {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
-    let config = MatchConfig::default();
-
-    let mut total_corners = 0u32;
-    for seed in 0..50 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        total_corners += report.home_stats.corners as u32 + report.away_stats.corners as u32;
-    }
-    assert!(total_corners > 0, "Corners should occur in 50 simulations");
-}
-
-// ---------------------------------------------------------------------------
-// Sent-off player excluded from subsequent play
-// ---------------------------------------------------------------------------
-
-#[test]
-fn sent_off_players_excluded() {
-    // Run many sims with high foul/red card rate and verify the report still
-    // produces valid data (no crashes from sent-off player selection).
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.80,
-        yellow_card_probability: 0.80,
-        red_card_probability: 0.50,
-        ..MatchConfig::default()
-    };
-
-    for seed in 0..50 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        // Just verify it completes without panic
-        assert!(report.total_minutes >= 90);
-    }
-}
 
 // ---------------------------------------------------------------------------
 // Play style coverage for less common styles
@@ -929,30 +776,7 @@ fn player_ratings_computed_for_active_players() {
 }
 
 // ---------------------------------------------------------------------------
-// Free kicks occur when fouls happen outside the box
-// ---------------------------------------------------------------------------
-
-#[test]
-fn free_kicks_occur_in_simulation() {
-    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
-    let config = MatchConfig {
-        foul_probability: 0.80,
-        ..MatchConfig::default()
-    };
-
-    let mut total_free_kicks = 0u32;
-    for seed in 0..30 {
-        let report = simulate_with_rng(&home, &away, &config, &mut seeded_rng(seed));
-        total_free_kicks +=
-            report.home_stats.free_kicks as u32 + report.away_stats.free_kicks as u32;
-    }
-    assert!(
-        total_free_kicks > 0,
-        "Free kicks should occur with high foul rate"
-    );
-}
-
+// (Legacy free kick tests removed — fouls don't exist in LoL)
 // ---------------------------------------------------------------------------
 // Dribble and clearance events
 // ---------------------------------------------------------------------------

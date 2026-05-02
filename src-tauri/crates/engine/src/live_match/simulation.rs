@@ -40,6 +40,34 @@ impl LiveMatchState {
         let minute = self.current_minute;
         let mut minute_events = Vec::new();
 
+        // Time limit: if Nexus hasn't been destroyed by minute 60, end the match.
+        if minute > 60 {
+            self.phase = MatchPhase::Finished;
+            let win_side = if self.home_score > self.away_score {
+                Some(Side::Home)
+            } else if self.away_score > self.home_score {
+                Some(Side::Away)
+            } else {
+                None
+            };
+            // Emit a nexus-destroyed-like event for the leading side, or just finish.
+            if let Some(side) = win_side {
+                minute_events.push(
+                    MatchEvent::new(minute, EventType::NexusDestroyed, side, Zone::Midfield),
+                );
+            }
+            return MinuteResult {
+                minute,
+                phase: self.phase,
+                events: minute_events,
+                home_score: self.home_score,
+                away_score: self.away_score,
+                possession: self.possession,
+                ball_zone: self.ball_zone,
+                is_finished: true,
+            };
+        }
+
         self.step_lol_map(minute, rng, &mut minute_events);
 
         MinuteResult {
