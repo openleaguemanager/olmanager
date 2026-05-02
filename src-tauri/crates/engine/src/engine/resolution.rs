@@ -5,7 +5,6 @@ use crate::shared::{PlayStylePhase, TraitContext, home_mod, play_style_modifier,
 use crate::types::{LolRole, Side, Zone};
 
 use super::MatchContext;
-use super::fouls::maybe_foul;
 use super::snap_player;
 
 // ---------------------------------------------------------------------------
@@ -121,15 +120,6 @@ fn resolve_midfield<R: Rng>(
                 MatchEvent::new(minute, EventType::Tackle, def_side, Zone::Midfield)
                     .with_player(&defender.id),
             );
-            maybe_foul(
-                ctx,
-                minute,
-                def_side,
-                &attacker,
-                &defender,
-                Zone::Midfield,
-                rng,
-            );
         } else {
             ctx.emit(
                 MatchEvent::new(minute, EventType::Interception, def_side, Zone::Midfield)
@@ -192,7 +182,6 @@ fn resolve_attacking_third<R: Rng>(
                 MatchEvent::new(minute, EventType::Tackle, def_side, zone)
                     .with_player(&defender.id),
             );
-            maybe_foul(ctx, minute, def_side, &attacker, &defender, zone, rng);
         } else {
             ctx.emit(
                 MatchEvent::new(minute, EventType::Clearance, def_side, zone)

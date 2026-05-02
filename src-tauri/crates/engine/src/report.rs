@@ -36,13 +36,7 @@ pub struct PlayerMatchStats {
     #[serde(default, skip_serializing)]
     pub minutes_played: u16,
     #[serde(default, skip_serializing)]
-    pub yellow_cards: u8,
-    #[serde(default, skip_serializing)]
-    pub red_cards: u8,
-    #[serde(default, skip_serializing)]
     pub rating: f32,
-    #[serde(default, skip_serializing)]
-    pub goals: u16,
     #[serde(default, skip_serializing)]
     pub shots: u16,
     #[serde(default, skip_serializing)]
@@ -55,8 +49,6 @@ pub struct PlayerMatchStats {
     pub tackles_won: u16,
     #[serde(default, skip_serializing)]
     pub interceptions: u16,
-    #[serde(default, skip_serializing)]
-    pub fouls_committed: u16,
     pub role: Option<LolRole>,
     pub duration_seconds: u32,
     pub kills: u16,

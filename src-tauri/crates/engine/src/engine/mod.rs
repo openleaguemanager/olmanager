@@ -1,4 +1,3 @@
-mod fouls;
 mod resolution;
 
 use rand::{Rng, RngExt};
