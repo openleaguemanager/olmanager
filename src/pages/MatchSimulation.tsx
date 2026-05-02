@@ -811,12 +811,22 @@ export default function MatchSimulation() {
     if (!gameState || !snapshot) return;
     const utid = gameState.manager.team_id;
     if (!utid) {
+      console.warn("[MatchSimulation] resolveSide: no manager team_id, forcing spectator");
       setIsSpectator(true);
       return;
     }
-    if (snapshot.home_team.id === utid) setUserSide("Home");
-    else if (snapshot.away_team.id === utid) setUserSide("Away");
-    else setIsSpectator(true);
+    const isHome = snapshot.home_team.id === utid;
+    const isAway = snapshot.away_team.id === utid;
+    if (isHome) setUserSide("Home");
+    else if (isAway) setUserSide("Away");
+    else {
+      console.warn("[MatchSimulation] resolveSide: team_id mismatch", {
+        managerTeamId: utid,
+        homeTeamId: snapshot.home_team.id,
+        awayTeamId: snapshot.away_team.id,
+      });
+      setIsSpectator(true);
+    }
 
     // If mode is spectator, force spectator regardless of team
     if (effectiveMatchMode === "spectator") setIsSpectator(true);
@@ -826,12 +836,8 @@ export default function MatchSimulation() {
       homeTeamId: snapshot.home_team.id,
       matchMode,
       managerTeamId: utid,
-      resolvedUserSide:
-        snapshot.home_team.id === utid
-          ? "Home"
-          : snapshot.away_team.id === utid
-            ? "Away"
-            : null,
+      resolvedUserSide: isHome ? "Home" : isAway ? "Away" : null,
+      isSpectator: !isHome && !isAway,
     });
   }, [effectiveMatchMode, gameState, snapshot?.home_team.id, snapshot?.away_team.id]);
 
