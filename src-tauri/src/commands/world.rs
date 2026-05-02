@@ -336,7 +336,6 @@ mod tests {
             "London Arena".to_string(),
             50_000,
         );
-        team.football_nation.clear();
 
         let mut player = Player::new(
             "player-1".to_string(),
@@ -348,7 +347,6 @@ mod tests {
             sample_attrs(),
         );
         player.team_id = Some("team-1".to_string());
-        player.football_nation.clear();
         player.birth_country = None;
 
         Game::new(clock, manager, vec![team], vec![player], vec![], vec![])
@@ -360,8 +358,6 @@ mod tests {
         let export_path = temp_dir.path().join("world-export.json");
         let state = StateManager::new();
         let mut game = make_game();
-        game.teams[0].football_nation.clear();
-        game.players[0].football_nation.clear();
         game.players[0].birth_country = None;
         state.set_game(game);
 
@@ -369,8 +365,6 @@ mod tests {
         let json = fs::read_to_string(&written_path).unwrap();
         let world: WorldData = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(world.teams[0].football_nation, "ENG");
-        assert_eq!(world.players[0].football_nation, "ENG");
     }
 
     #[test]
@@ -454,8 +448,6 @@ mod tests {
         let stored_json = fs::read_to_string(&written_path).unwrap();
         let world: WorldData = serde_json::from_str(&stored_json).unwrap();
 
-        assert_eq!(world.teams[0].football_nation, "ENG");
-        assert_eq!(world.players[0].football_nation, "ENG");
     }
 
     #[test]

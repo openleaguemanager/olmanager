@@ -63,6 +63,28 @@ fn migrate_stadium_to_arena_capacity(tx: &Transaction<'_>) -> HookResult {
     Ok(())
 }
 
+/// V39 hook: drop football_nation column from players, managers, staff.
+/// First ensures all required columns exist via add_column_if_missing,
+/// then recreates each table via CREATE TABLE AS (SQLite lacks DROP COLUMN).
+fn migrate_drop_football_nation(tx: &Transaction<'_>) -> HookResult {
+    // Add missing columns (safe: no-op if already present)
+    add_column_if_missing(tx, "players", "nationality_code", "TEXT NOT NULL DEFAULT ''")?;
+    add_column_if_missing(tx, "players", "competitive_region", "TEXT")?;
+    add_column_if_missing(tx, "players", "profile_image_url", "TEXT")?;
+    add_column_if_missing(tx, "managers", "nationality_code", "TEXT NOT NULL DEFAULT ''")?;
+    add_column_if_missing(tx, "managers", "competitive_region", "TEXT")?;
+    add_column_if_missing(tx, "managers", "avatar_path", "TEXT")?;
+    add_column_if_missing(tx, "staff", "nationality_code", "TEXT NOT NULL DEFAULT ''")?;
+    add_column_if_missing(tx, "staff", "competitive_region", "TEXT")?;
+    add_column_if_missing(tx, "staff", "profile_image_url", "TEXT")?;
+
+    // Execute the table recreation SQL
+    tx.execute_batch(include_str!("sql/v039_drop_football_nation.sql"))?;
+
+    log::info!("[migration] V39: removed football_nation from players, managers, staff");
+    Ok(())
+}
+
 /// V40 hook: audit football legacy columns in teams table and log findings.
 /// This is a non-destructive audit — columns are NOT removed yet.
 /// If the audit shows all defaults, columns can be removed in a future migration.
@@ -125,7 +147,7 @@ pub fn ensure_compatible_schema(conn: &Connection) -> rusqlite::Result<()> {
 }
 
 /// Number of migrations defined. Keep in sync with the vec in `all_migrations`.
-pub const MIGRATION_COUNT: usize = 40;
+pub const MIGRATION_COUNT: usize = 41;
 
 /// All migrations for a per-save game database.
 /// Each save `.db` file gets this schema applied via `rusqlite_migration`.
@@ -210,7 +232,10 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up(include_str!("sql/v037_rename_legacy_stats.sql")),
         // V38: Drop deprecated legacy stat tables
         M::up(include_str!("sql/v038_drop_deprecated_stats.sql")),
-        // V39: (reserved for future — remove football_nation from tables)
+        // V39: Remove football_nation column from players, managers, staff
+        // Recreates tables via CREATE TABLE AS (SQLite lacks DROP COLUMN)
+        // Uses a hook to ensure all required columns exist before recreating
+        M::up_with_hook("SELECT 1;", migrate_drop_football_nation),
         // V40: Audit football legacy columns in teams (non-destructive)
         M::up_with_hook("SELECT 1;", migrate_audit_teams_legacy),
     ])
