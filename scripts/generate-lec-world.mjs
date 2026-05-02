@@ -94,22 +94,23 @@ const TEAM_OVERRIDES = {
 };
 
 function roleToPosition(role) {
+  // Returns LoL role directly (no more football position conversion)
   switch (String(role || "").toLowerCase()) {
     case "top":
-      return "Defender";
+      return "Top";
     case "jungle":
-      return "Midfielder";
+      return "Jungle";
     case "mid":
-      return "AttackingMidfielder";
+      return "Mid";
     case "bot":
     case "bottom":
     case "adc":
-      return "Forward";
+      return "Adc";
     case "sup":
     case "support":
-      return "DefensiveMidfielder";
+      return "Support";
     default:
-      return "Midfielder";
+      return "Jungle";
   }
 }
 
