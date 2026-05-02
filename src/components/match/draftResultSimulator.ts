@@ -174,7 +174,7 @@ function toEnginePlayerFromState(
   return {
     id: player.id,
     name: player.match_name,
-    position: player.position,
+    role: player.position,
     condition: player.condition,
     pace: player.attributes.pace,
     stamina: player.attributes.stamina,

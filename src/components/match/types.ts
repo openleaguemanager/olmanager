@@ -109,8 +109,6 @@ export interface EnginePlayerData {
   id: string;
   name: string;
   role?: string;
-  position?: string;
-  lol_role?: string | null;
   condition: number;
   pace: number;
   stamina: number;

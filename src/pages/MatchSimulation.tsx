@@ -105,7 +105,7 @@ function attachLolTacticsToSnapshot(snapshot: MatchSnapshot, gameState: GameStat
     const byRole = new Map<DraftRole, MatchSnapshot["home_team"]["players"][number]>();
 
     players.forEach((player) => {
-      const role = engineRoleToDraftRole(player.role ?? player.position ?? player.lol_role ?? "");
+      const role = engineRoleToDraftRole(player.role ?? "");
       if (!role || byRole.has(role)) return;
       byRole.set(role, player);
     });
@@ -1239,7 +1239,7 @@ export default function MatchSimulation() {
           if (!pick) continue;
 
           const exact = players.find(
-            (entry) => !usedPlayerIds.has(entry.id) && inferRole(entry.role ?? entry.position ?? "") === role,
+            (entry) => !usedPlayerIds.has(entry.id) && inferRole(entry.role ?? "") === role,
           );
           const slot = players[roleOrder[role]];
           const slotCandidate = slot && !usedPlayerIds.has(slot.id) ? slot : null;
