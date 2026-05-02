@@ -305,12 +305,14 @@ export default function Dashboard(): JSX.Element {
   const currentModeMeta = MODE_META[matchMode];
 
   function handleNavClick(tab: string): void {
+    setViewingChampionKey(null);
     setProfileNavigation((currentState) =>
       navigateDashboardProfiles(currentState, tab),
     );
   }
 
   function handleNavigate(tab: string, context?: DashboardNavigateContext): void {
+    setViewingChampionKey(null);
     setProfileNavigation((currentState) =>
       navigateDashboardProfiles(currentState, tab, context),
     );
