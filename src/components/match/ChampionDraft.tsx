@@ -859,7 +859,7 @@ export default function ChampionDraft({
         const mappedSeedRole = fromSeed ? mapSeedRoleToDraftRole(String(fromSeed.role ?? "")) : null;
         if (mappedSeedRole) return mappedSeedRole;
 
-        return mapSnapshotPositionToDraftRole(player.position);
+        return mapSnapshotPositionToDraftRole(player.role ?? player.position ?? "");
       });
     },
     [gameState?.players, snapshot.home_team.name, snapshot.home_team.players],
@@ -883,7 +883,7 @@ export default function ChampionDraft({
         const mappedSeedRole = fromSeed ? mapSeedRoleToDraftRole(String(fromSeed.role ?? "")) : null;
         if (mappedSeedRole) return mappedSeedRole;
 
-        return mapSnapshotPositionToDraftRole(player.position);
+        return mapSnapshotPositionToDraftRole(player.role ?? player.position ?? "");
       });
     },
     [gameState?.players, snapshot.away_team.name, snapshot.away_team.players],

@@ -87,14 +87,13 @@ function attachLolTacticsToSnapshot(snapshot: MatchSnapshot, gameState: GameStat
   const homeTeam = gameState.teams.find((team) => team.id === snapshot.home_team.id);
   const awayTeam = gameState.teams.find((team) => team.id === snapshot.away_team.id);
 
-  const normalizePosition = (position: string) => position.toLowerCase().replace(/[^a-z]/g, "");
-  const positionToRole = (position: string): DraftRole | null => {
-    const normalized = normalizePosition(position);
-    if (normalized === "defender") return "TOP";
-    if (normalized === "midfielder") return "JUNGLE";
-    if (normalized === "attackingmidfielder") return "MID";
-    if (normalized === "forward") return "ADC";
-    if (normalized === "defensivemidfielder" || normalized === "goalkeeper") return "SUPPORT";
+  const engineRoleToDraftRole = (role: string): DraftRole | null => {
+    const normalized = role.toLowerCase();
+    if (normalized === "top") return "TOP";
+    if (normalized === "jungle") return "JUNGLE";
+    if (normalized === "mid") return "MID";
+    if (normalized === "adc") return "ADC";
+    if (normalized === "support") return "SUPPORT";
     return null;
   };
 
@@ -106,7 +105,7 @@ function attachLolTacticsToSnapshot(snapshot: MatchSnapshot, gameState: GameStat
     const byRole = new Map<DraftRole, MatchSnapshot["home_team"]["players"][number]>();
 
     players.forEach((player) => {
-      const role = positionToRole(player.position);
+      const role = engineRoleToDraftRole(player.role ?? player.position ?? player.lol_role ?? "");
       if (!role || byRole.has(role)) return;
       byRole.set(role, player);
     });

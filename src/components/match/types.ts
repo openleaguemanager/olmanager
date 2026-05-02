@@ -108,7 +108,8 @@ export interface LolMapState {
 export interface EnginePlayerData {
   id: string;
   name: string;
-  position: string;
+  role?: string;
+  position?: string;
   lol_role?: string | null;
   condition: number;
   pace: number;
