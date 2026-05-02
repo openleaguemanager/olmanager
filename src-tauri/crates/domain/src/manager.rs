@@ -18,8 +18,6 @@ pub struct Manager {
     pub date_of_birth: String,
     pub nationality: String,
     #[serde(default)]
-    pub football_nation: String,
-    #[serde(default)]
     pub birth_country: Option<String>,
     #[serde(default)]
     pub avatar_path: Option<String>,
@@ -71,7 +69,6 @@ impl Manager {
         date_of_birth: String,
         nationality: String,
     ) -> Self {
-        let football_nation = crate::identity::normalize_football_nation_code(&nationality);
         let birth_country = crate::identity::derive_birth_country_code(&nationality);
         Self {
             id,
@@ -80,7 +77,6 @@ impl Manager {
             last_name,
             date_of_birth,
             nationality,
-            football_nation,
             birth_country,
             avatar_path: None,
             reputation: 500,

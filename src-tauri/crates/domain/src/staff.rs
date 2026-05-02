@@ -8,8 +8,6 @@ pub struct Staff {
     pub date_of_birth: String,
     pub nationality: String,
     #[serde(default)]
-    pub football_nation: String,
-    #[serde(default)]
     pub birth_country: Option<String>,
     #[serde(default)]
     pub profile_image_url: Option<String>,
@@ -72,7 +70,6 @@ impl Staff {
             last_name,
             date_of_birth,
             nationality: String::new(),
-            football_nation: String::new(),
             birth_country: None,
             profile_image_url: None,
             role,
