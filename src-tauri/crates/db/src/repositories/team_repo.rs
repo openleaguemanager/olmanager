@@ -443,7 +443,7 @@ mod tests {
             drawn: 7,
             lost: 5,
             kills_for: 55,
-            goals_against: 30,
+            kills_against: 30,
         });
 
         upsert_team(db.conn(), &team).unwrap();
