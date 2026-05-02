@@ -5,7 +5,6 @@ use crate::shared::{PlayStylePhase, TraitContext, home_mod, play_style_modifier,
 use crate::types::{LolRole, Side, Zone};
 
 use super::MatchContext;
-use super::fouls::maybe_foul;
 use super::snap_player;
 
 // ---------------------------------------------------------------------------
@@ -121,15 +120,6 @@ fn resolve_midfield<R: Rng>(
                 MatchEvent::new(minute, EventType::Tackle, def_side, Zone::Midfield)
                     .with_player(&defender.id),
             );
-            maybe_foul(
-                ctx,
-                minute,
-                def_side,
-                &attacker,
-                &defender,
-                Zone::Midfield,
-                rng,
-            );
         } else {
             ctx.emit(
                 MatchEvent::new(minute, EventType::Interception, def_side, Zone::Midfield)
@@ -192,7 +182,6 @@ fn resolve_attacking_third<R: Rng>(
                 MatchEvent::new(minute, EventType::Tackle, def_side, zone)
                     .with_player(&defender.id),
             );
-            maybe_foul(ctx, minute, def_side, &attacker, &defender, zone, rng);
         } else {
             ctx.emit(
                 MatchEvent::new(minute, EventType::Clearance, def_side, zone)
@@ -245,15 +234,15 @@ fn resolve_shot<R: Rng>(ctx: &mut MatchContext, minute: u8, att_side: Side, rng:
     }
 
     let conversion =
-        (ctx.config.goal_conversion_base + (shoot_rating - gk_rating) / 150.0).clamp(0.10, 0.70);
+        (0.30 + (shoot_rating - gk_rating) / 150.0).clamp(0.10, 0.70);
 
     if rng.random_range(0.0..1.0f64) < conversion {
         ctx.emit(
-            MatchEvent::new(minute, EventType::Goal, att_side, zone)
+            MatchEvent::new(minute, EventType::Kill, att_side, zone)
                 .with_player(&shooter.id)
                 .with_secondary(&assister.id),
         );
-        ctx.add_goal(att_side);
+        ctx.add_score(att_side);
     } else {
         ctx.emit(
             MatchEvent::new(minute, EventType::ShotSaved, att_side, zone).with_player(&shooter.id),

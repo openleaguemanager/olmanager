@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use super::{LiveMatchState, MatchSnapshot};
 
 // ---------------------------------------------------------------------------
@@ -16,8 +14,6 @@ impl LiveMatchState {
             50.0
         };
 
-        let home_yellows = HashMap::new();
-        let away_yellows = HashMap::new();
         let home_team = self.home.clone();
         let away_team = self.away.clone();
 
@@ -42,9 +38,6 @@ impl LiveMatchState {
             away_set_pieces: super::SetPieceTakers::default(),
             substitutions: self.substitutions.clone(),
             allows_extra_time: self.allows_extra_time,
-            home_yellows,
-            away_yellows,
-            sent_off: std::collections::HashSet::new(),
             lol_map: self.lol_map.clone(),
         }
     }

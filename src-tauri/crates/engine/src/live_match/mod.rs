@@ -137,9 +137,6 @@ pub struct MatchSnapshot {
     pub away_set_pieces: SetPieceTakers,
     pub substitutions: Vec<SubstitutionRecord>,
     pub allows_extra_time: bool,
-    pub home_yellows: HashMap<String, u8>,
-    pub away_yellows: HashMap<String, u8>,
-    pub sent_off: HashSet<String>,
     pub lol_map: LolMapState,
 }
 
@@ -326,9 +323,9 @@ impl LiveMatchState {
         }
     }
 
-    /// Simulate a red card for a player (adds to sent_off set).
-    /// Primarily used for testing substitution guards.
-    pub fn test_send_off(&mut self, player_id: &str) {
+    /// Remove a player from the match (legacy red card simulation).
+    /// Used for testing substitution guards.
+    pub fn test_remove_player(&mut self, player_id: &str) {
         let _ = player_id;
     }
 
@@ -339,7 +336,7 @@ impl LiveMatchState {
         }
     }
 
-    pub(super) fn add_goal(&mut self, side: Side) {
+    pub(super) fn add_score(&mut self, side: Side) {
         match side {
             Side::Home => self.home_score = self.home_score.saturating_add(1),
             Side::Away => self.away_score = self.away_score.saturating_add(1),

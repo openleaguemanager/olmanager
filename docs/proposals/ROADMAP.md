@@ -116,7 +116,11 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - [ ] **Índices SQLite**: añadir índices funcionales con `json_extract` donde aún haya JSON
 - [ ] **Componentes monolíticos frontend**: romper `ChampionDraft.tsx` (3.149 LOC), `MatchSimulation.tsx` (1.922 LOC) en Container/Presentational
 - [ ] **`useEffect` audit**: activar `eslint-plugin-react-hooks/exhaustive-deps: error`, migrar fetch a TanStack Query
-- [ ] **Engine crate cleanup (#109)**: renombrar/eliminar términos de fútbol en `EventType` (Goal, Foul, FreeKick, YellowCard, RedCard, etc.), limpiar `TeamStats` fields, reescribir/remover `engine/fouls.rs`
+- [x] **Engine crate cleanup (#109)**: terminología de fútbol eliminada del engine (EventType, TeamStats, MatchConfig, Snapshot, PlayerMatchStats, fouls.rs). PR #110 mergeado.
+- [ ] **Remover home_goals/away_goals de MatchReport (#111)**: campos duplicados con home_wins/away_wins
+- [ ] **Replace SetPieceTakers con LoL roles (#112)**: renombrar free_kick_taker/corner_taker/penalty_taker en engine + domain + DB + frontend
+- [ ] **Replace legacy football engine para AI (#113)**: engine::simulate() usa halves/stoppage/football zones. Opciones: reemplazar con LoL simulation o limpiar
+- [ ] **Domain football fields cleanup (#114)**: eliminar goals/yellow_cards/red_cards/fouls_committed de PlayerSeasonStats + DB migration
 - [ ] **Fix `ChampionRuntime` visibility**: warning `private_interfaces` en `lol_sim_v2.rs`
 - [ ] **Rust profile tuning**: añadir `[profile.release]` con LTO, strip, panic=abort
 

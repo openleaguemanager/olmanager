@@ -772,7 +772,7 @@ impl LiveMatchState {
 
                 if matches!(target, StructureTarget::Nexus) {
                     self.lol_map.destroyed_nexus_by = Some(attacker);
-                    self.add_goal(attacker);
+                    self.add_score(attacker);
                     self.phase = MatchPhase::Finished;
                     return;
                 }
