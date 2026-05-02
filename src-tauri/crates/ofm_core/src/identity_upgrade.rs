@@ -9,6 +9,14 @@ use domain::staff::Staff;
 pub fn upgrade_game_football_identities(game: &mut Game) -> bool {
     let mut changed = false;
 
+    // Also upgrade manager birth_country
+    if let Some(bc) = normalize_birth_country(Some(game.manager.nationality.clone())) {
+        if game.manager.birth_country != Some(bc.clone()) {
+            game.manager.birth_country = Some(bc);
+            changed = true;
+        }
+    }
+
     for player in game.players.iter_mut() {
         if let Some(bc) = normalize_birth_country(Some(player.nationality.clone())) {
             if player.birth_country != Some(bc.clone()) {
@@ -60,13 +68,11 @@ pub fn upgrade_world_football_identities(
 }
 
 /// Normalize birth country from a nationality string.
-/// Falls back to deriving from the nationality code.
+/// Uses derive_birth_country_code to map known nationalities.
+/// If the function returns None (e.g., "GB" maps to None), returns None.
 fn normalize_birth_country(value: Option<String>) -> Option<String> {
     match value {
-        Some(v) if !v.trim().is_empty() => {
-            let derived = derive_birth_country_code(&v);
-            if derived.is_some() { derived } else { Some(v.trim().to_string()) }
-        }
+        Some(v) if !v.trim().is_empty() => derive_birth_country_code(&v),
         _ => None,
     }
 }
