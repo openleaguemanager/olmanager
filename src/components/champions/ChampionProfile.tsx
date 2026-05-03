@@ -134,7 +134,11 @@ interface ChampionStatsSummary {
   best_against: { vs_champion_key: string; vs_champion_name: string; games: number; wins: number; win_rate: number }[];
   worst_against: { vs_champion_key: string; vs_champion_name: string; games: number; wins: number; win_rate: number }[];
   top_players: { player_id: string; player_name: string; team_name: string; games: number; win_rate: number; avg_kda: number }[];
+  most_played_players: { player_id: string; player_name: string; team_name: string; games: number; win_rate: number; avg_kda: number }[];
   weekly_history: { week_label: string; games: number; win_rate: number; avg_kda: number }[];
+  avg_cs: number;
+  avg_vision: number;
+  avg_duration: number;
 }
 
 export default function ChampionProfile({ champion, onClose }: ChampionProfileProps) {
@@ -260,7 +264,7 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
 
               {/* QuickStats - Desktop */}
               <div className="hidden md:flex items-center gap-3">
-                <div className="grid grid-cols-3 gap-3 flex-1">
+                <div className="grid grid-cols-4 gap-2 flex-1">
                   <QuickStat
                     label={t("champions.winRate", "Win Rate")}
                     value={stats ? `${stats.win_rate.toFixed(1)}%` : "--"}
@@ -290,6 +294,16 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
                     label={t("champions.gold", "Gold/G")}
                     value={stats ? `${(stats.avg_gold / 1000).toFixed(1)}k` : "--"}
                     color="text-yellow-400"
+                  />
+                  <QuickStat
+                    label={t("champions.cs", "CS")}
+                    value={stats ? `${stats.avg_cs.toFixed(0)}` : "--"}
+                    color="text-purple-400"
+                  />
+                  <QuickStat
+                    label={t("champions.vision", "Vision")}
+                    value={stats ? `${stats.avg_vision.toFixed(0)}` : "--"}
+                    color="text-cyan-400"
                   />
                 </div>
               </div>
@@ -436,6 +450,35 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
           </Card>
         </div>
 
+          {/* Role Distribution */}
+          {stats && stats.role_distribution.length > 0 && (
+            <Card>
+              <CardHeader>
+                <span className="flex items-center gap-2 text-primary-400">
+                  <Users className="w-4 h-4" />
+                  {t("champions.roles", "Roles")}
+                </span>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-2">
+                  {stats.role_distribution.map((r, idx) => (
+                    <div key={`rd-${idx}`} className="flex items-center gap-3">
+                      <span className="text-xs font-heading font-bold text-gray-300 w-16 uppercase">{r.role}</span>
+                      <div className="flex-1 h-4 rounded-full bg-navy-700 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-400"
+                          style={{ width: `${r.percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-heading text-gray-400 w-16 text-right">{r.percentage.toFixed(0)}%</span>
+                      <span className="text-xs text-gray-500 w-12 text-right">{r.games}g</span>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+          )}
+
           {/* Stats-derived matchup cards */}
           {stats && stats.best_against.length > 0 && (
             <Card>
@@ -505,6 +548,34 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
                       <div className="text-right">
                         <p className="text-xs font-heading font-bold text-green-400">{p.win_rate.toFixed(0)}%</p>
                         <p className="text-[10px] text-gray-400">{p.games}g · {p.avg_kda.toFixed(1)} KDA</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+          )}
+
+          {stats && stats.most_played_players.length > 0 && (
+            <Card>
+              <CardHeader>
+                <span className="flex items-center gap-2 text-indigo-400">
+                  <Users className="w-4 h-4" />
+                  {t("champions.mostPlayed", "Mas Jugados")}
+                </span>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-2">
+                  {stats.most_played_players.map((p, idx) => (
+                    <div key={`mp-${idx}`} className="flex items-center gap-3 rounded-lg border border-navy-600 bg-navy-800/50 p-2">
+                      <span className="text-xs font-heading font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-heading font-semibold text-gray-100 truncate">{p.player_name}</p>
+                        <p className="text-[10px] text-gray-400">{p.team_name}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-heading font-bold text-indigo-400">{p.games}g</p>
+                        <p className="text-[10px] text-gray-400">{p.win_rate.toFixed(0)}% WR</p>
                       </div>
                     </div>
                   ))}

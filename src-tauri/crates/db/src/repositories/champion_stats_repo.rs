@@ -74,8 +74,9 @@ pub fn champion_stats(
     // 4. Synergies
     let best_with = champion_synergies(conn, champion_key, 3)?;
 
-    // 5. Top players
+    // 5. Top players (by WR) and most played (by games)
     let top_players = champion_top_players(conn, champion_key, 3, 5)?;
+    let most_played_players = champion_most_played_players(conn, champion_key, 5)?;
 
     // 6. Weekly history
     let weekly_history = champion_weekly_history(conn, champion_key, 10)?;
@@ -116,6 +117,7 @@ pub fn champion_stats(
         worst_against,
         best_with,
         top_players,
+        most_played_players,
         weekly_history,
     })
 }
@@ -316,6 +318,76 @@ pub fn champion_top_players(
     for row in rows {
         let mut p = row.map_err(|e| format!("Failed to read top player row: {e}"))?;
         // Resolve player name + team name from players/teams tables
+        if let Ok(name) = conn.query_row(
+            "SELECT match_name FROM players WHERE id = ?1",
+            params![&p.player_id],
+            |row| row.get::<_, String>(0),
+        ) {
+            p.player_name = name;
+        }
+        if let Ok(team_id) = conn.query_row(
+            "SELECT team_id FROM players WHERE id = ?1",
+            params![&p.player_id],
+            |row| row.get::<_, String>(0),
+        ) {
+            if let Ok(team_name) = conn.query_row(
+                "SELECT name FROM teams WHERE id = ?1",
+                params![&team_id],
+                |row| row.get::<_, String>(0),
+            ) {
+                p.team_name = team_name;
+            }
+        }
+        players.push(p);
+    }
+    Ok(players)
+}
+
+/// Most-played players on a champion (sorted by games, not win rate).
+pub fn champion_most_played_players(
+    conn: &Connection,
+    champion_key: &str,
+    limit: usize,
+) -> Result<Vec<ChampionTopPlayer>, String> {
+    let mut stmt = conn
+        .prepare(
+            &format!(
+                "SELECT
+                    player_id,
+                    COUNT(*) as games,
+                    SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END) as wins,
+                    ROUND(AVG(kills + assists) * 1.0 / MAX(deaths, 1), 1) as avg_kda
+                 FROM lol_player_match_stats
+                 WHERE champion_id = ?1
+                 GROUP BY player_id
+                 ORDER BY games DESC
+                 LIMIT ?2"
+            ),
+        )
+        .map_err(|e| format!("Failed to prepare most played query: {e}"))?;
+
+    let rows = stmt
+        .query_map(params![champion_key, limit as i64], |row| {
+            let player_id: String = row.get(0)?;
+            let games: u32 = row.get(1)?;
+            let wins: u32 = row.get(2)?;
+            let avg_kda: f64 = row.get(3)?;
+            let wr = if games > 0 { (wins as f64 / games as f64) * 100.0 } else { 0.0 };
+            Ok(ChampionTopPlayer {
+                player_id,
+                player_name: String::new(),
+                team_name: String::new(),
+                games,
+                wins,
+                win_rate: wr,
+                avg_kda,
+            })
+        })
+        .map_err(|e| format!("Failed to query most played: {e}"))?;
+
+    let mut players: Vec<ChampionTopPlayer> = Vec::new();
+    for row in rows {
+        let mut p = row.map_err(|e| format!("Failed to read most played row: {e}"))?;
         if let Ok(name) = conn.query_row(
             "SELECT match_name FROM players WHERE id = ?1",
             params![&p.player_id],

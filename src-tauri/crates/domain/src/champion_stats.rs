@@ -40,6 +40,7 @@ pub struct ChampionStatsSummary {
 
     // Players
     pub top_players: Vec<ChampionTopPlayer>,
+    pub most_played_players: Vec<ChampionTopPlayer>,
 
     // History
     pub weekly_history: Vec<WeeklyChampionStats>,
