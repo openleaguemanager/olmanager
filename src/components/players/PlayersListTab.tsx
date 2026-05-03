@@ -30,7 +30,7 @@ interface PlayersListTabProps {
   onSelectTeam: (id: string) => void;
 }
 
-type SortKey = "photo" | "name" | "position" | "age" | "ovr" | "value" | "team" | "status";
+type SortKey = "name" | "position" | "age" | "ovr" | "value" | "team" | "status" | "nationality";
 
 function normalizeNick(value: string): string {
   return value
@@ -123,10 +123,6 @@ export default function PlayersListTab({
   filtered.sort((a, b) => {
     let cmp = 0;
     switch (sortKey) {
-      case "photo":
-        // Photo column doesn't have a meaningful sort, fallback to name
-        cmp = a.match_name.localeCompare(b.match_name);
-        break;
       case "name":
         cmp = a.match_name.localeCompare(b.match_name);
         break;
@@ -157,6 +153,9 @@ export default function PlayersListTab({
         cmp = statusVal(b) - statusVal(a);
         break;
       }
+      case "nationality":
+        cmp = (a.nationality ?? "").localeCompare(b.nationality ?? "");
+        break;
     }
     return sortAsc ? cmp : -cmp;
   });
@@ -276,9 +275,13 @@ export default function PlayersListTab({
                       asc={sortAsc}
                       onClick={handleSort}
                     />
-                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.nationality")}
-                    </th>
+                    <SortHeader
+                      label={t("common.nationality")}
+                      sortKey="nationality"
+                      current={sortKey}
+                      asc={sortAsc}
+                      onClick={handleSort}
+                    />
                     <SortHeader
                       label={t("common.team")}
                       sortKey="team"

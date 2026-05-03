@@ -564,16 +564,48 @@ export default function TransfersTab({
                       {t("common.photo", "Foto")}
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.position")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("position")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByPosition", "Ordenar por posición")}
+                      >
+                        {t("common.position")}
+                        {renderSortIcon("position")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.player")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("name")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByName", "Ordenar por nombre")}
+                      >
+                        {t("common.player")}
+                        {renderSortIcon("name")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.age")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("age")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByAge", "Ordenar por edad")}
+                      >
+                        {t("common.age")}
+                        {renderSortIcon("age")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.team")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("team")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByTeam", "Ordenar por equipo")}
+                      >
+                        {t("common.team")}
+                        {renderSortIcon("team")}
+                      </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                       <button
@@ -609,7 +641,15 @@ export default function TransfersTab({
                       </button>
                     </th>
                     <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {t("common.status")}
+                      <button
+                        type="button"
+                        onClick={() => toggleSort("status")}
+                        className="group/sort inline-flex items-center gap-1.5 hover:text-primary-500 transition-colors"
+                        aria-label={t("transfers.sortByStatus", "Ordenar por estado")}
+                      >
+                        {t("common.status")}
+                        {renderSortIcon("status")}
+                      </button>
                     </th>
                     {view === "offers" && (
                       <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
