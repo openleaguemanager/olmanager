@@ -51,6 +51,7 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - ⚠️ **JSON-en-TEXT**: modelo de datos en SQLite (6 campos en players)
 - ⚠️ **100+ warnings de clippy**: pre-existing en workspace, no blocking en CI
 - ⚠️ **19 RustSec advisories**: pre-existing, cargo audit non-blocking
+- ⚠️ **Football remnants cleanup**: `Position` enum (18 variants) en `domain/src/stats.rs`, `TraitContext::Foul`/`Goalkeeping` en `engine/shared.rs`, `fouls_committed` en legacy mirror de `stats_repo.rs`, y `"Draw"` handling legacy en `match_messages.rs` — todo backward compat que se puede eliminar en v0.3
 
 ---
 
@@ -90,6 +91,7 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 #### 🎯 Hitos
 
 - [ ] 🔲 **Fase 1 cleanup**: completar items que quedaron pendientes
+- [ ] 🔲 **Football remnants purge**: eliminar `Position` enum legacy, `TraitContext::Foul`/`Goalkeeping`, `fouls_committed` de stats_repo legacy mirror, y `"Draw"` handling en match_messages — dejar solo backward compat estrictamente necesario
 - [ ] 🔲 **Motor de simulación**: lol_sim_v2 compilando + live_match funcional
 - [ ] 🔲 **AppError + i18n**: migración completa de todos los comandos
 - [ ] 🔲 **Sistema de temporada completa**: Winter/Spring/Summer/Season Finals
