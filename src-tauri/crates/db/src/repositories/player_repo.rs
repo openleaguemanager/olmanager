@@ -1,6 +1,6 @@
-use domain::player::{Footedness, Player, PlayerAttributes, Position};
+use domain::player::{Footedness, Player, PlayerAttributes};
 use domain::team::TrainingFocus;
-use rusqlite::{Connection, params};
+use rusqlite::{params, Connection};
 
 /// Insert or replace a player row.
 pub fn upsert_player(conn: &Connection, p: &Player) -> Result<(), String> {
@@ -83,26 +83,34 @@ pub fn upsert_players(conn: &Connection, players: &[Player]) -> Result<(), Strin
     Ok(())
 }
 
-fn parse_position(s: &str) -> Position {
+fn parse_role(s: &str) -> domain::stats::LolRole {
+    // Handles BOTH legacy position strings AND new LolRole uppercase strings
+    // for backward compatibility with existing database data.
     match s {
-        "Goalkeeper" => Position::Goalkeeper,
-        "Defender" => Position::Defender,
-        "Midfielder" => Position::Midfielder,
-        "Forward" => Position::Forward,
-        "RightBack" => Position::RightBack,
-        "CenterBack" => Position::CenterBack,
-        "LeftBack" => Position::LeftBack,
-        "RightWingBack" => Position::RightWingBack,
-        "LeftWingBack" => Position::LeftWingBack,
-        "DefensiveMidfielder" => Position::DefensiveMidfielder,
-        "CentralMidfielder" => Position::CentralMidfielder,
-        "AttackingMidfielder" => Position::AttackingMidfielder,
-        "RightMidfielder" => Position::RightMidfielder,
-        "LeftMidfielder" => Position::LeftMidfielder,
-        "RightWinger" => Position::RightWinger,
-        "LeftWinger" => Position::LeftWinger,
-        "Striker" => Position::Striker,
-        _ => Position::Midfielder,
+        // === New LolRole uppercase strings (primary format after refactor) ===
+        "TOP" => domain::stats::LolRole::Top,
+        "JUNGLE" => domain::stats::LolRole::Jungle,
+        "MID" => domain::stats::LolRole::Mid,
+        "ADC" => domain::stats::LolRole::Adc,
+        "SUPPORT" => domain::stats::LolRole::Support,
+        "" | "UNKNOWN" => domain::stats::LolRole::Unknown,
+
+        // === Legacy football position strings (for backward compatibility) ===
+        // Goalkeeper/Defensive → Support
+        "Goalkeeper" | "DefensiveMidfielder" => domain::stats::LolRole::Support,
+        // Defender variants → Top
+        "Defender" | "RightBack" | "CenterBack" | "LeftBack" | "RightWingBack" | "LeftWingBack" => {
+            domain::stats::LolRole::Top
+        }
+        // Midfielder variants → Jungle
+        "Midfielder" | "CentralMidfielder" => domain::stats::LolRole::Jungle,
+        // Attacking midfielder variants → Mid
+        "AttackingMidfielder" | "RightMidfielder" | "LeftMidfielder" => domain::stats::LolRole::Mid,
+        // Forward variants → ADC
+        "Forward" | "RightWinger" | "LeftWinger" | "Striker" => domain::stats::LolRole::Adc,
+
+        // Default fallback
+        _ => domain::stats::LolRole::Unknown,
     }
 }
 
@@ -192,11 +200,11 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
     let loan_listed_int: i32 = row.get(20)?;
     let market_value_i64: i64 = row.get(16)?;
 
-    let position = parse_position(&position_str);
+    let position = parse_role(&position_str);
     let natural_position = if natural_position_str.is_empty() {
-        position.clone()
+        position
     } else {
-        parse_position(&natural_position_str)
+        parse_role(&natural_position_str)
     };
 
     Ok(Player {
@@ -276,7 +284,7 @@ mod tests {
             "John Smith".to_string(),
             "2000-01-15".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            domain::stats::LolRole::Mid,
             PlayerAttributes {
                 pace: 70,
                 stamina: 75,
@@ -315,7 +323,7 @@ mod tests {
         assert_eq!(all.len(), 1);
         assert_eq!(all[0].id, "p-001");
         assert_eq!(all[0].full_name, "John Smith");
-        assert_eq!(all[0].position, Position::Midfielder);
+        assert_eq!(all[0].position, domain::stats::LolRole::Mid);
         assert_eq!(all[0].team_id, Some("team-001".to_string()));
         assert_eq!(all[0].wage, 5000);
         assert_eq!(all[0].market_value, 500_000);
@@ -373,7 +381,8 @@ mod tests {
     fn test_player_alternate_positions_roundtrip() {
         let db = test_db();
         let mut player = sample_player("p-001", Some("team-001"));
-        player.alternate_positions = vec![Position::DefensiveMidfielder, Position::Striker];
+        player.alternate_positions =
+            vec![domain::stats::LolRole::Support, domain::stats::LolRole::Adc];
 
         upsert_player(db.conn(), &player).unwrap();
         let loaded = load_all_players(db.conn()).unwrap();
@@ -381,9 +390,12 @@ mod tests {
         assert_eq!(loaded[0].alternate_positions.len(), 2);
         assert_eq!(
             loaded[0].alternate_positions[0],
-            Position::DefensiveMidfielder
+            domain::stats::LolRole::Support
         );
-        assert_eq!(loaded[0].alternate_positions[1], Position::Striker);
+        assert_eq!(
+            loaded[0].alternate_positions[1],
+            domain::stats::LolRole::Adc
+        );
     }
 
     #[test]
@@ -458,7 +470,7 @@ mod tests {
         let db = test_db();
         let mut player = sample_player("p-001", None);
         player.stats.appearances = 20;
-        player.stats.goals = 5;
+        player.stats.kills = 5;
         player.stats.assists = 8;
         player.stats.shots = 42;
         player.stats.shots_on_target = 21;
@@ -472,7 +484,7 @@ mod tests {
         let loaded = load_all_players(db.conn()).unwrap();
 
         assert_eq!(loaded[0].stats.appearances, 20);
-        assert_eq!(loaded[0].stats.goals, 5);
+        assert_eq!(loaded[0].stats.kills, 5);
         assert_eq!(loaded[0].stats.assists, 8);
         assert_eq!(loaded[0].stats.shots, 42);
         assert_eq!(loaded[0].stats.shots_on_target, 21);
@@ -506,7 +518,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(loaded_player.stats.appearances, 12);
-        assert_eq!(loaded_player.stats.goals, 4);
+        assert_eq!(loaded_player.stats.kills, 4);
         assert_eq!(loaded_player.stats.assists, 6);
         assert_eq!(loaded_player.stats.minutes_played, 900);
         assert_eq!(loaded_player.stats.shots, 0);
@@ -552,18 +564,18 @@ mod tests {
     fn test_player_granular_identity_roundtrip() {
         let db = test_db();
         let mut player = sample_player("p-identity", Some("team-001"));
-        player.natural_position = Position::LeftBack;
-        player.alternate_positions = vec![Position::LeftWingBack, Position::CenterBack];
+        player.natural_position = domain::stats::LolRole::Top;
+        player.alternate_positions = vec![domain::stats::LolRole::Top, domain::stats::LolRole::Top];
         player.footedness = Footedness::Left;
         player.weak_foot = 3;
 
         upsert_player(db.conn(), &player).unwrap();
         let loaded = load_all_players(db.conn()).unwrap();
 
-        assert_eq!(loaded[0].natural_position, Position::LeftBack);
+        assert_eq!(loaded[0].natural_position, domain::stats::LolRole::Top);
         assert_eq!(
             loaded[0].alternate_positions,
-            vec![Position::LeftWingBack, Position::CenterBack]
+            vec![domain::stats::LolRole::Top, domain::stats::LolRole::Top]
         );
         assert_eq!(loaded[0].footedness, Footedness::Left);
         assert_eq!(loaded[0].weak_foot, 3);

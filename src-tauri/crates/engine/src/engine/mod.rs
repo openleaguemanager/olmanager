@@ -6,7 +6,7 @@ use rand::{Rng, RngExt};
 use crate::event::{EventType, MatchEvent};
 use crate::report::MatchReport;
 use crate::shared::PlayerSnap;
-use crate::types::{MatchConfig, PlayerData, Position, Side, TeamData, Zone};
+use crate::types::{LolRole, MatchConfig, PlayerData, Side, TeamData, Zone};
 
 // ---------------------------------------------------------------------------
 // MatchEngine — the core minute-by-minute simulator
@@ -147,12 +147,12 @@ impl<'a> MatchContext<'a> {
     }
 }
 
-/// Pick a random player from a side, preferring a given position, and return
+/// Pick a random player from a side, preferring a given role, and return
 /// a snapshot so we don't hold a borrow on the context.
 fn snap_player<R: Rng>(
     ctx: &MatchContext,
     side: Side,
-    preferred: Position,
+    preferred: LolRole,
     rng: &mut R,
 ) -> PlayerSnap {
     let team = ctx.team(side);
@@ -164,7 +164,7 @@ fn snap_player<R: Rng>(
 
     let candidates: Vec<&PlayerData> = available
         .iter()
-        .filter(|p| p.position == preferred)
+        .filter(|p| p.role == preferred)
         .copied()
         .collect();
 

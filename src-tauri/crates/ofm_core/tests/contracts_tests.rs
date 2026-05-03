@@ -1,9 +1,8 @@
 use chrono::{TimeZone, Utc};
 use domain::manager::Manager;
-use domain::player::{
-    ContractRenewalState, Player, PlayerAttributes, Position, RenewalSessionStatus,
-};
+use domain::player::{ContractRenewalState, Player, PlayerAttributes, RenewalSessionStatus};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
+use domain::stats::LolRole;
 use domain::team::Team;
 use ofm_core::clock::GameClock;
 use ofm_core::contracts::{
@@ -43,7 +42,7 @@ fn make_player() -> Player {
         "John Smith".to_string(),
         "2000-01-01".to_string(),
         "England".to_string(),
-        Position::Forward,
+        LolRole::Adc,
         default_attrs(),
     );
     player.team_id = Some("team-1".to_string());

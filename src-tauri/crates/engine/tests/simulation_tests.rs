@@ -1,4 +1,9 @@
-use engine::*;
+use engine::LolRole;
+use engine::{
+    EventType, MatchConfig, MatchEvent, PlayStyle, PlayerData, Side, TeamData, Zone,
+    simulate_with_rng,
+};
+use rand::SeedableRng;
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
@@ -6,12 +11,25 @@ use rand::SeedableRng;
 // Test helpers
 // ---------------------------------------------------------------------------
 
-fn make_player(id: &str, name: &str, position: Position, skill: u8) -> PlayerData {
+/// Map football Position to LoL role for test data
+fn football_position_to_lol_role(position: &str) -> LolRole {
+    match position {
+        "Goalkeeper" | "DefensiveMidfielder" => LolRole::Support,
+        "Defender" | "RightBack" | "CenterBack" | "LeftBack" | "RightWingBack" | "LeftWingBack" => {
+            LolRole::Top
+        }
+        "Midfielder" | "CentralMidfielder" => LolRole::Jungle,
+        "AttackingMidfielder" | "RightMidfielder" | "LeftMidfielder" => LolRole::Mid,
+        "Forward" | "Striker" | "RightWinger" | "LeftWinger" => LolRole::Adc,
+        _ => LolRole::Mid, // default
+    }
+}
+
+fn make_player(id: &str, name: &str, position: &str, skill: u8) -> PlayerData {
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
-        position,
-        lol_role: None,
+        role: football_position_to_lol_role(position),
         condition: 90,
         fitness: 75,
         pace: skill,
@@ -44,17 +62,17 @@ fn make_team(id: &str, name: &str, skill: u8, draft_strategy: DraftStrategy) -> 
         formation: "4-4-2".to_string(),
         draft_strategy,
         players: vec![
-            make_player(&format!("{id}_gk1"), "GK1", Position::Goalkeeper, skill),
-            make_player(&format!("{id}_def1"), "DEF1", Position::Defender, skill),
-            make_player(&format!("{id}_def2"), "DEF2", Position::Defender, skill),
-            make_player(&format!("{id}_def3"), "DEF3", Position::Defender, skill),
-            make_player(&format!("{id}_def4"), "DEF4", Position::Defender, skill),
-            make_player(&format!("{id}_mid1"), "MID1", Position::Midfielder, skill),
-            make_player(&format!("{id}_mid2"), "MID2", Position::Midfielder, skill),
-            make_player(&format!("{id}_mid3"), "MID3", Position::Midfielder, skill),
-            make_player(&format!("{id}_mid4"), "MID4", Position::Midfielder, skill),
-            make_player(&format!("{id}_fwd1"), "FWD1", Position::Forward, skill),
-            make_player(&format!("{id}_fwd2"), "FWD2", Position::Forward, skill),
+            make_player(&format!("{id}_gk1"), "GK1", "Goalkeeper", skill),
+            make_player(&format!("{id}_def1"), "DEF1", "Defender", skill),
+            make_player(&format!("{id}_def2"), "DEF2", "Defender", skill),
+            make_player(&format!("{id}_def3"), "DEF3", "Defender", skill),
+            make_player(&format!("{id}_def4"), "DEF4", "Defender", skill),
+            make_player(&format!("{id}_mid1"), "MID1", "Midfielder", skill),
+            make_player(&format!("{id}_mid2"), "MID2", "Midfielder", skill),
+            make_player(&format!("{id}_mid3"), "MID3", "Midfielder", skill),
+            make_player(&format!("{id}_mid4"), "MID4", "Midfielder", skill),
+            make_player(&format!("{id}_fwd1"), "FWD1", "Forward", skill),
+            make_player(&format!("{id}_fwd2"), "FWD2", "Forward", skill),
         ],
     }
 }
@@ -69,13 +87,13 @@ fn seeded_rng(seed: u64) -> StdRng {
 
 #[test]
 fn player_overall_rating() {
-    let p = make_player("p1", "Test", Position::Forward, 70);
+    let p = make_player("p1", "Test", "Forward", 70);
     assert!((p.overall() - 70.0).abs() < 0.01);
 }
 
 #[test]
 fn player_effective_overall_accounts_for_condition() {
-    let mut p = make_player("p1", "Test", Position::Forward, 80);
+    let mut p = make_player("p1", "Test", "Forward", 80);
     p.condition = 50;
     let eff = p.effective_overall();
     assert!((eff - 40.0).abs() < 0.01, "Expected ~40.0, got {eff}");
@@ -83,11 +101,11 @@ fn player_effective_overall_accounts_for_condition() {
 
 #[test]
 fn team_position_counts() {
-    let team = make_team("t1", "Test FC", 60, DraftStrategy::Balanced);
-    assert_eq!(team.count_position(Position::Goalkeeper), 1);
-    assert_eq!(team.count_position(Position::Defender), 4);
-    assert_eq!(team.count_position(Position::Midfielder), 4);
-    assert_eq!(team.count_position(Position::Forward), 2);
+    let team = make_team("t1", "Test FC", 60, PlayStyle::Balanced);
+    assert_eq!(team.count_role(LolRole::Support), 1);
+    assert_eq!(team.count_role(LolRole::Top), 4);
+    assert_eq!(team.count_role(LolRole::Jungle), 4);
+    assert_eq!(team.count_role(LolRole::Adc), 2);
 }
 
 #[test]
@@ -96,7 +114,7 @@ fn team_ratings_non_zero() {
     assert!(team.defense_rating() > 0.0);
     assert!(team.midfield_rating() > 0.0);
     assert!(team.attack_rating() > 0.0);
-    assert!(team.goalkeeper_rating() > 0.0);
+    assert!(team.support_rating() > 0.0);
 }
 
 #[test]
@@ -922,10 +940,10 @@ fn minimal_team_doesnt_crash() {
         formation: "1-1-1-1".to_string(),
         draft_strategy: DraftStrategy::Balanced,
         players: vec![
-            make_player("gk", "GK", Position::Goalkeeper, 50),
-            make_player("def", "DEF", Position::Defender, 50),
-            make_player("mid", "MID", Position::Midfielder, 50),
-            make_player("fwd", "FWD", Position::Forward, 50),
+            make_player("gk", "GK", "Goalkeeper", 50),
+            make_player("def", "DEF", "Defender", 50),
+            make_player("mid", "MID", "Midfielder", 50),
+            make_player("fwd", "FWD", "Forward", 50),
         ],
     };
     let normal = make_team("normal", "Normal FC", 60, DraftStrategy::Balanced);

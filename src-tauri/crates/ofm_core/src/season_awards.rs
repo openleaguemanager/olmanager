@@ -1,6 +1,7 @@
 use crate::game::Game;
 use chrono::{Datelike, NaiveDate};
-use domain::player::{Player, Position};
+use domain::player::Player;
+use domain::stats::LolRole;
 use serde::{Deserialize, Serialize};
 
 /// A single award entry (player + stat value).
@@ -114,8 +115,8 @@ pub fn compute_season_awards(game: &Game) -> SeasonAwards {
     // Golden Boot — top scorers
     let golden_boot = top_awards(
         &contexts,
-        |context| context.player.stats.goals > 0,
-        |context| context.player.stats.goals as f64,
+        |context| context.player.stats.kills > 0,
+        |context| context.player.stats.kills as f64,
     );
 
     // Assist King
@@ -132,11 +133,11 @@ pub fn compute_season_awards(game: &Game) -> SeasonAwards {
         |context| context.player.stats.avg_rating as f64,
     );
 
-    // Clean Sheet King — GKs only
+    // Clean Sheet King — Supports only (in LoL, supports protect the base)
     let clean_sheet_king = top_awards(
         &contexts,
         |context| {
-            context.player.position == Position::Goalkeeper && context.player.stats.clean_sheets > 0
+            context.player.position == LolRole::Support && context.player.stats.clean_sheets > 0
         },
         |context| context.player.stats.clean_sheets as f64,
     );
@@ -174,7 +175,8 @@ mod tests {
     use super::compute_season_awards;
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, PlayerSeasonStats, Position};
+    use domain::player::{Player, PlayerAttributes, PlayerSeasonStats};
+    use domain::stats::LolRole;
     use domain::team::Team;
 
     use crate::clock::GameClock;
@@ -220,7 +222,7 @@ mod tests {
         id: &str,
         name: &str,
         team_id: Option<&str>,
-        position: Position,
+        role: LolRole,
         dob: &str,
         stats: PlayerSeasonStats,
     ) -> Player {
@@ -230,7 +232,7 @@ mod tests {
             name.to_string(),
             dob.to_string(),
             "England".to_string(),
-            position,
+            role,
             default_attrs(),
         );
         player.team_id = team_id.map(str::to_string);
@@ -259,7 +261,7 @@ mod tests {
                 "p1",
                 "Player 1",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2000-01-01",
                 PlayerSeasonStats {
                     appearances: 8,
@@ -271,7 +273,7 @@ mod tests {
                 "p2",
                 "Player 2",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2000-01-01",
                 PlayerSeasonStats {
                     appearances: 8,
@@ -283,7 +285,7 @@ mod tests {
                 "p3",
                 "Player 3",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2000-01-01",
                 PlayerSeasonStats {
                     appearances: 8,
@@ -295,7 +297,7 @@ mod tests {
                 "p4",
                 "Player 4",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2000-01-01",
                 PlayerSeasonStats {
                     appearances: 8,
@@ -307,7 +309,7 @@ mod tests {
                 "p5",
                 "Player 5",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2000-01-01",
                 PlayerSeasonStats {
                     appearances: 8,
@@ -319,7 +321,7 @@ mod tests {
                 "p6",
                 "Player 6",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2000-01-01",
                 PlayerSeasonStats {
                     appearances: 8,
@@ -332,7 +334,7 @@ mod tests {
             "p7",
             "Zero Apps",
             Some("team1"),
-            Position::Forward,
+            LolRole::Adc,
             "2000-01-01",
             PlayerSeasonStats {
                 appearances: 0,
@@ -350,12 +352,10 @@ mod tests {
             .collect();
         assert_eq!(top_ids, vec!["p2", "p4", "p1", "p6", "p5"]);
         assert_eq!(awards.golden_boot.len(), 5);
-        assert!(
-            awards
-                .golden_boot
-                .iter()
-                .all(|entry| entry.player_name != "Zero Apps")
-        );
+        assert!(awards
+            .golden_boot
+            .iter()
+            .all(|entry| entry.player_name != "Zero Apps"));
     }
 
     #[test]
@@ -366,7 +366,7 @@ mod tests {
                 "older-star",
                 "Older Star",
                 Some("team1"),
-                Position::Midfielder,
+                LolRole::Mid,
                 "2001-02-10",
                 PlayerSeasonStats {
                     appearances: 6,
@@ -378,7 +378,7 @@ mod tests {
                 "young-eligible",
                 "Young Eligible",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2004-06-15",
                 PlayerSeasonStats {
                     appearances: 5,
@@ -390,7 +390,7 @@ mod tests {
                 "young-four-apps",
                 "Young Four Apps",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2004-09-10",
                 PlayerSeasonStats {
                     appearances: 4,
@@ -402,7 +402,7 @@ mod tests {
                 "young-low-apps",
                 "Young Low Apps",
                 Some("team1"),
-                Position::Forward,
+                LolRole::Adc,
                 "2005-03-10",
                 PlayerSeasonStats {
                     appearances: 2,
@@ -414,7 +414,7 @@ mod tests {
                 "invalid-dob",
                 "Invalid DOB",
                 Some("team1"),
-                Position::Midfielder,
+                LolRole::Mid,
                 "unknown",
                 PlayerSeasonStats {
                     appearances: 6,
@@ -452,7 +452,7 @@ mod tests {
                 "team-gk",
                 "Team Keeper",
                 Some("team1"),
-                Position::Goalkeeper,
+                LolRole::Support,
                 "1998-01-01",
                 PlayerSeasonStats {
                     appearances: 10,
@@ -464,7 +464,7 @@ mod tests {
                 "free-agent-gk",
                 "Free Agent Keeper",
                 None,
-                Position::Goalkeeper,
+                LolRole::Support,
                 "1996-01-01",
                 PlayerSeasonStats {
                     appearances: 9,
@@ -476,7 +476,7 @@ mod tests {
                 "defender",
                 "Defender",
                 Some("team1"),
-                Position::Defender,
+                LolRole::Top,
                 "1999-01-01",
                 PlayerSeasonStats {
                     appearances: 12,
@@ -492,11 +492,9 @@ mod tests {
         assert_eq!(awards.clean_sheet_king[0].player_id, "free-agent-gk");
         assert_eq!(awards.clean_sheet_king[0].team_id, "");
         assert_eq!(awards.clean_sheet_king[0].team_name, "Free Agent");
-        assert!(
-            awards
-                .clean_sheet_king
-                .iter()
-                .all(|entry| entry.player_id != "defender")
-        );
+        assert!(awards
+            .clean_sheet_king
+            .iter()
+            .all(|entry| entry.player_id != "defender"));
     }
 }

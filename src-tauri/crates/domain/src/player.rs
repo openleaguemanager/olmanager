@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+// Re-export both LolRole and Position for backward compatibility
+pub use crate::stats::{LolRole, Position};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player {
     pub id: String,
@@ -14,16 +17,18 @@ pub struct Player {
     #[serde(default)]
     pub profile_image_url: Option<String>,
 
-    pub position: Position,
+    /// Player's current role in the team (set by formation)
+    pub position: LolRole,
 
-    // The player's natural/preferred position (never changed by formation logic)
+    /// The player's natural/preferred role (never changed by formation logic)
     #[serde(default)]
-    pub natural_position: Position,
+    pub natural_position: LolRole,
 
-    // Alternate positions this player can also play (with reduced effectiveness)
+    /// Alternate roles this player can also play (with reduced effectiveness)
     #[serde(default)]
-    pub alternate_positions: Vec<Position>,
+    pub alternate_positions: Vec<LolRole>,
 
+    /// Deprecated: LoL roles are lane-agnostic, footedness no longer affects ratings
     #[serde(default)]
     pub footedness: Footedness,
 
@@ -86,59 +91,8 @@ pub struct Player {
     pub champion_training_targets: Vec<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-pub enum Position {
-    #[default]
-    Goalkeeper,
-    Defender,
-    Midfielder,
-    Forward,
-    RightBack,
-    CenterBack,
-    LeftBack,
-    RightWingBack,
-    LeftWingBack,
-    DefensiveMidfielder,
-    CentralMidfielder,
-    AttackingMidfielder,
-    RightMidfielder,
-    LeftMidfielder,
-    RightWinger,
-    LeftWinger,
-    Striker,
-}
-
-impl Position {
-    pub fn is_legacy_bucket(&self) -> bool {
-        matches!(
-            self,
-            Position::Goalkeeper | Position::Defender | Position::Midfielder | Position::Forward
-        )
-    }
-
-    pub fn to_group_position(&self) -> Position {
-        match self {
-            Position::Goalkeeper => Position::Goalkeeper,
-            Position::Defender
-            | Position::RightBack
-            | Position::CenterBack
-            | Position::LeftBack
-            | Position::RightWingBack
-            | Position::LeftWingBack => Position::Defender,
-            Position::Midfielder
-            | Position::DefensiveMidfielder
-            | Position::CentralMidfielder
-            | Position::AttackingMidfielder
-            | Position::RightMidfielder
-            | Position::LeftMidfielder => Position::Midfielder,
-            Position::Forward
-            | Position::RightWinger
-            | Position::LeftWinger
-            | Position::Striker => Position::Forward,
-        }
-    }
-}
-
+/// Footedness is deprecated - LoL roles are lane-agnostic
+/// Kept for backward compatibility with legacy save files
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum Footedness {
     Left,
@@ -346,7 +300,7 @@ fn default_transfer_offer_destination_team_id() -> Option<String> {
 #[serde(default)]
 pub struct PlayerSeasonStats {
     pub appearances: u32,
-    pub goals: u32,
+    pub kills: u32,
     pub assists: u32,
     pub clean_sheets: u32,
     pub yellow_cards: u32,
@@ -402,121 +356,124 @@ pub enum TransferOfferStatus {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PlayerTrait {
-    // Physical
-    Speedster, // pace >= 85
-    Tank,      // strength >= 85 && stamina >= 75
-    Agile,     // agility >= 85
-    Tireless,  // stamina >= 90
-    // Technical
-    Playmaker,    // passing >= 80 && vision >= 80
-    Sharpshooter, // shooting >= 85
-    Dribbler,     // dribbling >= 85
-    BallWinner,   // tackling >= 80 && aggression >= 70
-    Rock,         // defending >= 85 && positioning >= 75
+    // Mechanics
+    #[serde(alias = "Speedster")]
+    LightningQuick, // mechanics >= 85
+    #[serde(alias = "Tank")]
+    Immovable, // durability >= 85 && stamina >= 75
+    #[serde(alias = "Agile")]
+    NimbleFingers, // mechanics >= 85
+    #[serde(alias = "Tireless")]
+    MarathonMan, // stamina >= 90
+    // Game Knowledge
+    #[serde(alias = "Playmaker")]
+    GameManager, // game_knowledge >= 80 && macro_play >= 80
+    #[serde(alias = "Sharpshooter")]
+    Lethal, // laning >= 85
+    #[serde(alias = "Dribbler")]
+    KiteMaster, // mechanics >= 85
+    #[serde(alias = "BallWinner")]
+    Interceptor, // teamfight >= 80 && aggression >= 70
+    #[serde(alias = "Rock")]
+    Sentinel, // laning >= 85 && macro_play >= 75
     // Mental
-    Leader,     // leadership >= 85 && teamwork >= 75
-    CoolHead,   // composure >= 85 && decisions >= 80
-    Visionary,  // vision >= 85
-    HotHead,    // aggression >= 85 && composure < 50
-    TeamPlayer, // teamwork >= 85
-    // Goalkeeper
-    SafeHands,       // handling >= 85 (GK only)
-    CatReflexes,     // reflexes >= 85 (GK only)
-    AerialDominance, // aerial >= 85
-    // Combo / Special
-    CompleteForward, // FWD: shooting >= 75 && dribbling >= 75 && pace >= 70 && strength >= 70
-    Engine,          // MID: stamina >= 85 && pace >= 70 && teamwork >= 75
-    SetPieceSpecialist, // passing >= 80 && shooting >= 75 && vision >= 75
+    #[serde(alias = "Leader")]
+    ShotCaller, // shotcalling >= 85 && teamfight >= 75
+    #[serde(alias = "CoolHead")]
+    IceCold, // consistency >= 85 && decisions >= 80
+    #[serde(alias = "Visionary")]
+    Visionary, // macro_play >= 85
+    #[serde(alias = "HotHead")]
+    Intimidator, // aggression >= 85 && discipline < 50
+    #[serde(alias = "TeamPlayer")]
+    TeamPlayer, // teamfight >= 85
+    // Special
+    #[serde(alias = "CompleteForward")]
+    HyperCarry, // laning >= 75 && mechanics >= 75 && consistency >= 70
+    #[serde(alias = "Engine")]
+    Workhorse, // stamina >= 85 && consistency >= 70 && teamfight >= 75
+    #[serde(alias = "SetPieceSpecialist")]
+    MacroSpecialist, // game_knowledge >= 80 && laning >= 75 && macro_play >= 75
 }
 
-/// Derive traits purely from a player's attributes (position-independent).
-pub fn compute_traits(attrs: &PlayerAttributes, _position: &Position) -> Vec<PlayerTrait> {
+/// Derive traits purely from a player's attributes (role-independent).
+pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTrait> {
     let mut traits = Vec::new();
 
-    // Physical
+    // Mechanics
     if attrs.pace >= 85 {
-        traits.push(PlayerTrait::Speedster);
+        traits.push(PlayerTrait::LightningQuick);
     }
     if attrs.strength >= 85 && attrs.stamina >= 75 {
-        traits.push(PlayerTrait::Tank);
+        traits.push(PlayerTrait::Immovable);
     }
     if attrs.agility >= 85 {
-        traits.push(PlayerTrait::Agile);
+        traits.push(PlayerTrait::NimbleFingers);
     }
     if attrs.stamina >= 90 {
-        traits.push(PlayerTrait::Tireless);
+        traits.push(PlayerTrait::MarathonMan);
     }
 
-    // Technical
+    // Game Knowledge
     if attrs.passing >= 80 && attrs.vision >= 80 {
-        traits.push(PlayerTrait::Playmaker);
+        traits.push(PlayerTrait::GameManager);
     }
     if attrs.shooting >= 85 {
-        traits.push(PlayerTrait::Sharpshooter);
+        traits.push(PlayerTrait::Lethal);
     }
     if attrs.dribbling >= 85 {
-        traits.push(PlayerTrait::Dribbler);
+        traits.push(PlayerTrait::KiteMaster);
     }
     if attrs.tackling >= 80 && attrs.aggression >= 70 {
-        traits.push(PlayerTrait::BallWinner);
+        traits.push(PlayerTrait::Interceptor);
     }
     if attrs.defending >= 85 && attrs.positioning >= 75 {
-        traits.push(PlayerTrait::Rock);
+        traits.push(PlayerTrait::Sentinel);
     }
 
     // Mental
     if attrs.leadership >= 85 && attrs.teamwork >= 75 {
-        traits.push(PlayerTrait::Leader);
+        traits.push(PlayerTrait::ShotCaller);
     }
     if attrs.composure >= 85 && attrs.decisions >= 80 {
-        traits.push(PlayerTrait::CoolHead);
+        traits.push(PlayerTrait::IceCold);
     }
     if attrs.vision >= 85 {
         traits.push(PlayerTrait::Visionary);
     }
     if attrs.aggression >= 85 && attrs.composure < 50 {
-        traits.push(PlayerTrait::HotHead);
+        traits.push(PlayerTrait::Intimidator);
     }
     if attrs.teamwork >= 85 {
         traits.push(PlayerTrait::TeamPlayer);
     }
 
-    // Goalkeeper-oriented (any player with high GK stats can earn these)
-    if attrs.handling >= 85 {
-        traits.push(PlayerTrait::SafeHands);
-    }
-    if attrs.reflexes >= 85 {
-        traits.push(PlayerTrait::CatReflexes);
-    }
-    if attrs.aerial >= 85 {
-        traits.push(PlayerTrait::AerialDominance);
-    }
-
-    // Combo / Special — purely attribute-based
+    // Special — purely attribute-based
     if attrs.shooting >= 75 && attrs.dribbling >= 75 && attrs.pace >= 70 && attrs.strength >= 70 {
-        traits.push(PlayerTrait::CompleteForward);
+        traits.push(PlayerTrait::HyperCarry);
     }
     if attrs.stamina >= 85 && attrs.pace >= 70 && attrs.teamwork >= 75 {
-        traits.push(PlayerTrait::Engine);
+        traits.push(PlayerTrait::Workhorse);
     }
     if attrs.passing >= 80 && attrs.shooting >= 75 && attrs.vision >= 75 {
-        traits.push(PlayerTrait::SetPieceSpecialist);
+        traits.push(PlayerTrait::MacroSpecialist);
     }
 
     traits
 }
 
 impl Player {
-    pub fn new(
+    pub fn new<R: Into<LolRole>>(
         id: String,
         match_name: String,
         full_name: String,
         date_of_birth: String,
         nationality: String,
-        position: Position,
+        role: R,
         attributes: PlayerAttributes,
     ) -> Self {
-        let traits = compute_traits(&attributes, &position);
+        let role: LolRole = role.into();
+        let traits = compute_traits(&attributes, &role);
         let football_nation = crate::identity::normalize_football_nation_code(&nationality);
         let birth_country = crate::identity::derive_birth_country_code(&nationality);
         Self {
@@ -528,8 +485,8 @@ impl Player {
             football_nation,
             birth_country,
             profile_image_url: None,
-            natural_position: position.clone(),
-            position,
+            natural_position: role,
+            position: role,
             alternate_positions: Vec::new(),
             footedness: Footedness::default(),
             weak_foot: default_weak_foot(),
@@ -596,7 +553,7 @@ mod tests {
             "John Smith".to_string(),
             "2000-01-15".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Mid,
             sample_attributes(),
         );
 
@@ -605,17 +562,9 @@ mod tests {
     }
 
     #[test]
-    fn position_group_conversion_maps_granular_positions_back_to_legacy_groups() {
-        assert_eq!(Position::RightBack.to_group_position(), Position::Defender);
-        assert_eq!(
-            Position::AttackingMidfielder.to_group_position(),
-            Position::Midfielder,
-        );
-        assert_eq!(Position::LeftWinger.to_group_position(), Position::Forward);
-    }
-
-    #[test]
-    fn player_deserialization_defaults_missing_foot_fields() {
+    fn legacy_football_position_deserializes_to_lol_role() {
+        // Test that legacy Position strings are correctly mapped to LolRole
+        // "Midfielder" (legacy) -> LolRole::Jungle (as per spec)
         let player: Player = serde_json::from_value(serde_json::json!({
             "id": "p-legacy",
             "match_name": "J. Legacy",
@@ -645,8 +594,47 @@ mod tests {
 
         assert_eq!(player.footedness, Footedness::Right);
         assert_eq!(player.weak_foot, 2);
-        assert_eq!(player.natural_position, Position::Midfielder);
+        // "Midfielder" should map to LolRole::Jungle per the spec
+        assert_eq!(player.natural_position, LolRole::Jungle);
         assert_eq!(player.potential_base, 99);
         assert_eq!(player.potential_revealed, None);
+    }
+
+    #[test]
+    fn new_lol_role_string_deserializes_directly() {
+        // Test that new LolRole strings deserialize correctly
+        let player: Player = serde_json::from_value(serde_json::json!({
+            "id": "p-new",
+            "match_name": "J. New",
+            "full_name": "John New",
+            "date_of_birth": "2000-01-15",
+            "nationality": "GB",
+            "position": "Top",
+            "natural_position": "Top",
+            "alternate_positions": ["Jungle", "Mid"],
+            "attributes": sample_attributes(),
+            "condition": 100,
+            "morale": 100,
+            "injury": null,
+            "team_id": null,
+            "traits": [],
+            "contract_end": null,
+            "wage": 0,
+            "market_value": 0,
+            "stats": {},
+            "career": [],
+            "transfer_listed": false,
+            "loan_listed": false,
+            "transfer_offers": [],
+            "morale_core": {}
+        }))
+        .expect("new player json should deserialize");
+
+        assert_eq!(player.position, LolRole::Top);
+        assert_eq!(player.natural_position, LolRole::Top);
+        assert_eq!(
+            player.alternate_positions,
+            vec![LolRole::Jungle, LolRole::Mid]
+        );
     }
 }

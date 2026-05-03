@@ -1,6 +1,6 @@
 use chrono::{Datelike, TimeZone};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes};
 use domain::team::{
     AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
 };
@@ -539,7 +539,7 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
             };
 
             let attributes = build_attributes_from_seed(&seed);
-            let position = role_to_position(seed.role.as_deref());
+            let position = role_to_lol_role(seed.role.as_deref());
             let player_id = format!("{}-player-{}", academy_id, player_index + 1);
 
             let mut player = Player::new(
@@ -1555,15 +1555,15 @@ fn seed_is_free_agent(seed: &DraftPlayerSeed) -> bool {
         .unwrap_or(true)
 }
 
-fn role_to_position(role: Option<&str>) -> Position {
+fn role_to_lol_role(role: Option<&str>) -> domain::stats::LolRole {
     let key = role.map(normalize_seed_name).unwrap_or_default();
     match key.as_str() {
-        "top" => Position::Defender,
-        "jungle" => Position::Midfielder,
-        "mid" | "middle" => Position::AttackingMidfielder,
-        "bot" | "adc" | "bottom" => Position::Forward,
-        "support" | "sup" | "utility" => Position::DefensiveMidfielder,
-        _ => Position::Midfielder,
+        "top" => domain::stats::LolRole::Top,
+        "jungle" => domain::stats::LolRole::Jungle,
+        "mid" | "middle" => domain::stats::LolRole::Mid,
+        "bot" | "adc" | "bottom" => domain::stats::LolRole::Adc,
+        "support" | "sup" | "utility" => domain::stats::LolRole::Support,
+        _ => domain::stats::LolRole::Mid,
     }
 }
 
@@ -1676,7 +1676,7 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
 
     let dob = seed.dob.clone().unwrap_or_else(|| "2002-01-01".to_string());
     let nationality = seed.nationality.clone().unwrap_or_else(|| "KR".to_string());
-    let position = role_to_position(seed.role.as_deref());
+    let position = role_to_lol_role(seed.role.as_deref());
     let attributes = build_attributes_from_seed(seed);
 
     let seed_key = normalize_seed_name(ign);

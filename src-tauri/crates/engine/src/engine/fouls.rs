@@ -2,7 +2,7 @@ use rand::{Rng, RngExt};
 
 use crate::event::{EventType, MatchEvent};
 use crate::shared::{PlayerSnap, TraitContext, trait_bonus};
-use crate::types::{Position, Side, Zone};
+use crate::types::{LolRole, Side, Zone};
 
 use super::MatchContext;
 use super::snap_player;
@@ -95,8 +95,8 @@ fn maybe_card<R: Rng>(
 }
 
 fn resolve_penalty<R: Rng>(ctx: &mut MatchContext, minute: u8, att_side: Side, rng: &mut R) {
-    let taker = snap_player(ctx, att_side, Position::Forward, rng);
-    let gk = snap_player(ctx, att_side.opposite(), Position::Goalkeeper, rng);
+    let taker = snap_player(ctx, att_side, LolRole::Adc, rng);
+    let gk = snap_player(ctx, att_side.opposite(), LolRole::Support, rng);
 
     let shoot_skill = (taker.shooting as f64 + taker.decisions as f64) / 2.0;
     let gk_skill = (gk.positioning as f64 + gk.decisions as f64) / 2.0;

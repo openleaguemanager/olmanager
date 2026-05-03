@@ -7,7 +7,8 @@ use domain::message::{
     ActionOption, ActionType, InboxMessage, MessageAction, MessageCategory, MessageContext,
     MessagePriority,
 };
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes};
+use domain::stats::LolRole;
 use domain::team::{SponsorshipBonusCriterion, Team};
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
@@ -49,7 +50,7 @@ fn make_player(id: &str, name: &str, team_id: &str) -> Player {
         name.to_string(),
         "1995-01-01".to_string(),
         "England".to_string(),
-        Position::Midfielder,
+        LolRole::Jungle,
         default_attrs(),
     );
     p.team_id = Some(team_id.to_string());
@@ -1178,7 +1179,7 @@ fn unfit_players_get_more_training_injuries() {
             "TestPlayer".to_string(),
             "1995-01-01".to_string(),
             "England".to_string(),
-            Position::Midfielder,
+            LolRole::Jungle,
             PlayerAttributes {
                 pace: 60,
                 stamina: 60,

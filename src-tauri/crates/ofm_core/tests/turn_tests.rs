@@ -3,11 +3,12 @@ use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, Standin
 use domain::manager::Manager;
 use domain::player::{
     Injury, Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, PlayerPromise,
-    PlayerPromiseKind, Position,
+    PlayerPromiseKind,
 };
+use domain::stats::LolRole;
 use domain::team::Team;
-use engine::Side;
 use engine::report::{GoalDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
+use engine::Side;
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::turn;
@@ -65,8 +66,8 @@ fn gk_attrs() -> PlayerAttributes {
     }
 }
 
-fn make_player(id: &str, name: &str, team_id: &str, pos: Position) -> Player {
-    let attrs = if pos == Position::Goalkeeper {
+fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
+    let attrs = if pos == LolRole::Support {
         gk_attrs()
     } else {
         default_attrs()
@@ -105,7 +106,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
         &format!("{}_gk", prefix),
         &format!("{} GK", prefix),
         team_id,
-        Position::Goalkeeper,
+        LolRole::Support,
     ));
     // 4 DEF
     for i in 0..4 {
@@ -113,7 +114,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
             &format!("{}_def{}", prefix, i),
             &format!("{} Def{}", prefix, i),
             team_id,
-            Position::Defender,
+            LolRole::Top,
         ));
     }
     // 4 MID
@@ -122,7 +123,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
             &format!("{}_mid{}", prefix, i),
             &format!("{} Mid{}", prefix, i),
             team_id,
-            Position::Midfielder,
+            LolRole::Jungle,
         ));
     }
     // 2 FWD
@@ -131,7 +132,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
             &format!("{}_fwd{}", prefix, i),
             &format!("{} Fwd{}", prefix, i),
             team_id,
-            Position::Forward,
+            LolRole::Adc,
         ));
     }
     players
@@ -560,7 +561,7 @@ fn apply_match_report_updates_player_stats() {
 
     let scorer = game.players.iter().find(|p| p.id == "t1_fwd0").unwrap();
     assert_eq!(scorer.stats.appearances, 1);
-    assert_eq!(scorer.stats.goals, 2);
+    assert_eq!(scorer.stats.kills, 2);
     assert_eq!(scorer.stats.shots, 3);
     assert_eq!(scorer.stats.shots_on_target, 2);
     assert_eq!(scorer.stats.passes_completed, 30);
@@ -1463,9 +1464,9 @@ fn make_round_summary_game() -> Game {
     game.players
         .iter_mut()
         .for_each(|player| match player.id.as_str() {
-            "t1_fwd0" => player.stats.goals = 5,
-            "t2_fwd0" => player.stats.goals = 3,
-            "t3_fwd0" => player.stats.goals = 6,
+            "t1_fwd0" => player.stats.kills = 5,
+            "t2_fwd0" => player.stats.kills = 3,
+            "t3_fwd0" => player.stats.kills = 6,
             _ => {}
         });
 

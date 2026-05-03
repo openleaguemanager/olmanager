@@ -45,7 +45,6 @@ pub struct Manager {
 pub struct ManagerCareerStats {
     pub matches_managed: u32,
     pub wins: u32,
-    pub draws: u32,
     pub losses: u32,
     pub trophies: u32,
     pub best_finish: Option<u32>,

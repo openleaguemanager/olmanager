@@ -64,10 +64,16 @@ jobs:
       - name: Check Rust workspace
         run: cargo check --workspace
 
+      - name: Lint Rust workspace
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test Rust workspace
+        run: cargo test --workspace
+        continue-on-error: true
+
   frontend-full:
-    name: frontend-full-experimental
+    name: frontend-tests-and-build
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,9 +95,8 @@ jobs:
         run: npm run build:types
 
   rust-full:
-    name: rust-full-experimental
+    name: rust-tests-and-clippy
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     defaults:
       run:
         working-directory: src-tauri
