@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
@@ -417,6 +417,29 @@ export default function Dashboard(): JSX.Element {
   );
   const unreadMessagesCount = getUnreadMessagesCount(gameState);
   const myTeamName = getManagerTeamName(gameState);
+
+  const teamLogo = useMemo(() => {
+    if (!myTeamName) return null;
+    const normalized = myTeamName.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const TEAM_LOGO_MAP: Record<string, string> = {
+      g2esports: "/team-logos/g2-esports.png",
+      fnatic: "/team-logos/fnatic.png",
+      giantx: "/team-logos/giantx-lec.png",
+      karminecorp: "/team-logos/karmine-corp.png",
+      movistarkoi: "/team-logos/mad-lions.png",
+      mkoi: "/team-logos/mad-lions.png",
+      koi: "/team-logos/mad-lions.png",
+      madlionskoi: "/team-logos/mad-lions.png",
+      natusvincere: "/team-logos/natus-vincere.png",
+      skgaming: "/team-logos/sk-gaming.png",
+      teamheretics: "/team-logos/team-heretics-lec.png",
+      teamvitality: "/team-logos/team-vitality.png",
+      teambds: "/team-logos/team-bds.png",
+      shifters: "/team-logos/team-bds.png",
+    };
+    return TEAM_LOGO_MAP[normalized] ?? null;
+  }, [myTeamName]);
+
   const searchResults = getDashboardSearchResults(gameState, searchQuery);
   const dashboardAlerts = getDashboardAlerts(gameState, hasMatchToday, t);
   const hasProfileHistory = hasDashboardProfileHistory(profileNavigation);
@@ -450,6 +473,7 @@ export default function Dashboard(): JSX.Element {
         unreadMessagesCount={unreadMessagesCount}
         managerName={managerName}
         teamName={myTeamName}
+        teamLogo={teamLogo}
         onNavigateSettings={handleNavigateSettings}
         isUnemployed={isUnemployed ?? false}
         onExitClick={() => {

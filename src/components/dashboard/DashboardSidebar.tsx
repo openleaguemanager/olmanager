@@ -19,7 +19,6 @@ import {
   LogOut,
   GraduationCap,
   PanelLeftClose,
-  PanelLeftOpen,
   User,
   Gamepad2,
 } from "lucide-react";
@@ -32,6 +31,7 @@ interface DashboardSidebarProps {
   unreadMessagesCount: number;
   managerName: string | null;
   teamName: string | null;
+  teamLogo: string | null;
   onNavigateSettings: () => void;
   onExitClick: () => void;
   isUnemployed: boolean;
@@ -54,17 +54,13 @@ function NavItem({
   label,
   onClick,
 }: NavItemProps): JSX.Element {
-  const buttonClassName = collapsed
-    ? `relative flex w-full items-center justify-center rounded-lg p-3 transition-all duration-200 ${
-        active
-          ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/20"
-          : "text-gray-400 hover:bg-white/5 hover:text-white"
-      }`
-    : `relative flex w-full items-center justify-between rounded-lg p-3 transition-all duration-200 ${
-        active
-          ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/20"
-          : "text-gray-400 hover:bg-white/5 hover:text-white"
-      }`;
+  const buttonClassName = `relative flex w-full items-center rounded-lg p-3 transition-all duration-200 ${
+    collapsed ? "justify-center" : "justify-start gap-3"
+  } ${
+    active
+      ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/20"
+      : "text-gray-400 hover:bg-white/5 hover:text-white"
+  }`;
 
   return (
     <button
@@ -73,16 +69,16 @@ function NavItem({
       aria-label={label}
       className={buttonClassName}
     >
-      <div
-        className={`flex items-center ${collapsed ? "justify-center" : "gap-3"}`}
+      <div className="[&>svg]:w-5 [&>svg]:h-5 shrink-0">{icon}</div>
+      <span
+        className={`overflow-hidden whitespace-nowrap transition-all duration-200 ${
+          collapsed
+            ? "max-w-0 opacity-0"
+            : "max-w-40 opacity-100 delay-150"
+        } font-heading font-semibold text-sm uppercase tracking-wider`}
       >
-        <div className="[&>svg]:w-5 [&>svg]:h-5">{icon}</div>
-        {collapsed ? null : (
-          <span className="font-heading font-semibold text-sm uppercase tracking-wider">
-            {label}
-          </span>
-        )}
-      </div>
+        {label}
+      </span>
       {badge !== undefined && badge > 0 && (
         <span
           className={
@@ -106,6 +102,7 @@ export default function DashboardSidebar({
   unreadMessagesCount,
   managerName,
   teamName,
+  teamLogo,
   onNavigateSettings,
   onExitClick,
   isUnemployed,
@@ -149,51 +146,68 @@ export default function DashboardSidebar({
     >
       {/* Brand */}
       <div
-        className={`border-b border-navy-700 ${collapsed ? "px-3 py-4" : "p-5"}`}
+        className={`border-b border-navy-700 p-5`}
       >
         <div
-          className={`flex ${collapsed ? "flex-col items-center gap-3" : "items-center justify-between gap-3"}`}
+          className={`flex ${collapsed ? "flex-col items-start gap-3" : "items-center justify-between gap-3"}`}
         >
           <div
-            className={`flex items-center ${collapsed ? "justify-center" : "gap-2"}`}
+            className={`flex ${collapsed ? "items-center justify-center" : "items-start gap-2"}`}
           >
-            <div className="w-8 h-8 flex items-center justify-center">
-              <img
-                src="../../lec-logo.svg"
-                alt="Logo"
-                className="w-8 h-8"
-              />
+            <div
+              className="w-8 h-8 flex items-center justify-center"
+              onClick={collapsed ? onToggleCollapse : undefined}
+              role={collapsed ? "button" : undefined}
+              tabIndex={collapsed ? 0 : undefined}
+              onKeyDown={collapsed ? (e) => { if (e.key === "Enter" || e.key === " ") onToggleCollapse(); } : undefined}
+              title={collapsed ? t("dashboard.expandSidebar") : undefined}
+            >
+              {teamLogo ? (
+                <img
+                  src={teamLogo}
+                  alt={teamName ?? "Logo"}
+                  className="w-8 h-8 object-contain"
+                />
+              ) : (
+                <img
+                  src="../../lec-logo.svg"
+                  alt="Logo"
+                  className="w-8 h-8"
+                />
+              )}
             </div>
-            {collapsed ? null : (
-              <div>
-                <h1 className="text-sm font-heading font-semibold text-white uppercase tracking-wider">
-                  Open League
-                </h1>
-                <h1 className="font-bold font-heading text-accent-400 uppercase tracking-wider">
-                  Manager
-                </h1>
-              </div>
-            )}
+            <div
+              className={`overflow-hidden whitespace-nowrap transition-all duration-200 ${
+                collapsed
+                  ? "max-w-0 opacity-0"
+                  : "max-w-40 opacity-100 delay-150"
+              }`}
+            >
+              <h1 className="text-sm font-heading font-semibold text-white uppercase tracking-wider">
+                Open League
+              </h1>
+              <h1 className="font-bold font-heading text-accent-400 uppercase tracking-wider">
+                Manager
+              </h1>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            title={toggleSidebarLabel}
-            aria-label={toggleSidebarLabel}
-            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
-          >
-            {collapsed ? (
-              <PanelLeftOpen className="h-5 w-5" />
-            ) : (
+          {collapsed ? null : (
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              title={toggleSidebarLabel}
+              aria-label={toggleSidebarLabel}
+              className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+            >
               <PanelLeftClose className="h-5 w-5" />
-            )}
-          </button>
+            </button>
+          )}
         </div>
         <button
           onClick={() => onNavClick("Manager")}
           title={collapsed ? t("dashboard.manager") : undefined}
           aria-label={t("dashboard.manager")}
-          className={`hover:bg-white/5 mt-3 w-full rounded-lg transition-colors hover:cursor-pointer ${
+          className={`hover:bg-white/5 mt-3 w-full rounded-lg transition-colors hover:cursor-pointer min-h-[4.5rem] ${
             collapsed
               ? "flex justify-center px-0 py-2 text-gray-300"
               : "-mx-1 border-t border-navy-700 px-1 py-1 pt-3 text-left"
