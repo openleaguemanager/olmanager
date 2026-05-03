@@ -57,8 +57,10 @@ pub fn set_formation(state: State<'_, StateManager>, formation: String) -> Resul
     // Sort by defensive ability (most defensive first)
     let mut sorted_ids = player_ids.clone();
     sorted_ids.sort_by(|a_id, b_id| {
-        let pa = game.players.iter().find(|p| p.id == *a_id).unwrap();
-        let pb = game.players.iter().find(|p| p.id == *b_id).unwrap();
+        let pa = game.players.iter().find(|p| p.id == *a_id)
+            .expect("set_formation: player should exist in game state");
+        let pb = game.players.iter().find(|p| p.id == *b_id)
+            .expect("set_formation: player should exist in game state");
         let def_a = pa.attributes.defending as u16
             + pa.attributes.tackling as u16
             + pa.attributes.strength as u16;
