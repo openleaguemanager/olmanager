@@ -300,7 +300,7 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
                 </p>
               </div>
 
-              {/* QuickStats - Desktop */}
+              {/* QuickStats - Desktop (solo WR, PR, BR en banner) */}
               <div className="hidden md:flex items-center gap-3">
                 <div className="grid grid-cols-3 gap-2 flex-1">
                   <QuickStat
@@ -318,42 +318,12 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
                     value={stats ? `${stats.ban_rate.toFixed(1)}%` : "--"}
                     color="text-red-400"
                   />
-                  <QuickStat
-                    label={t("champions.kda", "KDA")}
-                    value={stats ? `${stats.avg_kda.toFixed(1)}` : "--"}
-                    color={stats && stats.avg_kda >= 3.5 ? "text-green-400" : stats && stats.avg_kda >= 2.0 ? "text-accent-300" : "text-red-400"}
-                  />
-                  <QuickStat
-                    label={t("champions.games", "Games")}
-                    value={stats ? `${stats.total_games}` : "--"}
-                    color="text-gray-200"
-                  />
-                  <QuickStat
-                    label={t("champions.damage", "Dmg/G")}
-                    value={stats ? `${(stats.avg_damage / 1000).toFixed(1)}k` : "--"}
-                    color="text-orange-400"
-                  />
-                  <QuickStat
-                    label={t("champions.gold", "Gold/G")}
-                    value={stats ? `${(stats.avg_gold / 1000).toFixed(1)}k` : "--"}
-                    color="text-yellow-400"
-                  />
-                  <QuickStat
-                    label={t("champions.cs", "CS")}
-                    value={stats ? `${stats.avg_cs.toFixed(0)}` : "--"}
-                    color="text-purple-400"
-                  />
-                  <QuickStat
-                    label={t("champions.vision", "Vision")}
-                    value={stats ? `${stats.avg_vision.toFixed(0)}` : "--"}
-                    color="text-cyan-400"
-                  />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* QuickStats - Mobile */}
+          {/* QuickStats - Mobile (solo WR, PR, BR) */}
           <div className="grid grid-cols-3 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
             <MobileQuickStat
               label={t("champions.winRate", "Win Rate")}
@@ -369,21 +339,6 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
               label={t("champions.banRate", "Ban Rate")}
               value={stats ? `${stats.ban_rate.toFixed(1)}%` : "--"}
               color="text-red-500"
-            />
-            <MobileQuickStat
-              label={t("champions.kda", "KDA")}
-              value={stats ? `${stats.avg_kda.toFixed(1)}` : "--"}
-              color={stats && stats.avg_kda >= 3.5 ? "text-green-500" : "text-gray-700 dark:text-gray-200"}
-            />
-            <MobileQuickStat
-              label={t("champions.games", "Games")}
-              value={stats ? `${stats.total_games}` : "--"}
-              color="text-gray-700 dark:text-gray-200"
-            />
-            <MobileQuickStat
-              label={t("champions.damage", "Dmg/G")}
-              value={stats ? `${(stats.avg_damage / 1000).toFixed(1)}k` : "--"}
-              color="text-orange-500"
             />
           </div>
         </Card>
@@ -500,6 +455,41 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
                 )}
               </CardBody>
             </Card>
+
+            {/* Stats detalladas en el cuerpo */}
+            {stats && (
+              <Card>
+                <CardHeader>{t("champions.stats", "Estadísticas")}</CardHeader>
+                <CardBody>
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                    <div className="text-center p-3 rounded-lg bg-navy-800/50">
+                      <p className="text-xs text-gray-400">{t("champions.kda", "KDA")}</p>
+                      <p className="text-lg font-heading font-bold mt-1" style={{ color: stats.avg_kda >= 3.5 ? "#4ade80" : stats.avg_kda >= 2.0 ? "#fbbf24" : "#f87171" }}>{stats.avg_kda.toFixed(1)}</p>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-navy-800/50">
+                      <p className="text-xs text-gray-400">{t("champions.games", "Games")}</p>
+                      <p className="text-lg font-heading font-bold mt-1 text-gray-200">{stats.total_games}</p>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-navy-800/50">
+                      <p className="text-xs text-gray-400">{t("champions.damage", "Dmg/G")}</p>
+                      <p className="text-lg font-heading font-bold mt-1 text-orange-400">{(stats.avg_damage / 1000).toFixed(1)}k</p>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-navy-800/50">
+                      <p className="text-xs text-gray-400">{t("champions.gold", "Gold/G")}</p>
+                      <p className="text-lg font-heading font-bold mt-1 text-yellow-400">{(stats.avg_gold / 1000).toFixed(1)}k</p>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-navy-800/50">
+                      <p className="text-xs text-gray-400">{t("champions.cs", "CS")}</p>
+                      <p className="text-lg font-heading font-bold mt-1 text-purple-400">{stats.avg_cs.toFixed(0)}</p>
+                    </div>
+                    <div className="text-center p-3 rounded-lg bg-navy-800/50">
+                      <p className="text-xs text-gray-400">{t("champions.vision", "Vision")}</p>
+                      <p className="text-lg font-heading font-bold mt-1 text-cyan-400">{stats.avg_vision.toFixed(0)}</p>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            )}
 
             {/* Stats-derived cards */}
             {stats && stats.role_distribution.length > 0 && (
