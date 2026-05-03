@@ -271,7 +271,7 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
               {/* Champion Info */}
               <div className="flex-1">
                 <h2 className="text-3xl font-heading font-bold text-white uppercase tracking-wide">
-                  {champion.name.replace(/^[.\s]+/, "") || champion.champion_key}
+                  {champion.champion_key}
                 </h2>
                 <div className="flex items-center gap-3 mt-2">
                   {roles.map((role) => {

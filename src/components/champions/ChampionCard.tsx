@@ -124,7 +124,7 @@ export const ChampionCard = memo(function ChampionCard({
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-navy-800">
         <LazyImage
           src={displayImage}
-          alt={name}
+          alt={championKey}
           fallbackSrc={fallback}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -132,7 +132,7 @@ export const ChampionCard = memo(function ChampionCard({
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
         <p className="text-sm font-heading font-semibold text-white truncate">
-          {name}
+          {championKey}
         </p>
         <div className="flex gap-1 mt-1">
           {roles.slice(0, 2).map((role) => {
