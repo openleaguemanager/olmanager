@@ -491,142 +491,161 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
               </Card>
             )}
 
-            {/* Stats-derived cards */}
-            {stats && stats.role_distribution.length > 0 && (
+            {/* Stats-derived cards — siempre visibles, con estado vacío */}
+            {stats && (
               <Card>
-                <CardHeader>
-                  <span className="flex items-center gap-2 text-primary-400">
-                    <Users className="w-4 h-4" />
-                    {t("champions.roles", "Roles")}
-                  </span>
-                </CardHeader>
+                <CardHeader><span className="flex items-center gap-2 text-primary-400"><Users className="w-4 h-4" />{t("champions.roles", "Roles")}</span></CardHeader>
                 <CardBody>
-                  <div className="space-y-2">
-                    {stats.role_distribution.map((r, idx) => (
-                      <div key={`rd-${idx}`} className="flex items-center gap-3">
-                        <span className="text-xs font-heading font-bold text-gray-300 w-16 uppercase">{r.role}</span>
-                        <div className="flex-1 h-4 rounded-full bg-navy-700 overflow-hidden">
-                          <div className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-400" style={{ width: `${r.percentage}%` }} />
+                  {stats.role_distribution.length > 0 ? (
+                    <div className="space-y-2">
+                      {stats.role_distribution.map((r, idx) => (
+                        <div key={`rd-${idx}`} className="flex items-center gap-3">
+                          <span className="text-xs font-heading font-bold text-gray-300 w-16 uppercase">{r.role}</span>
+                          <div className="flex-1 h-4 rounded-full bg-navy-700 overflow-hidden">
+                            <div className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-400" style={{ width: `${r.percentage}%` }} />
+                          </div>
+                          <span className="text-xs font-heading text-gray-400 w-16 text-right">{r.percentage.toFixed(0)}%</span>
+                          <span className="text-xs text-gray-500 w-12 text-right">{r.games}g</span>
                         </div>
-                        <span className="text-xs font-heading text-gray-400 w-16 text-right">{r.percentage.toFixed(0)}%</span>
-                        <span className="text-xs text-gray-500 w-12 text-right">{r.games}g</span>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">{t("champions.noData", "Sin datos")}</p>
+                  )}
                 </CardBody>
               </Card>
             )}
 
-            {stats && stats.best_against.length > 0 && (
+            {stats && (
               <Card>
                 <CardHeader><span className="flex items-center gap-2 text-green-400"><Swords className="w-4 h-4" />{t("champions.bestMatchups", "Mejores Matchups")}</span></CardHeader>
                 <CardBody>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                    {stats.best_against.map((m, idx) => (
-                      <div key={`bm-${idx}`} className="flex items-center gap-2 rounded-lg border border-green-400/20 bg-navy-800/50 p-2">
-                        <img src={fallbackTileUrl(m.vs_champion_key)} alt={m.vs_champion_name} className="h-10 w-10 rounded object-cover" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">{m.vs_champion_name}</p>
-                          <p className="text-xs text-green-400">{m.win_rate.toFixed(0)}% WR ({m.games}g)</p>
+                  {stats.best_against.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      {stats.best_against.map((m, idx) => (
+                        <div key={`bm-${idx}`} className="flex items-center gap-2 rounded-lg border border-green-400/20 bg-navy-800/50 p-2">
+                          <img src={fallbackTileUrl(m.vs_champion_key)} alt={m.vs_champion_name} className="h-10 w-10 rounded object-cover" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-heading font-semibold text-gray-100 truncate">{m.vs_champion_name}</p>
+                            <p className="text-xs text-green-400">{m.win_rate.toFixed(0)}% WR ({m.games}g)</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">{t("champions.noData", "Sin datos")}</p>
+                  )}
                 </CardBody>
               </Card>
             )}
 
-            {stats && stats.worst_against.length > 0 && (
+            {stats && (
               <Card>
                 <CardHeader><span className="flex items-center gap-2 text-red-400"><Swords className="w-4 h-4" />{t("champions.worstMatchups", "Peores Matchups")}</span></CardHeader>
                 <CardBody>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                    {stats.worst_against.map((m, idx) => (
-                      <div key={`wm-${idx}`} className="flex items-center gap-2 rounded-lg border border-red-400/20 bg-navy-800/50 p-2">
-                        <img src={fallbackTileUrl(m.vs_champion_key)} alt={m.vs_champion_name} className="h-10 w-10 rounded object-cover" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">{m.vs_champion_name}</p>
-                          <p className="text-xs text-red-400">{m.win_rate.toFixed(0)}% WR ({m.games}g)</p>
+                  {stats.worst_against.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      {stats.worst_against.map((m, idx) => (
+                        <div key={`wm-${idx}`} className="flex items-center gap-2 rounded-lg border border-red-400/20 bg-navy-800/50 p-2">
+                          <img src={fallbackTileUrl(m.vs_champion_key)} alt={m.vs_champion_name} className="h-10 w-10 rounded object-cover" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-heading font-semibold text-gray-100 truncate">{m.vs_champion_name}</p>
+                            <p className="text-xs text-red-400">{m.win_rate.toFixed(0)}% WR ({m.games}g)</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">{t("champions.noData", "Sin datos")}</p>
+                  )}
                 </CardBody>
               </Card>
             )}
 
-            {stats && stats.top_players.length > 0 && (
+            {stats && (
               <Card>
                 <CardHeader><span className="flex items-center gap-2 text-yellow-400"><Crown className="w-4 h-4" />{t("champions.topPlayers", "Mejores Jugadores")}</span></CardHeader>
                 <CardBody>
-                  <div className="space-y-2">
-                    {stats.top_players.map((p, idx) => (
-                      <div key={`tp-${idx}`} className="flex items-center gap-3 rounded-lg border border-navy-600 bg-navy-800/50 p-2">
-                        <span className="text-xs font-heading font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">{p.player_name}</p>
-                          <p className="text-[10px] text-gray-400">{p.team_name}</p>
+                  {stats.top_players.length > 0 ? (
+                    <div className="space-y-2">
+                      {stats.top_players.map((p, idx) => (
+                        <div key={`tp-${idx}`} className="flex items-center gap-3 rounded-lg border border-navy-600 bg-navy-800/50 p-2">
+                          <span className="text-xs font-heading font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-heading font-semibold text-gray-100 truncate">{p.player_name}</p>
+                            <p className="text-[10px] text-gray-400">{p.team_name}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs font-heading font-bold text-green-400">{p.win_rate.toFixed(0)}%</p>
+                            <p className="text-[10px] text-gray-400">{p.games}g · {p.avg_kda.toFixed(1)} KDA</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-xs font-heading font-bold text-green-400">{p.win_rate.toFixed(0)}%</p>
-                          <p className="text-[10px] text-gray-400">{p.games}g · {p.avg_kda.toFixed(1)} KDA</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">{t("champions.noData", "Sin datos")}</p>
+                  )}
                 </CardBody>
               </Card>
             )}
 
-            {stats && stats.most_played_players.length > 0 && (
+            {stats && (
               <Card>
                 <CardHeader><span className="flex items-center gap-2 text-indigo-400"><Users className="w-4 h-4" />{t("champions.mostPlayed", "Mas Jugados")}</span></CardHeader>
                 <CardBody>
-                  <div className="space-y-2">
-                    {stats.most_played_players.map((p, idx) => (
-                      <div key={`mp-${idx}`} className="flex items-center gap-3 rounded-lg border border-navy-600 bg-navy-800/50 p-2">
-                        <span className="text-xs font-heading font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-heading font-semibold text-gray-100 truncate">{p.player_name}</p>
-                          <p className="text-[10px] text-gray-400">{p.team_name}</p>
+                  {stats.most_played_players.length > 0 ? (
+                    <div className="space-y-2">
+                      {stats.most_played_players.map((p, idx) => (
+                        <div key={`mp-${idx}`} className="flex items-center gap-3 rounded-lg border border-navy-600 bg-navy-800/50 p-2">
+                          <span className="text-xs font-heading font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-heading font-semibold text-gray-100 truncate">{p.player_name}</p>
+                            <p className="text-[10px] text-gray-400">{p.team_name}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs font-heading font-bold text-indigo-400">{p.games}g</p>
+                            <p className="text-[10px] text-gray-400">{p.win_rate.toFixed(0)}% WR</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-xs font-heading font-bold text-indigo-400">{p.games}g</p>
-                          <p className="text-[10px] text-gray-400">{p.win_rate.toFixed(0)}% WR</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">{t("champions.noData", "Sin datos")}</p>
+                  )}
                 </CardBody>
               </Card>
             )}
 
-            {stats && stats.weekly_history.length > 0 && (
+            {stats && (
               <Card>
                 <CardHeader><span className="flex items-center gap-2 text-primary-400"><TrendingUp className="w-4 h-4" />{t("champions.weeklyHistory", "Historial Semanal")}</span></CardHeader>
                 <CardBody>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs font-heading">
-                      <thead>
-                        <tr className="text-gray-400 uppercase tracking-wider border-b border-navy-600">
-                          <th className="text-left py-2 pr-4">Semana</th>
-                          <th className="text-right py-2 pr-4">G</th>
-                          <th className="text-right py-2 pr-4">WR</th>
-                          <th className="text-right py-2">KDA</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {stats.weekly_history.map((w, idx) => (
-                          <tr key={`wh-${idx}`} className="border-b border-navy-700/50">
-                            <td className="py-1.5 pr-4 text-gray-300">{w.week_label}</td>
-                            <td className="text-right py-1.5 pr-4 text-gray-300">{w.games}</td>
-                            <td className={`text-right py-1.5 pr-4 font-bold ${w.win_rate >= 55 ? "text-green-400" : w.win_rate >= 45 ? "text-accent-300" : "text-red-400"}`}>{w.win_rate.toFixed(0)}%</td>
-                            <td className="text-right py-1.5 text-gray-300">{w.avg_kda.toFixed(1)}</td>
+                  {stats.weekly_history.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs font-heading">
+                        <thead>
+                          <tr className="text-gray-400 uppercase tracking-wider border-b border-navy-600">
+                            <th className="text-left py-2 pr-4">Semana</th>
+                            <th className="text-right py-2 pr-4">G</th>
+                            <th className="text-right py-2 pr-4">WR</th>
+                            <th className="text-right py-2">KDA</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {stats.weekly_history.map((w, idx) => (
+                            <tr key={`wh-${idx}`} className="border-b border-navy-700/50">
+                              <td className="py-1.5 pr-4 text-gray-300">{w.week_label}</td>
+                              <td className="text-right py-1.5 pr-4 text-gray-300">{w.games}</td>
+                              <td className={`text-right py-1.5 pr-4 font-bold ${w.win_rate >= 55 ? "text-green-400" : w.win_rate >= 45 ? "text-accent-300" : "text-red-400"}`}>{w.win_rate.toFixed(0)}%</td>
+                              <td className="text-right py-1.5 text-gray-300">{w.avg_kda.toFixed(1)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">{t("champions.noData", "Sin datos")}</p>
+                  )}
                 </CardBody>
               </Card>
             )}

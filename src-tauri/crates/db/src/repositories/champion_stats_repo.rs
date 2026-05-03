@@ -19,7 +19,7 @@ pub fn champion_ban_count(conn: &Connection, champion_key: &str) -> Result<u32, 
 
 /// Base query columns reused across aggregations.
 const STAT_COLS: &str = "COUNT(*) as games,
-    SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END) as wins,
+    COALESCE(SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END), 0) as wins,
     COALESCE(ROUND(AVG(kills), 1), 0) as avg_kills,
     COALESCE(ROUND(AVG(deaths), 1), 0) as avg_deaths,
     COALESCE(ROUND(AVG(assists), 1), 0) as avg_assists,
@@ -42,7 +42,7 @@ pub fn champion_stats(
         .query_row(
             &format!(
                 "SELECT {STAT_COLS},
-                        COUNT(*) - SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END) as losses
+                        COUNT(*) - COALESCE(SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END), 0) as losses
                  FROM lol_player_match_stats
                  WHERE champion_id = ?1"
             ),
