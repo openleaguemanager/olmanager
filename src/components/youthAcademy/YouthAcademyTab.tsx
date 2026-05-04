@@ -345,8 +345,8 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
                     const optionLogoSrc = option.source_team_logo_url ?? resolveExampleTeamLogo(option.source_team_name);
 
                     return (
-                    <div key={option.source_team_id} className="rounded-lg border border-gray-100 dark:border-navy-600 p-4 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
+                    <div key={option.source_team_id} className="rounded-lg border border-gray-100 dark:border-navy-600 p-4 flex items-center gap-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-10 h-10 rounded-lg bg-navy-700/40 border border-navy-600 flex items-center justify-center overflow-hidden shrink-0">
                           {optionLogoSrc ? (
                             <img
@@ -368,6 +368,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
                       </div>
                       <Button
                         size="sm"
+                        className="shrink-0 min-w-[130px]"
                         disabled={acquiringSourceId === option.source_team_id}
                         onClick={async () => {
                           if (!myTeam?.id) return;
