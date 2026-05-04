@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown } from "lucide-react";
+import { Search, ArrowUp, ArrowDown } from "lucide-react";
 import type { ChampionData } from "../../store/types";
 
 interface ChampionsGridProps {
@@ -18,6 +18,14 @@ const LOL_ROLE_ICON_URLS: Record<DraftRole, string> = {
   MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
   ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
   SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+};
+
+const ROLE_BADGE_STYLES: Record<DraftRole, string> = {
+  TOP: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
+  JUNGLE: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
+  MID: "bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300",
+  ADC: "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300",
+  SUPPORT: "bg-gray-100 text-gray-600 dark:bg-navy-600 dark:text-gray-400",
 };
 
 function parseRoles(rolesJson: string): string[] {
@@ -105,14 +113,14 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
-              <th className="py-3 px-4 w-14" />
+              <th className="py-3 px-4 w-16" />
               <th
                 className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
                 onClick={toggleSort}
               >
                 <span className="inline-flex items-center gap-1">
                   {t("champions.name", "Campeón")}
-                  <ArrowUpDown className="w-3 h-3 opacity-40" />
+                  {sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
                 </span>
               </th>
               <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -129,33 +137,39 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
                   onClick={() => handleClick(champion.champion_key)}
                   className="hover:bg-gray-50 dark:hover:bg-navy-700/50 cursor-pointer transition-colors group"
                 >
-                  <td className="py-2.5 px-4">
-                    <img
-                      src={championTileUrl(champion.champion_key)}
-                      alt={champion.name}
-                      className="w-10 h-10 rounded-lg object-cover bg-navy-800"
-                      loading="lazy"
-                    />
+                  <td className="py-2 px-4">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-navy-600 bg-navy-800 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(251,191,36,0.3)] group-hover:border-yellow-400/50">
+                      <img
+                        src={championTileUrl(champion.champion_key)}
+                        alt={champion.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
                   </td>
-                  <td className="py-2.5 px-4">
-                    <span className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                  <td className="py-2 px-4">
+                    <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                       {champion.name}
-                    </span>
+                    </p>
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                      {champion.champion_key}
+                    </p>
                   </td>
-                  <td className="py-2.5 px-4">
-                    <div className="flex gap-1">
+                  <td className="py-2 px-4">
+                    <div className="flex gap-1.5">
                       {roles.map((role) => {
                         const normalized = role === "Bot" ? "ADC" : role.toUpperCase() as DraftRole;
                         const iconUrl = LOL_ROLE_ICON_URLS[normalized];
+                        const badgeStyle = ROLE_BADGE_STYLES[normalized] ?? "bg-gray-100 text-gray-600 dark:bg-navy-600 dark:text-gray-400";
                         if (!iconUrl) return null;
                         return (
-                          <img
+                          <span
                             key={role}
-                            src={iconUrl}
-                            alt={role}
-                            className="w-5 h-5 object-contain"
+                            className={`inline-flex items-center gap-1 font-bold font-heading uppercase tracking-wider rounded-md px-2 py-0.5 text-[10px] ${badgeStyle}`}
                             title={role}
-                          />
+                          >
+                            <img src={iconUrl} alt={role} className="h-3 w-3" />
+                          </span>
                         );
                       })}
                     </div>
