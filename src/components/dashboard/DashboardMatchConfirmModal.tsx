@@ -101,9 +101,6 @@ export default function DashboardMatchConfirmModal({
           </div>
         </div>
       )}
-      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-        {modeMeta.desc}
-      </p>
       {matchMode === "delegate" && (
         <p className="mt-1 flex items-center gap-1 text-xs text-amber-500 dark:text-amber-400">
           <AlertCircle className="h-3.5 w-3.5" />

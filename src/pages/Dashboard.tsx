@@ -398,25 +398,11 @@ export default function Dashboard(): JSX.Element {
     navigate("/settings", { state: { from: "/dashboard" } });
   }
 
-  if (!gameState) {
-    return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center transition-colors">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-gray-500 dark:text-gray-400 font-heading uppercase tracking-wider text-sm">
-            {t("dashboard.loading")}
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  const currentDate = formatDateFull(
-    gameState.clock.current_date,
-    settings.language,
-  );
-  const unreadMessagesCount = getUnreadMessagesCount(gameState);
-  const myTeamName = getManagerTeamName(gameState);
+  const currentDate = gameState
+    ? formatDateFull(gameState.clock.current_date, settings.language)
+    : "";
+  const unreadMessagesCount = gameState ? getUnreadMessagesCount(gameState) : 0;
+  const myTeamName = gameState ? getManagerTeamName(gameState) : null;
 
   const teamLogo = useMemo(() => {
     if (!myTeamName) return null;
@@ -440,26 +426,45 @@ export default function Dashboard(): JSX.Element {
     return TEAM_LOGO_MAP[normalized] ?? null;
   }, [myTeamName]);
 
-  const searchResults = getDashboardSearchResults(gameState, searchQuery);
-  const dashboardAlerts = getDashboardAlerts(gameState, hasMatchToday, t);
+  const searchResults = gameState
+    ? getDashboardSearchResults(gameState, searchQuery)
+    : { matchedPlayers: [], matchedTeams: [] };
+  const dashboardAlerts = gameState
+    ? getDashboardAlerts(gameState, hasMatchToday, t)
+    : [];
   const hasProfileHistory = hasDashboardProfileHistory(profileNavigation);
   const activeTabLabel = TAB_TRANSLATION_KEYS[profileNavigation.activeTab]
     ? t(TAB_TRANSLATION_KEYS[profileNavigation.activeTab])
     : profileNavigation.activeTab;
-  const dashboardTabContentModel = createDashboardTabContentModel({
-    activeTab: profileNavigation.activeTab,
-    gameState,
-    seasonComplete,
-    visitedOnboardingTabs,
-    initialMessageId: profileNavigation.initialMessageId,
-    handlers: {
-      onSelectPlayer: selectPlayer,
-      onSelectTeam: selectTeam,
-      onGameUpdate: setGameState,
-      onNavigate: handleNavigate,
-      onViewChampion: (championKey: string) => setViewingChampionKey(championKey),
-    },
-  });
+  const dashboardTabContentModel = gameState
+    ? createDashboardTabContentModel({
+        activeTab: profileNavigation.activeTab,
+        gameState,
+        seasonComplete,
+        visitedOnboardingTabs,
+        initialMessageId: profileNavigation.initialMessageId,
+        handlers: {
+          onSelectPlayer: selectPlayer,
+          onSelectTeam: selectTeam,
+          onGameUpdate: setGameState,
+          onNavigate: handleNavigate,
+          onViewChampion: (championKey: string) => setViewingChampionKey(championKey),
+        },
+      })
+    : null;
+
+  if (!gameState) {
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center transition-colors">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+          <span className="text-gray-500 dark:text-gray-400 font-heading uppercase tracking-wider text-sm">
+            {t("dashboard.loading")}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex transition-colors duration-300">

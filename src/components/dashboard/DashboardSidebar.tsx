@@ -147,7 +147,7 @@ export default function DashboardSidebar({
         {/* Always a row — no layout change between states */}
         <div className="flex items-start h-8 overflow-visible">
           <div
-            className="w-8 h-8 flex items-center justify-center shrink-0"
+            className={`w-8 h-8 flex items-center justify-center shrink-0 ${collapsed ? "cursor-pointer" : ""}`}
             onClick={collapsed ? onToggleCollapse : undefined}
             role={collapsed ? "button" : undefined}
             tabIndex={collapsed ? 0 : undefined}
@@ -197,7 +197,7 @@ export default function DashboardSidebar({
               onClick={onToggleCollapse}
               title={toggleSidebarLabel}
               aria-label={toggleSidebarLabel}
-              className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+              className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
             >
               <PanelLeftClose className="h-5 w-5" />
             </button>
@@ -207,11 +207,11 @@ export default function DashboardSidebar({
           onClick={() => onNavClick("Manager")}
           title={collapsed ? t("dashboard.manager") : undefined}
           aria-label={t("dashboard.manager")}
-          className={`hover:bg-white/5 mt-3 w-full rounded-lg transition-colors hover:cursor-pointer min-h-[4.5rem] flex items-start gap-3 justify-start -mx-1 border-t border-navy-700 px-1 py-1 pt-3 ${
+          className={`hover:bg-white/5 mt-3 w-full rounded-lg transition-colors hover:cursor-pointer h-[4.5rem] flex items-center gap-3 justify-start -mx-1 border-t border-navy-700 px-1 py-1 pt-3 ${
             collapsed ? "text-gray-300" : "text-left"
           }`}
         >
-          <User className="h-5 w-5 shrink-0 mt-0.5" />
+          <User className="h-5 w-5 shrink-0" />
           <div
             className={`min-w-0 min-h-0 overflow-hidden transition-all duration-200 ${
               collapsed

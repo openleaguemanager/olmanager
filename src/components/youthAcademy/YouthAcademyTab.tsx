@@ -7,9 +7,10 @@ import { acquireAcademyTeam, getAcademyAcquisitionOptions, promoteAcademyPlayer 
 import type { GameStateData, PlayerData } from "../../store/gameStore";
 import { findAcademyTeamForParent, getTeamAcademyRoster } from "../../store/academySelectors";
 import type { AcademyAcquisitionOptionData } from "../../store/gameStore";
-import { Badge, Button, Card, CardBody, CardHeader, RoleBadge } from "../ui";
+import { Badge, Button, Card, CardBody, CardHeader } from "../ui";
 import { resolvePlayerLolRole } from "../../lib/lolIdentity";
 import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 interface YouthAcademyTabProps {
   gameState: GameStateData;
@@ -18,6 +19,14 @@ interface YouthAcademyTabProps {
 }
 
 type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
+
+const LOL_ROLE_ICON_URLS: Record<DraftRole, string> = {
+  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
+  JUNGLE: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
+  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
+  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
+  SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+};
 
 const ROLE_ORDER: Record<DraftRole, number> = {
   TOP: 1,
@@ -320,6 +329,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
+                  <th className="py-3 px-4 w-14"></th>
                   <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.player")}</th>
                   <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.pos")}</th>
                   <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.age")}</th>
@@ -333,6 +343,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
                 {youthPlayers.map((player) => {
+                  const photoUrl = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
                   return (
                     <tr
                       key={player.id}
@@ -340,14 +351,32 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
                       className="hover:bg-gray-50 dark:hover:bg-navy-700/50 cursor-pointer transition-colors"
                     >
                       <td className="py-2.5 px-4">
+                        {photoUrl ? (
+                          <img
+                            src={photoUrl}
+                            alt={player.match_name}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-xs font-heading font-bold text-gray-500 dark:text-gray-400">
+                            {player.match_name?.charAt(0)?.toUpperCase() ?? "?"}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-4">
                         <div>
                           <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{player.match_name || player.id}</p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">{player.full_name}</p>
                         </div>
                       </td>
-                        <td className="py-2.5 px-4">
-                          <RoleBadge role={player.role} size="sm" />
-                        </td>
+                      <td className="py-2.5 px-4">
+                        <img
+                          src={LOL_ROLE_ICON_URLS[player.position as DraftRole] ?? LOL_ROLE_ICON_URLS.TOP}
+                          alt={player.position}
+                          className="w-5 h-5 object-contain"
+                          title={player.position}
+                        />
+                      </td>
                       <td className="py-2.5 px-4 text-center text-sm text-gray-700 dark:text-gray-300">{player.age}</td>
                       <td className="py-2.5 px-4 text-center">
                         <span className="font-heading font-bold text-gray-800 dark:text-gray-100">{player.ovr}</span>
