@@ -491,8 +491,8 @@ export default function FinancesTab({
                 const cy = size / 2;
                 let cumPct = 0;
                 return (
-                  <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                    <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-[160px] h-auto shrink-0">
+                  <div className="flex flex-col items-center gap-4 pt-2 w-full">
+                    <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-[200px] h-auto">
                       <circle cx={cx} cy={cy} r={radius} fill="none" strokeWidth={strokeWidth} className="stroke-gray-200 dark:stroke-navy-600" />
                       {slices.map((slice, i) => {
                         const pct = slice.value / total;
@@ -514,7 +514,7 @@ export default function FinancesTab({
                         );
                       })}
                     </svg>
-                    <div className="flex flex-wrap justify-center sm:flex-col gap-x-4 gap-y-1.5 text-xs">
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs">
                       {slices.map((slice, i) => (
                         <div key={i} className="flex items-center gap-2">
                           <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: slice.color }} />
