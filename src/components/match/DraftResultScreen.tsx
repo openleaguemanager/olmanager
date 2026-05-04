@@ -260,18 +260,18 @@ export default function DraftResultScreen({
             const leftPct = `${(row.minute / Math.max(maxMinute, 1)) * 100}%`;
             return (
               <div key={idx} className="absolute top-0 flex flex-col items-center" style={{ left: leftPct, transform: 'translateX(-50%)', height: '100%' }}>
-                {/* Blue events - top */}
-                <div className="flex flex-col items-center justify-start flex-1 overflow-visible">
+                {/* Blue events - stack upward from center */}
+                <div className="flex flex-col items-center justify-end flex-1 overflow-visible">
                   {row.blue.map((event, eIdx) => (
-                    <span key={`blue-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mb-px ${eventPillClass(event)}`}>
+                    <span key={`blue-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mt-px ${eventPillClass(event)}`}>
                       <span>{event.label}</span>
                     </span>
                   ))}
                 </div>
-                {/* Red events + minute label - bottom */}
-                <div className="flex flex-col items-center justify-end flex-1 overflow-visible">
+                {/* Red events - stack downward from center */}
+                <div className="flex flex-col items-center justify-start flex-1 overflow-visible">
                   {row.red.map((event, eIdx) => (
-                    <span key={`red-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mt-px ${eventPillClass(event)}`}>
+                    <span key={`red-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mb-px ${eventPillClass(event)}`}>
                       <span>{event.label}</span>
                     </span>
                   ))}
