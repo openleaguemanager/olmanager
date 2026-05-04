@@ -97,7 +97,7 @@ Ve a **Settings > Secrets and variables > Actions** del repositorio y añade:
 | `TAURI_SIGNING_PRIVATE_KEY` | Contenido completo de la clave privada (el archivo `.key`) | Sí |
 | `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | Contraseña usada al generar la clave (si aplica) | No |
 
-**Importante:** Si no configuras estos secrets, el workflow compilará los instaladores pero **no los firmará**, por lo que el updater no funcionará (los bundles sin `.sig` no serán considerados válidos).
+**Importante:** las releases pensadas para auto-update deben tener estos secrets configurados. Sin una firma `.sig` válida, el workflow no puede generar un `latest.json` útil para `tauri-plugin-updater` y fallará antes de publicar el manifiesto del updater.
 
 ### 4. Cómo funciona el release
 
@@ -106,7 +106,9 @@ El flujo está automatizado en `.github/workflows/release.yml`:
 1. **Crear un tag** `v*.*.*` (ej. `v0.3.0`) o ejecutar el workflow manualmente.
 2. **Job `source-release`**: verifica que las versiones estén sincronizadas (`package.json`, `Cargo.toml`, `tauri.conf.json`) y crea el release en GitHub.
 3. **Job `build-tauri`**: compila los bundles para Windows, Linux y macOS. Si los secrets están configurados, firma cada bundle generando archivos `.sig`.
-4. **Job `generate-latest-json`**: descarga los artefactos de las 3 plataformas, extrae las firmas y ensambla `latest.json` subiéndolo al release.
+4. **Job `generate-latest-json`**: descarga los artefactos de las 3 plataformas, extrae las firmas y ensambla `latest.json` subiéndolo al release en `https://github.com/OpenLeagueManager/OLManager/releases/latest/download/latest.json`.
+
+El manifiesto apunta al artefacto que realmente firma Tauri para cada plataforma: `.msi`/`.exe` en Windows, `.AppImage` en Linux y `.app.tar.gz` en macOS. No cambies esas URLs a instaladores no emparejados con su `.sig`, porque el updater rechazará la descarga.
 
 El archivo `latest.json` tiene este formato:
 
@@ -241,7 +243,7 @@ Go to **Settings > Secrets and variables > Actions** in the repository and add:
 | `TAURI_SIGNING_PRIVATE_KEY` | Complete content of the private key file (the `.key` file) | Yes |
 | `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | Password used when generating the key (if applicable) | No |
 
-**Important:** If you don't configure these secrets, the workflow will compile the installers but **won't sign them**, so the updater won't work (bundles without `.sig` won't be considered valid).
+**Important:** releases intended for auto-update must have these secrets configured. Without a valid `.sig` signature, the workflow cannot generate a useful `latest.json` for `tauri-plugin-updater` and will fail before publishing the updater manifest.
 
 ### 4. How the Release Works
 
@@ -250,7 +252,9 @@ The flow is automated in `.github/workflows/release.yml`:
 1. **Create a tag** `v*.*.*` (e.g. `v0.3.0`) or run the workflow manually.
 2. **Job `source-release`**: verifies that versions are synchronized (`package.json`, `Cargo.toml`, `tauri.conf.json`) and creates the GitHub release.
 3. **Job `build-tauri`**: compiles bundles for Windows, Linux, and macOS. If secrets are configured, signs each bundle generating `.sig` files.
-4. **Job `generate-latest-json`**: downloads artifacts from all 3 platforms, extracts signatures, and assembles `latest.json` uploading it to the release.
+4. **Job `generate-latest-json`**: downloads artifacts from all 3 platforms, extracts signatures, and assembles `latest.json` uploading it to the release at `https://github.com/OpenLeagueManager/OLManager/releases/latest/download/latest.json`.
+
+The manifest points to the artifact Tauri actually signs for each platform: `.msi`/`.exe` on Windows, `.AppImage` on Linux, and `.app.tar.gz` on macOS. Do not change those URLs to installers that are not paired with their `.sig`, because the updater will reject the download.
 
 The `latest.json` file has this format:
 

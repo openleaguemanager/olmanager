@@ -133,10 +133,13 @@ jobs:
         include:
           - platform: windows
             os: windows-latest
+            tauri_target: windows-x86_64
           - platform: linux
             os: ubuntu-22.04
+            tauri_target: linux-x86_64
           - platform: macos
             os: macos-latest
+            tauri_target: darwin-aarch64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -176,17 +179,21 @@ jobs:
         env:
           VERSION: ${{ needs.source-release.outputs.version }}
           PLATFORM: ${{ matrix.platform }}
+          TAURI_TARGET: ${{ matrix.tauri_target }}
           TAG_NAME: ${{ needs.source-release.outputs.tag_name }}
         shell: python
         run: |
           import hashlib
           import json
           import pathlib
+          import re
           import shutil
           import sys
+          import urllib.parse
 
           version = "${{ env.VERSION }}"
           platform = "${{ env.PLATFORM }}"
+          tauri_target = "${{ env.TAURI_TARGET }}"
           tag_name = "${{ env.TAG_NAME }}"
           bundle_dir = pathlib.Path("src-tauri/target/release/bundle")
           out_dir = pathlib.Path("dist-bundle")
@@ -200,6 +207,7 @@ jobs:
               ".msi",
               ".rpm",
               ".sig",
+              ".tar.gz",
           )
           allowed_double_suffixes = (".app.tar.gz",)
 
@@ -230,26 +238,49 @@ jobs:
               )
           )
 
-          # Generate platform-info.json for latest.json assembly
-          target_map = {
-              "windows": "windows-x86_64",
-              "linux": "linux-x86_64",
-              "macos": "darwin-aarch64",
+          # Generate platform-info.json for latest.json assembly.  Tauri signs the
+          # actual updater artifact, so the manifest URL must point to the file
+          # that matches the .sig file, not to an arbitrary installer.
+          updater_priority = {
+              "windows": (".msi", ".exe"),
+              "linux": (".AppImage",),
+              "macos": (".app.tar.gz",),
           }
-          tauri_target = target_map.get(platform, f"{platform}-x86_64")
 
-          sig_files = [p for p in copied if p.suffix == ".sig"]
-          main_files = [p for p in copied if p.suffix in (".exe", ".msi", ".AppImage", ".deb", ".rpm", ".dmg")]
+          signed_candidates = []
+          for sig_file in copied:
+              if sig_file.suffix != ".sig":
+                  continue
+              bundle_name = re.sub(r"\.sig$", "", sig_file.name)
+              bundle_file = out_dir / bundle_name
+              if bundle_file.exists():
+                  signed_candidates.append((bundle_file, sig_file))
 
-          if sig_files and main_files:
-              sig_content = sig_files[0].read_text().strip()
-              main_file = main_files[0]
-              platform_info = {
-                  "platform": tauri_target,
-                  "signature": sig_content,
-                    "url": f"https://github.com/OpenLeagueManager/OLManager/releases/download/{tag_name}/{main_file.name.replace(' ', '.')}",
-              }
-              (out_dir / "platform-info.json").write_text(json.dumps(platform_info, indent=2))
+          def priority(candidate: tuple[pathlib.Path, pathlib.Path]) -> int:
+              bundle_file, _ = candidate
+              suffixes = updater_priority.get(platform, ())
+              for index, suffix in enumerate(suffixes):
+                  if bundle_file.name.endswith(suffix):
+                      return index
+              return len(suffixes)
+
+          signed_candidates.sort(key=priority)
+          if not signed_candidates:
+              print(
+                  "No signed updater bundle found. Configure TAURI_SIGNING_PRIVATE_KEY "
+                  "and TAURI_SIGNING_PRIVATE_KEY_PASSWORD if applicable.",
+                  file=sys.stderr,
+              )
+              sys.exit(1)
+
+          bundle_file, sig_file = signed_candidates[0]
+          asset_name = urllib.parse.quote(bundle_file.name)
+          platform_info = {
+              "platform": tauri_target,
+              "signature": sig_file.read_text().strip(),
+              "url": f"https://github.com/OpenLeagueManager/OLManager/releases/download/{tag_name}/{asset_name}",
+          }
+          (out_dir / "platform-info.json").write_text(json.dumps(platform_info, indent=2))
 
       - name: Upload bundle artifacts
         uses: actions/upload-artifact@v4
@@ -263,7 +294,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ needs.source-release.outputs.tag_name }}
         shell: bash
-        run: gh release upload "$TAG_NAME" dist-bundle/* --clobber
+        run: |
+          for asset in dist-bundle/*; do
+            if [ "$(basename "$asset")" = "platform-info.json" ]; then
+              continue
+            fi
+            gh release upload "$TAG_NAME" "$asset" --clobber
+          done
 
   generate-latest-json:
     name: generate-latest-json
@@ -301,7 +338,7 @@ jobs:
               }
 
           if not platforms:
-              print("No platform-info.json files found!", file=sys.stderr)
+              print("No platform-info.json files found; signed updater artifacts are required.", file=sys.stderr)
               sys.exit(1)
 
           # Extract release notes from CHANGELOG.md if available in any artifact
