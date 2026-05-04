@@ -252,7 +252,7 @@ export default function DraftResultScreen({
     const maxMinute = rows.length > 0 ? rows[rows.length - 1].minute : 1;
     const rangeStart = Math.max(minMinute - 1, 0);
     const rangeMinute = Math.max(maxMinute - rangeStart, 1);
-    const edgePad = rangeMinute * 0.1;
+    const edgePad = rangeMinute * 0.06;
     const effectiveStart = rangeStart - edgePad;
     const effectiveRange = rangeMinute + 2 * edgePad;
     return (
