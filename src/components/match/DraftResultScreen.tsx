@@ -252,14 +252,17 @@ export default function DraftResultScreen({
     const maxMinute = rows.length > 0 ? rows[rows.length - 1].minute : 1;
     const rangeStart = Math.max(minMinute - 1, 0);
     const rangeMinute = Math.max(maxMinute - rangeStart, 1);
+    const edgePad = rangeMinute * 0.1;
+    const effectiveStart = rangeStart - edgePad;
+    const effectiveRange = rangeMinute + 2 * edgePad;
     return (
-      <div className="relative overflow-x-auto overflow-y-hidden scrollbar-draft h-full">
+      <div className="relative overflow-x-hidden overflow-y-hidden h-full">
         <div className="flex flex-col h-full">
           {/* Events area with center line */}
           <div className="relative flex-1 min-h-0 py-1">
             <div className="absolute left-0 right-0 top-1/2"><div className="h-px bg-white/10" /></div>
             {rows.map((row, idx) => {
-              const leftPct = `${((row.minute - rangeStart) / rangeMinute) * 100}%`;
+              const leftPct = `${((row.minute - effectiveStart) / effectiveRange) * 100}%`;
               return (
                 <div key={idx} className="absolute top-0 flex flex-col items-center" style={{ left: leftPct, transform: 'translateX(-50%)', height: '100%' }}>
                   <div className="flex flex-col items-center justify-end flex-1 overflow-visible pb-2">
@@ -286,7 +289,7 @@ export default function DraftResultScreen({
               <span
                 key={`marker-${idx}`}
                 className="absolute text-[9px] font-bold text-white/30 whitespace-nowrap -translate-x-1/2"
-                style={{ left: `${((row.minute - rangeStart) / rangeMinute) * 100}%` }}
+                style={{ left: `${((row.minute - effectiveStart) / effectiveRange) * 100}%` }}
               >
                 {row.minute}m
               </span>
