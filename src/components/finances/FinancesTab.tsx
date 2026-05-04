@@ -803,7 +803,7 @@ export default function FinancesTab({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
-                  <th className="py-3 px-5 w-12" />
+                  <th className="py-3 px-5 w-[72px]" />
                   <th
                     className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
                     onClick={() => toggleSort("name")}
