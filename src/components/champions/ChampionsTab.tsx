@@ -244,7 +244,6 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
   const { t } = useTranslation();
   const [submittingKey, setSubmittingKey] = useState<string | null>(null);
   const [metaRoleFilter, setMetaRoleFilter] = useState<"ALL" | UiRole>("ALL");
-  const [championSearch, setChampionSearch] = useState("");
   const managerTeamId = gameState.manager.team_id;
   const patch = gameState.champion_patch;
   const staffEffects = getLolStaffEffectsForTeam(gameState, managerTeamId);
@@ -373,18 +372,15 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
 
   const tierRows = useMemo(() => {
     const rows: Record<string, typeof discoveredMeta> = { S: [], A: [], B: [], C: [], D: [] };
-    const query = championSearch.trim().toLowerCase();
-    discoveredMeta
-      .filter((entry) => !query || championDisplayName(entry.champion_id).toLowerCase().includes(query))
-      .forEach((entry) => {
-        const tier = (entry.tier || "C").toUpperCase();
-        if (rows[tier]) rows[tier].push(entry);
-      });
+    discoveredMeta.forEach((entry) => {
+      const tier = (entry.tier || "C").toUpperCase();
+      if (rows[tier]) rows[tier].push(entry);
+    });
     TIER_ORDER.forEach((tier) => {
       rows[tier].sort((a, b) => a.champion_id.localeCompare(b.champion_id));
     });
     return rows;
-  }, [discoveredMeta, championSearch]);
+  }, [discoveredMeta]);
 
   const discoveredPct = useMemo(() => {
     const totalChampionKeys = new Set((patch?.hidden_meta ?? []).map((entry) => normalizeKey(entry.champion_id)));
@@ -450,39 +446,25 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
         </div>
 
         <div className="mt-5 rounded-xl border border-navy-600 bg-navy-900/60 p-4">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm text-yellow-300">
               <Sparkles className="h-4 w-4" />
               <span className="font-heading uppercase tracking-wider">{t("champions.metaTitle", "Meta del parche")}</span>
             </div>
-          </div>
-
-          {/* Search + Filter bar */}
-          <div className="flex flex-wrap gap-3 mb-4 items-center">
-            <div className="relative flex-1 min-w-[180px] max-w-xs">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={championSearch}
-                onChange={(e) => setChampionSearch(e.target.value)}
-                placeholder={t("champions.searchPlaceholder", "Buscar campeón...")}
-                className="w-full pl-9 pr-3 py-2 rounded-lg bg-navy-800 border border-navy-600 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
-              />
-            </div>
-            <div className="flex items-center gap-1 rounded-lg border border-navy-600 bg-navy-800/50 p-1">
+            <div className="flex items-center gap-1 rounded-lg border border-navy-600 bg-black/20 p-1">
               <button
                 type="button"
                 onClick={() => setMetaRoleFilter("ALL")}
-                className={`rounded-md px-2.5 py-1.5 text-[11px] font-heading uppercase tracking-wider transition-all ${metaRoleFilter === "ALL" ? "bg-primary-500 text-white shadow-sm" : "text-gray-400 hover:text-gray-200"}`}
+                className={`rounded-md px-2 py-1 text-[11px] font-heading ${metaRoleFilter === "ALL" ? "bg-yellow-400/20 text-yellow-200" : "text-gray-300"}`}
               >
-                {t("champions.allRoles", "Todos")}
+                ALL
               </button>
               {(Object.keys(ROLE_ORDER) as UiRole[]).map((role) => (
                 <button
                   key={role}
                   type="button"
                   onClick={() => setMetaRoleFilter(role)}
-                  className={`rounded-md p-1.5 transition-all ${metaRoleFilter === role ? "bg-primary-500/20 ring-1 ring-primary-500/50" : "hover:bg-white/5"}`}
+                  className={`rounded-md p-1 ${metaRoleFilter === role ? "bg-yellow-400/20" : "hover:bg-white/5"}`}
                   title={role}
                 >
                   <img src={ROLE_ICON_URLS[role]} alt={role} className="h-4 w-4" />
