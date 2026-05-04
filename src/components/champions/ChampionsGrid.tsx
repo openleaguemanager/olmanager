@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUp, ArrowDown } from "lucide-react";
+import { Search, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter } from "lucide-react";
 import type { ChampionData } from "../../store/types";
 import { Card, CardBody } from "../ui";
 
@@ -12,6 +12,7 @@ interface ChampionsGridProps {
 type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
 const LOL_ROLE_ORDER: DraftRole[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
+const PAGE_SIZE = 30;
 
 const LOL_ROLE_ICON_URLS: Record<DraftRole, string> = {
   TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
@@ -48,6 +49,7 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"ALL" | DraftRole>("ALL");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = useState(0);
 
   const toggleSort = () => setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
 
@@ -66,6 +68,12 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
       .sort((a, b) => sortDir === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
   }, [champions, search, roleFilter, sortDir]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const pageStart = safePage * PAGE_SIZE;
+  const pageEnd = Math.min(pageStart + PAGE_SIZE, filtered.length);
+  const paginated = filtered.slice(pageStart, pageEnd);
+
   const handleClick = useCallback(
     (championKey: string) => onChampionClick(championKey),
     [onChampionClick],
@@ -74,7 +82,7 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
   if (!champions || champions.length === 0) return null;
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {/* Search + Filter bar */}
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[180px] max-w-xs">
@@ -82,14 +90,14 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
             placeholder={t("champions.searchPlaceholder", "Buscar campeón...")}
             className="w-full pl-9 pr-3 py-2 rounded-lg bg-white dark:bg-navy-800 border border-gray-200 dark:border-navy-600 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
           />
         </div>
         <div className="flex gap-1.5">
           <button
-            onClick={() => setRoleFilter("ALL")}
+            onClick={() => { setRoleFilter("ALL"); setPage(0); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${roleFilter === "ALL" ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
           >
             <img src="/role-icons/allroles.png" alt="All" className="h-3.5 w-3.5" />
@@ -97,7 +105,7 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
           {LOL_ROLE_ORDER.map((role) => (
             <button
               key={role}
-              onClick={() => setRoleFilter(roleFilter === role ? "ALL" : role)}
+              onClick={() => { setRoleFilter(roleFilter === role ? "ALL" : role); setPage(0); }}
               className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${roleFilter === role ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
             >
               <img src={LOL_ROLE_ICON_URLS[role]} alt={role} className="h-3.5 w-3.5" />
@@ -105,6 +113,12 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
           ))}
         </div>
       </div>
+
+      {/* Results count */}
+      <p className="text-xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+        <Filter className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+        {filtered.length} {t("champions.results", "campeón(es) encontrado(s)")}
+      </p>
 
       {/* Table */}
       <Card>
@@ -129,7 +143,7 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
-                {filtered.map((champion) => {
+                {paginated.map((champion) => {
                   const roles = parseRoles(champion.roles_json);
                   return (
                     <tr
@@ -177,6 +191,46 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-navy-600">
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-heading">
+              {pageStart + 1}–{pageEnd} {t("champions.of", "de")} {filtered.length}
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                disabled={safePage === 0}
+                onClick={() => setPage(0)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronsLeft className="w-4 h-4" />
+              </button>
+              <button
+                disabled={safePage === 0}
+                onClick={() => setPage(safePage - 1)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="px-3 py-1 text-xs font-heading font-bold text-gray-600 dark:text-gray-300">
+                {safePage + 1} / {totalPages}
+              </span>
+              <button
+                disabled={safePage >= totalPages - 1}
+                onClick={() => setPage(safePage + 1)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <button
+                disabled={safePage >= totalPages - 1}
+                onClick={() => setPage(totalPages - 1)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+              >
+                <ChevronsRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </CardBody>
       </Card>
