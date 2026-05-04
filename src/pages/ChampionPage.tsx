@@ -115,7 +115,7 @@ function MobileQuickStat({
 
 export default function ChampionPage({ championKey, onClose }: ChampionPageProps) {
   const { t } = useTranslation();
-  const [showFullImage, setShowFullImage] = useState(false);
+  const [, setForceUpdate] = useState(0);
 
   // Get champions from game store - stable selector
   const champions = useGameStore((state) => state.gameState?.champions);
@@ -205,11 +205,9 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
                 <div
                   className="absolute inset-0 bg-cover opacity-100"
                   style={{
-                    backgroundImage: `url(${showFullImage ? splashUrl : tileUrl})`,
+                    backgroundImage: `url(${splashUrl})`,
                     backgroundPosition: "center 12%",
-                    cursor: "pointer",
                   }}
-                  onClick={() => setShowFullImage(!showFullImage)}
                 />
                 <div className="absolute inset-0 bg-linear-to-r from-black/88 via-black/28 to-transparent" />
               </>
