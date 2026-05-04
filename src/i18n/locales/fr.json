@@ -253,7 +253,9 @@
     "high": "Élevé",
     "moderate": "Modéré",
     "low": "Faible",
-    "discoveryProgress": "Progression de découverte"
+    "discoveryProgress": "Progression de découverte",
+    "delegating": "Déléguant...",
+    "delegateToCoach": "Déléguer à l'Assistant Coach"
   },
   "continueMenu": {
     "goToField": "Aller sur le Terrain",

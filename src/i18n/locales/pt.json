@@ -265,7 +265,9 @@
     "high": "Alto",
     "moderate": "Moderado",
     "low": "Baixo",
-    "discoveryProgress": "Progresso de descoberta"
+    "discoveryProgress": "Progresso de descoberta",
+    "delegating": "Delegando...",
+    "delegateToCoach": "Delegar ao coach assistente"
   },
   "exitConfirm": {
     "title": "Sair para o Menu Principal?",

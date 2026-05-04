@@ -265,7 +265,9 @@
     "high": "Alta",
     "moderate": "Moderada",
     "low": "Baja",
-    "discoveryProgress": "Progreso de descubrimiento"
+    "discoveryProgress": "Progreso de descubrimiento",
+    "delegating": "Delegando...",
+    "delegateToCoach": "Delegar al assistant coach"
   },
   "closeConfirm": {
     "title": "Cambios sin guardar",

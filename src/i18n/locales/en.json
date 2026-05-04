@@ -265,7 +265,9 @@
     "high": "High",
     "moderate": "Moderate",
     "low": "Low",
-    "discoveryProgress": "Discovery progress"
+    "discoveryProgress": "Discovery progress",
+    "delegating": "Delegating...",
+    "delegateToCoach": "Delegate to Assistant Coach"
   },
   "exitConfirm": {
     "title": "Exit to Main Menu?",
