@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GraduationCap, Sparkles, Star, TrendingUp, Users } from "lucide-react";
+import { GraduationCap, Sparkles, Star, TrendingUp, Users, ArrowUpDown, ArrowUp, ArrowDown, Info } from "lucide-react";
 
 import { calcAge } from "../../lib/helpers";
 import { acquireAcademyTeam, getAcademyAcquisitionOptions, promoteAcademyPlayer } from "../../services/academyService";
@@ -123,6 +123,44 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
   const highPotential = revealedPotentials.filter((value) => value >= 75).length;
   const youthCoach = gameState.staff.filter((staff) => staff.team_id === myTeam?.id && staff.specialization === "Youth");
 
+  type SortKey = "name" | "pos" | "age" | "ovr" | "potential" | "condition";
+  const [sortKey, setSortKey] = useState<SortKey>("pos");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir(key === "ovr" || key === "potential" || key === "condition" || key === "age" ? "desc" : "asc");
+    }
+  };
+
+  const sortedPlayers = useMemo(() => {
+    return [...youthPlayers].sort((a, b) => {
+      const dir = sortDir === "asc" ? 1 : -1;
+      switch (sortKey) {
+        case "name":
+          return dir * (a.match_name || a.full_name).localeCompare(b.match_name || b.full_name);
+        case "pos":
+          return dir * ((ROLE_ORDER[a.role] ?? 99) - (ROLE_ORDER[b.role] ?? 99));
+        case "age":
+          return dir * (a.age - b.age);
+        case "ovr":
+          return dir * (a.ovr - b.ovr);
+        case "potential": {
+          const pa = a.potential ?? -1;
+          const pb = b.potential ?? -1;
+          return dir * (pa - pb);
+        }
+        case "condition":
+          return dir * ((a.condition ?? 0) - (b.condition ?? 0));
+        default:
+          return 0;
+      }
+    });
+  }, [youthPlayers, sortKey, sortDir]);
+
   if (!myTeam) {
     return (
       <div className="max-w-5xl mx-auto flex flex-col gap-5">
@@ -183,7 +221,10 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <div className="text-center">
               <Star className="w-5 h-5 text-accent-400 mx-auto mb-1" />
               <p className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">{avgOvr}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              <div className="w-full max-w-[120px] mx-auto mt-1.5 h-1.5 rounded-full bg-gray-200 dark:bg-navy-600 overflow-hidden">
+                <div className="h-full rounded-full bg-accent-400" style={{ width: `${avgOvr}%` }} />
+              </div>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider mt-1">
                 {t("youthAcademy.avgOvr")}
               </p>
             </div>
@@ -193,8 +234,19 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
           <CardBody>
             <div className="text-center">
               <TrendingUp className="w-5 h-5 text-green-500 mx-auto mb-1" />
-              <p className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">{avgPotential ?? "??"}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              <p className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">
+                {avgPotential ?? (
+                  <span className="inline-flex items-center gap-1" title={t("youthAcademy.potentialHiddenHint", "Requiere investigación para revelarse")}>
+                    ?? <Info className="w-3.5 h-3.5 text-gray-400 inline" />
+                  </span>
+                )}
+              </p>
+              {avgPotential != null && (
+                <div className="w-full max-w-[120px] mx-auto mt-1.5 h-1.5 rounded-full bg-gray-200 dark:bg-navy-600 overflow-hidden">
+                  <div className="h-full rounded-full bg-green-500" style={{ width: `${avgPotential}%` }} />
+                </div>
+              )}
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider mt-1">
                 {t("youthAcademy.avgPotential")}
               </p>
             </div>
@@ -205,7 +257,12 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <div className="text-center">
               <Sparkles className="w-5 h-5 text-accent-400 mx-auto mb-1" />
               <p className="font-heading font-bold text-2xl text-accent-500">{highPotential}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              {highPotential > 0 && (
+                <span className="inline-flex items-center font-bold font-heading uppercase tracking-wider rounded-md bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 px-1.5 py-0.5 text-[10px]">
+                  {t("youthAcademy.highPotentialBadge", "Talento")}
+                </span>
+              )}
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider mt-1">
                 {t("youthAcademy.highPotential")}
               </p>
             </div>
@@ -343,20 +400,80 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
-                  <th className="py-3 px-4 w-14"></th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.player")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.pos")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.age")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.ovr")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.potential")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.condition")}</th>
+                  <th className="py-3 px-4 w-14" />
+                  <th
+                    className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                    onClick={() => toggleSort("name")}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {t("youthAcademy.player")}
+                      {sortKey === "name" ? (
+                        sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      ) : <ArrowUpDown className="w-3 h-3 opacity-40" />}
+                    </span>
+                  </th>
+                  <th
+                    className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                    onClick={() => toggleSort("pos")}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {t("youthAcademy.pos")}
+                      {sortKey === "pos" ? (
+                        sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      ) : <ArrowUpDown className="w-3 h-3 opacity-40" />}
+                    </span>
+                  </th>
+                  <th
+                    className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                    onClick={() => toggleSort("age")}
+                  >
+                    <span className="inline-flex items-center gap-1 justify-center">
+                      {t("youthAcademy.age")}
+                      {sortKey === "age" ? (
+                        sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      ) : <ArrowUpDown className="w-3 h-3 opacity-40" />}
+                    </span>
+                  </th>
+                  <th
+                    className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                    onClick={() => toggleSort("ovr")}
+                  >
+                    <span className="inline-flex items-center gap-1 justify-center">
+                      {t("youthAcademy.ovr")}
+                      {sortKey === "ovr" ? (
+                        sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      ) : <ArrowUpDown className="w-3 h-3 opacity-40" />}
+                    </span>
+                  </th>
+                  <th
+                    className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                    onClick={() => toggleSort("potential")}
+                  >
+                    <span className="inline-flex items-center gap-1 justify-center">
+                      {t("youthAcademy.potential")}
+                      {sortKey === "potential" ? (
+                        sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      ) : <ArrowUpDown className="w-3 h-3 opacity-40" />}
+                    </span>
+                  </th>
+                  <th
+                    className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center cursor-pointer select-none hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+                    onClick={() => toggleSort("condition")}
+                  >
+                    <span className="inline-flex items-center gap-1 justify-center">
+                      {t("youthAcademy.condition")}
+                      {sortKey === "condition" ? (
+                        sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      ) : <ArrowUpDown className="w-3 h-3 opacity-40" />}
+                    </span>
+                  </th>
                   <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
                     {t("common.actions")}
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
-                {youthPlayers.map((player) => {
+                {sortedPlayers.map((player) => {
                   const photoUrl = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
                   return (
                     <tr
