@@ -63,12 +63,12 @@ export default function PlayerProfileAttributesCard({
                                             )}
                                         </div>
                                     ))}
-                                    <div className="pt-1 border-t border-gray-100 dark:border-navy-600 flex items-center gap-2">
-                                        <span className="text-xs text-gray-500 dark:text-gray-400 w-20 font-semibold">
+                                    <div className="pt-1.5 mt-1 border-t-2 border-gray-200 dark:border-navy-500 flex items-center gap-2 rounded bg-gray-50 dark:bg-navy-800/40 px-1.5 -mx-1.5">
+                                        <span className="text-xs text-gray-600 dark:text-gray-300 w-20 font-bold font-heading uppercase tracking-wider">
                                             {averageLabel}
                                         </span>
                                         <span className="flex-1" />
-                                        <span className="font-heading font-bold text-xs w-7 text-right tabular-nums text-gray-700 dark:text-gray-200">
+                                        <span className="font-heading font-bold text-xs w-7 text-right tabular-nums text-gray-800 dark:text-gray-100">
                                             {group.average ?? "??"}
                                         </span>
                                     </div>
