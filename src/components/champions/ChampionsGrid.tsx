@@ -161,10 +161,10 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
                       </td>
                       <td className="py-2.5 px-4">
                         <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                          {champion.name}
+                          {champion.champion_key}
                         </p>
                         <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                          {champion.champion_key}
+                          {champion.name}
                         </p>
                       </td>
                       <td className="py-2.5 px-4">
