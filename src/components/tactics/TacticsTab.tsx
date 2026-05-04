@@ -456,23 +456,23 @@ export default function TacticsTab({
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-5">
-      <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 transition-colors hover:bg-gray-50 dark:border-navy-600 dark:bg-navy-700 dark:text-gray-300 dark:hover:bg-navy-600 [&::-webkit-details-marker]:hidden">
-          <span className="flex-1">{t("tactics.lol.gamePlan")}</span>
-          <svg
-            className="h-4 w-4 text-gray-400 transition-transform group-open:rotate-180"
-            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </summary>
-        <div className="mt-2 rounded-xl border border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-700 dark:border-navy-600 dark:bg-navy-700 dark:text-gray-200">
-          {t("tactics.lol.gamePlanDescription")}
-        </div>
-      </details>
-
       <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[1.6fr_1fr]">
         <div className="flex flex-col gap-4">
+          <details className="group">
+            <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 transition-colors hover:bg-gray-50 dark:border-navy-600 dark:bg-navy-700 dark:text-gray-300 dark:hover:bg-navy-600 [&::-webkit-details-marker]:hidden">
+              <span className="flex-1">{t("tactics.lol.gamePlan")}</span>
+              <svg
+                className="h-4 w-4 text-gray-400 transition-transform group-open:rotate-180"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+            <div className="mt-2 rounded-xl border border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-700 dark:border-navy-600 dark:bg-navy-700 dark:text-gray-200">
+              {t("tactics.lol.gamePlanDescription")}
+            </div>
+          </details>
+
           {/* Mobile coherence summary — hidden on desktop */}
           <Card accent="primary" className="xl:hidden">
             <CardHeader>{t("tactics.lol.impactAndCoherence")}</CardHeader>
