@@ -31,18 +31,27 @@ OLManager es un manager de esports para League of Legends diseñado para simular
 
 La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis.md` para el análisis técnico original.
 
-| Issue resuelto | PR | Estado |
-|---------------|-----|--------|
-| Security hardening (path traversal, CSP, capabilities) | #101 | ✅ |
-| StateManager unification (4 Mutex → 1 Session) | #101 | ✅ |
-| Break god files (avatar.rs extraído a game_setup/) | #101 | ✅ |
-| CI/CD audit gates (cargo audit, npm audit, tests blocking) | #101 | ✅ |
-| Legacy tests (123 db tests pass, legacy marcados) | #101 | ✅ |
-| Input validation (validator + Zod) | #101 | ✅ |
-| AppError enum (thiserror + códigos) | #101 | ✅ |
-| Architecture docs (ADRs + Mermaid C4) | #101 | ✅ |
-| Unwrap audit (production unwraps → expect) | #103 | ✅ |
-| Cross-stack types (ts-rs derives en 100+ tipos) | #104 | ✅ |
+| Issue resuelto | PR(split) | Estado |
+|---------------|-----------|--------|
+| Security hardening (path traversal, CSP, capabilities) | #121 (#125) | ✅ |
+| StateManager unification (4 Mutex → 1 Session) | #121 (#125) | ✅ |
+| Break god files (avatar.rs extraído a game_setup/) | #121 (#125) | ✅ |
+| CI/CD audit gates (cargo audit, npm audit, tests blocking) | #121 (#125) | ✅ |
+| Legacy tests (123 db tests pass, legacy marcados) | #121 (#125) | ✅ |
+| Input validation (validator + Zod) | #121 (#125) | ✅ |
+| AppError enum (thiserror + códigos) | #121 (#125) | ✅ |
+| Architecture docs (ADRs + Mermaid C4) | #121 (#125) | ✅ |
+| Cross-stack types (ts-rs derives en 100+ tipos) | #121 (#125) | ✅ |
+| Champions catalog (#64) | #121 (#125) | ✅ |
+| Database defutbolization + domain cleanup (#85) | #122 (#126) | ✅ |
+| Schema cleanup migrations V37-V42 (#106) | #122 (#126) | ✅ |
+| Remove football fields from PlayerSeasonStats (#114) | #122 (#126) | ✅ |
+| Engine cleanup: remove football terminology (#109) | #123 (#127) | ✅ |
+| Remove home_goals/away_goals from MatchReport (#111) | #123 (#127) | ✅ |
+| Replace legacy football engine with simulate_lol (#113) | #123 (#127) | ✅ |
+| SetPieceTakers → TeamRoles (#112) | #124 (#128) | ✅ |
+| Frontend position→role migration | #124 (#128) | ✅ |
+| Unwrap audit (production unwraps → expect) | #124 (#128) | ✅ |
 
 ### Deuda Técnica Remanente (post-Fase 1)
 
@@ -51,6 +60,7 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - ⚠️ **JSON-en-TEXT**: modelo de datos en SQLite (6 campos en players)
 - ⚠️ **100+ warnings de clippy**: pre-existing en workspace, no blocking en CI
 - ⚠️ **19 RustSec advisories**: pre-existing, cargo audit non-blocking
+- ⚠️ **Football remnants cleanup**: `Position` enum (18 variants) en `domain/src/stats.rs`, `TraitContext::Foul`/`Goalkeeping` en `engine/shared.rs`, `fouls_committed` en legacy mirror de `stats_repo.rs`, y `"Draw"` handling legacy en `match_messages.rs` — todo backward compat que se puede eliminar en v0.3
 
 ---
 
@@ -70,14 +80,14 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 - ✅ **Tests legacy**: rotos marcados como `#[ignore]` con tracking issues, `continue-on-error` eliminado
 - ✅ **StateManager**: unificado en single `Mutex<Session>` con `with_session()`/`with_session_mut()`
 
-#### PRs de Fase 1
+#### PRs de Fase 1 (splits)
 
-| PR | Descripción |
-|----|-------------|
-| [#101](https://github.com/OpenLeagueManager/OLManager/pull/101) | Principal: security, StateManager, CI/CD, tests, validation, AppError, docs |
-| [#102](https://github.com/OpenLeagueManager/OLManager/pull/102) | ts-rs scaffold inicial |
-| [#103](https://github.com/OpenLeagueManager/OLManager/pull/103) | Unwrap audit (production → expect) |
-| [#104](https://github.com/OpenLeagueManager/OLManager/pull/104) | ts-rs derives en 100+ tipos (completa #93) |
+| PR | Issue | Descripción |
+|----|-------|-------------|
+| [#121](https://github.com/OpenLeagueManager/OLManager/pull/121) | [#125](https://github.com/OpenLeagueManager/OLManager/issues/125) | Champions, ts-rs, CI/CD, security, docs, StateManager, validation, AppError |
+| [#122](https://github.com/OpenLeagueManager/OLManager/pull/122) | [#126](https://github.com/OpenLeagueManager/OLManager/issues/126) | Domain cleanup, DB migrations V33-V42, football_nation removal, ofm_core adaptation |
+| [#123](https://github.com/OpenLeagueManager/OLManager/pull/123) | [#127](https://github.com/OpenLeagueManager/OLManager/issues/127) | Engine migration: football→LoL events, MatchConfig, simulate_lol |
+| [#124](https://github.com/OpenLeagueManager/OLManager/pull/124) | [#128](https://github.com/OpenLeagueManager/OLManager/issues/128) | Frontend position→role, SetPieceTakers→TeamRoles, fixes, unwrap audit |
 
 ---
 
@@ -90,6 +100,7 @@ La Fase 1 de hardening y foundation está completa. Ver `docs/proposals/analisis
 #### 🎯 Hitos
 
 - [ ] 🔲 **Fase 1 cleanup**: completar items que quedaron pendientes
+- [ ] 🔲 **Football remnants purge**: eliminar `Position` enum legacy, `TraitContext::Foul`/`Goalkeeping`, `fouls_committed` de stats_repo legacy mirror, y `"Draw"` handling en match_messages — dejar solo backward compat estrictamente necesario
 - [ ] 🔲 **Motor de simulación**: lol_sim_v2 compilando + live_match funcional
 - [ ] 🔲 **AppError + i18n**: migración completa de todos los comandos
 - [ ] 🔲 **Sistema de temporada completa**: Winter/Spring/Summer/Season Finals
