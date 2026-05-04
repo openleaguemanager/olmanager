@@ -256,22 +256,22 @@ export default function DraftResultScreen({
       <div className="relative overflow-x-auto overflow-y-hidden scrollbar-draft h-full">
         <div className="flex flex-col h-full">
           {/* Events area with center line */}
-          <div className="relative flex-1 min-h-0">
+          <div className="relative flex-1 min-h-0 py-1">
             <div className="absolute left-0 right-0 top-1/2"><div className="h-px bg-white/10" /></div>
             {rows.map((row, idx) => {
               const leftPct = `${((row.minute - rangeStart) / rangeMinute) * 100}%`;
               return (
                 <div key={idx} className="absolute top-0 flex flex-col items-center" style={{ left: leftPct, transform: 'translateX(-50%)', height: '100%' }}>
-                  <div className="flex flex-col items-center justify-end flex-1 overflow-visible">
+                  <div className="flex flex-col items-center justify-end flex-1 overflow-visible pb-2">
                     {row.blue.map((event, eIdx) => (
-                      <span key={`blue-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mt-px ${eventPillClass(event)}`}>
-                        <span>{event.label}</span>
-                      </span>
+                    <span key={`blue-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mt-1 ${eventPillClass(event)}`}>
+                      <span>{event.label}</span>
+                    </span>
                     ))}
                   </div>
-                  <div className="flex flex-col items-center justify-start flex-1 overflow-visible">
+                  <div className="flex flex-col items-center justify-start flex-1 overflow-visible pt-2">
                     {row.red.map((event, eIdx) => (
-                      <span key={`red-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mb-px ${eventPillClass(event)}`}>
+                      <span key={`red-${eIdx}`} className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] whitespace-nowrap mb-1 ${eventPillClass(event)}`}>
                         <span>{event.label}</span>
                       </span>
                     ))}
