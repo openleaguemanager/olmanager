@@ -504,77 +504,80 @@ export default function TacticsTab({
             </CardBody>
           </Card>
 
-          <Section<GameTiming>
-            title={t("tactics.lol.sections.gameTiming", "Game timing")}
-            value={tactics.game_timing}
-            onChange={(value) =>
-              void persist({
-                ...tactics,
-                game_timing: value,
-              })
-            }
-            options={gameTimingOptions}
-          />
+          {/* ── Macro ── */}
+          <div className="relative">
+            <div className="absolute -top-2 left-4 px-2 bg-white dark:bg-navy-700 text-[10px] font-heading font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+              {t("tactics.lol.groupMacro", "Macro")}
+            </div>
+            <div className="border-t border-gray-200 dark:border-navy-600 pt-4 space-y-4">
+              <Section<GameTiming>
+                title={t("tactics.lol.sections.gameTiming", "Game timing")}
+                value={tactics.game_timing}
+                onChange={(value) =>
+                  void persist({ ...tactics, game_timing: value })
+                }
+                options={gameTimingOptions}
+              />
+              <Section<JunglePathing>
+                title={t("tactics.lol.sections.junglePathing", "Jungle pathing")}
+                value={tactics.jungle_pathing}
+                onChange={(value) =>
+                  void persist({ ...tactics, jungle_pathing: value })
+                }
+                options={junglePathingOptions}
+              />
+            </div>
+          </div>
 
-          <Section<StrongSide>
-            title={t("tactics.lol.sections.strongSide", "Strong side")}
-            value={tactics.strong_side}
-            onChange={(value) =>
-              void persist({
-                ...tactics,
-                strong_side: value,
-              })
-            }
-            options={strongSideOptions}
-          />
+          {/* ── Recursos ── */}
+          <div className="relative">
+            <div className="absolute -top-2 left-4 px-2 bg-white dark:bg-navy-700 text-[10px] font-heading font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+              {t("tactics.lol.groupResources", "Recursos")}
+            </div>
+            <div className="border-t border-gray-200 dark:border-navy-600 pt-4 space-y-4">
+              <Section<StrongSide>
+                title={t("tactics.lol.sections.strongSide", "Strong side")}
+                value={tactics.strong_side}
+                onChange={(value) =>
+                  void persist({ ...tactics, strong_side: value })
+                }
+                options={strongSideOptions}
+              />
+              <Section<JungleStyle>
+                title={t("tactics.lol.sections.jungleStyle", "Jungle style")}
+                value={tactics.jungle_style}
+                onChange={(value) =>
+                  void persist({ ...tactics, jungle_style: value })
+                }
+                options={jungleStyleOptions}
+              />
+            </div>
+          </div>
 
-          <Section<JungleStyle>
-            title={t("tactics.lol.sections.jungleStyle", "Jungle style")}
-            value={tactics.jungle_style}
-            onChange={(value) =>
-              void persist({
-                ...tactics,
-                jungle_style: value,
-              })
-            }
-            options={jungleStyleOptions}
-          />
-
-          <Section<JunglePathing>
-            title={t("tactics.lol.sections.junglePathing", "Jungle pathing")}
-            value={tactics.jungle_pathing}
-            onChange={(value) =>
-              void persist({
-                ...tactics,
-                jungle_pathing: value,
-              })
-            }
-            options={junglePathingOptions}
-          />
-
-          <Section<FightPlan>
-            title={t("tactics.lol.sections.fightPlan", "Fight plan")}
-            value={tactics.fight_plan}
-            onChange={(value) =>
-              void persist({
-                ...tactics,
-                fight_plan: value,
-              })
-            }
-            options={fightPlanOptions}
-          />
-
-          <Section<SupportRoaming>
-            title={t("tactics.lol.sections.supportRoaming", "Support roaming")}
-            value={tactics.support_roaming}
-            onChange={(value) =>
-              void persist({
-                ...tactics,
-                support_roaming: value,
-              })
-            }
-            options={supportRoamingOptions}
-          />
+          {/* ── Peleas ── */}
+          <div className="relative">
+            <div className="absolute -top-2 left-4 px-2 bg-white dark:bg-navy-700 text-[10px] font-heading font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+              {t("tactics.lol.groupFights", "Peleas")}
+            </div>
+            <div className="border-t border-gray-200 dark:border-navy-600 pt-4 space-y-4">
+              <Section<FightPlan>
+                title={t("tactics.lol.sections.fightPlan", "Fight plan")}
+                value={tactics.fight_plan}
+                onChange={(value) =>
+                  void persist({ ...tactics, fight_plan: value })
+                }
+                options={fightPlanOptions}
+              />
+              <Section<SupportRoaming>
+                title={t("tactics.lol.sections.supportRoaming", "Support roaming")}
+                value={tactics.support_roaming}
+                onChange={(value) =>
+                  void persist({ ...tactics, support_roaming: value })
+                }
+                options={supportRoamingOptions}
+              />
+            </div>
+          </div>
         </div>
 
         <aside className="sticky top-2">
