@@ -1563,7 +1563,7 @@
     "swapHint": "Selecciona un suplente para el cambio",
     "setPieces": "Balón Parado y Capitán",
     "lineup": "Alineación",
-    "startMatch": "Iniciar Partido",
+    "startMatch": "Iniciar Draft",
     "captain": "Capitán",
     "penaltyTaker": "Lanzador de Penaltis",
     "freeKickTaker": "Lanzador de Faltas",
@@ -2095,7 +2095,7 @@
     "penaltyTaker": "Lanzador de Penaltis",
     "freeKickTaker": "Lanzador de Faltas",
     "cornerTaker": "Lanzador de Córners",
-    "startMatch": "Iniciar Partido",
+    "startMatch": "Iniciar Draft",
     "notAssigned": "Sin asignar",
     "keyStats": "Stats Clave",
     "continueDashboard": "Continuar al Panel"
