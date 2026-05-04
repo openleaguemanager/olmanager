@@ -11,7 +11,7 @@ import type { JSX, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getTeamName } from "../../lib/helpers";
-import type { PlayerData, TeamData } from "../../store/gameStore";
+import type { PlayerData, TeamData, ChampionData } from "../../store/gameStore";
 import type { MatchModeType } from "../../hooks/useAdvanceTime";
 import { Badge, ThemeToggle } from "../ui";
 import { translatePositionAbbreviation } from "../squad/SquadTab.helpers";
@@ -36,6 +36,7 @@ interface DashboardHeaderProps {
   matchMode: MatchModeType;
   matchedPlayers: PlayerData[];
   matchedTeams: TeamData[];
+  matchedChampions: ChampionData[];
   modeMeta: Record<MatchModeType, DashboardMatchModeMeta>;
   onBack: () => void;
   onContinue: () => void;
@@ -46,6 +47,7 @@ interface DashboardHeaderProps {
   onSelectMatchMode: (mode: MatchModeType) => void;
   onSelectSearchPlayer: (playerId: string) => void;
   onSelectSearchTeam: (teamId: string) => void;
+  onSelectSearchChampion: (championKey: string) => void;
   onSkipToMatchDay: () => void;
   onToggleContinueMenu: () => void;
   saveFlash: boolean;
@@ -164,21 +166,25 @@ function renderContinueButtonContent(
 function renderSearchResults(props: {
   matchedPlayers: PlayerData[];
   matchedTeams: TeamData[];
+  matchedChampions: ChampionData[];
   onSelectSearchPlayer: (playerId: string) => void;
   onSelectSearchTeam: (teamId: string) => void;
+  onSelectSearchChampion: (championKey: string) => void;
   teams: TeamData[];
   t: (key: string) => string;
 }): JSX.Element {
   const {
     matchedPlayers,
     matchedTeams,
+    matchedChampions,
     onSelectSearchPlayer,
     onSelectSearchTeam,
+    onSelectSearchChampion,
     t,
     teams,
   } = props;
 
-  if (matchedPlayers.length === 0 && matchedTeams.length === 0) {
+  if (matchedPlayers.length === 0 && matchedTeams.length === 0 && matchedChampions.length === 0) {
     return (
       <p className="p-3 text-xs text-gray-400 dark:text-gray-500">
         {t("dashboard.noResults")}
@@ -237,6 +243,30 @@ function renderSearchResults(props: {
           ))}
         </div>
       )}
+      {matchedChampions.length > 0 && (
+        <div>
+          <p className="px-3 pb-1 pt-2 text-xs font-heading font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {t("dashboard.searchChampions")}
+          </p>
+          {matchedChampions.map((champion) => (
+            <button
+              key={champion.id}
+              onMouseDown={() => onSelectSearchChampion(champion.champion_key)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-gray-50 dark:hover:bg-navy-600"
+            >
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-primary-500/20 text-xs font-bold text-primary-500">
+                {champion.name.charAt(0)}
+              </div>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                {champion.name}
+              </span>
+              <span className="ml-auto text-xs text-gray-400 capitalize">
+                {champion.champion_key}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </>
   );
 }
@@ -252,6 +282,7 @@ export default function DashboardHeader({
   matchMode,
   matchedPlayers,
   matchedTeams,
+  matchedChampions,
   modeMeta,
   onBack,
   onContinue,
@@ -262,6 +293,7 @@ export default function DashboardHeader({
   onSelectMatchMode,
   onSelectSearchPlayer,
   onSelectSearchTeam,
+  onSelectSearchChampion,
   onSkipToMatchDay,
   onToggleContinueMenu,
   saveFlash,
@@ -347,8 +379,10 @@ export default function DashboardHeader({
             {renderSearchResults({
               matchedPlayers,
               matchedTeams,
+              matchedChampions,
               onSelectSearchPlayer,
               onSelectSearchTeam,
+              onSelectSearchChampion,
               t,
               teams,
             })}

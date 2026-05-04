@@ -521,6 +521,7 @@ export default function Dashboard(): JSX.Element {
           matchMode={matchMode}
           matchedPlayers={searchResults.matchedPlayers}
           matchedTeams={searchResults.matchedTeams}
+          matchedChampions={searchResults.matchedChampions}
           modeMeta={MODE_META}
           onBack={handleBack}
           onContinue={handleContinue}
@@ -531,6 +532,7 @@ export default function Dashboard(): JSX.Element {
           onSelectMatchMode={handleSelectMatchMode}
           onSelectSearchPlayer={handleSelectSearchPlayer}
           onSelectSearchTeam={handleSelectSearchTeam}
+          onSelectSearchChampion={(championKey: string) => setViewingChampionKey(championKey)}
           onSkipToMatchDay={handleSkipToMatchDay}
           onToggleContinueMenu={handleToggleContinueMenu}
           saveFlash={saveFlash}
