@@ -40,6 +40,7 @@ interface PreMatchSetupProps {
   currentFixture?: FixtureData | null;
   userSide: "Home" | "Away";
   onStart: () => void;
+  onCancel: () => void;
   onUpdateSnapshot: (snap: MatchSnapshot) => void;
 }
 
@@ -49,6 +50,7 @@ export default function PreMatchSetup({
   currentFixture,
   userSide,
   onStart,
+  onCancel,
   onUpdateSnapshot,
 }: PreMatchSetupProps) {
   const { t } = useTranslation();
@@ -217,7 +219,13 @@ export default function PreMatchSetup({
             </div>
           </div>
 
-          <div className="flex justify-center mt-2">
+          <div className="flex justify-center gap-3 mt-2">
+            <button
+              onClick={onCancel}
+              className="flex items-center gap-2 px-6 py-3.5 bg-gray-200 dark:bg-navy-600 hover:bg-gray-300 dark:hover:bg-navy-500 rounded-xl font-heading font-bold uppercase tracking-wider text-sm text-gray-700 dark:text-gray-300 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              {t("common.cancel")}
+            </button>
             <button
               onClick={onStart}
               className="flex items-center gap-3 px-10 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-xl font-heading font-bold uppercase tracking-wider text-sm text-white shadow-lg shadow-primary-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
