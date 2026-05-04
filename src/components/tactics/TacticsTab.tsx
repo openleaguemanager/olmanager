@@ -421,6 +421,11 @@ export default function TacticsTab({
     });
   }, [gameState.players, myTeam, roleModifiers, t]);
 
+  const maxAbsModifier = useMemo(
+    () => Math.max(1, ...roleImpactRows.map((r) => Math.abs(r.modifier))),
+    [roleImpactRows],
+  );
+
   if (!myTeam) {
     return (
       <p className="text-gray-500 dark:text-gray-400">{t("common.noTeam")}</p>
@@ -687,13 +692,27 @@ export default function TacticsTab({
 
                     <div className="text-right shrink-0">
                       <div className="flex items-center gap-1.5 justify-end">
-                        <div className="w-16 h-1.5 rounded-full bg-gray-200 dark:bg-navy-600 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all duration-500 ${
-                              row.modifier >= 0 ? "bg-emerald-400" : "bg-rose-400"
-                            }`}
-                            style={{ width: `${Math.min(100, Math.abs(row.modifier) * 10)}%` }}
-                          />
+                        <div className="flex items-center gap-0.5">
+                          {/* Negative side */}
+                          <div className="w-12 h-1.5 bg-gray-200 dark:bg-navy-600 rounded-l-full overflow-hidden flex justify-end">
+                            {row.modifier < 0 && (
+                              <div
+                                className="h-full bg-rose-400 rounded-l-full transition-all duration-500"
+                                style={{ width: `${(Math.abs(row.modifier) / maxAbsModifier) * 100}%` }}
+                              />
+                            )}
+                          </div>
+                          {/* Center zero line */}
+                          <div className="w-0.5 h-3 bg-gray-300 dark:bg-navy-500 rounded-full shrink-0" />
+                          {/* Positive side */}
+                          <div className="w-12 h-1.5 bg-gray-200 dark:bg-navy-600 rounded-r-full overflow-hidden">
+                            {row.modifier >= 0 && (
+                              <div
+                                className="h-full bg-emerald-400 rounded-r-full transition-all duration-500"
+                                style={{ width: `${(row.modifier / maxAbsModifier) * 100}%` }}
+                              />
+                            )}
+                          </div>
                         </div>
                         <p
                           className={`text-xl leading-none font-heading font-black ${
