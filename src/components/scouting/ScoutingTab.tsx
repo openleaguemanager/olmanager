@@ -12,6 +12,7 @@ import {
   ScanSearch,
 } from "lucide-react";
 import { sendScout } from "../../services/scoutingService";
+import { resolveExampleTeamLogo } from "../../lib/teamLogos";
 import {
   calculateAvailableScouts,
   scoutMaxSlots,
@@ -118,9 +119,21 @@ export default function ScoutingTab({
         <CardBody>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-5 h-5 text-primary-500" />
-              </div>
+              {(() => {
+                const logo = academyTeam ? resolveExampleTeamLogo(academyTeam.name) : null;
+                if (logo) {
+                  return (
+                    <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center shrink-0">
+                      <img src={logo} alt={academyTeam!.name} className="w-7 h-7 object-contain" />
+                    </div>
+                  );
+                }
+                return (
+                  <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center shrink-0">
+                    <GraduationCap className="w-5 h-5 text-primary-500" />
+                  </div>
+                );
+              })()}
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-heading uppercase tracking-wider">
                   {t("scouting.academyScoutingTag")}
