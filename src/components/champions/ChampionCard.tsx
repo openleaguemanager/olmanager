@@ -85,7 +85,7 @@ const LazyImage = memo(function LazyImage({
     <div className="relative w-full h-full">
       {/* Skeleton placeholder - shown until image loads */}
       <div
-        className={`absolute inset-0 bg-navy-700 animate-pulse transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-navy-700 transition-opacity duration-300 ${
           isLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       />
