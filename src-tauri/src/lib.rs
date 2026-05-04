@@ -1,5 +1,6 @@
 mod application;
 mod commands;
+pub mod error;
 use commands::*;
 
 use application::lol_sim_v2::LolSimV2StoreState;
@@ -22,6 +23,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .level(log::LevelFilter::Info)
@@ -114,7 +116,7 @@ pub fn run() {
             set_starting_xi,
             set_play_style,
             set_lol_tactics,
-            set_team_match_roles,
+            set_team_roles,
             set_training,
             set_training_schedule,
             set_training_groups,
@@ -132,7 +134,7 @@ pub fn run() {
             mark_all_messages_read,
             clear_old_messages,
             save_game,
-            auto_select_set_pieces,
+            auto_select_team_roles,
             toggle_transfer_list,
             toggle_loan_list,
             make_transfer_bid,
@@ -175,7 +177,10 @@ pub fn run() {
             lol_sim_v2_skip_to_end,
             save_manager_avatar,
             load_manager_avatar,
-            update_manager_profile
+            update_manager_profile,
+            get_champions,
+            get_champion_by_id,
+            seed_champions_from_json
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

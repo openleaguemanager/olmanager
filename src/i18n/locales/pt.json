@@ -174,8 +174,8 @@
     "selectCountry": "Selecionar País/Região...",
     "searchNationalities": "Pesquisar nacionalidades...",
     "chooseWorld": "Escolher Mundo",
-    "placeholderFirst": "ex. José",
-    "placeholderLast": "ex. Mourinho"
+    "placeholderFirst": "ex. Lee",
+    "placeholderLast": "ex. Sang-hyeok"
   },
   "validation": {
     "required": "{{field}} é obrigatório",
@@ -202,13 +202,14 @@
     "squad": "Plantel",
     "tactics": "Tática",
     "training": "Treino",
-    "champions": "Campeões",
+    "meta": "Meta",
     "staff": "Staff",
     "finances": "Finanças",
     "transfers": "Transferências",
     "players": "Jogadores",
     "teams": "Equipas",
     "tournaments": "Torneios",
+    "champions_world": "Campeões",
     "schedule": "Calendário",
     "news": "Notícias",
     "settings": "Definições",
@@ -268,6 +269,17 @@
     "discoveryProgress": "Progresso de descoberta",
     "delegating": "Delegando...",
     "delegateToCoach": "Delegar ao coach assistente"
+    "loading": "Carregando campeões...",
+    "error": "Erro ao carregar",
+    "empty": "Nenhum campeão disponível",
+    "counterpicks": "Counterpicks",
+    "synergies": "Sinergias",
+    "noData": "Sem informação de counterpicks ou sinergias disponível.",
+    "worldTitle": "Campeões do Mundo",
+    "allChampions": "Todos os Campeões",
+    "worldDescription": "Explore todos os campeões do League of Legends",
+    "totalChampions": "Total",
+    "170": "170+"
   },
   "exitConfirm": {
     "title": "Sair para o Menu Principal?",
@@ -1130,7 +1142,7 @@
       "BoardDirective": "Direção",
       "PlayerMorale": "Moral",
       "Injury": "Lesão",
-      "Training": "Treino",
+      "training": "Treino",
       "Finance": "Finanças",
       "Contract": "Contrato",
       "ScoutReport": "Observação",
@@ -1530,7 +1542,17 @@
     "fullscreen": "Ecrã Inteiro",
     "fullscreenDesc": "Alternar modo de ecrã inteiro",
     "enterFullscreen": "Entrar",
-    "exitFullscreen": "Sair"
+    "exitFullscreen": "Sair",
+    "updates": "Atualizações",
+    "currentVersion": "Versão Atual",
+    "currentVersionDesc": "A versão instalada do jogo",
+    "checkForUpdates": "Procurar Atualizações",
+    "checkForUpdatesDesc": "Verificar manualmente se existe uma nova versão disponível",
+    "checking": "A verificar...",
+    "updateAvailable": "Atualização Disponível",
+    "checkNow": "Verificar Agora",
+    "updateAvailableDetail": "A versão {{version}} está disponível",
+    "upToDate": "Tens a versão mais recente"
   },
   "preMatch": {
     "formationFit": "Ajuste da Formação",
@@ -2801,5 +2823,14 @@
     "noJobs": "Nenhuma posição disponível no momento.",
     "leaguePosition": "Última temporada: {{position}}",
     "refresh": "Verificar novas vagas"
+  },
+  "updater": {
+    "title": "Atualização Disponível",
+    "description": "Uma nova versão ({{version}}) está disponível. Os teus jogos guardados serão preservados.",
+    "downloading": "A descarregar...",
+    "preparing": "A preparar atualização...",
+    "installing": "A instalar...",
+    "installAndRestart": "Instalar e Reiniciar",
+    "playWithoutUpdating": "Jogar Sem Atualizar"
   }
 }
