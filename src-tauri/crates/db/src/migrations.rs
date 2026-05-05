@@ -108,6 +108,57 @@ fn migrate_audit_teams_legacy(tx: &Transaction<'_>) -> HookResult {
     Ok(())
 }
 
+/// V42 pre-hook: normalize teams schema so the rebuild SQL can run on
+/// very old/branch-divergent saves that still use stadium_* names.
+fn migrate_prepare_teams_for_v42(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(tx, "teams", "arena_name", "TEXT")?;
+    add_column_if_missing(tx, "teams", "arena_capacity", "INTEGER")?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "team_roles",
+        "TEXT NOT NULL DEFAULT '{\"captain\":null,\"shotcaller\":null}'",
+    )?;
+
+    if column_exists(tx, "teams", "stadium_name")? {
+        tx.execute(
+            "UPDATE teams SET arena_name = COALESCE(arena_name, stadium_name, 'Unknown Arena')",
+            [],
+        )?;
+    } else {
+        tx.execute(
+            "UPDATE teams SET arena_name = COALESCE(arena_name, 'Unknown Arena')",
+            [],
+        )?;
+    }
+
+    if column_exists(tx, "teams", "stadium_capacity")? {
+        tx.execute(
+            "UPDATE teams SET arena_capacity = COALESCE(arena_capacity, stadium_capacity, 0)",
+            [],
+        )?;
+    } else {
+        tx.execute(
+            "UPDATE teams SET arena_capacity = COALESCE(arena_capacity, 0)",
+            [],
+        )?;
+    }
+
+    tx.execute(
+        "UPDATE teams SET team_roles = COALESCE(team_roles, '{\"captain\":null,\"shotcaller\":null}')",
+        [],
+    )?;
+
+    Ok(())
+}
+
+/// V42 hook: pre-normalize legacy columns and then execute the table rebuild SQL.
+fn migrate_v42_drop_dead_team_columns(tx: &Transaction<'_>) -> HookResult {
+    migrate_prepare_teams_for_v42(tx)?;
+    tx.execute_batch(include_str!("sql/v042_drop_dead_team_columns.sql"))?;
+    Ok(())
+}
+
 fn connection_column_exists(
     conn: &Connection,
     table: &str,
@@ -240,7 +291,7 @@ pub fn all_migrations() -> Migrations<'static> {
         // V41: Add team_roles column (replaces match_roles)
         M::up(include_str!("sql/v041_team_roles.sql")),
         // V42: Drop dead columns from teams table (football_nation, match_roles, nationality_code)
-        M::up(include_str!("sql/v042_drop_dead_team_columns.sql")),
+        M::up_with_hook("SELECT 1;", migrate_v42_drop_dead_team_columns),
         // V43: Add bans_json column to lol_player_match_stats for ban rate
         M::up(include_str!("sql/v043_add_bans_column.sql")),
     ])
