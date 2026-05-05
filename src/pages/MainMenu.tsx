@@ -378,7 +378,7 @@ export default function MainMenu() {
         <div className="bg-white dark:bg-navy-800 p-8 rounded-b-2xl shadow-xl dark:shadow-2xl border border-gray-200 dark:border-navy-600 border-t-0 transition-all duration-500">
           {/* Logo */}
           <img
-            src="/lec-logo.svg"
+            src="/openfootlogo.svg"
             alt="League Manager"
             className="text-center w-full h-full object-cover"
           />
