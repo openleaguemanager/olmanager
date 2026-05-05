@@ -23,6 +23,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .level(log::LevelFilter::Info)
@@ -122,6 +123,7 @@ pub fn run() {
             set_weekly_scrims,
             set_player_training_focus,
             set_player_champion_training_target,
+            delegate_champion_training,
             start_potential_research,
             reroll_player_lol_role,
             hire_staff,

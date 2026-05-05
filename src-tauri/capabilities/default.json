@@ -15,6 +15,7 @@
         { "url": "https://*.leaguepedia.com" },
         { "url": "mailto:*" }
       ]
-    }
+    },
+    "updater:default"
   ]
 }

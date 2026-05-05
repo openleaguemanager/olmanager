@@ -379,7 +379,7 @@ export default function MainMenu() {
           {/* Logo */}
           <img
             src="/openfootlogo.svg"
-            alt="OpenFootball"
+            alt="League Manager"
             className="text-center w-full h-full object-cover"
           />
 

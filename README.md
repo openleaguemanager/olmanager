@@ -251,6 +251,7 @@ Reemplazados los badges de texto (`SUPPORT`, `MID`, etc.) por iconos Community D
 
 ---
 
+
 - **Repository:** [github.com/NicoRuedaA/OLManager](https://github.com/NicoRuedaA/OLManager)
 - **Documentation index:** [`docs/README.md`](docs/README.md)
 - **Tauri v2 Docs:** [https://v2.tauri.app/](https://v2.tauri.app/)

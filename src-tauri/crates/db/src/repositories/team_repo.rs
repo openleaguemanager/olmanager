@@ -1,6 +1,6 @@
 use domain::team::{
-    AcademyMetadata, Facilities, FinancialTransaction, LolTactics, PlayStyle, Sponsorship, Team,
-    TeamColors, TeamKind, TrainingFocus, TrainingIntensity, TrainingSchedule,
+    AcademyMetadata, Facilities, LolTactics, PlayStyle, Team, TeamColors, TeamKind, TrainingFocus,
+    TrainingIntensity, TrainingSchedule,
 };
 use rusqlite::{params, Connection};
 

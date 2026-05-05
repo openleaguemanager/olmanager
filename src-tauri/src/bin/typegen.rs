@@ -13,4 +13,4 @@ fn main() {
     println!("   To consolidate into a single bindings.ts, run:");
     println!("     cargo build --features typescript");
 }
-}
+
