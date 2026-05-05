@@ -169,6 +169,17 @@ mod tests {
     }
 
     #[test]
+    fn active_lec_world_seed_does_not_contain_football_nation() {
+        let json = include_str!("../../databases/lec_world.json");
+
+        // Assert: active seed data must NOT contain football_nation keys
+        assert!(
+            !json.contains("football_nation"),
+            "Active LEC world seed should not contain legacy 'football_nation' field"
+        );
+    }
+
+    #[test]
     fn export_world_to_json_writes_canonical_football_identity_fields() {
         let mut world = generate_world_data(None);
         world.teams[0].country = "GB".to_string();
