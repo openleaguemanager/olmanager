@@ -3,11 +3,12 @@ use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, Standin
 use domain::manager::Manager;
 use domain::player::{
     Injury, Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, PlayerPromise,
-    PlayerPromiseKind, Position,
+    PlayerPromiseKind,
 };
+use domain::stats::LolRole;
 use domain::team::Team;
+use engine::report::{KillDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
 use engine::Side;
-use engine::report::{GoalDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::turn;
@@ -65,8 +66,8 @@ fn gk_attrs() -> PlayerAttributes {
     }
 }
 
-fn make_player(id: &str, name: &str, team_id: &str, pos: Position) -> Player {
-    let attrs = if pos == Position::Goalkeeper {
+fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
+    let attrs = if pos == LolRole::Support {
         gk_attrs()
     } else {
         default_attrs()
@@ -105,7 +106,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
         &format!("{}_gk", prefix),
         &format!("{} GK", prefix),
         team_id,
-        Position::Goalkeeper,
+        LolRole::Support,
     ));
     // 4 DEF
     for i in 0..4 {
@@ -113,7 +114,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
             &format!("{}_def{}", prefix, i),
             &format!("{} Def{}", prefix, i),
             team_id,
-            Position::Defender,
+            LolRole::Top,
         ));
     }
     // 4 MID
@@ -122,7 +123,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
             &format!("{}_mid{}", prefix, i),
             &format!("{} Mid{}", prefix, i),
             team_id,
-            Position::Midfielder,
+            LolRole::Jungle,
         ));
     }
     // 2 FWD
@@ -131,7 +132,7 @@ fn make_squad(team_id: &str, prefix: &str) -> Vec<Player> {
             &format!("{}_fwd{}", prefix, i),
             &format!("{} Fwd{}", prefix, i),
             team_id,
-            Position::Forward,
+            LolRole::Adc,
         ));
     }
     players
@@ -181,16 +182,13 @@ fn make_game_with_match() -> Game {
     game
 }
 
-fn empty_report(home_goals: u8, away_goals: u8) -> MatchReport {
+fn empty_report(home_wins: u8, away_wins: u8) -> MatchReport {
     MatchReport {
-        home_goals,
-        away_goals,
-        home_wins: home_goals,
-        away_wins: away_goals,
+        home_wins,
+        away_wins,
         home_stats: TeamStats::default(),
         away_stats: TeamStats::default(),
         events: vec![],
-        goals: vec![],
         kill_feed: vec![],
         player_stats: HashMap::new(),
         home_possession: 50.0,
@@ -200,17 +198,12 @@ fn empty_report(home_goals: u8, away_goals: u8) -> MatchReport {
     }
 }
 
-fn report_with_scorer(home_goals: u8, away_goals: u8, scorer_id: &str, side: Side) -> MatchReport {
+fn report_with_scorer(home_wins: u8, away_wins: u8, scorer_id: &str, side: Side) -> MatchReport {
     let mut player_stats = HashMap::new();
     player_stats.insert(
         scorer_id.to_string(),
         PlayerMatchStats {
             minutes_played: 90,
-            goals: if side == Side::Home {
-                home_goals.into()
-            } else {
-                away_goals.into()
-            },
             assists: 0,
             shots: 3,
             shots_on_target: 2,
@@ -218,48 +211,42 @@ fn report_with_scorer(home_goals: u8, away_goals: u8, scorer_id: &str, side: Sid
             passes_attempted: 35,
             tackles_won: 2,
             interceptions: 1,
-            fouls_committed: 1,
-            yellow_cards: 0,
-            red_cards: 0,
             rating: 7.5,
             ..Default::default()
         },
     );
-    let goals = (0..home_goals)
-        .map(|i| GoalDetail {
+    let goals = (0..home_wins)
+        .map(|i| KillDetail {
             minute: 10 + i * 20,
-            scorer_id: if side == Side::Home {
+            killer_id: if side == Side::Home {
                 scorer_id.to_string()
             } else {
                 "other".to_string()
             },
+            victim_id: None,
             assist_id: None,
-            is_penalty: false,
             side: Side::Home,
         })
-        .chain((0..away_goals).map(|i| GoalDetail {
+        .chain((0..away_wins).map(|i| KillDetail {
             minute: 15 + i * 20,
-            scorer_id: if side == Side::Away {
+            killer_id: if side == Side::Away {
                 scorer_id.to_string()
             } else {
                 "other".to_string()
             },
+            victim_id: None,
             assist_id: None,
-            is_penalty: false,
             side: Side::Away,
         }))
         .collect();
 
     MatchReport {
-        home_goals,
-        away_goals,
-        home_wins: home_goals,
-        away_wins: away_goals,
+        home_wins,
+        away_wins,
         home_stats: TeamStats::default(),
         away_stats: TeamStats::default(),
         events: vec![],
-        goals,
-        kill_feed: vec![],
+        kill_feed: goals,
         player_stats,
         home_possession: 55.0,
         total_minutes: 90,
@@ -270,7 +257,7 @@ fn report_with_scorer(home_goals: u8, away_goals: u8, scorer_id: &str, side: Sid
 
 /// Creates a match report where all 22 players played the full 90 minutes.
 /// Use this for stamina depletion tests.
-fn full_squad_report(home_goals: u8, away_goals: u8) -> MatchReport {
+fn full_squad_report(home_wins: u8, away_wins: u8) -> MatchReport {
     let prefixes = ["t1_gk", "t2_gk"];
     let mut player_stats: HashMap<String, PlayerMatchStats> = HashMap::new();
     // Add GKs
@@ -312,14 +299,11 @@ fn full_squad_report(home_goals: u8, away_goals: u8) -> MatchReport {
         }
     }
     MatchReport {
-        home_goals,
-        away_goals,
-        home_wins: home_goals,
-        away_wins: away_goals,
+        home_wins,
+        away_wins,
         home_stats: TeamStats::default(),
         away_stats: TeamStats::default(),
         events: vec![],
-        goals: vec![],
         kill_feed: vec![],
         player_stats,
         home_possession: 50.0,
@@ -528,8 +512,8 @@ fn apply_match_report_updates_standings() {
     assert_eq!(home.played, 1);
     assert_eq!(home.won, 1);
     assert_eq!(home.points, 3);
-    assert_eq!(home.goals_for, 2);
-    assert_eq!(home.goals_against, 1);
+    assert_eq!(home.kills_for, 2);
+    assert_eq!(home.kills_against, 1);
 
     assert_eq!(away.played, 1);
     assert_eq!(away.lost, 1);
@@ -560,14 +544,13 @@ fn apply_match_report_updates_player_stats() {
 
     let scorer = game.players.iter().find(|p| p.id == "t1_fwd0").unwrap();
     assert_eq!(scorer.stats.appearances, 1);
-    assert_eq!(scorer.stats.goals, 2);
+    assert_eq!(scorer.stats.kills, 2);
     assert_eq!(scorer.stats.shots, 3);
     assert_eq!(scorer.stats.shots_on_target, 2);
     assert_eq!(scorer.stats.passes_completed, 30);
     assert_eq!(scorer.stats.passes_attempted, 35);
     assert_eq!(scorer.stats.tackles_won, 2);
     assert_eq!(scorer.stats.interceptions, 1);
-    assert_eq!(scorer.stats.fouls_committed, 1);
     assert!(scorer.stats.avg_rating > 0.0);
 }
 
@@ -585,8 +568,6 @@ fn apply_match_report_gk_clean_sheet() {
         },
     );
     let report = MatchReport {
-        home_goals: 1,
-        away_goals: 0,
         player_stats,
         ..empty_report(1, 0)
     };
@@ -609,8 +590,6 @@ fn apply_match_report_gk_no_clean_sheet_on_conceding() {
         },
     );
     let report = MatchReport {
-        home_goals: 1,
-        away_goals: 2,
         player_stats,
         ..empty_report(1, 2)
     };
@@ -827,44 +806,7 @@ fn apply_match_report_running_avg_rating() {
 }
 
 #[test]
-fn apply_match_report_yellow_and_red_cards() {
-    let mut game = make_game_with_match();
-    let mut player_stats = HashMap::new();
-    player_stats.insert(
-        "t1_mid0".to_string(),
-        PlayerMatchStats {
-            minutes_played: 90,
-            yellow_cards: 1,
-            red_cards: 0,
-            rating: 5.0,
-            ..Default::default()
-        },
-    );
-    player_stats.insert(
-        "t2_def0".to_string(),
-        PlayerMatchStats {
-            minutes_played: 90,
-            yellow_cards: 0,
-            red_cards: 1,
-            rating: 3.0,
-            ..Default::default()
-        },
-    );
-    let report = MatchReport {
-        player_stats,
-        ..empty_report(1, 0)
-    };
-    turn::apply_match_report(&mut game, 0, "team1", "team2", &report);
-
-    let mid = game.players.iter().find(|p| p.id == "t1_mid0").unwrap();
-    assert_eq!(mid.stats.yellow_cards, 1);
-
-    let def = game.players.iter().find(|p| p.id == "t2_def0").unwrap();
-    assert_eq!(def.stats.red_cards, 1);
-}
-
-#[test]
-fn apply_match_report_individual_morale_boost_from_goals() {
+fn apply_match_report_individual_morale_boost_from_kills() {
     let mut game = make_game_with_match();
     for p in &mut game.players {
         p.morale = 50;
@@ -956,7 +898,7 @@ fn moderate_unresolved_issue_slows_post_match_recovery() {
 }
 
 #[test]
-fn apply_match_report_morale_drop_from_red_card() {
+fn apply_match_report_morale_drop_from_loss() {
     let mut game = make_game_with_match();
     for p in &mut game.players {
         p.morale = 70;
@@ -966,7 +908,6 @@ fn apply_match_report_morale_drop_from_red_card() {
         "t1_mid0".to_string(),
         PlayerMatchStats {
             minutes_played: 90,
-            red_cards: 1,
             rating: 4.0,
             ..Default::default()
         },
@@ -978,10 +919,10 @@ fn apply_match_report_morale_drop_from_red_card() {
     turn::apply_match_report(&mut game, 0, "team1", "team2", &report);
 
     let mid = game.players.iter().find(|p| p.id == "t1_mid0").unwrap();
-    // Loss (-8 to -2) + red card (-8) + poor rating (-3) = substantial drop
+    // Loss + poor rating should drop morale
     assert!(
-        mid.morale < 65,
-        "Red card + loss should significantly drop morale, got {}",
+        mid.morale < 70,
+        "Loss + poor rating should drop morale, got {}",
         mid.morale
     );
 }
@@ -1463,9 +1404,9 @@ fn make_round_summary_game() -> Game {
     game.players
         .iter_mut()
         .for_each(|player| match player.id.as_str() {
-            "t1_fwd0" => player.stats.goals = 5,
-            "t2_fwd0" => player.stats.goals = 3,
-            "t3_fwd0" => player.stats.goals = 6,
+            "t1_fwd0" => player.stats.kills = 5,
+            "t2_fwd0" => player.stats.kills = 3,
+            "t3_fwd0" => player.stats.kills = 6,
             _ => {}
         });
 
@@ -1476,8 +1417,8 @@ fn standing_entry(
     team_id: &str,
     played: u32,
     points: u32,
-    goals_for: u32,
-    goals_against: u32,
+    kills_for: u32,
+    kills_against: u32,
 ) -> StandingEntry {
     StandingEntry {
         team_id: team_id.to_string(),
@@ -1485,8 +1426,8 @@ fn standing_entry(
         won: 0,
         drawn: 0,
         lost: 0,
-        goals_for,
-        goals_against,
+        kills_for,
+        kills_against,
         points,
     }
 }

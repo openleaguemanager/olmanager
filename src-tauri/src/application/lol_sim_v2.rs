@@ -5861,7 +5861,7 @@ fn category_plan(category: ItemBuildCategory) -> &'static [ItemTemplate; 6] {
     }
 }
 
-pub(super) fn champion_can_afford_next_item(champion: &ChampionRuntime) -> bool {
+fn champion_can_afford_next_item(champion: &ChampionRuntime) -> bool {
     if champion.items.len() >= 6 || !champion.has_left_base_once {
         return false;
     }

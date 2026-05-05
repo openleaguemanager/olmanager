@@ -20,12 +20,13 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' data: asset:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost"
     }
   },
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "resources": [
       "databases/lec_world.json"
     ],
@@ -36,5 +37,16 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJCN0EyN0VBQkU1NjBGM0IKUldRN0QxYSs2aWQ2dTBiSEluRGErRlFwRjkweStKTXljZmFlUEhXQlMvdFlYaFlnZTQ5V3Zqdk4K",
+      "endpoints": [
+        "https://github.com/OpenLeagueManager/OLManager/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

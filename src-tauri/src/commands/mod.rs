@@ -1,4 +1,5 @@
 pub mod academy;
+pub mod champion;
 pub mod club;
 pub mod contracts;
 pub mod game;
@@ -18,6 +19,7 @@ pub mod transfers;
 pub mod world;
 
 pub use academy::*;
+pub use champion::*;
 pub use club::*;
 pub use contracts::*;
 pub use game::*;

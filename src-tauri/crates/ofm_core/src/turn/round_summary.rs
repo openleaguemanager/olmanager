@@ -246,7 +246,7 @@ fn build_top_scorer_delta(game: &Game, fixtures: &[&Fixture]) -> Vec<TopScorerDe
         .players
         .iter()
         .filter_map(|player| {
-            let current_goals = player.stats.goals;
+            let current_goals = player.stats.kills;
             let round_goal_count = round_goals.get(&player.id).copied().unwrap_or(0);
             let previous_goals = current_goals.saturating_sub(round_goal_count);
 
@@ -340,7 +340,7 @@ fn sort_standings(mut standings: Vec<StandingEntry>) -> Vec<StandingEntry> {
             .points
             .cmp(&left.points)
             .then(right.goal_difference().cmp(&left.goal_difference()))
-            .then(right.goals_for.cmp(&left.goals_for))
+            .then(right.kills_for.cmp(&left.kills_for))
     });
     standings
 }

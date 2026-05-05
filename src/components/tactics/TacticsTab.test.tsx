@@ -90,8 +90,8 @@ const makeTeam = (overrides: Partial<TeamData> = {}): TeamData => ({
   short_name: "TFC",
   country: "England",
   city: "Test City",
-  stadium_name: "Test Ground",
-  stadium_capacity: 20000,
+  arena_name: "Test Ground",
+  arena_capacity: 20000,
   finance: 1000000,
   manager_id: "mgr1",
   reputation: 50,
@@ -500,13 +500,10 @@ describe("TacticsTab", () => {
     );
 
     await waitFor(() => {
-      expect(mockedInvoke).toHaveBeenCalledWith("set_team_match_roles", {
-        matchRoles: expect.objectContaining({
+      expect(mockedInvoke).toHaveBeenCalledWith("set_team_roles", {
+        teamRoles: expect.objectContaining({
           captain: expect.any(String),
-          vice_captain: expect.any(String),
-          penalty_taker: expect.any(String),
-          free_kick_taker: expect.any(String),
-          corner_taker: expect.any(String),
+          shotcaller: expect.any(String),
         }),
       });
     });

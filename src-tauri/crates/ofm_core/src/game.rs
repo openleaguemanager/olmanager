@@ -1,6 +1,8 @@
 use crate::champions::{ChampionMasteryEntry, ChampionPatchState};
 use crate::clock::GameClock;
 use domain::league::League;
+#[cfg(feature = "typescript")]
+use ts_rs::TS;
 use domain::manager::Manager;
 use domain::message::InboxMessage;
 use domain::news::NewsArticle;
@@ -55,6 +57,8 @@ impl DayPhase {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub enum ObjectiveType {
     LeaguePosition,
     Wins,
@@ -62,6 +66,8 @@ pub enum ObjectiveType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub struct BoardObjective {
     pub id: String,
     pub description: String,
@@ -71,6 +77,8 @@ pub struct BoardObjective {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub struct ScoutingAssignment {
     pub id: String,
     pub scout_id: String,
@@ -79,6 +87,8 @@ pub struct ScoutingAssignment {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
 pub struct Game {
     pub clock: GameClock,
     #[serde(default)]
@@ -143,7 +153,7 @@ impl Game {
             champion_masteries: vec![],
             champion_patch: ChampionPatchState::default(),
         };
-        crate::football_identity::upgrade_game_football_identities(&mut game);
+        crate::identity_upgrade::upgrade_game_football_identities(&mut game);
         crate::season_context::refresh_game_context(&mut game);
         game
     }

@@ -158,9 +158,7 @@ pub fn check_player_events(game: &mut Game) {
                 if player.injury.is_some() {
                     continue;
                 }
-                if player.position == domain::player::Position::Goalkeeper {
-                    continue;
-                }
+                // In LoL, no Goalkeeper - this check no longer applies (supports are valid)
                 if talk_cooldown_active(player, &today) {
                     continue;
                 }

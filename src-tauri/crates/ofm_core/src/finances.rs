@@ -71,12 +71,12 @@ pub fn calc_cash_runway_weeks(balance: i64, projected_weekly_net: i64) -> Option
 }
 
 pub fn calc_matchday(
-    stadium_capacity: u32,
+    arena_capacity: u32,
     home_match_count: i64,
     attendance_pct: f64,
     avg_ticket: f64,
 ) -> i64 {
-    let revenue_per_match = (stadium_capacity as f64 * attendance_pct * avg_ticket) as i64;
+    let revenue_per_match = (arena_capacity as f64 * attendance_pct * avg_ticket) as i64;
 
     revenue_per_match * home_match_count
 }
@@ -318,7 +318,7 @@ pub fn process_weekly_finances(game: &mut Game) {
                 let attendance_pct = rng.random_range(15..=30) as f64 / 100.0;
                 let avg_ticket = rng.random_range(4..=8) as f64;
                 let total_revenue = calc_matchday(
-                    team.stadium_capacity,
+                    team.arena_capacity,
                     home_count,
                     attendance_pct,
                     avg_ticket,

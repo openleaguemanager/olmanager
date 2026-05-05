@@ -30,16 +30,13 @@ export interface TeamSeasonRecord {
   won: number;
   drawn: number;
   lost: number;
-  goals_for: number;
-  goals_against: number;
+  kills_for: number;
+  kills_against: number;
 }
 
-export interface TeamMatchRolesData {
+export interface TeamRolesData {
   captain: string | null;
-  vice_captain: string | null;
-  penalty_taker: string | null;
-  free_kick_taker: string | null;
-  corner_taker: string | null;
+  shotcaller: string | null;
 }
 
 export type TeamKind = "Main" | "Academy";
@@ -139,8 +136,8 @@ export interface TeamData {
   short_name: string;
   country: string;
   city: string;
-  stadium_name: string;
-  stadium_capacity: number;
+  arena_name: string;
+  arena_capacity: number;
   finance: number;
   manager_id: string | null;
   reputation: number;
@@ -172,7 +169,7 @@ export interface TeamData {
   facilities?: FacilitiesData;
   sponsorship?: SponsorshipData | null;
   starting_xi_ids: string[];
-  match_roles?: TeamMatchRolesData;
+  team_roles?: TeamRolesData;
   form: string[];
   history: TeamSeasonRecord[];
   team_kind?: TeamKind;
@@ -185,7 +182,7 @@ export type MatchOutcome = "Win" | "Loss";
 
 export type TeamSide = "Blue" | "Red";
 
-export type LolRole = "Top" | "Jungle" | "Mid" | "ADC" | "Support";
+export type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
 export type MatchEndReason = "NexusDestroyed" | "Surrender";
 
@@ -304,12 +301,13 @@ export interface PlayerData {
   full_name: string;
   date_of_birth: string;
   nationality: string;
-  football_nation?: string;
+  nationality_code?: string;
+  competitive_region?: string;
   birth_country?: string | null;
   profile_image_url?: string | null;
-  position: string;
-  natural_position: string;
-  alternate_positions: string[];
+  position: LolRole;
+  natural_position: LolRole;
+  alternate_positions: LolRole[];
   footedness?: string;
   weak_foot?: number;
   training_focus: string | null;
@@ -422,6 +420,20 @@ export interface ChampionPatchStateData {
   patch_notes: ChampionPatchNoteData[];
   discovered_champion_ids: string[];
   rng_seed?: number;
+}
+
+/**
+ * Champion data from the backend - represents a League of Legends champion
+ */
+export interface ChampionData {
+  id: number;
+  name: string;
+  champion_key: string;
+  roles_json: string;
+  counterpicks_json: string | null;
+  synergies_json: string | null;
+  image_tile_url: string | null;
+  image_splash_url: string | null;
 }
 
 export interface TransferOfferData {
@@ -630,8 +642,8 @@ export interface StandingData {
   won: number;
   drawn: number;
   lost: number;
-  goals_for: number;
-  goals_against: number;
+  kills_for: number;
+  kills_against: number;
   points: number;
 }
 
@@ -808,4 +820,5 @@ export interface GameStateData {
   season_context?: SeasonContextData;
   champion_masteries?: ChampionMasteryEntryData[];
   champion_patch?: ChampionPatchStateData;
+  champions?: ChampionData[];
 }

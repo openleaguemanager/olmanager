@@ -48,7 +48,7 @@ fn make_player(id: &str, team_id: &str, natural_position: Position) -> Player {
         default_attrs(),
     );
     player.team_id = Some(team_id.to_string());
-    player.natural_position = natural_position;
+    player.natural_position = natural_position.into();
     player
 }
 
