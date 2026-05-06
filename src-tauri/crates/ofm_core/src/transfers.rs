@@ -1796,12 +1796,15 @@ fn calculate_wage_acceptance_score(
         }
     }
 
-    if contract_years >= 4 {
-        score += 12;
-    } else if contract_years >= 3 {
-        score += 8;
-    } else if contract_years == 1 {
-        score -= 5;
+    // Contract duration: longer commitments demand higher wages
+    if contract_years == 1 {
+        score += 12;  // Short deal, willing to accept less
+    } else if contract_years == 2 {
+        score += 8;  // Moderate commitment
+    } else if contract_years == 3 {
+        score -= 3;  // Longer commitment, wants better pay
+    } else if contract_years >= 4 {
+        score -= 6; // Long-term lock-in, demands premium wages
     }
 
     if player.morale >= 80 {
@@ -2057,11 +2060,19 @@ pub fn negotiate_player_wage(
     }
 
     if score >= 25 {
+        // Contract length premium: longer deals demand higher wages
+        let years_premium = match contract_years {
+            1 => -0.05, // Short deal: willing to take 5% less
+            2 => 0.0,   // Neutral
+            3 => 0.05,  // Longer: wants 5% more
+            _ => 0.10,  // Long-term: wants 10% more
+        };
+
         // Counter-offer: player wants ~10-25% more than offered, depending on score
         let wage_gap = if annual_wage > 0 {
-            (50 - score) as f64 / 100.0 * 0.2 + 0.1
+            (50 - score) as f64 / 100.0 * 0.2 + 0.1 + years_premium
         } else {
-            0.20
+            0.20 + years_premium
         };
         let mut suggested_wage = ((annual_wage as f64) * (1.0 + wage_gap)).round() as u32;
 
@@ -2116,9 +2127,15 @@ pub fn negotiate_player_wage(
         });
     }
 
-    // Low score: player demands ~25% more
+    // Low score: player demands significantly more, adjusted by contract length
     let suggested_wage = {
-        let base = ((annual_wage as f64) * 1.25).round() as u32;
+        let years_premium = match contract_years {
+            1 => 1.15, // Short deal: willing to accept 15% increase
+            2 => 1.25, // Neutral: 25% increase
+            3 => 1.35, // Longer: wants 35% increase
+            _ => 1.45, // Long-term: wants 45% increase
+        };
+        let base = ((annual_wage as f64) * years_premium).round() as u32;
         let min_over_offer = (annual_wage as f64 * 1.05).round() as u32;
         let min_acceptable = (player.wage as f64 * 1.1).round() as u32;
         base.max(min_over_offer).max(min_acceptable)
