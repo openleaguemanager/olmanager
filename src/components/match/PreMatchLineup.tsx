@@ -55,15 +55,15 @@ export function getPlayerLolRole(player: EnginePlayerData): LolRole {
 /** Delegates to the shared OVR formula so every view uses the same calculation. */
 export function getPositionOvr(p: EnginePlayerData): number {
   return calcOvr(
-    p.dribbling,
-    p.shooting,
-    p.teamwork,
-    p.vision,
-    p.decisions,
-    p.leadership,
-    p.agility,
-    p.composure,
-    p.stamina,
+    p.mechanics,
+    p.laning,
+    p.teamfighting,
+    p.macro_play,
+    p.consistency,
+    p.shotcalling,
+    p.champion_pool,
+    p.discipline,
+    p.mental_resilience,
   );
 }
 

@@ -183,21 +183,21 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
                 condition: p.condition,
                 fitness: p.fitness,
                 pace: p.attributes.pace,
-                stamina: p.attributes.stamina,
+                mental_resilience: p.attributes.mental_resilience,
                 strength: p.attributes.strength,
-                agility: p.attributes.agility,
+                champion_pool: p.attributes.champion_pool,
                 passing: p.attributes.passing,
-                shooting: p.attributes.shooting,
+                laning: p.attributes.laning,
                 tackling: p.attributes.tackling,
-                dribbling: p.attributes.dribbling,
+                mechanics: p.attributes.mechanics,
                 defending: p.attributes.defending,
                 positioning: p.attributes.positioning,
-                vision: p.attributes.vision,
-                decisions: p.attributes.decisions,
-                composure: p.attributes.composure,
+                macro_play: p.attributes.macro_play,
+                consistency: p.attributes.consistency,
+                discipline: p.attributes.discipline,
                 aggression: p.attributes.aggression,
-                teamwork: p.attributes.teamwork,
-                leadership: p.attributes.leadership,
+                teamfighting: p.attributes.teamfighting,
+                shotcalling: p.attributes.shotcalling,
                 handling: p.attributes.handling,
                 reflexes: p.attributes.reflexes,
                 aerial: p.attributes.aerial,
@@ -217,15 +217,15 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
 
 fn academy_player_ovr(player: &domain::player::Player) -> u32 {
     let attrs = &player.attributes;
-    let total = u32::from(attrs.dribbling)
-        + u32::from(attrs.shooting)
-        + u32::from(attrs.teamwork)
-        + u32::from(attrs.vision)
-        + u32::from(attrs.decisions)
-        + u32::from(attrs.leadership)
-        + u32::from(attrs.agility)
-        + u32::from(attrs.composure)
-        + u32::from(attrs.stamina);
+    let total = u32::from(attrs.mechanics)
+        + u32::from(attrs.laning)
+        + u32::from(attrs.teamfighting)
+        + u32::from(attrs.macro_play)
+        + u32::from(attrs.consistency)
+        + u32::from(attrs.shotcalling)
+        + u32::from(attrs.champion_pool)
+        + u32::from(attrs.discipline)
+        + u32::from(attrs.mental_resilience);
     (total + 4) / 9
 }
 

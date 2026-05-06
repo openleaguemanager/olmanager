@@ -284,7 +284,45 @@ describe("TacticsTab", () => {
     });
   });
 
-  it("does not expose the legacy pitch and set-piece controls in the LoL tactics view", () => {
+  it("shows a comparison panel after selecting a second pitch player", () => {
+    render(
+      <TacticsTab
+        gameState={makeGameState()}
+        onSelectPlayer={vi.fn()}
+        onGameUpdate={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("pitch-player-d1"));
+    fireEvent.click(screen.getByTestId("pitch-player-m1"));
+
+    expect(screen.getByText("Comparison player")).toBeInTheDocument();
+    expect(screen.getAllByText("Player m1").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("common.attributes.macro_play").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByRole("button", { name: "Confirm swap" }),
+    ).toBeInTheDocument();
+  });
+
+  it("only opens profiles from the lineup tables", () => {
+    const onSelectPlayer = vi.fn();
+
+    render(
+      <TacticsTab
+        gameState={makeGameState()}
+        onSelectPlayer={onSelectPlayer}
+        onGameUpdate={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("xi-player-d1"));
+
+    expect(onSelectPlayer).toHaveBeenCalledWith("d1");
+  });
+
+  it("persists default set piece and team role assignments from the roles tab", async () => {
     render(
       <TacticsTab
         gameState={makeGameState()}

@@ -997,7 +997,7 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
 
             // On rest days: only recovery, no attribute gains
             if !is_training_day {
-                let stamina_factor = player.attributes.stamina as f64 / 100.0;
+                let stamina_factor = player.attributes.mental_resilience as f64 / 100.0;
                 let recovery = (recovery_base
                     * (0.5 + stamina_factor * 0.5)
                     * age_rec
@@ -1091,7 +1091,7 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
 
             // Apply condition: deplete from training, then recover
             player.condition = player.condition.saturating_sub(condition_cost);
-            let stamina_factor = player.attributes.stamina as f64 / 100.0;
+            let stamina_factor = player.attributes.mental_resilience as f64 / 100.0;
             let recovery = (recovery_base
                 * (0.5 + stamina_factor * 0.5)
                 * age_rec
@@ -1228,37 +1228,37 @@ fn apply_focus_gains(
     // mental resilience -> stamina
     match focus {
         TrainingFocus::Scrims => {
-            try_gain(&mut attrs.decisions, gain);
-            try_gain(&mut attrs.teamwork, gain);
-            try_gain(&mut attrs.composure, gain * 0.85);
-            try_gain(&mut attrs.stamina, gain * 0.65);
-            try_gain(&mut attrs.vision, gain * 0.55);
+            try_gain(&mut attrs.consistency, gain);
+            try_gain(&mut attrs.teamfighting, gain);
+            try_gain(&mut attrs.discipline, gain * 0.85);
+            try_gain(&mut attrs.mental_resilience, gain * 0.65);
+            try_gain(&mut attrs.macro_play, gain * 0.55);
         }
         TrainingFocus::VODReview => {
-            try_gain(&mut attrs.vision, gain);
-            try_gain(&mut attrs.decisions, gain);
-            try_gain(&mut attrs.composure, gain * 0.75);
-            try_gain(&mut attrs.leadership, gain * 0.6);
+            try_gain(&mut attrs.macro_play, gain);
+            try_gain(&mut attrs.consistency, gain);
+            try_gain(&mut attrs.discipline, gain * 0.75);
+            try_gain(&mut attrs.shotcalling, gain * 0.6);
         }
         TrainingFocus::IndividualCoaching => {
-            try_gain(&mut attrs.shooting, gain);
-            try_gain(&mut attrs.dribbling, gain);
-            try_gain(&mut attrs.agility, gain);
-            try_gain(&mut attrs.composure, gain * 0.8);
-            try_gain(&mut attrs.teamwork, gain * 0.4);
+            try_gain(&mut attrs.laning, gain);
+            try_gain(&mut attrs.mechanics, gain);
+            try_gain(&mut attrs.champion_pool, gain);
+            try_gain(&mut attrs.discipline, gain * 0.8);
+            try_gain(&mut attrs.teamfighting, gain * 0.4);
         }
         TrainingFocus::ChampionPoolPractice => {
-            try_gain(&mut attrs.dribbling, gain);
-            try_gain(&mut attrs.agility, gain);
-            try_gain(&mut attrs.vision, gain * 0.8);
-            try_gain(&mut attrs.shooting, gain * 0.7);
-            try_gain(&mut attrs.decisions, gain * 0.65);
+            try_gain(&mut attrs.mechanics, gain);
+            try_gain(&mut attrs.champion_pool, gain);
+            try_gain(&mut attrs.macro_play, gain * 0.8);
+            try_gain(&mut attrs.laning, gain * 0.7);
+            try_gain(&mut attrs.consistency, gain * 0.65);
         }
         TrainingFocus::MacroSystems => {
-            try_gain(&mut attrs.vision, gain);
-            try_gain(&mut attrs.decisions, gain);
-            try_gain(&mut attrs.teamwork, gain * 0.8);
-            try_gain(&mut attrs.leadership, gain * 0.7);
+            try_gain(&mut attrs.macro_play, gain);
+            try_gain(&mut attrs.consistency, gain);
+            try_gain(&mut attrs.teamfighting, gain * 0.8);
+            try_gain(&mut attrs.shotcalling, gain * 0.7);
         }
         TrainingFocus::MentalResetRecovery => {
             // No attribute gains on recovery days
@@ -1278,34 +1278,34 @@ fn apply_scrim_plan_focus_gains(
 
     match focus {
         ScrimFocus::DraftPrep => {
-            try_gain(&mut attrs.vision, gain);
-            try_gain(&mut attrs.decisions, gain * 0.9);
-            try_gain(&mut attrs.leadership, gain * 0.7);
+            try_gain(&mut attrs.macro_play, gain);
+            try_gain(&mut attrs.consistency, gain * 0.9);
+            try_gain(&mut attrs.shotcalling, gain * 0.7);
         }
         ScrimFocus::ChampionPool => {
-            try_gain(&mut attrs.dribbling, gain);
-            try_gain(&mut attrs.agility, gain);
-            try_gain(&mut attrs.shooting, gain * 0.7);
+            try_gain(&mut attrs.mechanics, gain);
+            try_gain(&mut attrs.champion_pool, gain);
+            try_gain(&mut attrs.laning, gain * 0.7);
         }
         ScrimFocus::EarlyGame => {
-            try_gain(&mut attrs.shooting, gain);
-            try_gain(&mut attrs.decisions, gain * 0.85);
-            try_gain(&mut attrs.vision, gain * 0.75);
+            try_gain(&mut attrs.laning, gain);
+            try_gain(&mut attrs.consistency, gain * 0.85);
+            try_gain(&mut attrs.macro_play, gain * 0.75);
         }
         ScrimFocus::Teamfighting => {
-            try_gain(&mut attrs.teamwork, gain);
-            try_gain(&mut attrs.composure, gain * 0.9);
+            try_gain(&mut attrs.teamfighting, gain);
+            try_gain(&mut attrs.discipline, gain * 0.9);
             try_gain(&mut attrs.positioning, gain * 0.75);
         }
         ScrimFocus::Macro => {
-            try_gain(&mut attrs.vision, gain);
-            try_gain(&mut attrs.decisions, gain);
-            try_gain(&mut attrs.teamwork, gain * 0.7);
+            try_gain(&mut attrs.macro_play, gain);
+            try_gain(&mut attrs.consistency, gain);
+            try_gain(&mut attrs.teamfighting, gain * 0.7);
         }
         ScrimFocus::Mental => {
-            try_gain(&mut attrs.composure, gain);
-            try_gain(&mut attrs.stamina, gain * 0.85);
-            try_gain(&mut attrs.leadership, gain * 0.65);
+            try_gain(&mut attrs.discipline, gain);
+            try_gain(&mut attrs.mental_resilience, gain * 0.85);
+            try_gain(&mut attrs.shotcalling, gain * 0.65);
         }
     }
 }
@@ -1323,21 +1323,21 @@ mod tests {
     fn attrs(stat: u8) -> PlayerAttributes {
         PlayerAttributes {
             pace: stat,
-            stamina: stat,
+            mental_resilience: stat,
             strength: stat,
-            agility: stat,
+            champion_pool: stat,
             passing: stat,
-            shooting: stat,
+            laning: stat,
             tackling: stat,
-            dribbling: stat,
+            mechanics: stat,
             defending: stat,
             positioning: stat,
-            vision: stat,
-            decisions: stat,
-            composure: stat,
+            macro_play: stat,
+            consistency: stat,
+            discipline: stat,
             aggression: stat,
-            teamwork: stat,
-            leadership: stat,
+            teamfighting: stat,
+            shotcalling: stat,
             handling: stat,
             reflexes: stat,
             aerial: stat,
@@ -1366,9 +1366,9 @@ mod tests {
             1.0,
             true,
         );
-        assert_eq!(player.attributes.dribbling, before.dribbling);
-        assert_eq!(player.attributes.shooting, before.shooting);
-        assert_eq!(player.attributes.agility, before.agility);
+        assert_eq!(player.attributes.mechanics, before.mechanics);
+        assert_eq!(player.attributes.laning, before.laning);
+        assert_eq!(player.attributes.champion_pool, before.champion_pool);
     }
 }
 
