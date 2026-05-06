@@ -365,6 +365,7 @@ export default function TransfersTab({
   const filteredList = sortTransferPlayers(
     filterTransferPlayers(currentList, search, posFilter),
     sort,
+    gameState.clock.current_date,
   );
   const weeklyWageBudget = myTeam
     ? annualAmountToWeeklyCommitment(myTeam.wage_budget)

@@ -204,6 +204,7 @@ export interface TransferSortState {
 export function sortTransferPlayers(
   players: PlayerData[],
   sort: TransferSortState | null,
+  currentDate: string,
 ): PlayerData[] {
   if (!sort) return players;
 
@@ -226,7 +227,7 @@ export function sortTransferPlayers(
         return ((order[roleA] ?? 0) - (order[roleB] ?? 0)) * factor;
       }
       case "age":
-        return (calcAge(a.date_of_birth) - calcAge(b.date_of_birth)) * factor;
+        return (calcAge(a.date_of_birth, currentDate) - calcAge(b.date_of_birth, currentDate)) * factor;
       case "team": {
         const teamA = a.team_id ?? "";
         const teamB = b.team_id ?? "";
