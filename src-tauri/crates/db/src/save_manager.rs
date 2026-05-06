@@ -14,7 +14,7 @@ use ofm_core::player_rating::{effective_rating_for_assignment, formation_slots};
 use crate::game_database::GameDatabase;
 use crate::game_persistence::{GamePersistenceReader, GamePersistenceWriter};
 use crate::repositories::league_repo;
-use crate::save_index::{compute_checksum, SaveEntry};
+use crate::save_index::{SaveEntry, compute_checksum};
 use crate::save_index_manager::SaveIndexManager;
 
 /// Manages save sessions: creating, loading, saving, deleting, and listing.
@@ -482,21 +482,21 @@ mod tests {
             Position::Midfielder,
             PlayerAttributes {
                 pace: 70,
-                stamina: 75,
+                mental_resilience: 75,
                 strength: 65,
-                agility: 72,
+                champion_pool: 72,
                 passing: 80,
-                shooting: 60,
+                laning: 60,
                 tackling: 55,
-                dribbling: 68,
+                mechanics: 68,
                 defending: 50,
                 positioning: 65,
-                vision: 78,
-                decisions: 70,
-                composure: 60,
+                macro_play: 78,
+                consistency: 70,
+                discipline: 60,
                 aggression: 55,
-                teamwork: 80,
-                leadership: 45,
+                teamfighting: 80,
+                shotcalling: 45,
                 handling: 20,
                 reflexes: 25,
                 aerial: 40,
@@ -628,6 +628,7 @@ mod tests {
                 damage_dealt: 22_000,
                 vision_score: 24,
                 wards_placed: 10,
+                bans_json: String::new(),
             }],
             team_matches: vec![TeamMatchStatsRecord {
                 fixture_id: "fix-current".to_string(),
@@ -659,21 +660,21 @@ mod tests {
             position.clone(),
             PlayerAttributes {
                 pace: 70,
-                stamina: 70,
+                mental_resilience: 70,
                 strength: 70,
-                agility: 70,
+                champion_pool: 70,
                 passing: 70,
-                shooting: 70,
+                laning: 70,
                 tackling: 70,
-                dribbling: 70,
+                mechanics: 70,
                 defending: 70,
                 positioning: 70,
-                vision: 70,
-                decisions: 70,
-                composure: 70,
+                macro_play: 70,
+                consistency: 70,
+                discipline: 70,
                 aggression: 70,
-                teamwork: 70,
-                leadership: 70,
+                teamfighting: 70,
+                shotcalling: 70,
                 handling: 20,
                 reflexes: 20,
                 aerial: 70,
@@ -894,10 +895,12 @@ mod tests {
         // so canonicalization now puts right-side before left-side in the ordered slots.
         assert_eq!(
             starting_xi_ids,
-            vec!["gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"]
-                .into_iter()
-                .map(str::to_string)
-                .collect::<Vec<_>>()
+            vec![
+                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"
+            ]
+            .into_iter()
+            .map(str::to_string)
+            .collect::<Vec<_>>()
         );
     }
 
@@ -935,10 +938,12 @@ mod tests {
         // Note: same canonicalization order as test_create_save — right-side before left-side
         assert_eq!(
             team.starting_xi_ids,
-            vec!["gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"]
-                .into_iter()
-                .map(str::to_string)
-                .collect::<Vec<_>>()
+            vec![
+                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"
+            ]
+            .into_iter()
+            .map(str::to_string)
+            .collect::<Vec<_>>()
         );
 
         let db = GameDatabase::open(&db_path).unwrap();

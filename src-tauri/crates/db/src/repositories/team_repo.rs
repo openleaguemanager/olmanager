@@ -2,7 +2,7 @@ use domain::team::{
     AcademyMetadata, Facilities, LolTactics, PlayStyle, Team, TeamColors, TeamKind, TrainingFocus,
     TrainingIntensity, TrainingSchedule,
 };
-use rusqlite::{Connection, params};
+use rusqlite::{params, Connection};
 
 /// Insert or replace a team row.
 pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
@@ -227,25 +227,22 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         training_schedule: parse_training_schedule(&training_schedule_str),
         training_groups: serde_json::from_str(&training_groups_json).unwrap_or_default(),
         weekly_scrim_opponent_ids: serde_json::from_str(&weekly_scrims_json).unwrap_or_default(),
-        weekly_scrim_plan_team_ids: serde_json::from_str(
-            weekly_scrim_plans_json.as_deref().unwrap_or("[]"),
-        )
+        weekly_scrim_plan_team_ids: serde_json::from_str(&weekly_scrim_plans_json)
         .unwrap_or_default(),
         scrim_weekly_objective: scrim_weekly_objective_str
             .as_deref()
             .and_then(parse_scrim_focus),
-        scrim_weekly_slots: scrim_weekly_slots.unwrap_or(0),
+        scrim_weekly_slots,
         scrim_setup_locked_week_key,
-        scrim_reputation: scrim_reputation.unwrap_or(50),
-        scrim_weekly_cancellations: scrim_weekly_cancellations.unwrap_or(0),
-        scrim_loss_streak: scrim_loss_streak.unwrap_or(0),
-        scrim_weekly_played: scrim_weekly_played.unwrap_or(0),
-        scrim_weekly_wins: scrim_weekly_wins.unwrap_or(0),
-        scrim_weekly_losses: scrim_weekly_losses.unwrap_or(0),
+        scrim_reputation,
+        scrim_weekly_cancellations,
+        scrim_loss_streak,
+        scrim_weekly_played,
+        scrim_weekly_wins,
+        scrim_weekly_losses,
         scrim_slot_results: serde_json::from_str(&scrim_slot_results_json).unwrap_or_default(),
-        scrim_reports: serde_json::from_str(scrim_reports_json.as_deref().unwrap_or("[]"))
-            .unwrap_or_default(),
-        founded_year: row.get("founded_year")?,
+        scrim_reports: serde_json::from_str(&scrim_reports_json).unwrap_or_default(),
+        founded_year: row.get(19)?,
         colors: TeamColors {
             primary: row.get("colors_primary")?,
             secondary: row.get("colors_secondary")?,
@@ -254,7 +251,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         team_roles: serde_json::from_str(&team_roles_json).unwrap_or_default(),
         form: serde_json::from_str(&form_json).unwrap_or_default(),
         history: serde_json::from_str(&history_json).unwrap_or_default(),
-        team_kind: parse_team_kind(team_kind_str.as_deref().unwrap_or("Main")),
+        team_kind: parse_team_kind(&team_kind_str),
         parent_team_id,
         academy_team_id,
         academy: parse_academy_metadata(academy_metadata_json),
