@@ -47,6 +47,7 @@ const POSITION_ORDER: Record<string, number> = {
 };
 
 interface TacticsPlayerSortContext {
+  currentDate: string;
   section: SquadSection;
   sortDir: SortDirection;
   sortKey: SortKey;
@@ -139,7 +140,7 @@ export function sortTacticsPlayers(
   players: PlayerData[],
   context: TacticsPlayerSortContext,
 ): PlayerData[] {
-  const { section, sortDir, sortKey, xiActivePosition } = context;
+  const { currentDate, section, sortDir, sortKey, xiActivePosition } = context;
   const sortedPlayers = [...players].sort((leftPlayer, rightPlayer) => {
     const leftPosition = getSectionPlayerPosition(leftPlayer, section, xiActivePosition);
     const rightPosition = getSectionPlayerPosition(rightPlayer, section, xiActivePosition);
@@ -154,7 +155,7 @@ export function sortTacticsPlayers(
       case "name":
         return leftPlayer.full_name.localeCompare(rightPlayer.full_name);
       case "age":
-        return calcAge(leftPlayer.date_of_birth) - calcAge(rightPlayer.date_of_birth);
+        return calcAge(leftPlayer.date_of_birth, currentDate) - calcAge(rightPlayer.date_of_birth, currentDate);
       case "condition":
         return leftPlayer.condition - rightPlayer.condition;
       case "morale":

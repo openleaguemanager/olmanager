@@ -32,6 +32,14 @@ pub struct TeamSelectionData {
 
 const ACADEMY_FALLBACK_PHOTO: &str = "/player-photos/107455908655055017.png";
 
+fn calculate_age_on_date(birth_date: chrono::NaiveDate, as_of_date: chrono::NaiveDate) -> i32 {
+    let mut age = as_of_date.year() - birth_date.year();
+    if (as_of_date.month(), as_of_date.day()) < (birth_date.month(), birth_date.day()) {
+        age -= 1;
+    }
+    age
+}
+
 #[derive(Debug, Clone)]
 pub(crate) struct ExampleAcademyPlayerSeed {
     pub(crate) role: String,
@@ -1882,11 +1890,12 @@ pub async fn start_new_game(
         return Err("Nationality is required.".to_string());
     }
 
-    // Validate DOB: must be a valid date and within a sensible range
+    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
+
+    // Validate DOB: must be a valid date and within a sensible range for the game start date.
     let birth_date = chrono::NaiveDate::parse_from_str(&dob, "%Y-%m-%d")
         .map_err(|_| "Invalid date of birth. Use YYYY-MM-DD format.".to_string())?;
-    let today = chrono::Utc::now().date_naive();
-    let age = today.signed_duration_since(birth_date).num_days() / 365;
+    let age = calculate_age_on_date(birth_date, start_date.date_naive());
     if age > 99 {
         return Err("Invalid date of birth.".to_string());
     }
@@ -1901,8 +1910,6 @@ pub async fn start_new_game(
     manager.nickname = nickname;
     manager.avatar_path = avatar_path;
 
-    use chrono::TimeZone;
-    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
     let clock = GameClock::new(start_date);
 
     // Load world based on source
@@ -2438,4 +2445,25 @@ pub async fn update_manager_profile(
 
     info!("[cmd] update_manager_profile: completed");
     Ok(())
+}
+
+#[cfg(test)]
+mod player_age_tests {
+    use super::*;
+
+    #[test]
+    fn calculates_age_against_game_date_not_system_date() {
+        let birth_date = chrono::NaiveDate::from_ymd_opt(2000, 1, 2).unwrap();
+        let game_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
+
+        assert_eq!(calculate_age_on_date(birth_date, game_date), 24);
+    }
+
+    #[test]
+    fn increments_age_on_birthday() {
+        let birth_date = chrono::NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+        let game_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
+
+        assert_eq!(calculate_age_on_date(birth_date, game_date), 25);
+    }
 }

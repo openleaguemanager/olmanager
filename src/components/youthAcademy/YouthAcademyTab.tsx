@@ -89,7 +89,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
         .map((player) => {
           const role = resolvePlayerLolRole(player);
           const ovr = getLolOvr(player);
-          const age = calcAge(player.date_of_birth);
+          const age = calcAge(player.date_of_birth, gameState.clock.current_date);
           const potential = player.potential_revealed ?? null;
           return { ...player, role, age, ovr, potential };
         })
@@ -100,7 +100,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
           if (byOvr !== 0) return byOvr;
           return (a.match_name || a.full_name).localeCompare(b.match_name || b.full_name);
         }),
-    [gameState.players, gameState.teams, myTeam],
+    [gameState.clock.current_date, gameState.players, gameState.teams, myTeam],
   );
 
   const avgOvr = youthPlayers.length > 0 ? Math.round(youthPlayers.reduce((sum, player) => sum + player.ovr, 0) / youthPlayers.length) : 0;
