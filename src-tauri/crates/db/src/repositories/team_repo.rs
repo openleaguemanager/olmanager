@@ -229,7 +229,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         weekly_scrim_opponent_ids: serde_json::from_str(&weekly_scrims_json).unwrap_or_default(),
         weekly_scrim_plan_team_ids: weekly_scrim_plans_json
             .as_deref()
-            .and_then(|json| serde_json::from_str(json).ok())
+            .map(|s| serde_json::from_str(s).unwrap_or_default())
             .unwrap_or_default(),
         scrim_weekly_objective: scrim_weekly_objective_str
             .as_deref()
@@ -245,7 +245,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         scrim_slot_results: serde_json::from_str(&scrim_slot_results_json).unwrap_or_default(),
         scrim_reports: scrim_reports_json
             .as_deref()
-            .and_then(|json| serde_json::from_str(json).ok())
+            .map(|s| serde_json::from_str(s).unwrap_or_default())
             .unwrap_or_default(),
         founded_year: row.get(19)?,
         colors: TeamColors {
