@@ -12,6 +12,7 @@ import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 interface TeamProfileRosterCardProps {
   roster: PlayerData[];
+  currentDate: string;
   isOwnTeam: boolean;
   locale: string;
   t: TeamProfileTranslate;
@@ -20,6 +21,7 @@ interface TeamProfileRosterCardProps {
 
 export default function TeamProfileRosterCard({
   roster,
+  currentDate,
   isOwnTeam,
   locale,
   t,
@@ -72,7 +74,7 @@ export default function TeamProfileRosterCard({
             <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
               {roster.map((player) => {
                 const ovr = calculateLolOvr(player);
-                const age = calcAge(player.date_of_birth);
+                const age = calcAge(player.date_of_birth, currentDate);
                 const lolRole = getLolRoleForPlayer(player);
                 const photoUrl = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
 

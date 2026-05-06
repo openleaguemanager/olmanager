@@ -32,6 +32,14 @@ pub struct TeamSelectionData {
 
 const ACADEMY_FALLBACK_PHOTO: &str = "/player-photos/107455908655055017.png";
 
+fn calculate_age_on_date(birth_date: chrono::NaiveDate, as_of_date: chrono::NaiveDate) -> i32 {
+    let mut age = as_of_date.year() - birth_date.year();
+    if (as_of_date.month(), as_of_date.day()) < (birth_date.month(), birth_date.day()) {
+        age -= 1;
+    }
+    age
+}
+
 #[derive(Debug, Clone)]
 pub(crate) struct ExampleAcademyPlayerSeed {
     pub(crate) role: String,
@@ -1539,13 +1547,86 @@ pub(crate) fn apply_lol_seed_ratings(players: &mut [Player]) {
     }
 }
 
+fn default_initial_contract_end_for_start_year(start_year: i32) -> String {
+    format!("{}-11-30", start_year + 1)
+}
+
 pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
-    const DEFAULT_INITIAL_CONTRACT_END: &str = "2025-12-20";
+    let default_initial_contract_end = default_initial_contract_end_for_start_year(2025);
 
     for player in players.iter_mut() {
         if player.contract_end.is_none() {
-            player.contract_end = Some(DEFAULT_INITIAL_CONTRACT_END.to_string());
+            player.contract_end = Some(default_initial_contract_end.clone());
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{apply_default_initial_contract_end, default_initial_contract_end_for_start_year};
+    use domain::player::{Player, PlayerAttributes, Position};
+
+    fn default_attrs() -> PlayerAttributes {
+        PlayerAttributes {
+            pace: 60,
+            stamina: 60,
+            strength: 60,
+            agility: 60,
+            passing: 60,
+            shooting: 60,
+            tackling: 60,
+            dribbling: 60,
+            defending: 60,
+            positioning: 60,
+            vision: 60,
+            decisions: 60,
+            composure: 60,
+            aggression: 60,
+            teamwork: 60,
+            leadership: 60,
+            handling: 60,
+            reflexes: 60,
+            aerial: 60,
+        }
+    }
+
+    fn player_with_contract(id: &str, contract_end: Option<&str>) -> Player {
+        let mut player = Player::new(
+            id.to_string(),
+            id.to_string(),
+            id.to_string(),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            Position::Midfielder,
+            default_attrs(),
+        );
+        player.contract_end = contract_end.map(str::to_string);
+        player
+    }
+
+    #[test]
+    fn default_initial_contract_end_survives_first_next_season_friendlies() {
+        assert_eq!(
+            default_initial_contract_end_for_start_year(2025),
+            "2026-11-30"
+        );
+        assert_eq!(
+            default_initial_contract_end_for_start_year(2026),
+            "2027-11-30"
+        );
+    }
+
+    #[test]
+    fn apply_default_initial_contract_end_only_fills_missing_contracts() {
+        let mut players = vec![
+            player_with_contract("missing", None),
+            player_with_contract("existing", Some("2028-11-30")),
+        ];
+
+        apply_default_initial_contract_end(&mut players);
+
+        assert_eq!(players[0].contract_end.as_deref(), Some("2026-11-30"));
+        assert_eq!(players[1].contract_end.as_deref(), Some("2028-11-30"));
     }
 }
 
@@ -1809,11 +1890,12 @@ pub async fn start_new_game(
         return Err("Nationality is required.".to_string());
     }
 
-    // Validate DOB: must be a valid date and within a sensible range
+    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
+
+    // Validate DOB: must be a valid date and within a sensible range for the game start date.
     let birth_date = chrono::NaiveDate::parse_from_str(&dob, "%Y-%m-%d")
         .map_err(|_| "Invalid date of birth. Use YYYY-MM-DD format.".to_string())?;
-    let today = chrono::Utc::now().date_naive();
-    let age = today.signed_duration_since(birth_date).num_days() / 365;
+    let age = calculate_age_on_date(birth_date, start_date.date_naive());
     if age > 99 {
         return Err("Invalid date of birth.".to_string());
     }
@@ -1828,8 +1910,6 @@ pub async fn start_new_game(
     manager.nickname = nickname;
     manager.avatar_path = avatar_path;
 
-    use chrono::TimeZone;
-    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
     let clock = GameClock::new(start_date);
 
     // Load world based on source
@@ -2367,4 +2447,25 @@ pub async fn update_manager_profile(
 
     info!("[cmd] update_manager_profile: completed");
     Ok(())
+}
+
+#[cfg(test)]
+mod player_age_tests {
+    use super::*;
+
+    #[test]
+    fn calculates_age_against_game_date_not_system_date() {
+        let birth_date = chrono::NaiveDate::from_ymd_opt(2000, 1, 2).unwrap();
+        let game_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
+
+        assert_eq!(calculate_age_on_date(birth_date, game_date), 24);
+    }
+
+    #[test]
+    fn increments_age_on_birthday() {
+        let birth_date = chrono::NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+        let game_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
+
+        assert_eq!(calculate_age_on_date(birth_date, game_date), 25);
+    }
 }

@@ -195,6 +195,7 @@ export default function ScoutingTab({
           )}
         </div>
 
+<<<<<<< fix/team-upsert-values-mismatch
         {/* Right column: player search */}
         <div className="flex flex-col gap-5">
           {scouts.length > 0 && (
@@ -228,6 +229,38 @@ export default function ScoutingTab({
           )}
         </div>
       </div>
+=======
+      {scouts.length > 0 && (
+        <ScoutingPlayerSearchCard
+          players={scoutablePlayers}
+          teams={gameState.teams}
+          currentDate={gameState.clock.current_date}
+          posFilter={posFilter}
+          searchQuery={searchQuery}
+          alreadyScoutingIds={alreadyScoutingIds}
+          availableScoutCount={availableScouts.length}
+          sendingPlayerId={sending}
+          safePage={safePage}
+          totalPages={totalPages}
+          totalPlayers={allScoutable.length}
+          pageSize={SCOUTING_PAGE_SIZE}
+          onPositionFilterChange={(position) => {
+            setPosFilter(position);
+            setPage(0);
+          }}
+          onSearchQueryChange={(query) => {
+            setSearchQuery(query);
+            setPage(0);
+          }}
+          onSelectPlayer={onSelectPlayer}
+          onSendScout={handleSendScout}
+          onPreviousPage={() => setPage((currentPage) => Math.max(0, currentPage - 1))}
+          onNextPage={() =>
+            setPage((currentPage) => Math.min(totalPages - 1, currentPage + 1))
+          }
+        />
+      )}
+>>>>>>> develop
     </div>
   );
 }

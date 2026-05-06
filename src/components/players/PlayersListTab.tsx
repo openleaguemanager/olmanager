@@ -130,7 +130,7 @@ export default function PlayersListTab({
         cmp = posOrder[getLolRoleForPlayer(a)] - posOrder[getLolRoleForPlayer(b)];
         break;
       case "age":
-        cmp = calcAge(a.date_of_birth) - calcAge(b.date_of_birth);
+        cmp = calcAge(a.date_of_birth, gameState.clock.current_date) - calcAge(b.date_of_birth, gameState.clock.current_date);
         break;
       case "ovr":
         cmp = calculateLolOvr(a) - calculateLolOvr(b);
@@ -317,7 +317,7 @@ export default function PlayersListTab({
                   .slice((page - 1) * pageSize, page * pageSize)
                   .map((player) => {
                     const ovr = calculateLolOvr(player);
-                    const age = calcAge(player.date_of_birth);
+                    const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const photoSrc = resolvePlayerPhoto(player.id, player.match_name);
                     return (
                       <tr
