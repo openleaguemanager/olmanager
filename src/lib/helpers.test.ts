@@ -391,7 +391,7 @@ describe("calcOvr", () => {
       natural_position: "MID",
     });
 
-    expect(calcOvr(player)).toBe(68);
+    expect(calcOvr(player).ovr).toBe(63);
   });
 
   it("rounds positional overall to the nearest integer", () => {
@@ -400,11 +400,11 @@ describe("calcOvr", () => {
       natural_position: "MID",
       attributes: {
         ...makePlayer().attributes,
-        passing: 73,
+        dribbling: 73,
       },
     });
 
-    expect(calcOvr(player)).toBe(69);
+    expect(calcOvr(player).ovr).toBe(64); // (570+3)/9 = 573/9 = 63.67 → 64
   });
 });
 

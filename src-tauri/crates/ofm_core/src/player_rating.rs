@@ -66,18 +66,17 @@ fn forward_line(count: usize) -> Vec<LolRole> {
 
 pub fn natural_ovr(player: &Player) -> f64 {
     let attrs = &player.attributes;
-    // Simplified OVR calculation for LoL
-    // Weighted average of key attributes
-    weighted_average(&[
-        (attrs.passing, 0.10),
-        (attrs.shooting, 0.15),
-        (attrs.dribbling, 0.15),
-        (attrs.vision, 0.10),
-        (attrs.decisions, 0.15),
-        (attrs.composure, 0.10),
-        (attrs.teamwork, 0.10),
-        (attrs.positioning, 0.15),
-    ])
+    // Unified OVR: average of 9 visible LoL stats (matches calculate_lol_ovr in potential.rs)
+    (attrs.dribbling as f64
+        + attrs.shooting as f64
+        + attrs.teamwork as f64
+        + attrs.vision as f64
+        + attrs.decisions as f64
+        + attrs.leadership as f64
+        + attrs.agility as f64
+        + attrs.composure as f64
+        + attrs.stamina as f64)
+        / 9.0
 }
 
 fn primary_position(player: &Player) -> LolRole {

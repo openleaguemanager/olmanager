@@ -210,9 +210,21 @@ export function phaseLabel(phase: string): string {
 }
 
 export function calcOvr(attrs: Record<string, number>): number {
-  const vals = Object.values(attrs);
-  if (vals.length === 0) return 0;
-  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+  // Use the 9 visible LoL stats (same as calculate_lol_ovr in Rust)
+  const stats = [
+    attrs.dribbling,
+    attrs.shooting,
+    attrs.teamwork,
+    attrs.vision,
+    attrs.decisions,
+    attrs.leadership,
+    attrs.agility,
+    attrs.composure,
+    attrs.stamina,
+  ];
+  const valid = stats.filter((v) => v != null);
+  if (valid.length === 0) return 0;
+  return Math.round(valid.reduce((a, b) => a + b, 0) / valid.length);
 }
 
 export function resolveMatchFixture(

@@ -157,16 +157,16 @@ describe("phaseLabel", () => {
 });
 
 // ---------------------------------------------------------------------------
-// calcOvr (match version — averages all attrs)
+// calcOvr (match version — uses 9 visible LoL stats)
 // ---------------------------------------------------------------------------
 
 describe("calcOvr (match)", () => {
-  it("averages all attribute values", () => {
-    expect(calcOvr({ pace: 80, shooting: 60, passing: 70 })).toBe(70);
+  it("averages the 9 visible LoL stats", () => {
+    expect(calcOvr({ dribbling: 70, shooting: 60, teamwork: 70, vision: 70, decisions: 70, leadership: 70, agility: 70, composure: 70, stamina: 70 })).toBe(69); // 620/9 = 68.9 → 69
   });
 
-  it("rounds to nearest integer", () => {
-    expect(calcOvr({ pace: 71, shooting: 72 })).toBe(72); // 143/2 = 71.5 → 72
+  it("ignores non-visible stats like pace", () => {
+    expect(calcOvr({ dribbling: 80, shooting: 80 })).toBe(80);
   });
 
   it("returns 0 for empty attributes", () => {

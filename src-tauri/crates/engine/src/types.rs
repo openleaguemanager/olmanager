@@ -81,20 +81,18 @@ fn default_fitness() -> u8 {
 }
 
 impl PlayerData {
-    /// Overall rating (simple mean of core 11 attributes).
+    /// Overall rating (simple mean of 9 visible LoL stats, matching calculate_lol_ovr).
     pub fn overall(&self) -> f64 {
-        (self.pace as f64
-            + self.stamina as f64
-            + self.strength as f64
-            + self.passing as f64
+        (self.dribbling as f64
             + self.shooting as f64
-            + self.tackling as f64
-            + self.dribbling as f64
-            + self.defending as f64
-            + self.positioning as f64
+            + self.teamwork as f64
             + self.vision as f64
-            + self.decisions as f64)
-            / 11.0
+            + self.decisions as f64
+            + self.leadership as f64
+            + self.agility as f64
+            + self.composure as f64
+            + self.stamina as f64)
+            / 9.0
     }
 
     /// Effective rating accounting for current condition (0-100).
