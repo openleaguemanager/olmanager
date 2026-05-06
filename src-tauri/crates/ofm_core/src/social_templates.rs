@@ -1,5 +1,5 @@
-use domain::team::Team;
 use domain::social::SocialTemplate;
+use domain::team::Team;
 use serde::{Deserialize, Serialize};
 use std::sync::OnceLock;
 
@@ -108,11 +108,9 @@ fn deterministic_index(seed: &str, len: usize) -> usize {
         return 0;
     }
 
-    seed.bytes()
-        .fold(0usize, |acc, byte| {
-            acc.wrapping_mul(31).wrapping_add(byte as usize)
-        })
-        % len
+    seed.bytes().fold(0usize, |acc, byte| {
+        acc.wrapping_mul(31).wrapping_add(byte as usize)
+    }) % len
 }
 
 fn templates_pack() -> &'static MatchTemplatePack {
@@ -151,7 +149,10 @@ fn condition_matches(template: &MatchTextTemplate, context: &MatchTemplateContex
     !template.variants.is_empty()
 }
 
-fn runtime_condition_matches(template: &RuntimeTemplate, context: &MatchTemplateContext<'_>) -> bool {
+fn runtime_condition_matches(
+    template: &RuntimeTemplate,
+    context: &MatchTemplateContext<'_>,
+) -> bool {
     if let Some(required_stomp) = template.conditions.requires_stomp {
         if context.stomp != required_stomp {
             return false;
@@ -339,9 +340,10 @@ pub fn select_match_template(
         .iter()
         .map(|template| template.weight.max(1))
         .sum::<u32>();
-    let mut needle =
-        deterministic_index(&format!("{}-slot-{:?}", context.seed, slot), total_weight as usize)
-            as u32;
+    let mut needle = deterministic_index(
+        &format!("{}-slot-{:?}", context.seed, slot),
+        total_weight as usize,
+    ) as u32;
 
     for template in candidates {
         let weight = template.weight.max(1);
@@ -471,9 +473,10 @@ pub fn select_match_template_for_language(
         .iter()
         .map(|template| template.weight.max(1))
         .sum::<u32>();
-    let mut needle =
-        deterministic_index(&format!("{}-slot-{:?}", context.seed, slot), total_weight as usize)
-            as u32;
+    let mut needle = deterministic_index(
+        &format!("{}-slot-{:?}", context.seed, slot),
+        total_weight as usize,
+    ) as u32;
 
     for template in candidates {
         let weight = template.weight.max(1);

@@ -18,21 +18,21 @@ use ofm_core::transfers::{
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
         pace: 60,
-        stamina: 60,
+        mental_resilience: 60,
         strength: 60,
-        agility: 60,
+        champion_pool: 60,
         passing: 60,
-        shooting: 60,
+        laning: 60,
         tackling: 60,
-        dribbling: 60,
+        mechanics: 60,
         defending: 60,
         positioning: 60,
-        vision: 60,
-        decisions: 60,
-        composure: 60,
+        macro_play: 60,
+        consistency: 60,
+        discipline: 60,
         aggression: 60,
-        teamwork: 60,
-        leadership: 60,
+        teamfighting: 60,
+        shotcalling: 60,
         handling: 30,
         reflexes: 30,
         aerial: 60,
@@ -125,7 +125,7 @@ fn make_seller_team(starting_xi_ids: Vec<String>) -> Team {
         "Seller Ground".to_string(),
         28_000,
     );
-    team.starting_xi_ids = starting_xi_ids;
+    team.active_lineup_ids = starting_xi_ids;
     team
 }
 
@@ -289,8 +289,8 @@ fn accepted_transfer_bid_can_assign_player_to_academy_and_charge_parent_club() {
 #[test]
 fn key_player_is_harder_to_buy_than_fringe_player() {
     let mut star = make_player("player-star");
-    star.attributes.shooting = 88;
-    star.attributes.dribbling = 86;
+    star.attributes.laning = 88;
+    star.attributes.mechanics = 86;
     star.attributes.pace = 84;
 
     let mut star_game =
@@ -821,7 +821,7 @@ fn selling_key_player_can_reduce_remaining_starters_morale() {
 
     let mut game = make_game_with_player(key_player, vec![], 5_000_000, 2_000_000);
     game.players.push(teammate);
-    game.teams[0].starting_xi_ids =
+    game.teams[0].active_lineup_ids =
         vec!["player-key-sale".to_string(), "player-teammate".to_string()];
     game.teams[1].finance = 6_000_000;
     game.teams[1].transfer_budget = 3_000_000;

@@ -295,21 +295,21 @@ mod tests {
     fn sample_attrs() -> PlayerAttributes {
         PlayerAttributes {
             pace: 65,
-            stamina: 65,
+            mental_resilience: 65,
             strength: 65,
-            agility: 65,
+            champion_pool: 65,
             passing: 65,
-            shooting: 65,
+            laning: 65,
             tackling: 65,
-            dribbling: 65,
+            mechanics: 65,
             defending: 65,
             positioning: 65,
-            vision: 65,
-            decisions: 65,
-            composure: 65,
+            macro_play: 65,
+            consistency: 65,
+            discipline: 65,
             aggression: 50,
-            teamwork: 65,
-            leadership: 50,
+            teamfighting: 65,
+            shotcalling: 50,
             handling: 20,
             reflexes: 20,
             aerial: 60,
@@ -364,7 +364,6 @@ mod tests {
         let written_path = export_world_database_internal(&state, &export_path).unwrap();
         let json = fs::read_to_string(&written_path).unwrap();
         let world: WorldData = serde_json::from_str(&json).unwrap();
-
     }
 
     #[test]
@@ -397,7 +396,7 @@ mod tests {
               "training_schedule": "Balanced",
               "founded_year": 1900,
               "colors": { "primary": "#ffffff", "secondary": "#000000" },
-              "starting_xi_ids": [],
+              "active_lineup_ids": [],
               "match_roles": { "captain": null, "shotcaller": null },
               "form": [],
               "history": []
@@ -447,7 +446,6 @@ mod tests {
         let written_path = write_database_json_to_dir(temp_dir.path(), json).unwrap();
         let stored_json = fs::read_to_string(&written_path).unwrap();
         let world: WorldData = serde_json::from_str(&stored_json).unwrap();
-
     }
 
     #[test]

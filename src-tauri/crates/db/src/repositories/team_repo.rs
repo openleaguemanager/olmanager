@@ -2,12 +2,12 @@ use domain::team::{
     AcademyMetadata, Facilities, LolTactics, PlayStyle, Team, TeamColors, TeamKind, TrainingFocus,
     TrainingIntensity, TrainingSchedule,
 };
-use rusqlite::{Connection, params};
+use rusqlite::{params, Connection};
 
 /// Insert or replace a team row.
 pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
-    let starting_xi_json =
-        serde_json::to_string(&t.starting_xi_ids).map_err(|e| format!("JSON error: {}", e))?;
+    let active_lineup_json =
+        serde_json::to_string(&t.active_lineup_ids).map_err(|e| format!("JSON error: {}", e))?;
     let form_json = serde_json::to_string(&t.form).map_err(|e| format!("JSON error: {}", e))?;
     let history_json =
         serde_json::to_string(&t.history).map_err(|e| format!("JSON error: {}", e))?;
@@ -80,7 +80,7 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
             t.founded_year,
             t.colors.primary,
             t.colors.secondary,
-            starting_xi_json,
+            active_lineup_json,
             team_roles_json,
             form_json,
             history_json,
@@ -174,11 +174,11 @@ fn parse_academy_metadata(json: Option<String>) -> Option<AcademyMetadata> {
 }
 
 fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
-    let starting_xi_json: String = row.get(23)?;
-    let team_roles_json: String = row.get(24)?;
-    let form_json: String = row.get(25)?;
-    let history_json: String = row.get(26)?;
-    let training_groups_json: String = row.get(27)?;
+    let active_lineup_json: String = row.get("starting_xi_ids")?;
+    let team_roles_json: String = row.get("team_roles")?;
+    let form_json: String = row.get("form")?;
+    let history_json: String = row.get("history")?;
+    let training_groups_json: String = row.get("training_groups")?;
     let weekly_scrims_json: String = row.get("weekly_scrim_opponent_ids")?;
     let weekly_scrim_plans_json: Option<String> = row.get("weekly_scrim_plan_team_ids")?;
     let scrim_weekly_objective_str: Option<String> = row.get("scrim_weekly_objective")?;
@@ -192,9 +192,9 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
     let scrim_weekly_losses: Option<u8> = row.get("scrim_weekly_losses")?;
     let scrim_slot_results_json: String = row.get("scrim_slot_results")?;
     let scrim_reports_json: Option<String> = row.get("scrim_reports")?;
-    let financial_ledger_json: String = row.get(41)?;
-    let sponsorship_json: String = row.get(42)?;
-    let facilities_json: String = row.get(43)?;
+    let financial_ledger_json: String = row.get("financial_ledger")?;
+    let sponsorship_json: String = row.get("sponsorship")?;
+    let facilities_json: String = row.get("facilities")?;
     let play_style_str: String = row.get("play_style")?;
     let training_focus_str: String = row.get("training_focus")?;
     let training_intensity_str: String = row.get("training_intensity")?;
@@ -227,34 +227,39 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         training_schedule: parse_training_schedule(&training_schedule_str),
         training_groups: serde_json::from_str(&training_groups_json).unwrap_or_default(),
         weekly_scrim_opponent_ids: serde_json::from_str(&weekly_scrims_json).unwrap_or_default(),
-        weekly_scrim_plan_team_ids: serde_json::from_str(
-            weekly_scrim_plans_json.as_deref().unwrap_or("[]"),
-        )
-        .unwrap_or_default(),
+        weekly_scrim_plan_team_ids: weekly_scrim_plans_json
+            .as_deref()
+            .and_then(|json| serde_json::from_str(json).ok())
+            .unwrap_or_default(),
         scrim_weekly_objective: scrim_weekly_objective_str
             .as_deref()
             .and_then(parse_scrim_focus),
-        scrim_weekly_slots: scrim_weekly_slots.unwrap_or(0),
+        scrim_weekly_slots: scrim_weekly_slots.unwrap_or_default(),
         scrim_setup_locked_week_key,
         scrim_reputation: scrim_reputation.unwrap_or(50),
-        scrim_weekly_cancellations: scrim_weekly_cancellations.unwrap_or(0),
-        scrim_loss_streak: scrim_loss_streak.unwrap_or(0),
-        scrim_weekly_played: scrim_weekly_played.unwrap_or(0),
-        scrim_weekly_wins: scrim_weekly_wins.unwrap_or(0),
-        scrim_weekly_losses: scrim_weekly_losses.unwrap_or(0),
+        scrim_weekly_cancellations: scrim_weekly_cancellations.unwrap_or_default(),
+        scrim_loss_streak: scrim_loss_streak.unwrap_or_default(),
+        scrim_weekly_played: scrim_weekly_played.unwrap_or_default(),
+        scrim_weekly_wins: scrim_weekly_wins.unwrap_or_default(),
+        scrim_weekly_losses: scrim_weekly_losses.unwrap_or_default(),
         scrim_slot_results: serde_json::from_str(&scrim_slot_results_json).unwrap_or_default(),
-        scrim_reports: serde_json::from_str(scrim_reports_json.as_deref().unwrap_or("[]"))
+        scrim_reports: scrim_reports_json
+            .as_deref()
+            .and_then(|json| serde_json::from_str(json).ok())
             .unwrap_or_default(),
-        founded_year: row.get("founded_year")?,
+        founded_year: row.get(19)?,
         colors: TeamColors {
             primary: row.get("colors_primary")?,
             secondary: row.get("colors_secondary")?,
         },
-        starting_xi_ids: serde_json::from_str(&starting_xi_json).unwrap_or_default(),
+        active_lineup_ids: serde_json::from_str(&active_lineup_json).unwrap_or_default(),
         team_roles: serde_json::from_str(&team_roles_json).unwrap_or_default(),
         form: serde_json::from_str(&form_json).unwrap_or_default(),
         history: serde_json::from_str(&history_json).unwrap_or_default(),
-        team_kind: parse_team_kind(team_kind_str.as_deref().unwrap_or("Main")),
+        team_kind: team_kind_str
+            .as_deref()
+            .map(parse_team_kind)
+            .unwrap_or_default(),
         parent_team_id,
         academy_team_id,
         academy: parse_academy_metadata(academy_metadata_json),
@@ -609,16 +614,27 @@ mod tests {
     }
 
     #[test]
-    fn test_team_starting_xi_roundtrip() {
+    fn test_team_active_lineup_roundtrip_persists_to_legacy_column() {
         let db = test_db();
-        let mut team = sample_team("team-001", "XI FC");
-        team.starting_xi_ids = vec!["p1".to_string(), "p2".to_string(), "p3".to_string()];
+        let mut team = sample_team("team-001", "Lineup Esports");
+        team.active_lineup_ids = vec!["p1".to_string(), "p2".to_string(), "p3".to_string()];
 
         upsert_team(db.conn(), &team).unwrap();
         let loaded = load_team(db.conn(), "team-001").unwrap().unwrap();
 
-        assert_eq!(loaded.starting_xi_ids.len(), 3);
-        assert_eq!(loaded.starting_xi_ids[0], "p1");
+        assert_eq!(loaded.active_lineup_ids.len(), 3);
+        assert_eq!(loaded.active_lineup_ids[0], "p1");
+
+        let persisted: String = db
+            .conn()
+            .query_row(
+                "SELECT starting_xi_ids FROM teams WHERE id = ?1",
+                ["team-001"],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let persisted_lineup: Vec<String> = serde_json::from_str(&persisted).unwrap();
+        assert_eq!(persisted_lineup, team.active_lineup_ids);
     }
 
     #[test]

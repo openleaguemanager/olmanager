@@ -367,13 +367,13 @@ export function deriveWeeklyScrimContext(gameState: GameStateData, team: TeamDat
 function playerLolOvr(player: PlayerData): number {
   const a = player.attributes;
   return Math.round((
-    a.dribbling + a.shooting + a.teamwork + a.vision + a.decisions + a.leadership + a.agility + a.composure + a.stamina
+    a.mechanics + a.laning + a.teamfighting + a.macro_play + a.consistency + a.shotcalling + a.champion_pool + a.discipline + a.mental_resilience
   ) / 9);
 }
 
 export function teamLolOvr(gameState: GameStateData, teamId: string): number {
   const team = gameState.teams.find((candidate) => candidate.id === teamId);
-  const starters = (team?.starting_xi_ids ?? [])
+  const starters = (team?.active_lineup_ids ?? team?.starting_xi_ids ?? [])
     .map((playerId) => gameState.players.find((player) => player.id === playerId))
     .filter((player): player is NonNullable<typeof player> => Boolean(player))
     .slice(0, 5);
