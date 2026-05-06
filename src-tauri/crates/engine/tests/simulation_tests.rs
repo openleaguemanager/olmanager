@@ -37,25 +37,16 @@ fn make_player(id: &str, name: &str, position: &str, skill: u8) -> PlayerData {
         role: football_position_to_lol_role(position),
         condition: 90,
         fitness: 75,
-        pace: skill,
-        mental_resilience: skill,
-        strength: skill,
-        champion_pool: skill,
-        passing: skill,
-        laning: skill,
-        tackling: skill,
+        // LoL-native attributes
         mechanics: skill,
-        defending: skill,
-        positioning: skill,
+        laning: skill,
+        teamfighting: skill,
         macro_play: skill,
         consistency: skill,
-        discipline: skill,
-        aggression: skill,
-        teamfighting: skill,
         shotcalling: skill,
-        handling: skill,
-        reflexes: skill,
-        aerial: skill,
+        champion_pool: skill,
+        discipline: skill,
+        mental_resilience: skill,
         traits: vec![],
     }
 }
@@ -129,6 +120,60 @@ fn team_ratings_scale_with_skill() {
     assert!(strong.defense_rating() > weak.defense_rating());
     assert!(strong.midfield_rating() > weak.midfield_rating());
     assert!(strong.attack_rating() > weak.attack_rating());
+}
+
+#[test]
+fn team_ratings_use_lol_native_attributes() {
+    // Verify defense_rating uses LoL attributes (consistency + discipline + mental_resilience)
+    let mut team = make_team("t1", "Test FC", 60, PlayStyle::Balanced);
+    // Set low LoL-native stats but high legacy stats (should not affect rating)
+    for player in &mut team.players {
+        player.consistency = 30;
+        player.discipline = 30;
+        player.mental_resilience = 30;
+    }
+    let defense_before = team.defense_rating();
+
+    // Now set high LoL-native stats
+    for player in &mut team.players {
+        player.consistency = 90;
+        player.discipline = 90;
+        player.mental_resilience = 90;
+    }
+    let defense_after = team.defense_rating();
+
+    // Defense should increase significantly with higher LoL-native attributes
+    assert!(
+        defense_after > defense_before + 20.0,
+        "defense_rating should use LoL-native attributes: before={}, after={}",
+        defense_before,
+        defense_after
+    );
+
+    // Verify attack_rating uses LoL attributes (mechanics + laning + teamfighting + consistency)
+    let mut team2 = make_team("t2", "Test FC2", 60, PlayStyle::Balanced);
+    for player in &mut team2.players {
+        player.mechanics = 30;
+        player.laning = 30;
+        player.teamfighting = 30;
+        player.consistency = 30;
+    }
+    let attack_before = team2.attack_rating();
+
+    for player in &mut team2.players {
+        player.mechanics = 90;
+        player.laning = 90;
+        player.teamfighting = 90;
+        player.consistency = 90;
+    }
+    let attack_after = team2.attack_rating();
+
+    assert!(
+        attack_after > attack_before + 20.0,
+        "attack_rating should use LoL-native attributes: before={}, after={}",
+        attack_before,
+        attack_after
+    );
 }
 
 // ---------------------------------------------------------------------------
