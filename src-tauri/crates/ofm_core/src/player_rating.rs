@@ -67,15 +67,15 @@ fn forward_line(count: usize) -> Vec<LolRole> {
 pub fn natural_ovr(player: &Player) -> f64 {
     let attrs = &player.attributes;
     // Unified OVR: average of 9 visible LoL stats (matches calculate_lol_ovr in potential.rs)
-    (attrs.dribbling as f64
-        + attrs.shooting as f64
-        + attrs.teamwork as f64
-        + attrs.vision as f64
-        + attrs.decisions as f64
-        + attrs.leadership as f64
-        + attrs.agility as f64
-        + attrs.composure as f64
-        + attrs.stamina as f64)
+    (attrs.mechanics as f64
+        + attrs.laning as f64
+        + attrs.teamfighting as f64
+        + attrs.macro_play as f64
+        + attrs.consistency as f64
+        + attrs.shotcalling as f64
+        + attrs.champion_pool as f64
+        + attrs.discipline as f64
+        + attrs.mental_resilience as f64)
         / 9.0
 }
 
@@ -170,21 +170,21 @@ mod tests {
     fn make_player(role: LolRole) -> Player {
         let attrs = PlayerAttributes {
             pace: 70,
-            stamina: 75,
+            mental_resilience: 75,
             strength: 65,
-            agility: 72,
+            champion_pool: 72,
             passing: 80,
-            shooting: 60,
+            laning: 60,
             tackling: 55,
-            dribbling: 68,
+            mechanics: 68,
             defending: 50,
             positioning: 65,
-            vision: 78,
-            decisions: 70,
-            composure: 60,
+            macro_play: 78,
+            consistency: 70,
+            discipline: 60,
             aggression: 55,
-            teamwork: 80,
-            leadership: 45,
+            teamfighting: 80,
+            shotcalling: 45,
             handling: 20,
             reflexes: 25,
             aerial: 40,

@@ -89,10 +89,10 @@ mod tests {
 
     fn sample_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 70, stamina: 70, strength: 70, agility: 70,
-            passing: 70, shooting: 70, tackling: 70, dribbling: 70,
-            defending: 70, positioning: 70, vision: 70, decisions: 70,
-            composure: 70, aggression: 70, teamwork: 70, leadership: 70,
+            pace: 70, mental_resilience: 70, strength: 70, champion_pool: 70,
+            passing: 70, laning: 70, tackling: 70, mechanics: 70,
+            defending: 70, positioning: 70, macro_play: 70, consistency: 70,
+            discipline: 70, aggression: 70, teamfighting: 70, shotcalling: 70,
             handling: 20, reflexes: 20, aerial: 60,
         }
     }

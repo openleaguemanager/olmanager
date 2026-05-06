@@ -1517,15 +1517,15 @@ pub(crate) fn apply_lol_seed_ratings(players: &mut [Player]) {
 
         // Keep legacy schema compatibility but use a strict 1:1 mapping to LoL stats.
         // These are now treated as the source for LoL profile/training progression.
-        player.attributes.dribbling = seed.mechanics;
-        player.attributes.shooting = seed.laning;
-        player.attributes.teamwork = seed.teamfighting;
-        player.attributes.vision = seed.macro_play;
-        player.attributes.decisions = seed.consistency;
-        player.attributes.leadership = seed.shotcalling;
-        player.attributes.agility = seed.champion_pool;
-        player.attributes.composure = seed.discipline;
-        player.attributes.stamina = seed.mental_resilience;
+        player.attributes.mechanics = seed.mechanics;
+        player.attributes.laning = seed.laning;
+        player.attributes.teamfighting = seed.teamfighting;
+        player.attributes.macro_play = seed.macro_play;
+        player.attributes.consistency = seed.consistency;
+        player.attributes.shotcalling = seed.shotcalling;
+        player.attributes.champion_pool = seed.champion_pool;
+        player.attributes.discipline = seed.discipline;
+        player.attributes.mental_resilience = seed.mental_resilience;
 
         if let Some(potential_base) = potential_seed_for_player(&player.match_name) {
             player.potential_base = potential_base.min(99);
@@ -1635,21 +1635,21 @@ fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
 
     PlayerAttributes {
         pace: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
-        stamina: mental_resilience,
+        mental_resilience: mental_resilience,
         strength: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
-        agility: champion_pool,
+        champion_pool: champion_pool,
         passing: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
-        shooting: laning,
+        laning: laning,
         tackling: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
-        dribbling: mechanics,
+        mechanics: mechanics,
         defending,
         positioning: clamp_stat((i16::from(macro_play) + i16::from(consistency)) / 2),
-        vision: macro_play,
-        decisions: consistency,
-        composure: discipline,
+        macro_play: macro_play,
+        consistency: consistency,
+        discipline: discipline,
         aggression: clamp_stat((i16::from(teamfighting) + i16::from(mental_resilience)) / 2 - 4),
-        teamwork: teamfighting,
-        leadership: shotcalling,
+        teamfighting: teamfighting,
+        shotcalling: shotcalling,
         handling: 20,
         reflexes: 22,
         aerial: if role_key == "top" {
