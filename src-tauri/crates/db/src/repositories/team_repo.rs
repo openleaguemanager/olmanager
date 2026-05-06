@@ -56,7 +56,7 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
           founded_year, colors_primary, colors_secondary,
           starting_xi_ids, team_roles, form, history, training_groups, weekly_scrim_opponent_ids, weekly_scrim_plan_team_ids, scrim_weekly_objective, scrim_weekly_slots, scrim_setup_locked_week_key, scrim_reputation, scrim_weekly_cancellations, scrim_loss_streak, scrim_weekly_played, scrim_weekly_wins, scrim_weekly_losses, scrim_slot_results, scrim_reports, financial_ledger, sponsorship, facilities,
             team_kind, parent_team_id, academy_team_id, academy_metadata)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35, ?36, ?37, ?38, ?39, ?40, ?41, ?42, ?43, ?44, ?45, ?46, ?47, ?48)",
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35, ?36, ?37, ?38, ?39, ?40, ?41, ?42, ?43, ?44, ?45, ?46, ?47)",
         params![
             t.id,
             t.name,
@@ -174,11 +174,11 @@ fn parse_academy_metadata(json: Option<String>) -> Option<AcademyMetadata> {
 }
 
 fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
-    let starting_xi_json: String = row.get(23)?;
-    let team_roles_json: String = row.get(24)?;
-    let form_json: String = row.get(25)?;
-    let history_json: String = row.get(26)?;
-    let training_groups_json: String = row.get(27)?;
+    let starting_xi_json: String = row.get(22)?;
+    let team_roles_json: String = row.get(23)?;
+    let form_json: String = row.get(24)?;
+    let history_json: String = row.get(25)?;
+    let training_groups_json: String = row.get(26)?;
     let weekly_scrims_json: String = row.get("weekly_scrim_opponent_ids")?;
     let weekly_scrim_plans_json: Option<String> = row.get("weekly_scrim_plan_team_ids")?;
     let scrim_weekly_objective_str: Option<String> = row.get("scrim_weekly_objective")?;
@@ -192,9 +192,9 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
     let scrim_weekly_losses: Option<u8> = row.get("scrim_weekly_losses")?;
     let scrim_slot_results_json: String = row.get("scrim_slot_results")?;
     let scrim_reports_json: Option<String> = row.get("scrim_reports")?;
-    let financial_ledger_json: String = row.get(41)?;
-    let sponsorship_json: String = row.get(42)?;
-    let facilities_json: String = row.get(43)?;
+    let financial_ledger_json: String = row.get(40)?;
+    let sponsorship_json: String = row.get(41)?;
+    let facilities_json: String = row.get(42)?;
     let play_style_str: String = row.get("play_style")?;
     let training_focus_str: String = row.get("training_focus")?;
     let training_intensity_str: String = row.get("training_intensity")?;

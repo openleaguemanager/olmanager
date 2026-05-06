@@ -628,6 +628,7 @@ mod tests {
                 damage_dealt: 22_000,
                 vision_score: 24,
                 wards_placed: 10,
+                bans_json: String::new(),
             }],
             team_matches: vec![TeamMatchStatsRecord {
                 fixture_id: "fix-current".to_string(),
