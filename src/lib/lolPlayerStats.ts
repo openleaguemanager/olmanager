@@ -47,23 +47,23 @@ export function getLolVisibleStatValue(player: PlayerData, statId: LolVisibleSta
 
   switch (statId) {
     case "mechanics":
-      return a.dribbling;
+      return a.mechanics;
     case "laning":
-      return a.shooting;
+      return a.laning;
     case "teamfighting":
-      return a.teamwork;
+      return a.teamfighting;
     case "macro":
-      return a.vision;
+      return a.macro_play;
     case "consistency":
-      return a.decisions;
+      return a.consistency;
     case "shotcalling":
-      return a.leadership;
+      return a.shotcalling;
     case "championPool":
-      return a.agility;
+      return a.champion_pool;
     case "discipline":
-      return a.composure;
+      return a.discipline;
     case "mentalResilience":
-      return a.stamina;
+      return a.mental_resilience;
   }
 }
 

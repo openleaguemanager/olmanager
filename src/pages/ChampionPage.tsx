@@ -478,7 +478,7 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
                       <p className="text-lg font-heading font-bold mt-1 text-purple-400">{stats.avg_cs.toFixed(0)}</p>
                     </div>
                     <div className="text-center p-3 rounded-lg bg-navy-800/50">
-                      <p className="text-xs text-gray-400">{t("champions.vision", "Vision")}</p>
+                      <p className="text-xs text-gray-400">{t("champions.macro_play", "Vision")}</p>
                       <p className="text-lg font-heading font-bold mt-1 text-cyan-400">{stats.avg_vision.toFixed(0)}</p>
                     </div>
                   </div>

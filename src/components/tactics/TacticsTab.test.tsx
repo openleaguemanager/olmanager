@@ -462,7 +462,7 @@ describe("TacticsTab", () => {
     expect(screen.getByText("Comparison player")).toBeInTheDocument();
     expect(screen.getAllByText("Player m1").length).toBeGreaterThan(0);
     expect(
-      screen.getAllByText("common.attributes.vision").length,
+      screen.getAllByText("common.attributes.macro_play").length,
     ).toBeGreaterThan(0);
     expect(
       screen.getByRole("button", { name: "Confirm swap" }),

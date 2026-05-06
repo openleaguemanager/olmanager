@@ -2252,10 +2252,10 @@ export default function ChampionDraft({
       const playerState = gameState.players.find((item) => item.id === player.id);
       const gameIq = playerState
         ? Math.round(
-          (Number(playerState.attributes.decisions ?? 70) +
-            Number(playerState.attributes.vision ?? 70) +
+          (Number(playerState.attributes.consistency ?? 70) +
+            Number(playerState.attributes.macro_play ?? 70) +
             Number(playerState.attributes.positioning ?? 70) +
-            Number(playerState.attributes.composure ?? 70)) /
+            Number(playerState.attributes.discipline ?? 70)) /
           4,
         )
         : 70;

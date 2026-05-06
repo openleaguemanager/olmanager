@@ -212,15 +212,15 @@ export function phaseLabel(phase: string): string {
 export function calcOvr(attrs: Record<string, number>): number {
   // Use the 9 visible LoL stats (same as calculate_lol_ovr in Rust)
   const stats = [
-    attrs.dribbling,
-    attrs.shooting,
-    attrs.teamwork,
-    attrs.vision,
-    attrs.decisions,
-    attrs.leadership,
-    attrs.agility,
-    attrs.composure,
-    attrs.stamina,
+    attrs.mechanics,
+    attrs.laning,
+    attrs.teamfighting,
+    attrs.macro_play,
+    attrs.consistency,
+    attrs.shotcalling,
+    attrs.champion_pool,
+    attrs.discipline,
+    attrs.mental_resilience,
   ];
   const valid = stats.filter((v) => v != null);
   if (valid.length === 0) return 0;

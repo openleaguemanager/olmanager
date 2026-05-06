@@ -9,15 +9,15 @@ function baseOvr(player: PlayerData): number {
   const a = player.attributes;
   return Math.round(
     Math.max(1, Math.min(99,
-      (a.dribbling +
-        a.shooting +
-        a.teamwork +
-        a.vision +
-        a.decisions +
-        a.leadership +
-        a.agility +
-        a.composure +
-        a.stamina) / 9
+      (a.mechanics +
+        a.laning +
+        a.teamfighting +
+        a.macro_play +
+        a.consistency +
+        a.shotcalling +
+        a.champion_pool +
+        a.discipline +
+        a.mental_resilience) / 9
     ))
   );
 }

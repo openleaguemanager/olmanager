@@ -39,15 +39,15 @@ const ROLE_ORDER: Record<DraftRole, number> = {
 function getLolOvr(player: PlayerData): number {
   const attrs = player.attributes;
   const avg =
-    (Number(attrs.dribbling ?? 0) +
-      Number(attrs.shooting ?? 0) +
-      Number(attrs.teamwork ?? 0) +
-      Number(attrs.vision ?? 0) +
-      Number(attrs.decisions ?? 0) +
-      Number(attrs.leadership ?? 0) +
-      Number(attrs.agility ?? 0) +
-      Number(attrs.composure ?? 0) +
-      Number(attrs.stamina ?? 0)) /
+    (Number(attrs.mechanics ?? 0) +
+      Number(attrs.laning ?? 0) +
+      Number(attrs.teamfighting ?? 0) +
+      Number(attrs.macro_play ?? 0) +
+      Number(attrs.consistency ?? 0) +
+      Number(attrs.shotcalling ?? 0) +
+      Number(attrs.champion_pool ?? 0) +
+      Number(attrs.discipline ?? 0) +
+      Number(attrs.mental_resilience ?? 0)) /
     9;
   return Math.max(1, Math.min(99, Math.round(avg)));
 }
