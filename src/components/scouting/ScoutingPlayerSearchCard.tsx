@@ -22,6 +22,7 @@ const LOL_ROLE_ICON_URLS: Record<LolRole, string> = {
 interface ScoutingPlayerSearchCardProps {
   players: PlayerData[];
   teams: TeamData[];
+  currentDate: string;
   posFilter: string;
   searchQuery: string;
   alreadyScoutingIds: Set<string>;
@@ -42,6 +43,7 @@ interface ScoutingPlayerSearchCardProps {
 export default function ScoutingPlayerSearchCard({
   players,
   teams,
+  currentDate,
   posFilter,
   searchQuery,
   alreadyScoutingIds,
@@ -228,7 +230,7 @@ export default function ScoutingPlayerSearchCard({
                       />
                     </td>
                     <td className="text-center py-2 px-1 text-gray-600 dark:text-gray-400">
-                      {calcAge(player.date_of_birth)}
+                      {calcAge(player.date_of_birth, currentDate)}
                     </td>
                     <td className="py-2 px-1 text-gray-600 dark:text-gray-400 text-xs truncate max-w-[120px]">
                       {team}

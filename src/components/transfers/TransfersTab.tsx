@@ -687,7 +687,7 @@ export default function TransfersTab({
                 <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
                   {filteredList.map((player) => {
                     const ovr = calculateLolOvr(player);
-                    const age = calcAge(player.date_of_birth);
+                    const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const offersForThisPlayer = player.transfer_offers;
                     const lolRole = getLolRoleForPlayer(player);
                     const photoSrc = resolvePlayerPhoto(player.id, player.match_name);

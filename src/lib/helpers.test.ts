@@ -155,9 +155,9 @@ describe("findNextFixture", () => {
 });
 
 describe("season helpers", () => {
-  it("computes the expected double round-robin fixture count for even-sized leagues", () => {
-    expect(expectedFixtureCount(16)).toBe(240);
-    expect(expectedFixtureCount(4)).toBe(12);
+  it("computes the expected single round-robin fixture count for even-sized leagues", () => {
+    expect(expectedFixtureCount(16)).toBe(120);
+    expect(expectedFixtureCount(4)).toBe(6);
   });
 
   it("treats odd-sized or undersized leagues as incomplete schedules", () => {
@@ -409,9 +409,9 @@ describe("calcOvr", () => {
 });
 
 describe("calcAge", () => {
-  it("calculates age relative to 2026", () => {
-    expect(calcAge("1996-01-15")).toBe(30);
-    expect(calcAge("2000-06-01")).toBe(26);
+  it("calculates age relative to the provided as-of date", () => {
+    expect(calcAge("1996-01-15", "2026-07-01T00:00:00Z")).toBe(30);
+    expect(calcAge("2000-06-01", "2026-07-01T00:00:00Z")).toBe(26);
   });
 });
 
