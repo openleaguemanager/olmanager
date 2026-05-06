@@ -368,7 +368,12 @@
     "fullRoster": "Plantel completo",
     "todayScrimReviewVs": "Review vs {{team}}",
     "todayScrimReview": "Review pós-scrim",
-    "todayScrimReviewDetail": "Escolhe como transformar o scrim de hoje em aprendizagem."
+    "todayScrimReviewDetail": "Escolhe como transformar o scrim de hoje em aprendizagem.",
+    "todayMatch": "Today's match",
+    "todayScrimOpen": "Open scrim slot",
+    "todayScrimDetail": "Choose how to use today's scrim block.",
+    "todayTraining": "Training focus",
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
   },
   "season": {
     "preseasonStatus": "Estado da pré-época",
@@ -715,9 +720,9 @@
     "teamRoles": "Funções da equipa",
     "viceCaptain": "Vice-capitão",
     "setPiecesSection": "Funções de Objetivo",
-"rolesHint": "Escolhe a hierarquia de liderança e os especialistas em objetivos da equipa titular atual.",
-      "autoSelectAssignments": "Selecionar padrões automaticamente",
-      "noStartersForRoles": "Define a tua equipa titular para atribuir funções da equipa e objetivos.",
+    "rolesHint": "Escolhe a hierarquia de liderança e os especialistas em objetivos da equipa titular atual.",
+    "autoSelectAssignments": "Selecionar padrões automaticamente",
+    "noStartersForRoles": "Define a tua equipa titular para atribuir funções da equipa e objetivos.",
     "startingXI": "Cinco Inicial",
     "fullSquad": "Plantel Completo",
     "pitchInteractionHint": "Arrasta jogadores entre a Rift e o banco, clica num jogador para o analisar, clica num segundo para os comparar e depois confirma a troca no painel de comparação.",
@@ -2159,7 +2164,19 @@
     "startMatch": "Iniciar Jogo",
     "notAssigned": "Não atribuído",
     "keyStats": "Stats Chave",
-    "continueDashboard": "Continuar para o Painel"
+    "continueDashboard": "Continuar para o Painel",
+    "opponentIntel": {
+      "kicker": "Pre-match preparation",
+      "title": "Opponent intelligence",
+      "confidence": "Intel confidence",
+      "rivalPoolByRole": "Rival champion pool by role",
+      "noPoolYet": "No champion pool revealed yet.",
+      "suggestedBans": "Suggested bans",
+      "threat": "Threat",
+      "metaThreats": "Meta threats",
+      "meta": "Meta",
+      "masteryHighlights": "Mastery highlights"
+    }
   },
   "endOfSeason": {
     "seasonComplete": "Época Completa",
@@ -2912,5 +2929,8 @@
     "installing": "A instalar...",
     "installAndRestart": "Instalar e Reiniciar",
     "playWithoutUpdating": "Jogar Sem Atualizar"
+  },
+  "scrims": {
+    "weeklySetup": "Weekly setup"
   }
 }

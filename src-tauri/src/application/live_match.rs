@@ -304,6 +304,7 @@ fn build_match_report_from_lol_sim(input: LolSimMatchReportInput) -> MatchReport
 pub fn finish_live_match(
     state: &StateManager,
     lol_report: Option<LolSimMatchReportInput>,
+    locale: Option<&str>,
 ) -> Result<FinishLiveMatchResponse, String> {
     info!("[cmd] finish_live_match");
     let session = state.take_live_match().ok_or("No active live match")?;
@@ -344,7 +345,7 @@ pub fn finish_live_match(
         state.append_stats_state(capture);
     }
 
-    ofm_core::social::generate_match_social_posts(&mut game, fixture_index, &report);
+    ofm_core::social::generate_match_social_posts(&mut game, fixture_index, &report, locale);
 
     let round_summary = build_round_summary_dto(&game, round_matchday, &round_previous_standings);
 

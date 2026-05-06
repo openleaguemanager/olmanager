@@ -190,6 +190,19 @@ pub struct MatchConfig {
     pub shot_accuracy_base: f64,
     /// Per-minute fatigue factor applied to condition.
     pub fatigue_per_minute: f64,
+    /// Random swing applied in objective control comparisons.
+    #[serde(default = "default_objective_swing_min")]
+    pub objective_swing_min: f64,
+    #[serde(default = "default_objective_swing_max")]
+    pub objective_swing_max: f64,
+    /// Per-tick structure damage random range.
+    #[serde(default = "default_structure_damage_min")]
+    pub structure_damage_min: f64,
+    #[serde(default = "default_structure_damage_max")]
+    pub structure_damage_max: f64,
+    /// Late-game combat scaling cap.
+    #[serde(default = "default_late_game_damage_scale")]
+    pub late_game_damage_scale: f64,
 }
 
 impl Default for MatchConfig {
@@ -198,8 +211,33 @@ impl Default for MatchConfig {
             home_advantage: 1.03,
             shot_accuracy_base: 0.45,
             fatigue_per_minute: 0.20,
+            objective_swing_min: default_objective_swing_min(),
+            objective_swing_max: default_objective_swing_max(),
+            structure_damage_min: default_structure_damage_min(),
+            structure_damage_max: default_structure_damage_max(),
+            late_game_damage_scale: default_late_game_damage_scale(),
         }
     }
+}
+
+fn default_objective_swing_min() -> f64 {
+    0.97
+}
+
+fn default_objective_swing_max() -> f64 {
+    1.06
+}
+
+fn default_structure_damage_min() -> f64 {
+    9.0
+}
+
+fn default_structure_damage_max() -> f64 {
+    15.0
+}
+
+fn default_late_game_damage_scale() -> f64 {
+    1.50
 }
 
 // ---------------------------------------------------------------------------

@@ -14,6 +14,8 @@ pub enum MatchTemplateSlot {
 pub struct MatchTemplateContext<'a> {
     pub winner: &'a Team,
     pub loser: &'a Team,
+    pub manager_team_id: Option<&'a str>,
+    pub featured_player_id: Option<&'a str>,
     pub score: &'a str,
     pub seed: &'a str,
     pub stomp: bool,
@@ -36,6 +38,8 @@ struct MatchTemplatePack {
 #[derive(Debug, Deserialize)]
 struct MatchTextTemplate {
     id: String,
+    #[serde(default = "default_language")]
+    language: String,
     slot: MatchTemplateSlot,
     #[serde(default = "default_weight")]
     weight: u32,
@@ -66,13 +70,27 @@ struct MatchTemplateConditions {
     #[serde(default)]
     requires_stomp: Option<bool>,
     #[serde(default)]
+    manager_result: Option<String>,
+    #[serde(default)]
+    opponent_team_id: Option<String>,
+    #[serde(default)]
+    winner_team_id: Option<String>,
+    #[serde(default)]
+    loser_team_id: Option<String>,
+    #[serde(default)]
     winner_team_slug: Option<String>,
+    #[serde(default)]
+    featured_player_id: Option<String>,
     #[serde(default)]
     requires_player_name: Option<bool>,
 }
 
 fn default_weight() -> u32 {
     1
+}
+
+fn default_language() -> String {
+    "all".to_string()
 }
 
 static TEMPLATES: OnceLock<MatchTemplatePack> = OnceLock::new();
@@ -118,6 +136,10 @@ fn condition_matches(template: &MatchTextTemplate, context: &MatchTemplateContex
         }
     }
 
+    if !shared_condition_matches(&template.conditions, context) {
+        return false;
+    }
+
     if let Some(requires_player_name) = template.conditions.requires_player_name {
         if requires_player_name && context.player_name.is_none() {
             return false;
@@ -146,6 +168,10 @@ fn runtime_condition_matches(
         }
     }
 
+    if !shared_condition_matches(&template.conditions, context) {
+        return false;
+    }
+
     if let Some(requires_player_name) = template.conditions.requires_player_name {
         if requires_player_name && context.player_name.is_none() {
             return false;
@@ -153,6 +179,59 @@ fn runtime_condition_matches(
     }
 
     template.active && !template.variants.is_empty()
+}
+
+fn shared_condition_matches(
+    conditions: &MatchTemplateConditions,
+    context: &MatchTemplateContext<'_>,
+) -> bool {
+    if let Some(required_result) = conditions.manager_result.as_deref() {
+        let Some(manager_team_id) = context.manager_team_id else {
+            return false;
+        };
+        let manager_won = context.winner.id == manager_team_id;
+        match required_result {
+            "win" if !manager_won => return false,
+            "loss" if manager_won => return false,
+            _ => {}
+        }
+    }
+
+    if let Some(required_team_id) = conditions.opponent_team_id.as_deref() {
+        let Some(manager_team_id) = context.manager_team_id else {
+            return false;
+        };
+        let opponent_id = if context.winner.id == manager_team_id {
+            &context.loser.id
+        } else if context.loser.id == manager_team_id {
+            &context.winner.id
+        } else {
+            return false;
+        };
+        if opponent_id != required_team_id {
+            return false;
+        }
+    }
+
+    if let Some(required_team_id) = conditions.winner_team_id.as_deref() {
+        if context.winner.id != required_team_id {
+            return false;
+        }
+    }
+
+    if let Some(required_team_id) = conditions.loser_team_id.as_deref() {
+        if context.loser.id != required_team_id {
+            return false;
+        }
+    }
+
+    if let Some(required_player_id) = conditions.featured_player_id.as_deref() {
+        if context.featured_player_id != Some(required_player_id) {
+            return false;
+        }
+    }
+
+    true
 }
 
 fn render_text(template: &MatchTextTemplate, context: &MatchTemplateContext<'_>) -> String {
@@ -173,6 +252,69 @@ fn render_text(template: &MatchTextTemplate, context: &MatchTemplateContext<'_>)
             &context.winner_objectives.to_string(),
         )
         .replace("{player_name}", context.player_name.unwrap_or("El pibe"))
+}
+
+fn base_candidates_for_language<'a>(
+    language: &str,
+    slot: MatchTemplateSlot,
+    context: &MatchTemplateContext<'_>,
+) -> Vec<&'a MatchTextTemplate> {
+    templates_pack()
+        .templates
+        .iter()
+        .filter(|template| template.slot == slot)
+        .filter(|template| template.language.eq_ignore_ascii_case(language))
+        .filter(|template| condition_matches(template, context))
+        .collect()
+}
+
+fn base_candidates_global<'a>(
+    slot: MatchTemplateSlot,
+    context: &MatchTemplateContext<'_>,
+) -> Vec<&'a MatchTextTemplate> {
+    templates_pack()
+        .templates
+        .iter()
+        .filter(|template| template.slot == slot)
+        .filter(|template| template.language.eq_ignore_ascii_case("all"))
+        .filter(|template| condition_matches(template, context))
+        .collect()
+}
+
+fn select_from_base_language(
+    language: &str,
+    slot: MatchTemplateSlot,
+    context: &MatchTemplateContext<'_>,
+) -> Option<SelectedMatchTemplate> {
+    let mut candidates = base_candidates_for_language(language, slot, context);
+    if candidates.is_empty() {
+        candidates = base_candidates_global(slot, context);
+    }
+    if candidates.is_empty() {
+        return None;
+    }
+
+    let total_weight = candidates
+        .iter()
+        .map(|template| template.weight.max(1))
+        .sum::<u32>();
+    let mut needle =
+        deterministic_index(&format!("{}-slot-{:?}", context.seed, slot), total_weight as usize)
+            as u32;
+
+    for template in candidates {
+        let weight = template.weight.max(1);
+        if needle < weight {
+            return Some(SelectedMatchTemplate {
+                text: render_text(template, context),
+                author_id: template.author_id.clone(),
+                tags: template.tags.clone(),
+            });
+        }
+        needle = needle.saturating_sub(weight);
+    }
+
+    None
 }
 
 pub fn select_match_template(
@@ -232,6 +374,35 @@ fn parse_slot(value: &str) -> Option<MatchTemplateSlot> {
     }
 }
 
+fn infer_language_from_template_id(template_id: &str) -> Option<&'static str> {
+    let lower = template_id.to_lowercase();
+    if lower.ends_with("-pt-br") {
+        return Some("pt-BR");
+    }
+    if lower.ends_with("-es") {
+        return Some("es");
+    }
+    if lower.ends_with("-en") {
+        return Some("en");
+    }
+    if lower.ends_with("-fr") {
+        return Some("fr");
+    }
+    if lower.ends_with("-de") {
+        return Some("de");
+    }
+    if lower.ends_with("-it") {
+        return Some("it");
+    }
+    if lower.ends_with("-pt") {
+        return Some("pt");
+    }
+    if lower.ends_with("-tr") {
+        return Some("tr");
+    }
+    None
+}
+
 fn runtime_templates_from_overrides(overrides: &[SocialTemplate]) -> Vec<RuntimeTemplate> {
     overrides
         .iter()
@@ -239,10 +410,17 @@ fn runtime_templates_from_overrides(overrides: &[SocialTemplate]) -> Vec<Runtime
             let slot = parse_slot(&item.slot)?;
             let conditions = serde_json::from_str::<MatchTemplateConditions>(&item.conditions_json)
                 .unwrap_or_default();
+            let language = if item.language.eq_ignore_ascii_case("all") {
+                infer_language_from_template_id(&item.id)
+                    .map(|value| value.to_string())
+                    .unwrap_or_else(|| item.language.clone())
+            } else {
+                item.language.clone()
+            };
             Some(RuntimeTemplate {
                 id: item.id.clone(),
                 slot,
-                language: item.language.clone(),
+                language,
                 weight: item.weight,
                 author_id: item.author_id.clone(),
                 conditions,
@@ -261,18 +439,34 @@ pub fn select_match_template_for_language(
     context: &MatchTemplateContext<'_>,
 ) -> SelectedMatchTemplate {
     let runtime_templates = runtime_templates_from_overrides(overrides);
-    let candidates: Vec<&RuntimeTemplate> = runtime_templates
+    let mut candidates: Vec<&RuntimeTemplate> = runtime_templates
         .iter()
         .filter(|template| template.slot == slot)
-        .filter(|template| {
-            template.language.eq_ignore_ascii_case("all")
-                || template.language.eq_ignore_ascii_case(language)
-        })
+        .filter(|template| template.language.eq_ignore_ascii_case(language))
         .filter(|template| runtime_condition_matches(template, context))
         .collect();
 
     if candidates.is_empty() {
-        return select_match_template(slot, context);
+        candidates = runtime_templates
+            .iter()
+            .filter(|template| template.slot == slot)
+            .filter(|template| template.language.eq_ignore_ascii_case("all"))
+            .filter(|template| runtime_condition_matches(template, context))
+            .collect();
+    }
+
+    if candidates.is_empty() {
+        if let Some(selected) = select_from_base_language(language, slot, context) {
+            return selected;
+        }
+        if let Some(selected) = select_from_base_language("en", slot, context) {
+            return selected;
+        }
+        return SelectedMatchTemplate {
+            text: String::new(),
+            author_id: None,
+            tags: vec![],
+        };
     }
 
     let total_weight = candidates
@@ -289,6 +483,7 @@ pub fn select_match_template_for_language(
         if needle < weight {
             let base = MatchTextTemplate {
                 id: template.id.clone(),
+                language: template.language.clone(),
                 slot: template.slot,
                 weight: template.weight,
                 author_id: template.author_id.clone(),
@@ -305,7 +500,18 @@ pub fn select_match_template_for_language(
         needle = needle.saturating_sub(weight);
     }
 
-    select_match_template(slot, context)
+    if let Some(selected) = select_from_base_language(language, slot, context) {
+        return selected;
+    }
+    if let Some(selected) = select_from_base_language("en", slot, context) {
+        return selected;
+    }
+
+    SelectedMatchTemplate {
+        text: String::new(),
+        author_id: None,
+        tags: vec![],
+    }
 }
 
 pub fn default_social_templates() -> Vec<SocialTemplate> {
@@ -314,7 +520,7 @@ pub fn default_social_templates() -> Vec<SocialTemplate> {
         .iter()
         .map(|template| SocialTemplate {
             id: template.id.clone(),
-            language: "all".to_string(),
+            language: template.language.clone(),
             slot: format!("{:?}", template.slot),
             author_id: template.author_id.clone(),
             conditions_json: serde_json::to_string(&template.conditions)

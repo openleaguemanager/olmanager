@@ -183,6 +183,7 @@ pub fn run() {
             save_social_accounts,
             get_social_templates,
             save_social_templates,
+            relocalize_social_feed,
             clear_all_saves,
             get_available_jobs,
             apply_for_job,

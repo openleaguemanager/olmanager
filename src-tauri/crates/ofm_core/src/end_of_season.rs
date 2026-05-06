@@ -132,6 +132,14 @@ fn prize_money_for_position(position: u32) -> i64 {
         .unwrap_or(150_000)
 }
 
+fn refresh_hiring_cycle_budgets(team: &mut domain::team::Team) {
+    // Minimal hook: after split settlements (prize/objectives), rebalance next-cycle
+    // planning budgets from current treasury so offseason hiring decisions have
+    // coherent funds available without a full finance redesign.
+    team.wage_budget = ((team.finance.max(0) as f64) * 0.06).round() as i64;
+    team.transfer_budget = ((team.finance.max(0) as f64) * 0.22).round() as i64;
+}
+
 /// Process end-of-season: record history, compute awards, reset stats, generate next season.
 /// Returns a summary struct for the frontend to display.
 pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
@@ -273,6 +281,8 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                     kind: FinancialTransactionKind::PrizeMoney,
                 });
             }
+
+            refresh_hiring_cycle_budgets(team);
         }
     }
 

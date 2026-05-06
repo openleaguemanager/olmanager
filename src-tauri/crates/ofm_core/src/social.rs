@@ -70,7 +70,143 @@ fn top_player_for_team<'a>(
         })
 }
 
-pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report: &MatchReport) {
+fn scale_engagement(values: (u32, u32, u32), factor: f64) -> (u32, u32, u32) {
+    let scale = |value: u32| -> u32 { ((value as f64) * factor).round().max(1.0) as u32 };
+    (scale(values.0), scale(values.1), scale(values.2))
+}
+
+fn pick_team_fan_account<'a>(
+    game: &'a Game,
+    team_id: &str,
+    language: &str,
+    seed: &str,
+) -> Option<&'a domain::social::SocialAccount> {
+    let accounts: Vec<&domain::social::SocialAccount> = game
+        .social_accounts
+        .iter()
+        .filter(|account| account.active)
+        .filter(|account| matches!(account.author_type, SocialAuthorType::Fan | SocialAuthorType::MemeAccount))
+        .filter(|account| {
+            account.language.eq_ignore_ascii_case("all")
+                || account.language.eq_ignore_ascii_case(language)
+        })
+        .filter(|account| account.favorite_team_ids.iter().any(|favorite| favorite == team_id))
+        .collect();
+
+    if accounts.is_empty() {
+        return None;
+    }
+
+    let index = variant_index(seed, accounts.len());
+    accounts.get(index).copied()
+}
+
+fn team_fan_reaction_text(
+    language: &str,
+    won: bool,
+    team_short_name: &str,
+    opponent_short_name: &str,
+    score: &str,
+    seed: &str,
+) -> String {
+    let options: &[&str] = match (language, won) {
+        ("es", true) => &[
+            "{team} gano y se noto en el mapa. Muy buena serie contra {opponent}. {score}",
+            "Partido muy serio de {team}. Buenas decisiones y mejor cierre.",
+            "Victoria de {team} y sensaciones muy buenas para lo que viene.",
+        ],
+        ("es", false) => &[
+            "Hoy toco perder, pero seguimos confiando en {team}.",
+            "Resultado duro para {team}. Reset y a por la siguiente serie. {score}",
+            "No salio contra {opponent}, pero esto recien empieza para {team}.",
+        ],
+        (_, true) => &[
+            "{team} got the win and looked clean on map play vs {opponent}. {score}",
+            "Very solid game from {team}. Better setup, better closes.",
+            "Big win for {team}. This version can compete with anyone.",
+        ],
+        (_, false) => &[
+            "Tough loss today, but we still believe in {team}.",
+            "Rough result for {team}. Reset and go next. {score}",
+            "Did not work out vs {opponent}, but this split is long for {team}.",
+        ],
+    };
+
+    options[variant_index(seed, options.len())]
+        .replace("{team}", team_short_name)
+        .replace("{opponent}", opponent_short_name)
+        .replace("{score}", score)
+}
+
+fn bouzys_vs_fnatic_text(language: &str, winner_short_name: &str, seed: &str) -> String {
+    let options: &[&str] = match language {
+        "es" => &[
+            "Hoy soy {winner} Bouzys. Gracias por bajar a Fnatic, cine total.",
+            "Confirmado: {winner} Bouzys por 24h. Lo de hoy contra Fnatic fue una locura.",
+            "Sale cambio de camiseta: {winner} Bouzys hasta nuevo aviso. Qué victoria sobre Fnatic.",
+        ],
+        "pt-BR" => &[
+            "Hoje eu sou {winner} Bouzys. Valeu por derrubar a Fnatic, cinema puro.",
+            "Confirmado: {winner} Bouzys por 24h. O jogo de hoje contra a Fnatic foi loucura.",
+            "Troquei de camisa: {winner} Bouzys até novo aviso. Vitória gigante sobre a Fnatic.",
+        ],
+        "de" => &[
+            "Heute bin ich {winner} Bouzys. Danke fürs Runterholen von Fnatic, pures Kino.",
+            "Bestätigt: {winner} Bouzys für 24 Stunden. Das heute gegen Fnatic war verrückt.",
+            "Trikotwechsel ist durch: {winner} Bouzys bis auf Weiteres. Was für ein Sieg gegen Fnatic.",
+        ],
+        "fr" => &[
+            "Aujourd'hui je suis {winner} Bouzys. Merci d'avoir fait tomber Fnatic, c'était du cinéma.",
+            "Confirmé: {winner} Bouzys pendant 24h. Le match d'aujourd'hui contre Fnatic était dingue.",
+            "Changement de maillot: {winner} Bouzys jusqu'à nouvel ordre. Quelle victoire contre Fnatic.",
+        ],
+        "tr" => &[
+            "Bugün ben {winner} Bouzys oldum. Fnatic'i düşürdüğünüz için teşekkürler, tam sinema.",
+            "Resmileşti: 24 saatliğine {winner} Bouzys. Bugünkü Fnatic maçı tam delilikti.",
+            "Forma değişti: yeni ben {winner} Bouzys. Fnatic'e karşı müthiş galibiyet.",
+        ],
+        _ => &[
+            "Today I'm {winner} Bouzys. Thanks for taking down Fnatic, absolute cinema.",
+            "Confirmed: {winner} Bouzys for 24 hours. Today's game vs Fnatic was wild.",
+            "Shirt swap complete: {winner} Bouzys until further notice. Huge win over Fnatic.",
+        ],
+    };
+
+    options[variant_index(seed, options.len())].replace("{winner}", winner_short_name)
+}
+
+fn team_loser_post_text(
+    language: &str,
+    team_short_name: &str,
+    opponent_short_name: &str,
+    score: &str,
+    seed: &str,
+) -> String {
+    let options: &[&str] = match language {
+        "es" => &[
+            "No fue nuestro mejor dia. Revisamos y volvemos mas fuertes. {score}",
+            "Resultado duro para {team}. Gracias por el apoyo.",
+            "GG {opponent}. Hoy no salio, pero seguimos trabajando.",
+        ],
+        _ => &[
+            "Not our best day. We review and come back stronger. {score}",
+            "Tough result for {team}. Thank you for the support.",
+            "GG {opponent}. Not our day, but we keep working.",
+        ],
+    };
+
+    options[variant_index(seed, options.len())]
+        .replace("{team}", team_short_name)
+        .replace("{opponent}", opponent_short_name)
+        .replace("{score}", score)
+}
+
+pub fn generate_match_social_posts(
+    game: &mut Game,
+    fixture_index: usize,
+    report: &MatchReport,
+    locale: Option<&str>,
+) {
     ensure_social_registry_defaults(game);
 
     let Some(league) = game.league.as_ref() else {
@@ -108,20 +244,26 @@ pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report
     } else {
         report.away_stats.objectives
     };
+    let featured_player = top_player_for_team(game, report, &winner.id)
+        .map(|(player, _stats)| (player.id.clone(), player.match_name.clone()));
     let context = MatchTemplateContext {
         winner: &winner,
         loser: &loser,
+        manager_team_id: game.manager.team_id.as_deref(),
+        featured_player_id: featured_player.as_ref().map(|(player_id, _)| player_id.as_str()),
         score: &score,
         seed: &seed,
         stomp,
         winner_objectives,
-        player_name: None,
+        player_name: featured_player.as_ref().map(|(_, player_name)| player_name.as_str()),
     };
 
-    let language = manager_language(&game.manager.nationality);
+    let language = locale
+        .map(normalize_social_language)
+        .unwrap_or_else(|| manager_language(&game.manager.nationality).to_string());
     let team_template: SelectedMatchTemplate = select_match_template_for_language(
         &game.social_templates,
-        language,
+        &language,
         MatchTemplateSlot::TeamBanter,
         &context,
     );
@@ -145,9 +287,26 @@ pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report
     .with_teams(vec![winner.id.clone(), loser.id.clone()])
     .with_fixture(fixture.id.clone());
 
+    let (loss_likes, loss_reposts, loss_replies) =
+        engagement(75, loser.reputation, false, &format!("{}-team-loss", seed));
+    let loser_team_post = SocialPost::new(
+        format!("social_{}_team_loser", fixture.id),
+        date.clone(),
+        loser.name.clone(),
+        social_handle(&loser.name),
+        SocialAuthorType::Team,
+        team_loser_post_text(&language, &loser.short_name, &winner.short_name, &score, &seed),
+        SocialPostCategory::MatchResult,
+        SocialSentiment::Worried,
+    )
+    .with_engagement(loss_likes, loss_reposts, loss_replies)
+    .with_tags(vec!["match".to_string(), "team".to_string(), "loss".to_string()])
+    .with_teams(vec![winner.id.clone(), loser.id.clone()])
+    .with_fixture(fixture.id.clone());
+
     let fan_template: SelectedMatchTemplate = select_match_template_for_language(
         &game.social_templates,
-        language,
+        &language,
         MatchTemplateSlot::FanOpinion,
         &context,
     );
@@ -196,7 +355,7 @@ pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report
 
     let analyst_template: SelectedMatchTemplate = select_match_template_for_language(
         &game.social_templates,
-        language,
+        &language,
         MatchTemplateSlot::AnalystTake,
         &context,
     );
@@ -235,15 +394,77 @@ pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report
     .with_fixture(fixture.id.clone());
 
     game.social_posts
-        .extend([team_post, fan_post, analyst_post]);
+        .extend([team_post, loser_team_post, fan_post, analyst_post]);
 
-    if let Some((player_id, player_name)) = top_player_for_team(game, report, &winner.id)
-        .map(|(player, _stats)| (player.id.clone(), player.match_name.clone()))
+    if let Some(winner_fan) =
+        pick_team_fan_account(game, &winner.id, &language, &format!("{}-fan-win", seed))
     {
+        let (likes, reposts, replies) = scale_engagement(
+            engagement(48, winner.reputation / 2, true, &format!("{}-fan-win", seed)),
+            0.10,
+        );
+        let winner_fan_post = SocialPost::new(
+            format!("social_{}_fan_winner_team", fixture.id),
+            date.clone(),
+            winner_fan.display_name.clone(),
+            winner_fan.handle.clone(),
+            winner_fan.author_type.clone(),
+            team_fan_reaction_text(
+                &language,
+                true,
+                &winner.short_name,
+                &loser.short_name,
+                &score,
+                &format!("{}-fan-win", seed),
+            ),
+            SocialPostCategory::FanOpinion,
+            SocialSentiment::Hype,
+        )
+        .with_engagement(likes, reposts, replies)
+        .with_tags(vec!["fan".to_string(), "team-win".to_string()])
+        .with_teams(vec![winner.id.clone(), loser.id.clone()])
+        .with_fixture(fixture.id.clone());
+        game.social_posts.push(winner_fan_post);
+    }
+
+    if let Some(loser_fan) =
+        pick_team_fan_account(game, &loser.id, &language, &format!("{}-fan-loss", seed))
+    {
+        let (likes, reposts, replies) = scale_engagement(
+            engagement(42, loser.reputation / 2, false, &format!("{}-fan-loss", seed)),
+            0.10,
+        );
+        let loser_fan_post = SocialPost::new(
+            format!("social_{}_fan_loser_team", fixture.id),
+            date.clone(),
+            loser_fan.display_name.clone(),
+            loser_fan.handle.clone(),
+            loser_fan.author_type.clone(),
+            team_fan_reaction_text(
+                &language,
+                false,
+                &loser.short_name,
+                &winner.short_name,
+                &score,
+                &format!("{}-fan-loss", seed),
+            ),
+            SocialPostCategory::FanOpinion,
+            SocialSentiment::Worried,
+        )
+        .with_engagement(likes, reposts, replies)
+        .with_tags(vec!["fan".to_string(), "team-loss".to_string()])
+        .with_teams(vec![winner.id.clone(), loser.id.clone()])
+        .with_fixture(fixture.id.clone());
+        game.social_posts.push(loser_fan_post);
+    }
+
+    if let Some((player_id, player_name)) = featured_player {
         let (likes, reposts, replies) = engagement(105, winner.reputation, false, &seed);
         let player_context = MatchTemplateContext {
             winner: &winner,
             loser: &loser,
+            manager_team_id: game.manager.team_id.as_deref(),
+            featured_player_id: Some(&player_id),
             score: &score,
             seed: &seed,
             stomp,
@@ -252,7 +473,7 @@ pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report
         };
         let player_template = select_match_template_for_language(
             &game.social_templates,
-            language,
+            &language,
             MatchTemplateSlot::PlayerReaction,
             &player_context,
         );
@@ -274,8 +495,34 @@ pub fn generate_match_social_posts(game: &mut Game, fixture_index: usize, report
         })
         .with_teams(vec![winner.id.clone()])
         .with_players(vec![player_id])
-        .with_fixture(fixture.id);
+        .with_fixture(fixture.id.clone());
         game.social_posts.push(player_post);
+    }
+
+    if loser.id == "lec-fnatic" && language.eq_ignore_ascii_case("es") {
+        let (likes, reposts, replies) = scale_engagement(
+            engagement(38, winner.reputation / 2, true, &format!("{}-bouzys", seed)),
+            0.10,
+        );
+        let bouzys_post = SocialPost::new(
+            format!("social_{}_fan_bouzys_fnatic", fixture.id),
+            game.clock.current_date.format("%Y-%m-%d").to_string(),
+            if language.eq_ignore_ascii_case("es") {
+                format!("{} Bouzys", winner.short_name)
+            } else {
+                "X Bouzys".to_string()
+            },
+            "@Bouzyslol".to_string(),
+            SocialAuthorType::Fan,
+            bouzys_vs_fnatic_text(&language, &winner.short_name, &format!("{}-bouzys", seed)),
+            SocialPostCategory::FanOpinion,
+            SocialSentiment::Hype,
+        )
+        .with_engagement(likes, reposts, replies)
+        .with_tags(vec!["fan".to_string(), "fnatic".to_string(), "banter".to_string()])
+        .with_teams(vec![winner.id.clone(), loser.id.clone()])
+        .with_fixture(fixture.id.clone());
+        game.social_posts.push(bouzys_post);
     }
 }
 
@@ -355,16 +602,244 @@ pub fn publish_manager_post(game: &mut Game, raw_text: &str) -> Result<SocialPos
 }
 
 pub fn ensure_social_registry_defaults(game: &mut Game) {
+    let defaults = default_social_accounts();
     if game.social_accounts.is_empty() {
-        game.social_accounts = default_social_accounts();
+        game.social_accounts = defaults;
+    } else {
+        for default_account in defaults {
+            if let Some(existing) = game
+                .social_accounts
+                .iter_mut()
+                .find(|account| account.handle.eq_ignore_ascii_case(&default_account.handle))
+            {
+                if existing.profile_image_url.is_none() && default_account.profile_image_url.is_some() {
+                    existing.profile_image_url = default_account.profile_image_url.clone();
+                }
+                if existing.favorite_team_ids.is_empty() && !default_account.favorite_team_ids.is_empty()
+                {
+                    existing.favorite_team_ids = default_account.favorite_team_ids.clone();
+                }
+            } else {
+                game.social_accounts.push(default_account);
+            }
+        }
     }
     if game.social_templates.is_empty() {
         game.social_templates = default_social_templates();
     }
 }
 
+pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
+    ensure_social_registry_defaults(game);
+    let Some(league) = game.league.as_ref() else {
+        return;
+    };
+    let language = normalize_social_language(locale);
+    let fixtures = league.fixtures.clone();
+    let teams = game.teams.clone();
+    let templates = game.social_templates.clone();
+    let manager_team_id = game.manager.team_id.clone();
+
+    for post in game.social_posts.iter_mut() {
+        let Some(fixture_id) = post.fixture_id.as_deref() else {
+            continue;
+        };
+        let Some(fixture) = fixtures.iter().find(|item| item.id == fixture_id) else {
+            continue;
+        };
+        let Some(result) = fixture.result.as_ref() else {
+            continue;
+        };
+
+        let (winner_id, loser_id, winner_wins, loser_wins) = if result.home_wins >= result.away_wins {
+            (
+                fixture.home_team_id.as_str(),
+                fixture.away_team_id.as_str(),
+                result.home_wins,
+                result.away_wins,
+            )
+        } else {
+            (
+                fixture.away_team_id.as_str(),
+                fixture.home_team_id.as_str(),
+                result.away_wins,
+                result.home_wins,
+            )
+        };
+
+        let Some(winner) = teams.iter().find(|team| team.id == winner_id).cloned() else {
+            continue;
+        };
+        let Some(loser) = teams.iter().find(|team| team.id == loser_id).cloned() else {
+            continue;
+        };
+
+        let score = format!("{}-{}", winner_wins, loser_wins);
+        let kill_diff = result
+            .report
+            .as_ref()
+            .map(|report| {
+                if winner_id == fixture.home_team_id {
+                    report.home_stats.kills.saturating_sub(report.away_stats.kills)
+                } else {
+                    report.away_stats.kills.saturating_sub(report.home_stats.kills)
+                }
+            })
+            .unwrap_or(0);
+        let stomp = winner_wins.saturating_sub(loser_wins) >= 2 || kill_diff >= 10;
+        let winner_objectives = result
+            .report
+            .as_ref()
+            .map(|report| {
+                if winner_id == fixture.home_team_id {
+                    report.home_stats.objectives
+                } else {
+                    report.away_stats.objectives
+                }
+            })
+            .unwrap_or(0);
+
+        let player_name = if post.author_type == SocialAuthorType::Player {
+            Some(post.author_name.as_str())
+        } else {
+            None
+        };
+        let featured_player_id = if post.author_type == SocialAuthorType::Player {
+            post.player_ids.first().map(|id| id.as_str())
+        } else {
+            None
+        };
+
+        let seed = format!("{}-{}-{}", fixture.id, winner.id, score);
+        let context = MatchTemplateContext {
+            winner: &winner,
+            loser: &loser,
+            manager_team_id: manager_team_id.as_deref(),
+            featured_player_id,
+            score: &score,
+            seed: &seed,
+            stomp,
+            winner_objectives,
+            player_name,
+        };
+
+        post.body = if post.id.ends_with("_team") {
+            select_match_template_for_language(
+                &templates,
+                &language,
+                MatchTemplateSlot::TeamBanter,
+                &context,
+            )
+            .text
+        } else if post.id.ends_with("_team_loser") {
+            team_loser_post_text(&language, &loser.short_name, &winner.short_name, &score, &seed)
+        } else if post.id.ends_with("_fan") {
+            select_match_template_for_language(
+                &templates,
+                &language,
+                MatchTemplateSlot::FanOpinion,
+                &context,
+            )
+            .text
+        } else if post.id.ends_with("_analyst") {
+            select_match_template_for_language(
+                &templates,
+                &language,
+                MatchTemplateSlot::AnalystTake,
+                &context,
+            )
+            .text
+        } else if post.id.ends_with("_fan_winner_team") {
+            team_fan_reaction_text(&language, true, &winner.short_name, &loser.short_name, &score, &seed)
+        } else if post.id.ends_with("_fan_loser_team") {
+            team_fan_reaction_text(&language, false, &loser.short_name, &winner.short_name, &score, &seed)
+        } else if post.id.ends_with("_fan_bouzys_fnatic") {
+            if language.eq_ignore_ascii_case("es") {
+                post.author_name = format!("{} Bouzys", winner.short_name);
+            } else {
+                post.author_name = "X Bouzys".to_string();
+            }
+            bouzys_vs_fnatic_text(&language, &winner.short_name, &format!("{}-bouzys", seed))
+        } else if post.id.contains("_player_") {
+            select_match_template_for_language(
+                &templates,
+                &language,
+                MatchTemplateSlot::PlayerReaction,
+                &context,
+            )
+            .text
+        } else {
+            post.body.clone()
+        };
+    }
+}
+
+fn normalize_social_language(locale: &str) -> String {
+    let value = locale.trim();
+    if value.eq_ignore_ascii_case("pt-br") {
+        return "pt-BR".to_string();
+    }
+    value
+        .split(['-', '_'])
+        .next()
+        .filter(|part| !part.is_empty())
+        .unwrap_or("en")
+        .to_lowercase()
+}
+
 fn manager_language(nationality: &str) -> &str {
     let value = nationality.to_lowercase();
+    if value.contains("argentina")
+        || value.contains("uruguay")
+        || value.contains("mexico")
+        || value.contains("colombia")
+        || value.contains("chile")
+        || value.contains("peru")
+        || value.contains("ecuador")
+        || value.contains("venezuela")
+        || value.contains("bolivia")
+        || value.contains("paraguay")
+        || value.contains("costa rica")
+        || value.contains("guatemala")
+        || value.contains("honduras")
+        || value.contains("nicaragua")
+        || value.contains("panama")
+        || value.contains("dominican")
+        || value.contains("puerto rico")
+        || value.contains("latam")
+        || value.contains("latin")
+        || value == "ar"
+        || value == "uy"
+        || value == "mx"
+        || value == "co"
+        || value == "cl"
+        || value == "pe"
+        || value == "ec"
+        || value == "ve"
+        || value == "bo"
+        || value == "py"
+        || value == "cr"
+        || value == "gt"
+        || value == "hn"
+        || value == "ni"
+        || value == "pa"
+        || value == "do"
+        || value == "pr"
+    {
+        return "es";
+    }
+    if value.contains("ital") || value == "it" {
+        return "it";
+    }
+    if value.contains("portugal") || value == "pt" {
+        return "pt";
+    }
+    if value.contains("brazil") || value.contains("brasil") || value == "pt-br" || value == "br" {
+        return "pt-BR";
+    }
+    if value.contains("turkey") || value.contains("turkiye") || value == "tr" {
+        return "tr";
+    }
     if value.contains("spain") || value.contains("espa") || value == "es" {
         return "es";
     }
@@ -374,5 +849,5 @@ fn manager_language(nationality: &str) -> &str {
     if value.contains("germany") || value == "de" {
         return "de";
     }
-    "all"
+    "en"
 }

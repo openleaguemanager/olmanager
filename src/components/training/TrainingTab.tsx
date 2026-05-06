@@ -302,9 +302,9 @@ export default function TrainingTab({
   });
   const staffEffects = getLolStaffEffectsForTeam(gameState, myTeam.id);
   const staffImpactRows = [
-    { label: t("training.staffImpact.learning", "Learning"), value: staffEffects.development },
-    { label: t("training.staffImpact.scrims", "SoloQ prep"), value: (staffEffects.tactics * 0.55) + (staffEffects.analysis * 0.45) },
-    { label: t("training.staffImpact.recovery", "Recovery"), value: staffEffects.recovery },
+    { label: t("training.staffImpact.learning"), value: staffEffects.development },
+    { label: t("training.staffImpact.scrims"), value: (staffEffects.tactics * 0.55) + (staffEffects.analysis * 0.45) },
+    { label: t("training.staffImpact.recovery"), value: staffEffects.recovery },
   ];
 
   return (
@@ -375,7 +375,7 @@ export default function TrainingTab({
 
       <div className="flex flex-col gap-5">
         <Card accent="primary">
-          <CardHeader>{t("training.soloQRanks", "Rango actual")}</CardHeader>
+          <CardHeader>{t("training.soloQRanks")}</CardHeader>
           <CardBody>
             <div className="space-y-2">
               {roster
@@ -438,7 +438,7 @@ export default function TrainingTab({
         </Card>
 
         <Card accent="primary">
-          <CardHeader>{t("training.staffImpact.title", "Staff impact")}</CardHeader>
+          <CardHeader>{t("training.staffImpact.title")}</CardHeader>
           <CardBody>
             <div className="space-y-2 text-sm">
               {staffImpactRows.map((row) => (

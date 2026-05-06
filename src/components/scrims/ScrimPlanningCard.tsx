@@ -228,7 +228,7 @@ export default function ScrimPlanningCard({
                         >
                           <option value="">
                             {priorityIndex === 0
-                              ? t("training.scrims.selectOpponent", "Selecciona rival")
+                              ? t("training.scrims.selectOpponent", "Select rival")
                               : t("training.scrims.noFallback", "Sin alternativa")}
                           </option>
                           {options.map((team) => (

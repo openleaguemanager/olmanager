@@ -7,7 +7,7 @@ use domain::team::{
     PostScrimDecision, ScrimChampionPick, ScrimFocus, ScrimIssue, ScrimReport, ScrimStatus, Team,
     TrainingFocus, TrainingIntensity, TrainingSchedule,
 };
-use ofm_core::champions::ChampionMasteryEntry;
+use ofm_core::champions::{ChampionMasteryEntry, ChampionMetaEntry};
 use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::training;
@@ -1155,4 +1155,52 @@ fn rival_players_get_auto_targets_and_gain_mastery_on_training() {
         before_azir,
         after_azir
     );
+}
+
+#[test]
+fn rival_auto_targets_prioritize_meta_tier_over_raw_mastery() {
+    let mut game = make_game();
+
+    let mut rival = make_player("p-meta", "Meta Mid", "team2", "2001-04-11");
+    rival.natural_position = domain::player::LolRole::Mid;
+    rival.champion_training_targets = Vec::new();
+    rival.champion_training_target = None;
+    game.players.push(rival);
+
+    game.champion_masteries.push(ChampionMasteryEntry {
+        player_id: "p-meta".to_string(),
+        champion_id: "OffMetaHigh".to_string(),
+        mastery: 92,
+        last_active_on: "2025-06-15".to_string(),
+    });
+    game.champion_masteries.push(ChampionMasteryEntry {
+        player_id: "p-meta".to_string(),
+        champion_id: "MetaLow".to_string(),
+        mastery: 30,
+        last_active_on: "2025-06-15".to_string(),
+    });
+
+    game.champion_patch.discovered_champion_ids = vec!["OffMetaHigh".to_string(), "MetaLow".to_string()];
+    game.champion_patch.hidden_meta = vec![
+        ChampionMetaEntry {
+            champion_id: "MetaLow".to_string(),
+            role: "Mid".to_string(),
+            tier: "S".to_string(),
+        },
+        ChampionMetaEntry {
+            champion_id: "OffMetaHigh".to_string(),
+            role: "Mid".to_string(),
+            tier: "D".to_string(),
+        },
+    ];
+
+    ofm_core::champions::ensure_training_targets_from_mastery(&mut game, "p-meta");
+    let player = game
+        .players
+        .iter()
+        .find(|candidate| candidate.id == "p-meta")
+        .expect("meta test player should exist");
+    let targets = ofm_core::champions::training_targets_for_player(player);
+
+    assert_eq!(targets.first().map(String::as_str), Some("MetaLow"));
 }

@@ -49,25 +49,25 @@ function teamLogoPath(teamId: string): string {
 
 function scrimFocusLabel(t: ReturnType<typeof useTranslation>["t"], focus: ScrimFocus): string {
   const labels: Record<ScrimFocus, string> = {
-    DraftPrep: t("training.scrims.objectives.draftPrep", "Mejorar control del mapa"),
-    ChampionPool: t("training.scrims.objectives.championPool", "Expandir champion pool"),
-    EarlyGame: t("training.scrims.objectives.earlyGame", "Arreglar early game"),
-    Teamfighting: t("training.scrims.objectives.teamfighting", "Mejorar teamfights"),
-    Macro: t("training.scrims.objectives.macro", "Pulir macro y objetivos"),
-    Mental: t("training.scrims.objectives.mental", "Estabilizar mental"),
+    DraftPrep: t("training.scrims.objectives.draftPrep"),
+    ChampionPool: t("training.scrims.objectives.championPool"),
+    EarlyGame: t("training.scrims.objectives.earlyGame"),
+    Teamfighting: t("training.scrims.objectives.teamfighting"),
+    Macro: t("training.scrims.objectives.macro"),
+    Mental: t("training.scrims.objectives.mental"),
   };
   return labels[focus];
 }
 
 function scrimFocusImpactText(focus: ScrimFocus | null): string {
-  if (!focus) return "Define una dirección semanal para que las decisiones de scrim tengan impacto claro.";
+  if (!focus) return "Set a weekly direction so scrim decisions have clear impact.";
   const map: Record<ScrimFocus, string> = {
-    DraftPrep: "Mejora preparación de draft, lectura de bans y planes de composición.",
-    ChampionPool: "Amplía picks viables y reduce dependencia de comfort picks.",
-    EarlyGame: "Mejora control de líneas, tempo inicial y primeras rotaciones.",
-    Teamfighting: "Mejora ejecución de peleas, foco de objetivos y coordinación 5v5.",
-    Macro: "Mejora setup de objetivos, control de mapa y decisiones de mid/late.",
-    Mental: "Mejora estabilidad mental, recuperación y consistencia bajo presión.",
+    DraftPrep: "Improves draft prep, ban reads, and composition plans.",
+    ChampionPool: "Expands viable picks and reduces comfort-pick dependency.",
+    EarlyGame: "Improves lane control, early tempo, and first rotations.",
+    Teamfighting: "Improves teamfight execution, objective focus, and 5v5 coordination.",
+    Macro: "Improves objective setup, map control, and mid/late decisions.",
+    Mental: "Improves mental stability, recovery, and consistency under pressure.",
   };
   return map[focus];
 }
@@ -78,28 +78,28 @@ function scrimFocusGrowthTags(focus: ScrimFocus | null): { primary: string[]; se
   }
   const map: Record<ScrimFocus, { primary: string[]; secondary: string[] }> = {
     DraftPrep: {
-      primary: ["Visión", "Decisiones"],
-      secondary: ["Liderazgo"],
+      primary: ["Vision", "Decisions"],
+      secondary: ["Leadership"],
     },
     ChampionPool: {
-      primary: ["Mecánicas", "Champion Pool"],
+      primary: ["Mechanics", "Champion Pool"],
       secondary: ["Laning"],
     },
     EarlyGame: {
-      primary: ["Laning", "Decisiones"],
-      secondary: ["Visión"],
+      primary: ["Laning", "Decisions"],
+      secondary: ["Vision"],
     },
     Teamfighting: {
-      primary: ["Teamfighting", "Disciplina"],
-      secondary: ["Posicionamiento"],
+      primary: ["Teamfighting", "Discipline"],
+      secondary: ["Positioning"],
     },
     Macro: {
-      primary: ["Macro", "Decisiones"],
-      secondary: ["Coordinación"],
+      primary: ["Macro", "Decisions"],
+      secondary: ["Coordination"],
     },
     Mental: {
-      primary: ["Resiliencia mental", "Consistencia"],
-      secondary: ["Liderazgo"],
+      primary: ["Mental resilience", "Consistency"],
+      secondary: ["Leadership"],
     },
   };
   return map[focus];
@@ -162,7 +162,7 @@ export default function ScrimsTab({
   if (!weeklyContext || !todayContext) {
     return (
       <p className="text-gray-500 dark:text-gray-400">
-        {t("scrims.loadingContext", "Cargando contexto de scrims...")}
+        {t("scrims.loadingContext")}
       </p>
     );
   }
@@ -202,15 +202,15 @@ export default function ScrimsTab({
     weeklyContext.cancellations,
   );
   const weeklyMainGain = weeklyContext.avgQuality >= 65
-    ? "Calidad de práctica sólida"
+    ? t("scrims.weeklyGainSolid")
     : weeklyContext.wins > weeklyContext.losses
-      ? "Buena ejecución competitiva"
-      : "Aprendizaje por exposición";
+      ? t("scrims.weeklyGainExecution")
+      : t("scrims.weeklyGainExposure");
   const weeklyMainFailure = weeklyContext.topIssue
-    ? `Issue recurrente: ${weeklyContext.topIssue}`
+    ? t("scrims.weeklyFailureIssue", { defaultValue: "Issue recurrente: {{issue}}", issue: weeklyContext.topIssue })
     : weeklyContext.cancellations >= 2
-      ? "Demasiadas cancelaciones"
-      : "Falta de consistencia en la semana";
+      ? t("scrims.weeklyFailureCancellations")
+      : t("scrims.weeklyFailureConsistency");
   const dailyBlockMeta = todayContext.report
     ? deriveDailyScrimBlockMeta(
       effectiveWeeklyScrimSlots(myTeam),
@@ -224,39 +224,39 @@ export default function ScrimsTab({
     if (!todayContext.report) return [];
     if (isFirstBlock && resultIsBad && !showCancelFollowups) {
       return [
-        { id: "PushThrough", label: "Push Through", description: "Continuar al segundo bloque con más riesgo." },
-        { id: "CancelScrims", label: "Cancelar scrims", description: "Cancelar el bloque siguiente y elegir respuesta técnica." },
+        { id: "PushThrough", label: t("scrims.decision.pushThrough", "Push Through"), description: t("scrims.decision.pushThroughDesc", "Continue with higher risk to keep volume.") },
+        { id: "CancelScrims", label: t("scrims.decision.cancelScrims", "Cancel scrims"), description: t("scrims.decision.cancelScrimsDesc", "Cancel next block and choose a technical follow-up.") },
       ];
     }
     if (isFirstBlock && !resultIsBad) {
       return [
-        { id: "ContinueToBlock2", label: "Continuar al segundo bloque", description: "Mantener el plan del día." },
-        { id: "OfferRest", label: "Ofrecer descanso", description: "Cancelar bloque siguiente para recuperar." },
+        { id: "ContinueToBlock2", label: t("scrims.decision.continueBlock2", "Continue to block 2"), description: t("scrims.decision.continueBlock2Desc", "Keep today's plan.") },
+        { id: "OfferRest", label: t("scrims.decision.offerRest", "Offer rest"), description: t("scrims.decision.offerRestDesc", "Cancel next block to recover.") },
       ];
     }
     if (isFirstBlock && resultIsBad && showCancelFollowups) {
       return [
-        { id: "VodReview", label: "VOD Review", description: "Analizar errores y ajustar plan." },
-        { id: "MentalReset", label: "Mental Reset", description: "Recuperar moral/condición." },
-        { id: "TargetedDrills", label: "Targeted Drills", description: "Corregir issue puntual." },
+        { id: "VodReview", label: t("scrims.decision.vodReview", "VOD Review"), description: t("scrims.decision.vodReviewDesc", "Analizar errores y ajustar plan.") },
+        { id: "MentalReset", label: t("scrims.decision.mentalReset", "Mental Reset"), description: t("scrims.decision.mentalResetDesc", "Recover morale/condition.") },
+        { id: "TargetedDrills", label: t("scrims.decision.targetedDrills", "Targeted Drills"), description: t("scrims.decision.targetedDrillsDesc", "Corregir issue puntual.") },
       ];
     }
     return [
-      { id: "DayOff", label: "Dar resto del día libre", description: "Cerrar la jornada y priorizar recuperación." },
-      { id: "VodReview", label: "VOD Review", description: "Analizar errores y ajustar plan." },
-      { id: "MentalReset", label: "Mental Reset", description: "Recuperar moral/condición." },
-      { id: "TargetedDrills", label: "Targeted Drills", description: "Corregir issue puntual." },
+      { id: "DayOff", label: t("scrims.decision.dayOff", "Day off"), description: t("scrims.decision.dayOffDesc", "Close the day and prioritize recovery.") },
+      { id: "VodReview", label: t("scrims.decision.vodReview", "VOD Review"), description: t("scrims.decision.vodReviewDesc", "Analyze mistakes and adjust the plan.") },
+      { id: "MentalReset", label: t("scrims.decision.mentalReset", "Mental Reset"), description: t("scrims.decision.mentalResetDesc", "Recover morale/condition.") },
+      { id: "TargetedDrills", label: t("scrims.decision.targetedDrills", "Targeted Drills"), description: t("scrims.decision.targetedDrillsDesc", "Correct the specific issue.") },
     ];
   })();
   const decisionImpactTags: Record<DailyScrimAction, string[]> = {
-    ContinueToBlock2: ["Momentum +", "Fatiga -", "Volumen +"],
-    OfferRest: ["Recuperación +", "Fatiga +", "Volumen -"],
-    PushThrough: ["Volumen +", "Aprendizaje +", "Mental -"],
-    CancelScrims: ["Recuperación +", "Riesgo -", "Volumen -"],
-    VodReview: ["Análisis +", "Calidad +", "Recuperación -"],
-    MentalReset: ["Mental +", "Recuperación +", "Técnica -"],
-    TargetedDrills: ["Issue +", "Mecánicas +", "Fatiga -"],
-    DayOff: ["Recuperación +", "Mental +", "Volumen -"],
+    ContinueToBlock2: ["Momentum +", "Fatigue -", "Volume +"],
+    OfferRest: ["Recovery +", "Fatigue +", "Volume -"],
+    PushThrough: ["Volume +", "Learning +", "Mental -"],
+    CancelScrims: ["Recovery +", "Risk -", "Volume -"],
+    VodReview: ["Analysis +", "Quality +", "Recovery -"],
+    MentalReset: ["Mental +", "Recovery +", "Technique -"],
+    TargetedDrills: ["Issue +", "Mechanics +", "Fatigue -"],
+    DayOff: ["Recovery +", "Mental +", "Volume -"],
   };
 
   const handleSetWeeklyCapacity = async (slots: number) => {
@@ -289,7 +289,7 @@ export default function ScrimsTab({
     if (!todayContext.report) return;
     if (decision === "CancelScrims") {
       setShowCancelFollowups(true);
-      setDecisionFeedback("Scrims cancelados. Elegí VOD Review, Mental Reset o Targeted Drills para cerrar el día.");
+      setDecisionFeedback("Scrims cancelled. Pick VOD Review, Mental Reset, or Targeted Drills to close the day.");
       return;
     }
     setDecisionSaving(decision);
@@ -297,7 +297,7 @@ export default function ScrimsTab({
     try {
       const updated = await chooseDailyScrimAction(todayContext.report.slot_index, decision);
       onGameUpdate?.(updated);
-      setDecisionFeedback(t("scrims.reviewDecisionApplied", "Decisión aplicada. El staff adaptó el plan del día según tu elección."));
+      setDecisionFeedback(t("scrims.reviewDecisionApplied"));
       setShowCancelFollowups(false);
     } catch (error) {
       console.error("Failed to choose post-scrim decision from ScrimsTab:", error);
@@ -337,15 +337,15 @@ export default function ScrimsTab({
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-xs font-heading font-bold uppercase tracking-wider text-primary-500 dark:text-primary-400">
-                {t("scrims.pageKicker", "Preparacion competitiva")}
+                {t("scrims.pageKicker")}
               </p>
               <h2 className="mt-1 text-3xl font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white">
-                {t("dashboard.scrims", "Scrims")}
+                {t("dashboard.scrims")}
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-gray-600 dark:text-gray-400">
                 {t(
                   "scrims.pageDescription",
-                  "Planifica rivales, controla resultados semanales y prepara el camino para negociar mejores bloques de practica.",
+                  "Plan rivals, track weekly results, and set up better future practice blocks.",
                 )}
               </p>
             </div>
@@ -356,7 +356,7 @@ export default function ScrimsTab({
                   {plannedScrims}/{weeklyCapacity}
                 </p>
                 <p className="text-[10px] font-heading uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  {t("scrims.planned", "Planificadas")}
+                  {t("scrims.planned")}
                 </p>
               </div>
               <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-navy-600 dark:bg-navy-900/50">
@@ -365,7 +365,7 @@ export default function ScrimsTab({
                   {wins}-{losses}
                 </p>
                 <p className="text-[10px] font-heading uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  {t("scrims.weekRecord", "Record semanal")}
+                  {t("scrims.weekRecord")}
                 </p>
               </div>
               <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-navy-600 dark:bg-navy-900/50">
@@ -374,17 +374,17 @@ export default function ScrimsTab({
                   {weeklyContext.reputation}
                 </p>
                 <p className="text-[10px] font-heading uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  {t("scrims.reputation", "Rep scrims")}
+                  {t("scrims.reputation")}
                 </p>
               </div>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-400">
-            <span>{t("scrims.played", "Jugadas")}: {played}</span>
-            <span>{t("scrims.cancellations", "Cancelaciones")}: {weeklyContext.cancellations}</span>
+            <span>{t("scrims.played")}: {played}</span>
+            <span>{t("scrims.cancellations")}: {weeklyContext.cancellations}</span>
             {nextOfficialRivalName ? (
               <span>
-                {t("scrims.nextOfficialRival", "Próximo rival oficial")}: {nextOfficialRivalName}
+                {t("scrims.nextOfficialRival")}: {nextOfficialRivalName}
                 {weeklyContext.nextOfficialRivalCompetition ? ` · ${weeklyContext.nextOfficialRivalCompetition}` : ""}
               </span>
             ) : null}
@@ -398,7 +398,7 @@ export default function ScrimsTab({
         <CardHeader>
           <span className="inline-flex items-center gap-2">
             <SlidersHorizontal className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            {t("scrims.weeklySetup", "Setup semanal")}
+            {t("scrims.weeklySetup")}
           </span>
         </CardHeader>
         <CardBody>
@@ -407,7 +407,7 @@ export default function ScrimsTab({
               <label className="block text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 <span className="inline-flex items-center gap-2">
                   <Target className="h-4 w-4" />
-                  {t("training.scrims.weeklyObjective", "Objetivo semanal")}
+                  {t("training.scrims.weeklyObjective")}
                 </span>
               </label>
               <Select
@@ -417,7 +417,7 @@ export default function ScrimsTab({
                 variant="muted"
                 fullWidth
               >
-                <option value="">{t("training.scrims.objectives.none", "Sin objetivo definido")}</option>
+                <option value="">{t("training.scrims.objectives.none")}</option>
                 {SCRIM_OBJECTIVES.map((focus) => (
                   <option key={focus} value={focus}>{scrimFocusLabel(t, focus)}</option>
                 ))}
@@ -425,11 +425,11 @@ export default function ScrimsTab({
               <p className="text-xs text-gray-500 dark:text-gray-400">{scrimFocusImpactText(objective)}</p>
               {objective ? (
                 <div className="flex flex-wrap items-center gap-2 text-[10px] font-heading uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  <span>Crecimiento principal:</span>
+                  <span>Main growth:</span>
                   {objectiveGrowth.primary.map((tag) => (
                     <span key={`primary-${tag}`}>{tag} +</span>
                   ))}
-                  <span>· Secundario:</span>
+                  <span>· Secondary:</span>
                   {objectiveGrowth.secondary.map((tag) => (
                     <span key={`secondary-${tag}`}>{tag} +</span>
                   ))}
@@ -438,7 +438,7 @@ export default function ScrimsTab({
             </div>
             <div className="space-y-2">
               <p className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                {t("scrims.weeklyVolume", "Volumen semanal")}
+                {t("scrims.weeklyVolume")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {SCRIM_SLOT_OPTIONS.map((slots) => (
@@ -462,10 +462,10 @@ export default function ScrimsTab({
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3 dark:border-navy-700">
             <p className="text-xs text-gray-500 dark:text-gray-400">
               {setupLocked
-                ? t("scrims.setupLocked", "Configuración semanal bloqueada hasta la próxima semana.")
+                ? t("scrims.setupLocked", "Weekly setup is locked until next week.")
                 : assistantControls
-                  ? "El Assistant Coach controla automáticamente scrims esta semana."
-                  : t("scrims.setupUnlockWindow", "Puedes configurar objetivo, volumen y rivales antes del primer bloque de scrims de la semana.")}
+                  ? "Assistant Coach is handling scrims automatically this week."
+                  : t("scrims.setupUnlockWindow", "You can set objective, volume, and rivals before the first scrim block this week.")}
             </p>
             <button
               type="button"
@@ -473,7 +473,7 @@ export default function ScrimsTab({
               onClick={() => void handleFinalizeSetup()}
               className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-heading font-bold uppercase tracking-wider text-gray-700 transition-colors hover:border-gray-300 disabled:opacity-60 dark:border-navy-600 dark:text-gray-200 dark:hover:border-navy-500"
             >
-              {t("scrims.finalizeSetup", "Fijar elecciones semanales")}
+              {t("scrims.finalizeSetup", "Lock weekly choices")}
             </button>
           </div>
           {staffSuggestions.length > 0 ? (
@@ -507,12 +507,12 @@ export default function ScrimsTab({
 
         <aside className="flex flex-col gap-5 xl:sticky xl:top-4 xl:self-start">
       <Card>
-        <CardHeader>Assistant Coach</CardHeader>
+        <CardHeader>{t("scrims.assistantCoach", "Assistant Coach")}</CardHeader>
         <CardBody>
           <div className="rounded-xl border border-gray-200 p-3 dark:border-navy-600">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-xs font-heading font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                Delegación de scrims
+                {t("scrims.delegation", "Scrim delegation")}
               </p>
               <button
                 type="button"
@@ -523,26 +523,26 @@ export default function ScrimsTab({
               </button>
             </div>
             <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              En modo Assistant, Continuar avanza 1 día y el staff resuelve decisiones de scrims automáticamente.
+              {t("scrims.assistantModeHint", "In Assistant mode, Continue advances 1 day and staff resolves scrim decisions automatically.")}
             </p>
           </div>
         </CardBody>
       </Card>
 
       <Card>
-        <CardHeader>{t("scrims.todayBlock", "Bloque de hoy")}</CardHeader>
+        <CardHeader>{t("scrims.todayBlock", "Today's block")}</CardHeader>
         <CardBody>
           <div className="rounded-lg border border-gray-200 bg-transparent p-3 text-sm text-gray-700 dark:border-navy-600 dark:text-gray-200">
             <p>
               {todayContext.state === "PlayedNeedsReview"
-                ? t("scrims.todayNeedsReview", "El scrim ya se jugó y está pendiente de decisión de review.")
+                ? t("scrims.todayNeedsReview", "Today's scrim was played and is waiting for a review decision.")
                 : todayContext.state === "Reviewed"
-                  ? t("scrims.todayReviewed", "El review de hoy ya fue aplicado. Continuá con preparación/training.")
+                  ? t("scrims.todayReviewed", "Today's review was already applied. Continue with prep/training.")
                   : todayContext.state === "Planned"
-                    ? t("scrims.todayPlanned", "Hoy hay scrim planificado. Confirmá que Plan A/B/C siga teniendo sentido.")
+                    ? t("scrims.todayPlanned", "A scrim is planned today. Confirm Plan A/B/C still makes sense.")
                     : todayContext.state === "Cancelled"
-                      ? t("scrims.todayCancelled", "El bloque de scrim de hoy quedó cancelado. Priorizá recuperación o drills.")
-                      : t("scrims.todayNoScrim", "Hoy no hay scrim activo. Ajustá el plan semanal con intención.")}
+                      ? t("scrims.todayCancelled", "Today's scrim block was cancelled. Prioritize recovery or drills.")
+                      : t("scrims.todayNoScrim", "No active scrim today. Adjust your weekly plan with intent.")}
             </p>
             {todayOpponentName ? (
               <div className="mt-3 flex items-center gap-3 rounded-xl border border-gray-200 bg-transparent p-3 dark:border-navy-600">
@@ -559,7 +559,7 @@ export default function ScrimsTab({
                 ) : null}
                 <div className="min-w-0">
                   <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    {t("scrims.todayOpponent", "Rival de hoy")}
+                    {t("scrims.todayOpponent", "Today's rival")}
                   </p>
                   <p className="truncate font-heading text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-white">
                     {todayOpponentName}
@@ -570,55 +570,55 @@ export default function ScrimsTab({
             {todayContext.state === "Planned" ? (
               <div className="mt-3 space-y-1 text-xs">
                 <p>
-                  {t("scrims.todayRisk", "Riesgo")}: <strong>{todayRisk}</strong>
+                  {t("scrims.todayRisk", "Risk")}: <strong>{todayRisk}</strong>
                   {estimatedTodayGap > 0 ? ` · Gap OVR +${estimatedTodayGap}` : ""}
                   {estimatedRepGap > 0 ? ` · Gap rep +${estimatedRepGap}` : ""}
                 </p>
                 <p>
-                  {t("scrims.todayLearning", "Valor de aprendizaje")}: <strong>{todayLearning}</strong>
+                  {t("scrims.todayLearning", "Learning value")}: <strong>{todayLearning}</strong>
                 </p>
                 <p>
-                  {t("scrims.todayCancelCost", "Costo de cancelar")}: <strong>-{cancelCost} rep scrims</strong>
+                  {t("scrims.todayCancelCost", "Cancel cost")}: <strong>-{cancelCost} scrim rep</strong>
                 </p>
               </div>
             ) : null}
             {(todayContext.state === "PlayedNeedsReview" || todayContext.state === "Reviewed") && todayContext.report ? (
               <div className="mt-3 rounded-lg border border-gray-200 bg-transparent p-4 text-sm dark:border-navy-600">
                 <p className="font-heading text-[11px] font-bold uppercase tracking-wider text-gray-300">
-                  {t("scrims.postScrimFeedback", "Feedback post-scrim")}
+                  {t("scrims.postScrimFeedback", "Post-scrim feedback")}
                 </p>
                 <p className="mt-1 text-gray-900 dark:text-gray-100">
                   {todayContext.report.won
                     ? t("scrims.reviewWin", {
                         team: todayOpponentName ?? todayContext.report.opponent_team_id,
-                        defaultValue: "Victoria vs {{team}}",
+                        defaultValue: "Win vs {{team}}",
                       })
                     : t("scrims.reviewLoss", {
                         team: todayOpponentName ?? todayContext.report.opponent_team_id,
-                        defaultValue: "Derrota vs {{team}}",
+                        defaultValue: "Loss vs {{team}}",
                       })}
-                  {` · ${t("scrims.reportQuality", "Calidad")}: ${todayContext.report.quality}`}
+                  {` · ${t("scrims.reportQuality", "Quality")}: ${todayContext.report.quality}`}
                 </p>
                 <p className="mt-1 text-gray-900 dark:text-gray-100">
-                  {t("scrims.reportFocus", "Foco")}: {todayContext.report.focus}
-                  {todayContext.report.issue ? ` · ${t("scrims.detectedIssue", "Problema detectado")}: ${todayContext.report.issue}` : ""}
+                  {t("scrims.reportFocus", "Focus")}: {todayContext.report.focus}
+                  {todayContext.report.issue ? ` · ${t("scrims.detectedIssue", "Detected issue")}: ${todayContext.report.issue}` : ""}
                 </p>
                 {todayContext.state === "PlayedNeedsReview" && reviewPhaseActive ? (
                   <p className="mt-2 text-gray-600 dark:text-gray-300">
-                    {t("scrims.postScrimNextActionReview", "Siguiente acción: elegí una decisión de review en Home para convertir este bloque en progreso concreto.")}
+                    {t("scrims.postScrimNextActionReview", "Next action: choose a review decision in Home to turn this block into concrete progress.")}
                   </p>
                 ) : (
                   <p className="mt-2 text-gray-600 dark:text-gray-300">
-                    {t("scrims.postScrimNextActionContinue", "Review ya aplicado: usá este feedback para ajustar rival y enfoque del próximo bloque.")}
+                    {t("scrims.postScrimNextActionContinue", "Review already applied: use this feedback to adjust rival and focus for the next block.")}
                   </p>
                 )}
                 {todayContext.state === "PlayedNeedsReview" && reviewPhaseActive ? (
                   <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     {isFirstBlock
                       ? showCancelFollowups
-                        ? "Bloque 1/2: ahora elegí respuesta técnica para cerrar el día."
-                        : "Bloque 1/2: primero decidí si seguís con presión o cancelás scrims."
-                      : "Bloque 2/2: cerrá el día con recuperación o trabajo dirigido."}
+                        ? "Block 1/2: now choose the technical follow-up to close the day."
+                        : "Block 1/2: first decide whether to keep pressure or cancel scrims."
+                      : "Block 2/2: close the day with recovery or targeted work."}
                   </p>
                 ) : null}
                 {todayContext.state === "PlayedNeedsReview" && reviewPhaseActive ? (
@@ -661,12 +661,12 @@ export default function ScrimsTab({
       </Card>
 
       <Card>
-        <CardHeader>{t("scrims.weeklyReportInline", "Resumen semanal")}</CardHeader>
+        <CardHeader>{t("scrims.weeklyReportInline", "Weekly summary")}</CardHeader>
         <CardBody>
           <div className="space-y-4">
             <div>
               <p className="mb-2 text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                {t("scrims.recentReports", "Reportes recientes")}
+                {t("scrims.recentReports", "Recent reports")}
               </p>
               {latestReports.length > 0 ? (
                 <div className="space-y-2">
@@ -706,7 +706,7 @@ export default function ScrimsTab({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t("scrims.noRecentReports", "Todavía no hay reportes esta semana.")}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t("scrims.noRecentReports", "No reports yet this week.")}</p>
               )}
             </div>
             <div className="rounded-xl border border-gray-200 bg-transparent p-3 dark:border-navy-600">
@@ -716,7 +716,7 @@ export default function ScrimsTab({
                     {weeklyOutcome}
                   </p>
                   <p className="mt-2 text-sm text-gray-700 dark:text-gray-200">
-                    {t("training.scrims.weeklyObjective", "Objetivo semanal")}: <strong>{weeklyContext.objective ?? t("training.scrims.objectives.none", "Sin objetivo definido")}</strong>
+                    {t("training.scrims.weeklyObjective", "Weekly objective")}: <strong>{weeklyContext.objective ?? t("training.scrims.objectives.none", "No objective set")}</strong>
                   </p>
                   <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
                     {wins}-{losses} · {t("scrims.played", "Jugadas")}: {played} · {t("scrims.reportQuality", "Calidad")}: {weeklyContext.avgQuality}
@@ -727,7 +727,7 @@ export default function ScrimsTab({
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t("scrims.noWeeklyReportYet", "Completá scrims para generar el resumen semanal.")}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t("scrims.noWeeklyReportYet", "Complete scrims to generate the weekly summary.")}</p>
               )}
             </div>
           </div>

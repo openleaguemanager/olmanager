@@ -10,6 +10,7 @@ use domain::team::Team;
 use engine::Side;
 use engine::report::{KillDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
 use ofm_core::clock::GameClock;
+use ofm_core::champions::ChampionMasteryEntry;
 use ofm_core::game::Game;
 use ofm_core::turn;
 use std::collections::HashMap;
@@ -473,6 +474,44 @@ fn simulate_other_matches_no_league_no_crash() {
     let mut game = make_game_with_match();
     game.league = None;
     turn::simulate_other_matches(&mut game, "2025-06-15", None);
+}
+
+#[test]
+fn simulate_other_matches_applies_match_mastery_progress() {
+    let mut game = make_game_with_match();
+    let today = game.clock.current_date.format("%Y-%m-%d").to_string();
+
+    for player_id in ["t1_fwd0", "t2_fwd0"] {
+        game.champion_masteries.push(ChampionMasteryEntry {
+            player_id: player_id.to_string(),
+            champion_id: "Azir".to_string(),
+            mastery: 40,
+            last_active_on: today.clone(),
+        });
+    }
+
+    if let Some(player) = game.players.iter_mut().find(|p| p.id == "t1_fwd0") {
+        player.champion_training_targets = vec!["Azir".to_string(), String::new(), String::new()];
+    }
+    if let Some(player) = game.players.iter_mut().find(|p| p.id == "t2_fwd0") {
+        player.champion_training_targets = vec!["Azir".to_string(), String::new(), String::new()];
+    }
+
+    let before_home = ofm_core::champions::mastery_for_player_champion(&game, "t1_fwd0", "Azir");
+    let before_away = ofm_core::champions::mastery_for_player_champion(&game, "t2_fwd0", "Azir");
+
+    turn::simulate_other_matches(&mut game, &today, None);
+
+    let after_home = ofm_core::champions::mastery_for_player_champion(&game, "t1_fwd0", "Azir");
+    let after_away = ofm_core::champions::mastery_for_player_champion(&game, "t2_fwd0", "Azir");
+    assert!(
+        after_home > before_home || after_away > before_away,
+        "auto-sim should progress mastery for at least one side (home {}->{}, away {}->{})",
+        before_home,
+        after_home,
+        before_away,
+        after_away
+    );
 }
 
 // ---------------------------------------------------------------------------

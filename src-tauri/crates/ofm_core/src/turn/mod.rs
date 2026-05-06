@@ -1239,7 +1239,80 @@ where
         "[turn] match result: {} {} - {} {} (fixture #{})",
         home_name, report.home_wins, report.away_wins, away_name, idx
     );
+
+    let mastery_picks = auto_sim_mastery_picks(game, &home_team_id, &away_team_id);
+    let winner_team_id = if report.home_wins == report.away_wins {
+        if home_team_id <= away_team_id {
+            home_team_id.clone()
+        } else {
+            away_team_id.clone()
+        }
+    } else if report.home_wins > report.away_wins {
+        home_team_id.clone()
+    } else {
+        away_team_id.clone()
+    };
+    if !mastery_picks.is_empty() {
+        champions::apply_match_mastery_progress(game, &winner_team_id, &mastery_picks);
+    }
+
     apply_match_report_with_capture(game, idx, &home_team_id, &away_team_id, &report, on_capture);
+}
+
+fn auto_sim_mastery_picks(game: &Game, home_team_id: &str, away_team_id: &str) -> Vec<(String, String)> {
+    let mut picks: Vec<(String, String)> = Vec::new();
+
+    for team_id in [home_team_id, away_team_id] {
+        let mut player_ids = game
+            .teams
+            .iter()
+            .find(|team| team.id == *team_id)
+            .map(|team| team.active_lineup_ids.clone())
+            .unwrap_or_default();
+
+        if player_ids.len() < 5 {
+            let mut fallback_ids: Vec<String> = game
+                .players
+                .iter()
+                .filter(|player| player.team_id.as_deref() == Some(team_id))
+                .map(|player| player.id.clone())
+                .collect();
+            fallback_ids.sort();
+            for player_id in fallback_ids {
+                if !player_ids.contains(&player_id) {
+                    player_ids.push(player_id);
+                }
+                if player_ids.len() >= 5 {
+                    break;
+                }
+            }
+        }
+
+        for player_id in player_ids.into_iter().take(5) {
+            let champion_id = game
+                .players
+                .iter()
+                .find(|player| player.id == player_id)
+                .and_then(|player| {
+                    champions::training_targets_for_player(player)
+                        .into_iter()
+                        .find(|target| !target.trim().is_empty())
+                })
+                .or_else(|| {
+                    game.champion_masteries
+                        .iter()
+                        .filter(|entry| entry.player_id == player_id)
+                        .max_by_key(|entry| entry.mastery)
+                        .map(|entry| entry.champion_id.clone())
+                });
+
+            if let Some(champion_id) = champion_id {
+                picks.push((player_id, champion_id));
+            }
+        }
+    }
+
+    picks
 }
 
 fn simulate_series(

@@ -197,6 +197,24 @@ fn migrate_social_post_media_url(tx: &Transaction<'_>) -> HookResult {
     Ok(())
 }
 
+fn migrate_missing_scrim_columns(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(
+        tx,
+        "teams",
+        "weekly_scrim_plan_team_ids",
+        "TEXT NOT NULL DEFAULT '[]'",
+    )?;
+    add_column_if_missing(tx, "teams", "scrim_weekly_slots", "INTEGER NOT NULL DEFAULT 0")?;
+    add_column_if_missing(tx, "teams", "scrim_reputation", "INTEGER NOT NULL DEFAULT 50")?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "scrim_weekly_cancellations",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
+    Ok(())
+}
+
 fn connection_column_exists(
     conn: &Connection,
     table: &str,
@@ -380,7 +398,7 @@ pub fn all_migrations() -> Migrations<'static> {
         // V50: Persist social accounts and templates for editor workflows
         M::up(include_str!("sql/v036_social_registry.sql")),
         // V51: Add missing scrim columns to teams table (weekly_scrim_plan_team_ids, scrim_weekly_slots, scrim_reputation, scrim_weekly_cancellations)
-        M::up(include_str!("sql/v051_add_missing_scrim_columns.sql")),
+        M::up_with_hook("SELECT 1;", migrate_missing_scrim_columns),
     ])
 }
 

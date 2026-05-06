@@ -170,6 +170,9 @@ pub struct LiveMatchState {
     // Extra time / knockout
     allows_extra_time: bool,
 
+    // Tunable match configuration
+    config: MatchConfig,
+
     // LoL objective/map state (incremental overlay layer)
     lol_map: LolMapState,
 }
@@ -180,7 +183,7 @@ impl LiveMatchState {
     pub fn new(
         home: TeamData,
         away: TeamData,
-        _config: MatchConfig,
+        config: MatchConfig,
         home_bench: Vec<PlayerData>,
         away_bench: Vec<PlayerData>,
         allows_extra_time: bool,
@@ -207,6 +210,7 @@ impl LiveMatchState {
             home_bench,
             away_bench,
             allows_extra_time,
+            config,
             lol_map,
         }
     }

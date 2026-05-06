@@ -208,6 +208,47 @@ fn default_config_values_in_range() {
     let cfg = MatchConfig::default();
     assert!(cfg.home_advantage >= 1.0 && cfg.home_advantage <= 1.25);
     assert!(cfg.shot_accuracy_base > 0.0 && cfg.shot_accuracy_base < 1.0);
+    assert!(cfg.objective_swing_min > 0.9 && cfg.objective_swing_min < 1.05);
+    assert!(cfg.objective_swing_max > 1.0 && cfg.objective_swing_max < 1.1);
+    assert!(cfg.structure_damage_min >= 8.0 && cfg.structure_damage_min <= 12.0);
+    assert!(cfg.structure_damage_max >= 12.0 && cfg.structure_damage_max <= 16.0);
+    assert!(cfg.late_game_damage_scale >= 1.4 && cfg.late_game_damage_scale <= 1.6);
+}
+
+#[test]
+fn simulation_regression_sanity_no_extreme_drift() {
+    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
+    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let config = MatchConfig::default();
+
+    let mut total_kills = 0u32;
+    let mut total_objectives = 0u32;
+    let trials = 120;
+    for seed in 0..trials {
+        let report = simulate_lol(&home, &away, &config, &mut seeded_rng(seed));
+        total_kills += (report.home_stats.kills + report.away_stats.kills) as u32;
+        total_objectives += report
+            .events
+            .iter()
+            .filter(|event| {
+                matches!(
+                    event.event_type,
+                    EventType::ObjectiveTaken
+                        | EventType::TowerDestroyed
+                        | EventType::InhibitorDestroyed
+                        | EventType::NexusTowerDestroyed
+                )
+            })
+            .count() as u32;
+    }
+
+    let avg_kills = total_kills as f64 / trials as f64;
+    let avg_objectives = total_objectives as f64 / trials as f64;
+    assert!(avg_kills > 0.5 && avg_kills < 8.0, "avg kills drifted too far: {avg_kills:.2}");
+    assert!(
+        avg_objectives > 0.5 && avg_objectives < 20.0,
+        "avg objective events drifted too far: {avg_objectives:.2}"
+    );
 }
 
 // ---------------------------------------------------------------------------

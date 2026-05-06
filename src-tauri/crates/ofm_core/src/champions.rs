@@ -645,17 +645,68 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
         return;
     }
 
-    let mut ranked_masteries: Vec<(String, u8)> = game
+    let role = game
+        .players
+        .iter()
+        .find(|candidate| candidate.id == player_id)
+        .map(|player| match player.natural_position {
+            domain::player::LolRole::Top => "Top",
+            domain::player::LolRole::Jungle => "Jungle",
+            domain::player::LolRole::Mid => "Mid",
+            domain::player::LolRole::Adc => "ADC",
+            domain::player::LolRole::Support => "Support",
+            domain::player::LolRole::Unknown => "Unknown",
+        })
+        .unwrap_or("Unknown");
+
+    let discovered: HashSet<String> = game
+        .champion_patch
+        .discovered_champion_ids
+        .iter()
+        .map(|id| normalize_key(id))
+        .collect();
+
+    let tier_score = |tier: &str| -> i32 {
+        match tier.to_uppercase().as_str() {
+            "S" => 100,
+            "A" => 85,
+            "B" => 70,
+            "C" => 55,
+            "D" => 40,
+            _ => 60,
+        }
+    };
+
+    let mastery_map: HashMap<String, u8> = game
         .champion_masteries
         .iter()
         .filter(|entry| entry.player_id == player_id)
-        .map(|entry| (entry.champion_id.clone(), entry.mastery))
+        .map(|entry| (normalize_key(&entry.champion_id), entry.mastery))
         .collect();
-    ranked_masteries.sort_by(|left, right| right.1.cmp(&left.1));
+
+    let mut by_meta: Vec<(String, i32)> = game
+        .champion_patch
+        .hidden_meta
+        .iter()
+        .filter(|meta| normalize_key(&meta.role) == normalize_key(role))
+        .filter(|meta| {
+            let key = normalize_key(&meta.champion_id);
+            discovered.is_empty() || discovered.contains(&key)
+        })
+        .map(|meta| {
+            let key = normalize_key(&meta.champion_id);
+            let mastery = i32::from(*mastery_map.get(&key).unwrap_or(&MIN_MASTERY));
+            let mastery_gap = i32::from(MASTERY_CAP) - mastery;
+            let role_fit = if normalize_key(&meta.role) == normalize_key(role) { 10 } else { 0 };
+            let score = tier_score(&meta.tier) * 2 + role_fit + mastery_gap;
+            (meta.champion_id.clone(), score)
+        })
+        .collect();
+    by_meta.sort_by(|left, right| right.1.cmp(&left.1));
 
     let mut selected: Vec<String> = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
-    for (champion_id, _) in ranked_masteries {
+    for (champion_id, _) in by_meta {
         let key = normalize_key(&champion_id);
         if seen.contains(&key) {
             continue;
@@ -664,6 +715,27 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
         selected.push(champion_id);
         if selected.len() >= 3 {
             break;
+        }
+    }
+
+    if selected.len() < 3 {
+        let mut ranked_masteries: Vec<(String, u8)> = game
+            .champion_masteries
+            .iter()
+            .filter(|entry| entry.player_id == player_id)
+            .map(|entry| (entry.champion_id.clone(), entry.mastery))
+            .collect();
+        ranked_masteries.sort_by(|left, right| right.1.cmp(&left.1));
+        for (champion_id, _) in ranked_masteries {
+            let key = normalize_key(&champion_id);
+            if seen.contains(&key) {
+                continue;
+            }
+            seen.insert(key);
+            selected.push(champion_id);
+            if selected.len() >= 3 {
+                break;
+            }
         }
     }
 

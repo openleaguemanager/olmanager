@@ -582,7 +582,7 @@ impl LiveMatchState {
             let scale = 1.0 + (level.saturating_sub(1) as f64) * 0.06 + items as f64 * 0.10;
             let damage = role_power(role)
                 * scale
-                * game_damage_scale(minute)
+                * game_damage_scale(minute, self.config.late_game_damage_scale)
                 * rng.random_range(0.88..1.16)
                 * (1.0 - best_dist / 0.095).clamp(0.45, 1.0);
 
@@ -680,7 +680,7 @@ impl LiveMatchState {
             }
             let home = objective_presence(&self.lol_map.units, Side::Home, anchor, radius);
             let away = objective_presence(&self.lol_map.units, Side::Away, anchor, radius);
-            let swing = rng.random_range(0.95..1.08);
+            let swing = rng.random_range(self.config.objective_swing_min..self.config.objective_swing_max);
 
             let taker = if home * swing > away + 0.9 {
                 Some(Side::Home)
@@ -753,7 +753,9 @@ impl LiveMatchState {
                 };
 
                 let scaling = team_scaling(&self.lol_map.units, attacker);
-                let dmg = pressure * scaling * rng.random_range(8.0..16.0);
+                let dmg = pressure
+                    * scaling
+                    * rng.random_range(self.config.structure_damage_min..self.config.structure_damage_max);
                 if !deal_structure_damage(&mut self.lol_map, attacker, target, dmg, minute) {
                     continue;
                 }
@@ -939,7 +941,7 @@ fn role_power(role: LolRole) -> f64 {
     }
 }
 
-fn game_damage_scale(minute: u8) -> f64 {
+fn game_damage_scale(minute: u8, late_game_scale: f64) -> f64 {
     if minute < 10 {
         1.0
     } else if minute < 20 {
@@ -947,7 +949,7 @@ fn game_damage_scale(minute: u8) -> f64 {
     } else if minute < 30 {
         1.34
     } else {
-        1.56
+        late_game_scale.clamp(1.40, 1.60)
     }
 }
 

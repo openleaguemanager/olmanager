@@ -30,3 +30,9 @@ export async function saveSocialTemplates(
 ): Promise<GameStateData> {
   return invoke<GameStateData>("save_social_templates", { templates });
 }
+
+export async function relocalizeSocialFeed(
+  language: string,
+): Promise<GameStateData> {
+  return invoke<GameStateData>("relocalize_social_feed", { language });
+}
