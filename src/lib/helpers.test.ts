@@ -63,11 +63,11 @@ const makePlayer = (overrides: Partial<PlayerData> = {}): PlayerData => ({
   alternate_positions: [],
   training_focus: null,
   attributes: {
-    pace: 70, stamina: 70, strength: 70, agility: 70,
-    passing: 70, shooting: 70, tackling: 70, dribbling: 70,
-    defending: 70, positioning: 70, vision: 70, decisions: 70,
-    composure: 50, aggression: 50, teamwork: 50,
-    leadership: 50, handling: 30, reflexes: 30, aerial: 50,
+    pace: 70, mental_resilience: 70, strength: 70, champion_pool: 70,
+    passing: 70, laning: 70, tackling: 70, mechanics: 70,
+    defending: 70, positioning: 70, macro_play: 70, consistency: 70,
+    discipline: 50, aggression: 50, teamfighting: 50,
+    shotcalling: 50, handling: 30, reflexes: 30, aerial: 50,
   },
   condition: 100,
   morale: 80,
@@ -400,7 +400,7 @@ describe("calcOvr", () => {
       natural_position: "MID",
       attributes: {
         ...makePlayer().attributes,
-        dribbling: 73,
+        mechanics: 73,
       },
     });
 
