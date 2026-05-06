@@ -437,10 +437,10 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-[11px] uppercase tracking-widest text-gray-400 font-heading">
-              {t("champions.patchLabel", "Patch")}
+              {t("champions.patchLabel")}
             </p>
             <h2 className="mt-1 text-2xl font-heading font-bold text-white">
-              {patch?.current_patch_label || t("champions.patchFallback", "25.1")}
+              {patch?.current_patch_label || t("champions.patchFallback")}
             </h2>
             <p className="mt-1 text-sm text-gray-300">
               {patch?.last_patch_date
@@ -448,21 +448,21 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
                   defaultValue: "Último update: {{date}}",
                   date: patch.last_patch_date,
                 })
-                : t("champions.patchPending", "Esperando primer update de parche")}
+                : t("champions.patchPending")}
             </p>
           </div>
 
           <div className="min-w-[230px] rounded-xl border border-navy-600 bg-navy-800/30 px-4 py-3">
             <div className="flex items-center justify-between text-xs text-gray-300">
               <span className="inline-flex items-center gap-1"><Search className="h-3.5 w-3.5" />
-                {t("champions.discoveryProgress", "Meta descubierto")}</span>
+                {t("champions.discoveryProgress")}</span>
               <span className="font-semibold text-primary-500 dark:text-primary-300">{discoveredPct}%</span>
             </div>
             <div className="mt-2 h-2 rounded-full bg-navy-700">
               <div className="h-2 rounded-full bg-primary-500" style={{ width: `${discoveredPct}%` }} />
             </div>
             <p className="mt-2 text-[11px] text-gray-400">
-              {t("champions.staffMetaImpact", "Scout read")}: {formatStaffEffectPercent(staffEffects.metaDiscovery)} · {t("champions.staffMasteryImpact", "mastery learning")}: {formatStaffEffectPercent(staffEffects.development)}
+              {t("champions.staffMetaImpact")}: {formatStaffEffectPercent(staffEffects.metaDiscovery)} · {t("champions.staffMasteryImpact")}: {formatStaffEffectPercent(staffEffects.development)}
             </p>
           </div>
         </div>
@@ -471,7 +471,7 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm text-gray-300">
               <Sparkles className="h-4 w-4" />
-              <span className="font-heading uppercase tracking-wider">{t("champions.metaTitle", "Meta del parche")}</span>
+              <span className="font-heading uppercase tracking-wider">{t("champions.metaTitle")}</span>
             </div>
             <div className="flex items-center gap-1 rounded-lg border border-navy-600 bg-navy-900/20 p-1">
               <button
@@ -479,7 +479,7 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
                 onClick={() => setMetaRoleFilter("ALL")}
                 className={`rounded-md border px-2 py-1 text-[11px] font-heading transition-colors ${metaRoleFilter === "ALL" ? "border-primary-500 bg-primary-500 text-white" : "border-navy-600 text-gray-300 hover:border-navy-500"}`}
               >
-                ALL
+                {t("common.all")}
               </button>
               {(Object.keys(ROLE_ORDER) as UiRole[]).map((role) => (
                 <button
@@ -537,7 +537,7 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
         <div className="flex items-center gap-2 mb-3">
           <Clock3 className="h-4 w-4 text-amber-500" />
           <h3 className="font-heading font-bold uppercase tracking-wide text-gray-100">
-            {t("champions.masteryTrainingTitle", "Entrenamiento de maestría")}
+            {t("champions.masteryTrainingTitle")}
           </h3>
         </div>
 
@@ -638,12 +638,16 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
                       ? masteryMap.get(`${player.id}:${normalizeKey(target)}`) ?? 25
                       : 25;
                     const gainHint = expectedGainBadge(slotIndex, effectiveFocus);
-                    const slotTitle = slotIndex === 0 ? "Prioridad alta" : slotIndex === 1 ? "Prioridad media" : "Prioridad baja";
-                    const slotDesc = slotIndex === 0
-                      ? "Objetivo principal de progreso"
+                    const slotTitle = slotIndex === 0
+                      ? t("champions.priorityHigh")
                       : slotIndex === 1
-                        ? "Alternativa estable para mantener ritmo"
-                        : "Pick situacional para ampliar pool";
+                        ? t("champions.priorityMedium")
+                        : t("champions.priorityLow");
+                    const slotDesc = slotIndex === 0
+                      ? t("champions.priorityHighDesc")
+                      : slotIndex === 1
+                        ? t("champions.priorityMediumDesc")
+                        : t("champions.priorityLowDesc");
 
                     return (
                       <div
@@ -673,7 +677,7 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
                           }}
                           className="w-full rounded-md border border-navy-600 bg-navy-700/80 text-sm text-gray-100 px-2 py-1.5"
                         >
-                          <option value="">{t("champions.noTarget", "Sin objetivo")}</option>
+                          <option value="">{t("champions.noTarget")}</option>
                           {sortedRoleChampions.map((champion) => {
                             const championKey = normalizeKey(champion);
                             const mastery = masteryMap.get(`${player.id}:${championKey}`) ?? 25;
@@ -695,10 +699,10 @@ export default function ChampionsTab({ gameState, onGameUpdate }: ChampionsTabPr
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2">
                           <span className="text-[10px] font-heading uppercase tracking-wider text-gray-400">
-                            Maestría {masteryValue}
+                            {t("champions.mastery")} {masteryValue}
                           </span>
                           <span className="text-[10px] font-heading uppercase tracking-wider text-gray-400">
-                            Foco x{gainHint.baseMult.toFixed(2)}
+                            {t("training.effectiveFocus")} x{gainHint.baseMult.toFixed(2)}
                           </span>
                           <span className="text-[10px] font-heading uppercase tracking-wider text-gray-400">
                             SoloQ x{soloQMult.toFixed(1)}

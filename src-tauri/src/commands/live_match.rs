@@ -86,8 +86,9 @@ pub struct FixtureChampionPickInput {
 fn finish_live_match_internal(
     state: &StateManager,
     lol_report: Option<LolSimMatchReportInput>,
+    locale: Option<&str>,
 ) -> Result<FinishLiveMatchResponse, String> {
-    finish_live_match_service(state, lol_report)
+    finish_live_match_service(state, lol_report, locale)
 }
 
 fn apply_team_talk_internal(
@@ -138,10 +139,12 @@ pub fn get_match_snapshot(state: State<'_, StateManager>) -> Result<engine::Matc
 /// Finish the live match: generate report, update game state, clean up.
 #[tauri::command]
 pub fn finish_live_match(
+    app_handle: tauri::AppHandle,
     state: State<'_, StateManager>,
     lol_report: Option<LolSimMatchReportInput>,
 ) -> Result<FinishLiveMatchResponse, String> {
-    finish_live_match_internal(&state, lol_report)
+    let settings = crate::commands::settings::get_settings(app_handle).unwrap_or_default();
+    finish_live_match_internal(&state, lol_report, Some(settings.language.as_str()))
 }
 
 #[tauri::command]

@@ -353,7 +353,12 @@
     "fullRoster": "Plantel completo",
     "todayScrimReviewVs": "Review vs {{team}}",
     "todayScrimReview": "Review pós-scrim",
-    "todayScrimReviewDetail": "Escolhe como transformar o scrim de hoje em aprendizagem."
+    "todayScrimReviewDetail": "Escolhe como transformar o scrim de hoje em aprendizagem.",
+    "todayMatch": "Today's match",
+    "todayScrimOpen": "Open scrim slot",
+    "todayScrimDetail": "Choose how to use today's scrim block.",
+    "todayTraining": "Training focus",
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
   },
   "season": {
     "preseasonStatus": "Estado da pré-época",
@@ -2878,5 +2883,8 @@
     "noJobs": "Nenhuma posição disponível no momento.",
     "leaguePosition": "Última temporada: {{position}}",
     "refresh": "Verificar novas vagas"
+  },
+  "scrims": {
+    "weeklySetup": "Weekly setup"
   }
 }

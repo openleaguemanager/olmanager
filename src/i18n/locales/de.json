@@ -203,7 +203,7 @@
     "tactics": "Taktik",
     "training": "Training",
     "scrims": "Scrims",
-    "champions": "Champions",
+    "champions": "Meta",
     "staff": "Staff",
     "finances": "Finanzen",
     "transfers": "Transfers",
@@ -353,7 +353,55 @@
     "fullRoster": "Gesamter Kader",
     "todayScrimReviewVs": "Review vs {{team}}",
     "todayScrimReview": "Post-Scrim-Review",
-    "todayScrimReviewDetail": "Wähle, wie der heutige Scrim in Lernen umgewandelt wird."
+    "todayScrimReviewDetail": "Wähle, wie der heutige Scrim in Lernen umgewandelt wird.",
+    "today": "Today",
+    "currentPhase": "Current phase",
+    "recommendedNow": "Recommended now",
+    "riskRewardToday": "Risk and reward today",
+    "risk": "Risk",
+    "expectedLearning": "Expected learning",
+    "cancelCost": "Cancel cost",
+    "recommendation": "Recommendation",
+    "recommendationHighRisk": "High risk: consider cancelling and reviewing before forcing more volume.",
+    "recommendationNormalRisk": "Manageable risk: continue if you need reps, cancel if recovery is a priority.",
+    "scrimDecision": {
+      "cancelScrims": {
+        "desc": "Cancel the next block and switch to corrective work.",
+        "benefits": "Protects recovery and reduces immediate risk.",
+        "costs": "Loses planned volume for the day.",
+        "when": "When team state is unstable and quality is dropping."
+      },
+      "continueBlock2": {
+        "desc": "Keep the plan and play the second block."
+      },
+      "vodReview": {
+        "desc": "Review VOD to extract concrete learning from mistakes."
+      },
+      "mentalReset": {
+        "desc": "Prioritize morale and reset tilt before next sessions."
+      },
+      "targetedDrills": {
+        "desc": "Run focused drills on the detected issue."
+      },
+      "offerRest": {
+        "desc": "Offer rest after a good block to protect condition."
+      },
+      "dayOff": {
+        "desc": "Give the rest of the day off and recover."
+      },
+      "pushThrough": {
+        "desc": "Push volume despite the setback to maximize reps."
+      }
+    },
+    "scrimFeedback": {
+      "cancelledTitle": "Scrims cancelled for today",
+      "cancelledDetail": "Choose a corrective follow-up to close the day."
+    },
+    "todayMatch": "Today's match",
+    "todayScrimOpen": "Open scrim slot",
+    "todayScrimDetail": "Choose how to use today's scrim block.",
+    "todayTraining": "Training focus",
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
   },
   "season": {
     "preseasonStatus": "Status der Vorbereitung",
@@ -2878,5 +2926,43 @@
     "noJobs": "Derzeit keine Stellen verfügbar.",
     "leaguePosition": "Letzte Saison: {{position}}",
     "refresh": "Nach neuen Stellen suchen"
+  },
+  "scrims": {
+    "reputation": "Scrim rep",
+    "reviewBlockTitle": "Block review",
+    "reviewWin": "Win",
+    "reviewLoss": "Loss",
+    "reportFocus": "Focus",
+    "detectedIssue": "Detected issue",
+    "freeDayOff": "Give the rest of the day off",
+    "decision": {
+      "cancelScrims": "Cancel scrims",
+      "continueBlock2": "Continue to block 2",
+      "vodReview": "VOD Review",
+      "mentalReset": "Mental Reset",
+      "targetedDrills": "Targeted Drills",
+      "offerRest": "Offer rest",
+      "dayOff": "Day off",
+      "pushThrough": "Push through"
+    },
+    "tag": {
+      "momentumPlus": "Momentum +",
+      "fatigueMinus": "Fatigue -",
+      "volumePlus": "Volume +",
+      "recoveryPlus": "Recovery +",
+      "fatiguePlus": "Fatigue +",
+      "volumeMinus": "Volume -",
+      "learningPlus": "Learning +",
+      "mentalMinus": "Mental -",
+      "riskMinus": "Risk -",
+      "analysisPlus": "Analysis +",
+      "qualityPlus": "Quality +",
+      "recoveryMinus": "Recovery -",
+      "mentalPlus": "Mental +",
+      "techniqueMinus": "Technique -",
+      "issuePlus": "Issue +",
+      "mechanicsPlus": "Mechanics +"
+    },
+    "weeklySetup": "Weekly setup"
   }
 }

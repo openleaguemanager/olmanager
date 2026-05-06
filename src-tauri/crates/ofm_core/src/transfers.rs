@@ -1082,6 +1082,29 @@ pub fn make_transfer_bid(
     let date = game.clock.current_date.format("%Y-%m-%d").to_string();
 
     if player.team_id.is_none() {
+        let destination_team = game
+            .teams
+            .iter()
+            .find(|team| team.id == destination_team_id.as_str())
+            .ok_or("Destination team not found")?;
+
+        if !free_agent_accepts_offer(player, destination_team) {
+            return Ok(transfer_outcome(
+                TransferNegotiationDecision::Rejected,
+                None,
+                true,
+                build_transfer_feedback(
+                    "transfers.transferFeedbackRejectedHeadline",
+                    "transfers.transferFeedbackPlayerRejectedDetail",
+                    NegotiationMood::Guarded,
+                    58,
+                    41,
+                    1,
+                    &[("fee", round_transfer_fee(fee).to_string())],
+                ),
+            ));
+        }
+
         if let Some(p) = game.players.iter_mut().find(|p| p.id == player_id) {
             upsert_transfer_offer(
                 p,
@@ -1680,6 +1703,25 @@ fn player_accepts_transfer(
     }
 
     acceptance_score >= 22
+}
+
+fn free_agent_accepts_offer(
+    player: &domain::player::Player,
+    destination_team: &domain::team::Team,
+) -> bool {
+    let market_value = player.market_value;
+    let team_reputation = destination_team.reputation as i32;
+
+    // Lightweight realism guard for marquee free agents joining low-reputation teams.
+    if market_value >= 1_500_000 && team_reputation < 60 {
+        return false;
+    }
+
+    if market_value >= 900_000 && team_reputation < 45 {
+        return false;
+    }
+
+    true
 }
 
 pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, String> {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BadgeCheck, Heart, MessageCircle, Repeat2, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { GameStateData, PlayerData, SocialPostData, TeamData } from "../../store/gameStore";
@@ -6,7 +6,7 @@ import { Badge } from "../ui";
 import { formatDateShort } from "../../lib/helpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { resolveExampleTeamLogo } from "../../lib/teamLogos";
-import { createManagerSocialPost } from "../../services/socialService";
+import { createManagerSocialPost, relocalizeSocialFeed } from "../../services/socialService";
 import SocialEditor from "./SocialEditor";
 
 interface SocialTabProps {
@@ -111,10 +111,24 @@ function academyLogoFromMetadata(team: TeamData): string | null {
 }
 
 function teamLogoSrc(team: TeamData): string {
-  return academyLogoFromMetadata(team) ?? resolveExampleTeamLogo(team.name) ?? defaultTeamLogoSrc(team.id);
+  return resolveExampleTeamLogo(team.name) ?? defaultTeamLogoSrc(team.id) ?? academyLogoFromMetadata(team) ?? "";
 }
 
 function findPostTeam(post: SocialPostData, teams: TeamData[]): TeamData | null {
+  const normalizedHandle = post.author_handle.replace(/^@/, "").toLowerCase();
+  const byHandle = teams.find((team) => {
+    const teamHandle = team.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "")
+      .slice(0, 15);
+    const shortHandle = team.short_name
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "")
+      .slice(0, 15);
+    return normalizedHandle === teamHandle || normalizedHandle === shortHandle;
+  });
+  if (byHandle) return byHandle;
+
   const firstTeamId = post.team_ids[0];
   if (!firstTeamId) return null;
   return teams.find((team) => team.id === firstTeamId) ?? null;
@@ -136,12 +150,26 @@ function verifiedMeta(post: SocialPostData): { color: string; title: string } | 
   return null;
 }
 
-function Avatar({ post, teams, players }: { post: SocialPostData; teams: TeamData[]; players: PlayerData[] }) {
+function Avatar({
+  post,
+  teams,
+  players,
+  accounts,
+}: {
+  post: SocialPostData;
+  teams: TeamData[];
+  players: PlayerData[];
+  accounts: GameStateData["social_accounts"];
+}) {
   const team = post.author_type === "Team" ? findPostTeam(post, teams) : null;
   const player = post.author_type === "Player" ? findPostPlayer(post, players) : null;
   const override = HANDLE_OVERRIDES[post.author_handle];
+  const accountAvatar =
+    accounts?.find((account) => account.handle.toLowerCase() === post.author_handle.toLowerCase())
+      ?.profile_image_url ?? null;
   const src =
     override?.avatar ??
+    accountAvatar ??
     (team
       ? teamLogoSrc(team)
       : player
@@ -174,10 +202,34 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
   const [showEditor, setShowEditor] = useState(false);
+  const lastLocalizedLanguageRef = useRef<string>("");
   const posts = useMemo(
-    () => [...(gameState.social_posts ?? [])].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)),
-    [gameState.social_posts],
+    () =>
+      [...(gameState.social_posts ?? [])]
+        .filter((post) => {
+          if (post.id.endsWith("_fan_bouzys_fnatic")) {
+            return i18n.language.toLowerCase().startsWith("es");
+          }
+          return true;
+        })
+        .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)),
+    [gameState.social_posts, i18n.language],
   );
+
+  useEffect(() => {
+    const language = i18n.language;
+    if (!language || lastLocalizedLanguageRef.current === language) {
+      return;
+    }
+    lastLocalizedLanguageRef.current = language;
+    relocalizeSocialFeed(language)
+      .then((updatedGameState) => {
+        onGameUpdate(updatedGameState);
+      })
+      .catch(() => {
+        // no-op: keep current timeline if relocalization fails
+      });
+  }, [i18n.language, onGameUpdate]);
 
   function togglePostId(postIds: Set<string>, postId: string): Set<string> {
     const nextPostIds = new Set(postIds);
@@ -227,7 +279,7 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
   }
 
   return (
-    <div className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-navy-600 dark:bg-navy-800">
+    <div className={`mx-auto overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-navy-600 dark:bg-navy-800 ${showEditor ? "max-w-6xl" : "max-w-2xl"}`}>
       <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/90 px-5 py-4 backdrop-blur dark:border-navy-600 dark:bg-navy-800/90">
         <h2 className="font-heading text-xl font-bold text-gray-950 dark:text-white">
           {t("social.title", { defaultValue: "Social" })}
@@ -252,7 +304,7 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
           </button>
         </div>
 
-        {showEditor ? <SocialEditor onGameUpdate={onGameUpdate} /> : null}
+        {showEditor ? <SocialEditor gameState={gameState} onGameUpdate={onGameUpdate} /> : null}
 
         <div className="mt-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-navy-600 dark:bg-navy-700/50">
           <textarea
@@ -291,7 +343,12 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
 
             return (
               <>
-          <Avatar post={post} teams={gameState.teams} players={gameState.players} />
+          <Avatar
+            post={post}
+            teams={gameState.teams}
+            players={gameState.players}
+            accounts={gameState.social_accounts}
+          />
 
           <div className="min-w-0 flex-1">
             <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">

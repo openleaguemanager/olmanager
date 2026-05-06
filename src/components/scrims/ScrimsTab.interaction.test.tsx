@@ -10,10 +10,11 @@ const useScrimContextWithFallbackMock = vi.fn();
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
-    t: (_key: string, fallback?: string | { defaultValue?: string }) => {
+    t: (key: string, fallback?: string | { defaultValue?: string }) => {
+      if (key === "scrims.reviewDecisionApplied") return "Decisión aplicada.";
       if (typeof fallback === "string") return fallback;
       if (fallback && typeof fallback === "object" && fallback.defaultValue) return fallback.defaultValue;
-      return "";
+      return key;
     },
   }),
 }));
@@ -216,10 +217,10 @@ describe("ScrimsTab interactions", () => {
     render(<ScrimsTab gameState={gameState()} onGameUpdate={onGameUpdate} />);
 
     expect(screen.getByText("Push Through")).toBeInTheDocument();
-    expect(screen.getByText("Cancelar scrims")).toBeInTheDocument();
+    expect(screen.getByText("Cancel scrims")).toBeInTheDocument();
     expect(screen.queryByText("VOD Review")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText("Cancelar scrims"));
+    fireEvent.click(screen.getByText("Cancel scrims"));
 
     await waitFor(() => {
       expect(chooseDailyScrimActionMock).not.toHaveBeenCalled();
@@ -252,9 +253,9 @@ describe("ScrimsTab interactions", () => {
 
     render(<ScrimsTab gameState={gameState()} onGameUpdate={vi.fn()} />);
 
-    expect(screen.getByText("Continuar al segundo bloque")).toBeInTheDocument();
-    expect(screen.getByText("Ofrecer descanso")).toBeInTheDocument();
+    expect(screen.getByText("Continue to block 2")).toBeInTheDocument();
+    expect(screen.getByText("Offer rest")).toBeInTheDocument();
     expect(screen.queryByText("Push Through")).not.toBeInTheDocument();
-    expect(screen.queryByText("Cancelar scrims")).not.toBeInTheDocument();
+    expect(screen.queryByText("Cancel scrims")).not.toBeInTheDocument();
   });
 });

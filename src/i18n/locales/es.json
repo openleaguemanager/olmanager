@@ -353,7 +353,93 @@
     "fullRoster": "Plantilla completa",
     "todayScrimReviewVs": "Review vs {{team}}",
     "todayScrimReview": "Review post-scrim",
-    "todayScrimReviewDetail": "Elegí cómo convertir el scrim de hoy en aprendizaje."
+    "todayScrimReviewDetail": "Elegí cómo convertir el scrim de hoy en aprendizaje.",
+    "todayMatch": "Partido de hoy",
+    "today": "Hoy",
+    "currentPhase": "Fase actual",
+    "recommendedNow": "Recomendado ahora",
+    "riskRewardToday": "Riesgo y recompensa hoy",
+    "risk": "Riesgo",
+    "expectedLearning": "Aprendizaje esperado",
+    "cancelCost": "Costo de cancelar",
+    "recommendation": "Recomendación",
+    "recommendationHighRisk": "Riesgo alto: mejor cancelar y revisar antes de forzar más volumen.",
+    "recommendationNormalRisk": "Riesgo manejable: continuá si necesitás reps, cancelá si priorizás recuperación.",
+    "scrimDecision": {
+      "cancelScrims": {
+        "desc": "Cancelá el próximo bloque y pasá a trabajo correctivo.",
+        "benefits": "Protege recuperación y reduce riesgo inmediato.",
+        "costs": "Perdés volumen planificado del día.",
+        "when": "Cuando el estado del equipo es inestable y cae la calidad."
+      },
+      "continueBlock2": {
+        "desc": "Mantené el plan y jugá el segundo bloque."
+      },
+      "vodReview": {
+        "desc": "Revisá VOD para extraer aprendizaje concreto de los errores."
+      },
+      "mentalReset": {
+        "desc": "Priorizá moral y reseteo de tilt antes de próximas sesiones."
+      },
+      "targetedDrills": {
+        "desc": "Hacé drills focalizados sobre el issue detectado."
+      },
+      "offerRest": {
+        "desc": "Ofrecé descanso tras un buen bloque para cuidar condición."
+      },
+      "dayOff": {
+        "desc": "Dale resto del día libre al equipo para recuperar."
+      },
+      "pushThrough": {
+        "desc": "Forzá volumen pese al golpe para maximizar reps."
+      }
+    },
+    "scrimFeedback": {
+      "cancelledTitle": "Scrims del día cancelados",
+      "cancelledDetail": "Elegí una respuesta correctiva para cerrar el día."
+    },
+    "todayScrimOpen": "Bloque scrim libre",
+    "todayScrimDetail": "Defin? c?mo usar el bloque de scrim de hoy.",
+    "todayTraining": "Foco de entrenamiento",
+    "todayTrainingDetail": "Sin scrim bloqueado: aprovech? para entrenar y recuperar."
+  },
+  "scrims": {
+    "reputation": "Rep scrims",
+    "reviewBlockTitle": "Review del bloque",
+    "reviewWin": "Victoria",
+    "reviewLoss": "Derrota",
+    "reportFocus": "Focus",
+    "detectedIssue": "Issue detectado",
+    "freeDayOff": "Dar resto del día libre",
+    "decision": {
+      "cancelScrims": "Cancelar scrims",
+      "continueBlock2": "Continuar al bloque 2",
+      "vodReview": "VOD Review",
+      "mentalReset": "Mental Reset",
+      "targetedDrills": "Targeted Drills",
+      "offerRest": "Ofrecer descanso",
+      "dayOff": "Dar resto del día libre",
+      "pushThrough": "Push Through"
+    },
+    "tag": {
+      "momentumPlus": "Momentum +",
+      "fatigueMinus": "Fatiga -",
+      "volumePlus": "Volumen +",
+      "recoveryPlus": "Recuperación +",
+      "fatiguePlus": "Fatiga +",
+      "volumeMinus": "Volumen -",
+      "learningPlus": "Aprendizaje +",
+      "mentalMinus": "Mental -",
+      "riskMinus": "Riesgo -",
+      "analysisPlus": "Análisis +",
+      "qualityPlus": "Calidad +",
+      "recoveryMinus": "Recuperación -",
+      "mentalPlus": "Mental +",
+      "techniqueMinus": "Técnica -",
+      "issuePlus": "Issue +",
+      "mechanicsPlus": "Mecánicas +"
+    },
+    "weeklySetup": "Configuraci?n semanal"
   },
   "season": {
     "preseasonStatus": "Estado de la pretemporada",
@@ -1943,7 +2029,7 @@
     "viewDetails": "Ver detalles",
     "matchDetails": "Detalles del Partido",
     "scorers": "Goleadores",
-    "tactics":"Preparación de táctica",
+    "tactics": "Preparación de táctica",
     "noGoals": "No se marcaron goles.",
     "matchComplete": "Partido completado.",
     "addressPress": "Atiende a la prensa o regresa.",

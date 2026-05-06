@@ -6,12 +6,25 @@ import type { GameStateData, ScrimReportData, TeamData } from "../../store/gameS
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
+    // Keep unit tests deterministic after removing inline fallbacks.
+    // We only map the keys asserted in this test file.
     t: (key: string, params?: Record<string, unknown> | string) => {
+      const map: Record<string, string> = {
+        "scrims.tag.volumePlus": "Volumen +",
+        "scrims.tag.learningPlus": "Aprendizaje +",
+        "scrims.tag.mentalMinus": "Mental -",
+        "scrims.decision.cancelScrims": "Cancelar scrims",
+        "scrims.decision.vodReview": "VOD Review",
+        "scrims.decision.mentalReset": "Mental Reset",
+        "scrims.decision.targetedDrills": "Targeted Drills",
+        "scrims.freeDayOff": "Dar resto del día libre",
+        "scrims.reputation": "Rep scrims",
+      };
       if (typeof params === "object" && params?.defaultValue) {
         return String(params.defaultValue).replace(/\{\{(\w+)\}\}/g, (_match, token) => String(params[token] ?? ""));
       }
       if (typeof params === "string") return params;
-      return key;
+      return map[key] ?? key;
     },
   }),
 }));
@@ -110,7 +123,7 @@ describe("HomeTodayPlanCard", () => {
       />,
     );
 
-    expect(screen.getByText("Resultado bloque A vs G2 Esports")).toBeInTheDocument();
+    expect(screen.getByText("Block A result vs G2 Esports")).toBeInTheDocument();
     expect(screen.queryByText(/Rep scrims/i)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^Scrims$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /cancelar hoy/i })).not.toBeInTheDocument();

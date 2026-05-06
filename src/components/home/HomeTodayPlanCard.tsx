@@ -29,7 +29,7 @@ function estimateTeamOvr(gameState: GameStateData, teamId: string): number {
   return Math.round(avg);
 }
 
-const REVIEW_DECISIONS: Array<{
+function buildReviewDecisions(t: (key: string, fallback?: string) => string): Array<{
   id: DailyScrimAction;
   label: string;
   description: string;
@@ -37,82 +37,80 @@ const REVIEW_DECISIONS: Array<{
   costs: string;
   whenToPick: string;
   risk: "Bajo" | "Medio" | "Alto";
-}> = [
-  {
+}> {
+  return [{
     id: "CancelScrims",
-    label: "Cancelar scrims",
-    description: "Cortás el plan competitivo del día y pasás a respuesta dirigida.",
-    benefits: "Evita sobrecarga tras bloque malo y te deja elegir enfoque correctivo.",
-    costs: "Perdés volumen competitivo del día.",
-    whenToPick: "Cuando el bloque 1 salió mal y no querés forzar continuidad.",
-    risk: "Bajo",
+    label: t("scrims.decision.cancelScrims"),
+    description: t("home.scrimDecision.cancelScrims.desc"),
+    benefits: t("home.scrimDecision.cancelScrims.benefits"),
+    costs: t("home.scrimDecision.cancelScrims.costs"),
+    whenToPick: t("home.scrimDecision.cancelScrims.when"),
+    risk: t("common.low") as "Bajo",
   },
   {
     id: "ContinueToBlock2",
-    label: "Continuar al segundo bloque",
-    description: "El resultado fue bueno: mantenés el plan del día.",
+    label: t("scrims.decision.continueBlock2"),
+    description: t("home.scrimDecision.continueBlock2.desc"),
     benefits: "Aprovecha momentum y conserva el segundo scrim planificado.",
-    costs: "Más carga acumulada que descansar ahora.",
-    whenToPick: "Cuando el bloque salió bien y querés sostener ritmo competitivo.",
-    risk: "Medio",
+    costs: "Higher accumulated load than resting now.",
+    whenToPick: "When block one was stable and you want to sustain competitive pace.",
+    risk: t("common.medium") as "Medio",
   },
   {
     id: "VodReview",
-    label: "VOD Review",
-    description: "Convierte errores en aprendizaje táctico.",
+    label: t("scrims.decision.vodReview"),
+    description: t("home.scrimDecision.vodReview.desc"),
     benefits: "Mejora lectura macro/draft y baja severidad del issue.",
-    costs: "Recuperás menos condición que con Mental Reset.",
+    costs: "Less recovery than Mental Reset.",
     whenToPick: "Cuando el problema fue de setup, decisiones o draft.",
-    risk: "Bajo",
+    risk: t("common.low") as "Bajo",
   },
   {
     id: "MentalReset",
-    label: "Mental Reset",
-    description: "Protege moral y recuperación.",
-    benefits: "Sube moral/condición y corta espiral negativa.",
-    costs: "Aprendizaje técnico más bajo esta fase.",
-    whenToPick: "Después de derrota dura o racha emocional negativa.",
-    risk: "Bajo",
+    label: t("scrims.decision.mentalReset"),
+    description: t("home.scrimDecision.mentalReset.desc"),
+    benefits: "Boosts morale/recovery and stops negative spirals.",
+    costs: "Lower technical learning this phase.",
+    whenToPick: "After a hard loss or emotional downswing.",
+    risk: t("common.low") as "Bajo",
   },
   {
     id: "TargetedDrills",
-    label: "Targeted Drills",
-    description: "Ataca el problema detectado con más carga.",
-    benefits: "Acelera corrección del issue y progreso específico.",
-    costs: "Costo moderado de condición.",
-    whenToPick: "Si el issue está claro y querés corrección puntual.",
-    risk: "Medio",
+    label: t("scrims.decision.targetedDrills"),
+    description: t("home.scrimDecision.targetedDrills.desc"),
+    benefits: "Accelerates issue correction and targeted progress.",
+    costs: "Moderate recovery cost.",
+    whenToPick: "When the issue is clear and you want precise correction.",
+    risk: t("common.medium") as "Medio",
   },
   {
     id: "OfferRest",
-    label: "Ofrecer descanso",
-    description: "El resultado fue bueno: cancelás el resto de scrims del día.",
-    benefits: "Protege moral y condición tras un bloque positivo.",
-    costs: "Menos volumen de práctica ese día.",
-    whenToPick: "Cuando ya conseguiste aprendizaje suficiente y querés cuidar al equipo.",
-    risk: "Bajo",
+    label: t("scrims.decision.offerRest"),
+    description: t("home.scrimDecision.offerRest.desc"),
+    benefits: "Protects morale and recovery after a positive block.",
+    costs: "Lower practice volume for the day.",
+    whenToPick: "When you already got enough learning and want to protect the team.",
+    risk: t("common.low") as "Bajo",
   },
   {
     id: "DayOff",
-    label: "Day Off",
-    description: "Cerrás la jornada y priorizás recuperación total.",
-    benefits: "Mayor recuperación de moral/condición para el próximo día.",
-    costs: "Menos aprendizaje técnico inmediato.",
-    whenToPick: "Después del segundo bloque cuando el equipo llega cargado o emocionalmente tocado.",
-    risk: "Bajo",
+    label: t("scrims.decision.dayOff"),
+    description: t("home.scrimDecision.dayOff.desc"),
+    benefits: "Higher morale/recovery for the next day.",
+    costs: "Less immediate technical learning.",
+    whenToPick: "After block two when the team is physically or emotionally overloaded.",
+    risk: t("common.low") as "Bajo",
   },
   {
     id: "PushThrough",
-    label: "Push Through",
-    description: "Maximiza volumen, con riesgo de fatiga.",
-    benefits: "Máximo aprendizaje bruto en corto plazo.",
-    costs: "Riesgo alto de fatiga/tilt si venís golpeado.",
-    whenToPick: "Solo si el equipo está estable y querés exprimir la semana.",
-    risk: "Alto",
-  },
-];
-
-const DECISION_BY_ID = new Map(REVIEW_DECISIONS.map((option) => [option.id, option]));
+    label: t("scrims.decision.pushThrough"),
+    description: t("home.scrimDecision.pushThrough.desc"),
+    benefits: "Maximum raw learning in the short term.",
+    costs: "High fatigue/tilt risk if the team is already fragile.",
+    whenToPick: "Only if team state is stable and you want to maximize the week.",
+    risk: t("common.high") as "Alto",
+  }];
+}
 
 function recommendedDecision(report: NonNullable<ReturnType<typeof deriveTodayScrimContext>["report"]>): PostScrimDecision {
   if (!report.won && (report.issue === "Tilt" || report.severity >= 3)) return "MentalReset";
@@ -141,6 +139,8 @@ export default function HomeTodayPlanCard({
   onNavigate,
 }: HomeTodayPlanCardProps) {
   const { t } = useTranslation();
+  const REVIEW_DECISIONS = useMemo(() => buildReviewDecisions((k, f) => t(k, f)), [t]);
+  const DECISION_BY_ID = useMemo(() => new Map(REVIEW_DECISIONS.map((option) => [option.id, option])), [REVIEW_DECISIONS]);
   const [decisionSaving, setDecisionSaving] = useState<DailyScrimAction | null>(null);
   const [decisionFeedback, setDecisionFeedback] = useState<{ title: string; detail: string } | null>(null);
   const [showCancelFollowups, setShowCancelFollowups] = useState(false);
@@ -203,14 +203,14 @@ export default function HomeTodayPlanCard({
     .map((id) => DECISION_BY_ID.get(id))
     .filter((option): option is NonNullable<typeof option> => Boolean(option));
   const decisionImpactTags: Record<DailyScrimAction, string[]> = {
-    ContinueToBlock2: ["Momentum +", "Fatiga -", "Volumen +"],
-    OfferRest: ["Recuperación +", "Fatiga +", "Volumen -"],
-    PushThrough: ["Volumen +", "Aprendizaje +", "Mental -"],
-    CancelScrims: ["Recuperación +", "Riesgo -", "Volumen -"],
-    VodReview: ["Análisis +", "Calidad +", "Recuperación -"],
-    MentalReset: ["Mental +", "Recuperación +", "Técnica -"],
-    TargetedDrills: ["Issue +", "Mecánicas +", "Fatiga -"],
-    DayOff: ["Recuperación +", "Mental +", "Volumen -"],
+    ContinueToBlock2: [t("scrims.tag.momentumPlus"), t("scrims.tag.fatigueMinus"), t("scrims.tag.volumePlus")],
+    OfferRest: [t("scrims.tag.recoveryPlus"), t("scrims.tag.fatiguePlus"), t("scrims.tag.volumeMinus")],
+    PushThrough: [t("scrims.tag.volumePlus"), t("scrims.tag.learningPlus"), t("scrims.tag.mentalMinus")],
+    CancelScrims: [t("scrims.tag.recoveryPlus"), t("scrims.tag.riskMinus"), t("scrims.tag.volumeMinus")],
+    VodReview: [t("scrims.tag.analysisPlus"), t("scrims.tag.qualityPlus"), t("scrims.tag.recoveryMinus")],
+    MentalReset: [t("scrims.tag.mentalPlus"), t("scrims.tag.recoveryPlus"), t("scrims.tag.techniqueMinus")],
+    TargetedDrills: [t("scrims.tag.issuePlus"), t("scrims.tag.mechanicsPlus"), t("scrims.tag.fatigueMinus")],
+    DayOff: [t("scrims.tag.recoveryPlus"), t("scrims.tag.mentalPlus"), t("scrims.tag.volumeMinus")],
   };
   const ownOvr = estimateTeamOvr(gameState, team.id);
   const opponentOvr = todayScrimOpponent ? estimateTeamOvr(gameState, todayScrimOpponent.id) : null;
@@ -222,10 +222,10 @@ export default function HomeTodayPlanCard({
   const activity = todayFixture
     ? {
         icon: <Trophy className="h-6 w-6" />,
-        title: t("home.todayMatch", "Partido oficial"),
+        title: t("home.todayMatch"),
         detail: todayFixture.competition,
         accent: "text-primary-500",
-        actionLabel: t("dashboard.schedule", "Calendario"),
+        actionLabel: t("dashboard.schedule"),
         actionTab: "Schedule",
       }
       : unresolvedReviewReport
@@ -237,16 +237,16 @@ export default function HomeTodayPlanCard({
               {
                 team: reviewOpponent.name,
                 block: dailyBlockMeta?.blockLabel ?? "A",
-                defaultValue: "Resultado bloque {{block}} vs {{team}}",
+                defaultValue: "Block {{block}} result vs {{team}}",
               },
             )
-            : t("home.todayScrimBlockResult", "Resultado de scrim del bloque actual"),
+            : t("home.todayScrimBlockResult"),
           detail: t(
             "home.todayScrimBlockDecisionDetail",
             {
               index: dailyBlockMeta?.blockNumber ?? 1,
               total: dailyBlockMeta?.blocksToday ?? 2,
-              defaultValue: "Scrim {{index}}/{{total}} del día resuelto. Elegí la decisión del bloque para continuar.",
+              defaultValue: "Scrim {{index}}/{{total}} resolved. Choose the block decision to continue.",
             },
           ),
           accent: "text-amber-400",
@@ -258,18 +258,18 @@ export default function HomeTodayPlanCard({
           icon: <Swords className="h-6 w-6" />,
           title: todayScrimOpponent
             ? t("home.todayScrimVs", { team: todayScrimOpponent.name, defaultValue: "Scrim vs {{team}}" })
-            : t("home.todayScrimOpen", "Bloque de scrim sin rival"),
-          detail: t("home.todayScrimDetail", "Revisá el Plan A/B/C antes de avanzar el día."),
+            : t("home.todayScrimOpen"),
+          detail: t("home.todayScrimDetail"),
           accent: "text-amber-400",
-          actionLabel: t("dashboard.scrims", "Scrims"),
+          actionLabel: t("dashboard.scrims"),
           actionTab: "Scrims",
         }
       : {
           icon: <Dumbbell className="h-6 w-6" />,
-          title: t("home.todayTraining", "Entrenamiento y preparación"),
-          detail: t("home.todayTrainingDetail", "Sin scrim ni partido programado para hoy."),
+          title: t("home.todayTraining"),
+          detail: t("home.todayTrainingDetail"),
           accent: "text-accent-500",
-          actionLabel: t("dashboard.training", "Entrenamiento"),
+          actionLabel: t("dashboard.training"),
           actionTab: "Training",
         };
 
@@ -278,8 +278,8 @@ export default function HomeTodayPlanCard({
     if (decision === "CancelScrims") {
       setShowCancelFollowups(true);
       setDecisionFeedback({
-        title: "Scrims del día cancelados",
-        detail: "Ahora elegí cómo responder al bloque malo: VOD Review, Mental Reset o Targeted Drills.",
+        title: t("home.scrimFeedback.cancelledTitle"),
+        detail: t("home.scrimFeedback.cancelledDetail"),
       });
       return;
     }
@@ -290,42 +290,42 @@ export default function HomeTodayPlanCard({
       onGameUpdate?.(updated);
       const feedbackByDecision: Record<DailyScrimAction, { title: string; detail: string }> = {
         ContinueToBlock2: {
-          title: "Continuás al segundo bloque",
-          detail: "El equipo mantiene el plan del día y conserva el siguiente scrim seleccionado.",
+          title: "You continue to block two",
+          detail: "The team keeps today's plan and preserves the next selected scrim.",
         },
         OfferRest: {
-          title: "Ofreciste descanso y cancelaste el bloque siguiente",
-          detail: "Aprovechaste el buen resultado para proteger condición y moral del equipo.",
+          title: "You offered rest and cancelled the next block",
+          detail: "You used the positive result to protect team recovery and morale.",
         },
         CancelScrims: {
-          title: "Scrims del día cancelados",
-          detail: "Elegí respuesta correctiva para cerrar el día.",
+          title: "Today's scrims cancelled",
+          detail: "Choose a corrective follow-up to close the day.",
         },
         VodReview: {
-          title: isFirstDailyBlock ? "Aplicaste VOD Review y cancelaste bloque siguiente" : "Aplicaste VOD Review",
+          title: isFirstDailyBlock ? "Applied VOD Review and cancelled next block" : "Applied VOD Review",
           detail: isFirstDailyBlock
-            ? "Se canceló el próximo bloque del día. Convertiste este resultado en aprendizaje macro/draft con costo leve de recuperación."
-            : "Mejora aprendizaje macro/draft y reduce severidad del issue, con costo leve de recuperación.",
+            ? "The next block was cancelled. You converted this result into macro/draft learning with a small recovery cost."
+            : "Improves macro/draft learning and lowers issue severity, with a small recovery cost.",
         },
         MentalReset: {
-          title: isFirstDailyBlock ? "Aplicaste Mental Reset y cancelaste bloque siguiente" : "Aplicaste Mental Reset",
+          title: isFirstDailyBlock ? "Applied Mental Reset and cancelled next block" : "Applied Mental Reset",
           detail: isFirstDailyBlock
-            ? "Se canceló el próximo bloque del día. Priorizaste recuperación de moral/condición para estabilizar al equipo."
-            : "Recupera moral/condición del equipo y corta tilt, pero con menor crecimiento técnico inmediato.",
+            ? "The next block was cancelled. You prioritized morale/recovery to stabilize the team."
+            : "Recovers morale/recovery and reduces tilt, but with lower immediate technical growth.",
         },
         TargetedDrills: {
-          title: isFirstDailyBlock ? "Aplicaste Targeted Drills y cancelaste bloque siguiente" : "Aplicaste Targeted Drills",
+          title: isFirstDailyBlock ? "Applied Targeted Drills and cancelled next block" : "Applied Targeted Drills",
           detail: isFirstDailyBlock
-            ? "Se canceló el próximo bloque del día. Enfocaste la jornada en corregir el problema detectado con carga dirigida."
-            : "Acelera corrección del problema detectado y progreso específico, con costo moderado de condición.",
+            ? "The next block was cancelled. You focused the day on correcting the detected issue with targeted workload."
+            : "Accelerates correction of the detected issue and targeted progress, with a moderate recovery cost.",
         },
         DayOff: {
-          title: "Diste el resto del día libre",
-          detail: "El equipo corta carga y recupera moral/condición para llegar mejor al próximo bloque competitivo.",
+          title: "You gave the rest of the day off",
+          detail: "The team cuts load and recovers morale/recovery for the next competitive block.",
         },
         PushThrough: {
           title: "Aplicaste Push Through",
-          detail: "Maximiza aprendizaje bruto esta fase, pero aumenta riesgo de fatiga/tilt si el equipo está golpeado.",
+          detail: "Maximizes raw learning this phase, but increases fatigue/tilt risk if the team is fragile.",
         },
       };
       setDecisionFeedback(feedbackByDecision[decision]);
@@ -349,7 +349,7 @@ export default function HomeTodayPlanCard({
               <div>
                 <p className="inline-flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   <CalendarClock className="h-4 w-4" />
-                  {t("home.today", "Hoy")}
+                  {t("home.today")}
                 </p>
                 <h2 className="mt-1 text-2xl font-heading font-bold text-gray-900 dark:text-white">
                   {activity.title}
@@ -358,7 +358,7 @@ export default function HomeTodayPlanCard({
                   {activity.detail}
                 </p>
                 <p className="mt-2 text-xs font-heading font-bold uppercase tracking-wider text-primary-500 dark:text-primary-400">
-                  {t("home.currentPhase", "Fase actual")}: {t(dayPhaseLabelKey(dayPhase), dayPhase)}
+                  {t("home.currentPhase")}: {t(dayPhaseLabelKey(dayPhase), dayPhase)}
                 </p>
               </div>
             </div>
@@ -366,7 +366,7 @@ export default function HomeTodayPlanCard({
             <div className="flex flex-wrap items-center gap-2">
               {canPlanTodayScrim ? (
                 <span className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-heading uppercase tracking-wider text-gray-600 dark:border-navy-600 dark:text-gray-300">
-                  {t("scrims.reputation", "Rep scrims")}: {team.scrim_reputation ?? 50}
+                  {t("scrims.reputation")}: {team.scrim_reputation ?? 50}
                 </span>
               ) : null}
               {activity.actionLabel && activity.actionTab ? (
@@ -385,7 +385,7 @@ export default function HomeTodayPlanCard({
           {unresolvedReviewReport ? (
             <div className="rounded-xl border border-gray-200 bg-transparent p-4 text-sm dark:border-navy-600">
               <p className="font-heading text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                {t("scrims.reviewBlockTitle", "Revision post-scrim")}
+                {t("scrims.reviewBlockTitle")}
               </p>
               <p className="mt-1 text-gray-700 dark:text-gray-200">
                 {unresolvedReviewReport.won
@@ -398,20 +398,20 @@ export default function HomeTodayPlanCard({
                       defaultValue: "Derrota vs {{team}}",
                     })}
                 {" · "}
-                {t("scrims.reportFocus", "Foco")}: {unresolvedReviewReport.focus}
-                {unresolvedReviewReport.issue ? ` · ${t("scrims.detectedIssue", "Problema detectado")}: ${unresolvedReviewReport.issue}` : ""}
+                {t("scrims.reportFocus")}: {unresolvedReviewReport.focus}
+                {unresolvedReviewReport.issue ? ` · ${t("scrims.detectedIssue")}: ${unresolvedReviewReport.issue}` : ""}
               </p>
               <p className="mt-2 text-xs text-gray-600 dark:text-gray-300">
                 {isFirstDailyBlock
                   ? t(
                     "scrims.blockAInstruction",
                     showCancelFollowups
-                      ? "Bloque 1/2: elegí la respuesta técnica tras cancelar los scrims del día."
-                      : "Bloque 1/2: definí si seguís con el plan del día o cancelás el siguiente bloque para priorizar recuperación/trabajo dirigido.",
+                      ? "Block 1/2: choose the technical follow-up after cancelling today's scrims."
+                      : "Block 1/2: decide whether to stay on plan or cancel the next block to prioritize recovery/targeted work.",
                   )
                   : t(
                     "scrims.blockBInstruction",
-                    "Bloque 2/2: cerrá el día con una decisión de recuperación o trabajo dirigido antes de continuar.",
+                    "Block 2/2: close the day with a recovery or targeted-work decision before continuing.",
                   )}
               </p>
               <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -425,14 +425,14 @@ export default function HomeTodayPlanCard({
                   >
                     <span className="block font-heading text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200">
                       {decisionSaving === option.id
-                        ? t("common.saving", "Guardando")
+                        ? t("common.saving")
                         : isSecondDailyBlock && option.id === "DayOff"
-                              ? t("scrims.freeDayOff", "Dar resto del día libre")
+                              ? t("scrims.freeDayOff")
                             : option.label}
                     </span>
                     {suggestedDecision === option.id ? (
                       <span className="mt-1 inline-block text-[10px] font-heading uppercase tracking-wider text-primary-600 dark:text-primary-300">
-                        Recomendado ahora
+                        {t("home.recommendedNow")}
                       </span>
                     ) : null}
                     <span className="mt-1 block text-xs text-gray-500 dark:text-gray-400">
@@ -468,23 +468,23 @@ export default function HomeTodayPlanCard({
           {scrimContext.state === "Planned" ? (
             <div className="rounded-xl border border-primary-300/40 bg-primary-500/10 p-3 text-sm dark:border-primary-500/30">
               <p className="font-heading text-xs font-bold uppercase tracking-wider text-primary-700 dark:text-primary-300">
-                Riesgo y recompensa de hoy
+                {t("home.riskRewardToday")}
               </p>
               <p className="mt-1 text-gray-700 dark:text-gray-200">
-                Riesgo: <strong>{riskLevel}</strong>
+                {t("home.risk")}: <strong>{riskLevel}</strong>
                 {opponentOvr != null ? ` · Gap OVR: ${ovrGap >= 0 ? "+" : ""}${ovrGap}` : ""}
                 {todayScrimOpponent ? ` (${todayScrimOpponent.name})` : ""}
               </p>
               <p className="mt-1 text-gray-700 dark:text-gray-200">
-                Valor de aprendizaje esperado: <strong>{rewardLevel}</strong>
+                {t("home.expectedLearning")}: <strong>{rewardLevel}</strong>
               </p>
               <p className="mt-1 text-gray-700 dark:text-gray-200">
-                Costo de cancelar: <strong>-{cancelCost} rep scrims</strong>
+                {t("home.cancelCost")}: <strong>-{cancelCost} {t("scrims.reputation")}</strong>
               </p>
               <p className="mt-2 text-xs text-gray-600 dark:text-gray-300">
-                Recomendación: {riskLevel === "Alto"
-                  ? "si estás en racha negativa, considerá Mental Reset después del bloque."
-                  : "mantené el plan y priorizá ejecución sobre volumen."}
+                {t("home.recommendation")}: {riskLevel === "Alto"
+                  ? t("home.recommendationHighRisk")
+                  : t("home.recommendationNormalRisk")}
               </p>
             </div>
           ) : null}

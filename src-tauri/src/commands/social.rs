@@ -75,3 +75,16 @@ pub fn save_social_templates(
     state.set_game(game.clone());
     Ok(game)
 }
+
+#[tauri::command]
+pub fn relocalize_social_feed(
+    state: State<'_, StateManager>,
+    language: String,
+) -> Result<Game, String> {
+    let mut game = state
+        .get_game(|game| game.clone())
+        .ok_or("No active game session".to_string())?;
+    ofm_core::social::relocalize_social_posts(&mut game, &language);
+    state.set_game(game.clone());
+    Ok(game)
+}

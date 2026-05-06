@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { FixtureData, GameStateData } from "../../store/gameStore";
@@ -9,6 +9,11 @@ import PreMatchLineup, {
 } from "./PreMatchLineup";
 import MatchScreenLayout from "./MatchScreenLayout";
 import { ChevronRight } from "lucide-react";
+import OpponentIntelCard from "./OpponentIntelCard";
+import { buildOpponentIntel } from "./opponentIntelService";
+import teamsSeed from "../../../data/lec/draft/teams.json";
+import playersSeed from "../../../data/lec/draft/players.json";
+import championsSeed from "../../../data/lec/draft/champions.json";
 function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
@@ -77,6 +82,31 @@ export default function PreMatchSetup({
   // Use snapshot bench data (updated after swaps)
   const userBench =
     userSide === "Home" ? snapshot.home_bench || [] : snapshot.away_bench || [];
+
+  const opponentIntel = useMemo(
+    () => {
+      const teamCatalog = ((teamsSeed as { data?: { teams?: Array<{ id: string; name: string }> } }).data?.teams ?? []);
+      const rosteredSeeds = ((playersSeed as { data?: { rostered_seeds?: Array<{ ign: string; teamId: string; role: string; champions: Array<Array<string | number>> }> } }).data?.rostered_seeds ?? []);
+      const freeAgentSeeds = ((playersSeed as { data?: { free_agent_seeds?: Array<{ ign: string; teamId: string; role: string; champions: Array<Array<string | number>> }> } }).data?.free_agent_seeds ?? []);
+      const playerCatalog = [...rosteredSeeds, ...freeAgentSeeds];
+      const rolesMap = ((championsSeed as { data?: { roles?: Record<string, string[]> } }).data?.roles ?? {});
+      const championCatalog = Object.entries(rolesMap).map(([name, roleHints]) => ({
+        id: String(name).replace(/[^A-Za-z0-9]/g, ""),
+        name,
+        roleHints,
+      }));
+
+      return buildOpponentIntel({
+        gameState,
+        opponentTeamName: oppTeam.name,
+        opponentPlayers: oppTeam.players.map((player) => ({ id: player.id, name: player.name })),
+        teamSeeds: teamCatalog,
+        playerSeeds: playerCatalog,
+        championSeeds: championCatalog,
+      });
+    },
+    [gameState, oppTeam.name, oppTeam.players],
+  );
 
   console.info("[PreMatchSetup] render", {
     awayTeam: snapshot.away_team.name,
@@ -250,6 +280,7 @@ export default function PreMatchSetup({
           onSwap={handleSwap}
           onAutoSelect={handleAutoSelect}
         />
+        <OpponentIntelCard intel={opponentIntel} />
       </div>
     </MatchScreenLayout>
   );

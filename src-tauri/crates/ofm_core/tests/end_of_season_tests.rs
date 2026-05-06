@@ -667,6 +667,8 @@ fn champion_receives_prize_money_and_ledger_entry() {
     let team1 = game.teams.iter().find(|team| team.id == "team1").unwrap();
     assert_eq!(team1.finance, initial_finance + 800_000);
     assert_eq!(team1.season_income, 800_000);
+    assert_eq!(team1.wage_budget, ((team1.finance as f64) * 0.06).round() as i64);
+    assert_eq!(team1.transfer_budget, ((team1.finance as f64) * 0.22).round() as i64);
     assert_eq!(team1.financial_ledger.len(), 1);
     assert_eq!(
         team1.financial_ledger[0].kind,

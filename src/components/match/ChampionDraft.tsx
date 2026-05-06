@@ -11,6 +11,11 @@ import teamsSeed from "../../../data/lec/draft/teams.json";
 import playersSeed from "../../../data/lec/draft/players.json";
 import championsSeed from "../../../data/lec/draft/champions.json";
 import aiConfigSeed from "../../../data/lec/draft/ai-config.json";
+import {
+  computeBanRecommendationScore as computeUnifiedBanRecommendationScore,
+  rankBanCandidates,
+  type BanRecommendationContext,
+} from "./draftIntelHelpers";
 
 type Side = "blue" | "red";
 type DraftActionType = "ban" | "pick";
@@ -436,10 +441,6 @@ const AI_WEIGHTS = {
     counterAdvantageWeight: numberOrDefault(AI_CONFIG_SEED.data?.pick?.counterAdvantageWeight, 4),
     counterRiskWeight: numberOrDefault(AI_CONFIG_SEED.data?.pick?.counterRiskWeight, 3),
   },
-  ban: {
-    enemyMasteryWeight: numberOrDefault(AI_CONFIG_SEED.data?.ban?.enemyMasteryWeight, 1.15),
-    metaWeight: numberOrDefault(AI_CONFIG_SEED.data?.ban?.metaWeight, 0.9),
-  },
   score: {
     counterAdvantageWeight: numberOrDefault(AI_CONFIG_SEED.data?.score?.counterAdvantageWeight, 2),
     counterRiskWeight: numberOrDefault(AI_CONFIG_SEED.data?.score?.counterRiskWeight, 2),
@@ -545,6 +546,10 @@ function masteryBarTone(mastery: number): "gold" | "green" | "red" {
   if (mastery >= 90) return "gold";
   if (mastery >= 55) return "green";
   return "red";
+}
+
+export function computeBanRecommendationScore(context: BanRecommendationContext): number {
+  return computeUnifiedBanRecommendationScore(context);
 }
 
 function knownMetaTierForChampion(
@@ -1414,30 +1419,30 @@ export default function ChampionDraft({
 
     const targetSide = enemySideFor(currentStep.side);
     const targetPicks = targetSide === "blue" ? bluePicks : redPicks;
-    const alreadyCoveredRoles = assignedRolesForSelections(targetPicks);
-    const roleRelevantCandidates = available.filter((champion) => {
-      if (alreadyCoveredRoles.size === 0) return true;
-      if (champion.roleHints.length === 0) return true;
-      return !champion.roleHints.every((role) => alreadyCoveredRoles.has(role));
+    const enemyCoveredRoles = assignedRolesForSelections(targetPicks);
+    const ranked = rankBanCandidates({
+      available: available.map((champion) => ({
+        championId: champion.id,
+        roleHints: champion.roleHints,
+      })),
+      enemyCoveredRoles,
+      resolveEnemyMastery: (championId) => resolveTeamChampionMastery(targetSide, championId),
+      resolveMetaScore: (championId) => {
+        const champion = championById.get(championId);
+        return champion ? metaScoreForChampion(champion) : 0;
+      },
+      resolveScoringContext: (candidate) => {
+        return {
+          roleAlreadyCovered: candidate.roleHints.length > 0
+            && candidate.roleHints.every((role) => enemyCoveredRoles.has(role)),
+          enemyJungleLocked: enemyCoveredRoles.has("JUNGLE"),
+          isFlexThreat: candidate.roleHints.length >= 2,
+          draftHashSeed: `${stepIndex}:${targetSide}:${candidate.championId}`,
+        };
+      },
     });
-    const banCandidates = roleRelevantCandidates.length > 0 ? roleRelevantCandidates : available;
-
-    let bestBan: ChampionData | null = null;
-    let bestScore = Number.NEGATIVE_INFINITY;
-
-    banCandidates.forEach((champion) => {
-      const enemyMastery = resolveTeamChampionMastery(targetSide, champion.id);
-      const meta = metaScoreForChampion(champion);
-      const score =
-        enemyMastery * AI_WEIGHTS.ban.enemyMasteryWeight +
-        meta * AI_WEIGHTS.ban.metaWeight;
-      if (score > bestScore) {
-        bestScore = score;
-        bestBan = champion;
-      }
-    });
-
-    return bestBan;
+    const bestBanId = ranked[0]?.championId;
+    return bestBanId ? championById.get(bestBanId) ?? null : null;
   };
 
   const selectTimeoutChampionForUserTurn = (): ChampionData | null => {
@@ -1545,28 +1550,30 @@ export default function ChampionDraft({
 
       const targetSide = enemySideFor(step.side);
       const targetPicks = targetSide === "blue" ? nextBluePicks : nextRedPicks;
-      const alreadyCoveredRoles = assignedRolesForSelections(targetPicks);
-      const roleRelevantCandidates = available.filter((champion) => {
-        if (alreadyCoveredRoles.size === 0) return true;
-        if (champion.roleHints.length === 0) return true;
-        return !champion.roleHints.every((role) => alreadyCoveredRoles.has(role));
+      const enemyCoveredRoles = assignedRolesForSelections(targetPicks);
+      const ranked = rankBanCandidates({
+        available: available.map((champion) => ({
+          championId: champion.id,
+          roleHints: champion.roleHints,
+        })),
+        enemyCoveredRoles,
+        resolveEnemyMastery: (championId) => resolveTeamChampionMastery(targetSide, championId),
+        resolveMetaScore: (championId) => {
+          const champion = championById.get(championId);
+          return champion ? metaScoreForChampion(champion) : 0;
+        },
+        resolveScoringContext: (candidate) => {
+          return {
+            roleAlreadyCovered: candidate.roleHints.length > 0
+              && candidate.roleHints.every((role) => enemyCoveredRoles.has(role)),
+            enemyJungleLocked: enemyCoveredRoles.has("JUNGLE"),
+            isFlexThreat: candidate.roleHints.length >= 2,
+            draftHashSeed: `${stepIndex}:${targetSide}:${candidate.championId}:debug`,
+          };
+        },
       });
-      const banCandidates = roleRelevantCandidates.length > 0 ? roleRelevantCandidates : available;
-
-      let bestBan: ChampionData | null = null;
-      let bestScore = Number.NEGATIVE_INFINITY;
-
-      banCandidates.forEach((champion) => {
-        const enemyMastery = resolveTeamChampionMastery(targetSide, champion.id);
-        const meta = metaScoreForChampion(champion);
-        const score = enemyMastery * AI_WEIGHTS.ban.enemyMasteryWeight + meta * AI_WEIGHTS.ban.metaWeight;
-        if (score > bestScore) {
-          bestScore = score;
-          bestBan = champion;
-        }
-      });
-
-      return bestBan;
+      const bestBanId = ranked[0]?.championId;
+      return bestBanId ? championById.get(bestBanId) ?? null : null;
     };
 
     let processedSteps = 0;
@@ -2066,6 +2073,19 @@ export default function ChampionDraft({
     const tips: DraftAdviceTip[] = [];
     if (!gameState) return tips;
 
+    if (finished) {
+      return [
+        {
+          sourceType: "coach",
+          sourceName: t("match.draft.assistantCoach"),
+          sourceRole: t("match.draft.assistantCoach"),
+          sourceImage: ASSISTANT_COACH_PLACEHOLDER,
+          type: "warn",
+          text: t("match.draft.completed", { defaultValue: "Draft completed." }),
+        },
+      ];
+    }
+
     const draftAdviceStage: "ban" | "pick" | "post" = finished
       ? "post"
       : currentStep?.type === "ban"
@@ -2123,12 +2143,37 @@ export default function ChampionDraft({
       if (primaryRole) enemyPickedRoles.add(primaryRole);
     });
 
-    const rivalMasteryCandidates = rivalMasteryDisplay
-      .slice()
-      .filter((entry) => !entry.playerRole || !enemyPickedRoles.has(entry.playerRole));
-    const rivalMasteries = (rivalMasteryCandidates.length > 0 ? rivalMasteryCandidates : rivalMasteryDisplay)
-      .slice()
-      .sort((a, b) => b.mastery - a.mastery);
+    const rivalMasteryCandidates = rivalMasteryDisplay.slice();
+    const enemyLockedJungle = enemyPickedRoles.has("JUNGLE");
+    const draftHashSeed = `${controlledSide}:${stepIndex}:${blueBans.join("|")}:${redBans.join("|")}:${bluePicks
+      .map((pick) => pick.championId)
+      .join("|")}:${redPicks.map((pick) => pick.championId).join("|")}`;
+    const rivalMasteries = rivalMasteryCandidates
+      .map((entry) => {
+        const candidateTier = knownMetaTierForChampion(
+          entry.champion,
+          runtimeMetaScoreByChampion,
+          discoveredMetaChampionIds,
+        );
+        const tier: Exclude<MetaTierFilter, "ALL"> = candidateTier === "?" ? "B" : candidateTier;
+        const roleHints = entry.champion.roleHints;
+        const isFlexThreat = roleHints.length >= 2;
+        const isSpecialThreat = entry.mastery >= 97;
+        const roleAlreadyCovered = Boolean(entry.playerRole && enemyPickedRoles.has(entry.playerRole));
+        const score = computeBanRecommendationScore({
+          enemyMastery: entry.mastery,
+          metaScore: metaScoreForChampion(entry.champion),
+          tier,
+          roleHints,
+          roleAlreadyCovered,
+          enemyJungleLocked: enemyLockedJungle,
+          isFlexThreat,
+          isSpecialThreat,
+          draftHashSeed: `${draftHashSeed}:${entry.champion.id}`,
+        });
+        return { ...entry, recommendationScore: score };
+      })
+      .sort((a, b) => b.recommendationScore - a.recommendationScore);
     if (draftAdviceStage === "ban" && rivalMasteries.length > 0 && coachSkill >= 50) {
       const topRival = rivalMasteries[0];
       if (topRival.mastery >= 75) {
@@ -2434,6 +2479,8 @@ export default function ChampionDraft({
     snapshot.home_team.id,
     snapshot.away_team.id,
     stepIndex,
+    blueBans,
+    redBans,
     bluePicks,
     redPicks,
     bluePlayers,
@@ -2442,7 +2489,11 @@ export default function ChampionDraft({
     championById,
     championLookupByNormalizedName,
     usedChampionIds,
-    rivalMasteryDisplay
+    rivalMasteryDisplay,
+    discoveredMetaChampionIds,
+    runtimeMetaScoreByChampion,
+    metaScoreForChampion,
+    t,
   ]);
 
   const patchLabel =

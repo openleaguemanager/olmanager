@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  computeBanRecommendationScore,
   calculateScrimDraftSignal,
   calculateStaffRevealBudget,
   selectRivalMasteryKnowledgeForPlayer,
@@ -166,5 +167,89 @@ describe("ChampionDraft rival mastery knowledge", () => {
       "scrimmed core together",
       "recent prep vs this opponent",
     ]);
+  });
+
+  it("prioritizes meta tier over mastery in ban recommendation scoring", () => {
+    const highMetaLowMastery = computeBanRecommendationScore({
+      enemyMastery: 62,
+      metaScore: 20,
+      tier: "S",
+      roleHints: ["MID"],
+      roleAlreadyCovered: false,
+      enemyJungleLocked: false,
+      isFlexThreat: false,
+      isSpecialThreat: false,
+      draftHashSeed: "seed-a",
+    });
+
+    const lowMetaHighMastery = computeBanRecommendationScore({
+      enemyMastery: 95,
+      metaScore: 7,
+      tier: "D",
+      roleHints: ["MID"],
+      roleAlreadyCovered: false,
+      enemyJungleLocked: false,
+      isFlexThreat: false,
+      isSpecialThreat: false,
+      draftHashSeed: "seed-b",
+    });
+
+    expect(highMetaLowMastery).toBeGreaterThan(lowMetaHighMastery);
+  });
+
+  it("applies signature exception for Tier D when mastery is extreme", () => {
+    const tierDNormal = computeBanRecommendationScore({
+      enemyMastery: 90,
+      metaScore: 7,
+      tier: "D",
+      roleHints: ["TOP"],
+      roleAlreadyCovered: false,
+      enemyJungleLocked: false,
+      isFlexThreat: false,
+      isSpecialThreat: false,
+      draftHashSeed: "seed-c",
+    });
+
+    const tierDSignature = computeBanRecommendationScore({
+      enemyMastery: 96,
+      metaScore: 7,
+      tier: "D",
+      roleHints: ["TOP"],
+      roleAlreadyCovered: false,
+      enemyJungleLocked: false,
+      isFlexThreat: false,
+      isSpecialThreat: false,
+      draftHashSeed: "seed-d",
+    });
+
+    expect(tierDSignature).toBeGreaterThan(tierDNormal);
+  });
+
+  it("deprioritizes jungle bans when enemy jungle is already locked and no flex threat", () => {
+    const forcedJungleBan = computeBanRecommendationScore({
+      enemyMastery: 85,
+      metaScore: 16,
+      tier: "A",
+      roleHints: ["JUNGLE"],
+      roleAlreadyCovered: false,
+      enemyJungleLocked: true,
+      isFlexThreat: false,
+      isSpecialThreat: false,
+      draftHashSeed: "seed-e",
+    });
+
+    const flexJungleThreat = computeBanRecommendationScore({
+      enemyMastery: 85,
+      metaScore: 16,
+      tier: "A",
+      roleHints: ["JUNGLE", "MID"],
+      roleAlreadyCovered: false,
+      enemyJungleLocked: true,
+      isFlexThreat: true,
+      isSpecialThreat: false,
+      draftHashSeed: "seed-f",
+    });
+
+    expect(flexJungleThreat).toBeGreaterThan(forcedJungleBan);
   });
 });

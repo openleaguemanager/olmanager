@@ -279,6 +279,28 @@ describe("PressConference LoL social content", () => {
     expect(uniqueQuestionIds(lossQuestions)).toHaveLength(lossQuestions.length);
   });
 
+  it("does not surface loss-framed questions after a clear win", () => {
+    const questions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({
+        home_score: 3,
+        away_score: 0,
+        events: [
+          { minute: 5, event_type: "Kill", side: "Home", zone: "Top", player_id: "adc1", secondary_player_id: null },
+          { minute: 10, event_type: "Dragon", side: "Home", zone: "River", player_id: "adc1", secondary_player_id: null },
+          { minute: 16, event_type: "Baron", side: "Home", zone: "River", player_id: "sup1", secondary_player_id: null },
+        ],
+      }),
+      gameState: makeGameState(),
+      userSide: "Home",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.length).toBeGreaterThan(0);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("underperformance"))).toBe(true);
+  });
+
   it("selects the first-blood question from a real runtime event merged into the snapshot", () => {
     const snapshotWithRuntimeEvents = mergeRuntimeEventsIntoSnapshot(makeSnapshot(), [
       { t: 180, type: "kill", text: "FIRST BLOOD - BLUE bot lane killed RED ADC" },
