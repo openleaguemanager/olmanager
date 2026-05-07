@@ -680,7 +680,8 @@ impl LiveMatchState {
             }
             let home = objective_presence(&self.lol_map.units, Side::Home, anchor, radius);
             let away = objective_presence(&self.lol_map.units, Side::Away, anchor, radius);
-            let swing = rng.random_range(self.config.objective_swing_min..self.config.objective_swing_max);
+            let swing =
+                rng.random_range(self.config.objective_swing_min..self.config.objective_swing_max);
 
             let taker = if home * swing > away + 0.9 {
                 Some(Side::Home)
@@ -755,7 +756,9 @@ impl LiveMatchState {
                 let scaling = team_scaling(&self.lol_map.units, attacker);
                 let dmg = pressure
                     * scaling
-                    * rng.random_range(self.config.structure_damage_min..self.config.structure_damage_max);
+                    * rng.random_range(
+                        self.config.structure_damage_min..self.config.structure_damage_max,
+                    );
                 if !deal_structure_damage(&mut self.lol_map, attacker, target, dmg, minute) {
                     continue;
                 }

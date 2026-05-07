@@ -1,8 +1,8 @@
 use chrono::{TimeZone, Utc};
 use domain::manager::Manager;
+use domain::player::LolRole;
 use domain::player::{Player, PlayerAttributes};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
-use domain::player::LolRole;
 use domain::team::{
     PostScrimDecision, ScrimChampionPick, ScrimFocus, ScrimIssue, ScrimReport, ScrimStatus, Team,
     TrainingFocus, TrainingIntensity, TrainingSchedule,
@@ -48,7 +48,12 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
     };
 
     match stat {
-        "mechanics" => avg([attrs.mechanics, attrs.champion_pool, attrs.pace, attrs.discipline]),
+        "mechanics" => avg([
+            attrs.mechanics,
+            attrs.champion_pool,
+            attrs.pace,
+            attrs.discipline,
+        ]),
         "laning" => avg([
             attrs.laning,
             attrs.positioning,
@@ -79,7 +84,12 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
             attrs.macro_play,
             attrs.consistency,
         ]),
-        "champion_pool" => avg([attrs.mechanics, attrs.champion_pool, attrs.macro_play, attrs.passing]),
+        "champion_pool" => avg([
+            attrs.mechanics,
+            attrs.champion_pool,
+            attrs.macro_play,
+            attrs.passing,
+        ]),
         "discipline" => avg([
             attrs.consistency,
             attrs.discipline,
@@ -1180,7 +1190,8 @@ fn rival_auto_targets_prioritize_meta_tier_over_raw_mastery() {
         last_active_on: "2025-06-15".to_string(),
     });
 
-    game.champion_patch.discovered_champion_ids = vec!["OffMetaHigh".to_string(), "MetaLow".to_string()];
+    game.champion_patch.discovered_champion_ids =
+        vec!["OffMetaHigh".to_string(), "MetaLow".to_string()];
     game.champion_patch.hidden_meta = vec![
         ChampionMetaEntry {
             champion_id: "MetaLow".to_string(),

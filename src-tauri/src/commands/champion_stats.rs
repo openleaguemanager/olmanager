@@ -17,10 +17,7 @@ pub fn get_champion_stats(
         .get_save_id()
         .ok_or("No active game session".to_string())?;
 
-    let mut sm = sm_state
-        .0
-        .lock()
-        .map_err(|e| format!("Lock error: {e}"))?;
+    let mut sm = sm_state.0.lock().map_err(|e| format!("Lock error: {e}"))?;
 
     let db_arc = sm.open_game_db(&save_id)?;
     let db = db_arc.lock().map_err(|e| format!("Lock error: {e}"))?;
@@ -39,10 +36,7 @@ pub fn get_top_champions(
         .get_save_id()
         .ok_or("No active game session".to_string())?;
 
-    let mut sm = sm_state
-        .0
-        .lock()
-        .map_err(|e| format!("Lock error: {e}"))?;
+    let mut sm = sm_state.0.lock().map_err(|e| format!("Lock error: {e}"))?;
 
     let db_arc = sm.open_game_db(&save_id)?;
     let db = db_arc.lock().map_err(|e| format!("Lock error: {e}"))?;

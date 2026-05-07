@@ -298,9 +298,10 @@ fn select_from_base_language(
         .iter()
         .map(|template| template.weight.max(1))
         .sum::<u32>();
-    let mut needle =
-        deterministic_index(&format!("{}-slot-{:?}", context.seed, slot), total_weight as usize)
-            as u32;
+    let mut needle = deterministic_index(
+        &format!("{}-slot-{:?}", context.seed, slot),
+        total_weight as usize,
+    ) as u32;
 
     for template in candidates {
         let weight = template.weight.max(1);

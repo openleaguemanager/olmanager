@@ -466,8 +466,8 @@ mod tests {
     }
 
     #[test]
-    fn incomplete_lineup_is_not_reported_when_a_partial_saved_lineup_can_be_filled_by_healthy_players()
-    {
+    fn incomplete_lineup_is_not_reported_when_a_partial_saved_lineup_can_be_filled_by_healthy_players(
+    ) {
         let mut game = make_game(11);
         game.teams[0].active_lineup_ids = vec![
             "p1".to_string(),

@@ -85,12 +85,22 @@ fn pick_team_fan_account<'a>(
         .social_accounts
         .iter()
         .filter(|account| account.active)
-        .filter(|account| matches!(account.author_type, SocialAuthorType::Fan | SocialAuthorType::MemeAccount))
+        .filter(|account| {
+            matches!(
+                account.author_type,
+                SocialAuthorType::Fan | SocialAuthorType::MemeAccount
+            )
+        })
         .filter(|account| {
             account.language.eq_ignore_ascii_case("all")
                 || account.language.eq_ignore_ascii_case(language)
         })
-        .filter(|account| account.favorite_team_ids.iter().any(|favorite| favorite == team_id))
+        .filter(|account| {
+            account
+                .favorite_team_ids
+                .iter()
+                .any(|favorite| favorite == team_id)
+        })
         .collect();
 
     if accounts.is_empty() {
@@ -250,12 +260,16 @@ pub fn generate_match_social_posts(
         winner: &winner,
         loser: &loser,
         manager_team_id: game.manager.team_id.as_deref(),
-        featured_player_id: featured_player.as_ref().map(|(player_id, _)| player_id.as_str()),
+        featured_player_id: featured_player
+            .as_ref()
+            .map(|(player_id, _)| player_id.as_str()),
         score: &score,
         seed: &seed,
         stomp,
         winner_objectives,
-        player_name: featured_player.as_ref().map(|(_, player_name)| player_name.as_str()),
+        player_name: featured_player
+            .as_ref()
+            .map(|(_, player_name)| player_name.as_str()),
     };
 
     let language = locale
@@ -295,12 +309,22 @@ pub fn generate_match_social_posts(
         loser.name.clone(),
         social_handle(&loser.name),
         SocialAuthorType::Team,
-        team_loser_post_text(&language, &loser.short_name, &winner.short_name, &score, &seed),
+        team_loser_post_text(
+            &language,
+            &loser.short_name,
+            &winner.short_name,
+            &score,
+            &seed,
+        ),
         SocialPostCategory::MatchResult,
         SocialSentiment::Worried,
     )
     .with_engagement(loss_likes, loss_reposts, loss_replies)
-    .with_tags(vec!["match".to_string(), "team".to_string(), "loss".to_string()])
+    .with_tags(vec![
+        "match".to_string(),
+        "team".to_string(),
+        "loss".to_string(),
+    ])
     .with_teams(vec![winner.id.clone(), loser.id.clone()])
     .with_fixture(fixture.id.clone());
 
@@ -400,7 +424,12 @@ pub fn generate_match_social_posts(
         pick_team_fan_account(game, &winner.id, &language, &format!("{}-fan-win", seed))
     {
         let (likes, reposts, replies) = scale_engagement(
-            engagement(48, winner.reputation / 2, true, &format!("{}-fan-win", seed)),
+            engagement(
+                48,
+                winner.reputation / 2,
+                true,
+                &format!("{}-fan-win", seed),
+            ),
             0.10,
         );
         let winner_fan_post = SocialPost::new(
@@ -431,7 +460,12 @@ pub fn generate_match_social_posts(
         pick_team_fan_account(game, &loser.id, &language, &format!("{}-fan-loss", seed))
     {
         let (likes, reposts, replies) = scale_engagement(
-            engagement(42, loser.reputation / 2, false, &format!("{}-fan-loss", seed)),
+            engagement(
+                42,
+                loser.reputation / 2,
+                false,
+                &format!("{}-fan-loss", seed),
+            ),
             0.10,
         );
         let loser_fan_post = SocialPost::new(
@@ -519,7 +553,11 @@ pub fn generate_match_social_posts(
             SocialSentiment::Hype,
         )
         .with_engagement(likes, reposts, replies)
-        .with_tags(vec!["fan".to_string(), "fnatic".to_string(), "banter".to_string()])
+        .with_tags(vec![
+            "fan".to_string(),
+            "fnatic".to_string(),
+            "banter".to_string(),
+        ])
         .with_teams(vec![winner.id.clone(), loser.id.clone()])
         .with_fixture(fixture.id.clone());
         game.social_posts.push(bouzys_post);
@@ -612,10 +650,13 @@ pub fn ensure_social_registry_defaults(game: &mut Game) {
                 .iter_mut()
                 .find(|account| account.handle.eq_ignore_ascii_case(&default_account.handle))
             {
-                if existing.profile_image_url.is_none() && default_account.profile_image_url.is_some() {
+                if existing.profile_image_url.is_none()
+                    && default_account.profile_image_url.is_some()
+                {
                     existing.profile_image_url = default_account.profile_image_url.clone();
                 }
-                if existing.favorite_team_ids.is_empty() && !default_account.favorite_team_ids.is_empty()
+                if existing.favorite_team_ids.is_empty()
+                    && !default_account.favorite_team_ids.is_empty()
                 {
                     existing.favorite_team_ids = default_account.favorite_team_ids.clone();
                 }
@@ -651,7 +692,8 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
             continue;
         };
 
-        let (winner_id, loser_id, winner_wins, loser_wins) = if result.home_wins >= result.away_wins {
+        let (winner_id, loser_id, winner_wins, loser_wins) = if result.home_wins >= result.away_wins
+        {
             (
                 fixture.home_team_id.as_str(),
                 fixture.away_team_id.as_str(),
@@ -680,9 +722,15 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
             .as_ref()
             .map(|report| {
                 if winner_id == fixture.home_team_id {
-                    report.home_stats.kills.saturating_sub(report.away_stats.kills)
+                    report
+                        .home_stats
+                        .kills
+                        .saturating_sub(report.away_stats.kills)
                 } else {
-                    report.away_stats.kills.saturating_sub(report.home_stats.kills)
+                    report
+                        .away_stats
+                        .kills
+                        .saturating_sub(report.home_stats.kills)
                 }
             })
             .unwrap_or(0);
@@ -732,7 +780,13 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
             )
             .text
         } else if post.id.ends_with("_team_loser") {
-            team_loser_post_text(&language, &loser.short_name, &winner.short_name, &score, &seed)
+            team_loser_post_text(
+                &language,
+                &loser.short_name,
+                &winner.short_name,
+                &score,
+                &seed,
+            )
         } else if post.id.ends_with("_fan") {
             select_match_template_for_language(
                 &templates,
@@ -750,9 +804,23 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
             )
             .text
         } else if post.id.ends_with("_fan_winner_team") {
-            team_fan_reaction_text(&language, true, &winner.short_name, &loser.short_name, &score, &seed)
+            team_fan_reaction_text(
+                &language,
+                true,
+                &winner.short_name,
+                &loser.short_name,
+                &score,
+                &seed,
+            )
         } else if post.id.ends_with("_fan_loser_team") {
-            team_fan_reaction_text(&language, false, &loser.short_name, &winner.short_name, &score, &seed)
+            team_fan_reaction_text(
+                &language,
+                false,
+                &loser.short_name,
+                &winner.short_name,
+                &score,
+                &seed,
+            )
         } else if post.id.ends_with("_fan_bouzys_fnatic") {
             if language.eq_ignore_ascii_case("es") {
                 post.author_name = format!("{} Bouzys", winner.short_name);

@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection};
+use rusqlite::{Connection, params};
 
 use domain::champion_stats::{
     ChampionMatchup, ChampionStatsSummary, ChampionSynergy, ChampionTopPlayer, RolePopularity,
@@ -95,11 +95,9 @@ pub fn champion_stats(
 
     // 7. Pick rate (of this champ / total games)
     let total_all: u32 = conn
-        .query_row(
-            "SELECT COUNT(*) FROM lol_player_match_stats",
-            [],
-            |row| row.get(0),
-        )
+        .query_row("SELECT COUNT(*) FROM lol_player_match_stats", [], |row| {
+            row.get(0)
+        })
         .map_err(|e| format!("Failed to count total games: {e}"))?;
     let pick_rate = if total_all > 0 {
         (total_games as f64 / total_all as f64) * 100.0
@@ -214,7 +212,11 @@ pub fn champion_matchups(
             let vs_key: String = row.get(0)?;
             let games: u32 = row.get(1)?;
             let wins: u32 = row.get(2)?;
-            let wr = if games > 0 { (wins as f64 / games as f64) * 100.0 } else { 0.0 };
+            let wr = if games > 0 {
+                (wins as f64 / games as f64) * 100.0
+            } else {
+                0.0
+            };
             Ok(ChampionMatchup {
                 vs_champion_key: vs_key,
                 vs_champion_name: String::new(), // resolved below
@@ -233,7 +235,11 @@ pub fn champion_matchups(
     }
 
     // Best = highest win rate; Worst = lowest win rate
-    all.sort_by(|a, b| b.win_rate.partial_cmp(&a.win_rate).unwrap_or(std::cmp::Ordering::Equal));
+    all.sort_by(|a, b| {
+        b.win_rate
+            .partial_cmp(&a.win_rate)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     let mid = all.len() / 2;
     let worst: Vec<ChampionMatchup> = all.iter().rev().take(mid).cloned().collect();
     let best: Vec<ChampionMatchup> = all.iter().take(mid).cloned().collect();
@@ -271,7 +277,11 @@ pub fn champion_synergies(
             let with_key: String = row.get(0)?;
             let games: u32 = row.get(1)?;
             let wins: u32 = row.get(2)?;
-            let wr = if games > 0 { (wins as f64 / games as f64) * 100.0 } else { 0.0 };
+            let wr = if games > 0 {
+                (wins as f64 / games as f64) * 100.0
+            } else {
+                0.0
+            };
             Ok(ChampionSynergy {
                 with_champion_key: with_key,
                 with_champion_name: String::new(),
@@ -299,9 +309,8 @@ pub fn champion_top_players(
     limit: usize,
 ) -> Result<Vec<ChampionTopPlayer>, String> {
     let mut stmt = conn
-        .prepare(
-            &format!(
-                "SELECT
+        .prepare(&format!(
+            "SELECT
                     player_id,
                     COUNT(*) as games,
                     SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END) as wins,
@@ -312,8 +321,7 @@ pub fn champion_top_players(
                  HAVING games >= ?2
                  ORDER BY wins * 1.0 / games DESC
                  LIMIT ?3"
-            ),
-        )
+        ))
         .map_err(|e| format!("Failed to prepare top players query: {e}"))?;
 
     let rows = stmt
@@ -322,7 +330,11 @@ pub fn champion_top_players(
             let games: u32 = row.get(1)?;
             let wins: u32 = row.get(2)?;
             let avg_kda: f64 = row.get(3)?;
-            let wr = if games > 0 { (wins as f64 / games as f64) * 100.0 } else { 0.0 };
+            let wr = if games > 0 {
+                (wins as f64 / games as f64) * 100.0
+            } else {
+                0.0
+            };
             Ok(ChampionTopPlayer {
                 player_id,
                 player_name: String::new(),
@@ -371,9 +383,8 @@ pub fn champion_most_played_players(
     limit: usize,
 ) -> Result<Vec<ChampionTopPlayer>, String> {
     let mut stmt = conn
-        .prepare(
-            &format!(
-                "SELECT
+        .prepare(&format!(
+            "SELECT
                     player_id,
                     COUNT(*) as games,
                     SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END) as wins,
@@ -383,8 +394,7 @@ pub fn champion_most_played_players(
                  GROUP BY player_id
                  ORDER BY games DESC
                  LIMIT ?2"
-            ),
-        )
+        ))
         .map_err(|e| format!("Failed to prepare most played query: {e}"))?;
 
     let rows = stmt
@@ -393,7 +403,11 @@ pub fn champion_most_played_players(
             let games: u32 = row.get(1)?;
             let wins: u32 = row.get(2)?;
             let avg_kda: f64 = row.get(3)?;
-            let wr = if games > 0 { (wins as f64 / games as f64) * 100.0 } else { 0.0 };
+            let wr = if games > 0 {
+                (wins as f64 / games as f64) * 100.0
+            } else {
+                0.0
+            };
             Ok(ChampionTopPlayer {
                 player_id,
                 player_name: String::new(),
@@ -441,9 +455,8 @@ pub fn champion_weekly_history(
     weeks: u32,
 ) -> Result<Vec<WeeklyChampionStats>, String> {
     let mut stmt = conn
-        .prepare(
-            &format!(
-                "SELECT
+        .prepare(&format!(
+            "SELECT
                     strftime('%Y-W%W', date) as week_label,
                     COUNT(*) as games,
                     SUM(CASE WHEN result = 'Win' THEN 1 ELSE 0 END) as wins,
@@ -455,8 +468,7 @@ pub fn champion_weekly_history(
                    AND date >= date('now', ?2)
                  GROUP BY week_label
                  ORDER BY week_label ASC"
-            ),
-        )
+        ))
         .map_err(|e| format!("Failed to prepare weekly history query: {e}"))?;
 
     let since = format!("-{weeks} weeks");
@@ -464,7 +476,11 @@ pub fn champion_weekly_history(
         .query_map(params![champion_key, since], |row| {
             let games: u32 = row.get(1)?;
             let wins: u32 = row.get(2)?;
-            let wr = if games > 0 { (wins as f64 / games as f64) * 100.0 } else { 0.0 };
+            let wr = if games > 0 {
+                (wins as f64 / games as f64) * 100.0
+            } else {
+                0.0
+            };
             Ok(WeeklyChampionStats {
                 week_label: row.get(0)?,
                 games,
@@ -510,7 +526,11 @@ pub fn top_champions_by_pick_rate(
         .query_map(params![limit as i64], |row| {
             let key: String = row.get(0)?;
             let games: u32 = row.get(1)?;
-            let pr = if total > 0 { (games as f64 / total as f64) * 100.0 } else { 0.0 };
+            let pr = if total > 0 {
+                (games as f64 / total as f64) * 100.0
+            } else {
+                0.0
+            };
             Ok((key, games, pr))
         })
         .map_err(|e| format!("Failed to query top champions: {e}"))?;
@@ -568,7 +588,8 @@ mod tests {
                          5, 3, 7, 200, 12000, 25000,
                          30, 10)",
                 params![format!("f{i}"), team, opp, result, date],
-            ).unwrap();
+            )
+            .unwrap();
         }
     }
 
@@ -615,8 +636,9 @@ mod tests {
         ).unwrap();
 
         // Add opponent player to the same fixture as Ahri
-        db.conn().execute(
-            "INSERT INTO lol_player_match_stats
+        db.conn()
+            .execute(
+                "INSERT INTO lol_player_match_stats
                 (fixture_id, season, matchday, date, competition, player_id, team_id,
                  opponent_team_id, side, result, role, champion_id, duration_seconds,
                  kills, deaths, assists, creep_score, gold_earned, damage_dealt,
@@ -624,8 +646,9 @@ mod tests {
              VALUES ('f0', 2026, 1, '2026-01-01', 'League', 'p2', 'team_b', 'team_a',
                      'Red', 'Loss', 'Mid', 'Yasuo', 1800,
                      3, 5, 4, 180, 10000, 20000, 25, 8)",
-            [],
-        ).unwrap();
+                [],
+            )
+            .unwrap();
 
         let (best, _worst) = champion_matchups(db.conn(), "Ahri", 1).unwrap();
         assert!(!best.is_empty(), "Should have at least one matchup");

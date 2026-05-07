@@ -204,8 +204,18 @@ fn migrate_missing_scrim_columns(tx: &Transaction<'_>) -> HookResult {
         "weekly_scrim_plan_team_ids",
         "TEXT NOT NULL DEFAULT '[]'",
     )?;
-    add_column_if_missing(tx, "teams", "scrim_weekly_slots", "INTEGER NOT NULL DEFAULT 0")?;
-    add_column_if_missing(tx, "teams", "scrim_reputation", "INTEGER NOT NULL DEFAULT 50")?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "scrim_weekly_slots",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "scrim_reputation",
+        "INTEGER NOT NULL DEFAULT 50",
+    )?;
     add_column_if_missing(
         tx,
         "teams",

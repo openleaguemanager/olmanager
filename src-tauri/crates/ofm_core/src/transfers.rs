@@ -76,7 +76,11 @@ fn infer_player_importance(
     player: &domain::player::Player,
     owner_team: &domain::team::Team,
 ) -> PlayerImportance {
-    if owner_team.active_lineup_ids.iter().any(|id| id == &player.id) {
+    if owner_team
+        .active_lineup_ids
+        .iter()
+        .any(|id| id == &player.id)
+    {
         return PlayerImportance::Key;
     }
 

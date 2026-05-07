@@ -463,7 +463,10 @@ mod academy_team_metadata_tests {
 
         let json = serde_json::to_value(&team).unwrap();
 
-        assert_eq!(json["active_lineup_ids"], serde_json::json!(["top", "jungle"]));
+        assert_eq!(
+            json["active_lineup_ids"],
+            serde_json::json!(["top", "jungle"])
+        );
         assert!(json.get("starting_xi_ids").is_none());
     }
 

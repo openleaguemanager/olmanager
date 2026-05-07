@@ -2059,7 +2059,11 @@ mod tests {
     fn apply_active_lineup_sets_manager_team_lineup() {
         let mut game = make_game();
 
-        super::apply_active_lineup(&mut game, "team-1", vec!["p2".to_string(), "p1".to_string()]);
+        super::apply_active_lineup(
+            &mut game,
+            "team-1",
+            vec!["p2".to_string(), "p1".to_string()],
+        );
 
         assert_eq!(
             game.teams[0].active_lineup_ids,

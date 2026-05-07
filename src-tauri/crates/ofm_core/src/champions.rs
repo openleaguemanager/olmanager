@@ -697,7 +697,11 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
             let key = normalize_key(&meta.champion_id);
             let mastery = i32::from(*mastery_map.get(&key).unwrap_or(&MIN_MASTERY));
             let mastery_gap = i32::from(MASTERY_CAP) - mastery;
-            let role_fit = if normalize_key(&meta.role) == normalize_key(role) { 10 } else { 0 };
+            let role_fit = if normalize_key(&meta.role) == normalize_key(role) {
+                10
+            } else {
+                0
+            };
             let score = tier_score(&meta.tier) * 2 + role_fit + mastery_gap;
             (meta.champion_id.clone(), score)
         })

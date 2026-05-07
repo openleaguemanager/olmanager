@@ -569,7 +569,8 @@ fn apply_lol_profile_progression(
             clamp_attr_range(i16::from(player.attributes.teamfighting) + d_teamwork);
         player.attributes.mental_resilience =
             clamp_attr_range(i16::from(player.attributes.mental_resilience) + d_stamina);
-        player.attributes.macro_play = clamp_attr_range(i16::from(player.attributes.macro_play) + d_vision);
+        player.attributes.macro_play =
+            clamp_attr_range(i16::from(player.attributes.macro_play) + d_vision);
         player.attributes.consistency =
             clamp_attr_range(i16::from(player.attributes.consistency) + d_decisions);
         player.attributes.discipline =

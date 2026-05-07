@@ -1251,7 +1251,11 @@ where
     apply_match_report_with_capture(game, idx, &home_team_id, &away_team_id, &report, on_capture);
 }
 
-fn auto_sim_mastery_picks(game: &Game, home_team_id: &str, away_team_id: &str) -> Vec<(String, String)> {
+fn auto_sim_mastery_picks(
+    game: &Game,
+    home_team_id: &str,
+    away_team_id: &str,
+) -> Vec<(String, String)> {
     let mut picks: Vec<(String, String)> = Vec::new();
 
     for team_id in [home_team_id, away_team_id] {

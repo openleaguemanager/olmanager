@@ -289,7 +289,10 @@ fn simulation_regression_sanity_no_extreme_drift() {
 
     let avg_kills = total_kills as f64 / trials as f64;
     let avg_objectives = total_objectives as f64 / trials as f64;
-    assert!(avg_kills > 0.5 && avg_kills < 8.0, "avg kills drifted too far: {avg_kills:.2}");
+    assert!(
+        avg_kills > 0.5 && avg_kills < 8.0,
+        "avg kills drifted too far: {avg_kills:.2}"
+    );
     assert!(
         avg_objectives > 0.5 && avg_objectives < 20.0,
         "avg objective events drifted too far: {avg_objectives:.2}"
