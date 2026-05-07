@@ -16,11 +16,6 @@ default-run = "openleaguemanager"
 name = "olmanager_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
-[[bin]]
-name = "typegen"
-path = "src/bin/typegen.rs"
-required-features = ["typescript"]
-
 [workspace]
 members = ["crates/ofm_core", "crates/db", "crates/domain", "crates/engine"]
 
