@@ -1580,7 +1580,17 @@
     "fullscreen": "Tam Ekran",
     "fullscreenDesc": "Sürükleyici bir deneyim için tam ekran modunu açıp kapatın",
     "enterFullscreen": "Geç",
-    "exitFullscreen": "Çık"
+    "exitFullscreen": "Çık",
+    "updates": "Güncelleştirmeler",
+    "currentVersion": "Mevcut Sürüm",
+    "currentVersionDesc": "Oyunun kurulu olan sürümü",
+    "checkForUpdates": "Güncelleştirmeleri Kontrol Et",
+    "checkForUpdatesDesc": "Yeni bir sürümün mevcut olup olmadığını manuel olarak kontrol edin",
+    "checking": "Kontrol ediliyor...",
+    "updateAvailable": "Güncelleme Mevcut",
+    "checkNow": "Şimdi Kontrol Et",
+    "updateAvailableDetail": "Sürüm {{version}} mevcut",
+    "upToDate": "Güncel versiyonu kullanıyorsunuz"
   },
   "preMatch": {
     "formationFit": "Diziliş Uyumu",
