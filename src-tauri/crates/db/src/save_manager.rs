@@ -532,6 +532,7 @@ mod tests {
             days_since_last_job_offer: None,
             champion_masteries: vec![],
             champion_patch: Default::default(),
+            transfer_history: Default::default(),
         }
     }
 

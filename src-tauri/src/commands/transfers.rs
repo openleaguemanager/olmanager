@@ -1,12 +1,13 @@
 use domain::negotiation::NegotiationFeedback;
+use domain::transfer_history::TransferHistoryEntry;
 use log::info;
 use tauri::State;
 
 use ofm_core::game::Game;
 use ofm_core::state::StateManager;
 use ofm_core::transfers::{
-    TransferBidFinancialProjection, TransferDestination, TransferNegotiationDecision,
-    TransferNegotiationOutcome,
+    get_transfer_history, TransferBidFinancialProjection, TransferDestination,
+    TransferNegotiationDecision, TransferNegotiationOutcome,
 };
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -293,6 +294,16 @@ pub fn release_player_contract(
     ofm_core::transfers::release_player_contract(&mut game, &player_id)?;
     state.set_game(game.clone());
     Ok(game)
+}
+
+#[tauri::command]
+pub fn get_transfer_history_cmd(
+    state: State<'_, StateManager>,
+) -> Result<Vec<TransferHistoryEntry>, String> {
+    let game = state
+        .get_game(|g| g.clone())
+        .ok_or("No active game session".to_string())?;
+    Ok(get_transfer_history(&game))
 }
 
 #[cfg(test)]

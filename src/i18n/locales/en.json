@@ -210,6 +210,7 @@
     "teams": "Teams",
     "tournaments": "Tournaments",
     "champions_world": "Champions",
+    "market": "Market",
     "schedule": "Schedule",
     "news": "News",
     "settings": "Settings",
@@ -252,6 +253,7 @@
     "delegateWarning": "Your assistant will manage the match. You won't be able to intervene."
   },
   "champions": {
+    "170": "170+",
     "metaTitle": "Champion Meta",
     "patchNumber": "Patch {{n}}",
     "patchLastDate": "Last patch: {{date}}",
@@ -278,8 +280,7 @@
     "worldTitle": "World Champions",
     "allChampions": "All Champions",
     "worldDescription": "Explore all League of Legends champions",
-    "totalChampions": "Total",
-    "170": "170+"
+    "totalChampions": "Total"
   },
   "exitConfirm": {
     "title": "Exit to Main Menu?",
@@ -2867,5 +2868,21 @@
     "installing": "Installing...",
     "installAndRestart": "Install & Restart",
     "playWithoutUpdating": "Play Without Updating"
+  },
+  "market": {
+    "title": "Transfer Market",
+    "filterAll": "All",
+    "filterMyTransfers": "My Club",
+    "filterAiTransfers": "Global",
+    "empty": "No transfers have occurred yet. Transfer activity will appear here as the season progresses.",
+    "freeAgent": "Free Agent",
+    "wage": "Wage",
+    "contract": "Contract",
+    "years": "yr",
+    "negotiated": "Negotiated",
+    "rounds": "rnds",
+    "youBought": "You bought",
+    "youSold": "You sold",
+    "includedPlayers": "Included in deal"
   }
 }

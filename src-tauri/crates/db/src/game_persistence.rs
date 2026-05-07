@@ -202,6 +202,7 @@ impl GamePersistenceReader {
             days_since_last_job_offer: None,
             champion_masteries,
             champion_patch,
+            transfer_history: Default::default(),
         };
         ofm_core::season_context::refresh_game_context(&mut game);
 

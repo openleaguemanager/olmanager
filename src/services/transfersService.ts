@@ -122,3 +122,28 @@ export async function negotiatePlayerWage(
     contractYears,
   });
 }
+
+export interface TransferHistoryEntryData {
+  id: string;
+  player_id: string;
+  player_name: string;
+  player_ovr: number;
+  player_position: string;
+  from_team_id: string;
+  from_team_name: string;
+  to_team_id: string;
+  to_team_name: string;
+  fee: number;
+  annual_wage: number;
+  contract_years: number;
+  date: string;
+  is_user_involved: boolean;
+  is_user_buying: boolean;
+  was_negotiated: boolean;
+  initial_offer_fee: number | null;
+  negotiation_rounds: number;
+}
+
+export async function getTransferHistory(): Promise<TransferHistoryEntryData[]> {
+  return invoke<TransferHistoryEntryData[]>("get_transfer_history_cmd");
+}

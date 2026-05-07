@@ -6,6 +6,7 @@ use domain::player::{PlayerOfferItem, TransferOfferStatus, WageNegotiationStatus
 use domain::season::TransferWindowStatus;
 use domain::stats::LolRole;
 use domain::team::TeamKind;
+use domain::transfer_history::{IncludedPlayerEntry, TransferHistoryEntry};
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -956,7 +957,7 @@ fn simulate_ai_club_to_club_transfers(game: &mut Game, user_team_id: &str) {
             continue;
         };
 
-        if execute_transfer(game, &player_id, &buyer_id, &seller_id, fee).is_ok() {
+        if execute_transfer(game, &player_id, &buyer_id, &seller_id, fee, true).is_ok() {
             completed = completed.saturating_add(1);
         }
     }
@@ -1497,7 +1498,7 @@ pub fn respond_to_offer(
     }
 
     if accept {
-        execute_transfer(game, player_id, &from_team_id, &user_team_id, fee)?;
+        execute_transfer(game, player_id, &from_team_id, &user_team_id, fee, true)?;
     } else if let Some(player) = game
         .players
         .iter_mut()
@@ -2226,14 +2227,16 @@ fn complete_transfer_with_wage(
         .find(|o| o.status == TransferOfferStatus::Accepted)
         .cloned();
 
-    if let Some(offer) = offer {
+    if let Some(ref offer) = offer {
+        let seller_team = from_team_id.unwrap_or("");
         for item in &offer.players_included {
             execute_transfer(
                 game,
                 &item.player_id,
-                to_team_id,
+                seller_team,
                 payer_team_id,
                 0,
+                false,
             )?;
         }
     }
@@ -2242,7 +2245,151 @@ fn complete_transfer_with_wage(
     let msg = crate::messages::transfer_complete_message(&player_name, fee, date);
     game.messages.push(msg);
 
+    let user_team_id = game.manager.team_id.clone().unwrap_or_default();
+    let from_id = from_team_id.unwrap_or("");
+    let is_user_involved = from_id == user_team_id || to_team_id == user_team_id;
+    let is_user_buying = to_team_id == user_team_id;
+    let (initial_fee, neg_rounds, included_ids) = if let Some(ref o) = offer {
+        (
+            if o.fee > 0 && o.fee != fee {
+                Some(o.fee)
+            } else {
+                None
+            },
+            o.negotiation_round,
+            o.players_included.iter().map(|p| p.player_id.clone()).collect::<Vec<_>>(),
+        )
+    } else {
+        (None, 1, Vec::new())
+    };
+
+    record_transfer(
+        game,
+        player_id,
+        from_id,
+        to_team_id,
+        fee,
+        annual_wage,
+        contract_years,
+        is_user_involved,
+        is_user_buying,
+        true,
+        initial_fee,
+        neg_rounds,
+        &included_ids,
+    );
+
     Ok(())
+}
+
+pub fn get_transfer_history(game: &Game) -> Vec<TransferHistoryEntry> {
+    game.transfer_history.entries.clone()
+}
+
+fn record_transfer(
+    game: &mut Game,
+    player_id: &str,
+    from_team_id: &str,
+    to_team_id: &str,
+    fee: u64,
+    annual_wage: u32,
+    contract_years: u8,
+    is_user_involved: bool,
+    is_user_buying: bool,
+    was_negotiated: bool,
+    initial_offer_fee: Option<u64>,
+    negotiation_rounds: u8,
+    included_player_ids: &[String],
+) {
+    let player = match game.players.iter().find(|p| p.id == player_id) {
+        Some(p) => p,
+        None => return,
+    };
+    let from_team = game
+        .teams
+        .iter()
+        .find(|t| t.id == from_team_id)
+        .map(|t| t.name.clone())
+        .unwrap_or_else(|| from_team_id.to_string());
+    let to_team = game
+        .teams
+        .iter()
+        .find(|t| t.id == to_team_id)
+        .map(|t| t.name.clone())
+        .unwrap_or_else(|| to_team_id.to_string());
+    let today = game.clock.current_date.format("%Y-%m-%d").to_string();
+
+    let a = &player.attributes;
+    let ovr = (a.pace as u32
+        + a.stamina as u32
+        + a.strength as u32
+        + a.passing as u32
+        + a.shooting as u32
+        + a.tackling as u32
+        + a.dribbling as u32
+        + a.defending as u32
+        + a.positioning as u32
+        + a.vision as u32
+        + a.decisions as u32)
+        / 11;
+
+    let included_players: Vec<IncludedPlayerEntry> = included_player_ids
+        .iter()
+        .filter_map(|pid| {
+            let p = game.players.iter().find(|p| p.id == pid.as_str())?;
+            let a = &p.attributes;
+            let ovr = (a.pace as u32
+                + a.stamina as u32
+                + a.strength as u32
+                + a.passing as u32
+                + a.shooting as u32
+                + a.tackling as u32
+                + a.dribbling as u32
+                + a.defending as u32
+                + a.positioning as u32
+                + a.vision as u32
+                + a.decisions as u32)
+                / 11;
+            Some(IncludedPlayerEntry {
+                player_id: p.id.clone(),
+                player_name: p.match_name.clone(),
+                player_ovr: ovr as u8,
+                player_position: lol_role_to_string(&p.natural_position).to_string(),
+                player_profile_image_url: p.profile_image_url.clone(),
+                valuation: 0,
+            })
+        })
+        .collect();
+
+    let entry = TransferHistoryEntry {
+        id: Uuid::new_v4().to_string(),
+        player_id: player.id.clone(),
+        player_name: player.match_name.clone(),
+        player_ovr: ovr as u8,
+        player_position: lol_role_to_string(&player.natural_position).to_string(),
+        player_profile_image_url: player.profile_image_url.clone(),
+        from_team_id: from_team_id.to_string(),
+        from_team_name: from_team,
+        to_team_id: to_team_id.to_string(),
+        to_team_name: to_team,
+        fee,
+        annual_wage,
+        contract_years,
+        date: today,
+        is_user_involved,
+        is_user_buying,
+        was_negotiated,
+        initial_offer_fee,
+        negotiation_rounds,
+        included_players,
+    };
+
+    game.transfer_history.entries.insert(0, entry);
+
+    // Keep only last 200 entries
+    if game.transfer_history.entries.len() > 200 {
+        game.transfer_history.entries.truncate(200);
+    }
 }
 
 fn round_transfer_fee(value: u64) -> u64 {
@@ -2269,11 +2416,8 @@ fn remove_player_from_team_references(team: &mut domain::team::Team, player_id: 
 }
 
 fn remaining_contract_salary(player: &domain::player::Player, current_date: NaiveDate) -> i64 {
-    let Some(days_remaining) =
-        contract_days_remaining(current_date, player.contract_end.as_deref())
-    else {
-        return 0;
-    };
+    let days_remaining =
+        contract_days_remaining(current_date, player.contract_end.as_deref()).unwrap_or(0);
 
     let bounded_days = days_remaining.max(0);
     if bounded_days == 0 {
@@ -2569,8 +2713,9 @@ fn execute_transfer(
     to_team_id: &str,
     from_team_id: &str,
     fee: u64,
+    record_history: bool,
 ) -> Result<(), String> {
-    execute_transfer_with_payer(game, player_id, to_team_id, from_team_id, fee, to_team_id)
+    execute_transfer_with_payer(game, player_id, to_team_id, from_team_id, fee, to_team_id, record_history)
 }
 
 fn execute_transfer_with_payer(
@@ -2580,6 +2725,7 @@ fn execute_transfer_with_payer(
     from_team_id: &str,
     fee: u64,
     payer_team_id: &str,
+    record_history: bool,
 ) -> Result<(), String> {
     let player_snapshot = game
         .players
@@ -2693,6 +2839,28 @@ fn execute_transfer_with_payer(
                 &today,
             ));
         }
+    }
+
+    let user_team_id = game.manager.team_id.clone().unwrap_or_default();
+    let is_user_involved = from_team_id == user_team_id || to_team_id == user_team_id;
+    let is_user_buying = to_team_id == user_team_id;
+
+    if record_history {
+        record_transfer(
+            game,
+            player_id,
+            from_team_id,
+            to_team_id,
+            fee,
+            player_snapshot.wage,
+            0,
+            is_user_involved,
+            is_user_buying,
+            false,
+            None,
+            0,
+            &[],
+        );
     }
 
     Ok(())

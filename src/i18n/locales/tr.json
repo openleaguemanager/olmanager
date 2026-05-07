@@ -210,6 +210,7 @@
     "teams": "Takımlar",
     "tournaments": "Turnuvalar",
     "champions_world": "Champions",
+    "market": "Pazar",
     "schedule": "Fikstür",
     "news": "Haberler",
     "settings": "Ayarlar",
@@ -2867,5 +2868,21 @@
     "installing": "Installing...",
     "installAndRestart": "Install & Restart",
     "playWithoutUpdating": "Play Without Updating"
+  },
+  "market": {
+    "title": "Transfer Pazarı",
+    "filterAll": "Tümü",
+    "filterMyTransfers": "Kulübüm",
+    "filterAiTransfers": "Global",
+    "empty": "Henüz transfer gerçekleşmedi. Sezon ilerledikçe transfer hoạtimleri burada görünecektir.",
+    "freeAgent": "Boşta Oyuncu",
+    "wage": "Maaş",
+    "contract": "Sözleşme",
+    "years": "yıl",
+    "negotiated": "Pazarlık",
+    "rounds": "tur",
+    "youBought": "Satın aldınız",
+    "youSold": "Sattınız",
+    "includedPlayers": "Teklife dahil"
   }
 }

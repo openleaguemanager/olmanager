@@ -210,6 +210,7 @@
     "teams": "Équipes",
     "tournaments": "Tournois",
     "champions_world": "Champions",
+    "market": "Marché",
     "schedule": "Calendrier",
     "news": "Actualités",
     "settings": "Paramètres",
@@ -2867,5 +2868,21 @@
     "installing": "Installation...",
     "installAndRestart": "Installer & Redémarrer",
     "playWithoutUpdating": "Jouer Sans Mettre à Jour"
+  },
+  "market": {
+    "title": "Marché des Transferts",
+    "filterAll": "Tous",
+    "filterMyTransfers": "Mon Club",
+    "filterAiTransfers": "Global",
+    "empty": "Aucun transfert n'a encore eu lieu. L'activité des transferts apparaîtra ici au fil de la saison.",
+    "freeAgent": "Agent Libre",
+    "wage": "Salaire",
+    "contract": "Contrat",
+    "years": "an(s)",
+    "negotiated": "Négocié",
+    "rounds": "tour(s)",
+    "youBought": "Vous avez acheté",
+    "youSold": "Vous avez vendu",
+    "includedPlayers": "Inclus dans l'offre"
   }
 }

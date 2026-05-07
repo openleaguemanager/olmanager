@@ -70,6 +70,8 @@ pub struct Game {
     pub champion_masteries: Vec<ChampionMasteryEntry>,
     #[serde(default)]
     pub champion_patch: ChampionPatchState,
+    #[serde(default)]
+    pub transfer_history: domain::transfer_history::TransferHistory,
 }
 
 impl Game {
@@ -97,6 +99,7 @@ impl Game {
             days_since_last_job_offer: None,
             champion_masteries: vec![],
             champion_patch: ChampionPatchState::default(),
+            transfer_history: domain::transfer_history::TransferHistory::default(),
         };
         crate::identity_upgrade::upgrade_game_football_identities(&mut game);
         crate::season_context::refresh_game_context(&mut game);
