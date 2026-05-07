@@ -1926,8 +1926,7 @@ fn stat_delta(score: f64) -> f64 {
 
 fn champion_micro_damage_multiplier(champion: &ChampionRuntime) -> f64 {
     let gameplay = stat_delta(champion.gameplay_score);
-    let role_penalty = if champion.role == "JGL" { 0.96 } else { 1.0 };
-    ((1.0 + gameplay * 0.07) * role_penalty).clamp(0.84, 1.10)
+    (1.0 + gameplay * 0.07).clamp(0.84, 1.10)
 }
 
 fn champion_lane_damage_multiplier(champion: &ChampionRuntime) -> f64 {
@@ -3782,6 +3781,38 @@ fn nearest_enemy_in_range(
         .map(|(idx, _)| idx)
 }
 
+fn recent_attacker_target_idx(
+    runtime: &RuntimeState,
+    champion_idx: usize,
+    range: f64,
+    max_age_sec: f64,
+) -> Option<usize> {
+    if champion_idx >= runtime.champions.len() {
+        return None;
+    }
+
+    let champion = &runtime.champions[champion_idx];
+    let attacker_id = champion.last_damaged_by_champion_id.as_deref()?;
+    if runtime.time_sec - champion.last_damaged_by_champion_at > max_age_sec {
+        return None;
+    }
+
+    runtime
+        .champions
+        .iter()
+        .enumerate()
+        .find(|(idx, enemy)| {
+            *idx != champion_idx
+                && enemy.alive
+                && !champion_is_banished(enemy)
+                && enemy.id == attacker_id
+                && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                && team_has_vision_at(runtime, &champion.team, enemy.pos)
+                && dist(enemy.pos, champion.pos) <= range
+        })
+        .map(|(idx, _)| idx)
+}
+
 fn next_summon_id(runtime: &mut RuntimeState) -> String {
     let next = runtime
         .extra
@@ -5011,6 +5042,12 @@ fn should_engage_enemy_champion(
     let team_tactics = team_tactics_for_runtime(runtime.extra.get("teamTactics"), &attacker.team);
     let fight_plan = team_tactics.fight_plan.as_str();
     let risk_tolerance = stat_delta(attacker.competitive_score).clamp(-1.0, 1.0);
+    let retaliating_recent_attacker = recent_attacker_target_idx(
+        runtime,
+        attacker_idx,
+        LANE_CHAMPION_TRADE_RADIUS,
+        ALLY_HELP_DAMAGE_RECENT_SEC,
+    ) == Some(target_idx);
     let dynamic_retreat_hp_ratio =
         (runtime.policy.trade_retreat_hp_ratio - risk_tolerance * 0.05).clamp(0.24, 0.60);
 
@@ -5056,6 +5093,9 @@ fn should_engage_enemy_champion(
         }
         if enemy_nearby > ally_nearby && hp_ratio < 0.75 {
             return false;
+        }
+        if retaliating_recent_attacker {
+            return true;
         }
     }
 
