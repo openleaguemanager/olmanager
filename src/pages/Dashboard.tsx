@@ -108,6 +108,18 @@ export default function Dashboard(): JSX.Element {
     Set<string>
   >(new Set<string>());
 
+  useEffect(() => {
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, []);
+
   // Fetch initial state
   useEffect(() => {
     console.log("[Dashboard] mounted, hasActiveGame:", hasActiveGame);
@@ -467,7 +479,7 @@ export default function Dashboard(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex transition-colors duration-300">
+    <div className="h-screen overflow-hidden bg-gray-100 dark:bg-navy-900 flex transition-colors duration-300">
       <DashboardSidebar
         activeTab={profileNavigation.activeTab}
         collapsed={isSidebarCollapsed}
