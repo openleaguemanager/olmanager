@@ -14,6 +14,10 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
+vi.mock("../../services/trainingService", () => ({
+  getScrimContext: vi.fn().mockRejectedValue(new Error("no backend context in unit test")),
+}));
+
 function createTeam(overrides: Partial<TeamData> = {}): TeamData {
   return {
     id: "team-1",
@@ -21,8 +25,8 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     short_name: "ALP",
     country: "GB",
     city: "London",
-    stadium_name: "Alpha Ground",
-    stadium_capacity: 30000,
+    arena_name: "Alpha Ground",
+    arena_capacity: 30000,
     finance: 500000,
     manager_id: "manager-1",
     reputation: 50,
@@ -53,7 +57,7 @@ function createFixture(overrides: Partial<FixtureData> = {}): FixtureData {
     away_team_id: "team-2",
     competition: "League",
     status: "Scheduled",
-    result: undefined,
+    result: null,
     ...overrides,
   };
 }

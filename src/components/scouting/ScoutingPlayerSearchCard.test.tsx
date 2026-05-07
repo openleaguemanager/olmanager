@@ -39,8 +39,8 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     short_name: "ALP",
     country: "GB",
     city: "London",
-    stadium_name: "Alpha Ground",
-    stadium_capacity: 30000,
+    arena_name: "Alpha Ground",
+    arena_capacity: 30000,
     finance: 500000,
     manager_id: "manager-1",
     reputation: 50,
@@ -136,6 +136,7 @@ describe("ScoutingPlayerSearchCard", () => {
           createTeam(),
           createTeam({ id: "team-2", name: "Beta FC", manager_id: "manager-2" }),
         ]}
+        currentDate="2026-08-01T00:00:00Z"
         posFilter="All"
         searchQuery=""
         alreadyScoutingIds={new Set<string>()}

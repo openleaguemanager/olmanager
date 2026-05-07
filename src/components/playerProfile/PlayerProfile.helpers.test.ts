@@ -17,8 +17,8 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
         short_name: "ALP",
         country: "GB",
         city: "London",
-        stadium_name: "Alpha Ground",
-        stadium_capacity: 30000,
+        arena_name: "Alpha Ground",
+        arena_capacity: 30000,
         finance: 500000,
         manager_id: "manager-1",
         reputation: 50,
@@ -104,6 +104,8 @@ function createPlayer(overrides: Partial<PlayerData> = {}): PlayerData {
         ...overrides,
     };
 }
+
+void createPlayer;
 
 describe("PlayerProfile.helpers", function (): void {
     it("resolves the player team name with free-agent and unknown fallbacks", function (): void {

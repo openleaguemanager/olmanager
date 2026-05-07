@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { Pencil, Shield, User } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { EyeOff, Pencil, Shield, User } from "lucide-react";
 import type { PlayerData } from "../../store/gameStore";
 import { formatPlayerMarketValue, formatPlayerWage } from "./PlayerProfile.helpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolveExampleTeamLogo } from "../../lib/teamLogos";
 import type {
   PlayerProfileScoutStatus,
   ScoutAvailability,
@@ -18,7 +19,9 @@ type TranslateFn = (
 interface PlayerProfileHeroCardProps {
   player: PlayerData;
   ovr: number;
-  primaryRole: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
+  primaryRole?: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
+  /** @deprecated Legacy prop name kept for older focused tests. */
+  primaryPosition?: string;
   age: number;
   teamName: string;
   weeklySuffix: string;
@@ -44,7 +47,7 @@ interface PlayerProfileHeroCardProps {
 export default function PlayerProfileHeroCard({
   player,
   ovr,
-  primaryRole,
+  primaryRole = "MID",
   age,
   teamName,
   weeklySuffix,
@@ -66,7 +69,6 @@ export default function PlayerProfileHeroCard({
   t,
 }: PlayerProfileHeroCardProps) {
   const role = primaryRole;
-  const roleVariant = getLolRoleBadgeVariant(role);
   const playerPhoto = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
   const [insigniaBackground, setInsigniaBackground] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState(false);
@@ -83,6 +85,9 @@ export default function PlayerProfileHeroCard({
     !potentialResearchSubmitting;
   const potentialValueLabel =
     potentialRevealed !== null ? String(potentialRevealed) : "??";
+  void potentialProgress;
+  void canStartPotentialResearch;
+  void potentialValueLabel;
 
   useEffect(() => {
     let cancelled = false;
@@ -168,7 +173,7 @@ export default function PlayerProfileHeroCard({
           <div className="absolute inset-0 bg-linear-to-r from-navy-700 to-navy-800" />
         )}
 
-        <div className="relative z-10 flex items-center gap-6">
+        <div className="relative z-10 flex items-start gap-6">
           <div className="relative w-24 h-24 shrink-0">
             <div
               className={`w-24 h-24 rounded-2xl overflow-hidden border-2 ${
@@ -264,7 +269,14 @@ export default function PlayerProfileHeroCard({
               </div>
             ) : null}
             <p className="text-gray-400 text-sm mt-2 flex items-center gap-1.5">
-              <Shield className="w-4 h-4" />
+              {(() => {
+                const logoUrl = resolveExampleTeamLogo(teamName);
+                return logoUrl ? (
+                  <img src={logoUrl} alt={teamName} className="w-4 h-4 object-contain" />
+                ) : (
+                  <Shield className="w-4 h-4" />
+                );
+              })()}
               {player.team_id ? (
                 <button
                   onClick={() => onSelectTeam?.(player.team_id!)}
@@ -276,9 +288,7 @@ export default function PlayerProfileHeroCard({
                 <span>{teamName}</span>
               )}
             </p>
-          </div>
 
-          {!isOwnClub ? (
             <div className="mt-3">
               <PlayerProfileScoutAction
                 availability={scoutAvailability}
@@ -287,7 +297,7 @@ export default function PlayerProfileHeroCard({
                 onScout={onScout}
               />
             </div>
-          ) : null}
+          </div>
 
           <div className="hidden md:flex items-center gap-3">
             <div className="grid grid-cols-3 gap-3 flex-1">
@@ -308,8 +318,9 @@ export default function PlayerProfileHeroCard({
               />
               <QuickStat
                 label={t("common.potential", { defaultValue: "Potencial" })}
-                value={potentialValueLabel}
+                value={potentialRevealed !== null ? String(potentialRevealed) : "—"}
                 color="text-gray-200"
+                icon={potentialRevealed === null ? <EyeOff className="w-4 h-4" /> : undefined}
               />
               <QuickStat
                 label={t("common.value")}
@@ -344,8 +355,9 @@ export default function PlayerProfileHeroCard({
         />
         <MobileQuickStat
           label={t("common.potential", { defaultValue: "Potencial" })}
-          value={potentialValueLabel}
+          value={potentialRevealed !== null ? String(potentialRevealed) : "—"}
           color="text-gray-700 dark:text-gray-200"
+          icon={potentialRevealed === null ? <EyeOff className="w-4 h-4" /> : undefined}
         />
         <MobileQuickStat
           label={t("common.value")}
@@ -419,17 +431,21 @@ function QuickStat({
   label,
   value,
   color,
+  icon,
 }: {
   label: string;
   value: string;
   color: string;
+  icon?: ReactNode;
 }) {
   return (
     <div className="bg-black/42 border border-white/20 rounded-xl px-5 py-3 text-center min-w-25 backdrop-blur-xs">
       <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">
         {label}
       </p>
-      <p className={`font-heading font-bold text-xl mt-0.5 ${color}`}>{value}</p>
+      <p className={`font-heading font-bold text-xl mt-0.5 ${color} inline-flex items-center gap-1 justify-center`}>
+        {icon ?? value}
+      </p>
     </div>
   );
 }
@@ -438,28 +454,21 @@ function MobileQuickStat({
   label,
   value,
   color,
+  icon,
 }: {
   label: string;
   value: string;
   color: string;
+  icon?: ReactNode;
 }) {
   return (
     <div className="bg-white dark:bg-navy-800 p-3 text-center">
       <p className="text-xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
         {label}
       </p>
-      <p className={`font-heading font-bold text-lg mt-0.5 ${color}`}>{value}</p>
+      <p className={`font-heading font-bold text-lg mt-0.5 ${color} inline-flex items-center gap-1 justify-center`}>
+        {icon ?? value}
+      </p>
     </div>
   );
 }
-function getLolRoleBadgeVariant(role: string) {
-  const roleVariants: Record<string, string> = {
-    TOP: "top",
-    JUNGLE: "jungle",
-    MID: "mid",
-    ADC: "adc",
-    SUPPORT: "support",
-  };
-  return roleVariants[role] || "top";
-}
-
