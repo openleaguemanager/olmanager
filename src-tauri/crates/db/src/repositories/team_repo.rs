@@ -49,7 +49,7 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
 
     conn.execute(
         "INSERT OR REPLACE INTO teams
-         (id, name, short_name, country, city, arena_name, arena_capacity,
+         (id, name, short_name, country, city, stadium_name, stadium_capacity,
            finance, manager_id, reputation, wage_budget, transfer_budget,
           season_income, season_expenses, formation, play_style,
           training_focus, training_intensity, training_schedule,
@@ -63,8 +63,8 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
             t.short_name,
             t.country,
             t.city,
-            t.arena_name,
-            t.arena_capacity,
+            t.stadium_name,
+            t.stadium_capacity,
             t.finance,
             t.manager_id,
             t.reputation,
@@ -210,8 +210,8 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         short_name: row.get(2)?,
         country: row.get(3)?,
         city: row.get(4)?,
-        arena_name: row.get(5)?,
-        arena_capacity: row.get(6)?,
+        stadium_name: row.get(5)?,
+        stadium_capacity: row.get(6)?,
         finance: row.get(7)?,
         manager_id: row.get(8)?,
         reputation: row.get(9)?,
@@ -272,7 +272,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
 /// Load all teams.
 pub fn load_all_teams(conn: &Connection) -> Result<Vec<Team>, String> {
     log::info!("[team_repo] load_all_teams: preparing query...");
-    let query = "SELECT id, name, short_name, country, city, arena_name, arena_capacity,
+    let query = "SELECT id, name, short_name, country, city, stadium_name, stadium_capacity,
                     finance, manager_id, reputation, wage_budget, transfer_budget,
                     season_income, season_expenses, formation, play_style,
                     training_focus, training_intensity, training_schedule,
@@ -364,7 +364,7 @@ pub fn load_all_teams(conn: &Connection) -> Result<Vec<Team>, String> {
 pub fn load_team(conn: &Connection, id: &str) -> Result<Option<Team>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, name, short_name, country, city, arena_name, arena_capacity,
+            "SELECT id, name, short_name, country, city, stadium_name, stadium_capacity,
                     finance, manager_id, reputation, wage_budget, transfer_budget,
                     season_income, season_expenses, formation, play_style,
                     training_focus, training_intensity, training_schedule,
@@ -429,7 +429,7 @@ mod tests {
         assert_eq!(loaded.short_name, "TST");
         assert_eq!(loaded.play_style, PlayStyle::Possession);
         assert_eq!(loaded.finance, 5_000_000);
-        assert_eq!(loaded.arena_capacity, 50000);
+        assert_eq!(loaded.stadium_capacity, 50000);
     }
 
     #[test]

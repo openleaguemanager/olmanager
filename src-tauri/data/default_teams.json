@@ -12,7 +12,7 @@
         "secondary": "#ffffff"
       },
       "play_style": "Possession",
-      "arena_name": "London Arena",
+      "stadium_name": "London Arena",
       "reputation_range": [
         600,
         900
@@ -32,7 +32,7 @@
         "secondary": "#1e3a5f"
       },
       "play_style": "Attacking",
-      "arena_name": "Manchester Arena",
+      "stadium_name": "Manchester Arena",
       "reputation_range": [
         600,
         900
@@ -52,7 +52,7 @@
         "secondary": "#fbbf24"
       },
       "play_style": "HighPress",
-      "arena_name": "Liverpool Arena",
+      "stadium_name": "Liverpool Arena",
       "reputation_range": [
         500,
         850
@@ -72,7 +72,7 @@
         "secondary": "#ffffff"
       },
       "play_style": "Counter",
-      "arena_name": "Newcastle Arena",
+      "stadium_name": "Newcastle Arena",
       "reputation_range": [
         400,
         750
@@ -92,7 +92,7 @@
         "secondary": "#d4af37"
       },
       "play_style": "Possession",
-      "arena_name": "Madrid Arena",
+      "stadium_name": "Madrid Arena",
       "reputation_range": [
         700,
         900
@@ -112,7 +112,7 @@
         "secondary": "#1d4ed8"
       },
       "play_style": "Attacking",
-      "arena_name": "Barcelona Arena",
+      "stadium_name": "Barcelona Arena",
       "reputation_range": [
         700,
         900
@@ -132,7 +132,7 @@
         "secondary": "#1e3a5f"
       },
       "play_style": "HighPress",
-      "arena_name": "Munich Arena",
+      "stadium_name": "Munich Arena",
       "reputation_range": [
         700,
         900
@@ -152,7 +152,7 @@
         "secondary": "#000000"
       },
       "play_style": "Counter",
-      "arena_name": "Dortmund Arena",
+      "stadium_name": "Dortmund Arena",
       "reputation_range": [
         500,
         800
@@ -172,7 +172,7 @@
         "secondary": "#dc2626"
       },
       "play_style": "Attacking",
-      "arena_name": "Paris Arena",
+      "stadium_name": "Paris Arena",
       "reputation_range": [
         700,
         900
@@ -192,7 +192,7 @@
         "secondary": "#ffffff"
       },
       "play_style": "Balanced",
-      "arena_name": "Lyon Arena",
+      "stadium_name": "Lyon Arena",
       "reputation_range": [
         400,
         700
@@ -212,7 +212,7 @@
         "secondary": "#000000"
       },
       "play_style": "Defensive",
-      "arena_name": "Milan Arena",
+      "stadium_name": "Milan Arena",
       "reputation_range": [
         600,
         850
@@ -232,7 +232,7 @@
         "secondary": "#7c2d12"
       },
       "play_style": "Counter",
-      "arena_name": "Rome Arena",
+      "stadium_name": "Rome Arena",
       "reputation_range": [
         400,
         700
@@ -252,7 +252,7 @@
         "secondary": "#ffffff"
       },
       "play_style": "Attacking",
-      "arena_name": "Amsterdam Arena",
+      "stadium_name": "Amsterdam Arena",
       "reputation_range": [
         500,
         800
@@ -272,7 +272,7 @@
         "secondary": "#ffffff"
       },
       "play_style": "Possession",
-      "arena_name": "Lisbon Arena",
+      "stadium_name": "Lisbon Arena",
       "reputation_range": [
         500,
         800
@@ -292,7 +292,7 @@
         "secondary": "#ffffff"
       },
       "play_style": "Defensive",
-      "arena_name": "Porto Arena",
+      "stadium_name": "Porto Arena",
       "reputation_range": [
         500,
         800
@@ -312,7 +312,7 @@
         "secondary": "#fbbf24"
       },
       "play_style": "Balanced",
-      "arena_name": "Brussels Arena",
+      "stadium_name": "Brussels Arena",
       "reputation_range": [
         400,
         700

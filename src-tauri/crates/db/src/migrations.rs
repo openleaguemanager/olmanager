@@ -40,11 +40,11 @@ fn migrate_manager_avatar_path(tx: &Transaction<'_>) -> HookResult {
 }
 
 fn migrate_stadium_to_arena(tx: &Transaction<'_>) -> HookResult {
-    add_column_if_missing(tx, "teams", "arena_name", "TEXT")?;
+    add_column_if_missing(tx, "teams", "stadium_name", "TEXT")?;
     // Only migrate data if the legacy column exists (old save files)
     if column_exists(tx, "teams", "stadium_name")? {
         tx.execute(
-            "UPDATE teams SET arena_name = COALESCE(stadium_name, 'Unknown Arena') WHERE arena_name IS NULL",
+            "UPDATE teams SET stadium_name = COALESCE(stadium_name, 'Unknown Arena') WHERE stadium_name IS NULL",
             [],
         )?;
     }
@@ -52,11 +52,11 @@ fn migrate_stadium_to_arena(tx: &Transaction<'_>) -> HookResult {
 }
 
 fn migrate_stadium_to_arena_capacity(tx: &Transaction<'_>) -> HookResult {
-    add_column_if_missing(tx, "teams", "arena_capacity", "INTEGER")?;
+    add_column_if_missing(tx, "teams", "stadium_capacity", "INTEGER")?;
     // Only migrate data if the legacy column exists (old save files)
     if column_exists(tx, "teams", "stadium_capacity")? {
         tx.execute(
-            "UPDATE teams SET arena_capacity = COALESCE(stadium_capacity, 0) WHERE arena_capacity IS NULL",
+            "UPDATE teams SET stadium_capacity = COALESCE(stadium_capacity, 0) WHERE stadium_capacity IS NULL",
             [],
         )?;
     }
@@ -119,8 +119,8 @@ fn migrate_audit_teams_legacy(tx: &Transaction<'_>) -> HookResult {
 /// V42 pre-hook: normalize teams schema so the rebuild SQL can run on
 /// very old/branch-divergent saves that still use stadium_* names.
 fn migrate_prepare_teams_for_v42(tx: &Transaction<'_>) -> HookResult {
-    add_column_if_missing(tx, "teams", "arena_name", "TEXT")?;
-    add_column_if_missing(tx, "teams", "arena_capacity", "INTEGER")?;
+    add_column_if_missing(tx, "teams", "stadium_name", "TEXT")?;
+    add_column_if_missing(tx, "teams", "stadium_capacity", "INTEGER")?;
     add_column_if_missing(
         tx,
         "teams",
@@ -130,24 +130,24 @@ fn migrate_prepare_teams_for_v42(tx: &Transaction<'_>) -> HookResult {
 
     if column_exists(tx, "teams", "stadium_name")? {
         tx.execute(
-            "UPDATE teams SET arena_name = COALESCE(arena_name, stadium_name, 'Unknown Arena')",
+            "UPDATE teams SET stadium_name = COALESCE(stadium_name, stadium_name, 'Unknown Arena')",
             [],
         )?;
     } else {
         tx.execute(
-            "UPDATE teams SET arena_name = COALESCE(arena_name, 'Unknown Arena')",
+            "UPDATE teams SET stadium_name = COALESCE(stadium_name, 'Unknown Arena')",
             [],
         )?;
     }
 
     if column_exists(tx, "teams", "stadium_capacity")? {
         tx.execute(
-            "UPDATE teams SET arena_capacity = COALESCE(arena_capacity, stadium_capacity, 0)",
+            "UPDATE teams SET stadium_capacity = COALESCE(stadium_capacity, stadium_capacity, 0)",
             [],
         )?;
     } else {
         tx.execute(
-            "UPDATE teams SET arena_capacity = COALESCE(arena_capacity, 0)",
+            "UPDATE teams SET stadium_capacity = COALESCE(stadium_capacity, 0)",
             [],
         )?;
     }
@@ -374,9 +374,9 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up("SELECT 1;"),
         // V34: Add profile_image_url to staff (no-op: already handled by V29 hook)
         M::up("SELECT 1;"),
-        // V35: Rename stadium_name to arena_name for LoL terminology
+        // V35: Rename stadium_name to stadium_name for LoL terminology
         M::up_with_hook("SELECT 1;", migrate_stadium_to_arena),
-        // V36: Rename stadium_capacity to arena_capacity for LoL terminology
+        // V36: Rename stadium_capacity to stadium_capacity for LoL terminology
         M::up_with_hook("SELECT 1;", migrate_stadium_to_arena_capacity),
         // V37: Rename legacy football stat tables to _deprecated_ prefix
         M::up(include_str!("sql/v037_rename_legacy_stats.sql")),
