@@ -21,7 +21,8 @@ countries.registerLocale(frLocale);
 countries.registerLocale(deLocale);
 countries.registerLocale(itLocale);
 
-type SupportedLocale = "en" | "es" | "pt" | "fr" | "de" | "it";
+export type SupportedLocale = "en" | "es" | "pt" | "fr" | "de" | "it";
+export const SUPPORTED_LOCALES: SupportedLocale[] = ["en", "es", "pt", "fr", "de", "it"];
 
 interface FootballIdentityDefinition {
   code: string;
@@ -204,6 +205,18 @@ export function allNationalities(locale = "en"): { code: string; name: string }[
 /**
  * Validate that a string is a valid ISO alpha-2 country code.
  */
+/** Get all lowercase names for a country code across all supported locales */
+export function getAllCountryNames(code: string): Set<string> {
+  const names = new Set<string>();
+  for (const locale of SUPPORTED_LOCALES) {
+    const name = countryName(code, locale);
+    if (name) {
+      names.add(name.toLowerCase());
+    }
+  }
+  return names;
+}
+
 export function isValidCountryCode(code: string): boolean {
   if (!code) return false;
 

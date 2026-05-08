@@ -9,10 +9,14 @@ use crate::commands::game::{
     inject_seed_free_agents, remove_free_agents_shadowed_by_academy,
 };
 
-fn resolve_default_world_editor_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+fn resolve_default_world_editor_path(
+    app_handle: &tauri::AppHandle,
+) -> Result<std::path::PathBuf, String> {
     let cwd = std::env::current_dir().map_err(|e| format!("Failed to read current dir: {}", e))?;
     let candidates = [
-        cwd.join("src-tauri").join("databases").join("lec_world.json"),
+        cwd.join("src-tauri")
+            .join("databases")
+            .join("lec_world.json"),
         cwd.join("databases").join("lec_world.json"),
         app_handle
             .path()
@@ -31,16 +35,14 @@ fn resolve_default_world_editor_path(app_handle: &tauri::AppHandle) -> Result<st
 }
 
 fn enrich_world_for_editor(world: &mut ofm_core::generator::WorldData) {
-    bootstrap_example_academy_pool_from_example(
-        &mut world.teams,
-        &mut world.players,
-        "2025-01-01",
-    );
+    bootstrap_example_academy_pool_from_example(&mut world.teams, &mut world.players, "2025-01-01");
     remove_free_agents_shadowed_by_academy(&mut world.players, &world.teams);
     inject_seed_free_agents(&mut world.players);
 }
 
-fn writable_world_editor_database_dir(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+fn writable_world_editor_database_dir(
+    app_handle: &tauri::AppHandle,
+) -> Result<std::path::PathBuf, String> {
     if let Ok(user_profile) = std::env::var("USERPROFILE") {
         return Ok(std::path::PathBuf::from(user_profile)
             .join("Documents")
@@ -55,7 +57,9 @@ fn writable_world_editor_database_dir(app_handle: &tauri::AppHandle) -> Result<s
         .join("databases"))
 }
 
-fn writable_world_editor_database_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
+fn writable_world_editor_database_path(
+    app_handle: &tauri::AppHandle,
+) -> Result<std::path::PathBuf, String> {
     Ok(writable_world_editor_database_dir(app_handle)?.join("lec_world.json"))
 }
 
@@ -69,7 +73,10 @@ fn write_world_database_with_fallback(
             Ok(()) => {}
             Err(error) if error.kind() == std::io::ErrorKind::PermissionDenied => {}
             Err(error) => {
-                return Err(format!("Failed to create world database directory: {}", error));
+                return Err(format!(
+                    "Failed to create world database directory: {}",
+                    error
+                ));
             }
         }
     }
@@ -199,7 +206,10 @@ pub fn load_world_editor_database(
     app_handle: tauri::AppHandle,
     path: Option<String>,
 ) -> Result<ofm_core::generator::WorldData, String> {
-    let path = match path.map(|value| value.trim().to_string()).filter(|value| !value.is_empty()) {
+    let path = match path
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+    {
         Some(path) if path == "lec-default" => resolve_default_world_editor_path(&app_handle)?,
         Some(path) => std::path::PathBuf::from(path.strip_prefix("file:").unwrap_or(&path)),
         None => resolve_default_world_editor_path(&app_handle)?,
@@ -236,7 +246,9 @@ pub fn save_world_editor_database(
         Ok(saved_path.to_string_lossy().to_string())
     }));
 
-    result.unwrap_or_else(|_| Err("World Editor save failed unexpectedly. No changes were written.".to_string()))
+    result.unwrap_or_else(|_| {
+        Err("World Editor save failed unexpectedly. No changes were written.".to_string())
+    })
 }
 
 #[cfg(test)]
@@ -283,21 +295,21 @@ mod tests {
     fn sample_attrs() -> PlayerAttributes {
         PlayerAttributes {
             pace: 65,
-            stamina: 65,
+            mental_resilience: 65,
             strength: 65,
-            agility: 65,
+            champion_pool: 65,
             passing: 65,
-            shooting: 65,
+            laning: 65,
             tackling: 65,
-            dribbling: 65,
+            mechanics: 65,
             defending: 65,
             positioning: 65,
-            vision: 65,
-            decisions: 65,
-            composure: 65,
+            macro_play: 65,
+            consistency: 65,
+            discipline: 65,
             aggression: 50,
-            teamwork: 65,
-            leadership: 50,
+            teamfighting: 65,
+            shotcalling: 50,
             handling: 20,
             reflexes: 20,
             aerial: 60,
@@ -324,7 +336,6 @@ mod tests {
             "London Arena".to_string(),
             50_000,
         );
-        team.football_nation.clear();
 
         let mut player = Player::new(
             "player-1".to_string(),
@@ -336,7 +347,6 @@ mod tests {
             sample_attrs(),
         );
         player.team_id = Some("team-1".to_string());
-        player.football_nation.clear();
         player.birth_country = None;
 
         Game::new(clock, manager, vec![team], vec![player], vec![], vec![])
@@ -348,17 +358,12 @@ mod tests {
         let export_path = temp_dir.path().join("world-export.json");
         let state = StateManager::new();
         let mut game = make_game();
-        game.teams[0].football_nation.clear();
-        game.players[0].football_nation.clear();
         game.players[0].birth_country = None;
         state.set_game(game);
 
         let written_path = export_world_database_internal(&state, &export_path).unwrap();
         let json = fs::read_to_string(&written_path).unwrap();
         let world: WorldData = serde_json::from_str(&json).unwrap();
-
-        assert_eq!(world.teams[0].football_nation, "ENG");
-        assert_eq!(world.players[0].football_nation, "ENG");
     }
 
     #[test]
@@ -391,8 +396,8 @@ mod tests {
               "training_schedule": "Balanced",
               "founded_year": 1900,
               "colors": { "primary": "#ffffff", "secondary": "#000000" },
-              "starting_xi_ids": [],
-              "match_roles": { "captain": null, "vice_captain": null, "penalty_taker": null, "free_kick_taker": null, "corner_taker": null },
+              "active_lineup_ids": [],
+              "match_roles": { "captain": null, "shotcaller": null },
               "form": [],
               "history": []
             }
@@ -425,7 +430,7 @@ mod tests {
               "contract_end": null,
               "wage": 0,
               "market_value": 0,
-              "stats": { "appearances": 0, "goals": 0, "assists": 0, "clean_sheets": 0, "yellow_cards": 0, "red_cards": 0, "avg_rating": 0.0, "minutes_played": 0 },
+              "stats": { "appearances": 0, "goals": 0, "assists": 0, "clean_sheets": 0, "avg_rating": 0.0, "minutes_played": 0 },
               "career": [],
               "training_focus": null,
               "transfer_listed": false,
@@ -441,9 +446,6 @@ mod tests {
         let written_path = write_database_json_to_dir(temp_dir.path(), json).unwrap();
         let stored_json = fs::read_to_string(&written_path).unwrap();
         let world: WorldData = serde_json::from_str(&stored_json).unwrap();
-
-        assert_eq!(world.teams[0].football_nation, "ENG");
-        assert_eq!(world.players[0].football_nation, "ENG");
     }
 
     #[test]

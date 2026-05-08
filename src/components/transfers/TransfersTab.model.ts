@@ -1,5 +1,7 @@
 import type { GameStateData, PlayerData } from "../../store/gameStore";
+import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
+import { calcAge } from "../../lib/helpers";
 
 function normalizePlayerKey(player: PlayerData): string {
   const normalizeToken = (value: string): string =>
@@ -55,7 +57,7 @@ export interface TransferCollections {
   myTransferList: PlayerData[];
   myLoanList: PlayerData[];
   marketPlayers: PlayerData[];
-  erlPlayers: PlayerData[];
+  erlPlayers?: PlayerData[];
   loanPlayers: PlayerData[];
   playersWithOffers: PlayerData[];
 }
@@ -156,7 +158,7 @@ export function getCurrentTransferList(
     case "market":
       return collections.marketPlayers;
     case "erl":
-      return collections.erlPlayers;
+      return collections.erlPlayers ?? [];
     case "loans":
       return collections.loanPlayers;
     case "offers":
@@ -189,4 +191,60 @@ export function filterTransferPlayers(
 
     return true;
   });
+}
+
+export type TransferSortKey = "value" | "wage" | "ovr" | "name" | "position" | "age" | "team" | "status";
+export type TransferSortDirection = "asc" | "desc";
+
+export interface TransferSortState {
+  key: TransferSortKey;
+  direction: TransferSortDirection;
+}
+
+export function sortTransferPlayers(
+  players: PlayerData[],
+  sort: TransferSortState | null,
+): PlayerData[] {
+  if (!sort) return players;
+
+  const factor = sort.direction === "asc" ? 1 : -1;
+
+  const sorted = [...players].sort((a, b) => {
+    switch (sort.key) {
+      case "value":
+        return (a.market_value - b.market_value) * factor;
+      case "wage":
+        return (a.wage - b.wage) * factor;
+      case "ovr":
+        return (calculateLolOvr(a) - calculateLolOvr(b)) * factor;
+      case "name":
+        return a.match_name.localeCompare(b.match_name) * factor;
+      case "position": {
+        const roleA = getLolRoleForPlayer(a);
+        const roleB = getLolRoleForPlayer(b);
+        const order: Record<string, number> = { TOP: 1, JUNGLE: 2, MID: 3, ADC: 4, SUPPORT: 5 };
+        return ((order[roleA] ?? 0) - (order[roleB] ?? 0)) * factor;
+      }
+      case "age":
+        return (calcAge(a.date_of_birth, new Date().toISOString()) - calcAge(b.date_of_birth, new Date().toISOString())) * factor;
+      case "team": {
+        const teamA = a.team_id ?? "";
+        const teamB = b.team_id ?? "";
+        return teamA.localeCompare(teamB) * factor;
+      }
+      case "status": {
+        const statusVal = (p: typeof a) => {
+          if (p.loan_listed) return 3;
+          if (p.transfer_listed) return 2;
+          if (p.injury) return 1;
+          return 0;
+        };
+        return (statusVal(b) - statusVal(a)) * factor;
+      }
+      default:
+        return 0;
+    }
+  });
+
+  return sorted;
 }

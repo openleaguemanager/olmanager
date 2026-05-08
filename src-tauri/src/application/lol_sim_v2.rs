@@ -24,34 +24,28 @@ mod vision;
 mod waves;
 
 pub use api::*;
+use economy::{champion_kill_rewards, jungle_camp_cs_reward, jungle_camp_reward};
+use events::{log_event, push_event};
+use layout::{
+    BASE_POSITION_BLUE, BASE_POSITION_RED, LANE_PATH_BOT_BLUE, LANE_PATH_MID_BLUE,
+    LANE_PATH_TOP_BLUE, ROLE_SEEDS, STRUCTURE_LAYOUT,
+};
+use objectives::{
+    process_dragon_capture, resolve_neutral_capture_decision, sync_objectives_from_neutral_timers,
+    tick_neutral_timers, NeutralCaptureKind,
+};
 pub use runtime::{dispose, init, reset, run_to_completion, skip_to_end, tick};
 pub use session::*;
-pub use types::*;
-use events::{log_event, push_event};
-use layout::{BASE_POSITION_BLUE, BASE_POSITION_RED, LANE_PATH_BOT_BLUE, LANE_PATH_MID_BLUE, LANE_PATH_TOP_BLUE, ROLE_SEEDS, STRUCTURE_LAYOUT};
-use economy::{champion_kill_rewards, jungle_camp_cs_reward, jungle_camp_reward};
-use objectives::{
-    process_dragon_capture,
-    resolve_neutral_capture_decision,
-    sync_objectives_from_neutral_timers,
-    tick_neutral_timers,
-    NeutralCaptureKind,
-};
-use state_init::{
-    build_neutral_timers_state, create_initial_state, ensure_runtime_state_defaults,
-};
+use state_init::{build_neutral_timers_state, create_initial_state, ensure_runtime_state_defaults};
 use structures::{
-    apply_damage_to_structure,
-    create_structures, is_structure_targetable,
-    resolve_structure_combat,
+    apply_damage_to_structure, create_structures, is_structure_targetable, resolve_structure_combat,
 };
+pub use types::*;
 use types::{
     RuntimeEvent, RuntimeStats, RuntimeSummonerSpellSlot, RuntimeTeamStats, RuntimeUltimateSlot,
     Vec2, WardRuntime,
 };
-use util::{
-    as_mut_object, clamp, dist, normalize, ratio_or_zero, read_time_sec, read_winner,
-};
+use util::{as_mut_object, clamp, dist, normalize, ratio_or_zero, read_time_sec, read_winner};
 use vision::{place_wards, process_sweepers, team_has_vision_at};
 
 fn default_visible_stat() -> f64 {
@@ -61,8 +55,6 @@ fn default_visible_stat() -> f64 {
 fn default_staff_execution() -> f64 {
     1.0
 }
-
-
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "lowercase")]
@@ -81,7 +73,6 @@ impl SimulatorAiMode {
     }
 }
 
- 
 #[derive(Clone)]
 struct SnapshotPlayer {
     id: String,
@@ -318,6 +309,17 @@ struct RuntimeStaffEffects {
     tactics: f64,
     #[serde(default = "default_staff_execution")]
     analysis: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+struct RuntimeScrimPrepSide {
+    #[serde(default)]
+    preparation: f64,
+    #[serde(default)]
+    focus: Option<String>,
+    #[serde(default)]
+    comfort_by_player: HashMap<String, f64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1249,6 +1251,36 @@ fn seed_team(
             .map(|impact| impact.variance.clamp(0.5, 4.5))
             .unwrap_or(1.0);
         let staff_effects = extract_runtime_staff_effects(snapshot, side_key);
+        let scrim_prep = extract_runtime_scrim_prep(snapshot, side_key);
+        let scrim_preparation = scrim_prep.preparation.clamp(0.0, 3.0);
+        let scrim_comfort = scrim_prep
+            .comfort_by_player
+            .get(&player.id)
+            .copied()
+            .unwrap_or(0.0)
+            .clamp(0.0, 2.0);
+        let scrim_focus = scrim_prep
+            .focus
+            .as_deref()
+            .map(normalize_champion_key)
+            .unwrap_or_default();
+        let scrim_execution_bonus =
+            (scrim_preparation * 0.006 + scrim_comfort * 0.005).clamp(0.0, 0.026);
+        let scrim_gameplay_bonus = if scrim_focus == "teamfighting" || scrim_focus == "earlygame" {
+            scrim_preparation * 0.004
+        } else {
+            0.0
+        };
+        let scrim_iq_bonus = if scrim_focus == "macro" || scrim_focus == "draftprep" {
+            scrim_preparation * 0.006
+        } else {
+            0.0
+        };
+        let scrim_mental_bonus = if scrim_focus == "mental" {
+            scrim_preparation * 0.005
+        } else {
+            0.0
+        };
         let staff_execution = staff_effects.execution.clamp(0.96, 1.10);
         let staff_tactics_modifier = ((staff_effects.tactics - 1.0) * 1.2
             + (staff_effects.analysis - 1.0) * 0.8)
@@ -1284,20 +1316,24 @@ fn seed_team(
             * (1.0
                 + tuned_role_modifier * 0.012
                 + competitive_delta * 0.04
-                + teamfighting_delta * 0.02))
+                + teamfighting_delta * 0.02
+                + scrim_mental_bonus))
             .clamp(120.0, 340.0);
         let attack_damage = (14.0 + rng.next_f64() * 5.0)
             * (1.0
                 + tuned_role_modifier * 0.016
                 + gameplay_delta * 0.06
                 + mechanics_delta * 0.03
-                + staff_tactics_modifier * 0.015);
+                + staff_tactics_modifier * 0.015
+                + scrim_execution_bonus
+                + scrim_gameplay_bonus);
         let move_speed = (0.043
             + rng.next_f64() * 0.008
             + (tuned_role_modifier * 0.00035)
             + iq_delta * 0.001
             + laning_delta * 0.0006
-            + staff_tactics_modifier * 0.0004)
+            + staff_tactics_modifier * 0.0004
+            + scrim_iq_bonus * 0.0007)
             .clamp(0.036, 0.062);
 
         let spawn_pos = Vec2 {
@@ -1348,7 +1384,7 @@ fn seed_team(
                 .clamp(0.65, 1.35);
         let decision_jitter = (((role_variance - 1.0).max(0.0) * 0.35) + rng.next_f64() * 0.08)
             * consistency_factor
-            / staff_execution;
+            / (staff_execution * (1.0 + scrim_preparation * 0.012 + scrim_comfort * 0.01));
         let initial_next_decision_at = if role_seed.role == "JGL" {
             6.0 + decision_jitter
         } else {
@@ -1890,8 +1926,7 @@ fn stat_delta(score: f64) -> f64 {
 
 fn champion_micro_damage_multiplier(champion: &ChampionRuntime) -> f64 {
     let gameplay = stat_delta(champion.gameplay_score);
-    let role_penalty = if champion.role == "JGL" { 0.96 } else { 1.0 };
-    ((1.0 + gameplay * 0.07) * role_penalty).clamp(0.84, 1.10)
+    (1.0 + gameplay * 0.07).clamp(0.84, 1.10)
 }
 
 fn champion_lane_damage_multiplier(champion: &ChampionRuntime) -> f64 {
@@ -1955,6 +1990,16 @@ fn extract_runtime_staff_effects(snapshot: &Value, side_key: &str) -> RuntimeSta
         })
 }
 
+fn extract_runtime_scrim_prep(snapshot: &Value, side_key: &str) -> RuntimeScrimPrepSide {
+    snapshot
+        .get("lol_scrim_prep")
+        .and_then(Value::as_object)
+        .and_then(|obj| obj.get(side_key))
+        .cloned()
+        .and_then(|value| serde_json::from_value::<RuntimeScrimPrepSide>(value).ok())
+        .unwrap_or_default()
+}
+
 fn team_tactics_for_runtime(team_tactics: Option<&Value>, team: &str) -> RuntimeTeamTactics {
     team_tactics
         .and_then(Value::as_object)
@@ -2001,7 +2046,6 @@ fn team_buffs_ref<'a>(buffs: &'a RuntimeBuffState, team: &str) -> &'a RuntimeTea
         &buffs.blue
     }
 }
-
 
 fn normalize_attack_type(raw: &str) -> &'static str {
     if raw.eq_ignore_ascii_case("ranged") {
@@ -2207,7 +2251,7 @@ impl NavGrid {
         GridCell { cx, cy }
     }
 
-fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
+    fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
         let mut x0 = self.to_cell(a.x) as isize;
         let mut y0 = self.to_cell(a.y) as isize;
         let x1 = self.to_cell(b.x) as isize;
@@ -2228,11 +2272,12 @@ fn has_line_of_sight(&self, a: Vec2, b: Vec2) -> bool {
             }
 
             let e2 = 2 * err;
-            
+
             // Strictly check adjacent cells for diagonal movement to prevent corner-cutting through walls
             if e2 > -dy && e2 < dx {
-                if self.is_blocked_cell((x0 + sx) as usize, y0 as usize) || 
-                   self.is_blocked_cell(x0 as usize, (y0 + sy) as usize) {
+                if self.is_blocked_cell((x0 + sx) as usize, y0 as usize)
+                    || self.is_blocked_cell(x0 as usize, (y0 + sy) as usize)
+                {
                     return false;
                 }
             }
@@ -3229,7 +3274,11 @@ fn recall_fallback_toward_base(
     macro_ai::recall_fallback_toward_base(champion, threat)
 }
 
-fn safe_recall_anchor(champion: &ChampionRuntime, proposed: Vec2, structures: &[StructureRuntime]) -> Vec2 {
+fn safe_recall_anchor(
+    champion: &ChampionRuntime,
+    proposed: Vec2,
+    structures: &[StructureRuntime],
+) -> Vec2 {
     if champion.role == "JGL" {
         return proposed;
     }
@@ -3258,8 +3307,16 @@ fn safe_recall_anchor(champion: &ChampionRuntime, proposed: Vec2, structures: &[
         y: base.y - tower.pos.y,
     });
     Vec2 {
-        x: clamp(tower.pos.x + away_from_tower_to_base.x * (TOWER_ATTACK_RANGE + 0.065), 0.01, 0.99),
-        y: clamp(tower.pos.y + away_from_tower_to_base.y * (TOWER_ATTACK_RANGE + 0.065), 0.01, 0.99),
+        x: clamp(
+            tower.pos.x + away_from_tower_to_base.x * (TOWER_ATTACK_RANGE + 0.065),
+            0.01,
+            0.99,
+        ),
+        y: clamp(
+            tower.pos.y + away_from_tower_to_base.y * (TOWER_ATTACK_RANGE + 0.065),
+            0.01,
+            0.99,
+        ),
     }
 }
 
@@ -3290,7 +3347,9 @@ fn start_recall(
             } else {
                 Some(safe_recall_anchor(
                     champion,
-                    lane_retreat_anchor_pos(champion, threat.pos, now, champions, minions, structures),
+                    lane_retreat_anchor_pos(
+                        champion, threat.pos, now, champions, minions, structures,
+                    ),
                     structures,
                 ))
             }
@@ -3666,7 +3725,6 @@ fn champion_is_banished(champion: &ChampionRuntime) -> bool {
     champion.realm_banished_until > 0.0
 }
 
-
 fn maybe_upgrade_trinket_to_oracle(champion: &mut ChampionRuntime, now: f64) {
     if champion.trinket_swapped || now < TRINKET_SWAP_UNLOCK_AT_SEC {
         return;
@@ -3719,6 +3777,38 @@ fn nearest_enemy_in_range(
             dist(a.pos, champion.pos)
                 .partial_cmp(&dist(b.pos, champion.pos))
                 .unwrap_or(Ordering::Equal)
+        })
+        .map(|(idx, _)| idx)
+}
+
+fn recent_attacker_target_idx(
+    runtime: &RuntimeState,
+    champion_idx: usize,
+    range: f64,
+    max_age_sec: f64,
+) -> Option<usize> {
+    if champion_idx >= runtime.champions.len() {
+        return None;
+    }
+
+    let champion = &runtime.champions[champion_idx];
+    let attacker_id = champion.last_damaged_by_champion_id.as_deref()?;
+    if runtime.time_sec - champion.last_damaged_by_champion_at > max_age_sec {
+        return None;
+    }
+
+    runtime
+        .champions
+        .iter()
+        .enumerate()
+        .find(|(idx, enemy)| {
+            *idx != champion_idx
+                && enemy.alive
+                && !champion_is_banished(enemy)
+                && enemy.id == attacker_id
+                && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                && team_has_vision_at(runtime, &champion.team, enemy.pos)
+                && dist(enemy.pos, champion.pos) <= range
         })
         .map(|(idx, _)| idx)
 }
@@ -4612,7 +4702,9 @@ fn nearest_attackable_neutral_key(
         .entities
         .values()
         .filter(|timer| timer.alive && timer.unlocked)
-        .filter(|timer| neutral_is_attackable_by_champion(champion, timer, camp_radius, objective_radius))
+        .filter(|timer| {
+            neutral_is_attackable_by_champion(champion, timer, camp_radius, objective_radius)
+        })
         .collect();
 
     candidates.sort_by(|a, b| {
@@ -4726,8 +4818,7 @@ fn mark_neutral_taken(
             NeutralCaptureKind::Dragon => {
                 team_stats_mut(&mut runtime.stats, &killer_team).dragons += 1;
                 add_gold_xp_to_champion(runtime, &killer_id, DRAGON_SECURE_GOLD, DRAGON_SECURE_XP);
-                let dragon_kind =
-                    process_dragon_capture(runtime, neutral_timers, &killer_team);
+                let dragon_kind = process_dragon_capture(runtime, neutral_timers, &killer_team);
                 log_event(
                     runtime,
                     &format!(
@@ -4747,7 +4838,10 @@ fn mark_neutral_taken(
                 set_runtime_buffs(runtime, &buffs);
                 log_event(
                     runtime,
-                    &format!("{} secured baron", normalized_team(&killer_team).to_uppercase()),
+                    &format!(
+                        "{} secured baron",
+                        normalized_team(&killer_team).to_uppercase()
+                    ),
                     decision.event_type,
                 );
             }
@@ -4764,7 +4858,10 @@ fn mark_neutral_taken(
                 set_runtime_buffs(runtime, &buffs);
                 log_event(
                     runtime,
-                    &format!("{} secured elder", normalized_team(&killer_team).to_uppercase()),
+                    &format!(
+                        "{} secured elder",
+                        normalized_team(&killer_team).to_uppercase()
+                    ),
                     decision.event_type,
                 );
             }
@@ -4851,7 +4948,10 @@ fn attack_neutral_if_in_range(
     } else {
         JUNGLE_CAMP_ATTACK_RADIUS
     };
-    if distance > max_range || (!is_objective && !nav_grid().has_line_of_sight(runtime.champions[champion_idx].pos, timer.pos)) {
+    if distance > max_range
+        || (!is_objective
+            && !nav_grid().has_line_of_sight(runtime.champions[champion_idx].pos, timer.pos))
+    {
         return false;
     }
 
@@ -4942,6 +5042,12 @@ fn should_engage_enemy_champion(
     let team_tactics = team_tactics_for_runtime(runtime.extra.get("teamTactics"), &attacker.team);
     let fight_plan = team_tactics.fight_plan.as_str();
     let risk_tolerance = stat_delta(attacker.competitive_score).clamp(-1.0, 1.0);
+    let retaliating_recent_attacker = recent_attacker_target_idx(
+        runtime,
+        attacker_idx,
+        LANE_CHAMPION_TRADE_RADIUS,
+        ALLY_HELP_DAMAGE_RECENT_SEC,
+    ) == Some(target_idx);
     let dynamic_retreat_hp_ratio =
         (runtime.policy.trade_retreat_hp_ratio - risk_tolerance * 0.05).clamp(0.24, 0.60);
 
@@ -4988,6 +5094,9 @@ fn should_engage_enemy_champion(
         if enemy_nearby > ally_nearby && hp_ratio < 0.75 {
             return false;
         }
+        if retaliating_recent_attacker {
+            return true;
+        }
     }
 
     let attacker_is_backline = attacker.attack_range >= 0.05;
@@ -5017,9 +5126,7 @@ fn should_engage_enemy_champion(
         let own_camps_alive = decode_neutral_timers_state(&runtime.neutral_timers)
             .map(|timers| {
                 timers.entities.values().any(|timer| {
-                    timer.alive
-                        && is_jungle_camp_key(&timer.key)
-                        && timer.key.ends_with(own_suffix)
+                    timer.alive && is_jungle_camp_key(&timer.key) && timer.key.ends_with(own_suffix)
                 })
             })
             .unwrap_or(false);
@@ -5488,7 +5595,6 @@ fn champion_respawn_seconds(level: i64, now_sec: f64) -> f64 {
         .clamp(14.0, 58.0)
 }
 
-
 fn add_dragon_stack_for_kind(team_buffs: &mut RuntimeTeamBuffState, kind: &str) {
     match kind {
         "infernal" => team_buffs.infernal_stacks += 1,
@@ -5795,7 +5901,7 @@ fn category_plan(category: ItemBuildCategory) -> &'static [ItemTemplate; 6] {
     }
 }
 
-pub(super) fn champion_can_afford_next_item(champion: &ChampionRuntime) -> bool {
+fn champion_can_afford_next_item(champion: &ChampionRuntime) -> bool {
     if champion.items.len() >= 6 || !champion.has_left_base_once {
         return false;
     }
@@ -5803,17 +5909,14 @@ pub(super) fn champion_can_afford_next_item(champion: &ChampionRuntime) -> bool 
     let plan = champion_item_plan(&champion.role, &champion.champion_id);
     let has_boots = champion.items.iter().any(|item| is_boots_item_key(item));
     let next_item = if !has_boots {
-        plan
-            .iter()
+        plan.iter()
             .find(|candidate| is_boots_item_key(candidate.key))
             .or_else(|| {
-                plan
-                    .iter()
+                plan.iter()
                     .find(|candidate| !champion.items.iter().any(|owned| owned == candidate.key))
             })
     } else {
-        plan
-            .iter()
+        plan.iter()
             .find(|candidate| !champion.items.iter().any(|owned| owned == candidate.key))
     };
 
@@ -6161,8 +6264,6 @@ fn try_auto_buy_items(runtime: &mut RuntimeState) {
     }
 }
 
-
-
 fn team_stats_mut<'a>(stats: &'a mut RuntimeStats, team: &str) -> &'a mut RuntimeTeamStats {
     if normalized_team(team) == "red" {
         &mut stats.red
@@ -6252,8 +6353,6 @@ fn move_entity(pos: &mut Vec2, target: Vec2, speed: f64, dt: f64) {
     pos.x += ((target.x - pos.x) / dd) * step;
     pos.y += ((target.y - pos.y) / dd) * step;
 }
-
-
 
 #[cfg(test)]
 mod test_helpers;

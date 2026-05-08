@@ -10,8 +10,8 @@ pub fn upsert_manager(conn: &Connection, m: &Manager) -> Result<(), String> {
 
     conn.execute(
         "INSERT OR REPLACE INTO managers
-         (id, nickname, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, reputation, satisfaction, fan_approval, team_id, warning_stage, career_stats, career_history)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
+          (id, nickname, first_name, last_name, date_of_birth, nationality, birth_country, avatar_path, reputation, satisfaction, fan_approval, team_id, warning_stage, career_stats, career_history)
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
         params![
             m.id,
             m.nickname,
@@ -19,8 +19,8 @@ pub fn upsert_manager(conn: &Connection, m: &Manager) -> Result<(), String> {
             m.last_name,
             m.date_of_birth,
             m.nationality,
-            m.football_nation,
             m.birth_country,
+            m.avatar_path,
             m.reputation,
             m.satisfaction,
             m.fan_approval,
@@ -38,7 +38,7 @@ pub fn upsert_manager(conn: &Connection, m: &Manager) -> Result<(), String> {
 pub fn load_manager(conn: &Connection, id: &str) -> Result<Option<Manager>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, nickname, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, reputation, satisfaction, fan_approval, team_id, warning_stage, career_stats, career_history
+            "SELECT id, nickname, first_name, last_name, date_of_birth, nationality, birth_country, avatar_path, reputation, satisfaction, fan_approval, team_id, warning_stage, career_stats, career_history
              FROM managers WHERE id = ?1",
         )
         .map_err(|e| format!("Failed to prepare manager query: {}", e))?;
@@ -54,7 +54,7 @@ pub fn load_manager(conn: &Connection, id: &str) -> Result<Option<Manager>, Stri
                 row.get::<_, String>(3)?,
                 row.get::<_, String>(4)?,
                 row.get::<_, String>(5)?,
-                row.get::<_, String>(6)?,
+                row.get::<_, Option<String>>(6)?,
                 row.get::<_, Option<String>>(7)?,
                 row.get::<_, u32>(8)?,
                 row.get::<_, u8>(9)?,
@@ -75,8 +75,8 @@ pub fn load_manager(conn: &Connection, id: &str) -> Result<Option<Manager>, Stri
             last_name,
             dob,
             nationality,
-            football_nation,
             birth_country,
+            avatar_path,
             reputation,
             satisfaction,
             fan_approval,
@@ -97,8 +97,8 @@ pub fn load_manager(conn: &Connection, id: &str) -> Result<Option<Manager>, Stri
                 last_name,
                 date_of_birth: dob,
                 nationality,
-                football_nation,
                 birth_country,
+                avatar_path,
                 reputation,
                 satisfaction,
                 fan_approval,
@@ -117,7 +117,7 @@ pub fn load_manager(conn: &Connection, id: &str) -> Result<Option<Manager>, Stri
 pub fn load_all_managers(conn: &Connection) -> Result<Vec<Manager>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, nickname, first_name, last_name, date_of_birth, nationality, football_nation, birth_country, reputation, satisfaction, fan_approval, team_id, warning_stage, career_stats, career_history
+            "SELECT id, nickname, first_name, last_name, date_of_birth, nationality, birth_country, avatar_path, reputation, satisfaction, fan_approval, team_id, warning_stage, career_stats, career_history
              FROM managers",
         )
         .map_err(|e| format!("Failed to prepare managers query: {}", e))?;
@@ -131,7 +131,7 @@ pub fn load_all_managers(conn: &Connection) -> Result<Vec<Manager>, String> {
                 row.get::<_, String>(3)?,
                 row.get::<_, String>(4)?,
                 row.get::<_, String>(5)?,
-                row.get::<_, String>(6)?,
+                row.get::<_, Option<String>>(6)?,
                 row.get::<_, Option<String>>(7)?,
                 row.get::<_, u32>(8)?,
                 row.get::<_, u8>(9)?,
@@ -153,8 +153,8 @@ pub fn load_all_managers(conn: &Connection) -> Result<Vec<Manager>, String> {
             last_name,
             dob,
             nationality,
-            football_nation,
             birth_country,
+            avatar_path,
             reputation,
             satisfaction,
             fan_approval,
@@ -174,8 +174,8 @@ pub fn load_all_managers(conn: &Connection) -> Result<Vec<Manager>, String> {
             last_name,
             date_of_birth: dob,
             nationality,
-            football_nation,
             birth_country,
+            avatar_path,
             reputation,
             satisfaction,
             fan_approval,
@@ -224,7 +224,6 @@ mod tests {
         assert_eq!(loaded.reputation, 750);
         assert_eq!(loaded.satisfaction, 100);
         assert_eq!(loaded.fan_approval, 50);
-        assert_eq!(loaded.football_nation, "GB");
         assert_eq!(loaded.birth_country, None);
     }
 
