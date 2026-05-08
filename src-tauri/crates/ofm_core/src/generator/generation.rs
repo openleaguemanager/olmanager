@@ -51,7 +51,7 @@ fn compute_alternate_role(primary: &LolRole, attrs: &PlayerAttributes) -> Option
         }
         LolRole::Support => {
             // Support with good defending can play Top
-            if attrs.defending >= 65 && attrs.tackling >= 60 {
+            if attrs.positional_defense >= 65 && attrs.interception >= 60 {
                 Some(LolRole::Top)
             } else {
                 None
@@ -187,15 +187,15 @@ pub(super) fn generate_random_player_from_def(
     let is_jungle = matches!(role, LolRole::Jungle);
 
     let attributes = PlayerAttributes {
-        pace: rng.random_range(40..95),
+        reaction_speed: rng.random_range(40..95),
         mental_resilience: rng.random_range(40..95),
-        strength: if is_support {
+        durability: if is_support {
             rng.random_range(50..90)
         } else {
             rng.random_range(40..95)
         },
         champion_pool: rng.random_range(40..95),
-        passing: if is_support {
+        coordination: if is_support {
             rng.random_range(55..95)
         } else {
             rng.random_range(40..95)
@@ -205,7 +205,7 @@ pub(super) fn generate_random_player_from_def(
         } else {
             rng.random_range(40..95)
         },
-        tackling: if is_support {
+        interception: if is_support {
             rng.random_range(45..85)
         } else {
             rng.random_range(40..95)
@@ -215,7 +215,7 @@ pub(super) fn generate_random_player_from_def(
         } else {
             rng.random_range(40..95)
         },
-        defending: if is_support || is_jungle {
+        positional_defense: if is_support || is_jungle {
             rng.random_range(45..85)
         } else {
             rng.random_range(40..95)
@@ -247,19 +247,16 @@ pub(super) fn generate_random_player_from_def(
             rng.random_range(45..95)
         },
         shotcalling: rng.random_range(30..90),
-        handling: rng.random_range(10..35),
-        reflexes: rng.random_range(20..50),
-        aerial: rng.random_range(30..75),
     };
 
-    let ovr = (attributes.pace as u32
+    let ovr = (attributes.reaction_speed as u32
         + attributes.mental_resilience as u32
-        + attributes.strength as u32
-        + attributes.passing as u32
+        + attributes.durability as u32
+        + attributes.coordination as u32
         + attributes.laning as u32
-        + attributes.tackling as u32
+        + attributes.interception as u32
         + attributes.mechanics as u32
-        + attributes.defending as u32
+        + attributes.positional_defense as u32
         + attributes.positioning as u32
         + attributes.macro_play as u32
         + attributes.consistency as u32)

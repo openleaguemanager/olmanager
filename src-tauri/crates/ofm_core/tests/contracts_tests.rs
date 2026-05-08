@@ -13,15 +13,15 @@ use ofm_core::game::Game;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 60,
+        reaction_speed: 60,
         mental_resilience: 60,
-        strength: 60,
+        durability: 60,
         champion_pool: 60,
-        passing: 60,
+        coordination: 60,
         laning: 60,
-        tackling: 60,
+        interception: 60,
         mechanics: 60,
-        defending: 60,
+        positional_defense: 60,
         positioning: 60,
         macro_play: 60,
         consistency: 60,
@@ -29,9 +29,6 @@ fn default_attrs() -> PlayerAttributes {
         aggression: 60,
         teamfighting: 60,
         shotcalling: 60,
-        handling: 30,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
@@ -193,14 +190,14 @@ fn high_value_star_expects_more_than_fringe_player() {
     let mut star = make_player();
     star.contract_end = Some("2028-08-01".to_string());
     star.market_value = 2_500_000;
-    star.attributes.pace = 88;
+    star.attributes.reaction_speed = 88;
     star.attributes.laning = 90;
     star.attributes.mechanics = 87;
 
     let mut fringe = make_player();
     fringe.contract_end = Some("2028-08-01".to_string());
     fringe.market_value = 80_000;
-    fringe.attributes.pace = 50;
+    fringe.attributes.reaction_speed = 50;
     fringe.attributes.laning = 48;
     fringe.attributes.mechanics = 49;
 

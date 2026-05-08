@@ -463,15 +463,15 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 70,
+            reaction_speed: 70,
             mental_resilience: 70,
-            strength: 65,
+            durability: 65,
             champion_pool: 68,
-            passing: 66,
+            coordination: 66,
             laning: 72,
-            tackling: 40,
+            interception: 40,
             mechanics: 69,
-            defending: 38,
+            positional_defense: 38,
             positioning: 64,
             macro_play: 65,
             consistency: 67,
@@ -479,9 +479,6 @@ mod tests {
             aggression: 50,
             teamfighting: 64,
             shotcalling: 52,
-            handling: 20,
-            reflexes: 20,
-            aerial: 45,
         }
     }
 

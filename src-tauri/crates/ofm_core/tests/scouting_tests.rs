@@ -15,15 +15,15 @@ use ofm_core::scouting::{process_scouting, scout_max_assignments, send_scout};
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 70,
+        reaction_speed: 70,
         mental_resilience: 65,
-        strength: 60,
+        durability: 60,
         champion_pool: 68,
-        passing: 72,
+        coordination: 72,
         laning: 66,
-        tackling: 58,
+        interception: 58,
         mechanics: 74,
-        defending: 55,
+        positional_defense: 55,
         positioning: 62,
         macro_play: 70,
         consistency: 64,
@@ -31,9 +31,6 @@ fn default_attrs() -> PlayerAttributes {
         aggression: 50,
         teamfighting: 66,
         shotcalling: 55,
-        handling: 30,
-        reflexes: 30,
-        aerial: 58,
     }
 }
 

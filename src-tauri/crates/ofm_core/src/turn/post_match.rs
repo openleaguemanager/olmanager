@@ -603,8 +603,8 @@ fn apply_lol_profile_progression(
             clamp_attr_range(i16::from(player.attributes.discipline) + d_composure);
         player.attributes.shotcalling =
             clamp_attr_range(i16::from(player.attributes.shotcalling) + d_leadership);
-        player.attributes.passing =
-            clamp_attr_range(i16::from(player.attributes.passing) + d_passing);
+        player.attributes.coordination =
+            clamp_attr_range(i16::from(player.attributes.coordination) + d_passing);
     }
 }
 

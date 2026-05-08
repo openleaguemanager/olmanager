@@ -21,15 +21,15 @@ use std::collections::HashMap;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 60,
+        reaction_speed: 60,
         mental_resilience: 60,
-        strength: 60,
+        durability: 60,
         champion_pool: 60,
-        passing: 60,
+        coordination: 60,
         laning: 60,
-        tackling: 60,
+        interception: 60,
         mechanics: 60,
-        defending: 60,
+        positional_defense: 60,
         positioning: 60,
         macro_play: 60,
         consistency: 60,
@@ -37,23 +37,20 @@ fn default_attrs() -> PlayerAttributes {
         aggression: 60,
         teamfighting: 60,
         shotcalling: 60,
-        handling: 30,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
 fn gk_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 40,
+        reaction_speed: 40,
         mental_resilience: 50,
-        strength: 60,
+        durability: 60,
         champion_pool: 70,
-        passing: 40,
+        coordination: 40,
         laning: 20,
-        tackling: 20,
+        interception: 20,
         mechanics: 20,
-        defending: 30,
+        positional_defense: 30,
         positioning: 70,
         macro_play: 50,
         consistency: 60,
@@ -61,9 +58,6 @@ fn gk_attrs() -> PlayerAttributes {
         aggression: 30,
         teamfighting: 60,
         shotcalling: 50,
-        handling: 80,
-        reflexes: 80,
-        aerial: 70,
     }
 }
 
@@ -1476,14 +1470,14 @@ fn set_team_overall(game: &mut Game, team_id: &str, overall: u8) {
 }
 
 fn set_player_overall(player: &mut Player, overall: u8) {
-    player.attributes.pace = overall;
+    player.attributes.reaction_speed = overall;
     player.attributes.mental_resilience = overall;
-    player.attributes.strength = overall;
-    player.attributes.passing = overall;
+    player.attributes.durability = overall;
+    player.attributes.coordination = overall;
     player.attributes.laning = overall;
-    player.attributes.tackling = overall;
+    player.attributes.interception = overall;
     player.attributes.mechanics = overall;
-    player.attributes.defending = overall;
+    player.attributes.positional_defense = overall;
     player.attributes.positioning = overall;
     player.attributes.macro_play = overall;
     player.attributes.consistency = overall;

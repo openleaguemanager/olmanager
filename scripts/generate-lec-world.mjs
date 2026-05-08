@@ -117,15 +117,15 @@ function sanitizeText(value) {
 
 function attrsFor(position) {
   const base = {
-    pace: 68,
+    reaction_speed: 68,
     stamina: 72,
-    strength: 66,
+    durability: 66,
     agility: 67,
-    passing: 67,
+    coordination: 67,
     shooting: 64,
-    tackling: 64,
+    interception: 64,
     dribbling: 66,
-    defending: 64,
+    positional_defense: 64,
     positioning: 67,
     vision: 67,
     decisions: 68,
@@ -133,33 +133,26 @@ function attrsFor(position) {
     aggression: 58,
     teamwork: 74,
     leadership: 62,
-    handling: 20,
-    reflexes: 20,
-    aerial: 55,
   };
 
   if (position === "Goalkeeper") {
     return {
       ...base,
-      pace: 45,
+      reaction_speed: 45,
       agility: 58,
-      passing: 55,
+      coordination: 55,
       shooting: 30,
-      tackling: 35,
+      interception: 35,
       dribbling: 44,
-      defending: 58,
-      handling: 74,
-      reflexes: 76,
-      aerial: 74,
+      positional_defense: 58,
     };
   }
   if (position === "Defender") {
     return {
       ...base,
-      strength: 72,
-      tackling: 73,
-      defending: 74,
-      aerial: 68,
+      durability: 72,
+      interception: 73,
+      positional_defense: 74,
       shooting: 45,
     };
   }
@@ -170,22 +163,22 @@ function attrsFor(position) {
   ) {
     return {
       ...base,
-      passing: 74,
+      coordination: 74,
       vision: 73,
       decisions: 72,
       dribbling: 70,
       shooting: position === "AttackingMidfielder" ? 70 : 62,
-      tackling: position === "DefensiveMidfielder" ? 70 : 60,
+      interception: position === "DefensiveMidfielder" ? 70 : 60,
     };
   }
   return {
     ...base,
-    pace: 73,
+    reaction_speed: 73,
     shooting: 75,
     dribbling: 72,
     positioning: 71,
-    tackling: 48,
-    defending: 45,
+    interception: 48,
+    positional_defense: 45,
   };
 }
 
@@ -196,7 +189,6 @@ function applyRatingToAttrs(attrs, rating) {
   const keys = Object.keys(output);
 
   for (const key of keys) {
-    if (key === "handling" || key === "reflexes") continue;
     output[key] = Math.max(25, Math.min(95, output[key] + delta));
   }
 

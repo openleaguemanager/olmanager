@@ -519,12 +519,12 @@ pub fn set_formation(state: State<'_, StateManager>, formation: String) -> Resul
             .iter()
             .find(|p| p.id == *b_id)
             .expect("set_formation: player should exist in game state");
-        let def_a = pa.attributes.defending as u16
-            + pa.attributes.tackling as u16
-            + pa.attributes.strength as u16;
-        let def_b = pb.attributes.defending as u16
-            + pb.attributes.tackling as u16
-            + pb.attributes.strength as u16;
+        let def_a = pa.attributes.positional_defense as u16
+            + pa.attributes.interception as u16
+            + pa.attributes.durability as u16;
+        let def_b = pb.attributes.positional_defense as u16
+            + pb.attributes.interception as u16
+            + pb.attributes.durability as u16;
         def_b.cmp(&def_a)
     });
 
@@ -1934,15 +1934,15 @@ mod tests {
 
     fn attrs(stat: u8) -> PlayerAttributes {
         PlayerAttributes {
-            pace: stat,
+            reaction_speed: stat,
             mental_resilience: stat,
-            strength: stat,
+            durability: stat,
             champion_pool: stat,
-            passing: stat,
+            coordination: stat,
             laning: stat,
-            tackling: stat,
+            interception: stat,
             mechanics: stat,
-            defending: stat,
+            positional_defense: stat,
             positioning: stat,
             macro_play: stat,
             consistency: stat,
@@ -1950,9 +1950,6 @@ mod tests {
             aggression: stat,
             teamfighting: stat,
             shotcalling: stat,
-            handling: stat,
-            reflexes: stat,
-            aerial: stat,
         }
     }
 

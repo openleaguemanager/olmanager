@@ -246,15 +246,15 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
         alternate_positions: serde_json::from_str(&alt_positions_json).unwrap_or_default(),
         weak_foot,
         attributes: serde_json::from_str(&attrs_json).unwrap_or(PlayerAttributes {
-            pace: 50,
+            reaction_speed: 50,
             mental_resilience: 50,
-            strength: 50,
+            durability: 50,
             champion_pool: 50,
-            passing: 50,
+            coordination: 50,
             laning: 50,
-            tackling: 50,
+            interception: 50,
             mechanics: 50,
-            defending: 50,
+            positional_defense: 50,
             positioning: 50,
             macro_play: 50,
             consistency: 50,
@@ -262,9 +262,6 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
             aggression: 50,
             teamfighting: 50,
             shotcalling: 50,
-            handling: 50,
-            reflexes: 50,
-            aerial: 50,
         }),
         condition: row.get(8)?,
         morale: row.get(9)?,
@@ -310,15 +307,15 @@ mod tests {
             "GB".to_string(),
             domain::stats::LolRole::Mid,
             PlayerAttributes {
-                pace: 70,
+                reaction_speed: 70,
                 mental_resilience: 75,
-                strength: 65,
+                durability: 65,
                 champion_pool: 72,
-                passing: 80,
+                coordination: 80,
                 laning: 60,
-                tackling: 55,
+                interception: 55,
                 mechanics: 68,
-                defending: 50,
+                positional_defense: 50,
                 positioning: 65,
                 macro_play: 78,
                 consistency: 70,
@@ -326,9 +323,6 @@ mod tests {
                 aggression: 55,
                 teamfighting: 80,
                 shotcalling: 45,
-                handling: 20,
-                reflexes: 25,
-                aerial: 40,
             },
         );
         p.team_id = team_id.map(|s| s.to_string());
@@ -438,8 +432,8 @@ mod tests {
         upsert_player(db.conn(), &player).unwrap();
         let loaded = load_all_players(db.conn()).unwrap();
 
-        assert_eq!(loaded[0].attributes.pace, 70);
-        assert_eq!(loaded[0].attributes.passing, 80);
+        assert_eq!(loaded[0].attributes.reaction_speed, 70);
+        assert_eq!(loaded[0].attributes.coordination, 80);
         assert_eq!(loaded[0].attributes.macro_play, 78);
     }
 

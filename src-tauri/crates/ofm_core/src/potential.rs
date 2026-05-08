@@ -233,15 +233,15 @@ mod tests {
 
     fn attrs(stat: u8) -> PlayerAttributes {
         PlayerAttributes {
-            pace: stat,
+            reaction_speed: stat,
             mental_resilience: stat,
-            strength: stat,
+            durability: stat,
             champion_pool: stat,
-            passing: stat,
+            coordination: stat,
             laning: stat,
-            tackling: stat,
+            interception: stat,
             mechanics: stat,
-            defending: stat,
+            positional_defense: stat,
             positioning: stat,
             macro_play: stat,
             consistency: stat,
@@ -249,9 +249,6 @@ mod tests {
             aggression: stat,
             teamfighting: stat,
             shotcalling: stat,
-            handling: stat,
-            reflexes: stat,
-            aerial: stat,
         }
     }
 

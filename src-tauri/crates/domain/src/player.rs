@@ -106,21 +106,26 @@ pub enum Footedness {
 #[cfg_attr(feature = "typescript", ts(export))]
 pub struct PlayerAttributes {
     // Physical
-    pub pace: u8,
+    #[serde(alias = "pace")]
+    pub reaction_speed: u8,
     #[serde(alias = "stamina")]
     pub mental_resilience: u8,
-    pub strength: u8,
+    #[serde(alias = "strength")]
+    pub durability: u8,
     #[serde(default = "default_attr", alias = "agility")]
     pub champion_pool: u8,
 
     // Technical
-    pub passing: u8,
+    #[serde(alias = "passing")]
+    pub coordination: u8,
     #[serde(alias = "shooting")]
     pub laning: u8,
-    pub tackling: u8,
+    #[serde(alias = "tackling")]
+    pub interception: u8,
     #[serde(alias = "dribbling")]
     pub mechanics: u8,
-    pub defending: u8,
+    #[serde(alias = "defending")]
+    pub positional_defense: u8,
 
     // Mental
     pub positioning: u8,
@@ -136,14 +141,6 @@ pub struct PlayerAttributes {
     pub teamfighting: u8,
     #[serde(default = "default_attr", alias = "leadership")]
     pub shotcalling: u8,
-
-    // legacy — goalkeeper attributes (handling, reflexes, aerial)
-    #[serde(default = "default_attr")]
-    pub handling: u8,
-    #[serde(default = "default_attr")]
-    pub reflexes: u8,
-    #[serde(default = "default_attr")]
-    pub aerial: u8,
 }
 
 fn default_attr() -> u8 {
@@ -425,10 +422,10 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     let mut traits = Vec::new();
 
     // Mechanics
-    if attrs.pace >= 85 {
+    if attrs.reaction_speed >= 85 {
         traits.push(PlayerTrait::LightningQuick);
     }
-    if attrs.strength >= 85 && attrs.mental_resilience >= 75 {
+    if attrs.durability >= 85 && attrs.mental_resilience >= 75 {
         traits.push(PlayerTrait::Immovable);
     }
     if attrs.champion_pool >= 85 {
@@ -439,7 +436,7 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     }
 
     // Game Knowledge
-    if attrs.passing >= 80 && attrs.macro_play >= 80 {
+    if attrs.coordination >= 80 && attrs.macro_play >= 80 {
         traits.push(PlayerTrait::GameManager);
     }
     if attrs.laning >= 85 {
@@ -448,10 +445,10 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     if attrs.mechanics >= 85 {
         traits.push(PlayerTrait::KiteMaster);
     }
-    if attrs.tackling >= 80 && attrs.aggression >= 70 {
+    if attrs.interception >= 80 && attrs.aggression >= 70 {
         traits.push(PlayerTrait::Interceptor);
     }
-    if attrs.defending >= 85 && attrs.positioning >= 75 {
+    if attrs.positional_defense >= 85 && attrs.positioning >= 75 {
         traits.push(PlayerTrait::Sentinel);
     }
 
@@ -473,13 +470,13 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     }
 
     // Special — purely attribute-based
-    if attrs.laning >= 75 && attrs.mechanics >= 75 && attrs.pace >= 70 && attrs.strength >= 70 {
+    if attrs.laning >= 75 && attrs.mechanics >= 75 && attrs.reaction_speed >= 70 && attrs.durability >= 70 {
         traits.push(PlayerTrait::HyperCarry);
     }
-    if attrs.mental_resilience >= 85 && attrs.pace >= 70 && attrs.teamfighting >= 75 {
+    if attrs.mental_resilience >= 85 && attrs.reaction_speed >= 70 && attrs.teamfighting >= 75 {
         traits.push(PlayerTrait::Workhorse);
     }
-    if attrs.passing >= 80 && attrs.laning >= 75 && attrs.macro_play >= 75 {
+    if attrs.coordination >= 80 && attrs.laning >= 75 && attrs.macro_play >= 75 {
         traits.push(PlayerTrait::MacroSpecialist);
     }
 
@@ -544,15 +541,15 @@ mod tests {
 
     fn sample_attributes() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 70,
+            reaction_speed: 70,
             mental_resilience: 72,
-            strength: 65,
+            durability: 65,
             champion_pool: 68,
-            passing: 74,
+            coordination: 74,
             laning: 61,
-            tackling: 58,
+            interception: 58,
             mechanics: 69,
-            defending: 56,
+            positional_defense: 56,
             positioning: 67,
             macro_play: 73,
             consistency: 71,
@@ -560,9 +557,6 @@ mod tests {
             aggression: 54,
             teamfighting: 76,
             shotcalling: 49,
-            handling: 20,
-            reflexes: 24,
-            aerial: 44,
         }
     }
 

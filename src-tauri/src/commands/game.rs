@@ -1568,15 +1568,15 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
+            reaction_speed: 60,
             mental_resilience: 60,
-            strength: 60,
+            durability: 60,
             champion_pool: 60,
-            passing: 60,
+            coordination: 60,
             laning: 60,
-            tackling: 60,
+            interception: 60,
             mechanics: 60,
-            defending: 60,
+            positional_defense: 60,
             positioning: 60,
             macro_play: 60,
             consistency: 60,
@@ -1584,9 +1584,6 @@ mod tests {
             aggression: 60,
             teamfighting: 60,
             shotcalling: 60,
-            handling: 60,
-            reflexes: 60,
-            aerial: 60,
         }
     }
 
@@ -1708,22 +1705,22 @@ fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
 
     let role_key = normalize_seed_name(seed.role.as_deref().unwrap_or(""));
 
-    let defending = if role_key == "top" || role_key == "support" {
+    let positional_defense = if role_key == "top" || role_key == "support" {
         clamp_stat(((i16::from(teamfighting) + i16::from(discipline)) / 2) + 4)
     } else {
         clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2)
     };
 
     PlayerAttributes {
-        pace: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
+        reaction_speed: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
         mental_resilience: mental_resilience,
-        strength: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
+        durability: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
         champion_pool: champion_pool,
-        passing: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
+        coordination: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
         laning: laning,
-        tackling: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
+        interception: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
         mechanics: mechanics,
-        defending,
+        positional_defense,
         positioning: clamp_stat((i16::from(macro_play) + i16::from(consistency)) / 2),
         macro_play: macro_play,
         consistency: consistency,
@@ -1731,15 +1728,6 @@ fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
         aggression: clamp_stat((i16::from(teamfighting) + i16::from(mental_resilience)) / 2 - 4),
         teamfighting: teamfighting,
         shotcalling: shotcalling,
-        handling: 20,
-        reflexes: 22,
-        aerial: if role_key == "top" {
-            68
-        } else if role_key == "support" {
-            64
-        } else {
-            52
-        },
     }
 }
 

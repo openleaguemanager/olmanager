@@ -165,14 +165,14 @@ pub fn auto_select_team_roles(
         .max_by_key(|p| (p.attributes.shotcalling as u16) + (p.attributes.teamfighting as u16))
         .map(|p| p.id.clone());
 
-    // Shotcaller: highest shooting + vision + passing (exclude Support)
+    // Shotcaller: highest laning + macro_play + coordination (exclude Support)
     let shotcaller = players
         .iter()
         .filter(|p| p.position != DomainLolRole::Support)
         .max_by_key(|p| {
             (p.attributes.laning as u16)
                 + (p.attributes.macro_play as u16)
-                + (p.attributes.passing as u16)
+                + (p.attributes.coordination as u16)
         })
         .map(|p| p.id.clone());
 

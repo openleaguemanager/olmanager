@@ -189,15 +189,15 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
+            reaction_speed: 60,
             mental_resilience: 60,
-            strength: 60,
+            durability: 60,
             champion_pool: 60,
-            passing: 60,
+            coordination: 60,
             laning: 60,
-            tackling: 60,
+            interception: 60,
             mechanics: 60,
-            defending: 60,
+            positional_defense: 60,
             positioning: 60,
             macro_play: 60,
             consistency: 60,
@@ -205,9 +205,6 @@ mod tests {
             aggression: 60,
             teamfighting: 60,
             shotcalling: 60,
-            handling: 60,
-            reflexes: 60,
-            aerial: 60,
         }
     }
 
@@ -519,7 +516,7 @@ mod tests {
             .unwrap();
         first_key_player.contract_end = Some("2025-07-15".to_string());
         first_key_player.wage = 35_000;
-        first_key_player.attributes.pace = 92;
+        first_key_player.attributes.reaction_speed = 92;
         first_key_player.attributes.laning = 94;
         first_key_player.attributes.mechanics = 90;
 
@@ -530,7 +527,7 @@ mod tests {
             .unwrap();
         second_key_player.contract_end = Some("2025-07-15".to_string());
         second_key_player.wage = 25_000;
-        second_key_player.attributes.pace = 90;
+        second_key_player.attributes.reaction_speed = 90;
         second_key_player.attributes.laning = 91;
         second_key_player.attributes.mechanics = 89;
 

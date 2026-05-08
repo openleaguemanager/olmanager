@@ -162,15 +162,15 @@ mod tests {
 
     fn make_player(role: LolRole) -> Player {
         let attrs = PlayerAttributes {
-            pace: 70,
+            reaction_speed: 70,
             mental_resilience: 75,
-            strength: 65,
+            durability: 65,
             champion_pool: 72,
-            passing: 80,
+            coordination: 80,
             laning: 60,
-            tackling: 55,
+            interception: 55,
             mechanics: 68,
-            defending: 50,
+            positional_defense: 50,
             positioning: 65,
             macro_play: 78,
             consistency: 70,
@@ -178,9 +178,6 @@ mod tests {
             aggression: 55,
             teamfighting: 80,
             shotcalling: 45,
-            handling: 20,
-            reflexes: 25,
-            aerial: 40,
         };
         Player::new(
             "test-1".to_string(),

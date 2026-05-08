@@ -37,15 +37,15 @@ function roleBonus(player: PlayerData): number {
   const a = player.attributes;
   switch (lolRoleFromPlayer(player)) {
     case "top":
-      return avg(a.strength, a.defending, a.positioning) * 0.08;
+      return avg(a.durability, a.positional_defense, a.positioning) * 0.08;
     case "jungle":
-      return avg(a.macro_play, a.consistency, a.passing) * 0.08;
+      return avg(a.macro_play, a.consistency, a.coordination) * 0.08;
     case "mid":
       return avg(a.mechanics, a.laning, a.consistency) * 0.08;
     case "bottom":
-      return avg(a.laning, a.pace, a.positioning) * 0.08;
+      return avg(a.laning, a.reaction_speed, a.positioning) * 0.08;
     case "support":
-      return avg(a.passing, a.macro_play, a.teamfighting) * 0.08;
+      return avg(a.coordination, a.macro_play, a.teamfighting) * 0.08;
     default:
       return 0;
   }
@@ -54,9 +54,9 @@ function roleBonus(player: PlayerData): number {
 function lolPlayerOvr(player: PlayerData): number {
   const a = player.attributes;
 
-  const mechanics = avg(a.mechanics, a.champion_pool, a.pace, a.discipline);
-  const macro = avg(a.macro_play, a.consistency, a.positioning, a.passing);
-  const teamfight = avg(a.teamfighting, a.mental_resilience, a.discipline, a.strength);
+  const mechanics = avg(a.mechanics, a.champion_pool, a.reaction_speed, a.discipline);
+  const macro = avg(a.macro_play, a.consistency, a.positioning, a.coordination);
+  const teamfight = avg(a.teamfighting, a.mental_resilience, a.discipline, a.durability);
   const consistency = avg(a.consistency, a.macro_play, a.positioning, a.discipline);
 
   const weighted =

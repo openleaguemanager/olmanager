@@ -169,14 +169,14 @@ pub fn check_player_events(game: &mut Game) {
                 }
 
                 let attrs = &player.attributes;
-                let ovr = (attrs.pace as u16
+                let ovr = (attrs.reaction_speed as u16
                     + attrs.mental_resilience as u16
-                    + attrs.strength as u16
-                    + attrs.passing as u16
+                    + attrs.durability as u16
+                    + attrs.coordination as u16
                     + attrs.laning as u16
-                    + attrs.tackling as u16
+                    + attrs.interception as u16
                     + attrs.mechanics as u16
-                    + attrs.defending as u16
+                    + attrs.positional_defense as u16
                     + attrs.positioning as u16
                     + attrs.macro_play as u16
                     + attrs.consistency as u16)

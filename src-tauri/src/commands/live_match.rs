@@ -447,15 +447,15 @@ mod tests {
         let is_goalkeeper = matches!(position, Position::Goalkeeper);
 
         PlayerAttributes {
-            pace: 65,
+            reaction_speed: 65,
             mental_resilience: 65,
-            strength: 65,
+            durability: 65,
             champion_pool: 65,
-            passing: 65,
+            coordination: 65,
             laning: if is_goalkeeper { 30 } else { 65 },
-            tackling: if is_goalkeeper { 30 } else { 65 },
+            interception: if is_goalkeeper { 30 } else { 65 },
             mechanics: if is_goalkeeper { 30 } else { 65 },
-            defending: if is_goalkeeper { 30 } else { 65 },
+            positional_defense: if is_goalkeeper { 30 } else { 65 },
             positioning: 65,
             macro_play: 65,
             consistency: 65,
@@ -463,9 +463,6 @@ mod tests {
             aggression: 50,
             teamfighting: 65,
             shotcalling: 50,
-            handling: if is_goalkeeper { 75 } else { 20 },
-            reflexes: if is_goalkeeper { 75 } else { 20 },
-            aerial: 60,
         }
     }
 
