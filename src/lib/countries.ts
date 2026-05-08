@@ -24,7 +24,7 @@ countries.registerLocale(itLocale);
 export type SupportedLocale = "en" | "es" | "pt" | "fr" | "de" | "it";
 export const SUPPORTED_LOCALES: SupportedLocale[] = ["en", "es", "pt", "fr", "de", "it"];
 
-interface FootballIdentityDefinition {
+interface LegacyNationalIdentityDefinition {
   code: string;
   names: Record<SupportedLocale, string>;
   aliases: string[];
@@ -32,7 +32,7 @@ interface FootballIdentityDefinition {
   selectable?: boolean;
 }
 
-const FOOTBALL_IDENTITIES: Record<string, FootballIdentityDefinition> = {
+const LEGACY_NATIONAL_IDENTITIES: Record<string, LegacyNationalIdentityDefinition> = {
   ENG: {
     code: "ENG",
     names: {
@@ -101,7 +101,7 @@ const FOOTBALL_IDENTITIES: Record<string, FootballIdentityDefinition> = {
   },
 };
 
-const ALIAS_TO_CODE = Object.values(FOOTBALL_IDENTITIES).reduce<Record<string, string>>(
+const ALIAS_TO_CODE = Object.values(LEGACY_NATIONAL_IDENTITIES).reduce<Record<string, string>>(
   (map, identity) => {
     for (const alias of identity.aliases) {
       map[alias] = identity.code;
@@ -122,8 +122,8 @@ function getBaseLocale(locale: string): string {
   return locale.split('-')[0].toLowerCase();
 }
 
-function getFootballIdentity(code: string): FootballIdentityDefinition | undefined {
-  return FOOTBALL_IDENTITIES[code.toUpperCase()];
+function getFootballIdentity(code: string): LegacyNationalIdentityDefinition | undefined {
+  return LEGACY_NATIONAL_IDENTITIES[code.toUpperCase()];
 }
 
 function getFootballIdentityName(code: string, locale: string): string | null {
@@ -181,17 +181,17 @@ export function allCountries(locale = "en"): { code: string; name: string }[] {
  * This excludes legacy GB while surfacing the UK football nations explicitly.
  */
 export function allNationalities(locale = "en"): { code: string; name: string }[] {
-  const footballCodes = new Set(
-    Object.values(FOOTBALL_IDENTITIES)
+  const legacyCodes = new Set(
+    Object.values(LEGACY_NATIONAL_IDENTITIES)
       .filter((identity) => identity.selectable)
       .map((identity) => identity.code),
   );
 
   const isoNationalities = allCountries(locale)
-    .filter(({ code }) => code !== "GB" && !footballCodes.has(code))
+    .filter(({ code }) => code !== "GB" && !legacyCodes.has(code))
     .map(({ code }) => ({ code, name: countryName(code, locale) }));
 
-  const footballNationalities = Object.values(FOOTBALL_IDENTITIES)
+  const footballNationalities = Object.values(LEGACY_NATIONAL_IDENTITIES)
     .filter((identity) => identity.selectable)
     .map((identity) => ({
       code: identity.code,

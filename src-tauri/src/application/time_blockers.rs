@@ -45,7 +45,6 @@ fn should_notify_contract_risk_30d(
 fn build_effective_healthy_lineup_ids(
     saved_lineup_ids: &[String],
     roster: &[&domain::player::Player],
-    formation: &str,
 ) -> Vec<String> {
     let healthy_roster: Vec<&domain::player::Player> = roster
         .iter()
@@ -76,7 +75,7 @@ fn build_effective_healthy_lineup_ids(
             .unwrap_or(std::cmp::Ordering::Equal)
     });
 
-    let slots = formation_slots(formation);
+    let slots = formation_slots();
 
     if valid_saved_ids.len() >= 8 {
         let mut xi_ids = valid_saved_ids;
@@ -445,7 +444,7 @@ pub fn compute_blocking_actions(game: &Game) -> Vec<serde_json::Value> {
     let saved_xi_ids = &team.active_lineup_ids;
     let current_date = game.clock.current_date.date_naive();
     let effective_healthy_xi_ids =
-        build_effective_healthy_lineup_ids(saved_xi_ids, &roster, &team.formation);
+        build_effective_healthy_lineup_ids(saved_xi_ids, &roster);
 
     if let Some(blocker) = injured_lineup_blocker(saved_xi_ids, &roster) {
         blockers.push(blocker);

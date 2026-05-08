@@ -1,6 +1,6 @@
 use domain::team::{
-    AcademyMetadata, Facilities, LolTactics, PlayStyle, Team, TeamColors, TeamKind, TrainingFocus,
-    TrainingIntensity, TrainingSchedule,
+    AcademyMetadata, DraftStrategy, Facilities, LolTactics, Team, TeamColors, TeamKind,
+    TrainingFocus, TrainingIntensity, TrainingSchedule,
 };
 use rusqlite::{Connection, params};
 
@@ -31,7 +31,10 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
         .facilities
         .to_persisted_json_string()
         .map_err(|e| format!("JSON error: {}", e))?;
-    let play_style_str = format!("{:?}", t.play_style);
+    let draft_strategy_str = match serde_json::to_value(&t.draft_strategy) {
+        Ok(serde_json::Value::String(s)) => s,
+        _ => format!("{:?}", t.draft_strategy),
+    };
     let training_focus_str = t.training_focus.as_id().to_string();
     let training_intensity_str = format!("{:?}", t.training_intensity);
     let training_schedule_str = format!("{:?}", t.training_schedule);
@@ -48,15 +51,15 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
         .map_err(|e| format!("JSON error: {}", e))?;
 
     conn.execute(
-        "INSERT OR REPLACE INTO teams
-         (id, name, short_name, country, city, stadium_name, stadium_capacity,
-           finance, manager_id, reputation, wage_budget, transfer_budget,
-          season_income, season_expenses, formation, play_style,
+         "INSERT OR REPLACE INTO teams
+          (id, name, short_name, country, city, stadium_name, stadium_capacity,
+            finance, manager_id, reputation, wage_budget, transfer_budget,
+           season_income, season_expenses, draft_strategy,
           training_focus, training_intensity, training_schedule,
           founded_year, colors_primary, colors_secondary,
           starting_xi_ids, team_roles, form, history, training_groups, weekly_scrim_opponent_ids, weekly_scrim_plan_team_ids, scrim_weekly_objective, scrim_weekly_slots, scrim_setup_locked_week_key, scrim_reputation, scrim_weekly_cancellations, scrim_loss_streak, scrim_weekly_played, scrim_weekly_wins, scrim_weekly_losses, scrim_slot_results, scrim_reports, financial_ledger, sponsorship, facilities,
             team_kind, parent_team_id, academy_team_id, academy_metadata)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35, ?36, ?37, ?38, ?39, ?40, ?41, ?42, ?43, ?44, ?45, ?46, ?47)",
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35, ?36, ?37, ?38, ?39, ?40, ?41, ?42, ?43, ?44, ?45, ?46)",
         params![
             t.id,
             t.name,
@@ -72,8 +75,7 @@ pub fn upsert_team(conn: &Connection, t: &Team) -> Result<(), String> {
             t.transfer_budget,
             t.season_income,
             t.season_expenses,
-            t.formation,
-            play_style_str,
+            draft_strategy_str,
             training_focus_str,
             training_intensity_str,
             training_schedule_str,
@@ -119,14 +121,14 @@ pub fn upsert_teams(conn: &Connection, teams: &[Team]) -> Result<(), String> {
     Ok(())
 }
 
-fn parse_play_style(s: &str) -> PlayStyle {
+fn parse_draft_strategy(s: &str) -> DraftStrategy {
     match s {
-        "Attacking" => PlayStyle::Attacking,
-        "Defensive" => PlayStyle::Defensive,
-        "Possession" => PlayStyle::Possession,
-        "Counter" => PlayStyle::Counter,
-        "HighPress" => PlayStyle::HighPress,
-        _ => PlayStyle::Balanced,
+        "Aggressive" | "Attacking" | "HighPress" => DraftStrategy::Aggressive,
+        "Passive" | "Defensive" => DraftStrategy::Passive,
+        "Scaling" | "Possession" => DraftStrategy::Scaling,
+        "CounterPick" | "Counter" => DraftStrategy::CounterPick,
+        "PriorityBans" => DraftStrategy::PriorityBans,
+        _ => DraftStrategy::Balanced,
     }
 }
 
@@ -195,7 +197,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
     let financial_ledger_json: String = row.get("financial_ledger")?;
     let sponsorship_json: String = row.get("sponsorship")?;
     let facilities_json: String = row.get("facilities")?;
-    let play_style_str: String = row.get("play_style")?;
+    let draft_strategy_str: String = row.get("draft_strategy")?;
     let training_focus_str: String = row.get("training_focus")?;
     let training_intensity_str: String = row.get("training_intensity")?;
     let training_schedule_str: String = row.get("training_schedule")?;
@@ -219,8 +221,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
         transfer_budget: row.get(11)?,
         season_income: row.get(12)?,
         season_expenses: row.get(13)?,
-        formation: row.get(14)?,
-        play_style: parse_play_style(&play_style_str),
+        draft_strategy: parse_draft_strategy(&draft_strategy_str),
         lol_tactics: LolTactics::default(),
         training_focus: parse_training_focus(&training_focus_str),
         training_intensity: parse_training_intensity(&training_intensity_str),
@@ -247,7 +248,7 @@ fn row_to_team(row: &rusqlite::Row) -> rusqlite::Result<Team> {
             .as_deref()
             .map(|s| serde_json::from_str(s).unwrap_or_default())
             .unwrap_or_default(),
-        founded_year: row.get(19)?,
+        founded_year: row.get(18)?,
         colors: TeamColors {
             primary: row.get("colors_primary")?,
             secondary: row.get("colors_secondary")?,
@@ -274,7 +275,7 @@ pub fn load_all_teams(conn: &Connection) -> Result<Vec<Team>, String> {
     log::info!("[team_repo] load_all_teams: preparing query...");
     let query = "SELECT id, name, short_name, country, city, stadium_name, stadium_capacity,
                     finance, manager_id, reputation, wage_budget, transfer_budget,
-                    season_income, season_expenses, formation, play_style,
+                    season_income, season_expenses, draft_strategy,
                     training_focus, training_intensity, training_schedule,
                     founded_year, colors_primary, colors_secondary,
                     starting_xi_ids, team_roles, form, history, training_groups, weekly_scrim_opponent_ids, weekly_scrim_plan_team_ids, scrim_weekly_objective, scrim_weekly_slots, scrim_setup_locked_week_key, scrim_reputation, scrim_weekly_cancellations, scrim_loss_streak, scrim_weekly_played, scrim_weekly_wins, scrim_weekly_losses, scrim_slot_results, scrim_reports, financial_ledger, sponsorship, facilities,
@@ -364,9 +365,9 @@ pub fn load_all_teams(conn: &Connection) -> Result<Vec<Team>, String> {
 pub fn load_team(conn: &Connection, id: &str) -> Result<Option<Team>, String> {
     let mut stmt = conn
         .prepare(
-            "SELECT id, name, short_name, country, city, stadium_name, stadium_capacity,
+                "SELECT id, name, short_name, country, city, stadium_name, stadium_capacity,
                     finance, manager_id, reputation, wage_budget, transfer_budget,
-                    season_income, season_expenses, formation, play_style,
+                    season_income, season_expenses, draft_strategy,
                     training_focus, training_intensity, training_schedule,
                     founded_year, colors_primary, colors_secondary,
                     starting_xi_ids, team_roles, form, history, training_groups, weekly_scrim_opponent_ids, weekly_scrim_plan_team_ids, scrim_weekly_objective, scrim_weekly_slots, scrim_setup_locked_week_key, scrim_reputation, scrim_weekly_cancellations, scrim_loss_streak, scrim_weekly_played, scrim_weekly_wins, scrim_weekly_losses, scrim_slot_results, scrim_reports, financial_ledger, sponsorship, facilities,
@@ -409,7 +410,7 @@ mod tests {
             "Test Arena".to_string(),
             50000,
         );
-        team.play_style = PlayStyle::Possession;
+        team.draft_strategy = DraftStrategy::Scaling;
         team.finance = 5_000_000;
         team.wage_budget = 200_000;
         team.transfer_budget = 500_000;
@@ -427,7 +428,7 @@ mod tests {
         assert_eq!(loaded.id, "team-001");
         assert_eq!(loaded.name, "London FC");
         assert_eq!(loaded.short_name, "TST");
-        assert_eq!(loaded.play_style, PlayStyle::Possession);
+        assert_eq!(loaded.draft_strategy, DraftStrategy::Scaling);
         assert_eq!(loaded.finance, 5_000_000);
         assert_eq!(loaded.stadium_capacity, 50000);
     }
@@ -494,7 +495,6 @@ mod tests {
             league_position: 3,
             played: 30,
             won: 18,
-            drawn: 7,
             lost: 5,
             kills_for: 55,
             kills_against: 30,

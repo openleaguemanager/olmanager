@@ -177,7 +177,7 @@ export default function TournamentsTab({
             ) : (
               <>
                 <Calendar className="w-4 h-4 inline mr-1.5 -mt-0.5" />
-                {t("schedule.fixtures")}
+{t("schedule.matches")}
               </>
             )}
           </button>
@@ -274,7 +274,7 @@ export default function TournamentsTab({
           </Card>
 
           <Card>
-            <CardHeader>{t("schedule.fixtures")}</CardHeader>
+            <CardHeader>{t("schedule.matches")}</CardHeader>
             <CardBody className="p-0">
               {sortedMatchdays.length === 0 ? (
                 <p className="p-4 text-sm text-gray-400 dark:text-gray-500 text-center">

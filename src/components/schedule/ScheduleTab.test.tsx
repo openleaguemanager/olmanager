@@ -15,7 +15,7 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, params?: Record<string, string | number>) => {
       if (key === "schedule.noLeague") return "No league";
-      if (key === "schedule.fixtures") return "Fixtures";
+      if (key === "schedule.matches") return "Fixtures";
       if (key === "schedule.standings") return "Standings";
       if (key === "common.team") return "Team";
       if (key === "common.played") return "P";

@@ -296,7 +296,8 @@ mod tests {
 
     fn legacy_game_json_with_mirrored_starting_xi() -> String {
         use chrono::{TimeZone, Utc};
-        use domain::player::{Footedness, Player, PlayerAttributes, Position};
+        use domain::player::{Player, PlayerAttributes};
+        use domain::stats::LolRole;
         use ofm_core::clock::GameClock;
 
         let start = Utc.with_ymd_and_hms(2026, 7, 1, 0, 0, 0).unwrap();
@@ -319,22 +320,20 @@ mod tests {
             "Test Stadium".to_string(),
             30000,
         );
-        team.formation = "4-4-2".to_string();
-        team.active_lineup_ids = vec![
-            "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2",
-        ]
-        .into_iter()
-        .map(str::to_string)
-        .collect();
+        // No formation field — LoL uses fixed 5-role lineup
+        team.active_lineup_ids = vec!["top", "jng", "mid", "adc", "sup"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
 
-        let make_player = |id: &str, position: Position, footedness: Footedness| {
+        let make_player = |id: &str, role: LolRole| {
             let mut player = Player::new(
                 id.to_string(),
                 id.to_uppercase(),
                 format!("Player {}", id),
                 "2000-01-01".to_string(),
                 "GB".to_string(),
-                position.clone(),
+                role,
                 PlayerAttributes {
                     pace: 70,
                     mental_resilience: 70,
@@ -357,25 +356,18 @@ mod tests {
                     aerial: 70,
                 },
             );
-            player.natural_position = position.into();
-            player.footedness = footedness;
+            player.natural_position = role;
             player.weak_foot = 1;
             player.team_id = Some("team-001".to_string());
             player
         };
 
         let players = vec![
-            make_player("gk", Position::Goalkeeper, Footedness::Right),
-            make_player("lb", Position::LeftBack, Footedness::Left),
-            make_player("cb1", Position::CenterBack, Footedness::Right),
-            make_player("cb2", Position::CenterBack, Footedness::Right),
-            make_player("rb", Position::RightBack, Footedness::Right),
-            make_player("lm", Position::LeftMidfielder, Footedness::Left),
-            make_player("cm1", Position::CentralMidfielder, Footedness::Right),
-            make_player("cm2", Position::CentralMidfielder, Footedness::Right),
-            make_player("rm", Position::RightMidfielder, Footedness::Right),
-            make_player("st1", Position::Striker, Footedness::Right),
-            make_player("st2", Position::Striker, Footedness::Right),
+            make_player("top", LolRole::Top),
+            make_player("jng", LolRole::Jungle),
+            make_player("mid", LolRole::Mid),
+            make_player("adc", LolRole::Adc),
+            make_player("sup", LolRole::Support),
         ];
 
         let game = Game::new(clock, manager, vec![team], players, vec![], vec![]);
@@ -869,7 +861,6 @@ mod tests {
         assert_eq!(player.natural_position, domain::stats::LolRole::Top);
         // Note: identity upgrade (footedness, weak_foot) is now a no-op since
         // the Position to LolRole migration is complete. Players keep defaults.
-        assert_eq!(player.footedness, domain::player::Footedness::Right);
         assert!(player.weak_foot >= 1);
         assert!(
             player
@@ -913,15 +904,14 @@ mod tests {
             .unwrap();
         let starting_xi_ids: Vec<String> = serde_json::from_str(&starting_xi_json).unwrap();
 
-        // Note: is_mirrored_side_pair always returns true for LolRole — right-side before left-side
+        // Input was swapped order ["sup","jng","mid","top","adc"];
+        // canonicalization reorders to match formation_slots fit
         assert_eq!(
             starting_xi_ids,
-            vec![
-                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"
-            ]
-            .into_iter()
-            .map(str::to_string)
-            .collect::<Vec<_>>()
+            vec!["top", "jng", "mid", "adc", "sup"]
+                .into_iter()
+                .map(str::to_string)
+                .collect::<Vec<_>>()
         );
     }
 

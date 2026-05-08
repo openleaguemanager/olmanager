@@ -81,7 +81,7 @@ fn standings_rows(game: &Game, league: &League) -> Vec<(String, u32, i16)> {
             (
                 team_name(game, &entry.team_id),
                 entry.points,
-                entry.goal_difference() as i16,
+                entry.kill_difference() as i16,
             )
         })
         .collect();
@@ -836,20 +836,20 @@ mod tests {
         let alpha = standing_mut(&mut game, "team1");
         alpha.played = 10;
         alpha.points = 25;
-        alpha.kills_for = 18;
-        alpha.kills_against = 8;
+        alpha.maps_won = 18;
+        alpha.maps_lost = 8;
 
         let beta = standing_mut(&mut game, "team2");
         beta.played = 10;
         beta.points = 24;
-        beta.kills_for = 16;
-        beta.kills_against = 9;
+        beta.maps_won = 16;
+        beta.maps_lost = 9;
 
         let gamma = standing_mut(&mut game, "team3");
         gamma.played = 10;
         gamma.points = 7;
-        gamma.kills_for = 6;
-        gamma.kills_against = 15;
+        gamma.maps_won = 6;
+        gamma.maps_lost = 15;
 
         team_mut(&mut game, "team1").form = vec![
             "D".to_string(),
@@ -950,20 +950,20 @@ mod tests {
         let alpha = standing_mut(&mut game, "team1");
         alpha.played = 10;
         alpha.points = 25;
-        alpha.kills_for = 18;
-        alpha.kills_against = 8;
+        alpha.maps_won = 18;
+        alpha.maps_lost = 8;
 
         let beta = standing_mut(&mut game, "team2");
         beta.played = 10;
         beta.points = 24;
-        beta.kills_for = 16;
-        beta.kills_against = 9;
+        beta.maps_won = 16;
+        beta.maps_lost = 9;
 
         let gamma = standing_mut(&mut game, "team3");
         gamma.played = 10;
         gamma.points = 7;
-        gamma.kills_for = 6;
-        gamma.kills_against = 15;
+        gamma.maps_won = 6;
+        gamma.maps_lost = 15;
 
         team_mut(&mut game, "team1").form = vec![
             "D".to_string(),

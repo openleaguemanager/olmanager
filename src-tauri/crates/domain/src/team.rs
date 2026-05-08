@@ -42,8 +42,8 @@ pub struct Team {
     pub facilities: Facilities,
 
     // Tactical
-    pub formation: String,
-    pub play_style: PlayStyle,
+    #[serde(alias = "play_style")]
+    pub draft_strategy: DraftStrategy,
     #[serde(default)]
     pub lol_tactics: LolTactics,
 
@@ -660,16 +660,21 @@ pub struct TeamColors {
     pub secondary: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
-pub enum PlayStyle {
+pub enum DraftStrategy {
+    #[default]
     Balanced,
-    Attacking,
-    Defensive,
-    Possession,
-    Counter,
-    HighPress,
+    #[serde(rename = "Attacking", alias = "HighPress")]
+    Aggressive,
+    #[serde(rename = "Defensive")]
+    Passive,
+    #[serde(rename = "Possession")]
+    Scaling,
+    #[serde(rename = "Counter")]
+    CounterPick,
+    PriorityBans,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -680,7 +685,6 @@ pub struct TeamSeasonRecord {
     pub league_position: u32,
     pub played: u32,
     pub won: u32,
-    pub drawn: u32,
     pub lost: u32,
     pub kills_for: u32,
     pub kills_against: u32,
@@ -1232,8 +1236,7 @@ impl Team {
             financial_ledger: Vec::new(),
             sponsorship: None,
             facilities: Facilities::default(),
-            formation: "4-4-2".to_string(),
-            play_style: PlayStyle::Balanced,
+            draft_strategy: DraftStrategy::Balanced,
             lol_tactics: LolTactics::default(),
             training_focus: TrainingFocus::default(),
             training_intensity: TrainingIntensity::default(),

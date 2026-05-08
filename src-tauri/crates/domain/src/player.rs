@@ -30,10 +30,6 @@ pub struct Player {
     #[serde(default)]
     pub alternate_positions: Vec<LolRole>,
 
-    /// Deprecated: LoL roles are lane-agnostic, footedness no longer affects ratings
-    #[serde(default)]
-    pub footedness: Footedness,
-
     #[serde(default = "default_weak_foot")]
     pub weak_foot: u8,
 
@@ -141,7 +137,7 @@ pub struct PlayerAttributes {
     #[serde(default = "default_attr", alias = "leadership")]
     pub shotcalling: u8,
 
-    // Goalkeeper
+    // legacy — goalkeeper attributes (handling, reflexes, aerial)
     #[serde(default = "default_attr")]
     pub handling: u8,
     #[serde(default = "default_attr")]
@@ -326,7 +322,6 @@ pub struct PlayerSeasonStats {
     pub appearances: u32,
     pub kills: u32,
     pub assists: u32,
-    pub clean_sheets: u32,
     pub avg_rating: f32,
     pub minutes_played: u32,
     pub shots: u32,
@@ -515,7 +510,6 @@ impl Player {
             natural_position: role,
             position: role,
             alternate_positions: Vec::new(),
-            footedness: Footedness::default(),
             weak_foot: default_weak_foot(),
             attributes,
             condition: 100,
@@ -573,7 +567,7 @@ mod tests {
     }
 
     #[test]
-    fn player_new_defaults_footedness_and_weak_foot() {
+    fn player_new_defaults_weak_foot() {
         let player = Player::new(
             "p-001".to_string(),
             "J. Smith".to_string(),
@@ -584,7 +578,6 @@ mod tests {
             sample_attributes(),
         );
 
-        assert_eq!(player.footedness, Footedness::Right);
         assert_eq!(player.weak_foot, 2);
     }
 
@@ -619,7 +612,6 @@ mod tests {
         }))
         .expect("legacy player json should deserialize");
 
-        assert_eq!(player.footedness, Footedness::Right);
         assert_eq!(player.weak_foot, 2);
         // "Midfielder" should map to LolRole::Jungle per the spec
         assert_eq!(player.natural_position, LolRole::Jungle);

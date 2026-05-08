@@ -174,7 +174,7 @@ pub fn apply_match_report_with_capture<F>(
     apply_lol_profile_progression(game, report, home_team_id, away_team_id);
     resolve_post_match_promises(game, report, home_team_id, away_team_id);
 
-    // Deplete stamina for players who played, scaled by minutes on pitch
+    // Deplete stamina for players who played, scaled by minutes in game
     deplete_match_stamina(game, home_team_id, report);
     deplete_match_stamina(game, away_team_id, report);
 
@@ -427,18 +427,7 @@ fn apply_player_stats(
                     (player.stats.avg_rating * (n - 1.0) + match_rating.clamp(0.0, 10.0)) / n;
             }
 
-            if player.id.ends_with("_gk") {
-                let conceded = if player.team_id.as_deref() == Some(_home_team_id) {
-                    report.away_wins
-                } else if player.team_id.as_deref() == Some(_away_team_id) {
-                    report.home_wins
-                } else {
-                    1
-                };
-                if minutes_played > 0 && conceded == 0 {
-                    player.stats.clean_sheets += 1;
-                }
-            }
+            // clean_sheets removed — LoL has no keeper clean sheet stat (legacy).
         }
     }
 }

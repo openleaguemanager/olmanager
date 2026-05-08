@@ -769,7 +769,7 @@
     "noStartersForRoles": "Lege deine Starter Five fest, um Teamrollen und Objekte zuzuweisen.",
     "startingXI": "Starter Five",
     "fullSquad": "Gesamter Kader",
-    "pitchInteractionHint": "Ziehe Spieler zwischen Rift und Bank, klicke einen Spieler zur Analyse an, klicke einen zweiten zum Vergleichen an und bestätige den Tausch anschließend im Vergleichsbereich.",
+    "riftInteractionHint": "Ziehe Spieler zwischen Rift und Bank, klicke einen Spieler zur Analyse an, klicke einen zweiten zum Vergleichen an und bestätige den Tausch anschließend im Vergleichsbereich.",
     "selectedPlayer": "Ausgewählter Spieler",
     "comparePlayer": "Vergleichsspieler",
     "selectSecondPlayer": "Wähle in der Aufstellungsansicht einen zweiten Spieler aus, um Attribute zu vergleichen und den Tausch vorzubereiten.",
@@ -1343,7 +1343,7 @@
   "schedule": {
     "noSchedule": "Kein Ligaspielplan verfügbar.",
     "noLeague": "Kein Ligaspielplan verfügbar.",
-    "fixtures": "Spiele",
+    "matches": "Spiele",
     "calendar": "Kalender",
     "today": "Heute",
     "previousMonth": "Vorheriger Monat",
@@ -2297,7 +2297,7 @@
     },
     "source": {
       "sportsGazette": "Esports Gazette",
-      "footballHerald": "The Rift Herald",
+      "lolEsports": "The Rift Herald",
       "matchDayPress": "Matchday Desk",
       "leagueChronicle": "League Pulse",
       "leagueWire": "Rift Wire",

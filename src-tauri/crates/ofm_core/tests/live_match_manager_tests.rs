@@ -65,43 +65,52 @@ fn make_team(id: &str, name: &str) -> Team {
     )
 }
 
-/// Build a full squad of 22 players for a team (4-4-2 formation ready).
+/// Build a squad of players for a LoL team (5 starters + bench).
 fn make_squad(team_id: &str) -> Vec<Player> {
     let mut players = Vec::new();
-    // 2 GK
+    // 2 Top
     for i in 0..2 {
         players.push(make_player(
-            &format!("{}_gk{}", team_id, i),
-            &format!("GK{}", i),
-            team_id,
-            LolRole::Support,
-        ));
-    }
-    // 7 DEF
-    for i in 0..7 {
-        players.push(make_player(
-            &format!("{}_def{}", team_id, i),
-            &format!("Def{}", i),
+            &format!("{}_top{}", team_id, i),
+            &format!("Top{}", i),
             team_id,
             LolRole::Top,
         ));
     }
-    // 7 MID
-    for i in 0..7 {
+    // 2 Jungle
+    for i in 0..2 {
         players.push(make_player(
-            &format!("{}_mid{}", team_id, i),
-            &format!("Mid{}", i),
+            &format!("{}_jng{}", team_id, i),
+            &format!("Jng{}", i),
             team_id,
             LolRole::Jungle,
         ));
     }
-    // 6 FWD
-    for i in 0..6 {
+    // 2 Mid
+    for i in 0..2 {
         players.push(make_player(
-            &format!("{}_fwd{}", team_id, i),
-            &format!("Fwd{}", i),
+            &format!("{}_mid{}", team_id, i),
+            &format!("Mid{}", i),
+            team_id,
+            LolRole::Mid,
+        ));
+    }
+    // 2 ADC
+    for i in 0..2 {
+        players.push(make_player(
+            &format!("{}_adc{}", team_id, i),
+            &format!("Adc{}", i),
             team_id,
             LolRole::Adc,
+        ));
+    }
+    // 2 Support
+    for i in 0..2 {
+        players.push(make_player(
+            &format!("{}_sup{}", team_id, i),
+            &format!("Sup{}", i),
+            team_id,
+            LolRole::Support,
         ));
     }
     players

@@ -2,7 +2,7 @@ use db::game_database::GameDatabase;
 use db::migrations::MIGRATION_COUNT;
 use db::repositories::team_repo::{load_team, upsert_team};
 use domain::team::{
-    AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, PlayStyle, Team, TeamKind,
+    AcademyLifecycle, AcademyMetadata, DraftStrategy, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
 };
 
 fn test_db() -> GameDatabase {
@@ -19,7 +19,7 @@ fn sample_team(id: &str, name: &str) -> Team {
         "Academy Lab".to_string(),
         12_000,
     );
-    team.play_style = PlayStyle::Possession;
+    team.draft_strategy = DraftStrategy::Scaling;
     team.finance = 3_000_000;
     team
 }
@@ -54,13 +54,13 @@ fn legacy_team_rows_load_as_main_without_academy_metadata() {
     db.conn()
         .execute(
             r#"INSERT INTO teams
-             (id, name, short_name, country, city, stadium_name, stadium_capacity,
-              finance, reputation, formation, play_style,
-              team_kind)
-             VALUES
-             ('legacy-main', 'Legacy Main', 'LEG', 'DE', 'DE', 'Berlin', 18000,
-              1000000, 500, '4-4-2', 'Balanced',
-              'Main')"#,
+              (id, name, short_name, country, city, stadium_name, stadium_capacity,
+               finance, reputation, draft_strategy,
+               team_kind)
+              VALUES
+              ('legacy-main', 'Legacy Main', 'LEG', 'DE', 'DE', 'Berlin', 18000,
+               1000000, 500, 'Balanced',
+               'Main')"#,
             [],
         )
         .expect("legacy-style team row should insert using academy defaults");

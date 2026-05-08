@@ -6,7 +6,7 @@ import {
   MatchSnapshot,
   MatchEvent,
   FORMATIONS,
-  PLAY_STYLES,
+  DRAFT_STRATEGIES,
   getTeamTalkOptions,
   TeamTalkTone,
 } from "./types";
@@ -102,14 +102,14 @@ export default function HalfTimeBreak({
     }
   };
 
-  const handlePlayStyleChange = async (playStyle: string) => {
+  const handleDraftStrategyChange = async (draftStrategy: string) => {
     try {
       const snap = await invoke<MatchSnapshot>("apply_match_command", {
-        command: { ChangePlayStyle: { side: userSide, play_style: playStyle } },
+        command: { ChangeDraftStrategy: { side: userSide, draft_strategy: draftStrategy } },
       });
       onUpdateSnapshot(snap);
     } catch (err) {
-      console.error("Play style change failed:", err);
+      console.error("Draft strategy change failed:", err);
     }
   };
 
@@ -429,13 +429,13 @@ export default function HalfTimeBreak({
                 {/* Play Style */}
                 <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-4 transition-colors duration-300">
                   <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">
-                    {t("match.playStyle")}
+                    {t("match.draftStrategy")}
                   </h3>
                   <div className="grid grid-cols-2 gap-1.5">
-                    {PLAY_STYLES.map((s) => (
+                    {DRAFT_STRATEGIES.map((s) => (
                       <button
                         key={s.id}
-                        onClick={() => handlePlayStyleChange(s.id)}
+                        onClick={() => handleDraftStrategyChange(s.id)}
                         className={`flex items-center gap-1.5 py-2 px-3 rounded-lg text-xs font-heading font-bold transition-all ${
                           userTeam.play_style === s.id
                             ? "bg-primary-500/20 text-primary-400 ring-1 ring-primary-500/50"

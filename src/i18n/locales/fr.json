@@ -769,7 +769,7 @@
     "noStartersForRoles": "Définissez votre équipe titulaire pour attribuer les rôles d'équipe et les objectifs.",
     "startingXI": "Cinq de Départ",
     "fullSquad": "Effectif complet",
-    "pitchInteractionHint": "Faites glisser les joueurs entre le Rift et le banc, cliquez sur un joueur pour l'inspecter, cliquez sur un second pour les comparer, puis confirmez l'échange dans le panneau de comparaison.",
+    "riftInteractionHint": "Faites glisser les joueurs entre le Rift et le banc, cliquez sur un joueur pour l'inspecter, cliquez sur un second pour les comparer, puis confirmez l'échange dans le panneau de comparaison.",
     "selectedPlayer": "Joueur sélectionné",
     "comparePlayer": "Joueur de comparaison",
     "selectSecondPlayer": "Sélectionnez un deuxième joueur dans la vue de composition pour comparer les attributs et préparer l'échange.",
@@ -1349,7 +1349,7 @@
   "schedule": {
     "noSchedule": "Aucun calendrier de ligue disponible.",
     "noLeague": "Aucun calendrier de ligue disponible.",
-    "fixtures": "Matchs",
+    "matches": "Matchs",
     "calendar": "Calendrier",
     "today": "Aujourd'hui",
     "previousMonth": "Mois précédent",
@@ -2305,7 +2305,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",

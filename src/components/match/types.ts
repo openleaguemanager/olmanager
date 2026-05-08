@@ -110,7 +110,7 @@ export interface EnginePlayerData {
   id: string;
   name: string;
   role?: string;
-  /** @deprecated Legacy football test fixture field. */
+  /** @deprecated Legacy test fixture field. */
   position?: string;
   condition: number;
   fitness: number;
@@ -124,7 +124,7 @@ export interface EnginePlayerData {
   discipline: number;
   mental_resilience: number;
   traits: string[];
-  /** @deprecated Legacy football attributes retained for fixture compatibility. */
+  /** @deprecated Legacy attributes retained for fixture compatibility. */
   pace?: number;
   stamina?: number;
   strength?: number;
@@ -320,11 +320,11 @@ export const SPEED_MS: Record<SimSpeed, number> = {
 
 export const FORMATIONS = ["4-4-2", "4-3-3", "3-5-2", "4-5-1", "4-2-3-1", "3-4-3"];
 
-export const PLAY_STYLES = [
+export const DRAFT_STRATEGIES = [
   { id: "Balanced", label: "Balanced" },
-  { id: "Attacking", label: "Attacking" },
-  { id: "Defensive", label: "Defensive" },
-  { id: "Possession", label: "Possession" },
-  { id: "Counter", label: "Counter" },
-  { id: "HighPress", label: "High Press" },
+  { id: "Aggressive", label: "Aggressive" },
+  { id: "Passive", label: "Passive" },
+  { id: "Scaling", label: "Scaling" },
+  { id: "CounterPick", label: "Counter Pick" },
+  { id: "PriorityBans", label: "Priority Bans" },
 ];

@@ -158,15 +158,15 @@ export default function MatchLive({
     }
   };
 
-  const handlePlayStyleChange = async (playStyle: string) => {
+  const handleDraftStrategyChange = async (draftStrategy: string) => {
     if (!userSide || isSpectator) return;
     try {
       const snap = await invoke<MatchSnapshot>("apply_match_command", {
-        command: { ChangePlayStyle: { side: userSide, play_style: playStyle } }
+        command: { ChangeDraftStrategy: { side: userSide, draft_strategy: draftStrategy } }
       });
       onSnapshotUpdate(snap);
     } catch (err) {
-      console.error("Play style change failed:", err);
+      console.error("Draft strategy change failed:", err);
     }
   };
 
@@ -355,7 +355,7 @@ export default function MatchLive({
                 </div>
               </div>
               <div>
-                <p className="text-[10px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-1">{t('match.playStyle')}</p>
+                <p className="text-[10px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-1">{t('match.draftStrategy')}</p>
                 <div className="flex flex-wrap gap-1">
                   {[
                     { id: "Balanced", icon: <Target className="w-3 h-3" /> },
@@ -367,7 +367,7 @@ export default function MatchLive({
                   ].map(s => {
                     const cur = userSide === "Home" ? snapshot.home_team.play_style : snapshot.away_team.play_style;
                     return (
-                      <button key={s.id} onClick={() => handlePlayStyleChange(s.id)}
+                      <button key={s.id} onClick={() => handleDraftStrategyChange(s.id)}
                         className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-heading transition-colors ${cur === s.id ? "bg-primary-500/20 text-primary-500 dark:text-primary-400 ring-1 ring-primary-500/50" : "bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-navy-700 dark:text-gray-400 dark:hover:text-gray-300"}`}
                       >{s.icon}{s.id}</button>
                     );

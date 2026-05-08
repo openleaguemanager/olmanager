@@ -725,7 +725,7 @@
     "noStartersForRoles": "Define a tua equipa titular para atribuir funções da equipa e objetivos.",
     "startingXI": "Cinco Inicial",
     "fullSquad": "Plantel Completo",
-    "pitchInteractionHint": "Arrasta jogadores entre a Rift e o banco, clica num jogador para o analisar, clica num segundo para os comparar e depois confirma a troca no painel de comparação.",
+    "riftInteractionHint": "Arrasta jogadores entre a Rift e o banco, clica num jogador para o analisar, clica num segundo para os comparar e depois confirma a troca no painel de comparação.",
     "selectedPlayer": "Jogador selecionado",
     "comparePlayer": "Jogador de comparação",
     "selectSecondPlayer": "Seleciona um segundo jogador na vista da escalação para comparar atributos e preparar a troca.",
@@ -1299,7 +1299,7 @@
   "schedule": {
     "noSchedule": "Nenhum calendário de liga disponível.",
     "noLeague": "Nenhum calendário de liga disponível.",
-    "fixtures": "Jogos",
+    "matches": "Jogos",
     "calendar": "Calendário",
     "today": "Hoje",
     "previousMonth": "Mês anterior",
@@ -2253,7 +2253,7 @@
     },
     "source": {
       "sportsGazette": "Esports Gazette",
-      "footballHerald": "The Rift Herald",
+      "lolEsports": "The Rift Herald",
       "matchDayPress": "Matchday Desk",
       "leagueChronicle": "League Pulse",
       "leagueWire": "Rift Wire",

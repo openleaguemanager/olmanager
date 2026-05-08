@@ -115,7 +115,7 @@ pub fn run() {
             set_formation,
             set_active_lineup,
             set_starting_xi,
-            set_play_style,
+            set_draft_strategy,
             set_lol_tactics,
             set_team_roles,
             set_training,

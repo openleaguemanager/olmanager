@@ -752,7 +752,7 @@
     "noStartersForRoles": "Takım rollerini ve duran topları atamak için İlk 11'inizi belirleyin.",
     "startingXI": "İlk 11 — {{formation}}",
     "fullSquad": "Tüm Kadro",
-    "pitchInteractionHint": "Oyuncuları saha ve yedek kulübesi arasında sürükleyin, bir oyuncuyu incelemek için üzerine tıklayın, onları karşılaştırmak için ikinci bir oyuncuya tıklayın ve ardından karşılaştırma panelinden değişikliği onaylayayın.",
+    "riftInteractionHint": "Oyuncuları saha ve yedek kulübesi arasında sürükleyin, bir oyuncuyu incelemek için üzerine tıklayın, onları karşılaştırmak için ikinci bir oyuncuya tıklayın ve ardından karşılaştırma panelinden değişikliği onaylayayın.",
     "selectedPlayer": "Seçilen oyuncu",
     "comparePlayer": "Karşılaştırılan oyuncu",
     "selectSecondPlayer": "Özellikleri karşılaştırmak ve değişikliği hazırlamak için kadro görünümünde ikinci bir oyuncu seçin.",
@@ -1294,7 +1294,7 @@
   "schedule": {
     "noSchedule": "Lig fikstürü bulunmuyor.",
     "noLeague": "Lig fikstürü bulunmuyor.",
-    "fixtures": "Fikstür",
+    "matches": "Maçlar",
     "calendar": "Takvim",
     "today": "Bugün",
     "previousMonth": "Önceki ay",
@@ -2230,7 +2230,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",

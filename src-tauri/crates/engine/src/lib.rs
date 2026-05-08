@@ -22,4 +22,4 @@ pub use live_match::{
     TeamRoles,
 };
 pub use report::{KillDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
-pub use types::{MatchConfig, PlayStyle, PlayerData, Side, TeamData, Zone};
+pub use types::{DraftStrategy, MatchConfig, PlayerData, Side, TeamData, Zone};

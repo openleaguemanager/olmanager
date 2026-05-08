@@ -13,7 +13,7 @@ vi.mock("react-i18next", () => ({
     t: (key: string, params?: Record<string, string | number>) => {
       if (key === "tournaments.noActive") return "No active tournament";
       if (key === "schedule.standings") return "Standings";
-      if (key === "schedule.fixtures") return "Fixtures";
+      if (key === "schedule.matches") return "Matches";
       if (key === "tournaments.overview") return "Overview";
       if (key === "tournaments.leagueTable") return "League Table";
       if (key === "tournaments.nTeams") return `${params?.count} teams`;

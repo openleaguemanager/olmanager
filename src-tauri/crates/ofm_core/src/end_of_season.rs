@@ -220,10 +220,9 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
         user_position,
         user_points: user_standing.as_ref().map(|s| s.points).unwrap_or(0),
         user_won: user_standing.as_ref().map(|s| s.won).unwrap_or(0),
-        user_drawn: user_standing.as_ref().map(|s| s.drawn).unwrap_or(0),
         user_lost: user_standing.as_ref().map(|s| s.lost).unwrap_or(0),
-        user_kills_for: user_standing.as_ref().map(|s| s.kills_for).unwrap_or(0),
-        user_kills_against: user_standing.as_ref().map(|s| s.kills_against).unwrap_or(0),
+        user_maps_won: user_standing.as_ref().map(|s| s.maps_won).unwrap_or(0),
+        user_maps_lost: user_standing.as_ref().map(|s| s.maps_lost).unwrap_or(0),
         golden_boot_player: awards
             .golden_boot
             .first()
@@ -258,10 +257,9 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                 league_position: position,
                 played: standing.played,
                 won: standing.won,
-                drawn: standing.drawn,
                 lost: standing.lost,
-                kills_for: standing.kills_for,
-                kills_against: standing.kills_against,
+                kills_for: standing.maps_won,
+                kills_against: standing.maps_lost,
             });
             // Reset form
             team.form.clear();
@@ -312,7 +310,7 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
 
     // 6. Update manager career stats
     if let Some(standing) = &user_standing {
-        let total_matches = standing.won + standing.drawn + standing.lost;
+        let total_matches = standing.won + standing.lost;
         game.manager.career_stats.matches_managed += total_matches;
         game.manager.career_stats.wins += standing.won;
         game.manager.career_stats.losses += standing.lost;
@@ -340,7 +338,6 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
         if let Some(entry) = existing {
             entry.matches += total_matches;
             entry.wins += standing.won;
-            entry.draws += standing.drawn;
             entry.losses += standing.lost;
             let prev_best = entry.best_league_position;
             if prev_best.is_none() || prev_best.unwrap() > user_position {
@@ -356,7 +353,6 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                     end_date: None,
                     matches: total_matches,
                     wins: standing.won,
-                    draws: standing.drawn,
                     losses: standing.lost,
                     best_league_position: Some(user_position),
                 });
@@ -614,10 +610,9 @@ pub struct EndOfSeasonSummary {
     pub user_position: u32,
     pub user_points: u32,
     pub user_won: u32,
-    pub user_drawn: u32,
     pub user_lost: u32,
-    pub user_kills_for: u32,
-    pub user_kills_against: u32,
+    pub user_maps_won: u32,
+    pub user_maps_lost: u32,
     pub golden_boot_player: String,
     pub golden_boot_goals: u32,
     pub poty_player: String,

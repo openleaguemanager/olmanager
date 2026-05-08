@@ -551,8 +551,8 @@ fn apply_match_report_updates_standings() {
     assert_eq!(home.played, 1);
     assert_eq!(home.won, 1);
     assert_eq!(home.points, 3);
-    assert_eq!(home.kills_for, 2);
-    assert_eq!(home.kills_against, 1);
+    assert_eq!(home.maps_won, 2);
+    assert_eq!(home.maps_lost, 1);
 
     assert_eq!(away.played, 1);
     assert_eq!(away.lost, 1);
@@ -569,9 +569,7 @@ fn apply_match_report_draw_standings() {
     let home = standings.iter().find(|s| s.team_id == "team1").unwrap();
     let away = standings.iter().find(|s| s.team_id == "team2").unwrap();
 
-    assert_eq!(home.drawn, 1);
     assert_eq!(home.points, 1);
-    assert_eq!(away.drawn, 1);
     assert_eq!(away.points, 1);
 }
 
@@ -613,7 +611,7 @@ fn apply_match_report_gk_clean_sheet() {
     turn::apply_match_report(&mut game, 0, "team1", "team2", &report);
 
     let gk = game.players.iter().find(|p| p.id == "t1_gk").unwrap();
-    assert_eq!(gk.stats.clean_sheets, 1);
+    // clean_sheets removed in LoL migration
 }
 
 #[test]
@@ -635,7 +633,7 @@ fn apply_match_report_gk_no_clean_sheet_on_conceding() {
     turn::apply_match_report(&mut game, 0, "team1", "team2", &report);
 
     let gk = game.players.iter().find(|p| p.id == "t1_gk").unwrap();
-    assert_eq!(gk.stats.clean_sheets, 0);
+    // clean_sheets removed in LoL migration
 }
 
 #[test]
@@ -1456,17 +1454,16 @@ fn standing_entry(
     team_id: &str,
     played: u32,
     points: u32,
-    kills_for: u32,
-    kills_against: u32,
+    maps_won: u32,
+    maps_lost: u32,
 ) -> StandingEntry {
     StandingEntry {
         team_id: team_id.to_string(),
         played,
         won: 0,
-        drawn: 0,
         lost: 0,
-        kills_for,
-        kills_against,
+        maps_won,
+        maps_lost,
         points,
     }
 }

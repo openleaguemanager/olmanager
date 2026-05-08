@@ -223,7 +223,7 @@ fn build_scout_report(
     };
 
     // Build fuzzed LoL-facing attribute values. The underlying save still uses
-    // legacy football-shaped fields, but reports should reveal the concepts the
+    // legacy-shaped fields, but reports should reveal the concepts the
     // LoL UI teaches: mechanics, laning, teamfighting, macro, champion pool and
     // discipline.
     let all_fuzzed: [(u8, &str); 6] = [

@@ -158,7 +158,7 @@ pub fn check_player_events(game: &mut Game) {
                 if player.injury.is_some() {
                     continue;
                 }
-                // In LoL, no Goalkeeper - this check no longer applies (supports are valid)
+                // In LoL, all roles including Support can be benched (no legacy goalkeeper exclusion)
                 if talk_cooldown_active(player, &today) {
                     continue;
                 }

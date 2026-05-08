@@ -476,7 +476,7 @@ function mapSnapshotPositionToDraftRole(role: string): Role {
   if (engineKey === "adc") return "ADC";
   if (engineKey === "support") return "SUPPORT";
 
-  // Fallback: map football positions to LoL roles
+  // Fallback: map legacy positions to LoL roles
   const key = normalizeKey(role);
   if (key.includes("top") || key === "defender") return "TOP";
   if (key.includes("jung") || key === "midfielder" || key === "centralmidfielder") return "JUNGLE";
@@ -588,8 +588,8 @@ function hashText(value: string): number {
   return hash;
 }
 
-function planTempo(playStyle: string): "early" | "mid" | "late" {
-  switch (playStyle) {
+function planTempo(draftStrategy: string): "early" | "mid" | "late" {
+  switch (draftStrategy) {
     case "Attacking":
     case "HighPress":
     case "Counter":

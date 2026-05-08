@@ -109,8 +109,7 @@ mod tests {
                             "transfer_budget": 250000,
                             "season_income": 0,
                             "season_expenses": 0,
-                            "formation": "4-4-2",
-                            "play_style": "Balanced",
+                            "draft_strategy": "Balanced",
                             "training_focus": "Scrims",
                             "training_intensity": "Medium",
                             "training_schedule": "Balanced",
@@ -172,7 +171,7 @@ mod tests {
     fn active_lec_world_seed_does_not_contain_football_nation() {
         let json = include_str!("../../../../databases/lec_world.json");
 
-        // Assert: active seed data must NOT contain football_nation keys
+        // Assert: active seed data must NOT contain legacy football_nation keys
         assert!(
             !json.contains("football_nation"),
             "Active LEC world seed should not contain legacy 'football_nation' field"

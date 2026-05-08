@@ -182,7 +182,7 @@ export default function ScheduleTab({
           }`}
         >
           <CalendarIcon className="w-4 h-4 inline mr-1.5 -mt-0.5" />{" "}
-          {t("schedule.fixtures")}
+          {t("schedule.matches")}
         </button>
         <button
           onClick={() => setView("calendar")}

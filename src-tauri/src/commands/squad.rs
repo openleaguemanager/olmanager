@@ -491,8 +491,8 @@ pub fn set_formation(state: State<'_, StateManager>, formation: String) -> Resul
         _ => (4, 4, 2),
     };
 
-    if let Some(team) = game.teams.iter_mut().find(|t| t.id == team_id) {
-        team.formation = formation;
+    if let Some(_team) = game.teams.iter_mut().find(|t| t.id == team_id) {
+        // formation field removed — composition handled via draft_strategy
     }
 
     // Reassign positions for outfield players on this team
@@ -593,8 +593,8 @@ fn apply_active_lineup(game: &mut Game, team_id: &str, player_ids: Vec<String>) 
 }
 
 #[tauri::command]
-pub fn set_play_style(state: State<'_, StateManager>, play_style: String) -> Result<Game, String> {
-    info!("[cmd] set_play_style: {}", play_style);
+pub fn set_draft_strategy(state: State<'_, StateManager>, draft_strategy: String) -> Result<Game, String> {
+    info!("[cmd] set_draft_strategy: {}", draft_strategy);
     let mut game = state
         .get_game(|g| g.clone())
         .ok_or("No active game session".to_string())?;
@@ -605,17 +605,16 @@ pub fn set_play_style(state: State<'_, StateManager>, play_style: String) -> Res
         .clone()
         .ok_or("No team assigned".to_string())?;
 
-    let style = match play_style.as_str() {
-        "Attacking" => domain::team::PlayStyle::Attacking,
-        "Defensive" => domain::team::PlayStyle::Defensive,
-        "Possession" => domain::team::PlayStyle::Possession,
-        "Counter" => domain::team::PlayStyle::Counter,
-        "HighPress" => domain::team::PlayStyle::HighPress,
-        _ => domain::team::PlayStyle::Balanced,
+    let strategy = match draft_strategy.as_str() {
+        "Attacking" | "HighPress" => domain::team::DraftStrategy::Aggressive,
+        "Defensive" => domain::team::DraftStrategy::Passive,
+        "Possession" => domain::team::DraftStrategy::Scaling,
+        "Counter" => domain::team::DraftStrategy::CounterPick,
+        _ => domain::team::DraftStrategy::Balanced,
     };
 
     if let Some(team) = game.teams.iter_mut().find(|t| t.id == team_id) {
-        team.play_style = style;
+        team.draft_strategy = strategy;
     }
 
     state.set_game(game.clone());

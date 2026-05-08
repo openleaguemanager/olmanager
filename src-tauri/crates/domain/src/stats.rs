@@ -76,6 +76,7 @@ pub enum LolRole {
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(rename_all = "PascalCase")]
+#[deprecated(note = "Use LolRole instead")]
 pub enum Position {
     #[default]
     Goalkeeper,
@@ -101,7 +102,7 @@ impl Position {
     /// Groups the detailed positions into simplified categories
     pub fn to_group_position(&self) -> Self {
         match self {
-            // Goalkeeper stays as-is
+            // legacy: Goalkeeper stays as-is
             Position::Goalkeeper => Position::Goalkeeper,
             // All defender variants -> Defender
             Position::Defender

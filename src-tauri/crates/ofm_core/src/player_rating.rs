@@ -2,21 +2,14 @@ use domain::player::{LolRole, Player};
 
 /// Returns the 5 starting positions for a team in LoL format.
 /// In LoL, the formation is always 5 players: Top, Jungle, Mid, ADC, Support
-pub fn formation_slots(_formation: &str) -> Vec<LolRole> {
-    // LoL always uses 5 roles - ignore formation string for now
-    // TODO: Implement proper LoL team composition
+pub fn formation_slots() -> Vec<LolRole> {
     vec![
-        LolRole::Top,     // Top lane
-        LolRole::Jungle,  // Jungle
-        LolRole::Mid,     // Mid lane
-        LolRole::Adc,     // ADC (Bot lane carry)
-        LolRole::Support, // Support
+        LolRole::Top,
+        LolRole::Jungle,
+        LolRole::Mid,
+        LolRole::Adc,
+        LolRole::Support,
     ]
-}
-
-fn formation_slot_rows(formation: &str) -> Vec<Vec<LolRole>> {
-    let slots = formation_slots(formation);
-    vec![slots]
 }
 
 /// Calculate overall rating for a player at a specific LolRole
@@ -152,7 +145,7 @@ enum Side {
 }
 
 fn slot_side(_role: &LolRole) -> Option<Side> {
-    // In LoL, there's no left/right distinction like football
+    // In LoL, there's no left/right distinction (unlike traditional sports)
     None
 }
 
@@ -202,7 +195,7 @@ mod tests {
 
     #[test]
     fn formation_slots_returns_five_roles() {
-        let slots = formation_slots("any-formation");
+        let slots = formation_slots();
         assert_eq!(slots.len(), 5);
         assert_eq!(
             slots,

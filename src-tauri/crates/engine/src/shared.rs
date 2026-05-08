@@ -1,4 +1,4 @@
-use crate::types::{MatchConfig, PlayStyle, PlayerData, Side};
+use crate::types::{DraftStrategy, MatchConfig, PlayerData, Side};
 
 // ---------------------------------------------------------------------------
 // PlayerSnap — lightweight snapshot of a player to avoid borrow conflicts
@@ -65,36 +65,40 @@ pub(crate) fn trait_bonus(snap: &PlayerSnap, context: TraitContext) -> f64 {
 }
 
 // ---------------------------------------------------------------------------
-// Play-style modifiers
+// Draft-strategy modifiers
 // ---------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy)]
-pub(crate) enum PlayStylePhase {
+pub(crate) enum DraftStrategyPhase {
     Midfield,
     Attack,
     Defense,
     Press,
 }
 
-pub(crate) fn play_style_modifier(
-    style: PlayStyle,
-    phase: PlayStylePhase,
+pub(crate) fn draft_strategy_modifier(
+    strategy: DraftStrategy,
+    phase: DraftStrategyPhase,
     is_own_phase: bool,
 ) -> f64 {
     if !is_own_phase {
         return 1.0;
     }
-    match (style, phase) {
-        (PlayStyle::Attacking, PlayStylePhase::Attack) => 1.12,
-        (PlayStyle::Attacking, PlayStylePhase::Defense) => 0.93,
-        (PlayStyle::Defensive, PlayStylePhase::Defense) => 1.12,
-        (PlayStyle::Defensive, PlayStylePhase::Attack) => 0.93,
-        (PlayStyle::Possession, PlayStylePhase::Midfield) => 1.15,
-        (PlayStyle::Possession, PlayStylePhase::Attack) => 0.97,
-        (PlayStyle::Counter, PlayStylePhase::Attack) => 1.18,
-        (PlayStyle::Counter, PlayStylePhase::Midfield) => 0.92,
-        (PlayStyle::HighPress, PlayStylePhase::Press) => 1.20,
-        (PlayStyle::HighPress, PlayStylePhase::Defense) => 0.95,
+    match (strategy, phase) {
+        // Aggressive (formerly Attacking + HighPress) — uses HighPress values
+        (DraftStrategy::Aggressive, DraftStrategyPhase::Attack) => 1.12,
+        (DraftStrategy::Aggressive, DraftStrategyPhase::Defense) => 0.95,
+        (DraftStrategy::Aggressive, DraftStrategyPhase::Press) => 1.20,
+        // Passive (formerly Defensive)
+        (DraftStrategy::Passive, DraftStrategyPhase::Defense) => 1.12,
+        (DraftStrategy::Passive, DraftStrategyPhase::Attack) => 0.93,
+        // Scaling (formerly Possession)
+        (DraftStrategy::Scaling, DraftStrategyPhase::Midfield) => 1.15,
+        (DraftStrategy::Scaling, DraftStrategyPhase::Attack) => 0.97,
+        // CounterPick (formerly Counter)
+        (DraftStrategy::CounterPick, DraftStrategyPhase::Attack) => 1.18,
+        (DraftStrategy::CounterPick, DraftStrategyPhase::Midfield) => 0.92,
+        // Balanced and PriorityBans use default 1.0
         _ => 1.0,
     }
 }
