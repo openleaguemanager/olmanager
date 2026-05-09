@@ -1,7 +1,7 @@
 use log::info;
 
 use ofm_core::game::Game;
-use ofm_core::player_rating::{effective_rating_for_assignment, formation_slots, natural_ovr};
+use ofm_core::player_rating::{effective_rating_for_assignment, position_slots, natural_ovr};
 
 fn user_team_context<'a>(
     game: &'a Game,
@@ -75,7 +75,7 @@ fn build_effective_healthy_lineup_ids(
             .unwrap_or(std::cmp::Ordering::Equal)
     });
 
-    let slots = formation_slots();
+    let slots = position_slots();
 
     if valid_saved_ids.len() >= 8 {
         let mut xi_ids = valid_saved_ids;

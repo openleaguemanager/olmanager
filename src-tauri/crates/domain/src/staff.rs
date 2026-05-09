@@ -21,10 +21,6 @@ pub struct Staff {
     pub attributes: StaffAttributes,
     pub team_id: Option<String>,
 
-    // Coaching specialization — boosts one training focus area
-    #[serde(default)]
-    pub specialization: Option<CoachingSpecialization>,
-
     // Contract & finances
     #[serde(default)]
     pub wage: u32,
@@ -40,19 +36,6 @@ pub enum StaffRole {
     Coach,
     Scout,
     Physio,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[cfg_attr(feature = "typescript", derive(TS))]
-#[cfg_attr(feature = "typescript", ts(export))]
-pub enum CoachingSpecialization {
-    Fitness,     // Boosts Physical training
-    Technique,   // Boosts Technical training
-    Tactics,     // Boosts Tactical training
-    Defending,   // Boosts Defending training
-    Attacking,   // Boosts Attacking training
-    GoalKeeping, // Boosts GK-specific development
-    Youth,       // Boosts young player development
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -85,7 +68,6 @@ impl Staff {
             role,
             attributes,
             team_id: None,
-            specialization: None,
             wage: 0,
             contract_end: None,
         }

@@ -1,6 +1,6 @@
 use chrono::{Datelike, TimeZone};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use domain::player::{Player, PlayerAttributes};
+use domain::player::{Player, PlayerAttributes, LolRole};
 use domain::team::{
     AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
 };
@@ -1564,26 +1564,19 @@ pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
 #[cfg(test)]
 mod tests {
     use super::{apply_default_initial_contract_end, default_initial_contract_end_for_start_year};
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes, LolRole};
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            reaction_speed: 60,
-            mental_resilience: 60,
-            durability: 60,
-            champion_pool: 60,
-            coordination: 60,
-            laning: 60,
-            interception: 60,
             mechanics: 60,
-            positional_defense: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 
@@ -1594,7 +1587,7 @@ mod tests {
             id.to_string(),
             "2000-01-01".to_string(),
             "ES".to_string(),
-            Position::Midfielder,
+            LolRole::Jungle,
             default_attrs(),
         );
         player.contract_end = contract_end.map(str::to_string);
@@ -1703,31 +1696,16 @@ fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
     let [mechanics, laning, teamfighting, macro_play, consistency, shotcalling, champion_pool, discipline, mental_resilience] =
         build_lol_stats_from_seed(seed);
 
-    let role_key = normalize_seed_name(seed.role.as_deref().unwrap_or(""));
-
-    let positional_defense = if role_key == "top" || role_key == "support" {
-        clamp_stat(((i16::from(teamfighting) + i16::from(discipline)) / 2) + 4)
-    } else {
-        clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2)
-    };
-
     PlayerAttributes {
-        reaction_speed: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
-        mental_resilience: mental_resilience,
-        durability: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
-        champion_pool: champion_pool,
-        coordination: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
-        laning: laning,
-        interception: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
-        mechanics: mechanics,
-        positional_defense,
-        positioning: clamp_stat((i16::from(macro_play) + i16::from(consistency)) / 2),
-        macro_play: macro_play,
-        consistency: consistency,
-        discipline: discipline,
-        aggression: clamp_stat((i16::from(teamfighting) + i16::from(mental_resilience)) / 2 - 4),
-        teamfighting: teamfighting,
-        shotcalling: shotcalling,
+        mechanics,
+        laning,
+        teamfighting,
+        macro_play,
+        consistency,
+        shotcalling,
+        champion_pool,
+        discipline,
+        mental_resilience,
     }
 }
 

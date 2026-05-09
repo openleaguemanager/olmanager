@@ -120,14 +120,12 @@ function makeSnapshot(overrides: Partial<MatchSnapshot> = {}): MatchSnapshot {
     home_team: {
       id: "fnc",
       name: "Fnatic",
-      formation: "1-1-1-2",
       draft_strategy: "Objective control",
       players: [makePlayer("adc1", "Rekkles", "ADC"), makePlayer("sup1", "Support", "SUPPORT")],
     },
     away_team: {
       id: "g2",
       name: "G2 Esports",
-      formation: "1-1-1-2",
       draft_strategy: "Skirmish",
       players: [makePlayer("enemy1", "Hans", "ADC")],
     },

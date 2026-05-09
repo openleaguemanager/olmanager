@@ -57,7 +57,6 @@ vi.mock("react-i18next", () => ({
         "finances.squadValue": "Squad Value",
         "finances.seasonIncome": "Season Income",
         "finances.perWeekSuffix": "/wk",
-        "tactics.formation": "Formation",
         "tactics.draftStrategy": "Draft Strategy",
         "common.played": "P",
         "common.won": "W",

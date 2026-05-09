@@ -84,7 +84,6 @@ function makeSnapshot() {
     home_team: {
       id: "team1",
       name: "Alpha FC",
-      formation: "4-4-2",
       draft_strategy: "Balanced",
       players: [
         {
@@ -128,7 +127,6 @@ function makeSnapshot() {
     away_team: {
       id: "team2",
       name: "Beta FC",
-      formation: "4-4-2",
       draft_strategy: "Balanced",
       players: [
         {

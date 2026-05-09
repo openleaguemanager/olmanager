@@ -21,20 +21,13 @@ use std::collections::HashMap;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        reaction_speed: 60,
         mental_resilience: 60,
-        durability: 60,
         champion_pool: 60,
-        coordination: 60,
         laning: 60,
-        interception: 60,
         mechanics: 60,
-        positional_defense: 60,
-        positioning: 60,
         macro_play: 60,
         consistency: 60,
         discipline: 60,
-        aggression: 60,
         teamfighting: 60,
         shotcalling: 60,
     }
@@ -42,20 +35,13 @@ fn default_attrs() -> PlayerAttributes {
 
 fn gk_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        reaction_speed: 40,
         mental_resilience: 50,
-        durability: 60,
         champion_pool: 70,
-        coordination: 40,
         laning: 20,
-        interception: 20,
         mechanics: 20,
-        positional_defense: 30,
-        positioning: 70,
         macro_play: 50,
         consistency: 60,
         discipline: 70,
-        aggression: 30,
         teamfighting: 60,
         shotcalling: 50,
     }
@@ -1470,15 +1456,9 @@ fn set_team_overall(game: &mut Game, team_id: &str, overall: u8) {
 }
 
 fn set_player_overall(player: &mut Player, overall: u8) {
-    player.attributes.reaction_speed = overall;
     player.attributes.mental_resilience = overall;
-    player.attributes.durability = overall;
-    player.attributes.coordination = overall;
     player.attributes.laning = overall;
-    player.attributes.interception = overall;
     player.attributes.mechanics = overall;
-    player.attributes.positional_defense = overall;
-    player.attributes.positioning = overall;
     player.attributes.macro_play = overall;
     player.attributes.consistency = overall;
 }

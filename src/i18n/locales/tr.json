@@ -740,7 +740,6 @@
   },
   "tactics": {
     "formationStyle": "Diziliş ve Stil",
-    "formation": "Diziliş",
     "playStyle": "Oyun Tarzı",
     "lineupTab": "Kadro",
     "rolesTab": "Duran Toplar ve Roller",
@@ -1593,7 +1592,7 @@
     "upToDate": "Güncel versiyonu kullanıyorsunuz"
   },
   "preMatch": {
-    "formationFit": "Diziliş Uyumu",
+    "roleCoverage": "Diziliş Uyumu",
     "autoSelect": "En İyi 5'liyi Otomatik Seç",
     "selecting": "Seçiliyor...",
     "startingXI": "İlk 5",
@@ -1671,7 +1670,6 @@
     "step1Min": "1 Dakika İleri",
     "teamControls": "Takım Kontrolleri",
     "subs": "Yedekler",
-    "formation": "Diziliş",
     "playStyle": "Oyun Tarzı",
     "keyEvents": "Önemli Olaylar",
     "noEventsYet": "Maç henüz başlamadı.",
@@ -2122,7 +2120,7 @@
     "preMatchPrep": "Maç Öncesi Hazırlık",
     "startingLineup": "İlk 5",
     "setPiecesCaptain": "Duran Toplar ve Kaptan",
-    "formationFit": "Diziliş Uyumu",
+    "roleCoverage": "Diziliş Uyumu",
     "selecting": "Seçiliyor...",
     "autoSelectXI": "En İyi 5'liyi Otomatik Seç",
     "startingXI": "İlk 5",

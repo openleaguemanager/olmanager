@@ -146,18 +146,6 @@ export default function MatchLive({
     }
   };
 
-  const handleFormationChange = async (formation: string) => {
-    if (!userSide || isSpectator) return;
-    try {
-      const snap = await invoke<MatchSnapshot>("apply_match_command", {
-        command: { ChangeFormation: { side: userSide, formation } }
-      });
-      onSnapshotUpdate(snap);
-    } catch (err) {
-      console.error("Formation change failed:", err);
-    }
-  };
-
   const handleDraftStrategyChange = async (draftStrategy: string) => {
     if (!userSide || isSpectator) return;
     try {
@@ -198,7 +186,6 @@ export default function MatchLive({
                 <p className="font-heading font-bold text-sm uppercase tracking-wider text-gray-800 dark:text-gray-200">
                   {snapshot.home_team.name}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{snapshot.home_team.formation}</p>
               </div>
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center font-heading font-bold text-sm"
@@ -230,7 +217,6 @@ export default function MatchLive({
                 <p className="font-heading font-bold text-sm uppercase tracking-wider text-gray-800 dark:text-gray-200">
                   {snapshot.away_team.name}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{snapshot.away_team.formation}</p>
               </div>
             </div>
           </div>
@@ -341,19 +327,6 @@ export default function MatchLive({
                 <RefreshCw className="w-4 h-4" />
                 {t('match.subs')} ({userSide === "Home" ? snapshot.home_subs_made : snapshot.away_subs_made}/{snapshot.max_subs})
               </button>
-              <div>
-                <p className="text-[10px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-1">{t('match.formation')}</p>
-                <div className="flex flex-wrap gap-1">
-                  {["4-4-2", "4-3-3", "3-5-2", "4-5-1", "4-2-3-1", "3-4-3"].map(f => {
-                    const cur = userSide === "Home" ? snapshot.home_team.formation : snapshot.away_team.formation;
-                    return (
-                      <button key={f} onClick={() => handleFormationChange(f)}
-                        className={`px-2 py-1 rounded text-xs font-heading transition-colors ${cur === f ? "bg-primary-500/20 text-primary-500 dark:text-primary-400 ring-1 ring-primary-500/50" : "bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-navy-700 dark:text-gray-400 dark:hover:text-gray-300"}`}
-                      >{f}</button>
-                    );
-                  })}
-                </div>
-              </div>
               <div>
                 <p className="text-[10px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 mb-1">{t('match.draftStrategy')}</p>
                 <div className="flex flex-wrap gap-1">

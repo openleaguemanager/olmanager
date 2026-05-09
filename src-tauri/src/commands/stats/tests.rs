@@ -1,9 +1,9 @@
 use chrono::{TimeZone, Utc};
 use domain::league::FixtureCompetition;
 use domain::manager::Manager;
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes, LolRole};
 use domain::stats::{
-    LolRole, MatchOutcome, PlayerMatchStatsRecord, StatsState, TeamMatchStatsRecord, TeamSide,
+    MatchOutcome, PlayerMatchStatsRecord, StatsState, TeamMatchStatsRecord, TeamSide,
 };
 use domain::team::Team;
 use ofm_core::clock::GameClock;
@@ -15,26 +15,19 @@ use super::team::{get_team_match_history_internal, get_team_stats_overview_inter
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        reaction_speed: 60,
-        mental_resilience: 60,
-        durability: 60,
-        champion_pool: 60,
-        coordination: 60,
-        laning: 60,
-        interception: 60,
         mechanics: 60,
-        positional_defense: 60,
-        positioning: 60,
+        laning: 60,
+        teamfighting: 60,
         macro_play: 60,
         consistency: 60,
-        discipline: 60,
-        aggression: 60,
-        teamfighting: 60,
         shotcalling: 60,
+        champion_pool: 60,
+        discipline: 60,
+        mental_resilience: 60,
     }
 }
 
-fn make_player(id: &str, team_id: &str, natural_position: Position) -> Player {
+fn make_player(id: &str, team_id: &str, natural_position: LolRole) -> Player {
     let mut player = Player::new(
         id.to_string(),
         id.to_string(),
@@ -159,7 +152,7 @@ fn get_player_match_history_returns_lol_first_fields() {
     state.set_game(make_game(vec![make_player(
         "player-1",
         "team-1",
-        Position::Striker,
+        LolRole::Adc,
     )]));
     state.set_stats_state(StatsState {
         player_matches: vec![
@@ -203,9 +196,9 @@ fn get_player_match_history_returns_lol_first_fields() {
 fn get_player_stats_overview_aggregates_lol_metrics_by_position() {
     let state = StateManager::new();
     state.set_game(make_game(vec![
-        make_player("player-1", "team-1", Position::Striker),
-        make_player("player-2", "team-1", Position::Striker),
-        make_player("player-3", "team-1", Position::Striker),
+        make_player("player-1", "team-1", LolRole::Adc),
+        make_player("player-2", "team-1", LolRole::Adc),
+        make_player("player-3", "team-1", LolRole::Adc),
     ]));
     state.set_stats_state(StatsState {
         player_matches: vec![
@@ -320,7 +313,7 @@ fn get_team_stats_overview_aggregates_lol_team_metrics() {
     state.set_game(make_game(vec![make_player(
         "player-1",
         "team-1",
-        Position::Striker,
+        LolRole::Adc,
     )]));
     state.set_stats_state(StatsState {
         player_matches: vec![],
@@ -348,7 +341,7 @@ fn get_team_match_history_returns_lol_first_fields() {
     state.set_game(make_game(vec![make_player(
         "player-1",
         "team-1",
-        Position::Striker,
+        LolRole::Adc,
     )]));
     state.set_stats_state(StatsState {
         player_matches: vec![],

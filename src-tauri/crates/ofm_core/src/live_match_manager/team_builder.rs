@@ -172,7 +172,7 @@ pub fn auto_select_team_roles(
         .max_by_key(|p| {
             (p.attributes.laning as u16)
                 + (p.attributes.macro_play as u16)
-                + (p.attributes.coordination as u16)
+                + (p.attributes.teamfighting as u16)
         })
         .map(|p| p.id.clone());
 

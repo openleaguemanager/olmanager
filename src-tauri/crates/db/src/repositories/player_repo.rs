@@ -32,9 +32,9 @@ pub fn upsert_player(conn: &Connection, p: &Player) -> Result<(), String> {
            attributes, condition, morale, injury, team_id, traits,
            contract_end, wage, market_value, stats, career,
            transfer_listed, loan_listed, transfer_offers, alternate_positions,
-           natural_position, training_focus, morale_core, footedness, weak_foot, fitness,
+           natural_position, training_focus, morale_core, footedness, fitness,
            potential_base, potential_revealed, potential_research_started_on, potential_research_eta_days, profile_image_url)
-           VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33)",
+           VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32)",
         params![
             p.id,
             p.match_name,
@@ -62,7 +62,6 @@ pub fn upsert_player(conn: &Connection, p: &Player) -> Result<(), String> {
             training_focus_str,
             morale_core_json,
             "Right",
-            p.weak_foot,
             p.fitness,
             p.potential_base,
             p.potential_revealed,
@@ -215,7 +214,7 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
     let training_focus_str: Option<String> = row.get(23)?;
     let morale_core_json: String = row.get(24)?;
     let _footedness_str: String = row.get(25)?;
-    let weak_foot: u8 = row.get(26)?;
+    let _weak_foot: u8 = row.get(26).unwrap_or(2);
     let fitness: u8 = row.get(27).unwrap_or(75);
     let potential_base: u8 = row.get(28).unwrap_or(99);
     let potential_revealed: Option<u8> = row.get(29).unwrap_or(None);
@@ -244,24 +243,16 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
         position,
         natural_position,
         alternate_positions: serde_json::from_str(&alt_positions_json).unwrap_or_default(),
-        weak_foot,
         attributes: serde_json::from_str(&attrs_json).unwrap_or(PlayerAttributes {
-            reaction_speed: 50,
-            mental_resilience: 50,
-            durability: 50,
-            champion_pool: 50,
-            coordination: 50,
-            laning: 50,
-            interception: 50,
             mechanics: 50,
-            positional_defense: 50,
-            positioning: 50,
+            laning: 50,
+            teamfighting: 50,
             macro_play: 50,
             consistency: 50,
-            discipline: 50,
-            aggression: 50,
-            teamfighting: 50,
             shotcalling: 50,
+            champion_pool: 50,
+            discipline: 50,
+            mental_resilience: 50,
         }),
         condition: row.get(8)?,
         morale: row.get(9)?,
@@ -283,7 +274,6 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
         potential_revealed,
         potential_research_started_on,
         potential_research_eta_days,
-        champion_training_target: None,
         champion_training_targets: Vec::new(),
     })
 }
@@ -307,22 +297,15 @@ mod tests {
             "GB".to_string(),
             domain::stats::LolRole::Mid,
             PlayerAttributes {
-                reaction_speed: 70,
-                mental_resilience: 75,
-                durability: 65,
-                champion_pool: 72,
-                coordination: 80,
-                laning: 60,
-                interception: 55,
                 mechanics: 68,
-                positional_defense: 50,
-                positioning: 65,
+                laning: 60,
+                teamfighting: 80,
                 macro_play: 78,
                 consistency: 70,
-                discipline: 60,
-                aggression: 55,
-                teamfighting: 80,
                 shotcalling: 45,
+                champion_pool: 72,
+                discipline: 60,
+                mental_resilience: 75,
             },
         );
         p.team_id = team_id.map(|s| s.to_string());
@@ -432,8 +415,8 @@ mod tests {
         upsert_player(db.conn(), &player).unwrap();
         let loaded = load_all_players(db.conn()).unwrap();
 
-        assert_eq!(loaded[0].attributes.reaction_speed, 70);
-        assert_eq!(loaded[0].attributes.coordination, 80);
+        assert_eq!(loaded[0].attributes.mechanics, 68);
+        assert_eq!(loaded[0].attributes.teamfighting, 80);
         assert_eq!(loaded[0].attributes.macro_play, 78);
     }
 
@@ -579,7 +562,6 @@ mod tests {
         let mut player = sample_player("p-identity", Some("team-001"));
         player.natural_position = domain::stats::LolRole::Top;
         player.alternate_positions = vec![domain::stats::LolRole::Top, domain::stats::LolRole::Top];
-        player.weak_foot = 3;
 
         upsert_player(db.conn(), &player).unwrap();
         let loaded = load_all_players(db.conn()).unwrap();
@@ -589,7 +571,6 @@ mod tests {
             loaded[0].alternate_positions,
             vec![domain::stats::LolRole::Top, domain::stats::LolRole::Top]
         );
-        assert_eq!(loaded[0].weak_foot, 3);
     }
 
     #[test]

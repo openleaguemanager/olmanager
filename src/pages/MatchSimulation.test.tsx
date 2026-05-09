@@ -285,14 +285,12 @@ function makeSnapshot(
     home_team: {
       id: "home1",
       name: "Home FC",
-      formation: "4-4-2",
       draft_strategy: "Balanced",
       players: [makeEnginePlayer({ id: "home-p1", name: "Home Keeper" })],
     },
     away_team: {
       id: "away1",
       name: "Away FC",
-      formation: "4-4-2",
       draft_strategy: "Balanced",
       players: [makeEnginePlayer({ id: "away-p1", name: "Away Keeper" })],
     },

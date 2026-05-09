@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 use domain::player::{LolRole, Player};
 use ofm_core::game::Game;
 use ofm_core::player_identity;
-use ofm_core::player_rating::{effective_rating_for_assignment, formation_slots};
+use ofm_core::player_rating::{effective_rating_for_assignment, position_slots};
 
 use crate::game_database::GameDatabase;
 use crate::game_persistence::{GamePersistenceReader, GamePersistenceWriter};
@@ -356,7 +356,7 @@ fn canonicalize_team_active_lineup_ids(
 ) -> bool {
     // LoL has a fixed 5-role lineup (top, jungle, mid, adc, support).
     // We only need to check if mirrored pairing exists for compatibility.
-    let slots = formation_slots();
+    let slots = position_slots();
     let mut changed = false;
 
     // For LoL, canonicalize the single row of 5 slots
@@ -450,22 +450,15 @@ mod tests {
             "GB".to_string(),
             LolRole::Mid,
             PlayerAttributes {
-                reaction_speed: 70,
-                mental_resilience: 75,
-                durability: 65,
-                champion_pool: 72,
-                coordination: 80,
-                laning: 60,
-                interception: 55,
                 mechanics: 68,
-                positional_defense: 50,
-                positioning: 65,
+                laning: 60,
+                teamfighting: 80,
                 macro_play: 78,
                 consistency: 70,
-                discipline: 60,
-                aggression: 55,
-                teamfighting: 80,
                 shotcalling: 45,
+                champion_pool: 72,
+                discipline: 60,
+                mental_resilience: 75,
             },
         );
 
@@ -625,26 +618,18 @@ mod tests {
             "GB".to_string(),
             role,
             PlayerAttributes {
-                reaction_speed: 70,
-                mental_resilience: 70,
-                durability: 70,
-                champion_pool: 70,
-                coordination: 70,
-                laning: 70,
-                interception: 70,
                 mechanics: 70,
-                positional_defense: 70,
-                positioning: 70,
+                laning: 70,
+                teamfighting: 70,
                 macro_play: 70,
                 consistency: 70,
-                discipline: 70,
-                aggression: 70,
-                teamfighting: 70,
                 shotcalling: 70,
+                champion_pool: 70,
+                discipline: 70,
+                mental_resilience: 70,
             },
         );
         player.natural_position = role;
-        player.weak_foot = 1;
         player.team_id = Some("team-001".to_string());
         player
     }

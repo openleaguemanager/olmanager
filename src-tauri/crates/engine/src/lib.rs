@@ -10,7 +10,6 @@ pub mod engine;
 pub mod event;
 pub mod live_match;
 pub mod report;
-pub(crate) mod shared;
 pub mod types;
 
 // Re-export key types for convenience

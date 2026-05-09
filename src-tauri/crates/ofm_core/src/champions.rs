@@ -567,18 +567,6 @@ pub fn set_player_training_target(
         player.champion_training_targets.resize(3, String::new());
     }
 
-    // Backward compatibility: if legacy single-target exists and new slots are empty,
-    // migrate it to priority slot 1.
-    if player
-        .champion_training_targets
-        .iter()
-        .all(|slot| slot.is_empty())
-        && let Some(legacy) = player.champion_training_target.clone()
-        && !legacy.trim().is_empty()
-    {
-        player.champion_training_targets[0] = legacy;
-    }
-
     if let Some(champion) = champion_id.clone() {
         let normalized = normalize_key(&champion);
         // Remove duplicates from other slots before setting the requested priority.
@@ -603,12 +591,6 @@ pub fn set_player_training_target(
     player.champion_training_targets = compacted;
     player.champion_training_targets.resize(3, String::new());
 
-    player.champion_training_target = player
-        .champion_training_targets
-        .iter()
-        .find(|slot| !slot.trim().is_empty())
-        .cloned();
-
     if let Some(champion) = champion_id {
         let current = mastery_for_player_champion(game, player_id, &champion);
         upsert_mastery(game, player_id, &champion, current.max(MIN_MASTERY));
@@ -623,13 +605,6 @@ pub fn training_targets_for_player(player: &domain::player::Player) -> Vec<Strin
         .filter(|slot| !slot.trim().is_empty())
         .cloned()
         .collect();
-
-    if targets.is_empty()
-        && let Some(legacy) = player.champion_training_target.clone()
-        && !legacy.trim().is_empty()
-    {
-        targets.push(legacy);
-    }
 
     targets.truncate(3);
     targets
@@ -756,11 +731,6 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
         player.champion_training_targets.extend(selected);
         player.champion_training_targets.truncate(3);
         player.champion_training_targets.resize(3, String::new());
-        player.champion_training_target = player
-            .champion_training_targets
-            .iter()
-            .find(|slot| !slot.trim().is_empty())
-            .cloned();
     }
 }
 
@@ -916,11 +886,6 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
         let old_targets = player.champion_training_targets.clone();
         player.champion_training_targets = targets.clone();
         player.champion_training_targets.resize(3, String::new());
-        player.champion_training_target = player
-            .champion_training_targets
-            .iter()
-            .find(|slot| !slot.trim().is_empty())
-            .cloned();
 
         if old_targets != player.champion_training_targets {
             updated_count += 1;

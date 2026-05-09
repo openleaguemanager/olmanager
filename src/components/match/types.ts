@@ -149,7 +149,6 @@ export interface EnginePlayerData {
 export interface EngineTeamData {
   id: string;
   name: string;
-  formation: string;
   draft_strategy: string;
   players: EnginePlayerData[];
 }
@@ -317,8 +316,6 @@ export const SPEED_MS: Record<SimSpeed, number> = {
   fast: 200,
   instant: 10,
 };
-
-export const FORMATIONS = ["4-4-2", "4-3-3", "3-5-2", "4-5-1", "4-2-3-1", "3-4-3"];
 
 export const DRAFT_STRATEGIES = [
   { id: "Balanced", label: "Balanced" },

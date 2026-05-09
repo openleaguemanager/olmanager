@@ -1,5 +1,5 @@
 use crate::game::Game;
-use crate::player_rating::{effective_rating_for_assignment, formation_slots, natural_ovr};
+use crate::player_rating::{effective_rating_for_assignment, position_slots, natural_ovr};
 use domain::league::{Fixture, FixtureStatus, StandingEntry};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -376,7 +376,7 @@ fn team_strength(game: &Game, team_id: &str) -> f64 {
     let team = game.teams.iter().find(|team| team.id == team_id);
     match team {
         Some(team) if !team.active_lineup_ids.is_empty() => {
-            let slots = formation_slots();
+            let slots = position_slots();
             let rated_players: Vec<f64> = team
                 .active_lineup_ids
                 .iter()

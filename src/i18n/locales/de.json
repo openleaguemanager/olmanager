@@ -757,7 +757,6 @@
   },
   "tactics": {
     "formationStyle": "Spielplan & Stil",
-    "formation": "Spielplan",
     "playStyle": "Spielweise",
     "lineupTab": "Aufstellung",
     "rolesTab": "Objektive & Rollen",
@@ -1642,7 +1641,7 @@
     "upToDate": "Du hast die neueste Version"
   },
   "preMatch": {
-    "formationFit": "Strategieanpassung",
+    "roleCoverage": "Strategieanpassung",
     "autoSelect": "Beste Fünf automatisch wählen",
     "selecting": "Auswahl...",
     "startingXI": "Starter Five",
@@ -1720,7 +1719,6 @@
     "step1Min": "1 Minute vorspulen",
     "teamControls": "Teamsteuerung",
     "subs": "Wechsel",
-    "formation": "Spielplan",
     "playStyle": "Spielstil",
     "keyEvents": "Wichtige Ereignisse",
     "noEventsYet": "Das Spiel hat noch nicht begonnen.",
@@ -2189,7 +2187,7 @@
     "preMatchPrep": "Vorbereitung vor dem Spiel",
     "startingLineup": "Startaufstellung",
     "setPiecesCaptain": "Standards & Kapitän",
-    "formationFit": "Strategieanpassung",
+    "roleCoverage": "Strategieanpassung",
     "selecting": "Auswahl...",
     "autoSelectXI": "Beste Fünf auswählen",
     "startingXI": "Starter Five",

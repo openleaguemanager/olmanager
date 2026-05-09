@@ -112,7 +112,6 @@ pub fn run() {
             propose_renewal,
             delegate_renewals,
             preview_renewal_financial_impact,
-            set_formation,
             set_active_lineup,
             set_starting_xi,
             set_draft_strategy,

@@ -14,20 +14,13 @@ use ofm_core::live_match_manager::{self, MatchMode};
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        reaction_speed: 65,
         mental_resilience: 65,
-        durability: 65,
         champion_pool: 65,
-        coordination: 65,
         laning: 65,
-        interception: 55,
         mechanics: 65,
-        positional_defense: 55,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
     }

@@ -232,22 +232,15 @@ mod tests {
             "GB".to_string(),
             Position::Midfielder,
             PlayerAttributes {
-                reaction_speed: 50,
-                mental_resilience: 50,
-                durability: 50,
-                champion_pool: 50,
-                coordination: 50,
-                laning: 50,
-                interception: 50,
                 mechanics: 50,
-                positional_defense: 50,
-                positioning: 50,
+                laning: 50,
+                teamfighting: 50,
                 macro_play: 50,
                 consistency: 50,
-                discipline: 50,
-                aggression: 50,
-                teamfighting: 50,
                 shotcalling: 50,
+                champion_pool: 50,
+                discipline: 50,
+                mental_resilience: 50,
             },
         );
         let staff = domain::staff::Staff::new(
@@ -332,26 +325,18 @@ mod tests {
                 "GB".to_string(),
                 role,
                 PlayerAttributes {
-                    reaction_speed: 70,
-                    mental_resilience: 70,
-                    durability: 70,
-                    champion_pool: 70,
-                    coordination: 70,
-                    laning: 70,
-                    interception: 70,
                     mechanics: 70,
-                    positional_defense: 70,
-                    positioning: 70,
+                    laning: 70,
+                    teamfighting: 70,
                     macro_play: 70,
                     consistency: 70,
-                    discipline: 70,
-                    aggression: 70,
-                    teamfighting: 70,
                     shotcalling: 70,
+                    champion_pool: 70,
+                    discipline: 70,
+                    mental_resilience: 70,
                 },
             );
             player.natural_position = role;
-            player.weak_foot = 1;
             player.team_id = Some("team-001".to_string());
             player
         };
@@ -372,7 +357,6 @@ mod tests {
         let mut json: serde_json::Value =
             serde_json::from_str(&minimal_game_json()).expect("minimal game json should parse");
 
-        json["teams"][0]["formation"] = serde_json::json!("4-4-2");
         json["teams"][0]["starting_xi_ids"] = serde_json::json!(["legacy-gk", "p-001"]);
         json["players"][0]["position"] = serde_json::json!("Defender");
         json["players"][0]["natural_position"] = serde_json::json!("Defender");
@@ -853,9 +837,6 @@ mod tests {
             .unwrap();
 
         assert_eq!(player.natural_position, domain::stats::LolRole::Top);
-        // Note: identity upgrade (footedness, weak_foot) is now a no-op since
-        // the Position to LolRole migration is complete. Players keep defaults.
-        assert!(player.weak_foot >= 1);
         assert!(
             player
                 .alternate_positions
@@ -899,7 +880,7 @@ mod tests {
         let starting_xi_ids: Vec<String> = serde_json::from_str(&starting_xi_json).unwrap();
 
         // Input was swapped order ["sup","jng","mid","top","adc"];
-        // canonicalization reorders to match formation_slots fit
+        // canonicalization reorders to match position_slots fit
         assert_eq!(
             starting_xi_ids,
             vec!["top", "jng", "mid", "adc", "sup"]

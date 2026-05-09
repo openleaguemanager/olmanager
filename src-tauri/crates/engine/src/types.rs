@@ -53,10 +53,6 @@ pub struct PlayerData {
     pub traits: Vec<String>,
 }
 
-fn default_engine_attr() -> u8 {
-    50
-}
-
 fn default_fitness() -> u8 {
     75
 }

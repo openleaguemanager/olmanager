@@ -43,7 +43,7 @@ fn compute_alternate_role(primary: &LolRole, attrs: &PlayerAttributes) -> Option
         }
         LolRole::Adc => {
             // ADC with good positioning can play Mid
-            if attrs.positioning >= 70 && attrs.laning >= 65 {
+            if attrs.consistency >= 70 && attrs.laning >= 65 {
                 Some(LolRole::Mid)
             } else {
                 None
@@ -51,7 +51,7 @@ fn compute_alternate_role(primary: &LolRole, attrs: &PlayerAttributes) -> Option
         }
         LolRole::Support => {
             // Support with good defending can play Top
-            if attrs.positional_defense >= 65 && attrs.interception >= 60 {
+            if attrs.discipline >= 65 && attrs.macro_play >= 60 {
                 Some(LolRole::Top)
             } else {
                 None
@@ -187,15 +187,7 @@ pub(super) fn generate_random_player_from_def(
     let is_jungle = matches!(role, LolRole::Jungle);
 
     let attributes = PlayerAttributes {
-        reaction_speed: rng.random_range(40..95),
-        mental_resilience: rng.random_range(40..95),
-        durability: if is_support {
-            rng.random_range(50..90)
-        } else {
-            rng.random_range(40..95)
-        },
-        champion_pool: rng.random_range(40..95),
-        coordination: if is_support {
+        mechanics: if is_adc {
             rng.random_range(55..95)
         } else {
             rng.random_range(40..95)
@@ -205,25 +197,10 @@ pub(super) fn generate_random_player_from_def(
         } else {
             rng.random_range(40..95)
         },
-        interception: if is_support {
-            rng.random_range(45..85)
-        } else {
-            rng.random_range(40..95)
-        },
-        mechanics: if is_adc {
+        teamfighting: if is_support {
             rng.random_range(55..95)
         } else {
-            rng.random_range(40..95)
-        },
-        positional_defense: if is_support || is_jungle {
-            rng.random_range(45..85)
-        } else {
-            rng.random_range(40..95)
-        },
-        positioning: if is_adc || is_support {
-            rng.random_range(55..95)
-        } else {
-            rng.random_range(40..95)
+            rng.random_range(45..95)
         },
         macro_play: if is_support || is_jungle {
             rng.random_range(55..95)
@@ -235,32 +212,26 @@ pub(super) fn generate_random_player_from_def(
         } else {
             rng.random_range(40..95)
         },
+        shotcalling: rng.random_range(30..90),
+        champion_pool: rng.random_range(40..95),
         discipline: if is_adc {
             rng.random_range(55..90)
         } else {
             rng.random_range(40..95)
         },
-        aggression: rng.random_range(30..90),
-        teamfighting: if is_support {
-            rng.random_range(55..95)
-        } else {
-            rng.random_range(45..95)
-        },
-        shotcalling: rng.random_range(30..90),
+        mental_resilience: rng.random_range(40..95),
     };
 
-    let ovr = (attributes.reaction_speed as u32
-        + attributes.mental_resilience as u32
-        + attributes.durability as u32
-        + attributes.coordination as u32
+    let ovr = (attributes.mechanics as u32
         + attributes.laning as u32
-        + attributes.interception as u32
-        + attributes.mechanics as u32
-        + attributes.positional_defense as u32
-        + attributes.positioning as u32
+        + attributes.teamfighting as u32
         + attributes.macro_play as u32
-        + attributes.consistency as u32)
-        / 11;
+        + attributes.consistency as u32
+        + attributes.shotcalling as u32
+        + attributes.champion_pool as u32
+        + attributes.discipline as u32
+        + attributes.mental_resilience as u32)
+        / 9;
 
     let age_factor = if age <= 23 {
         1.5

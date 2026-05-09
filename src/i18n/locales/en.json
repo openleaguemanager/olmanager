@@ -794,7 +794,6 @@
   },
   "tactics": {
     "formationStyle": "Game Plan & Style",
-    "formation": "Game Plan",
     "playStyle": "Play Style",
     "draftStrategy": "Draft Strategy",
     "lineupTab": "Lineup",
@@ -1687,7 +1686,7 @@
     "upToDate": "You're up to date"
   },
   "preMatch": {
-    "formationFit": "Strategy Fit",
+    "roleCoverage": "Strategy Fit",
     "autoSelect": "Auto-Select Best Five",
     "selecting": "Selecting...",
     "startingXI": "Starting Five",
@@ -1765,7 +1764,6 @@
     "step1Min": "Step 1 Minute",
     "teamControls": "Team Controls",
     "subs": "Subs",
-    "formation": "Formation",
     "playStyle": "Play Style",
     "draftStrategy": "Draft Strategy",
     "keyEvents": "Key Events",
@@ -2235,7 +2233,7 @@
     "preMatchPrep": "Pre-Match Preparation",
     "startingLineup": "Starting Lineup",
     "setPiecesCaptain": "Objectives & Captain",
-    "formationFit": "Strategy Fit",
+    "roleCoverage": "Strategy Fit",
     "selecting": "Selecting...",
     "autoSelectXI": "Auto-Select Best Five",
     "startingXI": "Starting Five",

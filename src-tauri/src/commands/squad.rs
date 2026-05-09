@@ -468,87 +468,6 @@ fn apply_post_scrim_decision_internal(
 }
 
 #[tauri::command]
-pub fn set_formation(state: State<'_, StateManager>, formation: String) -> Result<Game, String> {
-    info!("[cmd] set_formation: {}", formation);
-    let mut game = state
-        .get_game(|g| g.clone())
-        .ok_or("No active game session".to_string())?;
-
-    let team_id = game
-        .manager
-        .team_id
-        .clone()
-        .ok_or("No team assigned".to_string())?;
-
-    // Parse formation into (def, mid, fwd) counts
-    let parts: Vec<usize> = formation
-        .split('-')
-        .filter_map(|s| s.parse().ok())
-        .collect();
-    let (num_def, num_mid, num_fwd) = match parts.len() {
-        3 => (parts[0], parts[1], parts[2]),
-        4 => (parts[0], parts[1] + parts[2], parts[3]),
-        _ => (4, 4, 2),
-    };
-
-    if let Some(_team) = game.teams.iter_mut().find(|t| t.id == team_id) {
-        // formation field removed — composition handled via draft_strategy
-    }
-
-    // Reassign positions for outfield players on this team
-    // In LoL, filter out Support role (the "goalkeeper" equivalent)
-    let player_ids: Vec<String> = game
-        .players
-        .iter()
-        .filter(|p| {
-            p.team_id.as_deref() == Some(&team_id) && p.position != domain::player::LolRole::Support
-        })
-        .map(|p| p.id.clone())
-        .collect();
-
-    // Sort by defensive ability (most defensive first)
-    let mut sorted_ids = player_ids.clone();
-    sorted_ids.sort_by(|a_id, b_id| {
-        let pa = game
-            .players
-            .iter()
-            .find(|p| p.id == *a_id)
-            .expect("set_formation: player should exist in game state");
-        let pb = game
-            .players
-            .iter()
-            .find(|p| p.id == *b_id)
-            .expect("set_formation: player should exist in game state");
-        let def_a = pa.attributes.positional_defense as u16
-            + pa.attributes.interception as u16
-            + pa.attributes.durability as u16;
-        let def_b = pb.attributes.positional_defense as u16
-            + pb.attributes.interception as u16
-            + pb.attributes.durability as u16;
-        def_b.cmp(&def_a)
-    });
-
-    // Assign positions - map to LoL roles
-    for (slot, pid) in sorted_ids.iter().enumerate() {
-        let new_pos = if slot < num_def {
-            domain::player::LolRole::Top
-        } else if slot < num_def + num_mid {
-            domain::player::LolRole::Mid
-        } else if slot < num_def + num_mid + num_fwd {
-            domain::player::LolRole::Adc
-        } else {
-            continue;
-        };
-        if let Some(player) = game.players.iter_mut().find(|p| p.id == *pid) {
-            player.position = new_pos;
-        }
-    }
-
-    state.set_game(game.clone());
-    Ok(game)
-}
-
-#[tauri::command]
 pub fn set_active_lineup(
     state: State<'_, StateManager>,
     player_ids: Vec<String>,
@@ -1926,7 +1845,7 @@ pub fn auto_select_team_roles(
 mod tests {
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes, LolRole};
     use domain::staff::{Staff, StaffAttributes, StaffRole};
     use domain::team::{Team, TrainingFocus, TrainingIntensity, TrainingSchedule};
     use ofm_core::clock::GameClock;
@@ -1934,22 +1853,15 @@ mod tests {
 
     fn attrs(stat: u8) -> PlayerAttributes {
         PlayerAttributes {
-            reaction_speed: stat,
-            mental_resilience: stat,
-            durability: stat,
-            champion_pool: stat,
-            coordination: stat,
-            laning: stat,
-            interception: stat,
             mechanics: stat,
-            positional_defense: stat,
-            positioning: stat,
+            laning: stat,
+            teamfighting: stat,
             macro_play: stat,
             consistency: stat,
-            discipline: stat,
-            aggression: stat,
-            teamfighting: stat,
             shotcalling: stat,
+            champion_pool: stat,
+            discipline: stat,
+            mental_resilience: stat,
         }
     }
 
@@ -1960,7 +1872,7 @@ mod tests {
             format!("{} Full", id),
             "2005-01-01".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Jungle,
             attrs(stat),
         );
         player.team_id = Some(team_id.to_string());
@@ -2008,7 +1920,6 @@ mod tests {
         );
         coach.nationality = "GB".to_string();
         coach.team_id = Some("team-1".to_string());
-        coach.specialization = Some(domain::staff::CoachingSpecialization::Technique);
 
         Game::new(
             clock,

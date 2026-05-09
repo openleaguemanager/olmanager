@@ -1,8 +1,8 @@
 use domain::player::{LolRole, Player};
 
 /// Returns the 5 starting positions for a team in LoL format.
-/// In LoL, the formation is always 5 players: Top, Jungle, Mid, ADC, Support
-pub fn formation_slots() -> Vec<LolRole> {
+/// In LoL, the lineup is always 5 players: Top, Jungle, Mid, ADC, Support
+pub fn position_slots() -> Vec<LolRole> {
     vec![
         LolRole::Top,
         LolRole::Jungle,
@@ -162,22 +162,15 @@ mod tests {
 
     fn make_player(role: LolRole) -> Player {
         let attrs = PlayerAttributes {
-            reaction_speed: 70,
-            mental_resilience: 75,
-            durability: 65,
-            champion_pool: 72,
-            coordination: 80,
-            laning: 60,
-            interception: 55,
             mechanics: 68,
-            positional_defense: 50,
-            positioning: 65,
+            laning: 60,
+            teamfighting: 80,
             macro_play: 78,
             consistency: 70,
-            discipline: 60,
-            aggression: 55,
-            teamfighting: 80,
             shotcalling: 45,
+            champion_pool: 72,
+            discipline: 60,
+            mental_resilience: 75,
         };
         Player::new(
             "test-1".to_string(),
@@ -191,8 +184,8 @@ mod tests {
     }
 
     #[test]
-    fn formation_slots_returns_five_roles() {
-        let slots = formation_slots();
+    fn position_slots_returns_five_roles() {
+        let slots = position_slots();
         assert_eq!(slots.len(), 5);
         assert_eq!(
             slots,

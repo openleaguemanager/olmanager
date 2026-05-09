@@ -169,18 +169,16 @@ pub fn check_player_events(game: &mut Game) {
                 }
 
                 let attrs = &player.attributes;
-                let ovr = (attrs.reaction_speed as u16
-                    + attrs.mental_resilience as u16
-                    + attrs.durability as u16
-                    + attrs.coordination as u16
+                let ovr = (attrs.mechanics as u16
                     + attrs.laning as u16
-                    + attrs.interception as u16
-                    + attrs.mechanics as u16
-                    + attrs.positional_defense as u16
-                    + attrs.positioning as u16
+                    + attrs.teamfighting as u16
                     + attrs.macro_play as u16
-                    + attrs.consistency as u16)
-                    / 11;
+                    + attrs.consistency as u16
+                    + attrs.shotcalling as u16
+                    + attrs.champion_pool as u16
+                    + attrs.discipline as u16
+                    + attrs.mental_resilience as u16)
+                    / 9;
 
                 // Player must have decent OVR, low morale, and few appearances
                 // relative to team matches. 10% daily chance to avoid flooding.

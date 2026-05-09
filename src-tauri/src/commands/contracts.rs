@@ -164,7 +164,7 @@ mod tests {
     use chrono::{TimeZone, Utc};
     use db::save_manager::SaveManager;
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes, LolRole};
     use domain::staff::{Staff, StaffAttributes, StaffRole};
     use domain::team::Team;
     use ofm_core::clock::GameClock;
@@ -203,22 +203,15 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            reaction_speed: 60,
-            mental_resilience: 60,
-            durability: 60,
-            champion_pool: 60,
-            coordination: 60,
-            laning: 60,
-            interception: 60,
             mechanics: 60,
-            positional_defense: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 
@@ -229,7 +222,7 @@ mod tests {
             "John Smith".to_string(),
             "2000-01-01".to_string(),
             "England".to_string(),
-            Position::Forward,
+            LolRole::Adc,
             default_attrs(),
         );
         player.team_id = Some("team-1".to_string());

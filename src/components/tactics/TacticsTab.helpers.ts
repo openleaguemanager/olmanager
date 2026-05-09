@@ -61,7 +61,6 @@ interface TacticsPlayerFilterContext {
 
 interface ResolveStartingXiIdsOptions {
   availablePlayers: PlayerData[];
-  formation: string;
   pendingStartingXiIds: string[] | null;
   playersById: Map<string, PlayerData>;
   savedStartingXiIds: string[];
@@ -85,12 +84,10 @@ export function buildTacticsRoster(
 
 export function resolveStartingXiIds({
   availablePlayers,
-  formation: _formation,
   pendingStartingXiIds,
   playersById,
   savedStartingXiIds,
 }: ResolveStartingXiIdsOptions): string[] {
-  void _formation;
   const baseIds = buildActiveLineupIds(
     availablePlayers,
     savedStartingXiIds,

@@ -34,20 +34,13 @@ fn make_team(id: &str, name: &str) -> Team {
 
 fn make_player(id: &str, team_id: &str, wage: u32) -> Player {
     let attrs = PlayerAttributes {
-        reaction_speed: 65,
         mental_resilience: 65,
-        durability: 65,
         champion_pool: 65,
-        coordination: 65,
         laning: 65,
-        interception: 65,
         mechanics: 65,
-        positional_defense: 65,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
     };

@@ -589,8 +589,8 @@ fn apply_lol_profile_progression(
             clamp_attr_range(i16::from(player.attributes.champion_pool) + d_agility);
         player.attributes.laning =
             clamp_attr_range(i16::from(player.attributes.laning) + d_shooting);
-        player.attributes.positioning =
-            clamp_attr_range(i16::from(player.attributes.positioning) + d_positioning);
+        player.attributes.consistency =
+            clamp_attr_range(i16::from(player.attributes.consistency) + d_positioning);
         player.attributes.teamfighting =
             clamp_attr_range(i16::from(player.attributes.teamfighting) + d_teamwork);
         player.attributes.mental_resilience =
@@ -603,8 +603,8 @@ fn apply_lol_profile_progression(
             clamp_attr_range(i16::from(player.attributes.discipline) + d_composure);
         player.attributes.shotcalling =
             clamp_attr_range(i16::from(player.attributes.shotcalling) + d_leadership);
-        player.attributes.coordination =
-            clamp_attr_range(i16::from(player.attributes.coordination) + d_passing);
+        player.attributes.teamfighting =
+            clamp_attr_range(i16::from(player.attributes.teamfighting) + d_passing);
     }
 }
 

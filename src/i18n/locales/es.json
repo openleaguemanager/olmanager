@@ -793,7 +793,6 @@
   },
   "tactics": {
     "formationStyle": "Plan de Juego y Estilo",
-    "formation": "Plan de Juego",
     "playStyle": "Estilo de Juego",
     "lineupTab": "Alineación",
     "rolesTab": "Roles y objetivos",
@@ -1691,7 +1690,7 @@
     "upToDate": "Tienes la última versión"
   },
   "preMatch": {
-    "formationFit": "Ajuste de Estrategia",
+    "roleCoverage": "Ajuste de Estrategia",
     "autoSelect": "Selección automática del quinteto",
     "selecting": "Seleccionando...",
     "startingXI": "Quinteto Titular",
@@ -1769,7 +1768,6 @@
     "step1Min": "Avanzar 1 Minuto",
     "teamControls": "Controles del Equipo",
     "subs": "Cambios",
-    "formation": "Plan de Juego",
     "playStyle": "Estilo de Juego",
     "keyEvents": "Eventos Clave",
     "noEventsYet": "El partido aún no ha comenzado.",
@@ -2238,7 +2236,7 @@
     "preMatchPrep": "Preparación Pre-Partido",
     "startingLineup": "Alineación Titular",
     "setPiecesCaptain": "Objetivos y Líder",
-    "formationFit": "Ajuste de Estrategia",
+    "roleCoverage": "Ajuste de Estrategia",
     "selecting": "Seleccionando...",
     "autoSelectXI": "Auto-seleccionar mejor quinteto",
     "startingXI": "Quinteto",

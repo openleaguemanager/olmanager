@@ -18,20 +18,13 @@ use ofm_core::training;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        reaction_speed: 65,
         mental_resilience: 65,
-        durability: 65,
         champion_pool: 65,
-        coordination: 65,
         laning: 65,
-        interception: 65,
         mechanics: 65,
-        positional_defense: 65,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
     }
@@ -48,12 +41,12 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
         "mechanics" => avg([
             attrs.mechanics,
             attrs.champion_pool,
-            attrs.reaction_speed,
+            attrs.mechanics,
             attrs.discipline,
         ]),
         "laning" => avg([
             attrs.laning,
-            attrs.positioning,
+            attrs.consistency,
             attrs.mechanics,
             attrs.discipline,
         ]),
@@ -66,8 +59,8 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
         "macro" => avg([
             attrs.macro_play,
             attrs.consistency,
-            attrs.positioning,
-            attrs.coordination,
+            attrs.consistency,
+            attrs.teamfighting,
         ]),
         "consistency" => avg([
             attrs.consistency,
@@ -85,7 +78,7 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
             attrs.mechanics,
             attrs.champion_pool,
             attrs.macro_play,
-            attrs.coordination,
+            attrs.teamfighting,
         ]),
         "discipline" => avg([
             attrs.consistency,
@@ -696,8 +689,8 @@ fn mental_reset_recovery_has_no_attribute_gains() {
     // Mental Reset / Recovery: no attribute gains at all
     for (i, p) in game.players.iter().enumerate() {
         assert_eq!(
-            p.attributes.reaction_speed, initial_attrs[i].reaction_speed,
-            "Mental Reset / Recovery should not change reaction_speed"
+            p.attributes.mechanics, initial_attrs[i].mechanics,
+            "Mental Reset / Recovery should not change mechanics"
         );
         assert_eq!(
             p.attributes.laning, initial_attrs[i].laning,
@@ -734,7 +727,7 @@ fn no_coaching_staff_reduces_gains() {
     let mut game = Game::new(clock, manager, vec![team1], vec![p1], vec![], vec![]);
 
     // Train many sessions
-    let initial_reaction_speed = game.players[0].attributes.reaction_speed;
+    let initial_mechanics = game.players[0].attributes.mechanics;
     for _ in 0..200 {
         game.players[0].condition = 90;
         training::process_training(&mut game, 0);
@@ -742,10 +735,10 @@ fn no_coaching_staff_reduces_gains() {
 
     // Should still gain something (just less than with staff)
     // The 0.8 penalty from no staff still allows some growth
-    let final_reaction_speed = game.players[0].attributes.reaction_speed;
+    let final_mechanics = game.players[0].attributes.mechanics;
     // After 200 intense sessions with a young player, some gain is expected
     assert!(
-        final_reaction_speed >= initial_reaction_speed,
+        final_mechanics >= initial_mechanics,
         "Should still gain attributes without staff"
     );
 }
@@ -912,20 +905,20 @@ fn young_player_gains_more_than_old() {
     game.teams[0].training_intensity = TrainingIntensity::High;
     game.teams[0].training_schedule = TrainingSchedule::Intense;
 
-    let p1_initial_reaction_speed = game
+    let p1_initial_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p1")
         .unwrap()
         .attributes
-        .reaction_speed;
-    let p3_initial_reaction_speed = game
+        .mechanics;
+    let p3_initial_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p3")
         .unwrap()
         .attributes
-        .reaction_speed;
+        .mechanics;
 
     for _ in 0..300 {
         for p in game.players.iter_mut() {
@@ -934,23 +927,23 @@ fn young_player_gains_more_than_old() {
         training::process_training(&mut game, 0);
     }
 
-    let p1_final_reaction_speed = game
+    let p1_final_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p1")
         .unwrap()
         .attributes
-        .reaction_speed;
-    let p3_final_reaction_speed = game
+        .mechanics;
+    let p3_final_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p3")
         .unwrap()
         .attributes
-        .reaction_speed;
+        .mechanics;
 
-    let p1_gain = p1_final_reaction_speed - p1_initial_reaction_speed;
-    let p3_gain = p3_final_reaction_speed - p3_initial_reaction_speed;
+    let p1_gain = p1_final_mechanics - p1_initial_mechanics;
+    let p3_gain = p3_final_mechanics - p3_initial_mechanics;
 
     assert!(
         p1_gain >= p3_gain,

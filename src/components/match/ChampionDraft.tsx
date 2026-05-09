@@ -2281,7 +2281,7 @@ export default function ChampionDraft({
         ? Math.round(
           (Number(playerState.attributes.consistency ?? 70) +
             Number(playerState.attributes.macro_play ?? 70) +
-            Number(playerState.attributes.positioning ?? 70) +
+            Number(playerState.attributes.consistency ?? 70) +
             Number(playerState.attributes.discipline ?? 70)) /
           4,
         )

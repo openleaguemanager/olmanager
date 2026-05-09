@@ -7,7 +7,6 @@ use crate::staff_effects::LolStaffEffects;
 use chrono::Datelike;
 use domain::message::{InboxMessage, MessageCategory, MessagePriority};
 use domain::player::LolRole;
-use domain::staff::CoachingSpecialization;
 use domain::team::{
     MainFacilityModuleKind, ScrimChampionPick, ScrimFocus, ScrimIssue, ScrimReport, ScrimStatus,
     TrainingFocus, TrainingIntensity, TrainingSchedule,
@@ -29,23 +28,12 @@ pub struct TeamCoachingBonus {
 }
 
 /// Compute coaching bonuses from a team's staff.
-fn compute_coaching_bonus(game: &Game, team_id: &str, focus: &TrainingFocus) -> TeamCoachingBonus {
-    let focus_spec = match focus {
-        TrainingFocus::Scrims => Some(CoachingSpecialization::Tactics),
-        TrainingFocus::VODReview => Some(CoachingSpecialization::Tactics),
-        TrainingFocus::IndividualCoaching => Some(CoachingSpecialization::Technique),
-        TrainingFocus::ChampionPoolPractice => Some(CoachingSpecialization::Technique),
-        TrainingFocus::MacroSystems => Some(CoachingSpecialization::Tactics),
-        TrainingFocus::MentalResetRecovery => None,
-    };
-
+fn compute_coaching_bonus(game: &Game, team_id: &str, _focus: &TrainingFocus) -> TeamCoachingBonus {
     let effects = LolStaffEffects::for_team(&game.staff, team_id);
-    let specialization_mult =
-        effects.focus_specialization_multiplier(&game.staff, team_id, focus_spec);
 
     TeamCoachingBonus {
         coaching_mult: effects.coaching,
-        specialization_mult,
+        specialization_mult: 1.0,
         physio_mult: effects.recovery,
     }
 }
@@ -1301,7 +1289,7 @@ fn apply_scrim_plan_focus_gains(
         ScrimFocus::Teamfighting => {
             try_gain(&mut attrs.teamfighting, gain);
             try_gain(&mut attrs.discipline, gain * 0.9);
-            try_gain(&mut attrs.positioning, gain * 0.75);
+            try_gain(&mut attrs.consistency, gain * 0.75);
         }
         ScrimFocus::Macro => {
             try_gain(&mut attrs.macro_play, gain);
@@ -1328,22 +1316,15 @@ mod tests {
 
     fn attrs(stat: u8) -> PlayerAttributes {
         PlayerAttributes {
-            reaction_speed: stat,
-            mental_resilience: stat,
-            durability: stat,
-            champion_pool: stat,
-            coordination: stat,
-            laning: stat,
-            interception: stat,
             mechanics: stat,
-            positional_defense: stat,
-            positioning: stat,
+            laning: stat,
+            teamfighting: stat,
             macro_play: stat,
             consistency: stat,
-            discipline: stat,
-            aggression: stat,
-            teamfighting: stat,
             shotcalling: stat,
+            champion_pool: stat,
+            discipline: stat,
+            mental_resilience: stat,
         }
     }
 

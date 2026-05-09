@@ -48,7 +48,6 @@ function player(overrides: Partial<PlayerData>): PlayerData {
     alternate_positions: [],
     training_focus: null,
     attributes: {
-      reaction_speed: 50,
       stamina: 50,
       durability: 50,
       agility: 50,

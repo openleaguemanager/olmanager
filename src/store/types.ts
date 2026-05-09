@@ -299,8 +299,9 @@ export interface CareerEntry {
   team_id: string;
   team_name: string;
   appearances: number;
-  goals: number;
+  kills: number;
   assists: number;
+  avg_rating: number;
 }
 
 export type PlayerAttributes = Record<string, number>;
@@ -318,7 +319,6 @@ export interface PlayerData {
   position: LolRole;
   natural_position: LolRole;
   alternate_positions: LolRole[];
-  weak_foot?: number;
   training_focus: string | null;
   attributes: PlayerAttributes;
   condition: number;

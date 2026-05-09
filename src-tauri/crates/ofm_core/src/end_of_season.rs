@@ -300,8 +300,9 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                 team_id,
                 team_name,
                 appearances: player.stats.appearances,
-                goals: player.stats.kills,
+                kills: player.stats.kills,
                 assists: player.stats.assists,
+                avg_rating: player.stats.avg_rating,
             });
         }
         // Reset stats for next season

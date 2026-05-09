@@ -256,7 +256,7 @@ mod tests {
     use super::{export_world_database_internal, write_database_json_to_dir};
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes, LolRole};
     use domain::team::Team;
     use ofm_core::clock::GameClock;
     use ofm_core::game::Game;
@@ -294,22 +294,15 @@ mod tests {
 
     fn sample_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            reaction_speed: 65,
-            mental_resilience: 65,
-            durability: 65,
-            champion_pool: 65,
-            coordination: 65,
-            laning: 65,
-            interception: 65,
             mechanics: 65,
-            positional_defense: 65,
-            positioning: 65,
+            laning: 65,
+            teamfighting: 65,
             macro_play: 65,
             consistency: 65,
-            discipline: 65,
-            aggression: 50,
-            teamfighting: 65,
             shotcalling: 50,
+            champion_pool: 65,
+            discipline: 65,
+            mental_resilience: 65,
         }
     }
 
@@ -340,7 +333,7 @@ mod tests {
             "John Doe".to_string(),
             "2000-01-01".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Jungle,
             sample_attrs(),
         );
         player.team_id = Some("team-1".to_string());

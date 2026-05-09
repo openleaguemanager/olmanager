@@ -355,22 +355,15 @@ mod tests {
 
     fn make_player(id: &str, team_id: &str, overall: u8) -> Player {
         let attrs = PlayerAttributes {
-            reaction_speed: overall,
-            mental_resilience: overall,
-            durability: overall,
-            champion_pool: overall,
-            coordination: overall,
-            laning: overall,
-            interception: overall,
             mechanics: overall,
-            positional_defense: overall,
-            positioning: overall,
+            laning: overall,
+            teamfighting: overall,
             macro_play: overall,
             consistency: overall,
-            discipline: overall,
-            aggression: overall,
-            teamfighting: overall,
             shotcalling: overall,
+            champion_pool: overall,
+            discipline: overall,
+            mental_resilience: overall,
         };
         let mut player = Player::new(
             id.to_string(),
