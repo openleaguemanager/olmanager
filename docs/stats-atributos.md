@@ -150,6 +150,21 @@ Estos 9 atributos son los que usa el **motor de simulación** (`engine`). Se map
 | `Coach` | `coaching` |
 | `Scout` | `judging_ability` + `judging_potential` |
 | `Physio` | `physiotherapy` |
+| `Owner` | Ninguno — no afecta gameplay directamente |
+
+### Relación Team ↔ Staff
+
+```
+Game
+├── staff: Vec<Staff>         ← todos los staff del mundo
+│   └── cada Staff tiene team_id → se vincula a un Team
+├── teams: Vec<Team>          ← NO tienen lista de staff
+│   └── para obtener su staff: filtrar game.staff por team_id
+└── players: Vec<Player>
+    └── cada Player tiene team_id → mismo patrón
+```
+
+**Team no tiene `staff_ids`** ni vector propio. La relación se resuelve dinámicamente filtrando `game.staff.iter().filter(|s| s.team_id == team_id)`. Es el mismo patrón que con los players. Como cada equipo tiene ~4 staff, no es un cuello de botella.
 
 ### Outputs del sistema (`LolStaffEffects`)
 
@@ -198,9 +213,10 @@ physiotherapy    ──────────────►  recovery        
 ```
 Team.facilities ────► staff effects ──► player condition recovery
                                                     
-Staff.coaching ─────► coaching_mult ──► player training gain
-Staff.judging_* ────► analysis ───────► scouting quality
-Staff.physio ───────► recovery ───────► condition regen
+Staff.coaching ─────► coaching_mult ──► player training gain   ← de Coach + AssistantManager
+Staff.judging_* ────► analysis ───────► scouting quality       ← de Scout
+Staff.physio ───────► recovery ───────► condition regen        ← de Physio
+Staff.Owner ────────► (sin efecto directo en simulador)
                                                     
 Player.attributes ──► overall ────────► match simulation
 Player.condition ───► effective_overall

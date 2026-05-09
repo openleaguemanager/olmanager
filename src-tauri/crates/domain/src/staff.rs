@@ -36,6 +36,7 @@ pub enum StaffRole {
     Coach,
     Scout,
     Physio,
+    Owner,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -317,6 +317,12 @@ pub(super) fn generate_random_staff_from_def(
             judging_potential: rng.random_range(15..45),
             physiotherapy: rng.random_range(60..95),
         },
+        StaffRole::Owner => StaffAttributes {
+            coaching: rng.random_range(30..70),
+            judging_ability: rng.random_range(30..70),
+            judging_potential: rng.random_range(30..70),
+            physiotherapy: rng.random_range(10..40),
+        },
     };
 
     let mut s = Staff::new(
