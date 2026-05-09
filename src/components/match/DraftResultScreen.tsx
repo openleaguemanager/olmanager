@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import teamsSeed from "../../../data/lec/draft/teams.json";
 import { buildLolScrimPrepInsight } from "../../lib/lolScrimPrep";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 import type { MatchSnapshot } from "./types";
 import type { DraftMatchResult, DraftTimelineEvent } from "./draftResultSimulator";
 
@@ -169,8 +169,8 @@ export default function DraftResultScreen({
   const redTeam = sideTeam(snapshot, "red");
   const blueTri = teamTriCode(blueTeam.name);
   const redTri = teamTriCode(redTeam.name);
-  const blueLogo = resolveExampleTeamLogo(blueTeam.name);
-  const redLogo = resolveExampleTeamLogo(redTeam.name);
+  const blueLogo = resolveTeamLogo(blueTeam.name);
+  const redLogo = resolveTeamLogo(redTeam.name);
 
   const controlledWon = selectedResult.winnerSide === controlledSide;
   const controlledPrepInsight = buildLolScrimPrepInsight(

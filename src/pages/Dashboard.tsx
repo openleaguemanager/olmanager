@@ -45,7 +45,7 @@ import {
 } from "../lib/helpers";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../store/settingsStore";
-import { resolveExampleTeamLogo } from "../lib/teamLogos";
+import { resolveTeamLogo } from "../lib/teamLogos";
 
 const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Meta", "Scrims", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
 
@@ -422,7 +422,7 @@ export default function Dashboard(): JSX.Element {
     : managerName;
 
   const teamLogo = useMemo(() => {
-    return resolveExampleTeamLogo(myTeamName);
+    return resolveTeamLogo(myTeamName);
   }, [myTeamName]);
 
   const searchResults = gameState

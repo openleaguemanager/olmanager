@@ -3,7 +3,7 @@ import { EyeOff, Pencil, Shield, User } from "lucide-react";
 import type { PlayerData } from "../../store/gameStore";
 import { formatPlayerMarketValue, formatPlayerWage } from "./PlayerProfile.helpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 import type {
   PlayerProfileScoutStatus,
   ScoutAvailability,
@@ -267,7 +267,7 @@ export default function PlayerProfileHeroCard({
             ) : null}
             <p className="text-gray-400 text-sm mt-2 flex items-center gap-1.5">
               {(() => {
-                const logoUrl = resolveExampleTeamLogo(teamName);
+                const logoUrl = resolveTeamLogo(teamName);
                 return logoUrl ? (
                   <img src={logoUrl} alt={teamName} className="w-4 h-4 object-contain" />
                 ) : (

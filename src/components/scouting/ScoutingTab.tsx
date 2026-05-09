@@ -12,7 +12,7 @@ import {
   ScanSearch,
 } from "lucide-react";
 import { sendScout } from "../../services/scoutingService";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 import {
   calculateAvailableScouts,
   scoutMaxSlots,
@@ -123,7 +123,7 @@ export default function ScoutingTab({
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-start gap-3">
                   {(() => {
-                    const logo = academyTeam ? resolveExampleTeamLogo(academyTeam.name) : null;
+                    const logo = academyTeam ? resolveTeamLogo(academyTeam.name) : null;
                     if (logo) {
                       return (
                         <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center shrink-0">

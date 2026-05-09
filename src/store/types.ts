@@ -155,6 +155,7 @@ export interface TeamData {
   weekly_scrim_opponent_ids?: string[];
   weekly_scrim_plan_team_ids?: string[][];
   scrim_weekly_objective?: ScrimFocus | null;
+  logo_url?: string | null;
   scrim_weekly_slots?: number;
   scrim_reputation?: number;
   scrim_weekly_cancellations?: number;

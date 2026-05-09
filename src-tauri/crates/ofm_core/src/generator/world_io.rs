@@ -1,5 +1,13 @@
 use super::definitions::{WorldData, WorldDatabaseInfo};
 
+/// Convert a team name to a filesystem-safe slug for logo lookup.
+fn team_name_to_logo_slug(name: &str) -> String {
+    name.to_lowercase()
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .collect()
+}
+
 /// Generate a random world and wrap it in a `WorldData`.
 /// If `data_dir` is provided, tries to load definition files from that directory.
 pub fn generate_world_data(data_dir: Option<&std::path::Path>) -> WorldData {
@@ -26,6 +34,13 @@ pub fn generate_world_data(data_dir: Option<&std::path::Path>) -> WorldData {
 pub fn load_world_from_json(json: &str) -> Result<WorldData, String> {
     let mut world: WorldData =
         serde_json::from_str(json).map_err(|e| format!("Failed to parse world database: {}", e))?;
+    for team in &mut world.teams {
+        // Populate logo_url if missing
+        if team.logo_url.is_none() {
+            let slug = team_name_to_logo_slug(&team.name);
+            team.logo_url = Some(format!("/team-logos/{}.png", slug));
+        }
+    }
     crate::identity_upgrade::upgrade_world_football_identities(
         &mut world.teams,
         &mut world.players,

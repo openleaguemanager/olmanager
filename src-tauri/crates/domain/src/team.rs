@@ -28,6 +28,8 @@ pub struct Team {
     pub academy_team_id: Option<String>,
     #[serde(default)]
     pub academy: Option<AcademyMetadata>,
+    #[serde(default)]
+    pub logo_url: Option<String>,
 
     // Financial breakdown
     pub wage_budget: i64,
@@ -1227,6 +1229,7 @@ impl Team {
             parent_team_id: None,
             academy_team_id: None,
             academy: None,
+            logo_url: None,
             wage_budget: 200_000,
             transfer_budget: 500_000,
             season_income: 0,
