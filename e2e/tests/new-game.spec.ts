@@ -32,20 +32,25 @@ test.describe("New Game Flow", () => {
     await page.locator("#create-manager-field-lastName input").fill("Doe");
     await page.locator("#create-manager-field-nickname input").fill("JD");
 
-    // Fill date of birth
-    const dobInput = page.locator('input[type="date"]');
-    await dobInput.fill("2000-01-15");
+    // Fill date of birth (custom DatePicker: 3 separate inputs)
+    const dobFields = page.locator("#create-manager-field-dob input[inputmode='numeric']");
+    // Day
+    await dobFields.nth(0).fill("15");
+    // Year
+    await dobFields.nth(1).fill("2000");
+
+    // Month — click the dropdown button inside the datepicker
+    await page.locator("#create-manager-field-dob button[type='button']").first().click();
+    // Select first month from the dropdown list (any language)
+    await page.locator("#create-manager-field-dob [class*='max-h-48'] button").first().click();
 
     // Select nationality from the searchable dropdown
-    const nationalitySearch = page.locator(
-      'input[placeholder*="nationality" i], input[placeholder*="pa\u00eds" i]',
-    );
-    await nationalitySearch.fill("ES");
-
-    // Wait for dropdown results and select Spain
-    const spainOption = page.locator("text=Spain").first();
-    await expect(spainOption).toBeVisible({ timeout: 5000 });
-    await spainOption.click();
+    // Click the dropdown trigger button
+    await page.locator("#create-manager-field-nationality button[type='button']").click();
+    // Type search text
+    await page.locator("#create-manager-field-nationality input[type='text']").fill("Spain");
+    // Click the Spain option
+    await page.locator("#create-manager-field-nationality button:has-text('Spain')").click();
 
     // Click "Comenzar" / "Start Career"
     await page.locator('button:has-text("Comenzar")').click();
