@@ -1,16 +1,42 @@
 use crate::finances::calc_annual_wages;
 use crate::game::Game;
-use chrono::{Datelike, NaiveDate};
+use chrono::{Datelike, NaiveDate, Utc};
 use domain::negotiation::{NegotiationFeedback, NegotiationMood};
 use domain::player::{PlayerOfferItem, TransferOfferStatus, WageNegotiationStatus};
 use domain::season::TransferWindowStatus;
 use domain::stats::LolRole;
 use domain::team::TeamKind;
 use domain::transfer_history::{IncludedPlayerEntry, TransferHistoryEntry};
+use rand_08::{Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use uuid::Uuid;
+
+fn ai_random_contract_years() -> u8 {
+    let mut rng: rand_08::rngs::StdRng = rand_08::SeedableRng::seed_from_u64(42);
+    rng.gen_range(1..=3)
+}
+
+fn next_split_end_date(game: &Game) -> String {
+    let current_date = game.clock.current_date.date_naive();
+    let league_name = game.league.as_ref().and_then(|l| {
+        if l.name.contains("Winter") {
+            Some("Winter")
+        } else if l.name.contains("Spring") {
+            Some("Spring")
+        } else {
+            Some("Summer")
+        }
+    }).unwrap_or("Winter");
+
+    let next_split = match league_name {
+        "Winter" => (current_date.year(), 3, 28),
+        "Spring" => (current_date.year(), 8, 1),
+        _ => (current_date.year() + 1, 1, 17),
+    };
+    format!("{}-{:02}-{:02}", next_split.0, next_split.1, next_split.2)
+}
 
 const TRANSFER_NEGOTIATION_STALE_DAYS: i64 = 14;
 const PLAYER_INCOMING_OFFER_COOLDOWN_DAYS: i64 = 7;
@@ -269,15 +295,15 @@ fn suggested_incoming_fee(
     buyer_team: &domain::team::Team,
     buyer_id: &str,
 ) -> u64 {
-    let mut multiplier: f64 = if player.transfer_listed { 0.75 } else { 0.8 };
+    let mut multiplier: f64 = if player.transfer_listed { 0.85 } else { 0.82 };
 
     if let Some(days_remaining) =
         contract_days_remaining(current_date, player.contract_end.as_deref())
     {
         if days_remaining <= 60 {
-            multiplier -= 0.15;
+            multiplier -= 0.05;
         } else if days_remaining <= 180 {
-            multiplier -= 0.1;
+            multiplier -= 0.03;
         }
     }
 
@@ -871,7 +897,7 @@ fn simulate_ai_club_to_club_transfers(game: &mut Game, user_team_id: &str) {
             continue;
         };
         let budget_cap = buyer_team.transfer_budget.min(buyer_team.finance);
-        if budget_cap <= 100_000 {
+        if budget_cap <= 200_000 {
             continue;
         }
 
@@ -883,6 +909,14 @@ fn simulate_ai_club_to_club_transfers(game: &mut Game, user_team_id: &str) {
             .filter_map(|player| {
                 if lol_role_to_string(&player.natural_position) != preferred_role {
                     return None;
+                }
+
+                if let Some(date_str) = &player.can_be_transferred_until {
+                    if let Ok(date) = NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+                        if date >= current_date {
+                            return None;
+                        }
+                    }
                 }
 
                 let seller_id = player.team_id.as_deref()?;
@@ -921,6 +955,14 @@ fn simulate_ai_club_to_club_transfers(game: &mut Game, user_team_id: &str) {
             .players
             .iter()
             .filter_map(|player| {
+                if let Some(date_str) = &player.can_be_transferred_until {
+                    if let Ok(date) = NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+                        if date >= current_date {
+                            return None;
+                        }
+                    }
+                }
+
                 let seller_id = player.team_id.as_deref()?;
                 if seller_id == user_team_id || seller_id == buyer_id {
                     return None;
@@ -1438,6 +1480,26 @@ fn execute_free_agent_signing_with_payer(
             team.starting_xi_ids.remove(pos);
         }
     }
+
+    let user_team_id = game.manager.team_id.clone().unwrap_or_default();
+    let is_user_involved = to_team_id == user_team_id;
+    let is_user_buying = is_user_involved;
+
+    record_transfer(
+        game,
+        player_id,
+        "",
+        to_team_id,
+        0,
+        0,
+        1,
+        is_user_involved,
+        is_user_buying,
+        false,
+        None,
+        0,
+        &[],
+    );
 
     Ok(())
 }
@@ -2286,7 +2348,7 @@ pub fn get_transfer_history(game: &Game) -> Vec<TransferHistoryEntry> {
     game.transfer_history.entries.clone()
 }
 
-fn record_transfer(
+pub fn record_transfer(
     game: &mut Game,
     player_id: &str,
     from_team_id: &str,
@@ -2715,7 +2777,8 @@ fn execute_transfer(
     fee: u64,
     record_history: bool,
 ) -> Result<(), String> {
-    execute_transfer_with_payer(game, player_id, to_team_id, from_team_id, fee, to_team_id, record_history)
+    let contract_years = ai_random_contract_years();
+    execute_transfer_with_payer(game, player_id, to_team_id, from_team_id, fee, to_team_id, record_history, contract_years)
 }
 
 fn execute_transfer_with_payer(
@@ -2726,6 +2789,7 @@ fn execute_transfer_with_payer(
     fee: u64,
     payer_team_id: &str,
     record_history: bool,
+    transfer_contract_years: u8,
 ) -> Result<(), String> {
     let player_snapshot = game
         .players
@@ -2766,12 +2830,18 @@ fn execute_transfer_with_payer(
         })
         .unwrap_or_default();
 
+    let next_split_date = next_split_end_date(game);
+
     // Move player
     if let Some(p) = game.players.iter_mut().find(|p| p.id == player_id) {
         p.team_id = Some(to_team_id.to_string());
         p.transfer_listed = false;
         p.loan_listed = false;
-        // Remove from any starting XI
+        p.can_be_transferred_until = Some(next_split_date);
+        let current_date = game.clock.current_date.date_naive();
+        if let Some(new_date) = current_date.checked_add_months(chrono::Months::new(transfer_contract_years as u32 * 12)) {
+            p.contract_end = Some(format!("{}-11-30", new_date.year()));
+        }
     }
 
     if !departing_starter_ids.is_empty() {

@@ -147,7 +147,7 @@ pub fn ensure_compatible_schema(conn: &Connection) -> rusqlite::Result<()> {
 }
 
 /// Number of migrations defined. Keep in sync with the vec in `all_migrations`.
-pub const MIGRATION_COUNT: usize = 44;
+pub const MIGRATION_COUNT: usize = 45;
 
 /// All migrations for a per-save game database.
 /// Each save `.db` file gets this schema applied via `rusqlite_migration`.
@@ -243,6 +243,8 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up(include_str!("sql/v042_drop_dead_team_columns.sql")),
         // V43: Add bans_json column to lol_player_match_stats for ban rate
         M::up(include_str!("sql/v043_add_bans_column.sql")),
+        // V44: Persist transfer history entries
+        M::up(include_str!("sql/v044_transfer_history.sql")),
     ])
 }
 

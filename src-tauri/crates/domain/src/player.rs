@@ -89,6 +89,8 @@ pub struct Player {
     pub champion_training_target: Option<String>,
     #[serde(default)]
     pub champion_training_targets: Vec<String>,
+    #[serde(default)]
+    pub can_be_transferred_until: Option<String>,
 }
 
 /// Footedness is deprecated - LoL roles are lane-agnostic
@@ -590,6 +592,7 @@ impl Player {
             potential_research_eta_days: None,
             champion_training_target: None,
             champion_training_targets: Vec::new(),
+            can_be_transferred_until: None,
         }
     }
 }

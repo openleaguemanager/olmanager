@@ -298,6 +298,7 @@ fn row_to_player(row: &rusqlite::Row) -> rusqlite::Result<Player> {
         potential_research_eta_days,
         champion_training_target: None,
         champion_training_targets: Vec::new(),
+        can_be_transferred_until: None,
     })
 }
 

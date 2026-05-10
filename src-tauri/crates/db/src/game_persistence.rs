@@ -8,6 +8,7 @@ use crate::game_database::GameDatabase;
 use crate::repositories::{
     champion_progression_repo, league_repo, manager_repo, message_repo, meta_repo, news_repo,
     objective_repo, player_repo, scouting_repo, staff_repo, stats_repo, team_repo,
+    transfer_history_repo,
 };
 
 pub struct GamePersistenceWriter;
@@ -76,6 +77,8 @@ impl GamePersistenceWriter {
             &game.champion_masteries,
             &game.champion_patch,
         )?;
+
+        transfer_history_repo::upsert_transfer_history(conn, &game.transfer_history)?;
 
         Ok(())
     }
@@ -186,6 +189,13 @@ impl GamePersistenceReader {
             champion_masteries.len()
         );
 
+        log::info!("[GamePersistenceReader] read_game: loading transfer history...");
+        let transfer_history = transfer_history_repo::load_transfer_history(conn)?;
+        log::info!(
+            "[GamePersistenceReader] read_game: transfer history entries: {}",
+            transfer_history.entries.len()
+        );
+
         let mut game = Game {
             clock,
             manager,
@@ -202,7 +212,7 @@ impl GamePersistenceReader {
             days_since_last_job_offer: None,
             champion_masteries,
             champion_patch,
-            transfer_history: Default::default(),
+            transfer_history,
         };
         ofm_core::season_context::refresh_game_context(&mut game);
 

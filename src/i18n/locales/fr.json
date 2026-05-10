@@ -2741,6 +2741,10 @@
       "transferRumour": {
         "headline": "{{player}} rejoint officiellement {{to}}",
         "body": "{{to}} a finalisé la signature de {{player}} en provenance de {{from}} pour {{fee}}."
+      },
+      "freeAgentSigned": {
+        "subject": "{{player}} signe avec {{team}}",
+        "body": "L'agent libre {{player}} a signé un contrat de {{years}} an(s) avec {{team}} à €{{wage}}/an."
       }
     }
   },

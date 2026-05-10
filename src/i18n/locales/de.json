@@ -2741,6 +2741,10 @@
       "transferRumour": {
         "headline": "{{player}} Complete Move to {{to}}",
         "body": "{{to}} have completed the signing of {{player}} from {{from}} for {{fee}}."
+      },
+      "freeAgentSigned": {
+        "subject": "{{player}} unterschreibt bei {{team}}",
+        "body": "Der vereinslose Spieler {{player}} hat einen {{years}}-Jahres-Vertrag bei {{team}} für €{{wage}}/Jahr unterschrieben."
       }
     }
   },

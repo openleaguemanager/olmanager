@@ -2577,6 +2577,10 @@
       "transferRumour": {
         "headline": "{{player}} Complete Move to {{to}}",
         "body": "{{to}} have completed the signing of {{player}} from {{from}} for {{fee}}."
+      },
+      "freeAgentSigned": {
+        "subject": "{{player}} firma con {{team}}",
+        "body": "Il giocatore svincolato {{player}} ha firmato un contratto di {{years}} anno(i) con {{team}} a €{{wage}}/anno."
       }
     }
   },

@@ -210,7 +210,7 @@ export default function MarketTab({ gameState }: MarketTabProps) {
 
                   <div className="text-right shrink-0">
                     <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
-                      {entry.fee > 0 ? formatVal(entry.fee) : t("common.free")}
+                      {entry.fee > 0 ? formatVal(entry.fee) : t("market.freeAgent")}
                     </p>
                     <p className="text-[11px] text-gray-400">
                       {formatDate(entry.date)}
