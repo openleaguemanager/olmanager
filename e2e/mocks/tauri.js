@@ -1,9 +1,10 @@
 // Mock de window.__TAURI_INTERNALS__ para Playwright
-// Copia del world.json simplificada para tests
 (function () {
+  // Store a reference to the game state so tests can inject it into Zustand
+  window.__MOCK_GAME_STATE__ = null;
   const worldData = {
     teams: [
-      { id: "lec-fnatic", name: "Fnatic", short_name: "FNC", country: "GB", city: "London", logo_url: "/teams-icons/fnatic.webp", colors: { primary: "#1f2937", secondary: "#f3f4f6" }, reputation: 500, finance: 3500000, wage_budget: 770000, transfer_budget: 1225000 },
+      { id: "lec-fnatic", name: "Fnatic", short_name: "FNC", country: "GB", city: "London", manager_id: "mgr_user", logo_url: "/teams-icons/fnatic.webp", colors: { primary: "#1f2937", secondary: "#f3f4f6" }, reputation: 500, finance: 3500000, wage_budget: 770000, transfer_budget: 1225000 },
       { id: "lec-g2-esports", name: "G2 Esports", short_name: "G2", country: "DE", city: "Berlin", logo_url: "/teams-icons/g2-esports.webp", colors: { primary: "#1f2937", secondary: "#f3f4f6" }, reputation: 650, finance: 4500000, wage_budget: 990000, transfer_budget: 1575000 },
       { id: "lec-giantx-lec", name: "GIANTX", short_name: "GX", country: "ES", city: "M\u00e1laga", logo_url: "/teams-icons/giantx-lec.webp", colors: { primary: "#1f2937", secondary: "#f3f4f6" }, reputation: 500, finance: 3500000, wage_budget: 770000, transfer_budget: 1225000 },
       { id: "lec-karmine-corp", name: "Karmine Corp", short_name: "KC", country: "FR", city: "Paris", logo_url: "/teams-icons/karmine-corp.webp", colors: { primary: "#1f2937", secondary: "#f3f4f6" }, reputation: 650, finance: 4500000, wage_budget: 990000, transfer_budget: 1575000 },
@@ -120,6 +121,9 @@
   }
 
   window.__TAURI_INTERNALS__ = {
+    metadata: {
+      currentWindow: { label: "main" },
+    },
     invoke: function (cmd, args) {
       switch (cmd) {
         case "start_new_game":
@@ -131,12 +135,41 @@
             players: worldData.players,
           });
         case "select_team":
-          return Promise.resolve(buildGameState(args.teamId));
+          var state = buildGameState(args.teamId);
+          window.__MOCK_GAME_STATE__ = state;
+          return Promise.resolve(state);
         case "get_active_game":
           return Promise.resolve(buildGameState("lec-fnatic"));
         case "get_champions":
           return Promise.resolve([]);
         case "save_game":
+          return Promise.resolve();
+        case "plugin:window|set_title":
+        case "plugin:window|set_size":
+        case "plugin:window|set_resizable":
+        case "plugin:window|set_decorations":
+        case "plugin:window|set_focus":
+        case "plugin:window|close":
+        case "plugin:window|destroy":
+        case "plugin:window|maximize":
+        case "plugin:window|unmaximize":
+        case "plugin:window|minimize":
+        case "plugin:window|unminimize":
+        case "plugin:window|show":
+        case "plugin:window|hide":
+        case "plugin:window|set_fullscreen":
+        case "plugin:window|set_always_on_top":
+        case "plugin:window|set_cursor_grab":
+        case "plugin:window|set_cursor_visible":
+        case "plugin:window|set_cursor_icon":
+        case "plugin:window|set_skip_taskbar":
+        case "plugin:window|start_dragging":
+        case "plugin:window|set_icon":
+        case "plugin:window|set_badge_count":
+        case "plugin:window|set_badge_label":
+        case "plugin:window|set_overlay_icon":
+        case "plugin:window|set_progress_bar":
+        case "plugin:window|set_effects":
           return Promise.resolve();
         default:
           console.warn("[Tauri mock] Unhandled invoke:", cmd, args);
