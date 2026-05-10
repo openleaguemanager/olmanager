@@ -97,8 +97,8 @@ test.describe("New Game Flow", () => {
     await page.waitForURL("**/dashboard", { timeout: 30000 });
     await expect(page.locator("text=Fnatic").first()).toBeVisible({ timeout: 15000 });
 
-    // Click Squad tab
-    await page.locator('button[aria-label="Squad"]').click();
+    // Click Squad tab (spanish: "Plantilla")
+    await page.locator('button[aria-label="Plantilla"]').click();
     await expect(page.locator("text=Bwipo").first()).toBeVisible({ timeout: 10000 });
   });
 
@@ -124,8 +124,8 @@ test.describe("New Game Flow", () => {
     await page.waitForURL("**/dashboard", { timeout: 30000 });
     await expect(page.locator("text=Fnatic").first()).toBeVisible({ timeout: 15000 });
 
-    // Click Training tab
-    await page.locator('button[aria-label="Training"]').click();
+    // Click Training tab (spanish: "Entrenamiento")
+    await page.locator('button[aria-label="Entrenamiento"]').click();
     await page.waitForTimeout(1000);
   });
 
@@ -151,8 +151,8 @@ test.describe("New Game Flow", () => {
     await page.waitForURL("**/dashboard", { timeout: 30000 });
     await expect(page.locator("text=Fnatic").first()).toBeVisible({ timeout: 15000 });
 
-    // Click Schedule tab
-    await page.locator('button[aria-label="Schedule"]').click();
+    // Click Schedule tab (spanish: "Calendario")
+    await page.locator('button[aria-label="Calendario"]').click();
     await page.waitForTimeout(1000);
   });
 });
