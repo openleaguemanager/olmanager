@@ -669,22 +669,22 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
             .path()
             .resource_dir()
             .ok()
-            .map(|dir| dir.join("databases").join("lec_world.json")),
+            .map(|dir| dir.join("databases").join("world.json")),
         cwd.join("src-tauri")
             .join("databases")
-            .join("lec_world.json")
+            .join("world.json")
             .into(),
-        cwd.join("databases").join("lec_world.json").into(),
+        cwd.join("databases").join("world.json").into(),
     ];
 
     if let Ok(exe_path) = std::env::current_exe() {
         if let Some(exe_dir) = exe_path.parent() {
-            candidates.push(Some(exe_dir.join("databases").join("lec_world.json")));
+            candidates.push(Some(exe_dir.join("databases").join("world.json")));
             candidates.push(Some(
                 exe_dir
                     .join("resources")
                     .join("databases")
-                    .join("lec_world.json"),
+                    .join("world.json"),
             ));
         }
     }
@@ -695,7 +695,7 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
         }
     }
 
-    let embedded_world_json = include_str!("../../databases/lec_world.json");
+    let embedded_world_json = include_str!("../../databases/world.json");
     let app_data_dir = app_handle.path().app_data_dir().map_err(|e| {
         format!(
             "Default LEC world database not found and app data dir is unavailable: {}",
@@ -706,7 +706,7 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
     std::fs::create_dir_all(&db_dir)
         .map_err(|e| format!("Failed to create fallback databases directory: {}", e))?;
 
-    let fallback_path = db_dir.join("lec_world.json");
+    let fallback_path = db_dir.join("world.json");
     if !fallback_path.exists() {
         std::fs::write(&fallback_path, embedded_world_json)
             .map_err(|e| format!("Failed to write fallback LEC world database: {}", e))?;

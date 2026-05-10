@@ -38,7 +38,7 @@ pub fn load_world_from_json(json: &str) -> Result<WorldData, String> {
         // Populate logo_url if missing
         if team.logo_url.is_none() {
             let slug = team_name_to_logo_slug(&team.name);
-            team.logo_url = Some(format!("/team-logos/{}.png", slug));
+            team.logo_url = Some(format!("/teams-icons/{}.webp", slug));
         }
     }
     crate::identity_upgrade::upgrade_world_football_identities(
@@ -183,8 +183,8 @@ mod tests {
     }
 
     #[test]
-    fn active_lec_world_seed_does_not_contain_football_nation() {
-        let json = include_str!("../../../../databases/lec_world.json");
+    fn active_world_seed_does_not_contain_football_nation() {
+        let json = include_str!("../../../../databases/world.json");
 
         // Assert: active seed data must NOT contain legacy football_nation keys
         assert!(

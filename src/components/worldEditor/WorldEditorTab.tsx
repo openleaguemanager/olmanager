@@ -272,7 +272,7 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
       setWorld(loaded);
       setSelectedPlayerId(loaded.players[0]?.id ?? "");
       setSelectedStaffId(loaded.staff[0]?.id ?? "");
-      if (sourcePath) setPath(sourcePath === "lec-default" ? "" : sourcePath);
+      if (sourcePath) setPath(sourcePath === "default" ? "" : sourcePath);
       setStatus(`Mundo cargado: ${loaded.name}`);
     } catch (err) {
       setError(String(err));
@@ -551,7 +551,7 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
         <Card>
           <CardBody>
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto_auto_auto] lg:items-end">
-              <TextField label="Path JSON del mundo" value={path} placeholder="src-tauri/databases/lec_world.json" onChange={setPath} />
+              <TextField label="Path JSON del mundo" value={path} placeholder="src-tauri/databases/world.json" onChange={setPath} />
               <button type="button" onClick={() => loadWorld("lec-default")} disabled={isLoading} className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 dark:border-navy-600 dark:text-gray-200 dark:hover:bg-navy-700">
                 <Database className="h-4 w-4" />
                 Default

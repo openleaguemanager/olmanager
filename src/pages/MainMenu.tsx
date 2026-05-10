@@ -283,7 +283,7 @@ export default function MainMenu() {
         );
       }
 
-      const worldSource = "lec-default";
+      const worldSource = "default";
 
       await invoke<string>("start_new_game", {
         nickname: formData.nickname,

@@ -5,14 +5,14 @@ const ROOT = resolve(process.cwd());
 const draftTeamsPath = resolve(ROOT, "data/lec/draft/teams.json");
 const draftPlayersPath = resolve(ROOT, "data/lec/draft/players.json");
 const overridesPath = resolve(ROOT, "data/lec/player-overrides.json");
-const outPath = resolve(ROOT, "src-tauri/databases/lec_world.json");
+const outPath = resolve(ROOT, "src-tauri/databases/world.json");
 
 const TEAM_ID_TO_WORLD_SLUG = {
   fnc: "fnatic",
   g2: "g2-esports",
   gx: "giantx-lec",
   kc: "karmine-corp",
-  mkoi: "mad-lions",
+  mkoi: "movistar-koi",
   navi: "natus-vincere",
   shft: "shifters",
   sk: "sk-gaming",
@@ -347,6 +347,7 @@ for (const teamSeed of teamSeeds) {
     id: teamId,
     name: teamSeed.name,
     short_name: teamSeed.code,
+    logo_url: `/teams-icons/${teamSeed.slug}.webp`,
     country: override.country,
     city: override.city,
     stadium_name: `${teamSeed.name} Arena`,

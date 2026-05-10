@@ -206,7 +206,7 @@ describe("MainMenu", () => {
             lastName: "Lovelace",
             dob: "1980-01-01",
             nationality: "ES",
-            worldSource: "lec-default",
+            worldSource: "default",
           }),
         );
       });
@@ -367,7 +367,7 @@ describe("MainMenu", () => {
         "start_new_game",
         expect.objectContaining({
           dob: "2010-06-15",
-          worldSource: "lec-default",
+          worldSource: "default",
         }),
       );
     });

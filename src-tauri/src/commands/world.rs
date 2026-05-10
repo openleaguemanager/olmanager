@@ -16,12 +16,12 @@ fn resolve_default_world_editor_path(
     let candidates = [
         cwd.join("src-tauri")
             .join("databases")
-            .join("lec_world.json"),
-        cwd.join("databases").join("lec_world.json"),
+            .join("world.json"),
+        cwd.join("databases").join("world.json"),
         app_handle
             .path()
             .resource_dir()
-            .map(|dir| dir.join("databases").join("lec_world.json"))
+            .map(|dir| dir.join("databases").join("world.json"))
             .unwrap_or_else(|_| std::path::PathBuf::new()),
     ];
 
@@ -31,7 +31,7 @@ fn resolve_default_world_editor_path(
         }
     }
 
-    Err("Default LEC world database not found (lec_world.json).".to_string())
+    Err("Default world database not found (world.json).".to_string())
 }
 
 fn enrich_world_for_editor(world: &mut ofm_core::generator::WorldData) {
@@ -60,7 +60,7 @@ fn writable_world_editor_database_dir(
 fn writable_world_editor_database_path(
     app_handle: &tauri::AppHandle,
 ) -> Result<std::path::PathBuf, String> {
-    Ok(writable_world_editor_database_dir(app_handle)?.join("lec_world.json"))
+    Ok(writable_world_editor_database_dir(app_handle)?.join("world.json"))
 }
 
 fn write_world_database_with_fallback(
@@ -89,7 +89,7 @@ fn write_world_database_with_fallback(
                 .map_err(|e| format!("Failed to create writable database directory: {}", e))?;
             let fallback_path = fallback_dir.join(
                 path.file_name()
-                    .unwrap_or_else(|| std::ffi::OsStr::new("lec_world.json")),
+                    .unwrap_or_else(|| std::ffi::OsStr::new("world.json")),
             );
             std::fs::write(&fallback_path, json)
                 .map_err(|e| format!("Failed to write fallback world database: {}", e))?;
