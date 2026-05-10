@@ -1,5 +1,5 @@
 use crate::game::Game;
-use crate::player_rating::{effective_rating_for_assignment, position_slots, natural_ovr};
+use crate::player_rating::{effective_rating_for_assignment, natural_ovr, position_slots};
 use domain::league::{Fixture, FixtureStatus, StandingEntry};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -317,8 +317,18 @@ fn round_goal_counts(game: &Game, fixtures: &[&Fixture]) -> HashMap<String, u32>
         };
 
         let Some(report) = result.report.as_ref() else {
-            assign_result_kills_to_team_leader(game, &mut counts, &fixture.home_team_id, result.home_wins);
-            assign_result_kills_to_team_leader(game, &mut counts, &fixture.away_team_id, result.away_wins);
+            assign_result_kills_to_team_leader(
+                game,
+                &mut counts,
+                &fixture.home_team_id,
+                result.home_wins,
+            );
+            assign_result_kills_to_team_leader(
+                game,
+                &mut counts,
+                &fixture.away_team_id,
+                result.away_wins,
+            );
             continue;
         };
 

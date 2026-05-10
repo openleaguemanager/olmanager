@@ -163,10 +163,7 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
                 _ => engine::DraftStrategy::Balanced,
             },
         ),
-        None => (
-            "Unknown".into(),
-            engine::DraftStrategy::Balanced,
-        ),
+        None => ("Unknown".into(), engine::DraftStrategy::Balanced),
     };
 
     let players: Vec<engine::PlayerData> = game

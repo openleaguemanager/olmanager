@@ -512,7 +512,10 @@ fn apply_active_lineup(game: &mut Game, team_id: &str, player_ids: Vec<String>) 
 }
 
 #[tauri::command]
-pub fn set_draft_strategy(state: State<'_, StateManager>, draft_strategy: String) -> Result<Game, String> {
+pub fn set_draft_strategy(
+    state: State<'_, StateManager>,
+    draft_strategy: String,
+) -> Result<Game, String> {
     info!("[cmd] set_draft_strategy: {}", draft_strategy);
     let mut game = state
         .get_game(|g| g.clone())
@@ -1845,7 +1848,7 @@ pub fn auto_select_team_roles(
 mod tests {
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, LolRole};
+    use domain::player::{LolRole, Player, PlayerAttributes};
     use domain::staff::{Staff, StaffAttributes, StaffRole};
     use domain::team::{Team, TrainingFocus, TrainingIntensity, TrainingSchedule};
     use ofm_core::clock::GameClock;

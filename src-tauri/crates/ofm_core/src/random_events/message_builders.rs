@@ -172,10 +172,7 @@ pub(super) fn media_story_message(
     } else {
         match variant {
             0 => (
-                format!(
-                    "Draft Pressure on {} — panel shows no mercy",
-                    player_name
-                ),
+                format!("Draft Pressure on {} — panel shows no mercy", player_name),
                 format!(
                     "The Esportmaníacos panel did not hold back today on {}: \
                     \"The guy has completely disappeared under lane pressure. What happened to him this split? \
@@ -300,10 +297,7 @@ pub fn build_media_story_from_narrative(
     } else {
         match variant {
             0 => (
-                format!(
-                    "Draft Pressure on {} — panel shows no mercy",
-                    player_name
-                ),
+                format!("Draft Pressure on {} — panel shows no mercy", player_name),
                 format!(
                     "The Esportmaníacos panel did not hold back today on {}: \
                     \"The guy has completely disappeared under lane pressure. What happened to him this split? \

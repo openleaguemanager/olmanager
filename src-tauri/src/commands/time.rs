@@ -179,7 +179,7 @@ mod tests {
     use domain::league::{Fixture, FixtureCompetition, FixtureStatus};
     use domain::manager::Manager;
     use domain::message::{InboxMessage, MessagePriority};
-    use domain::player::{Injury, Player, PlayerAttributes, LolRole};
+    use domain::player::{Injury, LolRole, Player, PlayerAttributes};
     use domain::stats::StatsState;
     use domain::team::Team;
     use ofm_core::clock::GameClock;

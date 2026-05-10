@@ -14,9 +14,7 @@ fn resolve_default_world_editor_path(
 ) -> Result<std::path::PathBuf, String> {
     let cwd = std::env::current_dir().map_err(|e| format!("Failed to read current dir: {}", e))?;
     let candidates = [
-        cwd.join("src-tauri")
-            .join("databases")
-            .join("world.json"),
+        cwd.join("src-tauri").join("databases").join("world.json"),
         cwd.join("databases").join("world.json"),
         app_handle
             .path()
@@ -256,7 +254,7 @@ mod tests {
     use super::{export_world_database_internal, write_database_json_to_dir};
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, LolRole};
+    use domain::player::{LolRole, Player, PlayerAttributes};
     use domain::team::Team;
     use ofm_core::clock::GameClock;
     use ofm_core::game::Game;

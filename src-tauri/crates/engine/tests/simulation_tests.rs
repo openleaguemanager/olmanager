@@ -7,7 +7,8 @@
 
 use engine::LolRole;
 use engine::{
-    DraftStrategy, EventType, MatchConfig, MatchEvent, PlayerData, Side, TeamData, Zone, simulate_lol,
+    DraftStrategy, EventType, MatchConfig, MatchEvent, PlayerData, Side, TeamData, Zone,
+    simulate_lol,
 };
 use rand::SeedableRng;
 use rand::rngs::StdRng;
