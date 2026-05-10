@@ -32,28 +32,27 @@ test.describe("New Game Flow", () => {
     await page.locator("#create-manager-field-lastName input").fill("Doe");
     await page.locator("#create-manager-field-nickname input").fill("JD");
 
-    // Fill date of birth (custom DatePicker: 3 separate inputs)
-    const dobFields = page.locator("#create-manager-field-dob input[inputmode='numeric']");
-    // Day
-    await dobFields.nth(0).fill("15");
-    // Year
-    await dobFields.nth(1).fill("2000");
-
-    // Month — click the dropdown button inside the datepicker
-    await page.locator("#create-manager-field-dob button[type='button']").first().click();
-    // Select first month from the dropdown list (any language)
-    await page.locator("#create-manager-field-dob [class*='max-h-48'] button").first().click();
+    // Fill date of birth (custom DatePicker)
+    // Day input: numeric input inside the DatePicker, first one
+    await page.locator("input[inputmode='numeric']").nth(0).fill("15");
+    // Year input: numeric input inside the DatePicker, second one
+    await page.locator("input[inputmode='numeric']").nth(1).fill("2000");
+    // Month: click the toggle button inside the DatePicker
+    await page.locator("#create-manager-field-dob button").first().click();
+    // Select first month from the dropdown list
+    await page.locator(".max-h-48 button").first().click();
 
     // Select nationality from the searchable dropdown
-    // Click the dropdown trigger button
-    await page.locator("#create-manager-field-nationality button[type='button']").click();
-    // Type search text
-    await page.locator("#create-manager-field-nationality input[type='text']").fill("Spain");
-    // Click the Spain option
-    await page.locator("#create-manager-field-nationality button:has-text('Spain')").click();
+    // Click the toggle button to open dropdown
+    await page.locator("#create-manager-field-nationality button[type='button']").first().click();
+    // Type country code (ES = Spain, works regardless of locale)
+    await page.locator("#create-manager-field-nationality input[type='text']").fill("ES");
+    // Wait for filter and click the first option
+    await page.locator("#create-manager-field-nationality [class*='max-h'] button").first().waitFor({ timeout: 5000 });
+    await page.locator("#create-manager-field-nationality [class*='max-h'] button").first().click({ force: true });
 
-    // Click "Comenzar" / "Start Career"
-    await page.locator('button:has-text("Comenzar")').click();
+    // Click submit button (locale-independent, button type="submit")
+    await page.locator('button[type="submit"]').click();
 
     // Should navigate to /select-team
     await page.waitForURL("**/select-team", { timeout: 30000 });
@@ -64,9 +63,9 @@ test.describe("New Game Flow", () => {
     // Select Fnatic
     await page.locator('button:has-text("Fnatic")').first().click();
 
-    // Verify confirm button is enabled
-    const confirmBtn = page.locator('button:has-text("Confirmar")');
-    await expect(confirmBtn).toBeEnabled();
+    // The manage button says "Dirigir FNC" (Spanish) — unique text on page
+    const confirmBtn = page.locator('button:has-text("Dirigir")');
+    await expect(confirmBtn).toBeEnabled({ timeout: 5000 });
 
     // Confirm selection
     await confirmBtn.click();
