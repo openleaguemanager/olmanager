@@ -4,6 +4,7 @@ pub mod error;
 use commands::*;
 
 use application::lol_sim_v2::LolSimV2StoreState;
+use application::lol_sim_v3::LolSimV3StoreState;
 use db::save_manager::SaveManager;
 use ofm_core::state::StateManager;
 use std::sync::Mutex;
@@ -37,6 +38,7 @@ pub fn run() {
         )
         .manage(StateManager::new())
         .manage(LolSimV2StoreState::default())
+        .manage(LolSimV3StoreState::default())
         .setup(|app| {
             use tauri::Manager as TauriManager;
             let app_data_dir = app
@@ -193,6 +195,11 @@ pub fn run() {
             lol_sim_v2_dispose,
             lol_sim_v2_run_to_completion,
             lol_sim_v2_skip_to_end,
+            lol_sim_v3_init,
+            lol_sim_v3_tick,
+            lol_sim_v3_reset,
+            lol_sim_v3_dispose,
+            lol_sim_v3_run_to_completion,
             save_manager_avatar,
             load_manager_avatar,
             update_manager_profile,

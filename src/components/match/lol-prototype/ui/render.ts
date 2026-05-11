@@ -10,6 +10,7 @@ import {
   STRUCTURE_ICON_PATH,
   STRUCTURES_LAYOUT,
 } from "../../../../lib/lolMapLayout";
+import { drawUltimateIdentityEvents } from "./ultimateIdentityVfx";
 
 let cachedImage: HTMLImageElement | null = null;
 const iconCache = new Map<string, HTMLImageElement>();
@@ -294,6 +295,8 @@ export function renderSimulation(
     ctx.stroke();
   });
 
+  drawUltimateIdentityEvents(ctx, state.events ?? [], state.champions, state.timeSec, width, height);
+
   state.minions.filter((m) => m.kind !== "summon").forEach((m) => {
     ctx.beginPath();
     ctx.fillStyle = m.team === "blue" ? "#67e8f9" : "#fda4af";
@@ -353,8 +356,10 @@ export function renderSimulation(
     ctx.fill();
     ctx.stroke();
 
-    const championId = championByPlayerId?.[c.id];
-    const icon = championIconUrl(championId ?? undefined);
+    const runtimeChampion = c as typeof c & { championId?: string; champion_id?: string };
+    const runtimeChampionId = runtimeChampion.championId ?? runtimeChampion.champion_id;
+    const mappedChampionId = championByPlayerId?.[c.id];
+    const icon = championIconUrl((runtimeChampionId ?? mappedChampionId) || undefined);
     let drewChampionIcon = false;
     if (icon) {
       const championImg = getIcon(icon);

@@ -1,0 +1,262 @@
+// 1. DICCIONARIO VISUAL (La identidad visual de los 168 campeones)
+// Cada campeón se asigna a una "Primitiva" con su color hexadecimal RGB base.
+const VFX_DB = {
+    // --- A ---
+    "vfx_aatrox_ult": { type: "AURA", rgb: "178, 34, 34", size: 40 }, // Firebrick
+    "vfx_ahri_dash": { type: "DASH", rgb: "255, 105, 180", size: 10 }, // HotPink
+    "vfx_akali_execute": { type: "DASH", rgb: "0, 250, 154", size: 12 }, // MediumSpringGreen
+    "vfx_akshan_snipe": { type: "PROJECTILE", rgb: "255, 215, 0", size: 5 }, // Gold
+    "vfx_alistar_shield": { type: "AURA", rgb: "169, 169, 169", size: 35 }, // DarkGray
+    "vfx_ambessa_slam": { type: "DASH", rgb: "205, 92, 92", size: 15 }, // IndianRed
+    "vfx_amumu_curse": { type: "PULSE", rgb: "218, 165, 32", size: 120 }, // GoldenRod
+    "vfx_anivia_storm": { type: "PULSE", rgb: "135, 206, 235", size: 100 }, // SkyBlue
+    "vfx_annie_tibbers": { type: "PULSE", rgb: "255, 69, 0", size: 80 }, // Red-Orange
+    "vfx_aphelios_moonlight": { type: "PROJECTILE", rgb: "176, 196, 222", size: 15 }, // LightSteelBlue
+    "vfx_ashe_arrow": { type: "PROJECTILE", rgb: "0, 255, 255", size: 20 }, // Cyan
+    "vfx_asol_meteor": { type: "PULSE", rgb: "255, 140, 0", size: 150 }, // DarkOrange
+    "vfx_aurora_dome": { type: "PULSE", rgb: "147, 112, 219", size: 90 }, // MediumPurple
+    "vfx_azir_wall": { type: "PULSE", rgb: "218, 165, 32", size: 80 }, // Goldenrod
+
+    // --- B & C ---
+    "vfx_bard_stasis": { type: "PULSE", rgb: "255, 215, 0", size: 110 },
+    "vfx_belveth_consume": { type: "PULSE", rgb: "138, 43, 226", size: 90 }, // BlueViolet
+    "vfx_blitz_static": { type: "PULSE", rgb: "30, 144, 255", size: 100 }, // DodgerBlue
+    "vfx_brand_bounce": { type: "PROJECTILE", rgb: "255, 0, 0", size: 10 },
+    "vfx_braum_fissure": { type: "LASER", rgb: "173, 216, 230", size: 40 }, // LightBlue
+    "vfx_briar_dive": { type: "DASH", rgb: "220, 20, 60", size: 20 }, // Crimson
+    "vfx_caitlyn_snipe": { type: "LASER", rgb: "255, 0, 0", size: 5 },
+    "vfx_camille_ultimatum": { type: "PULSE", rgb: "0, 191, 255", size: 70 }, // DeepSkyBlue
+    "vfx_cassio_gaze": { type: "PULSE", rgb: "50, 205, 50", size: 90 }, // LimeGreen
+    "vfx_chogath_feast": { type: "PULSE", rgb: "139, 0, 139", size: 50 }, // DarkMagenta
+    "vfx_corki_missile": { type: "PROJECTILE", rgb: "255, 165, 0", size: 8 }, // Orange
+
+    // --- D & E ---
+    "vfx_darius_dunk": { type: "PULSE", rgb: "178, 34, 34", size: 60 },
+    "vfx_diana_pull": { type: "PULSE", rgb: "248, 248, 255", size: 100 }, // GhostWhite
+    "vfx_mundo_heal": { type: "AURA", rgb: "124, 252, 0", size: 35 }, // LawnGreen
+    "vfx_draven_axes": { type: "PROJECTILE", rgb: "255, 140, 0", size: 15 },
+    "vfx_ekko_rewind": { type: "PULSE", rgb: "0, 250, 154", size: 90 },
+    "vfx_elise_transform": { type: "AURA", rgb: "139, 0, 0", size: 20 }, // DarkRed
+    "vfx_evelynn_slash": { type: "PULSE", rgb: "255, 20, 147", size: 80 }, // DeepPink
+    "vfx_ezreal_barrage": { type: "PROJECTILE", rgb: "255, 255, 0", size: 30 }, // Yellow
+
+    // --- F, G & H ---
+    "vfx_fiddle_crowstorm": { type: "PULSE", rgb: "47, 79, 79", size: 150 }, // DarkSlateGray
+    "vfx_fiora_duel": { type: "AURA", rgb: "255, 105, 180", size: 60 },
+    "vfx_fizz_shark": { type: "PULSE", rgb: "30, 144, 255", size: 120 },
+    "vfx_galio_hero": { type: "PULSE", rgb: "255, 255, 255", size: 180 },
+    "vfx_gp_cannon": { type: "PULSE", rgb: "255, 69, 0", size: 130 },
+    "vfx_garen_justice": { type: "LASER", rgb: "255, 215, 0", size: 80 }, // Cae del cielo
+    "vfx_gnar_slam": { type: "PULSE", rgb: "210, 105, 30", size: 100 }, // Chocolate
+    "vfx_gragas_cask": { type: "PULSE", rgb: "222, 184, 135", size: 110 }, // BurlyWood
+    "vfx_gwen_needles": { type: "LASER", rgb: "0, 191, 255", size: 20 },
+    "vfx_hecarim_charge": { type: "DASH", rgb: "0, 128, 128", size: 40 }, // Teal
+    "vfx_heimer_upgrade": { type: "AURA", rgb: "255, 215, 0", size: 30 },
+    "vfx_hwei_despair": { type: "PULSE", rgb: "75, 0, 130", size: 130 }, // Indigo
+
+    // --- I, J & K ---
+    "vfx_illaoi_leap": { type: "PULSE", rgb: "46, 139, 87", size: 110 }, // SeaGreen
+    "vfx_irelia_blades": { type: "PROJECTILE", rgb: "218, 165, 32", size: 25 },
+    "vfx_ivern_daisy": { type: "PULSE", rgb: "34, 139, 34", size: 60 }, // ForestGreen
+    "vfx_janna_monsoon": { type: "PULSE", rgb: "152, 251, 152", size: 140 }, // PaleGreen
+    "vfx_j4_cataclysm": { type: "PULSE", rgb: "139, 69, 19", size: 90 }, // SaddleBrown
+    "vfx_jax_master": { type: "AURA", rgb: "148, 0, 211", size: 35 }, // DarkViolet
+    "vfx_jayce_stance": { type: "AURA", rgb: "65, 105, 225", size: 20 }, // RoyalBlue
+    "vfx_jhin_curtain": { type: "LASER", rgb: "220, 20, 60", size: 10 },
+    "vfx_jinx_rocket": { type: "PROJECTILE", rgb: "255, 69, 0", size: 15 },
+    "vfx_ksante_allout": { type: "DASH", rgb: "218, 165, 32", size: 20 },
+    "vfx_kaisa_instinct": { type: "DASH", rgb: "138, 43, 226", size: 15 },
+    "vfx_kalista_fate": { type: "DASH", rgb: "0, 255, 127", size: 10 },
+    "vfx_karma_mantra": { type: "AURA", rgb: "50, 205, 50", size: 30 },
+    "vfx_karthus_requiem": { type: "GLOBAL_FLASH", rgb: "255, 0, 0", size: 0 }, // Map flash
+    "vfx_kassadin_rift": { type: "DASH", rgb: "75, 0, 130", size: 20 },
+    "vfx_katarina_lotus": { type: "PULSE", rgb: "220, 20, 60", size: 80 },
+    "vfx_kayle_judgment": { type: "LASER", rgb: "255, 215, 0", size: 100 },
+    "vfx_kayn_umbra": { type: "AURA", rgb: "139, 0, 0", size: 40 },
+    "vfx_kennen_storm": { type: "PULSE", rgb: "135, 206, 250", size: 120 }, // LightSkyBlue
+    "vfx_khazix_void": { type: "AURA", rgb: "148, 0, 211", size: 30 },
+    "vfx_kindred_respite": { type: "AURA", rgb: "176, 224, 230", size: 100 }, // PowderBlue
+    "vfx_kled_charge": { type: "DASH", rgb: "210, 105, 30", size: 30 },
+    "vfx_kogmaw_artillery": { type: "PULSE", rgb: "154, 205, 50", size: 60 }, // YellowGreen
+
+    // --- L & M ---
+    "vfx_leblanc_mimic": { type: "AURA", rgb: "255, 0, 255", size: 30 }, // Magenta
+    "vfx_leesin_kick": { type: "DASH", rgb: "255, 69, 0", size: 15 },
+    "vfx_leona_flare": { type: "PULSE", rgb: "255, 255, 0", size: 90 },
+    "vfx_lillia_lullaby": { type: "GLOBAL_FLASH", rgb: "216, 191, 216", size: 0 }, // Thistle
+    "vfx_lissandra_tomb": { type: "PULSE", rgb: "0, 191, 255", size: 80 },
+    "vfx_lucian_culling": { type: "LASER", rgb: "240, 230, 140", size: 15 }, // Khaki
+    "vfx_lulu_growth": { type: "AURA", rgb: "186, 85, 211", size: 60 }, // MediumOrchid
+    "vfx_lux_spark": { type: "LASER", rgb: "255, 105, 180", size: 30 },
+    "vfx_malphite_force": { type: "DASH", rgb: "139, 69, 19", size: 40 },
+    "vfx_malzahar_grasp": { type: "LASER", rgb: "128, 0, 128", size: 10 }, // Purple
+    "vfx_maokai_nature": { type: "PROJECTILE", rgb: "34, 139, 34", size: 100 },
+    "vfx_yi_highlander": { type: "AURA", rgb: "255, 215, 0", size: 25 },
+    "vfx_mel_solari": { type: "AURA", rgb: "255, 215, 0", size: 80 },
+    "vfx_milio_breath": { type: "PULSE", rgb: "255, 140, 0", size: 110 },
+    "vfx_mf_bullet": { type: "LASER", rgb: "220, 20, 60", size: 80 }, // Cono frontal
+    "vfx_morde_realm": { type: "PULSE", rgb: "0, 100, 0", size: 150 }, // DarkGreen
+    "vfx_morgana_soul": { type: "PULSE", rgb: "138, 43, 226", size: 100 },
+
+    // --- N, O, P & Q ---
+    "vfx_naafiri_pack": { type: "AURA", rgb: "178, 34, 34", size: 35 },
+    "vfx_nami_tidal": { type: "PROJECTILE", rgb: "64, 224, 208", size: 80 }, // Turquoise
+    "vfx_nasus_fury": { type: "AURA", rgb: "105, 105, 105", size: 60 }, // DimGray
+    "vfx_nautilus_depth": { type: "PROJECTILE", rgb: "70, 130, 180", size: 30 }, // SteelBlue
+    "vfx_neeko_pop": { type: "PULSE", rgb: "147, 112, 219", size: 100 },
+    "vfx_nidalee_cougar": { type: "AURA", rgb: "255, 140, 0", size: 20 },
+    "vfx_nilah_apotheosis": { type: "PULSE", rgb: "0, 206, 209", size: 90 }, // DarkTurquoise
+    "vfx_nocturne_paranoia": { type: "GLOBAL_FLASH", rgb: "0, 0, 0", size: 0 },
+    "vfx_nunu_zero": { type: "PULSE", rgb: "175, 238, 238", size: 150 }, // PaleTurquoise
+    "vfx_olaf_ragnarok": { type: "AURA", rgb: "255, 69, 0", size: 35 },
+    "vfx_orianna_shockwave": { type: "PULSE", rgb: "176, 196, 222", size: 80 },
+    "vfx_ornn_forge": { type: "PROJECTILE", rgb: "255, 69, 0", size: 90 },
+    "vfx_pantheon_star": { type: "PULSE", rgb: "255, 140, 0", size: 130 },
+    "vfx_poppy_verdict": { type: "LASER", rgb: "255, 215, 0", size: 40 },
+    "vfx_pyke_death": { type: "PULSE", rgb: "46, 139, 87", size: 60 },
+    "vfx_qiyana_display": { type: "PULSE", rgb: "255, 20, 147", size: 100 },
+    "vfx_quinn_behind": { type: "AURA", rgb: "255, 215, 0", size: 25 },
+
+    // --- R & S ---
+    "vfx_rakan_quickness": { type: "AURA", rgb: "255, 215, 0", size: 40 },
+    "vfx_rammus_tremors": { type: "PULSE", rgb: "139, 69, 19", size: 80 },
+    "vfx_reksai_rush": { type: "DASH", rgb: "148, 0, 211", size: 20 },
+    "vfx_rell_storm": { type: "AURA", rgb: "218, 165, 32", size: 60 },
+    "vfx_renata_takeover": { type: "PROJECTILE", rgb: "255, 20, 147", size: 100 },
+    "vfx_renekton_dominus": { type: "AURA", rgb: "139, 0, 0", size: 50 },
+    "vfx_rengar_thrill": { type: "AURA", rgb: "255, 0, 0", size: 25 },
+    "vfx_riven_blade": { type: "LASER", rgb: "124, 252, 0", size: 50 },
+    "vfx_rumble_equalizer": { type: "LASER", rgb: "255, 69, 0", size: 40 },
+    "vfx_ryze_realm": { type: "PULSE", rgb: "30, 144, 255", size: 120 },
+    "vfx_samira_inferno": { type: "PULSE", rgb: "255, 69, 0", size: 70 },
+    "vfx_sejuani_prison": { type: "PROJECTILE", rgb: "135, 206, 250", size: 40 },
+    "vfx_senna_shadow": { type: "LASER", rgb: "47, 79, 79", size: 100 },
+    "vfx_seraphine_encore": { type: "PROJECTILE", rgb: "255, 105, 180", size: 80 },
+    "vfx_sett_showstopper": { type: "DASH", rgb: "218, 165, 32", size: 30 },
+    "vfx_shaco_hallucinate": { type: "PULSE", rgb: "255, 20, 147", size: 40 },
+    "vfx_shen_standunited": { type: "AURA", rgb: "186, 85, 211", size: 60 },
+    "vfx_shyvana_dragon": { type: "DASH", rgb: "255, 0, 0", size: 50 },
+    "vfx_singed_potion": { type: "AURA", rgb: "50, 205, 50", size: 40 },
+    "vfx_sion_charge": { type: "DASH", rgb: "178, 34, 34", size: 35 },
+    "vfx_sivir_hunt": { type: "AURA", rgb: "0, 191, 255", size: 80 },
+    "vfx_skarner_impale": { type: "AURA", rgb: "148, 0, 211", size: 40 },
+    "vfx_smolder_mom": { type: "LASER", rgb: "255, 140, 0", size: 150 },
+    "vfx_sona_crescendo": { type: "LASER", rgb: "255, 215, 0", size: 60 },
+    "vfx_soraka_wish": { type: "GLOBAL_FLASH", rgb: "0, 255, 127", size: 0 },
+    "vfx_swain_ascension": { type: "AURA", rgb: "220, 20, 60", size: 90 },
+    "vfx_sylas_hijack": { type: "PROJECTILE", rgb: "255, 255, 255", size: 10 },
+    "vfx_syndra_unleashed": { type: "PROJECTILE", rgb: "138, 43, 226", size: 15 },
+
+    // --- T, U, V & W ---
+    "vfx_tahm_devour": { type: "AURA", rgb: "46, 139, 87", size: 30 },
+    "vfx_taliyah_wall": { type: "LASER", rgb: "210, 105, 30", size: 20 },
+    "vfx_talon_assault": { type: "PULSE", rgb: "105, 105, 105", size: 80 },
+    "vfx_taric_radiance": { type: "AURA", rgb: "135, 206, 250", size: 100 },
+    "vfx_teemo_trap": { type: "PULSE", rgb: "50, 205, 50", size: 50 },
+    "vfx_thresh_box": { type: "AURA", rgb: "64, 224, 208", size: 70 },
+    "vfx_tristana_buster": { type: "PROJECTILE", rgb: "255, 165, 0", size: 25 },
+    "vfx_trundle_subjugate": { type: "AURA", rgb: "139, 69, 19", size: 40 },
+    "vfx_tryndamere_fury": { type: "AURA", rgb: "255, 0, 0", size: 35 },
+    "vfx_tf_destiny": { type: "GLOBAL_FLASH", rgb: "255, 215, 0", size: 0 },
+    "vfx_twitch_spray": { type: "AURA", rgb: "0, 100, 0", size: 25 },
+    "vfx_udyr_stance": { type: "AURA", rgb: "30, 144, 255", size: 30 },
+    "vfx_urgot_fear": { type: "PROJECTILE", rgb: "105, 105, 105", size: 20 },
+    "vfx_varus_chain": { type: "PROJECTILE", rgb: "148, 0, 211", size: 30 },
+    "vfx_vayne_final": { type: "AURA", rgb: "192, 192, 192", size: 20 },
+    "vfx_veigar_burst": { type: "PROJECTILE", rgb: "75, 0, 130", size: 40 },
+    "vfx_velkoz_ray": { type: "LASER", rgb: "255, 0, 255", size: 25 },
+    "vfx_vex_surge": { type: "DASH", rgb: "47, 79, 79", size: 20 },
+    "vfx_vi_assault": { type: "DASH", rgb: "255, 20, 147", size: 20 },
+    "vfx_viego_heartbreaker": { type: "PULSE", rgb: "0, 250, 154", size: 50 },
+    "vfx_viktor_storm": { type: "AURA", rgb: "255, 215, 0", size: 70 },
+    "vfx_vlad_hemoplague": { type: "PULSE", rgb: "178, 34, 34", size: 90 },
+    "vfx_volibear_bringer": { type: "PULSE", rgb: "135, 206, 250", size: 110 },
+    "vfx_warwick_duress": { type: "DASH", rgb: "139, 0, 0", size: 20 },
+    "vfx_wukong_cyclone": { type: "AURA", rgb: "218, 165, 32", size: 60 },
+
+    // --- X, Y & Z ---
+    "vfx_xayah_feather": { type: "AURA", rgb: "255, 20, 147", size: 50 },
+    "vfx_xerath_rite": { type: "PULSE", rgb: "0, 191, 255", size: 60 },
+    "vfx_xinzhao_guard": { type: "AURA", rgb: "255, 215, 0", size: 70 },
+    "vfx_yasuo_breath": { type: "DASH", rgb: "173, 216, 230", size: 30 },
+    "vfx_yone_fate": { type: "DASH", rgb: "220, 20, 60", size: 30 },
+    "vfx_yorick_eulogy": { type: "AURA", rgb: "119, 136, 153", size: 40 },
+    "vfx_yunara_pack": { type: "PULSE", rgb: "205, 92, 92", size: 100 },
+    "vfx_yuumi_chapter": { type: "PROJECTILE", rgb: "255, 215, 0", size: 80 },
+    "vfx_zaahen_annihilation": { type: "PULSE", rgb: "0, 0, 0", size: 120 },
+    "vfx_zac_bounce": { type: "PULSE", rgb: "50, 205, 50", size: 80 },
+    "vfx_zed_mark": { type: "AURA", rgb: "139, 0, 0", size: 20 },
+    "vfx_zeri_crash": { type: "PULSE", rgb: "173, 255, 47", size: 90 }, // GreenYellow
+    "vfx_ziggs_bomb": { type: "PULSE", rgb: "255, 69, 0", size: 140 },
+    "vfx_zilean_shift": { type: "AURA", rgb: "218, 165, 32", size: 40 },
+    "vfx_zoe_jump": { type: "DASH", rgb: "255, 105, 180", size: 15 },
+    "vfx_zyra_stranglethorns": { type: "PULSE", rgb: "34, 139, 34", size: 120 }
+};
+
+// 2. MOTOR DE RENDERIZADO (Reemplaza el switch/case gigante en renderLoop)
+function drawVfx(ctx, vfx, progress) {
+    // Si no encontramos el ID en la DB, usamos un circulo blanco por defecto
+    const config = VFX_DB[vfx.id] || { type: "PULSE", rgb: "255, 255, 255", size: 30 };
+    
+    // Alpha interpolado (1.0 al inicio, 0.0 al final)
+    const alpha = 1 - progress;
+    const colorStr = `rgba(${config.rgb}, ${alpha})`;
+
+    ctx.beginPath();
+    
+    if (config.type === "PULSE") {
+        // Círculo que crece y se desvanece
+        ctx.arc(vfx.x, vfx.y, config.size * progress, 0, Math.PI * 2);
+        ctx.fillStyle = colorStr;
+        ctx.fill();
+    } 
+    else if (config.type === "AURA") {
+        // Anillo constante que gira/brilla alrededor del personaje
+        ctx.arc(vfx.x, vfx.y, config.size, 0, Math.PI * 2);
+        ctx.lineWidth = 4 * alpha;
+        ctx.strokeStyle = colorStr;
+        ctx.stroke();
+    } 
+    else if (config.type === "LASER" && vfx.targetX) {
+        // Línea instantánea de A a B que se desvanece
+        ctx.moveTo(vfx.x, vfx.y);
+        ctx.lineTo(vfx.targetX, vfx.targetY);
+        ctx.lineWidth = config.size * alpha;
+        ctx.strokeStyle = colorStr;
+        ctx.stroke();
+    } 
+    else if (config.type === "PROJECTILE" && vfx.targetX) {
+        // Círculo que se mueve de A a B
+        const currentX = vfx.x + (vfx.targetX - vfx.x) * progress;
+        const currentY = vfx.y + (vfx.targetY - vfx.y) * progress;
+        
+        ctx.arc(currentX, currentY, config.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${config.rgb}, 1.0)`; // Mantiene el color sólido
+        ctx.fill();
+        
+        // Rastro del proyectil
+        ctx.beginPath();
+        ctx.moveTo(vfx.x, vfx.y);
+        ctx.lineTo(currentX, currentY);
+        ctx.lineWidth = config.size * 0.3;
+        ctx.strokeStyle = colorStr;
+        ctx.stroke();
+    } 
+    else if (config.type === "DASH" && vfx.targetX) {
+        // Simula el rastro de movimiento veloz del propio personaje
+        const currentX = vfx.x + (vfx.targetX - vfx.x) * Math.min(progress * 2, 1);
+        const currentY = vfx.y + (vfx.targetY - vfx.y) * Math.min(progress * 2, 1);
+        
+        ctx.moveTo(vfx.x, vfx.y);
+        ctx.lineTo(currentX, currentY);
+        ctx.lineWidth = config.size;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = colorStr;
+        ctx.stroke();
+    } 
+    else if (config.type === "GLOBAL_FLASH") {
+        // Pinta todo el canvas temporalmente (ej: Noc, Karthus)
+        ctx.fillStyle = colorStr;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    }
+}

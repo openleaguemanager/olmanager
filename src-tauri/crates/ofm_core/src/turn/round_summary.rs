@@ -317,8 +317,18 @@ fn round_goal_counts(game: &Game, fixtures: &[&Fixture]) -> HashMap<String, u32>
         };
 
         let Some(report) = result.report.as_ref() else {
-            assign_result_kills_to_team_leader(game, &mut counts, &fixture.home_team_id, result.home_wins);
-            assign_result_kills_to_team_leader(game, &mut counts, &fixture.away_team_id, result.away_wins);
+            assign_result_kills_to_team_leader(
+                game,
+                &mut counts,
+                &fixture.home_team_id,
+                result.home_wins,
+            );
+            assign_result_kills_to_team_leader(
+                game,
+                &mut counts,
+                &fixture.away_team_id,
+                result.away_wins,
+            );
             continue;
         };
 

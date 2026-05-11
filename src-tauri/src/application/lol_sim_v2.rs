@@ -6,6 +6,7 @@ use std::sync::OnceLock;
 
 mod api;
 mod combat;
+mod decision_layer;
 mod economy;
 mod events;
 mod layout;
@@ -19,13 +20,14 @@ mod state_init;
 mod structures;
 mod trading;
 mod types;
+mod ultimate_identity;
 mod util;
 mod vision;
 mod waves;
 
 pub use api::*;
 use economy::{champion_kill_rewards, jungle_camp_cs_reward, jungle_camp_reward};
-use events::{log_event, push_event};
+use events::{log_event, log_event_with_metadata, push_event};
 use layout::{
     BASE_POSITION_BLUE, BASE_POSITION_RED, LANE_PATH_BOT_BLUE, LANE_PATH_MID_BLUE,
     LANE_PATH_TOP_BLUE, ROLE_SEEDS, STRUCTURE_LAYOUT,
@@ -44,6 +46,9 @@ pub use types::*;
 use types::{
     RuntimeEvent, RuntimeStats, RuntimeSummonerSpellSlot, RuntimeTeamStats, RuntimeUltimateSlot,
     Vec2, WardRuntime,
+};
+use ultimate_identity::{
+    ultimate_cast_event_metadata, ultimate_identity_for, ultimate_identity_value,
 };
 use util::{as_mut_object, clamp, dist, normalize, ratio_or_zero, read_time_sec, read_winner};
 use vision::{place_wards, process_sweepers, team_has_vision_at};
@@ -1391,21 +1396,74 @@ fn seed_team(
             decision_jitter
         };
         let summoner_spells = default_summoner_spells_for_role(role_seed.role);
+        let ultimate_identity = champion_id.and_then(|id| ultimate_identity_for(id));
         let ultimate = champion_id
             .and_then(|id| champion_ultimates_by_id.get(id))
             .map(|slot| {
-                json!({
+                let mut value = json!({
                     "archetype": slot.archetype,
                     "icon": slot.icon,
                     "cdUntil": 0.0,
-                })
+                });
+                if let Some(identity) = ultimate_identity {
+                    if let Some(obj) = value.as_object_mut() {
+                        obj.insert(
+                            "technicalPrimitive".to_string(),
+                            json!(identity.technical_primitive),
+                        );
+                        obj.insert(
+                            "signatureId".to_string(),
+                            Value::from(identity.signature_id),
+                        );
+                        obj.insert(
+                            "visualEventId".to_string(),
+                            Value::from(identity.visual.visual_event_id),
+                        );
+                        obj.insert("gameplayTags".to_string(), json!(identity.gameplay_tags));
+                        obj.insert(
+                            "semanticEffects".to_string(),
+                            json!(identity.semantic_effects),
+                        );
+                        obj.insert(
+                            "ultimateIdentity".to_string(),
+                            ultimate_identity_value(identity),
+                        );
+                    }
+                }
+                value
             })
             .unwrap_or_else(|| {
-                json!({
+                let mut value = json!({
                     "archetype": default_ultimate_archetype_for_role(role_seed.role),
                     "icon": "",
                     "cdUntil": 0.0,
-                })
+                });
+                if let Some(identity) = ultimate_identity {
+                    if let Some(obj) = value.as_object_mut() {
+                        obj.insert(
+                            "technicalPrimitive".to_string(),
+                            json!(identity.technical_primitive),
+                        );
+                        obj.insert(
+                            "signatureId".to_string(),
+                            Value::from(identity.signature_id),
+                        );
+                        obj.insert(
+                            "visualEventId".to_string(),
+                            Value::from(identity.visual.visual_event_id),
+                        );
+                        obj.insert("gameplayTags".to_string(), json!(identity.gameplay_tags));
+                        obj.insert(
+                            "semanticEffects".to_string(),
+                            json!(identity.semantic_effects),
+                        );
+                        obj.insert(
+                            "ultimateIdentity".to_string(),
+                            ultimate_identity_value(identity),
+                        );
+                    }
+                }
+                value
             });
 
         // Keep this object built manually instead of one huge `json!` call.
@@ -2895,6 +2953,9 @@ struct TradeConfidenceFeatures {
     ally_minions_local: usize,
     enemy_minions_local: usize,
     nearest_enemy_tower_distance: f64,
+    tower_danger: bool,
+    wave_advantage: f64,
+    role_fight_bias: f64,
     enemy_overextended: bool,
     first_wave_window: bool,
 }
@@ -2960,8 +3021,9 @@ fn should_commit_all_in_trade(
     enemy: &ChampionRuntime,
     champions: &[ChampionRuntime],
     minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
 ) -> bool {
-    trading::should_commit_all_in_trade(champion, enemy, champions, minions)
+    trading::should_commit_all_in_trade(champion, enemy, champions, minions, structures)
 }
 
 fn evaluate_open_trade_window(
@@ -2986,6 +3048,15 @@ fn evaluate_open_trade_window(
         ai_mode,
         policy,
     )
+}
+
+#[cfg(test)]
+fn decision_intent_trade_guardrail(
+    champion: &ChampionRuntime,
+    now: f64,
+    policy: &SimulatorPolicyConfig,
+) -> Option<TradeDecisionEvaluation> {
+    trading::decision_intent_trade_guardrail(champion, now, policy)
 }
 
 fn can_open_trade_window(
@@ -3489,6 +3560,24 @@ fn decide_champion_state(
         neutral_timers,
         team_tactics,
         team_buffs,
+    );
+}
+
+fn apply_decision_intent_target(
+    champion: &mut ChampionRuntime,
+    intent: &decision_layer::DecisionIntent,
+    champions: &[ChampionRuntime],
+    neutral_timers: Option<&NeutralTimersRuntime>,
+    team_tactics: &RuntimeTeamTactics,
+    now: f64,
+) {
+    macro_ai::apply_decision_intent_target(
+        champion,
+        intent,
+        champions,
+        neutral_timers,
+        team_tactics,
+        now,
     );
 }
 
@@ -3997,11 +4086,7 @@ fn try_cast_special_ultimate(
         };
 
         runtime.minions.push(summon);
-        log_event(
-            runtime,
-            &format!("{} summoned {}", champion.name, summon_kind),
-            "info",
-        );
+        log_ultimate_cast(runtime, &champion, &format!("summoned {}", summon_kind));
         return Some(true);
     }
 
@@ -4046,11 +4131,7 @@ fn try_cast_special_ultimate(
         runtime.champions[champion_idx].target_path.clear();
         runtime.champions[champion_idx].target_path_index = 0;
         runtime.champions[champion_idx].next_decision_at = now;
-        log_event(
-            runtime,
-            &format!("{} cast Stand United", champion.name),
-            "info",
-        );
+        log_ultimate_cast(runtime, &champion, "cast Stand United");
         return Some(true);
     }
 
@@ -4077,11 +4158,7 @@ fn try_cast_special_ultimate(
         runtime.champions[champion_idx].target_path_index = 0;
         runtime.champions[target_idx].target_path_index = 0;
 
-        log_event(
-            runtime,
-            &format!("{} cast Realm of Death", champion.name),
-            "info",
-        );
+        log_ultimate_cast(runtime, &champion, "cast Realm of Death");
         return Some(true);
     }
 
@@ -4094,9 +4171,6 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
     }
 
     let champion_snapshot = runtime.champions[champion_idx].clone();
-    if champion_snapshot.role == "JGL" {
-        return false;
-    }
     if champion_snapshot.level < ULTIMATE_UNLOCK_LEVEL || !ultimate_ready(&champion_snapshot, now) {
         return false;
     }
@@ -4121,6 +4195,10 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
         .unwrap_or_else(|| {
             default_ultimate_archetype_for_role(&champion_snapshot.role).to_string()
         });
+
+    if champion_snapshot.role == "JGL" && archetype != "global" && archetype != "zone" {
+        return false;
+    }
 
     let casted = match archetype.as_str() {
         "execute" => {
@@ -4196,14 +4274,28 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
         now,
         ULTIMATE_BASE_CD_SEC,
     ) {
-        log_event(
+        log_ultimate_cast(
             runtime,
-            &format!("{} cast Ultimate ({})", champion_snapshot.name, archetype),
-            "info",
+            &champion_snapshot,
+            &format!("cast Ultimate ({})", archetype),
         );
         return true;
     }
     false
+}
+
+fn log_ultimate_cast(runtime: &mut RuntimeState, champion: &ChampionRuntime, action: &str) {
+    let text = format!("{} {}", champion.name, action);
+    if let Some(identity) = ultimate_identity_for(&champion.champion_id) {
+        log_event_with_metadata(
+            runtime,
+            &text,
+            "info",
+            ultimate_cast_event_metadata(identity, &champion.id),
+        );
+    } else {
+        log_event(runtime, &text, "info");
+    }
 }
 
 fn tick_ignite_dot_effects(runtime: &mut RuntimeState, now: f64) {
@@ -6365,6 +6457,9 @@ mod structures_tests;
 
 #[cfg(test)]
 mod combat_tests;
+
+#[cfg(test)]
+mod decision_layer_tests;
 
 #[cfg(test)]
 mod vision_tests;

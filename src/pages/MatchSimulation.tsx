@@ -26,7 +26,9 @@ import {
   type DraftMatchResult,
 } from "../components/match/draftResultSimulator";
 import {
+  getLolSimBackendMode,
   lolSimV2RunToCompletion,
+  lolSimV3RunToCompletion,
 } from "../components/match/lol-prototype/backend/tauri-client";
 import {
   createDefaultObjectivesState,
@@ -576,6 +578,7 @@ function buildDraftResultFromRuntime(params: {
 }
 
 const PARALLEL_SIM_MAX_TICKS = 3600;
+const LOL_SIM_BACKEND_MODE = getLolSimBackendMode();
 const PARALLEL_SIM_DT_SEC = 0.2;
 const PARALLEL_SIM_SPEED = 12;
 const DRAFT_RUNTIME_SESSION_ID = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1216,14 +1219,6 @@ export default function MatchSimulation() {
     setDraftPayload(payload);
     if (activeSnapshot) {
       const roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"] as const;
-      const inferRole = (position: string): typeof roles[number] => {
-        const p = position.toLowerCase();
-        if (p.includes("top")) return "TOP";
-        if (p.includes("jung")) return "JUNGLE";
-        if (p.includes("mid")) return "MID";
-        if (p.includes("adc") || p.includes("bot") || p.includes("carry")) return "ADC";
-        return "SUPPORT";
-      };
 
       const mapSide = (
         players: MatchSnapshot["home_team"]["players"],
@@ -1241,18 +1236,19 @@ export default function MatchSimulation() {
           ADC: 3,
           SUPPORT: 4,
         };
+        const sortedPicks = [...picks].sort((left, right) => (roleOrder[left.role] ?? 99) - (roleOrder[right.role] ?? 99));
         const usedPlayerIds = new Set<string>();
         for (const role of roles) {
-          const pick = picks.find((entry) => entry.role === role);
+          const pick = sortedPicks.find((entry) => entry.role === role);
           if (!pick) continue;
 
-          const exact = players.find(
-            (entry) => !usedPlayerIds.has(entry.id) && inferRole(entry.role ?? "") === role,
-          );
           const slot = players[roleOrder[role]];
           const slotCandidate = slot && !usedPlayerIds.has(slot.id) ? slot : null;
+          const exactRole = players.find(
+            (entry) => !usedPlayerIds.has(entry.id) && (entry.role ?? "").toUpperCase() === role,
+          );
           const fallback = players.find((entry) => !usedPlayerIds.has(entry.id)) ?? players[0];
-          const player = exact ?? slotCandidate ?? fallback;
+          const player = slotCandidate ?? exactRole ?? fallback;
 
           if (player) {
             usedPlayerIds.add(player.id);
@@ -1622,22 +1618,30 @@ export default function MatchSimulation() {
     }
 
     try {
-      const response = await lolSimV2RunToCompletion({
-        seed: `post-draft-simulate-${Date.now()}`,
-        aiMode: "hybrid",
-        policy: simPolicy,
-        snapshot: renderSnapshotWithTactics,
-        championByPlayerId: championMapByPlayerId,
-        championProfilesById: {},
-        dtSec: PARALLEL_SIM_DT_SEC,
-        speed: PARALLEL_SIM_SPEED,
-        maxTicks: PARALLEL_SIM_MAX_TICKS,
-      });
+      const response = LOL_SIM_BACKEND_MODE === "v3"
+        ? await lolSimV3RunToCompletion({
+          seed: `post-draft-simulate-${Date.now()}`,
+          snapshot: renderSnapshotWithTactics,
+          championByPlayerId: championMapByPlayerId,
+          tickDtSec: 0.1,
+          maxSteps: PARALLEL_SIM_MAX_TICKS,
+        })
+        : await lolSimV2RunToCompletion({
+          seed: `post-draft-simulate-${Date.now()}`,
+          aiMode: "hybrid",
+          policy: simPolicy,
+          snapshot: renderSnapshotWithTactics,
+          championByPlayerId: championMapByPlayerId,
+          championProfilesById: {},
+          dtSec: PARALLEL_SIM_DT_SEC,
+          speed: PARALLEL_SIM_SPEED,
+          maxTicks: PARALLEL_SIM_MAX_TICKS,
+        });
 
       const predictiveState: LolSimV1RuntimeState = {
         timeSec: response.elapsedSimulatedSec ?? 0,
         running: false,
-        winner: response.winner ?? null,
+        winner: (response.winner === "blue" || response.winner === "red") ? response.winner : null,
         showWalls: false,
         champions: [],
         minions: [],

@@ -1,14 +1,16 @@
+use super::decision_layer::{classify_decision_intent, AgentState, IntentKind};
 use super::{
     clamp_ratio_01, closest_lane_path_index, dist, is_first_wave_contest_active, lane_anchor_pos,
     lane_minion_context_distance, lane_path_for, lane_pressure_at, lane_recent_trade_lock_active,
     lane_role_profile, lane_trade_cooldown_active, lane_wave_front_pos, normalized_lane,
     normalized_team, should_force_laner_disengage, sigmoid, ChampionRuntime,
-    LanerCombatStateRuntime, MinionRuntime, SimulatorAiMode, SimulatorPolicyConfig,
-    StructureRuntime, TradeConfidenceFeatures, TradeDecisionEvaluation, Vec2,
-    LANE_CHAMPION_TRADE_RADIUS, LANE_CHASE_MINION_CONTEXT_RADIUS, LANE_LOCAL_PRESSURE_RADIUS,
-    LANE_MINION_CONTEXT_RADIUS, TRADE_SCORE_WEIGHT_BIAS, TRADE_SCORE_WEIGHT_CHAMP_NUMBERS,
-    TRADE_SCORE_WEIGHT_ENEMY_HP, TRADE_SCORE_WEIGHT_ENEMY_OVEREXTENDED,
-    TRADE_SCORE_WEIGHT_FIRST_WAVE, TRADE_SCORE_WEIGHT_MINION_NUMBERS, TRADE_SCORE_WEIGHT_SELF_HP,
+    LanerCombatStateRuntime, MinionRuntime, RuntimeTeamBuffState, RuntimeTeamTactics,
+    SimulatorAiMode, SimulatorPolicyConfig, StructureRuntime, TradeConfidenceFeatures,
+    TradeDecisionEvaluation, Vec2, LANE_CHAMPION_TRADE_RADIUS, LANE_CHASE_MINION_CONTEXT_RADIUS,
+    LANE_LOCAL_PRESSURE_RADIUS, LANE_MINION_CONTEXT_RADIUS, TRADE_SCORE_WEIGHT_BIAS,
+    TRADE_SCORE_WEIGHT_CHAMP_NUMBERS, TRADE_SCORE_WEIGHT_ENEMY_HP,
+    TRADE_SCORE_WEIGHT_ENEMY_OVEREXTENDED, TRADE_SCORE_WEIGHT_FIRST_WAVE,
+    TRADE_SCORE_WEIGHT_MINION_NUMBERS, TRADE_SCORE_WEIGHT_SELF_HP,
     TRADE_SCORE_WEIGHT_TOWER_DISTANCE,
 };
 use std::collections::HashMap;
@@ -52,6 +54,9 @@ pub(super) fn evaluate_open_trade_window(
             confidence: if can_force { 0.9 } else { 0.1 },
             flipped_by_hybrid: false,
         };
+    }
+    if let Some(guardrail_decision) = decision_intent_trade_guardrail(champion, now, policy) {
+        return guardrail_decision;
     }
     if dist(champion.pos, enemy.pos) > LANE_CHAMPION_TRADE_RADIUS {
         return TradeDecisionEvaluation {
@@ -99,7 +104,8 @@ pub(super) fn evaluate_open_trade_window(
             flipped_by_hybrid: false,
         };
     }
-    let clear_win_condition = should_commit_all_in_trade(champion, enemy, champions, minions);
+    let clear_win_condition =
+        should_commit_all_in_trade(champion, enemy, champions, minions, structures);
     if (lane_trade_cooldown_active(champion, now, lane_combat_state_by_champion)
         || lane_recent_trade_lock_active(champion, now, lane_combat_state_by_champion))
         && !clear_win_condition
@@ -191,6 +197,24 @@ pub(super) fn evaluate_open_trade_window(
         }
     }
 
+    let enemy_tower_distance = nearest_enemy_lane_tower_distance(champion, enemy.pos, structures);
+    let tower_danger = enemy_tower_distance <= 0.055
+        && pressure.ally_lane_minions < 2
+        && pressure.ally_champions <= pressure.enemy_champions;
+    let safe_poke_window = hp_ratio >= 0.46
+        && enemy_hp_ratio <= 0.76
+        && !tower_danger
+        && pressure.ally_champions >= pressure.enemy_champions
+        && pressure.ally_score + 0.25 >= pressure.enemy_score;
+    if safe_poke_window {
+        return TradeDecisionEvaluation {
+            decision: true,
+            rule_decision: true,
+            confidence: 0.85,
+            flipped_by_hybrid: false,
+        };
+    }
+
     let hp_advantage = hp_ratio + 0.08 >= enemy_hp_ratio;
     let wave_pressure = pressure.ally_lane_minions >= pressure.enemy_lane_minions;
     let score_pressure = pressure.ally_score >= pressure.enemy_score - 0.05;
@@ -220,6 +244,39 @@ pub(super) fn evaluate_open_trade_window(
         confidence,
         flipped_by_hybrid: hybrid_decision != rule_decision,
     }
+}
+
+pub(super) fn decision_intent_trade_guardrail(
+    champion: &ChampionRuntime,
+    now: f64,
+    policy: &SimulatorPolicyConfig,
+) -> Option<TradeDecisionEvaluation> {
+    let intent = classify_decision_intent(
+        champion,
+        now,
+        None,
+        &RuntimeTeamTactics::default(),
+        &RuntimeTeamBuffState::default(),
+    );
+    let self_hp_ratio = if champion.max_hp <= 0.0 {
+        1.0
+    } else {
+        champion.hp / champion.max_hp
+    };
+
+    let should_block = matches!(intent.state, AgentState::Dead | AgentState::Recalling)
+        || matches!(
+            intent.intent,
+            IntentKind::Recall | IntentKind::WaitRespawn | IntentKind::DefendBase
+        )
+        || self_hp_ratio < policy.trade_retreat_hp_ratio;
+
+    should_block.then_some(TradeDecisionEvaluation {
+        decision: false,
+        rule_decision: false,
+        confidence: 1.0,
+        flipped_by_hybrid: false,
+    })
 }
 
 pub(super) fn evaluate_disengage_champion_trade(
@@ -332,6 +389,21 @@ pub(super) fn evaluate_disengage_champion_trade(
 
     let allied_pressure = ally_champions as f64 + ally_lane_minions as f64 * 0.5;
     let enemy_pressure = enemy_champions as f64 + enemy_lane_minions as f64 * 0.5;
+    let enemy_tower_distance = nearest_enemy_lane_tower_distance(champion, enemy.pos, structures);
+    let bad_tower_danger =
+        enemy_tower_distance <= 0.055 && ally_lane_minions < 2 && ally_champions <= enemy_champions;
+    let low_hp_context_risk = self_hp_ratio < policy.trade_retreat_hp_ratio + 0.12
+        && (enemy_champions > ally_champions
+            || enemy_lane_minions >= ally_lane_minions + 2
+            || bad_tower_danger);
+    if low_hp_context_risk {
+        return TradeDecisionEvaluation {
+            decision: true,
+            rule_decision: true,
+            confidence: 0.0,
+            flipped_by_hybrid: false,
+        };
+    }
     if enemy_pressure > allied_pressure + 1.05 {
         return TradeDecisionEvaluation {
             decision: true,
@@ -382,7 +454,7 @@ pub(super) fn nearest_enemy_lane_tower_distance(
         .filter(|tower| {
             tower.alive
                 && normalized_team(&tower.team) != normalized_team(&champion.team)
-                && tower.kind == "TOWER"
+                && tower.kind.eq_ignore_ascii_case("tower")
                 && normalized_lane(&tower.lane) == normalized_lane(&champion.lane)
         })
         .map(|tower| dist(tower.pos, target_pos))
@@ -408,6 +480,7 @@ pub(super) fn should_commit_all_in_trade(
     enemy: &ChampionRuntime,
     champions: &[ChampionRuntime],
     minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
 ) -> bool {
     if champion.role == "JGL" {
         return true;
@@ -424,10 +497,6 @@ pub(super) fn should_commit_all_in_trade(
         enemy.hp / enemy.max_hp
     };
 
-    if enemy_hp <= 0.2 && self_hp >= 0.25 {
-        return true;
-    }
-
     let pressure = lane_pressure_at(
         champion,
         enemy.pos,
@@ -435,11 +504,30 @@ pub(super) fn should_commit_all_in_trade(
         minions,
         LANE_LOCAL_PRESSURE_RADIUS,
     );
-    if pressure.ally_champions > pressure.enemy_champions && self_hp >= 0.32 {
+    let tower_danger = nearest_enemy_lane_tower_distance(champion, enemy.pos, structures) <= 0.055
+        && pressure.ally_lane_minions < 2
+        && pressure.ally_champions <= pressure.enemy_champions;
+    if tower_danger {
+        return false;
+    }
+
+    let role_bias = champion_role_fight_bias(champion);
+    let clear_hp_edge = self_hp + 0.12 + role_bias >= enemy_hp;
+    let wave_edge = pressure.ally_lane_minions >= pressure.enemy_lane_minions + 1
+        || pressure.ally_score >= pressure.enemy_score + 0.35;
+
+    if enemy_hp <= 0.2
+        && self_hp >= 0.35
+        && (wave_edge || pressure.ally_champions > pressure.enemy_champions)
+    {
         return true;
     }
 
-    pressure.ally_score >= pressure.enemy_score + 0.65 && self_hp >= enemy_hp
+    if pressure.ally_champions > pressure.enemy_champions && self_hp >= 0.40 && clear_hp_edge {
+        return true;
+    }
+
+    pressure.ally_score >= pressure.enemy_score + 0.85 && self_hp >= enemy_hp + 0.04 - role_bias
 }
 
 fn trade_confidence_score(features: TradeConfidenceFeatures) -> f64 {
@@ -456,14 +544,19 @@ fn trade_confidence_score(features: TradeConfidenceFeatures) -> f64 {
         0.0
     };
     let first_wave_window = if features.first_wave_window { 1.0 } else { 0.0 };
+    let tower_danger = if features.tower_danger { -1.0 } else { 0.0 };
+    let wave_advantage = clamp_ratio_01((features.wave_advantage + 4.0) / 8.0);
 
     let logit = TRADE_SCORE_WEIGHT_BIAS
         + TRADE_SCORE_WEIGHT_SELF_HP * clamp_ratio_01(features.self_hp_ratio)
         + TRADE_SCORE_WEIGHT_ENEMY_HP * clamp_ratio_01(features.enemy_hp_ratio)
         + TRADE_SCORE_WEIGHT_CHAMP_NUMBERS * champion_numbers
         + TRADE_SCORE_WEIGHT_MINION_NUMBERS * minion_numbers
+        + TRADE_SCORE_WEIGHT_MINION_NUMBERS * 0.45 * wave_advantage
         + TRADE_SCORE_WEIGHT_TOWER_DISTANCE * enemy_tower_distance_norm
+        + TRADE_SCORE_WEIGHT_TOWER_DISTANCE * tower_danger
         + TRADE_SCORE_WEIGHT_ENEMY_OVEREXTENDED * enemy_overextended
+        + features.role_fight_bias
         + TRADE_SCORE_WEIGHT_FIRST_WAVE * first_wave_window;
 
     clamp_ratio_01(sigmoid(logit))
@@ -507,6 +600,10 @@ fn trade_confidence_features(
     );
     let nearest_enemy_tower_distance =
         nearest_enemy_lane_tower_distance(champion, enemy.pos, structures);
+    let tower_danger = nearest_enemy_tower_distance <= 0.055
+        && pressure.ally_lane_minions < 2
+        && pressure.ally_champions <= pressure.enemy_champions;
+    let wave_advantage = pressure.ally_lane_minions as f64 - pressure.enemy_lane_minions as f64;
 
     TradeConfidenceFeatures {
         self_hp_ratio,
@@ -516,9 +613,39 @@ fn trade_confidence_features(
         ally_minions_local: pressure.ally_lane_minions,
         enemy_minions_local: pressure.enemy_lane_minions,
         nearest_enemy_tower_distance,
+        tower_danger,
+        wave_advantage,
+        role_fight_bias: champion_role_fight_bias(champion),
         enemy_overextended: enemy_overextended_in_lane(champion, enemy),
         first_wave_window: is_first_wave_contest_active(champion, now),
     }
+}
+
+fn champion_role_fight_bias(champion: &ChampionRuntime) -> f64 {
+    let role_bias = match champion.role.as_str() {
+        "TOP" => 0.08,
+        "MID" => 0.04,
+        "ADC" => -0.05,
+        "SUP" => -0.02,
+        "JGL" => 0.06,
+        _ => 0.0,
+    };
+    let range_bias = if champion.attack_range >= 0.06 {
+        -0.03
+    } else {
+        0.04
+    };
+    let ultimate_bias = champion
+        .ultimate
+        .as_ref()
+        .map(|ultimate| match ultimate.archetype.as_str() {
+            "burst" | "execute" => 0.04,
+            "defensive" => -0.03,
+            _ => 0.0,
+        })
+        .unwrap_or(0.0);
+
+    role_bias + range_bias + ultimate_bias
 }
 
 pub(super) fn in_lane_trade_context(

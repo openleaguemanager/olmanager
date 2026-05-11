@@ -335,6 +335,70 @@ pub(super) fn is_local_combat_target(
     true
 }
 
+pub(super) fn decision_intent_objective_chase_guardrail_allows(
+    runtime: &RuntimeState,
+    champion_idx: usize,
+    enemy_idx: usize,
+    neutral_timers: &NeutralTimersRuntime,
+) -> bool {
+    if champion_idx >= runtime.champions.len() || enemy_idx >= runtime.champions.len() {
+        return false;
+    }
+    let champion = &runtime.champions[champion_idx];
+    let enemy = &runtime.champions[enemy_idx];
+    if !champion.alive || champion.state == "recall" || !enemy.alive {
+        return true;
+    }
+
+    let team_tactics = team_tactics_for_runtime(runtime.extra.get("teamTactics"), &champion.team);
+    let team_buffs = team_buffs_for_runtime(runtime.extra.get("teamBuffs"), &champion.team);
+    let intent = super::decision_layer::classify_decision_intent(
+        champion,
+        runtime.time_sec,
+        Some(neutral_timers),
+        &team_tactics,
+        &team_buffs,
+    );
+
+    let objective_anchor = match intent.intent {
+        super::decision_layer::IntentKind::RotateToObjective
+        | super::decision_layer::IntentKind::TakeDragon
+        | super::decision_layer::IntentKind::TakeBaron => {
+            active_objective_attempt_for_team(&champion.team, &runtime.champions, neutral_timers)
+                .or_else(|| {
+                    contested_dragon_attempt_for_team(
+                        &champion.team,
+                        &runtime.champions,
+                        neutral_timers,
+                    )
+                })
+        }
+        super::decision_layer::IntentKind::TradeWithEnemy => neutral_timers
+            .entities
+            .values()
+            .filter(|timer| timer.alive && is_objective_neutral_key(&timer.key))
+            .filter(|timer| dist(champion.pos, timer.pos) <= OBJECTIVE_ASSIST_RADIUS)
+            .min_by(|a, b| {
+                dist(champion.pos, a.pos)
+                    .partial_cmp(&dist(champion.pos, b.pos))
+                    .unwrap_or(Ordering::Equal)
+                    .then_with(|| a.key.cmp(&b.key))
+            }),
+        _ => None,
+    };
+
+    let Some(objective) = objective_anchor else {
+        return true;
+    };
+
+    if dist(champion.pos, objective.pos) > OBJECTIVE_ASSIST_RADIUS {
+        return true;
+    }
+
+    dist(enemy.pos, objective.pos) <= MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS
+        || dist(champion.pos, enemy.pos) <= champion.attack_range.max(0.04) + 0.01
+}
+
 pub(super) fn is_visible_enemy_champion(
     runtime: &RuntimeState,
     champion_team: &str,
@@ -447,6 +511,214 @@ pub(super) fn has_credible_kill_chance(
     (ttk_enemy <= ttk_self * 0.95 || low_enemy) && ally_pressure + 0.5 >= enemy_pressure
 }
 
+fn allied_wave_near_enemy_tower(
+    runtime: &RuntimeState,
+    champion: &ChampionRuntime,
+    tower_pos: Vec2,
+) -> usize {
+    runtime
+        .minions
+        .iter()
+        .filter(|minion| {
+            minion.alive
+                && normalized_team(&minion.team) == normalized_team(&champion.team)
+                && normalized_lane(&minion.lane) == normalized_lane(&champion.lane)
+                && dist(minion.pos, tower_pos) <= 0.115
+        })
+        .count()
+}
+
+fn local_allies_near(
+    runtime: &RuntimeState,
+    champion: &ChampionRuntime,
+    pos: Vec2,
+    radius: f64,
+) -> usize {
+    runtime
+        .champions
+        .iter()
+        .filter(|ally| {
+            ally.alive
+                && normalized_team(&ally.team) == normalized_team(&champion.team)
+                && dist(ally.pos, pos) <= radius
+        })
+        .count()
+}
+
+fn local_enemies_near(
+    runtime: &RuntimeState,
+    champion: &ChampionRuntime,
+    pos: Vec2,
+    radius: f64,
+) -> usize {
+    runtime
+        .champions
+        .iter()
+        .filter(|enemy| {
+            enemy.alive
+                && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                && dist(enemy.pos, pos) <= radius
+        })
+        .count()
+}
+
+fn enemy_tower_threatening_pos<'a>(
+    runtime: &'a RuntimeState,
+    champion: &ChampionRuntime,
+    pos: Vec2,
+) -> Option<&'a StructureRuntime> {
+    runtime
+        .structures
+        .iter()
+        .filter(|structure| {
+            structure.alive
+                && structure.kind == "tower"
+                && normalized_team(&structure.team) != normalized_team(&champion.team)
+                && (normalized_lane(&structure.lane) == normalized_lane(&champion.lane)
+                    || structure.lane == "base")
+                && dist(structure.pos, pos) <= TOWER_ATTACK_RANGE + 0.045
+        })
+        .min_by(|a, b| {
+            dist(a.pos, pos)
+                .partial_cmp(&dist(b.pos, pos))
+                .unwrap_or(Ordering::Equal)
+        })
+}
+
+fn anti_inting_combat_guard_blocks(
+    runtime: &RuntimeState,
+    champion: &ChampionRuntime,
+    target_pos: Vec2,
+) -> bool {
+    if champion.role == "JGL" || champion.state == "recall" {
+        return false;
+    }
+    let enemies = local_enemies_near(runtime, champion, champion.pos, 0.14);
+    let allies = local_allies_near(runtime, champion, champion.pos, 0.14);
+    if enemies >= 3 && allies < 2 {
+        return true;
+    }
+
+    let Some(tower) = enemy_tower_threatening_pos(runtime, champion, target_pos) else {
+        return false;
+    };
+    let wave_count = allied_wave_near_enemy_tower(runtime, champion, tower.pos);
+    let ally_count = local_allies_near(runtime, champion, tower.pos, 0.15);
+    let enemy_count = local_enemies_near(runtime, champion, tower.pos, 0.15);
+    let has_wave_or_numbers = wave_count >= 2 || (wave_count >= 1 && ally_count > enemy_count);
+    let hp_ratio = ratio_or_zero(champion.hp, champion.max_hp);
+    !has_wave_or_numbers || hp_ratio < 0.48
+}
+
+fn append_fight_debug(
+    runtime: &mut RuntimeState,
+    champion_idx: usize,
+    tag: &'static str,
+    reason: String,
+) {
+    if champion_idx >= runtime.champions.len() {
+        return;
+    }
+    let champion = &mut runtime.champions[champion_idx];
+    if champion.debug_ai_decision.contains(tag) {
+        return;
+    }
+    if !champion.debug_ai_decision.is_empty() {
+        champion.debug_ai_decision.push('|');
+    }
+    champion.debug_ai_decision.push_str(tag);
+    champion.debug_ai_decision.push('|');
+    champion.debug_ai_decision.push_str(&reason);
+}
+
+pub(super) fn fight_debug_for_trade(
+    runtime: &RuntimeState,
+    champion: &ChampionRuntime,
+    enemy: &ChampionRuntime,
+    neutral_timers: &NeutralTimersRuntime,
+) -> (&'static str, String) {
+    let self_hp = ratio_or_zero(champion.hp, champion.max_hp);
+    let enemy_hp = ratio_or_zero(enemy.hp, enemy.max_hp);
+    let ally_count = local_allies_near(runtime, champion, enemy.pos, 0.12);
+    let enemy_count = local_enemies_near(runtime, champion, enemy.pos, 0.12);
+    let pressure = lane_pressure_at(
+        champion,
+        enemy.pos,
+        &runtime.champions,
+        &runtime.minions,
+        LANE_LOCAL_PRESSURE_RADIUS,
+    );
+
+    let objective_context = champion.state == "objective"
+        && neutral_timers.entities.values().any(|timer| {
+            timer.alive
+                && is_objective_neutral_key(&timer.key)
+                && dist(enemy.pos, timer.pos) <= MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS
+        });
+    if objective_context {
+        return (
+            "fight:objective",
+            format!(
+                "fight_reason:objective_context,allies={},enemies={},self_hp={:.0},enemy_hp={:.0}",
+                ally_count,
+                enemy_count,
+                self_hp * 100.0,
+                enemy_hp * 100.0
+            ),
+        );
+    }
+
+    if self_hp < 0.42
+        && ally_count >= 2
+        && super::trading::enemy_overextended_in_lane(champion, enemy)
+    {
+        return (
+            "fight:bait",
+            format!(
+                "fight_reason:kite_with_allies,allies={},enemies={},self_hp={:.0},enemy_hp={:.0}",
+                ally_count,
+                enemy_count,
+                self_hp * 100.0,
+                enemy_hp * 100.0
+            ),
+        );
+    }
+
+    if should_commit_all_in_trade(
+        champion,
+        enemy,
+        &runtime.champions,
+        &runtime.minions,
+        &runtime.structures,
+    ) {
+        return (
+            "fight:all_in",
+            format!(
+                "fight_reason:clear_advantage,allies={},enemies={},wave={}v{},self_hp={:.0},enemy_hp={:.0}",
+                ally_count,
+                enemy_count,
+                pressure.ally_lane_minions,
+                pressure.enemy_lane_minions,
+                self_hp * 100.0,
+                enemy_hp * 100.0
+            ),
+        );
+    }
+
+    (
+        "fight:poke",
+        format!(
+            "fight_reason:safe_short_trade,allies={},enemies={},wave={}v{},self_hp={:.0},enemy_hp={:.0}",
+            ally_count,
+            enemy_count,
+            pressure.ally_lane_minions,
+            pressure.enemy_lane_minions,
+            self_hp * 100.0,
+            enemy_hp * 100.0
+        ),
+    )
+}
+
 pub(super) fn pick_combat_target(
     runtime: &RuntimeState,
     champion_idx: usize,
@@ -466,6 +738,29 @@ pub(super) fn pick_combat_target(
     } else {
         "blue"
     };
+
+    if anti_inting_combat_guard_blocks(runtime, champion, champion.pos) {
+        return None;
+    }
+
+    let tower_siege_enemy = runtime
+        .champions
+        .iter()
+        .enumerate()
+        .filter(|(_, enemy)| {
+            is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
+                && normalized_lane(&enemy.lane) == champion_lane
+                && dist(champion.pos, enemy.pos) <= LANE_CHAMPION_TRADE_RADIUS
+                && !anti_inting_combat_guard_blocks(runtime, champion, enemy.pos)
+                && enemy_tower_threatening_pos(runtime, champion, enemy.pos).is_some()
+        })
+        .min_by(|(idx_a, a), (idx_b, b)| {
+            compare_enemy_priority_distance(champion.pos, fight_plan, *idx_a, a, *idx_b, b)
+        })
+        .map(|(idx, _)| idx);
+    if let Some(enemy_idx) = tower_siege_enemy {
+        return Some(CombatTarget::Champion(enemy_idx));
+    }
 
     if let Some(enemy_idx) = recent_attacker_target_idx(
         runtime,
@@ -748,6 +1043,7 @@ pub(super) fn pick_combat_target(
             is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
                 && enemy.state == "recall"
                 && dist(champion.pos, enemy.pos) <= LOCAL_COMBAT_ENGAGE_RADIUS
+                && !anti_inting_combat_guard_blocks(runtime, champion, enemy.pos)
                 && in_lane_trade_context(
                     champion,
                     enemy.pos,
@@ -772,6 +1068,7 @@ pub(super) fn pick_combat_target(
         .filter(|(_, enemy)| {
             is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
                 && dist(champion.pos, enemy.pos) <= 0.12
+                && !anti_inting_combat_guard_blocks(runtime, champion, enemy.pos)
                 && runtime.champions.iter().any(|ally| {
                     ally.alive
                         && normalized_team(&ally.team) == normalized_team(&champion.team)
@@ -818,6 +1115,7 @@ pub(super) fn pick_combat_target(
             is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
                 && normalized_lane(&enemy.lane) == champion_lane
                 && dist(champion.pos, enemy.pos) <= LANE_CHAMPION_TRADE_RADIUS
+                && !anti_inting_combat_guard_blocks(runtime, champion, enemy.pos)
                 && has_local_numbers_advantage(champion, enemy.pos, &runtime.champions, 0.11)
                 && can_open_trade_window(
                     champion,
@@ -840,8 +1138,7 @@ pub(super) fn pick_combat_target(
     }
 
     let objective_assist_active =
-        should_assist_objective_attempt(champion, &runtime.champions, neutral_timers)
-            && champion.state == "objective";
+        should_assist_objective_attempt(champion, &runtime.champions, neutral_timers);
     if objective_assist_active {
         if let Some(neutral_key) = nearby_neutral_objective_key(champion, neutral_timers) {
             return Some(CombatTarget::Neutral(neutral_key));
@@ -858,6 +1155,7 @@ pub(super) fn pick_combat_target(
             is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
                 && normalized_lane(&enemy.lane) == champion_lane
                 && dist(champion.pos, enemy.pos) <= LANE_CHAMPION_TRADE_RADIUS
+                && !anti_inting_combat_guard_blocks(runtime, champion, enemy.pos)
                 && can_open_trade_window(
                     champion,
                     enemy,
@@ -1093,6 +1391,7 @@ pub(super) fn pick_combat_target(
             *idx != champion_idx
                 && is_visible_enemy_champion(runtime, champion_team, enemy_team, enemy)
                 && normalized_lane(&enemy.lane) == champion_lane
+                && !anti_inting_combat_guard_blocks(runtime, champion, enemy.pos)
                 && can_open_trade_window(
                     champion,
                     enemy,
@@ -1315,6 +1614,23 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
             continue;
         };
 
+        if let CombatTarget::Champion(enemy_idx) = &target {
+            if !decision_intent_objective_chase_guardrail_allows(
+                runtime,
+                idx,
+                *enemy_idx,
+                &neutral_timers,
+            ) {
+                append_fight_debug(
+                    runtime,
+                    idx,
+                    "fight:objective",
+                    "fight_reason:block_chase_outside_objective_context".to_string(),
+                );
+                continue;
+            }
+        }
+
         if dist(attacker_snapshot.pos, target_pos) > attack_range {
             if let CombatTarget::Champion(enemy_idx) = &target {
                 let target_snapshot = runtime.champions[*enemy_idx].clone();
@@ -1385,6 +1701,12 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                         runtime.ai_mode,
                         &runtime.policy,
                     );
+                    let (tag, reason) = fight_debug_for_trade(
+                        runtime,
+                        &attacker_snapshot,
+                        &target_snapshot,
+                        &neutral_timers,
+                    );
                     if open_eval.flipped_by_hybrid {
                         maybe_log_hybrid_trade_flip(
                             runtime,
@@ -1396,9 +1718,21 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                         );
                     }
                     if !open_eval.decision {
+                        let disengage_tag = if tag == "fight:bait" {
+                            tag
+                        } else {
+                            "fight:disengage"
+                        };
+                        let disengage_reason = if tag == "fight:bait" {
+                            reason
+                        } else {
+                            "fight_reason:open_trade_rejected".to_string()
+                        };
+                        append_fight_debug(runtime, idx, disengage_tag, disengage_reason);
                         issue_lane_disengage(runtime, idx, target_snapshot.pos);
                         continue;
                     }
+                    append_fight_debug(runtime, idx, tag, reason);
                 }
 
                 if !retaliating_recent_attacker {
@@ -1423,6 +1757,15 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                         );
                     }
                     if disengage_eval.decision {
+                        append_fight_debug(
+                            runtime,
+                            idx,
+                            "fight:disengage",
+                            format!(
+                                "fight_reason:risk_score,score={:.2}",
+                                disengage_eval.confidence
+                            ),
+                        );
                         issue_lane_disengage(runtime, idx, target_snapshot.pos);
                         continue;
                     }
@@ -1469,6 +1812,7 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
                         &runtime.champions[champion_idx],
                         &runtime.champions,
                         &runtime.minions,
+                        &runtime.structures,
                     )
                 {
                     if attacker_after.role == "MID"

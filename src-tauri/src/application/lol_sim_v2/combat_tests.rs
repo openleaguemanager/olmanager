@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
-use super::combat::pick_combat_target;
+use super::combat::{
+    decision_intent_objective_chase_guardrail_allows, fight_debug_for_trade, pick_combat_target,
+};
 use super::test_helpers::{
-    test_champion, test_minion, test_neutral_timer, test_runtime, test_structure,
+    empty_neutral, test_champion, test_minion, test_neutral_timer, test_runtime, test_structure,
 };
 use super::*;
 
@@ -139,6 +141,7 @@ fn ultimate_burst_casts_when_level_six_enemy_nearby() {
         archetype: "burst".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let target = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.55, y: 0.50 });
@@ -171,6 +174,7 @@ fn execute_ultimate_requires_low_hp_target() {
         archetype: "execute".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let mut target = test_champion("adc-red", "red", "ADC", "bot", Vec2 { x: 0.55, y: 0.50 });
@@ -203,6 +207,7 @@ fn annie_ultimate_summons_tibbers_with_scaled_stats() {
         archetype: "burst".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let mut runtime = test_runtime(vec![annie], vec![], vec![], neutral);
@@ -230,6 +235,7 @@ fn shen_ultimate_shields_ally_and_teleports() {
         archetype: "defensive".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let mut ally = test_champion("adc-blue", "blue", "ADC", "bot", Vec2 { x: 0.72, y: 0.78 });
@@ -261,6 +267,7 @@ fn mordekaiser_ultimate_banishes_both_champions_temporarily() {
         archetype: "burst".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let enemy = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.54, y: 0.50 });
@@ -288,6 +295,7 @@ fn summon_expires_after_configured_duration() {
         archetype: "burst".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let mut runtime = test_runtime(vec![annie], vec![], vec![], neutral);
@@ -322,6 +330,7 @@ fn mordekaiser_realm_returns_positions_after_duration() {
         archetype: "burst".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
 
     let enemy = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.54, y: 0.50 });
@@ -352,6 +361,7 @@ fn global_ultimate_requires_team_vision() {
         archetype: "global".to_string(),
         icon: String::new(),
         cd_until: 0.0,
+        ..Default::default()
     });
     let target = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.56, y: 0.40 });
 
@@ -433,6 +443,45 @@ fn objective_assist_prioritizes_objective_over_farm_lock() {
 }
 
 #[test]
+fn objective_fight_guardrail_allows_local_fight_but_blocks_far_chase() {
+    let mut adc = test_champion("adc-blue", "blue", "ADC", "bot", Vec2 { x: 0.66, y: 0.71 });
+    adc.state = "objective".to_string();
+    let jungler = test_champion(
+        "jgl-blue",
+        "blue",
+        "JGL",
+        "jungle",
+        Vec2 { x: 0.66, y: 0.70 },
+    );
+    let enemy_far = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.05, y: 0.05 });
+    let enemy_near = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.70, y: 0.70 });
+
+    let mut entities = HashMap::new();
+    let mut dragon = test_neutral_timer("dragon", Vec2 { x: 0.67, y: 0.70 }, true);
+    dragon.hp = dragon.max_hp * 0.80;
+    entities.insert("dragon".to_string(), dragon);
+    let neutral = NeutralTimersRuntime {
+        dragon_soul_unlocked: false,
+        elder_unlocked: false,
+        entities,
+        extra: HashMap::new(),
+    };
+    let runtime = test_runtime(
+        vec![adc, jungler, enemy_near, enemy_far],
+        vec![],
+        vec![],
+        neutral.clone(),
+    );
+
+    assert!(decision_intent_objective_chase_guardrail_allows(
+        &runtime, 0, 2, &neutral
+    ));
+    assert!(!decision_intent_objective_chase_guardrail_allows(
+        &runtime, 0, 3, &neutral
+    ));
+}
+
+#[test]
 fn structure_pressure_is_blocked_with_two_enemy_minions_near_tower() {
     let laner = test_champion("top-blue", "blue", "TOP", "top", Vec2 { x: 0.28, y: 0.09 });
     let tower = test_structure(
@@ -465,4 +514,292 @@ fn structure_pressure_is_blocked_with_two_enemy_minions_near_tower() {
 
     let target = pick_combat_target(&runtime, 0, runtime.time_sec, &neutral);
     assert!(!matches!(target, Some(CombatTarget::Structure(_))));
+}
+
+#[test]
+fn chase_under_enemy_tower_without_allied_wave_is_blocked() {
+    let blue = test_champion(
+        "top-blue",
+        "blue",
+        "TOP",
+        "top",
+        Vec2 { x: 0.285, y: 0.082 },
+    );
+    let red = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.276, y: 0.075 });
+    let tower = test_structure("red-top-outer", "red", "top", Vec2 { x: 0.275, y: 0.072 });
+    let neutral = empty_neutral();
+    let runtime = test_runtime(vec![blue, red], Vec::new(), vec![tower], neutral.clone());
+
+    let target = pick_combat_target(&runtime, 0, runtime.time_sec, &neutral);
+
+    assert!(!matches!(target, Some(CombatTarget::Champion(1))));
+}
+
+#[test]
+fn chase_under_enemy_tower_with_wave_and_numbers_is_allowed() {
+    let blue = test_champion(
+        "top-blue",
+        "blue",
+        "TOP",
+        "top",
+        Vec2 { x: 0.285, y: 0.082 },
+    );
+    let ally = test_champion(
+        "jgl-blue",
+        "blue",
+        "JGL",
+        "jungle",
+        Vec2 { x: 0.286, y: 0.083 },
+    );
+    let red = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.276, y: 0.075 });
+    let tower = test_structure("red-top-outer", "red", "top", Vec2 { x: 0.275, y: 0.072 });
+    let wave = vec![
+        test_minion("m-blue-1", "blue", "top", Vec2 { x: 0.277, y: 0.073 }),
+        test_minion("m-blue-2", "blue", "top", Vec2 { x: 0.278, y: 0.074 }),
+    ];
+    let neutral = empty_neutral();
+    let runtime = test_runtime(vec![blue, ally, red], wave, vec![tower], neutral.clone());
+
+    let target = pick_combat_target(&runtime, 0, runtime.time_sec, &neutral);
+
+    assert!(matches!(target, Some(CombatTarget::Champion(2))));
+}
+
+#[test]
+fn one_vs_three_engage_is_blocked() {
+    let blue = test_champion("mid-blue", "blue", "MID", "mid", Vec2 { x: 0.50, y: 0.50 });
+    let red_1 = test_champion("red-1", "red", "MID", "mid", Vec2 { x: 0.505, y: 0.50 });
+    let red_2 = test_champion("red-2", "red", "JGL", "jungle", Vec2 { x: 0.51, y: 0.505 });
+    let red_3 = test_champion("red-3", "red", "SUP", "bot", Vec2 { x: 0.495, y: 0.505 });
+    let neutral = empty_neutral();
+    let runtime = test_runtime(
+        vec![blue, red_1, red_2, red_3],
+        Vec::new(),
+        Vec::new(),
+        neutral.clone(),
+    );
+
+    let target = pick_combat_target(&runtime, 0, runtime.time_sec, &neutral);
+
+    assert!(!matches!(target, Some(CombatTarget::Champion(_))));
+}
+
+#[test]
+fn low_hp_dive_without_wave_is_blocked() {
+    let mut blue = test_champion(
+        "top-blue",
+        "blue",
+        "TOP",
+        "top",
+        Vec2 { x: 0.285, y: 0.082 },
+    );
+    blue.hp = 42.0;
+    let red = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.276, y: 0.075 });
+    let tower = test_structure("red-top-outer", "red", "top", Vec2 { x: 0.275, y: 0.072 });
+    let neutral = empty_neutral();
+    let runtime = test_runtime(vec![blue, red], Vec::new(), vec![tower], neutral.clone());
+
+    let target = pick_combat_target(&runtime, 0, runtime.time_sec, &neutral);
+
+    assert!(!matches!(target, Some(CombatTarget::Champion(1))));
+}
+
+#[test]
+fn trading_poke_allowed_with_safe_advantage() {
+    let blue = test_champion("top-blue", "blue", "TOP", "top", Vec2 { x: 0.25, y: 0.085 });
+    let mut red = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.266, y: 0.08 });
+    red.hp = 68.0;
+    let mut minions = vec![
+        test_minion("m-blue-1", "blue", "top", Vec2 { x: 0.264, y: 0.08 }),
+        test_minion("m-blue-2", "blue", "top", Vec2 { x: 0.265, y: 0.081 }),
+        test_minion("m-red-1", "red", "top", Vec2 { x: 0.267, y: 0.08 }),
+        test_minion("m-red-2", "red", "top", Vec2 { x: 0.268, y: 0.081 }),
+    ];
+    for minion in &mut minions {
+        minion.path_index = 9;
+    }
+    let runtime = test_runtime(vec![blue, red], minions, Vec::new(), empty_neutral());
+
+    assert!(can_open_trade_window(
+        &runtime.champions[0],
+        &runtime.champions[1],
+        runtime.time_sec,
+        &runtime.champions,
+        &runtime.minions,
+        &runtime.structures,
+        &runtime.lane_combat_state_by_champion,
+        runtime.ai_mode,
+        &runtime.policy,
+    ));
+}
+
+#[test]
+fn trading_all_in_blocked_under_tower_without_wave_or_numbers() {
+    let blue = test_champion(
+        "top-blue",
+        "blue",
+        "TOP",
+        "top",
+        Vec2 { x: 0.285, y: 0.082 },
+    );
+    let mut red = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.276, y: 0.075 });
+    red.hp = 15.0;
+    let tower = test_structure("red-top-outer", "red", "top", Vec2 { x: 0.275, y: 0.072 });
+
+    assert!(!should_commit_all_in_trade(
+        &blue,
+        &red,
+        &[blue.clone(), red.clone()],
+        &[],
+        &[tower]
+    ));
+}
+
+#[test]
+fn trading_disengage_low_hp_with_nearby_enemies() {
+    let mut blue = test_champion("mid-blue", "blue", "MID", "mid", Vec2 { x: 0.50, y: 0.50 });
+    blue.hp = 28.0;
+    let red_1 = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.53, y: 0.50 });
+    let red_2 = test_champion(
+        "jgl-red",
+        "red",
+        "JGL",
+        "jungle",
+        Vec2 { x: 0.535, y: 0.505 },
+    );
+    let minions = vec![
+        test_minion("m-red-1", "red", "mid", Vec2 { x: 0.525, y: 0.50 }),
+        test_minion("m-red-2", "red", "mid", Vec2 { x: 0.526, y: 0.501 }),
+    ];
+    let runtime = test_runtime(
+        vec![blue, red_1, red_2],
+        minions,
+        Vec::new(),
+        empty_neutral(),
+    );
+
+    assert!(should_disengage_champion_trade(
+        &runtime.champions[0],
+        &runtime.champions[1],
+        runtime.time_sec,
+        &runtime.champions,
+        &runtime.minions,
+        &runtime.structures,
+        runtime.ai_mode,
+        &runtime.policy,
+    ));
+}
+
+#[test]
+fn combat_bait_kite_tag_when_low_hp_has_allies_and_enemy_extended() {
+    let mut blue = test_champion("top-blue", "blue", "TOP", "top", Vec2 { x: 0.10, y: 0.66 });
+    blue.hp = 30.0;
+    let ally_1 = test_champion(
+        "jgl-blue",
+        "blue",
+        "JGL",
+        "jungle",
+        Vec2 { x: 0.092, y: 0.67 },
+    );
+    let ally_2 = test_champion(
+        "mid-blue",
+        "blue",
+        "MID",
+        "mid",
+        Vec2 { x: 0.094, y: 0.668 },
+    );
+    let red = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.091, y: 0.67 });
+    let neutral = empty_neutral();
+    let runtime = test_runtime(
+        vec![blue, ally_1, ally_2, red],
+        Vec::new(),
+        Vec::new(),
+        neutral.clone(),
+    );
+
+    let (tag, reason) = fight_debug_for_trade(
+        &runtime,
+        &runtime.champions[0],
+        &runtime.champions[3],
+        &neutral,
+    );
+
+    assert_eq!(tag, "fight:bait");
+    assert!(reason.contains("kite_with_allies"));
+}
+
+#[test]
+fn combat_objective_fight_tag_with_allies_near_objective() {
+    let mut adc = test_champion("adc-blue", "blue", "ADC", "bot", Vec2 { x: 0.66, y: 0.71 });
+    adc.state = "objective".to_string();
+    let jungler = test_champion(
+        "jgl-blue",
+        "blue",
+        "JGL",
+        "jungle",
+        Vec2 { x: 0.66, y: 0.70 },
+    );
+    let enemy = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.70, y: 0.70 });
+    let mut entities = HashMap::new();
+    let mut dragon = test_neutral_timer("dragon", Vec2 { x: 0.67, y: 0.70 }, true);
+    dragon.hp = dragon.max_hp * 0.80;
+    entities.insert("dragon".to_string(), dragon);
+    let neutral = NeutralTimersRuntime {
+        dragon_soul_unlocked: false,
+        elder_unlocked: false,
+        entities,
+        extra: HashMap::new(),
+    };
+    let runtime = test_runtime(
+        vec![adc, jungler, enemy],
+        Vec::new(),
+        Vec::new(),
+        neutral.clone(),
+    );
+
+    let (tag, reason) = fight_debug_for_trade(
+        &runtime,
+        &runtime.champions[0],
+        &runtime.champions[2],
+        &neutral,
+    );
+
+    assert_eq!(tag, "fight:objective");
+    assert!(reason.contains("objective_context"));
+}
+
+#[test]
+fn combat_objective_chase_outside_context_is_blocked() {
+    let mut adc = test_champion("adc-blue", "blue", "ADC", "bot", Vec2 { x: 0.66, y: 0.71 });
+    adc.state = "objective".to_string();
+    let jungler = test_champion(
+        "jgl-blue",
+        "blue",
+        "JGL",
+        "jungle",
+        Vec2 { x: 0.66, y: 0.70 },
+    );
+    let enemy_far = test_champion("top-red", "red", "TOP", "top", Vec2 { x: 0.05, y: 0.05 });
+    let enemy_near = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.70, y: 0.70 });
+    let mut entities = HashMap::new();
+    entities.insert(
+        "dragon".to_string(),
+        test_neutral_timer("dragon", Vec2 { x: 0.67, y: 0.70 }, true),
+    );
+    let neutral = NeutralTimersRuntime {
+        dragon_soul_unlocked: false,
+        elder_unlocked: false,
+        entities,
+        extra: HashMap::new(),
+    };
+    let runtime = test_runtime(
+        vec![adc, jungler, enemy_near, enemy_far],
+        Vec::new(),
+        Vec::new(),
+        neutral.clone(),
+    );
+
+    assert!(!decision_intent_objective_chase_guardrail_allows(
+        &runtime, 0, 3, &neutral
+    ));
 }

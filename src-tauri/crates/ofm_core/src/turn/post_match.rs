@@ -415,8 +415,7 @@ fn apply_player_stats(
             let match_rating = if ps.rating > 0.0 {
                 ps.rating
             } else {
-                6.0 + ((kills + ps.assists) as f32 * 0.35)
-                    - (ps.deaths as f32 * 0.25)
+                6.0 + ((kills + ps.assists) as f32 * 0.35) - (ps.deaths as f32 * 0.25)
                     + ((ps.damage_dealt as f32 / 10_000.0).min(1.5))
             };
             if player.stats.appearances == 1 {

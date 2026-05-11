@@ -15,6 +15,8 @@ export type LolSimV1AiMode = "rules" | "hybrid";
 export interface LolChampionUltimateProfile {
   archetype: string;
   icon: string;
+  signatureId?: string;
+  visualEventId?: string;
 }
 
 export interface LolSimV1PolicyConfig {
@@ -30,6 +32,7 @@ export interface LolSimV1SimEvent {
   t: number;
   text: string;
   type: LolSimV1EventType;
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface LolSimV1TeamStats {

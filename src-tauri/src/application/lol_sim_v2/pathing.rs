@@ -341,6 +341,11 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
 
         if now >= champion.next_decision_at {
             let old_state = champion.state.clone();
+            let old_guard = champion
+                .debug_ai_decision
+                .split('|')
+                .find(|part| part.starts_with("guard:"))
+                .map(str::to_string);
 
             super::decide_champion_state(
                 champion,
@@ -353,13 +358,45 @@ pub(super) fn move_champions(runtime: &mut RuntimeState, dt: f64) {
                 &super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team),
             );
 
+            let team_tactics =
+                super::team_tactics_for_runtime(team_tactics_snapshot.as_ref(), &champion.team);
+            let team_buffs =
+                super::team_buffs_for_runtime(team_buffs_snapshot.as_ref(), &champion.team);
+            let decision_intent = super::decision_layer::classify_decision_intent(
+                champion,
+                now,
+                neutral_timers_snapshot.as_ref(),
+                &team_tactics,
+                &team_buffs,
+            );
+            super::apply_decision_intent_target(
+                champion,
+                &decision_intent,
+                &champion_snapshot,
+                neutral_timers_snapshot.as_ref(),
+                &team_tactics,
+                now,
+            );
+
             if old_state != champion.state || champion.debug_ai_decision.is_empty() {
-                champion.debug_ai_decision = format!(
-                    "state:{}->{}|hp:{:.0}%",
+                let guard = champion
+                    .debug_ai_decision
+                    .split('|')
+                    .find(|part| part.starts_with("guard:"))
+                    .map(str::to_string)
+                    .or(old_guard);
+                let mut debug = format!(
+                    "state:{}->{}|hp:{:.0}%|{}",
                     old_state,
                     champion.state,
                     champion.hp / champion.max_hp.max(1.0) * 100.0,
+                    decision_intent.debug_label(),
                 );
+                if let Some(guard) = guard {
+                    debug.push('|');
+                    debug.push_str(&guard);
+                }
+                champion.debug_ai_decision = debug;
             }
 
             champion.next_decision_at = now

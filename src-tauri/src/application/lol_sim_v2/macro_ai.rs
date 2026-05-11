@@ -1,24 +1,37 @@
 use std::cmp::Ordering;
 
+use super::decision_layer::{DecisionIntent, IntentKind};
 use super::{
-    base_position_for, champion_can_afford_next_item, clamp, dist, is_first_wave_contest_active,
-    lane_fallback_pos_from_tower, lane_farm_anchor_pos_v2, lane_path_for, lane_pre_wave_hold_pos,
-    lane_pressure_at, lane_role_profile, lane_wave_front_pos, normalize, normalized_lane,
-    normalized_team, set_champion_direct_path, set_champion_direct_path_hysteresis, start_recall,
-    stat_delta, ChampionRuntime, MinionRuntime, NeutralTimerRuntime, NeutralTimersRuntime,
-    RuntimeTeamBuffState, RuntimeTeamTactics, StructureRuntime, Vec2, BASE_DEFENSE_RECALL_DISTANCE,
-    FIRST_WAVE_CONTEST_UNTIL, JUNGLE_CAMP_WAIT_FOR_SPAWN_SEC, JUNGLE_STICKY_CAMP_RADIUS,
-    LANE_COMBAT_UNLOCK_AT, LANE_HEALTHY_RETREAT_HP_RATIO, LANE_LOCAL_PRESSURE_RADIUS,
+    base_position_for, champion_can_afford_next_item, clamp, current_champion_path_target, dist,
+    is_first_wave_contest_active, lane_fallback_pos_from_tower, lane_farm_anchor_pos_v2,
+    lane_path_for, lane_pre_wave_hold_pos, lane_pressure_at, lane_role_profile,
+    lane_wave_front_pos, normalize, normalized_lane, normalized_team, set_champion_direct_path,
+    set_champion_direct_path_hysteresis, start_recall, stat_delta, ChampionRuntime, MinionRuntime,
+    NeutralTimerRuntime, NeutralTimersRuntime, RuntimeTeamBuffState, RuntimeTeamTactics,
+    StructureRuntime, Vec2, BASE_DEFENSE_RECALL_DISTANCE, FIRST_WAVE_CONTEST_UNTIL,
+    JUNGLE_CAMP_WAIT_FOR_SPAWN_SEC, JUNGLE_STICKY_CAMP_RADIUS, LANE_COMBAT_UNLOCK_AT,
+    LANE_HEALTHY_RETREAT_HP_RATIO, LANE_LOCAL_PRESSURE_RADIUS,
     LANE_STRONG_UNFAVORABLE_PRESSURE_DELTA, LANE_STRUCTURE_PRESSURE_RADIUS,
     MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS, MINION_XP_SHARE_RADIUS, NEXUS_DEFENSE_THREAT_RADIUS,
     OBJECTIVE_ASSIST_RADIUS, OBJECTIVE_ATTEMPT_RADIUS, OBJECTIVE_PATH_MIN_TARGET_DELTA,
     RECALL_CANCEL_ENEMY_RADIUS, RECALL_CHANNEL_SEC, RECALL_REACH_BUFFER_SEC,
     RECALL_TRIGGER_HP_RATIO, SUPPORT_OPEN_ROAM_AT_SEC, SUPPORT_ROAM_UNLOCK_AT_SEC,
+    TOWER_ATTACK_RANGE,
 };
 
 const FORCED_LANE_RECALL_COOLDOWN_SEC: f64 = 55.0;
 const FORCED_LANE_RECALL_MAX_HP_RATIO: f64 = 0.58;
 const WALK_TO_BASE_HEAL_DISTANCE: f64 = 0.17;
+const MACRO_OBJECTIVE_SETUP_LEAD_SEC: f64 = 45.0;
+const MACRO_OBJECTIVE_MIN_SCORE: f64 = 4.2;
+const SUPPORT_ADC_SAFE_HP_RATIO: f64 = 0.45;
+const BOT_WAVE_THREAT_SCORE_DELTA: f64 = 1.35;
+const CRITICAL_OBJECTIVE_SOON_SEC: f64 = 40.0;
+const SOLO_RIVER_RADIUS: f64 = 0.16;
+const ANTI_INTING_TOWER_WAVE_RADIUS: f64 = 0.115;
+const ANTI_INTING_TOWER_CHAMPION_RADIUS: f64 = 0.15;
+const ANTI_INTING_1V3_RADIUS: f64 = 0.14;
+const ANTI_INTING_LONELY_RIVER_ALLY_RADIUS: f64 = 0.17;
 
 pub(super) fn nearest_enemy_champion_snapshot<'a>(
     champion: &ChampionRuntime,
@@ -54,6 +67,234 @@ pub(super) fn should_recall_in_place(
     let d = dist(champion.pos, enemy.pos);
     let enemy_reach_time = d / enemy.move_speed.max(0.01);
     enemy_reach_time > RECALL_CHANNEL_SEC + RECALL_REACH_BUFFER_SEC
+}
+
+fn mark_guard(champion: &mut ChampionRuntime, guard: &'static str) {
+    if champion.debug_ai_decision.contains(guard) {
+        return;
+    }
+    if champion.debug_ai_decision.is_empty() {
+        champion.debug_ai_decision = guard.to_string();
+    } else {
+        champion.debug_ai_decision.push('|');
+        champion.debug_ai_decision.push_str(guard);
+    }
+}
+
+fn alive_allies_near(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    pos: Vec2,
+    radius: f64,
+) -> usize {
+    champions
+        .iter()
+        .filter(|ally| {
+            ally.alive
+                && normalized_team(&ally.team) == normalized_team(&champion.team)
+                && dist(ally.pos, pos) <= radius
+        })
+        .count()
+}
+
+fn alive_enemies_near(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    pos: Vec2,
+    radius: f64,
+) -> usize {
+    champions
+        .iter()
+        .filter(|enemy| {
+            enemy.alive
+                && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                && dist(enemy.pos, pos) <= radius
+        })
+        .count()
+}
+
+fn allied_wave_near(
+    champion: &ChampionRuntime,
+    minions: &[MinionRuntime],
+    pos: Vec2,
+    radius: f64,
+) -> usize {
+    minions
+        .iter()
+        .filter(|minion| {
+            minion.alive
+                && normalized_team(&minion.team) == normalized_team(&champion.team)
+                && normalized_lane(&minion.lane) == normalized_lane(&champion.lane)
+                && dist(minion.pos, pos) <= radius
+        })
+        .count()
+}
+
+fn enemy_tower_threatening_pos<'a>(
+    champion: &ChampionRuntime,
+    structures: &'a [StructureRuntime],
+    pos: Vec2,
+) -> Option<&'a StructureRuntime> {
+    structures
+        .iter()
+        .filter(|structure| {
+            structure.alive
+                && structure.kind == "tower"
+                && normalized_team(&structure.team) != normalized_team(&champion.team)
+                && (normalized_lane(&structure.lane) == normalized_lane(&champion.lane)
+                    || structure.lane == "base")
+                && dist(structure.pos, pos) <= TOWER_ATTACK_RANGE + 0.045
+        })
+        .min_by(|a, b| {
+            dist(a.pos, pos)
+                .partial_cmp(&dist(b.pos, pos))
+                .unwrap_or(Ordering::Equal)
+        })
+}
+
+fn has_local_siege_permission(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+    tower_pos: Vec2,
+) -> bool {
+    let wave_count = allied_wave_near(champion, minions, tower_pos, ANTI_INTING_TOWER_WAVE_RADIUS);
+    let ally_count = alive_allies_near(
+        champion,
+        champions,
+        tower_pos,
+        ANTI_INTING_TOWER_CHAMPION_RADIUS,
+    );
+    let enemy_count = alive_enemies_near(
+        champion,
+        champions,
+        tower_pos,
+        ANTI_INTING_TOWER_CHAMPION_RADIUS,
+    );
+    wave_count >= 2 || (wave_count >= 1 && ally_count > enemy_count)
+}
+
+fn river_has_allied_vision_or_support(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
+    pos: Vec2,
+) -> bool {
+    alive_allies_near(
+        champion,
+        champions,
+        pos,
+        ANTI_INTING_LONELY_RIVER_ALLY_RADIUS,
+    ) >= 2
+        || minions.iter().any(|minion| {
+            minion.alive
+                && normalized_team(&minion.team) == normalized_team(&champion.team)
+                && dist(minion.pos, pos) <= SOLO_RIVER_RADIUS
+        })
+        || structures.iter().any(|structure| {
+            structure.alive
+                && normalized_team(&structure.team) == normalized_team(&champion.team)
+                && dist(structure.pos, pos) <= SOLO_RIVER_RADIUS
+        })
+}
+
+fn safe_lane_anchor_for_guard(
+    champion: &ChampionRuntime,
+    threat_pos: Vec2,
+    now: f64,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
+) -> Vec2 {
+    lane_retreat_anchor_pos(champion, threat_pos, now, champions, minions, structures)
+}
+
+fn apply_anti_inting_macro_guardrails(
+    champion: &mut ChampionRuntime,
+    now: f64,
+    minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
+    champions: &[ChampionRuntime],
+) -> bool {
+    if champion.role == "JGL" || !champion.alive {
+        return false;
+    }
+
+    let hp_ratio = super::ratio_or_zero(champion.hp, champion.max_hp);
+    let local_enemies =
+        alive_enemies_near(champion, champions, champion.pos, ANTI_INTING_1V3_RADIUS);
+    let local_allies = alive_allies_near(champion, champions, champion.pos, ANTI_INTING_1V3_RADIUS);
+    if local_enemies >= 3 && local_allies < 2 {
+        if hp_ratio <= RECALL_TRIGGER_HP_RATIO + 0.08 {
+            mark_guard(champion, "guard:no_1v3");
+            start_recall(champion, now, champions, minions, structures);
+        } else {
+            champion.state = "lane".to_string();
+            let nearest_enemy = champions
+                .iter()
+                .filter(|enemy| normalized_team(&enemy.team) != normalized_team(&champion.team))
+                .min_by(|a, b| {
+                    dist(champion.pos, a.pos)
+                        .partial_cmp(&dist(champion.pos, b.pos))
+                        .unwrap_or(Ordering::Equal)
+                })
+                .map(|enemy| enemy.pos)
+                .unwrap_or(champion.pos);
+            let anchor = safe_lane_anchor_for_guard(
+                champion,
+                nearest_enemy,
+                now,
+                champions,
+                minions,
+                structures,
+            );
+            set_champion_direct_path_hysteresis(champion, anchor, OBJECTIVE_PATH_MIN_TARGET_DELTA);
+            mark_guard(champion, "guard:no_1v3");
+        }
+        return true;
+    }
+
+    if let Some(tower) = enemy_tower_threatening_pos(champion, structures, champion.pos) {
+        let has_wave_or_numbers =
+            has_local_siege_permission(champion, champions, minions, tower.pos);
+        let low_hp_bad_dive = hp_ratio < 0.48;
+        if !has_wave_or_numbers || low_hp_bad_dive {
+            champion.state = "lane".to_string();
+            let anchor = safe_lane_anchor_for_guard(
+                champion, tower.pos, now, champions, minions, structures,
+            );
+            set_champion_direct_path_hysteresis(champion, anchor, OBJECTIVE_PATH_MIN_TARGET_DELTA);
+            mark_guard(
+                champion,
+                if low_hp_bad_dive {
+                    "guard:no_bad_dive"
+                } else {
+                    "guard:no_tower_chase"
+                },
+            );
+            return true;
+        }
+    }
+
+    if matches!(champion.role.as_str(), "ADC" | "MID")
+        && champion.state == "objective"
+        && !river_has_allied_vision_or_support(
+            champion,
+            champions,
+            minions,
+            structures,
+            champion.pos,
+        )
+    {
+        champion.state = "lane".to_string();
+        let anchor = lane_farm_anchor_pos_v2(champion, now, champions, minions, structures);
+        set_champion_direct_path_hysteresis(champion, anchor, OBJECTIVE_PATH_MIN_TARGET_DELTA);
+        mark_guard(champion, "guard:no_lonely_river");
+        return true;
+    }
+
+    false
 }
 
 pub(super) fn recall_fallback_toward_base(
@@ -450,11 +691,9 @@ pub(super) fn decide_champion_state(
     team_buffs: &RuntimeTeamBuffState,
 ) {
     if champion.state == "recall" {
-        return;
-    }
-
-    if champion_can_afford_next_item(champion) {
-        start_recall(champion, now, champions, minions, structures);
+        if should_recall_in_place(champion, champions) {
+            mark_guard(champion, "guard:recall_safe");
+        }
         return;
     }
 
@@ -474,9 +713,21 @@ pub(super) fn decide_champion_state(
         return;
     }
 
+    if apply_anti_inting_macro_guardrails(champion, now, minions, structures, champions) {
+        return;
+    }
+
     if champion.role == "JGL" {
         if let Some(timers) = neutral_timers {
-            if let Some(objective_pos) = pick_live_neutral_objective_pos(champion, timers) {
+            if let Some(objective_pos) = pick_smart_jungle_objective_pos(
+                champion,
+                champions,
+                minions,
+                structures,
+                timers,
+                now,
+                team_tactics,
+            ) {
                 champion.state = "objective".to_string();
                 set_champion_direct_path_hysteresis(
                     champion,
@@ -621,9 +872,15 @@ pub(super) fn decide_champion_state(
         }
 
         if champion.role == "JGL" {
-            if let Some(objective_pos) =
-                pick_macro_objective_pos(champion, champions, timers, now, team_tactics)
-            {
+            if let Some(objective_pos) = pick_smart_jungle_objective_pos(
+                champion,
+                champions,
+                minions,
+                structures,
+                timers,
+                now,
+                team_tactics,
+            ) {
                 champion.state = "objective".to_string();
                 set_champion_direct_path_hysteresis(
                     champion,
@@ -635,6 +892,37 @@ pub(super) fn decide_champion_state(
         }
 
         if champion.role == "SUP" && now >= SUPPORT_ROAM_UNLOCK_AT_SEC {
+            if !support_can_roam_contextually(champion, champions, minions) {
+                champion.state = "lane".to_string();
+                set_champion_direct_path(
+                    champion,
+                    lane_farm_anchor_pos_v2(champion, now, champions, minions, structures),
+                );
+                return;
+            }
+
+            if now >= champion.support_roam_cd_until {
+                if let Some(objective_pos) = pick_soon_viable_objective_for_support(
+                    champion,
+                    champions,
+                    minions,
+                    structures,
+                    timers,
+                    now,
+                    team_tactics,
+                ) {
+                    champion.state = "objective".to_string();
+                    champion.support_roam_cd_until = now + 55.0;
+                    champion.support_last_roam_role = "OBJ".to_string();
+                    set_champion_direct_path_hysteresis(
+                        champion,
+                        objective_pos,
+                        OBJECTIVE_PATH_MIN_TARGET_DELTA,
+                    );
+                    return;
+                }
+            }
+
             if now < SUPPORT_OPEN_ROAM_AT_SEC {
                 let roam_target_role = match team_tactics.support_roaming.as_str() {
                     "RoamMid" => Some("MID"),
@@ -725,10 +1013,31 @@ pub(super) fn decide_champion_state(
         }
     }
 
+    if champion_can_afford_next_item(champion)
+        && purchase_recall_allowed_by_intent(
+            champion,
+            now,
+            neutral_timers,
+            team_tactics,
+            team_buffs,
+        )
+    {
+        start_recall(champion, now, champions, minions, structures);
+        return;
+    }
+
     if champion.role == "JGL" {
         champion.state = "jungle".to_string();
         if let Some(timers) = neutral_timers {
-            if let Some(objective_pos) = pick_live_neutral_objective_pos(champion, timers) {
+            if let Some(objective_pos) = pick_smart_jungle_objective_pos(
+                champion,
+                champions,
+                minions,
+                structures,
+                timers,
+                now,
+                team_tactics,
+            ) {
                 champion.state = "objective".to_string();
                 set_champion_direct_path_hysteresis(
                     champion,
@@ -770,6 +1079,13 @@ pub(super) fn decide_champion_state(
 
     champion.state = "lane".to_string();
 
+    if let Some(safe_anchor) =
+        solo_carry_critical_objective_safe_anchor(champion, champions, neutral_timers, now)
+    {
+        set_champion_direct_path_hysteresis(champion, safe_anchor, OBJECTIVE_PATH_MIN_TARGET_DELTA);
+        return;
+    }
+
     if let Some(push_anchor) = post_tower_push_anchor(champion, minions, structures) {
         set_champion_direct_path_hysteresis(champion, push_anchor, OBJECTIVE_PATH_MIN_TARGET_DELTA);
         return;
@@ -797,6 +1113,121 @@ pub(super) fn decide_champion_state(
     };
 
     set_champion_direct_path(champion, target);
+}
+
+fn purchase_recall_allowed_by_intent(
+    champion: &ChampionRuntime,
+    now: f64,
+    neutral_timers: Option<&NeutralTimersRuntime>,
+    team_tactics: &RuntimeTeamTactics,
+    team_buffs: &RuntimeTeamBuffState,
+) -> bool {
+    let intent = super::decision_layer::classify_decision_intent(
+        champion,
+        now,
+        neutral_timers,
+        team_tactics,
+        team_buffs,
+    );
+
+    matches!(
+        intent.intent,
+        IntentKind::FarmLane | IntentKind::ClearJungle | IntentKind::Recall
+    )
+}
+
+pub(super) fn apply_decision_intent_target(
+    champion: &mut ChampionRuntime,
+    intent: &DecisionIntent,
+    champions: &[ChampionRuntime],
+    neutral_timers: Option<&NeutralTimersRuntime>,
+    team_tactics: &RuntimeTeamTactics,
+    now: f64,
+) {
+    if !champion.alive || champion.state == "recall" {
+        return;
+    }
+    if matches!(intent.intent, IntentKind::Recall | IntentKind::WaitRespawn) {
+        return;
+    }
+
+    if champion.role == "SUP" {
+        apply_support_decision_intent_target(champion, intent, neutral_timers, now);
+        return;
+    }
+
+    let Some(timers) = neutral_timers else {
+        return;
+    };
+
+    let target = match intent.intent {
+        IntentKind::TakeDragon => live_targetable_neutral_pos(timers, "dragon", now),
+        IntentKind::TakeBaron => live_targetable_neutral_pos(timers, "baron", now),
+        IntentKind::RotateToObjective => {
+            objective_assist_decision_target_pos(champion, champions, timers)
+                .or_else(|| current_champion_path_target(champion))
+        }
+        IntentKind::ClearJungle if champion.role == "JGL" => {
+            pick_sticky_or_next_jungle_camp_pos(champion, timers, &team_tactics.jungle_pathing, now)
+        }
+        _ => None,
+    };
+
+    if let Some(target) = target {
+        set_champion_direct_path_hysteresis(champion, target, OBJECTIVE_PATH_MIN_TARGET_DELTA);
+    }
+}
+
+fn apply_support_decision_intent_target(
+    champion: &mut ChampionRuntime,
+    intent: &DecisionIntent,
+    neutral_timers: Option<&NeutralTimersRuntime>,
+    now: f64,
+) {
+    let target = match intent.intent {
+        IntentKind::RoamLane => current_champion_path_target(champion),
+        IntentKind::RotateToObjective => neutral_timers.and_then(|timers| {
+            live_targetable_neutral_pos(timers, "dragon", now)
+                .or_else(|| live_targetable_neutral_pos(timers, "baron", now))
+        }),
+        _ => None,
+    };
+
+    if let Some(target) = target {
+        set_champion_direct_path_hysteresis(champion, target, OBJECTIVE_PATH_MIN_TARGET_DELTA);
+    }
+}
+
+fn objective_assist_decision_target_pos(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    neutral_timers: &NeutralTimersRuntime,
+) -> Option<Vec2> {
+    if let Some(dragon) =
+        contested_dragon_attempt_for_team(&champion.team, champions, neutral_timers)
+            .filter(|dragon| should_hard_assist_contested_dragon(champion, Some(*dragon)))
+    {
+        return Some(dragon.pos);
+    }
+
+    if should_assist_objective_attempt(champion, champions, neutral_timers) {
+        return active_objective_attempt_for_team(&champion.team, champions, neutral_timers)
+            .map(|attempt| attempt.pos);
+    }
+
+    None
+}
+
+fn live_targetable_neutral_pos(
+    neutral_timers: &NeutralTimersRuntime,
+    key: &str,
+    now: f64,
+) -> Option<Vec2> {
+    neutral_timers
+        .entities
+        .get(key)
+        .filter(|timer| timer.alive && timer.unlocked && now >= timer.first_spawn_at)
+        .map(|timer| timer.pos)
 }
 
 fn is_behind_own_lane_tower(champion: &ChampionRuntime, structures: &[StructureRuntime]) -> bool {
@@ -1360,6 +1791,287 @@ fn should_jungler_commit_major_objective(
         })
         .count();
     ally_nearby + 1 >= enemy_nearby
+}
+
+fn team_average_hp_ratio(team: &str, champions: &[ChampionRuntime]) -> f64 {
+    let mut total = 0.0;
+    let mut count = 0.0;
+    for champion in champions.iter().filter(|champion| {
+        champion.alive && normalized_team(&champion.team) == normalized_team(team)
+    }) {
+        total += super::ratio_or_zero(champion.hp, champion.max_hp);
+        count += 1.0;
+    }
+    if count == 0.0 {
+        0.0
+    } else {
+        total / count
+    }
+}
+
+fn objective_spawn_window_score(timer: &NeutralTimerRuntime, now: f64) -> Option<f64> {
+    if timer.alive && timer.unlocked && now >= timer.first_spawn_at {
+        return Some(2.0);
+    }
+    let next_spawn_at = timer.next_spawn_at?;
+    if timer.unlocked
+        && next_spawn_at >= now
+        && next_spawn_at - now <= MACRO_OBJECTIVE_SETUP_LEAD_SEC
+    {
+        return Some(1.0 - ((next_spawn_at - now) / MACRO_OBJECTIVE_SETUP_LEAD_SEC) * 0.35);
+    }
+    None
+}
+
+fn objective_side_matches(key: &str, strong_side: &str) -> bool {
+    matches!(
+        (key, strong_side),
+        ("baron", "Top") | ("herald", "Top") | ("voidgrubs", "Top")
+    ) || matches!((key, strong_side), ("dragon", "Bot") | ("elder", "Bot"))
+        || strong_side == "Mid"
+}
+
+fn objective_lane_pressure_score(
+    champion: &ChampionRuntime,
+    objective: &NeutralTimerRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+) -> f64 {
+    objective_adjacent_lanes(&objective.key)
+        .iter()
+        .filter_map(|lane| {
+            champions.iter().find(|ally| {
+                ally.alive
+                    && normalized_team(&ally.team) == normalized_team(&champion.team)
+                    && normalized_lane(&ally.lane) == *lane
+                    && ally.role != "JGL"
+            })
+        })
+        .map(|ally| {
+            let pressure = lane_pressure_at(
+                ally,
+                ally.pos,
+                champions,
+                minions,
+                LANE_LOCAL_PRESSURE_RADIUS,
+            );
+            (pressure.ally_score - pressure.enemy_score).clamp(-1.5, 1.5) * 0.35
+        })
+        .sum()
+}
+
+fn score_jungle_objective(
+    champion: &ChampionRuntime,
+    objective: &NeutralTimerRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+    _structures: &[StructureRuntime],
+    neutral_timers: &NeutralTimersRuntime,
+    now: f64,
+    team_tactics: &RuntimeTeamTactics,
+) -> Option<f64> {
+    let mut score = objective_spawn_window_score(objective, now)?;
+    score += match objective.key.as_str() {
+        "elder" => 3.2,
+        "baron" => 2.8,
+        "dragon" => 2.35,
+        "voidgrubs" | "herald" => 1.7,
+        "scuttle-bot" | "scuttle-top" => 0.55,
+        _ => 0.0,
+    };
+    if objective_side_matches(&objective.key, &team_tactics.strong_side) {
+        score += 0.45;
+    }
+    if matches!(team_tactics.jungle_style.as_str(), "Objective" | "Enabler") {
+        score += 0.35;
+    }
+
+    let ally_nearby = champions
+        .iter()
+        .filter(|ally| {
+            ally.alive
+                && normalized_team(&ally.team) == normalized_team(&champion.team)
+                && dist(ally.pos, objective.pos) <= MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS
+        })
+        .count() as f64;
+    let enemy_nearby = champions
+        .iter()
+        .filter(|enemy| {
+            enemy.alive
+                && normalized_team(&enemy.team) != normalized_team(&champion.team)
+                && dist(enemy.pos, objective.pos) <= MAJOR_OBJECTIVE_TEAM_ASSIST_RADIUS
+        })
+        .count() as f64;
+    score += (ally_nearby - enemy_nearby) * 0.45;
+
+    score += (team_average_hp_ratio(&champion.team, champions) - 0.55) * 1.1;
+    score += objective_lane_pressure_score(champion, objective, champions, minions);
+
+    if is_major_teamfight_objective(objective, neutral_timers)
+        && !should_jungler_commit_major_objective(champion, objective, champions)
+    {
+        score -= 1.4;
+    }
+    Some(score)
+}
+
+fn pick_smart_jungle_objective_pos(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
+    neutral_timers: &NeutralTimersRuntime,
+    now: f64,
+    team_tactics: &RuntimeTeamTactics,
+) -> Option<Vec2> {
+    neutral_timers
+        .entities
+        .values()
+        .filter(|timer| is_objective_neutral_key(&timer.key))
+        .filter_map(|timer| {
+            score_jungle_objective(
+                champion,
+                timer,
+                champions,
+                minions,
+                structures,
+                neutral_timers,
+                now,
+                team_tactics,
+            )
+            .map(|score| (timer, score))
+        })
+        .filter(|(_, score)| *score >= MACRO_OBJECTIVE_MIN_SCORE)
+        .max_by(|(a, score_a), (b, score_b)| {
+            score_a
+                .partial_cmp(score_b)
+                .unwrap_or(Ordering::Equal)
+                .then_with(|| b.key.cmp(&a.key))
+        })
+        .map(|(timer, _)| timer.pos)
+}
+
+fn support_can_roam_contextually(
+    support: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+) -> bool {
+    let Some(adc) = champions.iter().find(|ally| {
+        ally.alive
+            && normalized_team(&ally.team) == normalized_team(&support.team)
+            && ally.role == "ADC"
+            && normalized_lane(&ally.lane) == "bot"
+    }) else {
+        return true;
+    };
+    if super::ratio_or_zero(adc.hp, adc.max_hp) < SUPPORT_ADC_SAFE_HP_RATIO {
+        return false;
+    }
+    let pressure = lane_pressure_at(adc, adc.pos, champions, minions, LANE_LOCAL_PRESSURE_RADIUS);
+    pressure.enemy_score <= pressure.ally_score + BOT_WAVE_THREAT_SCORE_DELTA
+}
+
+fn pick_soon_viable_objective_for_support(
+    support: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    minions: &[MinionRuntime],
+    structures: &[StructureRuntime],
+    neutral_timers: &NeutralTimersRuntime,
+    now: f64,
+    team_tactics: &RuntimeTeamTactics,
+) -> Option<Vec2> {
+    neutral_timers
+        .entities
+        .values()
+        .filter(|timer| {
+            matches!(
+                timer.key.as_str(),
+                "dragon" | "elder" | "baron" | "herald" | "voidgrubs"
+            )
+        })
+        .filter_map(|timer| {
+            score_jungle_objective(
+                support,
+                timer,
+                champions,
+                minions,
+                structures,
+                neutral_timers,
+                now,
+                team_tactics,
+            )
+            .map(|score| (timer, score))
+        })
+        .filter(|(_, score)| *score >= MACRO_OBJECTIVE_MIN_SCORE - 0.45)
+        .min_by(|(a, score_a), (b, score_b)| {
+            dist(support.pos, a.pos)
+                .partial_cmp(&dist(support.pos, b.pos))
+                .unwrap_or(Ordering::Equal)
+                .then_with(|| score_b.partial_cmp(score_a).unwrap_or(Ordering::Equal))
+        })
+        .map(|(timer, _)| timer.pos)
+}
+
+fn critical_objective_soon<'a>(
+    neutral_timers: Option<&'a NeutralTimersRuntime>,
+    now: f64,
+) -> Option<&'a NeutralTimerRuntime> {
+    let timers = neutral_timers?;
+    timers
+        .entities
+        .values()
+        .filter(|timer| matches!(timer.key.as_str(), "dragon" | "elder" | "baron"))
+        .filter(|timer| timer.unlocked)
+        .filter(|timer| {
+            timer.alive
+                || timer
+                    .next_spawn_at
+                    .map(|spawn_at| {
+                        spawn_at >= now && spawn_at - now <= CRITICAL_OBJECTIVE_SOON_SEC
+                    })
+                    .unwrap_or(false)
+        })
+        .min_by(|a, b| {
+            dist(a.pos, Vec2 { x: 0.5, y: 0.5 })
+                .partial_cmp(&dist(b.pos, Vec2 { x: 0.5, y: 0.5 }))
+                .unwrap_or(Ordering::Equal)
+        })
+}
+
+fn solo_carry_critical_objective_safe_anchor(
+    champion: &ChampionRuntime,
+    champions: &[ChampionRuntime],
+    neutral_timers: Option<&NeutralTimersRuntime>,
+    now: f64,
+) -> Option<Vec2> {
+    if champion.role != "ADC" && champion.role != "MID" {
+        return None;
+    }
+    let objective = critical_objective_soon(neutral_timers, now)?;
+    if dist(champion.pos, objective.pos) > SOLO_RIVER_RADIUS {
+        return None;
+    }
+    let allies_near = champions
+        .iter()
+        .filter(|ally| {
+            ally.alive
+                && ally.id != champion.id
+                && normalized_team(&ally.team) == normalized_team(&champion.team)
+                && dist(ally.pos, champion.pos) <= OBJECTIVE_ASSIST_RADIUS
+        })
+        .count();
+    if allies_near > 0 {
+        return None;
+    }
+    let base = base_position_for(&champion.team);
+    let away = normalize(Vec2 {
+        x: base.x - objective.pos.x,
+        y: base.y - objective.pos.y,
+    });
+    Some(Vec2 {
+        x: clamp(champion.pos.x + away.x * 0.08, 0.01, 0.99),
+        y: clamp(champion.pos.y + away.y * 0.08, 0.01, 0.99),
+    })
 }
 
 fn allied_nexus_under_threat_pos(

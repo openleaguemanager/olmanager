@@ -675,7 +675,7 @@ mod tests {
         state.set_live_match(session);
 
         let response =
-            finish_live_match_internal(&state, None).expect("finish live match response");
+            finish_live_match_internal(&state, None, None).expect("finish live match response");
 
         let round_summary = response.round_summary.expect("round summary response");
         assert!(round_summary.is_complete);

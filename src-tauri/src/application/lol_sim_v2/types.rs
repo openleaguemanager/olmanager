@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub(super) struct Vec2 {
@@ -30,6 +31,8 @@ pub(super) struct RuntimeEvent {
     pub text: String,
     #[serde(rename = "type")]
     pub kind: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -56,6 +59,34 @@ pub(super) struct RuntimeUltimateSlot {
     #[serde(default)]
     pub icon: String,
     pub cd_until: f64,
+    #[serde(default)]
+    pub technical_primitive: Option<String>,
+    #[serde(default)]
+    pub signature_id: Option<String>,
+    #[serde(default)]
+    pub visual_event_id: Option<String>,
+    #[serde(default)]
+    pub gameplay_tags: Vec<String>,
+    #[serde(default)]
+    pub semantic_effects: Vec<String>,
+    #[serde(default)]
+    pub ultimate_identity: Option<Value>,
+}
+
+impl Default for RuntimeUltimateSlot {
+    fn default() -> Self {
+        Self {
+            archetype: "burst".to_string(),
+            icon: String::new(),
+            cd_until: 0.0,
+            technical_primitive: None,
+            signature_id: None,
+            visual_event_id: None,
+            gameplay_tags: Vec::new(),
+            semantic_effects: Vec::new(),
+            ultimate_identity: None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -92,4 +123,8 @@ pub struct LolChampionUltimateInput {
     pub archetype: String,
     #[serde(default)]
     pub icon: String,
+    #[serde(default)]
+    pub signature_id: Option<String>,
+    #[serde(default)]
+    pub visual_event_id: Option<String>,
 }

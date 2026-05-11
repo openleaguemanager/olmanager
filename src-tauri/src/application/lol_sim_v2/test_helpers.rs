@@ -60,6 +60,7 @@ pub(super) fn test_champion(
             archetype: "burst".to_string(),
             icon: String::new(),
             cd_until: 0.0,
+            ..Default::default()
         }),
         ignite_dot_until: 0.0,
         ignite_source_id: None,

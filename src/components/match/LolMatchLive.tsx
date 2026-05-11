@@ -6,7 +6,7 @@ import { getWalls } from "./lol-prototype/assets/map";
 import { NavGrid } from "./lol-prototype/engine/navigation";
 import { PrototypeSimulation } from "./lol-prototype/engine/simulation";
 import type { ChampionCombatProfile } from "./lol-prototype/engine/simulation";
-import type { MatchState } from "./lol-prototype/engine/types";
+import type { LaneId, MatchState, RoleId, TeamId } from "./lol-prototype/engine/types";
 import {
   createDefaultObjectivesState,
   createEmptyNeutralTimersState,
@@ -15,7 +15,8 @@ import {
   type LolSimV1PolicyConfig,
   type LolSimV1RuntimeState,
 } from "./lol-prototype/backend/contract-v1";
-import { LolSimV2Client } from "./lol-prototype/backend/tauri-client";
+import type { LolSimV3TickResponse } from "./lol-prototype/backend/contract-v3";
+import { getLolSimBackendMode, LolSimV2Client, LolSimV3Client, type LolSimBackendMode } from "./lol-prototype/backend/tauri-client";
 import { renderSimulation } from "./lol-prototype/ui/render";
 import { LecLowerThirdPanel } from "./lol-prototype/ui/panels";
 import { useSettingsStore } from "../../store/settingsStore";
@@ -47,7 +48,8 @@ const SPEEDS = [
 ];
 
 const DDRAGON_VERSION = "14.24.1";
-const USE_RUST_SIM_V2 = true;
+const LOL_SIM_BACKEND_MODE: LolSimBackendMode = getLolSimBackendMode();
+const USE_RUST_SIM_BACKEND = true;
 const ICON_TOWER = "/lol-map-icons/icon_ui_tower_minimap.png";
 const ICON_GOLD = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-event-hub/global/default/images/currency.png";
 const ICON_VOIDGRUB = "/lol-map-icons/grub.png";
@@ -285,6 +287,490 @@ function dragonKillIconsBySide(
   return fallback;
 }
 
+function mapV3ResponseToV1RuntimeState(
+  response: LolSimV3TickResponse,
+  championByPlayerId: Record<string, string> = {},
+): LolSimV1RuntimeState {
+  const snapshot = response.snapshot;
+  const dragonObjective = snapshot.objectives.find((objective) => objective.key === "dragon");
+  const baronObjective = snapshot.objectives.find((objective) => objective.key === "baron");
+  const neutralTimers = mapV3NeutralTimers(snapshot);
+  const fallbackChampionByUnitId = buildFallbackChampionByUnitId(snapshot.units ?? [], championByPlayerId);
+
+  return {
+    timeSec: snapshot.timeSec ?? 0,
+    running: snapshot.running ?? false,
+    winner: (snapshot.winner as "blue" | "red" | null | undefined) ?? null,
+    showWalls: false,
+    champions: (snapshot.units ?? []).map((unit) => ({
+      id: unit.id,
+      name: unit.name,
+      team: normalizeTeamId(unit.team),
+      role: normalizeRoleId(unit.role),
+      lane: normalizeLaneId(unit.lane || (unit.role === "TOP" ? "top" : unit.role === "MID" ? "mid" : "bot")),
+      pos: unit.pos,
+      hp: Math.max(0, Math.round((unit.hpRatio ?? 0) * 100)),
+      maxHp: 100,
+      alive: unit.alive,
+      respawnAt: 0,
+      attackCdUntil: 0,
+      moveSpeed: 0.05,
+      attackRange: 0.05,
+      attackType: "melee",
+      attackDamage: 0,
+      targetPath: [],
+      targetPathIndex: 0,
+      nextDecisionAt: 0,
+      kills: 0,
+      deaths: 0,
+      assists: 0,
+      gold: 0,
+      xp: 0,
+      level: 1,
+      state: normalizeRuntimeChampionState(unit.state),
+      recallAnchor: null,
+      recallChannelUntil: 0,
+      lastDamagedAt: 0,
+      lastDamagedByChampionId: null,
+      lastDamagedByChampionAt: 0,
+      championId: unit.championId
+        ?? championByPlayerId[unit.id]
+        ?? championByPlayerId[`${unit.team}-${roleSlotFromRole(unit.role)}`]
+        ?? fallbackChampionByUnitId[unit.id]
+        ?? defaultChampionIdForRole(normalizeRoleId(unit.role)),
+      cs: 0,
+      gameplayScore: 70,
+      iqScore: 70,
+      competitiveScore: 70,
+      summonerSpells: [],
+      spentGold: 0,
+      items: [],
+      trinketKey: "ward",
+      trinketSwapped: false,
+      supportRoamUses: 0,
+      supportRoamCdUntil: 0,
+      supportLastRoamRole: "",
+      pathStuckForSec: 0,
+      forcedLaneRecallCdUntil: 0,
+      debugAiDecision: "",
+      staffExecution: 1,
+      wardCdUntil: 0,
+      sweeperCdUntil: 0,
+      sweeperActiveUntil: 0,
+      realmBanishedUntil: 0,
+      realmReturnPos: null,
+    })),
+    minions: (snapshot.minions ?? []).map((minion) => ({
+      id: minion.id,
+      team: normalizeTeamId(minion.team),
+      lane: normalizeLaneId(minion.lane),
+      pos: minion.pos,
+      hp: Math.max(0, Math.round((minion.hpRatio ?? (minion.alive ? 1 : 0)) * (minion.kind === "siege" ? 600 : minion.kind === "ranged" ? 300 : 420))),
+      maxHp: minion.kind === "siege" ? 600 : minion.kind === "ranged" ? 300 : 420,
+      alive: minion.alive,
+      kind: (minion.kind === "siege" ? "ranged" : minion.kind) as "melee" | "ranged" | "summon",
+      lastHitByChampionId: null,
+      ownerChampionId: null,
+      summonKind: null,
+      summonExpiresAt: undefined,
+      debugTargetStructureId: null,
+      attackCdUntil: 0,
+      moveSpeed: 0.006,
+      attackRange: minion.kind === "ranged" ? 0.05 : 0.03,
+      attackDamage: minion.kind === "siege" ? 38 : minion.kind === "ranged" ? 22 : 16,
+      path: [],
+      pathIndex: 0,
+    })),
+    structures: (snapshot.structures ?? []).map((structure) => {
+      const maxHp = structure.kind === "nexus" ? 6500 : structure.kind === "inhib" ? 4000 : 3500;
+      return {
+        id: structure.id,
+        team: normalizeTeamId(structure.team),
+        lane: normalizeStructureLane(structure.lane),
+        kind: normalizeStructureKind(structure.kind),
+        pos: structure.pos,
+        hp: Math.max(0, Math.round((structure.hpRatio ?? 0) * maxHp)),
+        maxHp,
+        alive: structure.alive,
+        attackCdUntil: 0,
+      };
+    }),
+    objectives: {
+      dragon: {
+        key: "dragon",
+        pos: dragonObjective?.pos ?? { x: 0.67, y: 0.7 },
+        alive: dragonObjective?.alive ?? false,
+        nextSpawnAt: dragonObjective?.nextSpawnAtSec ?? 0,
+      },
+      baron: {
+        key: "baron",
+        pos: baronObjective?.pos ?? { x: 0.33, y: 0.3 },
+        alive: baronObjective?.alive ?? false,
+        nextSpawnAt: baronObjective?.nextSpawnAtSec ?? 20 * 60,
+      },
+    },
+    neutralTimers,
+    stats: {
+      blue: {
+        kills: snapshot.scoreboard?.blue?.kills ?? 0,
+        towers: snapshot.scoreboard?.blue?.towers ?? 0,
+        dragons: snapshot.scoreboard?.blue?.dragons ?? 0,
+        barons: 0,
+        gold: snapshot.scoreboard?.blue?.gold ?? 0,
+      },
+      red: {
+        kills: snapshot.scoreboard?.red?.kills ?? 0,
+        towers: snapshot.scoreboard?.red?.towers ?? 0,
+        dragons: snapshot.scoreboard?.red?.dragons ?? 0,
+        barons: 0,
+        gold: snapshot.scoreboard?.red?.gold ?? 0,
+      },
+    },
+    events: (response.events ?? []).map(mapV3EventToLegacyEvent),
+    speed: SPEEDS[0].value,
+  };
+}
+
+type NeutralTimerEntity = LolSimV1RuntimeState["neutralTimers"]["entities"][keyof LolSimV1RuntimeState["neutralTimers"]["entities"]];
+
+function buildNeutralTimerEntity(
+  key: NeutralTimerEntity["key"],
+  label: string,
+  pos: { x: number; y: number },
+  alive: boolean,
+  nextSpawnAt: number | null,
+  maxHp: number,
+): NeutralTimerEntity {
+  return {
+    key,
+    label,
+    alive,
+    hp: alive ? maxHp : 0,
+    maxHp,
+    nextSpawnAt,
+    firstSpawnAt: 0,
+    respawnDelaySec: null,
+    oneShot: false,
+    windowCloseAt: null,
+    combatGraceUntil: null,
+    unlocked: true,
+    lastSpawnAt: null,
+    lastTakenAt: null,
+    timesSpawned: 0,
+    timesTaken: 0,
+    pos,
+  };
+}
+
+function mapNeutralCampKey(rawKey: string): NeutralTimerEntity["key"] | null {
+  const key = rawKey.toLowerCase().replace(/_/g, "-");
+  if (key in {
+    "blue-buff-blue": true,
+    "blue-buff-red": true,
+    "red-buff-blue": true,
+    "red-buff-red": true,
+    "wolves-blue": true,
+    "wolves-red": true,
+    "raptors-blue": true,
+    "raptors-red": true,
+    "gromp-blue": true,
+    "gromp-red": true,
+    "krugs-blue": true,
+    "krugs-red": true,
+    "scuttle-top": true,
+    "scuttle-bot": true,
+    dragon: true,
+    voidgrubs: true,
+    herald: true,
+    baron: true,
+    elder: true,
+  }) {
+    return key as NeutralTimerEntity["key"];
+  }
+
+  if (key === "blue-buff") return "blue-buff-blue";
+  if (key === "red-buff") return "red-buff-blue";
+  if (key === "blue-gromp") return "gromp-blue";
+  if (key === "red-gromp") return "gromp-red";
+  if (key === "blue-red") return "red-buff-blue";
+  if (key === "red-blue") return "blue-buff-red";
+  if (key.includes("scuttle") && key.includes("top")) return "scuttle-top";
+  if (key.includes("scuttle") && (key.includes("bot") || key.includes("bottom"))) return "scuttle-bot";
+  return null;
+}
+
+function mapV3NeutralTimers(snapshot: LolSimV3TickResponse["snapshot"]): LolSimV1RuntimeState["neutralTimers"] {
+  const neutralTimers = createEmptyNeutralTimersState();
+  const entities = neutralTimers.entities as Record<string, NeutralTimerEntity>;
+  const dragonObjective = snapshot.objectives.find((objective) => objective.key === "dragon");
+  const baronObjective = snapshot.objectives.find((objective) => objective.key === "baron");
+
+  entities.dragon = buildNeutralTimerEntity(
+    "dragon",
+    "Dragon",
+    dragonObjective?.pos ?? { x: 0.67, y: 0.7 },
+    dragonObjective?.alive ?? false,
+    snapshot.neutralTimers?.nextDragonAtSec ?? dragonObjective?.nextSpawnAtSec ?? null,
+    5000,
+  );
+
+  entities.baron = buildNeutralTimerEntity(
+    "baron",
+    "Baron",
+    baronObjective?.pos ?? { x: 0.33, y: 0.3 },
+    baronObjective?.alive ?? false,
+    snapshot.neutralTimers?.nextBaronAtSec ?? baronObjective?.nextSpawnAtSec ?? null,
+    9000,
+  );
+
+  (snapshot.neutralCamps ?? []).forEach((camp) => {
+    const mappedKey = mapNeutralCampKey(camp.key);
+    if (!mappedKey) return;
+    entities[mappedKey] = buildNeutralTimerEntity(
+      mappedKey,
+      camp.key,
+      camp.pos,
+      camp.alive,
+      camp.nextSpawnAtSec ?? null,
+      mappedKey.includes("buff") ? 470 : mappedKey.includes("scuttle") ? 1100 : 1400,
+    );
+  });
+
+  return neutralTimers;
+}
+
+function mapV3EventToLegacyEvent(event: LolSimV3TickResponse["events"][number]): LolSimV1RuntimeState["events"][number] {
+  const fallbackTeam = deriveTeamFallbackFromEvent(event);
+  const fallbackLane = deriveLaneFallbackFromEvent(event);
+  const team = ((event.team ?? fallbackTeam) ?? "").toString().toUpperCase();
+  const lane = ((event.lane ?? fallbackLane) ?? "").toString().toUpperCase();
+  const key = ((event.metadata?.key as string | undefined) ?? event.targetId ?? "").toString();
+  const source = ((event.metadata?.source as string | undefined) ?? defaultEventSource(event.kind)).toString();
+  const importance = ((event.metadata?.importance as string | undefined) ?? "").toString().toUpperCase();
+
+  if (event.kind === "wave_spawned") {
+    const totalCount = Number((event.metadata?.totalCount as number | undefined) ?? event.amount ?? 0);
+    return { t: event.t, type: "spawn", text: `${team || "TEAM"} ${lane || "LANE"} WAVE SPAWN (${totalCount || 0})` };
+  }
+  if (event.kind === "neutral_camp_spawned") {
+    return { t: event.t, type: "spawn", text: `${team || "TEAM"} NEUTRAL CAMP SPAWN: ${key || "camp"}` };
+  }
+  if (event.kind === "neutral_camp_taken") {
+    return { t: event.t, type: "info", text: `${team || "TEAM"} TOOK ${key || "NEUTRAL CAMP"}` };
+  }
+  if (event.kind === "tower_damaged") {
+    const dmg = Math.abs(Number(event.amount ?? 0));
+    const tag = importance ? ` [${importance}]` : "";
+    return { t: event.t, type: "tower", text: `${team || "TEAM"} ${lane || "LANE"} TOWER DAMAGED (${Math.round(dmg)}) [${source || "push"}]${tag}` };
+  }
+  if (event.kind === "tower_destroyed") {
+    return { t: event.t, type: "tower", text: `${team || "TEAM"} ${lane || "LANE"} TOWER DESTROYED` };
+  }
+  if (event.kind === "dragon_taken") return { t: event.t, type: "dragon", text: `${team || "TEAM"} SECURED DRAGON` };
+  if (event.kind === "baron_taken") return { t: event.t, type: "baron", text: `${team || "TEAM"} SECURED BARON` };
+  if (event.kind === "champion_killed") return { t: event.t, type: "kill", text: `${event.actorId ?? "Champion"} killed ${event.targetId ?? "enemy"}` };
+  if (event.kind === "nexus_destroyed") return { t: event.t, type: "nexus", text: `${team || "TEAM"} NEXUS DESTROYED` };
+
+  return { t: event.t, text: event.kind, type: "info" };
+}
+
+function deriveTeamFallbackFromEvent(event: LolSimV3TickResponse["events"][number]): "blue" | "red" | null {
+  const candidates = [event.targetId, event.actorId, (event.metadata?.key as string | undefined)];
+  for (const candidate of candidates) {
+    const value = (candidate ?? "").toString().toLowerCase();
+    if (value.startsWith("blue-")) return "blue";
+    if (value.startsWith("red-")) return "red";
+  }
+  return null;
+}
+
+function deriveLaneFallbackFromEvent(event: LolSimV3TickResponse["events"][number]): "top" | "mid" | "bot" | null {
+  const candidates = [event.targetId, event.actorId, (event.metadata?.key as string | undefined)];
+  for (const candidate of candidates) {
+    const value = (candidate ?? "").toString().toLowerCase();
+    if (value.includes("top")) return "top";
+    if (value.includes("mid")) return "mid";
+    if (value.includes("bot")) return "bot";
+  }
+  return null;
+}
+
+function defaultEventSource(kind: LolSimV3TickResponse["events"][number]["kind"]): string {
+  if (kind === "wave_spawned") return "wave";
+  if (kind === "neutral_camp_spawned") return "timer";
+  if (kind === "neutral_camp_taken") return "jungle-camp";
+  if (kind === "tower_damaged" || kind === "tower_destroyed") return "push";
+  return "";
+}
+
+function roleSlotFromRole(role: string): "top" | "jgl" | "mid" | "adc" | "sup" {
+  const normalized = role.toUpperCase();
+  if (normalized === "TOP") return "top";
+  if (normalized === "JGL" || normalized === "JUNGLE") return "jgl";
+  if (normalized === "MID") return "mid";
+  if (normalized === "ADC" || normalized === "BOT") return "adc";
+  return "sup";
+}
+
+function normalizeTeamId(value: string | null | undefined): TeamId {
+  return String(value).toLowerCase() === "red" ? "red" : "blue";
+}
+
+function normalizeRoleId(value: string | null | undefined): RoleId {
+  const key = String(value ?? "").toUpperCase();
+  if (key === "TOP") return "TOP";
+  if (key === "JGL" || key === "JUNGLE") return "JGL";
+  if (key === "MID") return "MID";
+  if (key === "ADC" || key === "BOT") return "ADC";
+  return "SUP";
+}
+
+function normalizeLaneId(value: string | null | undefined): LaneId {
+  const key = String(value ?? "").toLowerCase();
+  if (key === "top") return "top";
+  if (key === "bot") return "bot";
+  return "mid";
+}
+
+function normalizeStructureLane(value: string | null | undefined): LaneId | "base" {
+  const key = String(value ?? "").toLowerCase();
+  if (key === "base") return "base";
+  return normalizeLaneId(key);
+}
+
+function normalizeStructureKind(value: string | null | undefined): "tower" | "inhib" | "nexus" {
+  const key = String(value ?? "").toLowerCase();
+  if (key === "inhib" || key === "inhibitor") return "inhib";
+  if (key === "nexus") return "nexus";
+  return "tower";
+}
+
+function normalizeRuntimeChampionState(value: string | null | undefined): "lane" | "fight" | "objective" | "recall" {
+  const key = String(value ?? "").toLowerCase();
+  if (key === "fighting") return "fight";
+  if (key === "objective_setup") return "objective";
+  if (key === "recalling") return "recall";
+  return "lane";
+}
+
+function defaultChampionIdForRole(role: RoleId): string {
+  if (role === "TOP") return "Garen";
+  if (role === "JGL") return "Warwick";
+  if (role === "MID") return "Ahri";
+  if (role === "ADC") return "Ashe";
+  return "Leona";
+}
+
+function buildV3ChampionByPlayerId(championSelections: ChampionSelectionByPlayer | null | undefined): Record<string, string> {
+  if (!championSelections) return {};
+
+  const mapped: Record<string, string> = {
+    ...championSelections.home,
+    ...championSelections.away,
+  };
+
+  Object.entries(championSelections.homeRoles).forEach(([playerId, role]) => {
+    const championId = championSelections.home[playerId];
+    if (!championId) return;
+    const slot = roleSlotFromRole(role);
+    mapped[`blue-${slot}`] = championId;
+  });
+
+  Object.entries(championSelections.awayRoles).forEach(([playerId, role]) => {
+    const championId = championSelections.away[playerId];
+    if (!championId) return;
+    const slot = roleSlotFromRole(role);
+    mapped[`red-${slot}`] = championId;
+  });
+
+  const orderedSlots: Array<"top" | "jgl" | "mid" | "adc" | "sup"> = ["top", "jgl", "mid", "adc", "sup"];
+  const fillTeamSlots = (
+    team: "blue" | "red",
+    picksByPlayerId: Record<string, string>,
+    rolesByPlayerId: Record<string, "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT">,
+  ) => {
+    const usedChampionIds = new Set<string>();
+    orderedSlots.forEach((slot) => {
+      const existing = mapped[`${team}-${slot}`];
+      if (existing) usedChampionIds.add(existing);
+    });
+
+    const deterministicDraftOrder = Object.entries(picksByPlayerId)
+      .filter(([, championId]) => Boolean(championId))
+      .sort(([a], [b]) => a.localeCompare(b));
+
+    for (const slot of orderedSlots) {
+      const slotKey = `${team}-${slot}`;
+      if (mapped[slotKey]) continue;
+
+      const fromMatchingRole = Object.entries(rolesByPlayerId).find(([playerId, role]) => {
+        const championId = picksByPlayerId[playerId];
+        if (!championId || usedChampionIds.has(championId)) return false;
+        return roleSlotFromRole(role) === slot;
+      });
+      if (fromMatchingRole) {
+        const championId = picksByPlayerId[fromMatchingRole[0]];
+        if (championId) {
+          mapped[slotKey] = championId;
+          usedChampionIds.add(championId);
+          continue;
+        }
+      }
+
+      const fallbackPick = deterministicDraftOrder.find(([, championId]) => !usedChampionIds.has(championId));
+      if (fallbackPick?.[1]) {
+        mapped[slotKey] = fallbackPick[1];
+        usedChampionIds.add(fallbackPick[1]);
+      }
+    }
+  };
+
+  fillTeamSlots("blue", championSelections.home, championSelections.homeRoles ?? {});
+  fillTeamSlots("red", championSelections.away, championSelections.awayRoles ?? {});
+
+  return mapped;
+}
+
+function buildFallbackChampionByUnitId(
+  units: Array<{ id: string; team: string; role: string }>,
+  championByPlayerId: Record<string, string>,
+): Record<string, string> {
+  const orderedSlots: Array<"top" | "jgl" | "mid" | "adc" | "sup"> = ["top", "jgl", "mid", "adc", "sup"];
+  const byUnit: Record<string, string> = {};
+  const unitsByTeam: Record<string, Array<{ id: string; role: string }>> = { blue: [], red: [] };
+  units.forEach((unit) => {
+    const team = unit.team === "red" ? "red" : "blue";
+    unitsByTeam[team].push({ id: unit.id, role: unit.role });
+  });
+
+  (["blue", "red"] as const).forEach((team) => {
+    const usedChampionIds = new Set<string>();
+    const teamUnits = [...(unitsByTeam[team] ?? [])].sort((a, b) => a.id.localeCompare(b.id));
+    teamUnits.forEach((unit, index) => {
+      const roleSlot = roleSlotFromRole(unit.role);
+      const roleChampion = championByPlayerId[`${team}-${roleSlot}`];
+      if (roleChampion && !usedChampionIds.has(roleChampion)) {
+        byUnit[unit.id] = roleChampion;
+        usedChampionIds.add(roleChampion);
+        return;
+      }
+      const indexSlot = orderedSlots[index] ?? "sup";
+      const indexedChampion = championByPlayerId[`${team}-${indexSlot}`];
+      if (indexedChampion && !usedChampionIds.has(indexedChampion)) {
+        byUnit[unit.id] = indexedChampion;
+        usedChampionIds.add(indexedChampion);
+      }
+    });
+  });
+
+  return byUnit;
+}
+
+export const __testables = {
+  mapV3ResponseToV1RuntimeState,
+  buildV3ChampionByPlayerId,
+};
+
 function normalizeChampionLookupKey(value: string | null | undefined): string {
   return (value ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 }
@@ -415,6 +901,9 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
       ...championSelections.home,
       ...championSelections.away,
     };
+  }, [championSelections]);
+  const v3ChampionByPlayerId = useMemo<Record<string, string>>(() => {
+    return buildV3ChampionByPlayerId(championSelections);
   }, [championSelections]);
   const [championProfilesById, setChampionProfilesById] = useState<Record<string, ChampionCombatProfile>>({});
   const [championUltimatesById, setChampionUltimatesById] = useState<Record<string, LolChampionUltimateProfile>>({});
@@ -598,7 +1087,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simRef = useRef<PrototypeSimulation | null>(null);
-  const backendClientRef = useRef<LolSimV2Client | null>(null);
+  const backendClientRef = useRef<LolSimV2Client | LolSimV3Client | null>(null);
   const backendStateRef = useRef<LolSimV1RuntimeState | null>(null);
   const backendTickInFlightRef = useRef(false);
   const backendPendingDtRef = useRef(0);
@@ -613,7 +1102,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
   });
 
   const currentState = (): LolSimV1RuntimeState | null => {
-    if (USE_RUST_SIM_V2 && backendStateRef.current) return backendStateRef.current;
+    if (USE_RUST_SIM_BACKEND && backendStateRef.current) return backendStateRef.current;
     return simRef.current ? withRuntimeSpeed(simRef.current.state) : null;
   };
 
@@ -627,26 +1116,42 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
     goldDiffTimelineRef.current = [{ minute: 0, diff: 0 }];
     finishedRef.current = false;
 
-    if (!USE_RUST_SIM_V2) return;
+    if (!USE_RUST_SIM_BACKEND) return;
 
-    const client = new LolSimV2Client();
+    const client = LOL_SIM_BACKEND_MODE === "v3" ? new LolSimV3Client() : new LolSimV2Client();
     backendClientRef.current = client;
     let disposed = false;
 
-    void client
-      .init({
-        seed,
-        aiMode,
-        policy: simPolicy,
-        snapshot,
-        championByPlayerId,
-        championProfilesById,
-        championUltimatesById,
-        initialState: { ...tsSim.state, speed },
-      })
+    const backendAny = client as unknown as {
+      init: (request: Record<string, unknown>) => Promise<unknown>;
+      dispose: () => Promise<unknown>;
+    };
+
+    void backendAny
+      .init(
+        LOL_SIM_BACKEND_MODE === "v3"
+          ? {
+            seed,
+            snapshot,
+            championByPlayerId: v3ChampionByPlayerId,
+            tickDtSec: 0.1,
+          } as Record<string, unknown>
+          : {
+            seed,
+            aiMode,
+            policy: simPolicy,
+            snapshot,
+            championByPlayerId,
+            championProfilesById,
+            championUltimatesById,
+            initialState: { ...tsSim.state, speed },
+          } as Record<string, unknown>,
+      )
       .then((response) => {
         if (disposed || backendClientRef.current !== client) return;
-        backendStateRef.current = response.state;
+        backendStateRef.current = LOL_SIM_BACKEND_MODE === "v3"
+          ? mapV3ResponseToV1RuntimeState(response as LolSimV3TickResponse, v3ChampionByPlayerId)
+          : (response as { state: LolSimV1RuntimeState }).state;
       })
       .catch(() => {
         if (disposed || backendClientRef.current !== client) return;
@@ -663,9 +1168,9 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
         backendTickInFlightRef.current = false;
         backendPendingDtRef.current = 0;
       }
-      void client.dispose().catch(() => undefined);
+      void backendAny.dispose().catch(() => undefined);
     };
-  }, [aiMode, nav, seed, simPolicy, snapshot, championByPlayerId, championProfilesById, championUltimatesById]);
+  }, [aiMode, nav, seed, simPolicy, snapshot, championByPlayerId, v3ChampionByPlayerId, championProfilesById, championUltimatesById]);
 
   useEffect(() => {
     const loop = (ts: number) => {
@@ -679,7 +1184,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
 
       sim.setRunning(running);
 
-      const backendClient = USE_RUST_SIM_V2 ? backendClientRef.current : null;
+      const backendClient = USE_RUST_SIM_BACKEND ? backendClientRef.current : null;
       if (isSkipping) {
         // While skip-to-end is running, avoid sending background tick requests.
         backendPendingDtRef.current = 0;
@@ -690,11 +1195,20 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
           backendTickInFlightRef.current = true;
           const dtForBackend = Math.min(0.05, backendPendingDtRef.current);
           backendPendingDtRef.current = Math.max(0, backendPendingDtRef.current - dtForBackend);
-          void backendClient
-            .tick({ dtSec: dtForBackend, running, speed })
+          const backendAny = backendClient as unknown as {
+            tick: (request: Record<string, unknown>) => Promise<unknown>;
+          };
+          void backendAny
+            .tick(
+              LOL_SIM_BACKEND_MODE === "v3"
+                ? { running, steps: Math.max(1, Math.round((dtForBackend / 0.1) * speed)) }
+                : { dtSec: dtForBackend, running, speed },
+            )
             .then((response) => {
               if (backendClientRef.current !== backendClient) return;
-              backendStateRef.current = response.state;
+              backendStateRef.current = LOL_SIM_BACKEND_MODE === "v3"
+                ? mapV3ResponseToV1RuntimeState(response as LolSimV3TickResponse, v3ChampionByPlayerId)
+                : (response as { state: LolSimV1RuntimeState }).state;
             })
             .catch(() => {
               if (backendClientRef.current !== backendClient) return;
@@ -906,14 +1420,23 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
 
     sim.reset(nextSeed);
 
-    const backendClient = USE_RUST_SIM_V2 ? backendClientRef.current : null;
+    const backendClient = USE_RUST_SIM_BACKEND ? backendClientRef.current : null;
     if (backendClient && backendStateRef.current) {
       backendTickInFlightRef.current = false;
-      void backendClient
-        .reset({ seed: nextSeed, aiMode, policy: simPolicy, initialState: { ...sim.state, speed } })
+      const backendAny = backendClient as unknown as {
+        reset: (request: Record<string, unknown>) => Promise<unknown>;
+      };
+      void backendAny
+        .reset(
+          LOL_SIM_BACKEND_MODE === "v3"
+            ? { seed: nextSeed, tickDtSec: 0.1 }
+            : { seed: nextSeed, aiMode, policy: simPolicy, initialState: { ...sim.state, speed } },
+        )
         .then((response) => {
           if (backendClientRef.current !== backendClient) return;
-          backendStateRef.current = response.state;
+          backendStateRef.current = LOL_SIM_BACKEND_MODE === "v3"
+            ? mapV3ResponseToV1RuntimeState(response as LolSimV3TickResponse, v3ChampionByPlayerId)
+            : (response as { state: LolSimV1RuntimeState }).state;
           setTick((v) => v + 1);
         })
         .catch(() => {

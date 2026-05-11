@@ -169,7 +169,12 @@ function SidePane({ champion, team, championByPlayerId, timeSec }: {
   timeSec: number;
 }) {
   const red = team === "red";
-  const icon = championIconUrl(champion && championByPlayerId ? championByPlayerId[champion.id] : undefined);
+  const runtimeChampion = champion as (ChampionState & { championId?: string; champion_id?: string }) | undefined;
+  const runtimeChampionId = runtimeChampion?.championId ?? runtimeChampion?.champion_id;
+  const mappedChampionId = champion && championByPlayerId
+    ? (championByPlayerId[champion.id] ?? championByPlayerId[champion.name])
+    : undefined;
+  const icon = championIconUrl(runtimeChampionId || mappedChampionId);
   const hpBase = champion && champion.maxHp > 0 ? Math.max(0, Math.min(1, champion.hp / champion.maxHp)) : 0;
   const hp = champion && !champion.alive ? 0 : hpBase;
   const mp = manaRatio(champion);

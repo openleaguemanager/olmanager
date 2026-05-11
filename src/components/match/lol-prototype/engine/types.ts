@@ -17,11 +17,19 @@ export interface UltimateState {
   archetype: string;
   icon: string;
   cdUntil: number;
+  technicalPrimitive?: string | null;
+  signatureId?: string | null;
+  visualEventId?: string | null;
+  gameplayTags?: string[];
+  semanticEffects?: string[];
+  ultimateIdentity?: Record<string, unknown> | null;
 }
 
 export interface ChampionState {
   id: string;
   name: string;
+  championId?: string;
+  champion_id?: string;
   team: TeamId;
   role: RoleId;
   lane: LaneId;
@@ -190,6 +198,7 @@ export interface SimEvent {
     | "spawn"
     | "recall"
     | "info";
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface MatchState {

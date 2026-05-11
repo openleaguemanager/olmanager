@@ -7,6 +7,7 @@ pub fn push_event(events: &mut Vec<RuntimeEvent>, at: f64, text: &str, kind: &st
         t: at,
         text: text.to_string(),
         kind: kind.to_string(),
+        metadata: None,
     });
 
     if events.len() > EVENT_CAP {
@@ -22,6 +23,31 @@ pub fn log_event(runtime: &mut RuntimeState, text: &str, kind: &str) {
         return;
     }
     push_event(&mut runtime.events, runtime.time_sec, text, kind);
+}
+
+pub fn log_event_with_metadata(
+    runtime: &mut RuntimeState,
+    text: &str,
+    kind: &str,
+    metadata: Value,
+) {
+    if runtime_is_skip_fast_mode(runtime)
+        && !matches!(kind, "kill" | "tower" | "dragon" | "baron" | "nexus")
+    {
+        return;
+    }
+
+    runtime.events.push(RuntimeEvent {
+        t: runtime.time_sec,
+        text: text.to_string(),
+        kind: kind.to_string(),
+        metadata: Some(metadata),
+    });
+
+    if runtime.events.len() > EVENT_CAP {
+        let drain = runtime.events.len() - EVENT_CAP;
+        runtime.events.drain(0..drain);
+    }
 }
 
 fn runtime_is_skip_fast_mode(runtime: &RuntimeState) -> bool {
