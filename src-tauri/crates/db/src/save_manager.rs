@@ -1163,7 +1163,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_game_cleans_stale_league_rows() {
+    fn test_load_game_ignores_stale_competition_data() {
         let dir = tempfile::tempdir().unwrap();
         let saves_dir = dir.path().join("saves");
 
@@ -1172,18 +1172,19 @@ mod tests {
         let save_id = sm.create_save(&game, "League Cleanup Career").unwrap();
         let db_path = saves_dir.join(format!("{}.db", save_id));
 
+        // Insert stale data into the normalized tables with a different competition_id
         {
             let db = GameDatabase::open(&db_path).unwrap();
             db.conn()
                 .execute(
-                    "INSERT INTO league (id, name, season) VALUES (?1, ?2, ?3)",
-                    rusqlite::params!["league-stale", "Premier Division", 2026],
+                    "INSERT OR IGNORE INTO competitions (id, name, region, tier) VALUES (?1, ?2, '', 1)",
+                    rusqlite::params!["league-stale", "Premier Division"],
                 )
                 .unwrap();
             db.conn()
                 .execute(
-                    "INSERT INTO fixtures (id, league_id, matchday, date, home_team_id, away_team_id, status, result)
-                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+                    "INSERT INTO fixtures (id, league_id, matchday, date, home_team_id, away_team_id, competition, status, result, competition_id)
+                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
                     rusqlite::params![
                         "fix-stale",
                         "league-stale",
@@ -1191,8 +1192,10 @@ mod tests {
                         "2026-08-15",
                         "team-001",
                         "team-002",
+                        "League",
                         "Completed",
                         None::<String>,
+                        "league-stale",
                     ],
                 )
                 .unwrap();
@@ -1201,23 +1204,11 @@ mod tests {
         let loaded = sm.load_game(&save_id).unwrap();
         let loaded_league = loaded.league.expect("league should load");
 
+        // Stale data exists in the DB but load_league only returns the active competition
         assert_eq!(loaded_league.id, "league-current");
         assert_eq!(loaded_league.season, 2027);
         assert_eq!(loaded_league.fixtures.len(), 1);
         assert_eq!(loaded_league.fixtures[0].id, "fix-current");
-
-        let db = GameDatabase::open(&db_path).unwrap();
-        let league_count: i64 = db
-            .conn()
-            .query_row("SELECT COUNT(*) FROM league", [], |row| row.get(0))
-            .unwrap();
-        let fixture_count: i64 = db
-            .conn()
-            .query_row("SELECT COUNT(*) FROM fixtures", [], |row| row.get(0))
-            .unwrap();
-
-        assert_eq!(league_count, 1);
-        assert_eq!(fixture_count, 1);
     }
 
     #[test]
