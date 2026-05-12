@@ -106,24 +106,6 @@ impl Default for ChampionPatchState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SeedPlayer {
-    ign: String,
-    champions: Vec<(String, u8)>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct SeedRoot {
-    data: SeedData,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct SeedData {
-    rostered_seeds: Vec<SeedPlayer>,
-    #[serde(default)]
-    free_agent_seeds: Vec<SeedPlayer>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ChampionCatalogRoot {
     data: ChampionCatalogData,
 }
@@ -141,8 +123,6 @@ struct WorkingMeta {
 }
 
 static CHAMPION_CATALOG: OnceLock<Vec<(String, String)>> = OnceLock::new();
-static PLAYER_MASTERY_SEED: OnceLock<Vec<SeedPlayer>> = OnceLock::new();
-
 fn default_meta_tier() -> String {
     "C".to_string()
 }
@@ -317,7 +297,7 @@ fn tier_map_from_working(working: &[WorkingMeta]) -> HashMap<String, String> {
 
 fn champion_catalog() -> &'static Vec<(String, String)> {
     CHAMPION_CATALOG.get_or_init(|| {
-        let raw = include_str!("../../../../data/lec/draft/champions.json");
+        let raw = include_str!("../../../../data/draft/champions.json");
         let parsed: ChampionCatalogRoot =
             serde_json::from_str(raw).unwrap_or(ChampionCatalogRoot {
                 data: ChampionCatalogData {
@@ -344,19 +324,6 @@ fn champion_catalog() -> &'static Vec<(String, String)> {
         }
 
         entries
-    })
-}
-
-fn seed_players() -> &'static Vec<SeedPlayer> {
-    PLAYER_MASTERY_SEED.get_or_init(|| {
-        let raw = include_str!("../../../../data/lec/draft/players.json");
-        serde_json::from_str::<SeedRoot>(raw)
-            .map(|root| {
-                let mut all = root.data.rostered_seeds;
-                all.extend(root.data.free_agent_seeds);
-                all
-            })
-            .unwrap_or_default()
     })
 }
 
@@ -390,30 +357,10 @@ fn upsert_mastery(game: &mut Game, player_id: &str, champion_id: &str, value: u8
     });
 }
 
-pub fn bootstrap_seed_masteries(game: &mut Game) {
-    if !game.champion_masteries.is_empty() {
-        return;
-    }
-
-    let players = seed_players();
-    let game_players: Vec<(String, String)> = game
-        .players
-        .iter()
-        .map(|player| (player.id.clone(), player.match_name.clone()))
-        .collect();
-
-    for (player_id, match_name) in game_players {
-        let Some(seed) = players
-            .iter()
-            .find(|candidate| normalize_key(&candidate.ign) == normalize_key(&match_name))
-        else {
-            continue;
-        };
-
-        for (champion, mastery) in &seed.champions {
-            upsert_mastery(game, &player_id, champion, (*mastery).max(MIN_MASTERY));
-        }
-    }
+pub fn bootstrap_seed_masteries(_game: &mut Game) {
+    // Champion mastery seeding from legacy files is disabled.
+    // Mastery starts empty and accumulates during gameplay.
+    // Existing masteries from saves (Flow C) are preserved.
 }
 
 fn ensure_patch_seed(state: &mut ChampionPatchState) {
@@ -567,18 +514,6 @@ pub fn set_player_training_target(
         player.champion_training_targets.resize(3, String::new());
     }
 
-    // Backward compatibility: if legacy single-target exists and new slots are empty,
-    // migrate it to priority slot 1.
-    if player
-        .champion_training_targets
-        .iter()
-        .all(|slot| slot.is_empty())
-        && let Some(legacy) = player.champion_training_target.clone()
-        && !legacy.trim().is_empty()
-    {
-        player.champion_training_targets[0] = legacy;
-    }
-
     if let Some(champion) = champion_id.clone() {
         let normalized = normalize_key(&champion);
         // Remove duplicates from other slots before setting the requested priority.
@@ -603,12 +538,6 @@ pub fn set_player_training_target(
     player.champion_training_targets = compacted;
     player.champion_training_targets.resize(3, String::new());
 
-    player.champion_training_target = player
-        .champion_training_targets
-        .iter()
-        .find(|slot| !slot.trim().is_empty())
-        .cloned();
-
     if let Some(champion) = champion_id {
         let current = mastery_for_player_champion(game, player_id, &champion);
         upsert_mastery(game, player_id, &champion, current.max(MIN_MASTERY));
@@ -623,13 +552,6 @@ pub fn training_targets_for_player(player: &domain::player::Player) -> Vec<Strin
         .filter(|slot| !slot.trim().is_empty())
         .cloned()
         .collect();
-
-    if targets.is_empty()
-        && let Some(legacy) = player.champion_training_target.clone()
-        && !legacy.trim().is_empty()
-    {
-        targets.push(legacy);
-    }
 
     targets.truncate(3);
     targets
@@ -756,11 +678,6 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
         player.champion_training_targets.extend(selected);
         player.champion_training_targets.truncate(3);
         player.champion_training_targets.resize(3, String::new());
-        player.champion_training_target = player
-            .champion_training_targets
-            .iter()
-            .find(|slot| !slot.trim().is_empty())
-            .cloned();
     }
 }
 
@@ -916,11 +833,6 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
         let old_targets = player.champion_training_targets.clone();
         player.champion_training_targets = targets.clone();
         player.champion_training_targets.resize(3, String::new());
-        player.champion_training_target = player
-            .champion_training_targets
-            .iter()
-            .find(|slot| !slot.trim().is_empty())
-            .cloned();
 
         if old_targets != player.champion_training_targets {
             updated_count += 1;

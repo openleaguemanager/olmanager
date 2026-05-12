@@ -20,7 +20,6 @@ pub struct SeasonAwards {
     pub golden_boot: Vec<AwardEntry>,      // Top scorers
     pub assist_king: Vec<AwardEntry>,      // Top assists
     pub player_of_year: Vec<AwardEntry>,   // Best avg rating (min 5 apps)
-    pub clean_sheet_king: Vec<AwardEntry>, // Most clean sheets (GKs only)
     pub most_appearances: Vec<AwardEntry>,
     pub young_player: Vec<AwardEntry>, // Best avg rating, age <= 21
 }
@@ -133,15 +132,6 @@ pub fn compute_season_awards(game: &Game) -> SeasonAwards {
         |context| context.player.stats.avg_rating as f64,
     );
 
-    // Clean Sheet King — Supports only (in LoL, supports protect the base)
-    let clean_sheet_king = top_awards(
-        &contexts,
-        |context| {
-            context.player.position == LolRole::Support && context.player.stats.clean_sheets > 0
-        },
-        |context| context.player.stats.clean_sheets as f64,
-    );
-
     // Most Appearances
     let most_appearances = top_awards(
         &contexts,
@@ -164,7 +154,6 @@ pub fn compute_season_awards(game: &Game) -> SeasonAwards {
         golden_boot,
         assist_king,
         player_of_year,
-        clean_sheet_king,
         most_appearances,
         young_player,
     }
@@ -184,25 +173,15 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
-            mental_resilience: 60,
-            strength: 60,
-            champion_pool: 60,
-            passing: 60,
-            laning: 60,
-            tackling: 60,
             mechanics: 60,
-            defending: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
-            handling: 60,
-            reflexes: 60,
-            aerial: 60,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 
@@ -446,59 +425,4 @@ mod tests {
         assert_eq!(young_player_ids, vec!["young-four-apps", "young-eligible"]);
     }
 
-    #[test]
-    fn clean_sheet_king_only_counts_goalkeepers_and_uses_free_agent_fallback() {
-        let team = make_team("team1", "Test FC");
-        let players = vec![
-            make_player(
-                "team-gk",
-                "Team Keeper",
-                Some("team1"),
-                LolRole::Support,
-                "1998-01-01",
-                PlayerSeasonStats {
-                    appearances: 10,
-                    clean_sheets: 8,
-                    ..PlayerSeasonStats::default()
-                },
-            ),
-            make_player(
-                "free-agent-gk",
-                "Free Agent Keeper",
-                None,
-                LolRole::Support,
-                "1996-01-01",
-                PlayerSeasonStats {
-                    appearances: 9,
-                    clean_sheets: 9,
-                    ..PlayerSeasonStats::default()
-                },
-            ),
-            make_player(
-                "defender",
-                "Defender",
-                Some("team1"),
-                LolRole::Top,
-                "1999-01-01",
-                PlayerSeasonStats {
-                    appearances: 12,
-                    clean_sheets: 12,
-                    ..PlayerSeasonStats::default()
-                },
-            ),
-        ];
-
-        let awards = compute_season_awards(&make_game(players, vec![team]));
-
-        assert_eq!(awards.clean_sheet_king.len(), 2);
-        assert_eq!(awards.clean_sheet_king[0].player_id, "free-agent-gk");
-        assert_eq!(awards.clean_sheet_king[0].team_id, "");
-        assert_eq!(awards.clean_sheet_king[0].team_name, "Free Agent");
-        assert!(
-            awards
-                .clean_sheet_king
-                .iter()
-                .all(|entry| entry.player_id != "defender")
-        );
-    }
 }

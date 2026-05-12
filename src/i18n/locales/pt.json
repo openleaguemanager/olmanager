@@ -713,7 +713,6 @@
   },
   "tactics": {
     "formationStyle": "Plano de Jogo & Estilo",
-    "formation": "Plano de Jogo",
     "playStyle": "Estilo de Jogo",
     "lineupTab": "Alineação",
     "rolesTab": "Objetivos & Funções",
@@ -725,7 +724,7 @@
     "noStartersForRoles": "Define a tua equipa titular para atribuir funções da equipa e objetivos.",
     "startingXI": "Cinco Inicial",
     "fullSquad": "Plantel Completo",
-    "pitchInteractionHint": "Arrasta jogadores entre a Rift e o banco, clica num jogador para o analisar, clica num segundo para os comparar e depois confirma a troca no painel de comparação.",
+    "riftInteractionHint": "Arrasta jogadores entre a Rift e o banco, clica num jogador para o analisar, clica num segundo para os comparar e depois confirma a troca no painel de comparação.",
     "selectedPlayer": "Jogador selecionado",
     "comparePlayer": "Jogador de comparação",
     "selectSecondPlayer": "Seleciona um segundo jogador na vista da escalação para comparar atributos e preparar a troca.",
@@ -1299,7 +1298,7 @@
   "schedule": {
     "noSchedule": "Nenhum calendário de liga disponível.",
     "noLeague": "Nenhum calendário de liga disponível.",
-    "fixtures": "Jogos",
+    "matches": "Jogos",
     "calendar": "Calendário",
     "today": "Hoje",
     "previousMonth": "Mês anterior",
@@ -1598,7 +1597,7 @@
     "upToDate": "Tens a versão mais recente"
   },
   "preMatch": {
-    "formationFit": "Ajuste da Estratégia",
+    "roleCoverage": "Ajuste da Estratégia",
     "autoSelect": "Selecionar Melhor Cinco",
     "selecting": "A selecionar...",
     "startingXI": "Cinco Inicial",
@@ -1676,7 +1675,6 @@
     "step1Min": "Avançar 1 Minuto",
     "teamControls": "Controlos da Equipa",
     "subs": "Substituições",
-    "formation": "Plano de Jogo",
     "playStyle": "Estilo de Jogo",
     "keyEvents": "Eventos-Chave",
     "noEventsYet": "O jogo ainda não começou.",
@@ -2145,7 +2143,7 @@
     "preMatchPrep": "Preparação Pré-Jogo",
     "startingLineup": "Quinteto Titular",
     "setPiecesCaptain": "Objetivos e Líder",
-    "formationFit": "Ajuste de Estratégia",
+    "roleCoverage": "Ajuste de Estratégia",
     "selecting": "A selecionar...",
     "autoSelectXI": "Auto-Selecionar Melhor Cinco",
     "startingXI": "Cinco Titular",
@@ -2253,7 +2251,7 @@
     },
     "source": {
       "sportsGazette": "Esports Gazette",
-      "footballHerald": "The Rift Herald",
+      "lolEsports": "The Rift Herald",
       "matchDayPress": "Matchday Desk",
       "leagueChronicle": "League Pulse",
       "leagueWire": "Rift Wire",

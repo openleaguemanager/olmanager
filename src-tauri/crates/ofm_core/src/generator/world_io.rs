@@ -1,5 +1,13 @@
 use super::definitions::{WorldData, WorldDatabaseInfo};
 
+/// Convert a team name to a filesystem-safe slug for logo lookup.
+fn team_name_to_logo_slug(name: &str) -> String {
+    name.to_lowercase()
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .collect()
+}
+
 /// Generate a random world and wrap it in a `WorldData`.
 /// If `data_dir` is provided, tries to load definition files from that directory.
 pub fn generate_world_data(data_dir: Option<&std::path::Path>) -> WorldData {
@@ -26,6 +34,13 @@ pub fn generate_world_data(data_dir: Option<&std::path::Path>) -> WorldData {
 pub fn load_world_from_json(json: &str) -> Result<WorldData, String> {
     let mut world: WorldData =
         serde_json::from_str(json).map_err(|e| format!("Failed to parse world database: {}", e))?;
+    for team in &mut world.teams {
+        // Populate logo_url if missing
+        if team.logo_url.is_none() {
+            let slug = team_name_to_logo_slug(&team.name);
+            team.logo_url = Some(format!("/teams-icons/{}.webp", slug));
+        }
+    }
     crate::identity_upgrade::upgrade_world_football_identities(
         &mut world.teams,
         &mut world.players,
@@ -109,8 +124,7 @@ mod tests {
                             "transfer_budget": 250000,
                             "season_income": 0,
                             "season_expenses": 0,
-                            "formation": "4-4-2",
-                            "play_style": "Balanced",
+                            "draft_strategy": "Balanced",
                             "training_focus": "Scrims",
                             "training_intensity": "Medium",
                             "training_schedule": "Balanced",
@@ -169,10 +183,10 @@ mod tests {
     }
 
     #[test]
-    fn active_lec_world_seed_does_not_contain_football_nation() {
-        let json = include_str!("../../../../databases/lec_world.json");
+    fn active_world_seed_does_not_contain_football_nation() {
+        let json = include_str!("../../../../databases/world.json");
 
-        // Assert: active seed data must NOT contain football_nation keys
+        // Assert: active seed data must NOT contain legacy football_nation keys
         assert!(
             !json.contains("football_nation"),
             "Active LEC world seed should not contain legacy 'football_nation' field"

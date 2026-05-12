@@ -54,7 +54,6 @@ pub fn hire_manager(game: &mut Game, team_id: &str, date: &str) -> Result<String
         end_date: None,
         matches: 0,
         wins: 0,
-        draws: 0,
         losses: 0,
         best_league_position: None,
     });

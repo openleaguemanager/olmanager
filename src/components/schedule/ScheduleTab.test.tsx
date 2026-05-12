@@ -15,7 +15,7 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, params?: Record<string, string | number>) => {
       if (key === "schedule.noLeague") return "No league";
-      if (key === "schedule.fixtures") return "Fixtures";
+      if (key === "schedule.matches") return "Fixtures";
       if (key === "schedule.standings") return "Standings";
       if (key === "common.team") return "Team";
       if (key === "common.played") return "P";
@@ -56,8 +56,7 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     transfer_budget: 250000,
     season_income: 0,
     season_expenses: 0,
-    formation: "4-4-2",
-    play_style: "Balanced",
+    draft_strategy: "Balanced",
     training_focus: "General",
     training_intensity: "Balanced",
     training_schedule: "Balanced",
@@ -108,7 +107,6 @@ function createGameState(withLeague: boolean): GameStateData {
       career_stats: {
         matches_managed: 0,
         wins: 0,
-        draws: 0,
         losses: 0,
         trophies: 0,
         best_finish: null,
@@ -134,20 +132,18 @@ function createGameState(withLeague: boolean): GameStateData {
               team_id: "team-1",
               played: 1,
               won: 1,
-              drawn: 0,
-              lost: 0,
-              goals_for: 2,
-              goals_against: 1,
+          lost: 0,
+          maps_won: 2,
+          maps_lost: 1,
               points: 3,
             },
             {
               team_id: "team-2",
               played: 1,
               won: 0,
-              drawn: 0,
-              lost: 1,
-              goals_for: 1,
-              goals_against: 2,
+          lost: 1,
+          maps_won: 1,
+          maps_lost: 2,
               points: 0,
             },
           ],
@@ -195,7 +191,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffFixture],
           },
         }}
@@ -236,7 +232,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffFixture],
           },
         }}
@@ -269,7 +265,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffRoundOne, playoffRoundTwo],
           },
         }}
@@ -304,7 +300,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [friendlyOne, friendlyTwo],
           },
         }}
@@ -344,7 +340,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffFixture],
           },
         }}

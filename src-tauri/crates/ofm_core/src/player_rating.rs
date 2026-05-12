@@ -1,22 +1,15 @@
 use domain::player::{LolRole, Player};
 
 /// Returns the 5 starting positions for a team in LoL format.
-/// In LoL, the formation is always 5 players: Top, Jungle, Mid, ADC, Support
-pub fn formation_slots(_formation: &str) -> Vec<LolRole> {
-    // LoL always uses 5 roles - ignore formation string for now
-    // TODO: Implement proper LoL team composition
+/// In LoL, the lineup is always 5 players: Top, Jungle, Mid, ADC, Support
+pub fn position_slots() -> Vec<LolRole> {
     vec![
-        LolRole::Top,     // Top lane
-        LolRole::Jungle,  // Jungle
-        LolRole::Mid,     // Mid lane
-        LolRole::Adc,     // ADC (Bot lane carry)
-        LolRole::Support, // Support
+        LolRole::Top,
+        LolRole::Jungle,
+        LolRole::Mid,
+        LolRole::Adc,
+        LolRole::Support,
     ]
-}
-
-fn formation_slot_rows(formation: &str) -> Vec<Vec<LolRole>> {
-    let slots = formation_slots(formation);
-    vec![slots]
 }
 
 /// Calculate overall rating for a player at a specific LolRole
@@ -152,7 +145,7 @@ enum Side {
 }
 
 fn slot_side(_role: &LolRole) -> Option<Side> {
-    // In LoL, there's no left/right distinction like football
+    // In LoL, there's no left/right distinction (unlike traditional sports)
     None
 }
 
@@ -169,25 +162,15 @@ mod tests {
 
     fn make_player(role: LolRole) -> Player {
         let attrs = PlayerAttributes {
-            pace: 70,
-            mental_resilience: 75,
-            strength: 65,
-            champion_pool: 72,
-            passing: 80,
-            laning: 60,
-            tackling: 55,
             mechanics: 68,
-            defending: 50,
-            positioning: 65,
+            laning: 60,
+            teamfighting: 80,
             macro_play: 78,
             consistency: 70,
-            discipline: 60,
-            aggression: 55,
-            teamfighting: 80,
             shotcalling: 45,
-            handling: 20,
-            reflexes: 25,
-            aerial: 40,
+            champion_pool: 72,
+            discipline: 60,
+            mental_resilience: 75,
         };
         Player::new(
             "test-1".to_string(),
@@ -201,8 +184,8 @@ mod tests {
     }
 
     #[test]
-    fn formation_slots_returns_five_roles() {
-        let slots = formation_slots("any-formation");
+    fn position_slots_returns_five_roles() {
+        let slots = position_slots();
         assert_eq!(slots.len(), 5);
         assert_eq!(
             slots,

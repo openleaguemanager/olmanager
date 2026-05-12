@@ -147,8 +147,7 @@ export interface TeamData {
   season_income: number;
   season_expenses: number;
   installations?: FacilitiesData;
-  formation: string;
-  play_style: string;
+  draft_strategy: string;
   lol_tactics?: LolTacticsData;
   training_focus: string;
   training_intensity: string;
@@ -156,6 +155,9 @@ export interface TeamData {
   weekly_scrim_opponent_ids?: string[];
   weekly_scrim_plan_team_ids?: string[][];
   scrim_weekly_objective?: ScrimFocus | null;
+  logo_url?: string | null;
+  /** Competition/league this team belongs to (multi-league system). */
+  competition_id?: string | null;
   scrim_weekly_slots?: number;
   scrim_reputation?: number;
   scrim_weekly_cancellations?: number;
@@ -300,8 +302,9 @@ export interface CareerEntry {
   team_id: string;
   team_name: string;
   appearances: number;
-  goals: number;
+  kills: number;
   assists: number;
+  avg_rating: number;
 }
 
 export type PlayerAttributes = Record<string, number>;
@@ -319,8 +322,6 @@ export interface PlayerData {
   position: LolRole;
   natural_position: LolRole;
   alternate_positions: LolRole[];
-  footedness?: string;
-  weak_foot?: number;
   training_focus: string | null;
   attributes: PlayerAttributes;
   condition: number;
@@ -336,8 +337,6 @@ export interface PlayerData {
   loan_listed: boolean;
   transfer_offers: TransferOfferData[];
   traits: string[];
-  /** @deprecated Compatibility for old world editor forms. Use competitive_region/nationality_code. */
-  football_nation?: string;
   potential_base?: number;
   potential_revealed?: number | null;
   potential_research_started_on?: string | null;
@@ -563,7 +562,6 @@ export interface ManagerCareerStats {
   /** @deprecated Legacy test fixture alias. Use matches_managed. */
   matches?: number;
   wins: number;
-  draws?: number;
   losses: number;
   trophies: number;
   best_finish: number | null;
@@ -576,7 +574,6 @@ export interface ManagerCareerEntry {
   end_date: string | null;
   matches: number;
   wins: number;
-  draws: number;
   losses: number;
   best_league_position: number | null;
 }
@@ -616,12 +613,11 @@ export interface CompactMatchEventData {
 
 export interface CompactTeamMatchStatsData {
   possession_pct: number;
-  shots: number;
-  shots_on_target: number;
-  fouls: number;
-  corners: number;
-  yellow_cards: number;
-  red_cards: number;
+  kills: number;
+  deaths: number;
+  gold_earned: number;
+  damage_dealt: number;
+  objectives: number;
 }
 
 export interface CompactMatchReportData {
@@ -635,34 +631,73 @@ export interface StandingData {
   team_id: string;
   played: number;
   won: number;
-  drawn: number;
   lost: number;
+  maps_won?: number;
+  maps_lost?: number;
+  /** @deprecated Compatibility alias. Use maps_won. */
   kills_for?: number;
+  /** @deprecated Compatibility alias. Use maps_lost. */
   kills_against?: number;
-  /** @deprecated Compatibility alias while old fixture tests are migrated. Use kills_for. */
+  /** @deprecated Compatibility alias while old fixture tests are migrated. Use maps_won. */
   goals_for?: number;
-  /** @deprecated Compatibility alias while old fixture tests are migrated. Use kills_against. */
+  /** @deprecated Compatibility alias while old fixture tests are migrated. Use maps_lost. */
   goals_against?: number;
   points: number;
 }
 
+export function getStandingMapsWon(standing: StandingData): number {
+  return standing.maps_won ?? standing.kills_for ?? standing.goals_for ?? 0;
+}
+
+export function getStandingMapsLost(standing: StandingData): number {
+  return standing.maps_lost ?? standing.kills_against ?? standing.goals_against ?? 0;
+}
+
 export function getStandingKillsFor(standing: StandingData): number {
-  return standing.kills_for ?? standing.goals_for ?? 0;
+  return getStandingMapsWon(standing);
 }
 
 export function getStandingKillsAgainst(standing: StandingData): number {
-  return standing.kills_against ?? standing.goals_against ?? 0;
+  return getStandingMapsLost(standing);
 }
 
 export function getStandingKillDiff(standing: StandingData): number {
-  return getStandingKillsFor(standing) - getStandingKillsAgainst(standing);
+  return getStandingMapsWon(standing) - getStandingMapsLost(standing);
 }
+
+// ---------------------------------------------------------------------------
+// League/Competition selection types (multi-league system)
+// ---------------------------------------------------------------------------
+
+export interface CompetitionSummary {
+  id: string;
+  name: string;
+  region: string;
+  logo: string | null;
+  team_count: number;
+  teams: TeamSummary[];
+}
+
+export interface TeamSummary {
+  id: string;
+  name: string;
+  short_name: string;
+  logo_url: string | null;
+  country: string;
+  ovr: number | null;
+}
+
+export interface LeagueSelectionData {
+  competitions: CompetitionSummary[];
+}
+
+// ---------------------------------------------------------------------------
 
 export function compareStandingsByLolScore(left: StandingData, right: StandingData): number {
   return (
     right.points - left.points ||
     getStandingKillDiff(right) - getStandingKillDiff(left) ||
-    getStandingKillsFor(right) - getStandingKillsFor(left)
+    getStandingMapsWon(right) - getStandingMapsWon(left)
   );
 }
 
@@ -832,7 +867,8 @@ export interface GameStateData {
   social_posts?: SocialPostData[];
   social_accounts?: SocialAccountData[];
   social_templates?: SocialTemplateData[];
-  league: LeagueData | null;
+  /** Multi-league support. The first element is the player's active league. */
+  leagues: LeagueData[];
   academy_league?: LeagueData | null;
   scouting_assignments: ScoutingAssignment[];
   board_objectives: BoardObjective[];

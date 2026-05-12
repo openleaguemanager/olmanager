@@ -757,7 +757,6 @@
   },
   "tactics": {
     "formationStyle": "Plano de Jogo & Estilo",
-    "formation": "Plano de Jogo",
     "playStyle": "Estilo de Jogo",
     "lineupTab": "Escalação",
     "rolesTab": "Objetivos & Funções",
@@ -769,7 +768,7 @@
     "noStartersForRoles": "Defina sua escalação titular para atribuir funções do time e objetivos.",
     "startingXI": "Cinco Inicial",
     "fullSquad": "Elenco Completo",
-    "pitchInteractionHint": "Arraste jogadores entre a Rift e o banco, clique em um jogador para analisá-lo, clique em um segundo para compará-los e então confirme a troca no painel de comparação.",
+    "riftInteractionHint": "Arraste jogadores entre a Rift e o banco, clique em um jogador para analisá-lo, clique em um segundo para compará-los e então confirme a troca no painel de comparação.",
     "selectedPlayer": "Jogador selecionado",
     "comparePlayer": "Jogador de comparação",
     "selectSecondPlayer": "Selecione um segundo jogador na visão da escalação para comparar atributos e preparar a troca.",
@@ -1349,7 +1348,7 @@
   "schedule": {
     "noSchedule": "Nenhum calendário de liga disponível.",
     "noLeague": "Nenhum calendário de liga disponível.",
-    "fixtures": "Jogos",
+    "matches": "Jogos",
     "calendar": "Calendário",
     "today": "Hoje",
     "previousMonth": "Mês anterior",
@@ -1650,7 +1649,7 @@
     "upToDate": "Você está na versão mais recente"
   },
   "preMatch": {
-    "formationFit": "Ajuste da Estratégia",
+    "roleCoverage": "Ajuste da Estratégia",
     "autoSelect": "Selecionar Titulares Automaticamente",
     "selecting": "Selecionando...",
     "startingXI": "Titulares",
@@ -1687,7 +1686,6 @@
     "step1Min": "Avançar 1 Minuto",
     "teamControls": "Controles do Time",
     "subs": "Substituições",
-    "formation": "Plano de Jogo",
     "playStyle": "Estilo de Jogo",
     "keyEvents": "Eventos-Chave",
     "noEventsYet": "A partida ainda não começou.",
@@ -2156,7 +2154,7 @@
     "preMatchPrep": "Preparação Pré-Jogo",
     "startingLineup": "Escalação Titular",
     "setPiecesCaptain": "Objetivos e Líder",
-    "formationFit": "Ajuste da Estratégia",
+    "roleCoverage": "Ajuste da Estratégia",
     "selecting": "Selecionando...",
     "autoSelectXI": "Selecionar Melhores Titulares",
     "startingXI": "Titulares",
@@ -2305,7 +2303,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",

@@ -206,7 +206,7 @@ describe("MainMenu", () => {
             lastName: "Lovelace",
             dob: "1980-01-01",
             nationality: "ES",
-            worldSource: "lec-default",
+            worldSource: "default",
           }),
         );
       });
@@ -367,18 +367,15 @@ describe("MainMenu", () => {
         "start_new_game",
         expect.objectContaining({
           dob: "2010-06-15",
-          worldSource: "lec-default",
+          worldSource: "default",
         }),
       );
     });
   });
 
-  it("displays LoL-neutral logo without OpenFoot/OpenFootball branding", () => {
+  it("displays OLManager logo", () => {
     render(<MainMenu />);
 
-    const logo = screen.getByRole("img", { name: /league manager/i });
-    expect(logo).toBeInTheDocument();
-    expect(logo).toHaveAttribute("src", "/openfootlogo.svg");
-    expect(logo).toHaveAccessibleName("League Manager");
+    expect(screen.getByAltText("Open League Manager")).toBeInTheDocument();
   });
 });

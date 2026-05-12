@@ -44,17 +44,16 @@ pub fn upsert_league(conn: &Connection, league: &League) -> Result<(), String> {
 
     for s in &league.standings {
         conn.execute(
-            "INSERT INTO standings (league_id, team_id, played, won, drawn, lost, goals_for, goals_against, points)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+            "INSERT INTO standings (league_id, team_id, played, won, lost, goals_for, goals_against, points)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
             params![
                 league.id,
                 s.team_id,
                 s.played,
                 s.won,
-                s.drawn,
                 s.lost,
-                s.kills_for,
-                s.kills_against,
+                s.maps_won,
+                s.maps_lost,
                 s.points,
             ],
         )
@@ -138,7 +137,7 @@ pub fn load_league(conn: &Connection) -> Result<Option<League>, String> {
     // Load standings
     let mut stand_stmt = conn
         .prepare(
-            "SELECT team_id, played, won, drawn, lost, goals_for, goals_against, points
+            "SELECT team_id, played, won, lost, goals_for, goals_against, points
              FROM standings WHERE league_id = ?1",
         )
         .map_err(|e| format!("Failed to prepare standings query: {}", e))?;
@@ -149,11 +148,10 @@ pub fn load_league(conn: &Connection) -> Result<Option<League>, String> {
                 team_id: row.get(0)?,
                 played: row.get(1)?,
                 won: row.get(2)?,
-                drawn: row.get(3)?,
-                lost: row.get(4)?,
-                kills_for: row.get(5)?,
-                kills_against: row.get(6)?,
-                points: row.get(7)?,
+                lost: row.get(3)?,
+                maps_won: row.get(4)?,
+                maps_lost: row.get(5)?,
+                points: row.get(6)?,
             })
         })
         .map_err(|e| format!("Failed to query standings: {}", e))?;
@@ -169,6 +167,7 @@ pub fn load_league(conn: &Connection) -> Result<Option<League>, String> {
         season,
         fixtures,
         standings,
+        competition_id: None,
     }))
 }
 
@@ -224,6 +223,7 @@ mod tests {
             "Premier Division".to_string(),
             2026,
             &team_ids,
+            None,
         );
         league.fixtures = vec![
             Fixture {

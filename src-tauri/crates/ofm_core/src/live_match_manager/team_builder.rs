@@ -1,7 +1,7 @@
 use crate::game::Game;
 use crate::potential::calculate_lol_ovr;
 use domain::player::LolRole as DomainLolRole;
-use engine::{LolRole, PlayStyle, PlayerData, TeamData};
+use engine::{DraftStrategy, LolRole, PlayerData, TeamData};
 
 // ---------------------------------------------------------------------------
 // Domain → Engine conversion (LoL: 5 titulares + banca)
@@ -21,25 +21,24 @@ fn to_engine_role(role: DomainLolRole) -> LolRole {
 
 pub(super) fn build_team_with_bench(game: &Game, team_id: &str) -> (TeamData, Vec<PlayerData>) {
     let team = game.teams.iter().find(|t| t.id == team_id);
-    let (name, formation, play_style) = match team {
+    let (name, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
-            t.formation.clone(),
-            match t.play_style {
-                domain::team::PlayStyle::Attacking => PlayStyle::Attacking,
-                domain::team::PlayStyle::Defensive => PlayStyle::Defensive,
-                domain::team::PlayStyle::Possession => PlayStyle::Possession,
-                domain::team::PlayStyle::Counter => PlayStyle::Counter,
-                domain::team::PlayStyle::HighPress => PlayStyle::HighPress,
-                _ => PlayStyle::Balanced,
+            match t.draft_strategy {
+                domain::team::DraftStrategy::Aggressive => DraftStrategy::Aggressive,
+                domain::team::DraftStrategy::Passive => DraftStrategy::Passive,
+                domain::team::DraftStrategy::Scaling => DraftStrategy::Scaling,
+                domain::team::DraftStrategy::CounterPick => DraftStrategy::CounterPick,
+                domain::team::DraftStrategy::PriorityBans => DraftStrategy::PriorityBans,
+                _ => DraftStrategy::Balanced,
             },
         ),
-        None => ("Unknown".into(), "4-4-2".into(), PlayStyle::Balanced),
+        None => ("Unknown".into(), DraftStrategy::Balanced),
     };
 
     // Collect all players for this team.
-    // NOTE: For LoL/live prototype we should not apply football injury filtering,
-    // otherwise rosters can drop below 5 and UI shows empty player slots.
+    // NOTE: Do not apply legacy injury filtering — rosters must not drop below 5
+    // otherwise UI shows empty player slots.
     let available_players: Vec<&domain::player::Player> = game
         .players
         .iter()
@@ -106,8 +105,7 @@ pub(super) fn build_team_with_bench(game: &Game, team_id: &str) -> (TeamData, Ve
     let team_data = TeamData {
         id: team_id.to_string(),
         name,
-        formation,
-        play_style,
+        draft_strategy,
         players: starting_xi,
     };
 
@@ -167,14 +165,14 @@ pub fn auto_select_team_roles(
         .max_by_key(|p| (p.attributes.shotcalling as u16) + (p.attributes.teamfighting as u16))
         .map(|p| p.id.clone());
 
-    // Shotcaller: highest shooting + vision + passing (exclude Support)
+    // Shotcaller: highest laning + macro_play + coordination (exclude Support)
     let shotcaller = players
         .iter()
         .filter(|p| p.position != DomainLolRole::Support)
         .max_by_key(|p| {
             (p.attributes.laning as u16)
                 + (p.attributes.macro_play as u16)
-                + (p.attributes.passing as u16)
+                + (p.attributes.teamfighting as u16)
         })
         .map(|p| p.id.clone());
 

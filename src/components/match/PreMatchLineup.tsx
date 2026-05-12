@@ -91,16 +91,6 @@ const LOL_ROLE_ICON_URLS: Record<LolRole, string> = {
   SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
 };
 
-export function parseFormationNeeds(_formation: string): Record<string, number> {
-  return {
-    TOP: 1,
-    JUNGLE: 1,
-    MID: 1,
-    ADC: 1,
-    SUPPORT: 1,
-  };
-}
-
 interface PreMatchLineupProps {
   homeTeam: MatchSnapshot["home_team"];
   homeBench: EnginePlayerData[];
@@ -364,7 +354,7 @@ export default function PreMatchLineup({
       <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-3 flex items-center justify-between transition-colors duration-300">
         <div className="flex items-center gap-4">
           <span className="text-[10px] font-heading uppercase tracking-widest text-gray-700 dark:text-gray-500">
-            {t("match.formationFit")}
+            {t("match.roleCoverage")}
           </span>
           {LOL_ROLE_ORDER.map((role) => {
             const homeCount = homeTeam.players.filter((p) => getPlayerLolRole(p) === role).length;

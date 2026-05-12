@@ -42,8 +42,7 @@ const makePlayer = (overrides: Partial<EnginePlayerData> = {}): EnginePlayerData
 const makeTeam = (overrides: Partial<EngineTeamData> = {}): EngineTeamData => ({
   id: "team1",
   name: "Test FC",
-  formation: "4-4-2",
-  play_style: "Balanced",
+  draft_strategy: "Balanced",
   players: [],
   ...overrides,
 });

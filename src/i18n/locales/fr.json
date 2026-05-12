@@ -757,7 +757,6 @@
   },
   "tactics": {
     "formationStyle": "Plan de jeu & Style",
-    "formation": "Plan de jeu",
     "playStyle": "Style de jeu",
     "lineupTab": "Composition",
     "rolesTab": "Objectifs & Rôles",
@@ -769,7 +768,7 @@
     "noStartersForRoles": "Définissez votre équipe titulaire pour attribuer les rôles d'équipe et les objectifs.",
     "startingXI": "Cinq de Départ",
     "fullSquad": "Effectif complet",
-    "pitchInteractionHint": "Faites glisser les joueurs entre le Rift et le banc, cliquez sur un joueur pour l'inspecter, cliquez sur un second pour les comparer, puis confirmez l'échange dans le panneau de comparaison.",
+    "riftInteractionHint": "Faites glisser les joueurs entre le Rift et le banc, cliquez sur un joueur pour l'inspecter, cliquez sur un second pour les comparer, puis confirmez l'échange dans le panneau de comparaison.",
     "selectedPlayer": "Joueur sélectionné",
     "comparePlayer": "Joueur de comparaison",
     "selectSecondPlayer": "Sélectionnez un deuxième joueur dans la vue de composition pour comparer les attributs et préparer l'échange.",
@@ -1349,7 +1348,7 @@
   "schedule": {
     "noSchedule": "Aucun calendrier de ligue disponible.",
     "noLeague": "Aucun calendrier de ligue disponible.",
-    "fixtures": "Matchs",
+    "matches": "Matchs",
     "calendar": "Calendrier",
     "today": "Aujourd'hui",
     "previousMonth": "Mois précédent",
@@ -1650,7 +1649,7 @@
     "upToDate": "Vous êtes à jour"
   },
   "preMatch": {
-    "formationFit": "Ajustement Stratégie",
+    "roleCoverage": "Ajustement Stratégie",
     "autoSelect": "Sélection Auto du Cinq",
     "selecting": "Sélection...",
     "startingXI": "Cinq de Départ",
@@ -1728,7 +1727,6 @@
     "step1Min": "Avancer 1 Minute",
     "teamControls": "Contrôles d'Équipe",
     "subs": "Remplacements",
-    "formation": "Plan de jeu",
     "playStyle": "Style de Jeu",
     "keyEvents": "Événements Clés",
     "noEventsYet": "Le match n'a pas encore commencé.",
@@ -2197,7 +2195,7 @@
     "preMatchPrep": "Préparation d'Avant-Match",
     "startingLineup": "Composition de Départ",
     "setPiecesCaptain": "Coups de Pied Arrêtés et Capitaine",
-    "formationFit": "Ajustement de Formation",
+    "roleCoverage": "Ajustement de Formation",
     "selecting": "Sélection...",
     "autoSelectXI": "Auto-Sélectionner le Meilleur Cinq",
     "startingXI": "Cinq de Départ",
@@ -2305,7 +2303,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",
