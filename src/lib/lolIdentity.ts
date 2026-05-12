@@ -1,7 +1,15 @@
 import championsSeed from "../../data/lec/draft/champions.json";
-import type { PlayerData } from "../store/gameStore";
+import type { PlayerData, TeamData } from "../store/gameStore";
 
 export type LolRoleTag = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
+
+const ACTIVE_LINEUP_ROLES: readonly LolRoleTag[] = [
+  "TOP",
+  "JUNGLE",
+  "MID",
+  "ADC",
+  "SUPPORT",
+] as const;
 
 /**
  * Resolve the LoL role for a player directly from their data.
@@ -27,6 +35,27 @@ export function resolvePlayerLolRole(player: PlayerData): LolRoleTag {
     return "SUPPORT";
   }
   return "MID";
+}
+
+/**
+ * Resolve the player's current roster role.
+ *
+ * A player assigned to the active lineup adopts the role of that lineup slot.
+ * Bench players keep their natural player role. This matters for champion-pool
+ * training after lineup changes: a support moved into TOP must train TOP picks.
+ */
+export function resolvePlayerCurrentLolRole(
+  player: PlayerData,
+  team?: Pick<TeamData, "active_lineup_ids" | "starting_xi_ids"> | null,
+): LolRoleTag {
+  const lineupIds = team?.active_lineup_ids ?? team?.starting_xi_ids ?? [];
+  const lineupIndex = lineupIds.indexOf(player.id);
+
+  if (lineupIndex >= 0) {
+    return ACTIVE_LINEUP_ROLES[lineupIndex] ?? resolvePlayerLolRole(player);
+  }
+
+  return resolvePlayerLolRole(player);
 }
 
 function normalizeKey(value: string): string {

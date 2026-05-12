@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Sparkles, Clock3, Search } from "lucide-react";
 import type { GameStateData } from "../../store/gameStore";
 import championsSeed from "../../../data/lec/draft/champions.json";
-import playersSeed from "../../../data/lec/draft/players.json";
 import { setPlayerChampionTrainingTarget, delegateChampionTraining } from "../../services/playerService";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
 import { t } from "i18next";
+import { resolvePlayerCurrentLolRole } from "../../lib/lolIdentity";
 
 interface ChampionsTabProps {
   gameState: GameStateData;
@@ -56,22 +56,6 @@ const CHAMPIONS_BY_ROLE = Object.entries(CHAMPION_ROLES).reduce<Record<UiRole, s
   { Top: [], Jungle: [], Mid: [], ADC: [], Support: [] },
 );
 
-type PlayerSeedLite = {
-  ign: string;
-  role?: string;
-};
-
-const PLAYER_SEEDS: PlayerSeedLite[] = [
-  ...(((playersSeed as { data?: { rostered_seeds?: PlayerSeedLite[] } }).data
-    ?.rostered_seeds ?? []) as PlayerSeedLite[]),
-  ...(((playersSeed as { data?: { free_agent_seeds?: PlayerSeedLite[] } }).data
-    ?.free_agent_seeds ?? []) as PlayerSeedLite[]),
-];
-
-const PLAYER_SEED_BY_IGN = new Map<string, PlayerSeedLite>(
-  PLAYER_SEEDS.map((entry) => [normalizeKey(entry.ign), entry]),
-);
-
 function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
@@ -85,12 +69,11 @@ function normalizeRole(role: string): UiRole {
   return "Support";
 }
 
-function inferLolRole(player: GameStateData["players"][number]): UiRole {
-  const key = normalizeKey(player.natural_position || player.position || "");
-  if (key.includes("defender") && !key.includes("midfielder")) return "Top";
-  if (key.includes("midfielder") && !key.includes("attacking")) return "Jungle";
-  if (key.includes("attackingmidfielder")) return "Mid";
-  if (key.includes("forward") || key.includes("striker")) return "ADC";
+function toUiRole(role: ReturnType<typeof resolvePlayerCurrentLolRole>): UiRole {
+  if (role === "TOP") return "Top";
+  if (role === "JUNGLE") return "Jungle";
+  if (role === "MID") return "Mid";
+  if (role === "ADC") return "ADC";
   return "Support";
 }
 
@@ -272,11 +255,15 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
   const patch = gameState.champion_patch;
   const staffEffects = getLolStaffEffectsForTeam(gameState, managerTeamId);
 
+  const managerTeam = useMemo(
+    () => gameState.teams.find((team) => team.id === managerTeamId) ?? null,
+    [gameState.teams, managerTeamId],
+  );
+
   const ownPlayers = useMemo(() => {
     if (!managerTeamId) return [];
     const roleOf = (player: GameStateData["players"][number]) => {
-      const seedEntry = PLAYER_SEED_BY_IGN.get(normalizeKey(player.match_name));
-      return normalizeRole(seedEntry?.role ?? inferLolRole(player));
+      return toUiRole(resolvePlayerCurrentLolRole(player, managerTeam));
     };
 
     return gameState.players
@@ -286,12 +273,7 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
         if (roleDiff !== 0) return roleDiff;
         return a.match_name.localeCompare(b.match_name);
       });
-  }, [gameState.players, managerTeamId]);
-
-  const managerTeam = useMemo(
-    () => gameState.teams.find((team) => team.id === managerTeamId) ?? null,
-    [gameState.teams, managerTeamId],
-  );
+  }, [gameState.players, managerTeam, managerTeamId]);
 
   const masteryMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -572,8 +554,7 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
 
         <div className="space-y-3">
           {ownPlayers.map((player) => {
-            const seedEntry = PLAYER_SEED_BY_IGN.get(normalizeKey(player.match_name));
-            const role = normalizeRole(seedEntry?.role ?? inferLolRole(player));
+            const role = toUiRole(resolvePlayerCurrentLolRole(player, managerTeam));
             const roleChampions = CHAMPIONS_BY_ROLE[role] ?? [];
             const sortedRoleChampions = [...roleChampions].sort((a, b) => {
               const aKey = normalizeKey(a);
