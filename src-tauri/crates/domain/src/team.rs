@@ -11,12 +11,16 @@ pub struct Team {
     pub short_name: String,
     pub country: String,
     pub city: String,
+    #[serde(default, alias = "arena_name")]
     pub stadium_name: String,
+    #[serde(default, alias = "arena_capacity")]
     pub stadium_capacity: u32,
 
     // Current state
+    #[serde(default)]
     pub finance: i64,
     pub manager_id: Option<String>,
+    #[serde(default)]
     pub reputation: u32,
 
     // Academy affiliation metadata. Defaults keep legacy saves and existing teams as main clubs.
@@ -28,11 +32,19 @@ pub struct Team {
     pub academy_team_id: Option<String>,
     #[serde(default)]
     pub academy: Option<AcademyMetadata>,
+    #[serde(default)]
+    pub logo_url: Option<String>,
+    #[serde(default)]
+    pub competition_id: Option<String>,
 
     // Financial breakdown
+    #[serde(default)]
     pub wage_budget: i64,
+    #[serde(default)]
     pub transfer_budget: i64,
+    #[serde(default)]
     pub season_income: i64,
+    #[serde(default)]
     pub season_expenses: i64,
     #[serde(default)]
     pub financial_ledger: Vec<FinancialTransaction>,
@@ -42,8 +54,8 @@ pub struct Team {
     pub facilities: Facilities,
 
     // Tactical
-    pub formation: String,
-    pub play_style: PlayStyle,
+    #[serde(default, alias = "play_style")]
+    pub draft_strategy: DraftStrategy,
     #[serde(default)]
     pub lol_tactics: LolTactics,
 
@@ -56,7 +68,9 @@ pub struct Team {
     pub training_schedule: TrainingSchedule,
 
     // Club info
+    #[serde(default)]
     pub founded_year: u32,
+    #[serde(default)]
     pub colors: TeamColors,
 
     // Training groups: allow per-group focus overrides for subsets of players
@@ -226,6 +240,7 @@ pub enum JungleStyle {
     Ganker,
     Invader,
     Farmer,
+    Carry,
     #[default]
     Enabler,
 }
@@ -248,6 +263,7 @@ pub enum FightPlan {
     Pick,
     Dive,
     Siege,
+    Flank,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -256,6 +272,7 @@ pub enum FightPlan {
 pub enum SupportRoaming {
     #[default]
     Lane,
+    #[serde(alias = "Roam")]
     RoamMid,
     RoamTop,
 }
@@ -402,7 +419,6 @@ mod academy_team_metadata_tests {
             "transfer_budget": 500000,
             "season_income": 0,
             "season_expenses": 0,
-            "formation": "4-4-2",
             "play_style": "Balanced",
             "founded_year": 1900,
             "colors": { "primary": "#000000", "secondary": "#ffffff" },
@@ -433,7 +449,6 @@ mod academy_team_metadata_tests {
             "transfer_budget": 500000,
             "season_income": 0,
             "season_expenses": 0,
-            "formation": "4-4-2",
             "play_style": "Balanced",
             "founded_year": 1900,
             "colors": { "primary": "#000000", "secondary": "#ffffff" },
@@ -652,24 +667,31 @@ pub struct ScrimReport {
     pub created_on: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 pub struct TeamColors {
+    #[serde(default)]
     pub primary: String,
+    #[serde(default)]
     pub secondary: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
-pub enum PlayStyle {
+pub enum DraftStrategy {
+    #[default]
     Balanced,
-    Attacking,
-    Defensive,
-    Possession,
-    Counter,
-    HighPress,
+    #[serde(rename = "Attacking", alias = "HighPress")]
+    Aggressive,
+    #[serde(rename = "Defensive")]
+    Passive,
+    #[serde(rename = "Possession")]
+    Scaling,
+    #[serde(rename = "Counter")]
+    CounterPick,
+    PriorityBans,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -680,7 +702,6 @@ pub struct TeamSeasonRecord {
     pub league_position: u32,
     pub played: u32,
     pub won: u32,
-    pub drawn: u32,
     pub lost: u32,
     pub kills_for: u32,
     pub kills_against: u32,
@@ -1225,6 +1246,8 @@ impl Team {
             parent_team_id: None,
             academy_team_id: None,
             academy: None,
+            logo_url: None,
+            competition_id: None,
             wage_budget: 200_000,
             transfer_budget: 500_000,
             season_income: 0,
@@ -1232,8 +1255,7 @@ impl Team {
             financial_ledger: Vec::new(),
             sponsorship: None,
             facilities: Facilities::default(),
-            formation: "4-4-2".to_string(),
-            play_style: PlayStyle::Balanced,
+            draft_strategy: DraftStrategy::Balanced,
             lol_tactics: LolTactics::default(),
             training_focus: TrainingFocus::default(),
             training_intensity: TrainingIntensity::default(),

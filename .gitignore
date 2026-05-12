@@ -58,6 +58,9 @@ pnpm-debug.log*
 # Agent Teams Lite local registry
 .atl/
 
+# Engram persistent memory (local only)
+.engram/
+
 # =========================
 # OS files
 # =========================
@@ -68,3 +71,8 @@ Thumbs.db
 # Tauri mobile generated files (optional, Tauri v2)
 # =========================
 src-tauri/gen/
+
+# =========================
+# SDD artifacts (openspec)
+# =========================
+openspec/

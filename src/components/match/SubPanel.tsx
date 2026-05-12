@@ -44,24 +44,6 @@ export function SubPanel({
 
   const positions = ["Goalkeeper", "Defender", "Midfielder", "Forward"];
 
-  // Parse formation to get expected counts per position
-  const parts = team.formation.split("-").map(Number);
-  const expectedCounts: Record<string, number> = {
-    Goalkeeper: 1,
-    Defender: 0,
-    Midfielder: 0,
-    Forward: 0,
-  };
-  if (parts.length === 3) {
-    expectedCounts.Defender = parts[0];
-    expectedCounts.Midfielder = parts[1];
-    expectedCounts.Forward = parts[2];
-  } else if (parts.length === 4) {
-    expectedCounts.Defender = parts[0];
-    expectedCounts.Midfielder = parts[1] + parts[2];
-    expectedCounts.Forward = parts[3];
-  }
-
   const getOvr = (p: EnginePlayerData) => {
     const vals = [
       p.mental_resilience,

@@ -13,7 +13,7 @@ use std::collections::HashMap;
 fn personality_factor(player: &domain::player::Player) -> i8 {
     let composure = player.attributes.discipline as i16;
     let leadership = player.attributes.shotcalling as i16;
-    let aggression = player.attributes.aggression as i16;
+    let aggression = player.attributes.shotcalling as i16;
     // Composed leaders are receptive; aggressive low-composure players are volatile
     ((composure + leadership - aggression) / 6).clamp(-20, 20) as i8
 }

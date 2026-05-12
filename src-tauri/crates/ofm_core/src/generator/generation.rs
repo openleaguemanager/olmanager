@@ -1,7 +1,7 @@
 use domain::player::{Player, PlayerAttributes};
 use domain::staff::{Staff, StaffAttributes, StaffRole};
 use domain::stats::LolRole;
-use domain::team::PlayStyle;
+use domain::team::DraftStrategy;
 use rand::{Rng, RngExt};
 use uuid::Uuid;
 
@@ -43,7 +43,7 @@ fn compute_alternate_role(primary: &LolRole, attrs: &PlayerAttributes) -> Option
         }
         LolRole::Adc => {
             // ADC with good positioning can play Mid
-            if attrs.positioning >= 70 && attrs.laning >= 65 {
+            if attrs.consistency >= 70 && attrs.laning >= 65 {
                 Some(LolRole::Mid)
             } else {
                 None
@@ -51,7 +51,7 @@ fn compute_alternate_role(primary: &LolRole, attrs: &PlayerAttributes) -> Option
         }
         LolRole::Support => {
             // Support with good defending can play Top
-            if attrs.defending >= 65 && attrs.tackling >= 60 {
+            if attrs.discipline >= 65 && attrs.macro_play >= 60 {
                 Some(LolRole::Top)
             } else {
                 None
@@ -141,14 +141,13 @@ pub(super) fn country_to_iso(country: &str) -> &str {
     }
 }
 
-pub(super) fn play_style_from_str(s: &str) -> PlayStyle {
+pub(super) fn draft_strategy_from_str(s: &str) -> DraftStrategy {
     match s {
-        "Attacking" => PlayStyle::Attacking,
-        "Defensive" => PlayStyle::Defensive,
-        "Possession" => PlayStyle::Possession,
-        "Counter" => PlayStyle::Counter,
-        "HighPress" => PlayStyle::HighPress,
-        _ => PlayStyle::Balanced,
+        "Attacking" | "HighPress" => DraftStrategy::Aggressive,
+        "Defensive" => DraftStrategy::Passive,
+        "Possession" => DraftStrategy::Scaling,
+        "Counter" => DraftStrategy::CounterPick,
+        _ => DraftStrategy::Balanced,
     }
 }
 
@@ -188,15 +187,7 @@ pub(super) fn generate_random_player_from_def(
     let is_jungle = matches!(role, LolRole::Jungle);
 
     let attributes = PlayerAttributes {
-        pace: rng.random_range(40..95),
-        mental_resilience: rng.random_range(40..95),
-        strength: if is_support {
-            rng.random_range(50..90)
-        } else {
-            rng.random_range(40..95)
-        },
-        champion_pool: rng.random_range(40..95),
-        passing: if is_support {
+        mechanics: if is_adc {
             rng.random_range(55..95)
         } else {
             rng.random_range(40..95)
@@ -206,25 +197,10 @@ pub(super) fn generate_random_player_from_def(
         } else {
             rng.random_range(40..95)
         },
-        tackling: if is_support {
-            rng.random_range(45..85)
-        } else {
-            rng.random_range(40..95)
-        },
-        mechanics: if is_adc {
+        teamfighting: if is_support {
             rng.random_range(55..95)
         } else {
-            rng.random_range(40..95)
-        },
-        defending: if is_support || is_jungle {
-            rng.random_range(45..85)
-        } else {
-            rng.random_range(40..95)
-        },
-        positioning: if is_adc || is_support {
-            rng.random_range(55..95)
-        } else {
-            rng.random_range(40..95)
+            rng.random_range(45..95)
         },
         macro_play: if is_support || is_jungle {
             rng.random_range(55..95)
@@ -236,35 +212,26 @@ pub(super) fn generate_random_player_from_def(
         } else {
             rng.random_range(40..95)
         },
+        shotcalling: rng.random_range(30..90),
+        champion_pool: rng.random_range(40..95),
         discipline: if is_adc {
             rng.random_range(55..90)
         } else {
             rng.random_range(40..95)
         },
-        aggression: rng.random_range(30..90),
-        teamfighting: if is_support {
-            rng.random_range(55..95)
-        } else {
-            rng.random_range(45..95)
-        },
-        shotcalling: rng.random_range(30..90),
-        handling: rng.random_range(10..35),
-        reflexes: rng.random_range(20..50),
-        aerial: rng.random_range(30..75),
+        mental_resilience: rng.random_range(40..95),
     };
 
-    let ovr = (attributes.pace as u32
-        + attributes.mental_resilience as u32
-        + attributes.strength as u32
-        + attributes.passing as u32
+    let ovr = (attributes.mechanics as u32
         + attributes.laning as u32
-        + attributes.tackling as u32
-        + attributes.mechanics as u32
-        + attributes.defending as u32
-        + attributes.positioning as u32
+        + attributes.teamfighting as u32
         + attributes.macro_play as u32
-        + attributes.consistency as u32)
-        / 11;
+        + attributes.consistency as u32
+        + attributes.shotcalling as u32
+        + attributes.champion_pool as u32
+        + attributes.discipline as u32
+        + attributes.mental_resilience as u32)
+        / 9;
 
     let age_factor = if age <= 23 {
         1.5
@@ -349,6 +316,12 @@ pub(super) fn generate_random_staff_from_def(
             judging_ability: rng.random_range(20..50),
             judging_potential: rng.random_range(15..45),
             physiotherapy: rng.random_range(60..95),
+        },
+        StaffRole::Owner => StaffAttributes {
+            coaching: rng.random_range(30..70),
+            judging_ability: rng.random_range(30..70),
+            judging_potential: rng.random_range(30..70),
+            physiotherapy: rng.random_range(10..40),
         },
     };
 

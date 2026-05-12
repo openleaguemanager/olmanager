@@ -11,6 +11,8 @@ pub struct League {
     pub season: u32,
     pub fixtures: Vec<Fixture>,
     pub standings: Vec<StandingEntry>,
+    #[serde(default)]
+    pub competition_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -124,10 +126,11 @@ pub struct StandingEntry {
     pub team_id: String,
     pub played: u32,
     pub won: u32,
-    pub drawn: u32,
     pub lost: u32,
-    pub kills_for: u32,
-    pub kills_against: u32,
+    #[serde(alias = "kills_for", alias = "goals_for")]
+    pub maps_won: u32,
+    #[serde(alias = "kills_against", alias = "goals_against")]
+    pub maps_lost: u32,
     pub points: u32,
 }
 
@@ -137,27 +140,25 @@ impl StandingEntry {
             team_id,
             played: 0,
             won: 0,
-            drawn: 0,
             lost: 0,
-            kills_for: 0,
-            kills_against: 0,
+            maps_won: 0,
+            maps_lost: 0,
             points: 0,
         }
     }
 
-    pub fn goal_difference(&self) -> i32 {
-        self.kills_for as i32 - self.kills_against as i32
+    pub fn kill_difference(&self) -> i32 {
+        self.maps_won as i32 - self.maps_lost as i32
     }
 
     pub fn record_result(&mut self, kills_for: u8, kills_against: u8) {
         self.played += 1;
-        self.kills_for += kills_for as u32;
-        self.kills_against += kills_against as u32;
+        self.maps_won += kills_for as u32;
+        self.maps_lost += kills_against as u32;
         if kills_for > kills_against {
             self.won += 1;
             self.points += 3;
         } else if kills_for == kills_against {
-            self.drawn += 1;
             self.points += 1;
         } else {
             self.lost += 1;
@@ -172,7 +173,7 @@ impl Fixture {
 }
 
 impl League {
-    pub fn new(id: String, name: String, season: u32, team_ids: &[String]) -> Self {
+    pub fn new(id: String, name: String, season: u32, team_ids: &[String], competition_id: Option<String>) -> Self {
         let standings = team_ids
             .iter()
             .map(|tid| StandingEntry::new(tid.clone()))
@@ -184,6 +185,7 @@ impl League {
             season,
             fixtures: Vec::new(),
             standings,
+            competition_id,
         }
     }
 
@@ -192,8 +194,8 @@ impl League {
         sorted.sort_by(|a, b| {
             b.points
                 .cmp(&a.points)
-                .then(b.goal_difference().cmp(&a.goal_difference()))
-                .then(b.kills_for.cmp(&a.kills_for))
+                .then(b.kill_difference().cmp(&a.kill_difference()))
+                .then(b.maps_won.cmp(&a.maps_won))
         });
         sorted
     }

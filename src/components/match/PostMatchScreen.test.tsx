@@ -84,8 +84,7 @@ function makeSnapshot() {
     home_team: {
       id: "team1",
       name: "Alpha FC",
-      formation: "4-4-2",
-      play_style: "Balanced",
+      draft_strategy: "Balanced",
       players: [
         {
           id: "p1",
@@ -128,8 +127,7 @@ function makeSnapshot() {
     away_team: {
       id: "team2",
       name: "Beta FC",
-      formation: "4-4-2",
-      play_style: "Balanced",
+      draft_strategy: "Balanced",
       players: [
         {
           id: "p2",
@@ -234,8 +232,7 @@ function makeGameState() {
         transfer_budget: 500000,
         season_income: 0,
         season_expenses: 0,
-        formation: "4-4-2",
-        play_style: "Balanced",
+        draft_strategy: "Balanced",
         training_focus: "Physical",
         training_intensity: "Medium",
         training_schedule: "Balanced",
@@ -264,8 +261,7 @@ function makeGameState() {
         transfer_budget: 500000,
         season_income: 0,
         season_expenses: 0,
-        formation: "4-4-2",
-        play_style: "Balanced",
+        draft_strategy: "Balanced",
         training_focus: "Physical",
         training_intensity: "Medium",
         training_schedule: "Balanced",
@@ -429,21 +425,19 @@ function makeReportedFixture(id: string) {
         total_minutes: 90,
         home_stats: {
           possession_pct: 54,
-          shots: 13,
-          shots_on_target: 6,
-          fouls: 8,
-          corners: 5,
-          yellow_cards: 1,
-          red_cards: 0,
+          kills: 13,
+          deaths: 6,
+          gold_earned: 55000,
+          damage_dealt: 85000,
+          objectives: 5,
         },
         away_stats: {
           possession_pct: 46,
-          shots: 9,
-          shots_on_target: 4,
-          fouls: 11,
-          corners: 3,
-          yellow_cards: 2,
-          red_cards: 0,
+          kills: 9,
+          deaths: 11,
+          gold_earned: 42000,
+          damage_dealt: 62000,
+          objectives: 3,
         },
         events: [
           {
@@ -469,7 +463,7 @@ function makeReportedFixture(id: string) {
 describe("PostMatchScreen", function (): void {
   it("renders the round summary mini table and scorer list when summary data exists", function (): void {
     const gameState = makeGameState();
-    gameState.league = {
+    gameState.leagues[0] = {
       id: "league-1",
       name: "League",
       season: 1,
@@ -557,7 +551,7 @@ describe("PostMatchScreen", function (): void {
 
   it("opens a read-only detail modal for another completed fixture", function (): void {
     const gameState = makeGameState();
-    gameState.league = {
+    gameState.leagues[0] = {
       id: "league-1",
       name: "League",
       season: 1,

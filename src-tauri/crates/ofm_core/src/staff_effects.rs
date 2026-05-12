@@ -1,4 +1,4 @@
-use domain::staff::{CoachingSpecialization, Staff, StaffRole};
+use domain::staff::{Staff, StaffRole};
 
 /// Conservative, LoL-specific staff influence surface.
 ///
@@ -46,12 +46,6 @@ fn quality_mult(avg_value: Option<f64>, empty: f64, min: f64, max: f64) -> f64 {
     (min + (value.clamp(0.0, 100.0) / 100.0) * (max - min)).clamp(min, max)
 }
 
-fn has_specialist(staff: &[&Staff], specialization: CoachingSpecialization) -> bool {
-    staff
-        .iter()
-        .any(|member| member.specialization.as_ref() == Some(&specialization))
-}
-
 impl LolStaffEffects {
     pub fn for_team(staff: &[Staff], team_id: &str) -> Self {
         let team_staff: Vec<&Staff> = staff
@@ -97,29 +91,15 @@ impl LolStaffEffects {
             .collect::<Vec<_>>());
 
         let coaching = quality_mult(coaching_avg, 0.85, 0.88, 1.22);
-        let mut development = quality_mult(coaching_avg, 0.90, 0.92, 1.18);
-        let mut tactics = quality_mult(coaching_avg, 0.95, 0.94, 1.14);
+        let development = quality_mult(coaching_avg, 0.90, 0.92, 1.18);
+        let tactics = quality_mult(coaching_avg, 0.95, 0.94, 1.14);
         let analysis = quality_mult(judging_ability_avg, 0.95, 0.94, 1.14);
-        let mut recovery = quality_mult(physio_avg, 1.00, 1.00, 1.20);
+        let recovery = quality_mult(physio_avg, 1.00, 1.00, 1.20);
         let morale = quality_mult(coaching_avg, 1.00, 0.96, 1.12);
         let meta_discovery = (quality_mult(judging_ability_avg, 0.90, 0.92, 1.18) * 0.75
             + quality_mult(judging_potential_avg, 1.00, 0.98, 1.16) * 0.25)
             .clamp(0.90, 1.20);
-        let mut execution = ((tactics + analysis) / 2.0).clamp(0.96, 1.08);
-
-        if has_specialist(&coaches, CoachingSpecialization::Technique) {
-            development *= 1.04;
-        }
-        if has_specialist(&coaches, CoachingSpecialization::Tactics) {
-            tactics *= 1.05;
-            execution *= 1.02;
-        }
-        if has_specialist(&coaches, CoachingSpecialization::Youth) {
-            development *= 1.03;
-        }
-        if has_specialist(&coaches, CoachingSpecialization::Fitness) {
-            recovery *= 1.03;
-        }
+        let execution = ((tactics + analysis) / 2.0).clamp(0.96, 1.08);
 
         Self {
             coaching: coaching.clamp(0.85, 1.25),
@@ -130,33 +110,6 @@ impl LolStaffEffects {
             morale: morale.clamp(0.95, 1.15),
             meta_discovery,
             execution: execution.clamp(0.96, 1.10),
-        }
-    }
-
-    pub fn focus_specialization_multiplier(
-        self,
-        staff: &[Staff],
-        team_id: &str,
-        specialization: Option<CoachingSpecialization>,
-    ) -> f64 {
-        let Some(target) = specialization else {
-            return 1.0;
-        };
-
-        let coaches: Vec<&Staff> = staff
-            .iter()
-            .filter(|member| {
-                member.team_id.as_deref() == Some(team_id)
-                    && matches!(member.role, StaffRole::Coach | StaffRole::AssistantManager)
-            })
-            .collect();
-
-        if has_specialist(&coaches, target) {
-            // Smaller than the old 25% training-only boost because the central model
-            // already contributes through coaching/development/tactics.
-            1.08
-        } else {
-            1.0
         }
     }
 
@@ -172,7 +125,7 @@ impl LolStaffEffects {
 #[cfg(test)]
 mod tests {
     use super::LolStaffEffects;
-    use domain::staff::{CoachingSpecialization, Staff, StaffAttributes, StaffRole};
+    use domain::staff::{Staff, StaffAttributes, StaffRole};
 
     fn staff(
         id: &str,
@@ -210,8 +163,7 @@ mod tests {
 
     #[test]
     fn strong_staff_improves_multiple_preparation_surfaces_with_caps() {
-        let mut coach = staff("coach", StaffRole::Coach, 92, 30, 30, 20);
-        coach.specialization = Some(CoachingSpecialization::Tactics);
+        let coach = staff("coach", StaffRole::Coach, 92, 30, 30, 20);
         let scout = staff("scout", StaffRole::Scout, 20, 90, 86, 20);
         let physio = staff("physio", StaffRole::Physio, 20, 20, 20, 88);
         let effects = LolStaffEffects::for_team(&[coach, scout, physio], "team-1");
@@ -221,20 +173,5 @@ mod tests {
         assert!(effects.analysis > 1.10 && effects.analysis <= 1.16);
         assert!(effects.recovery > 1.15 && effects.recovery <= 1.25);
         assert!(effects.execution <= 1.10);
-    }
-
-    #[test]
-    fn role_specializations_target_development_and_tactics() {
-        let mut technique = staff("tech", StaffRole::Coach, 75, 20, 20, 20);
-        technique.specialization = Some(CoachingSpecialization::Technique);
-        let mut tactics = staff("tact", StaffRole::Coach, 75, 20, 20, 20);
-        tactics.specialization = Some(CoachingSpecialization::Tactics);
-
-        let development = LolStaffEffects::for_team(&[technique], "team-1");
-        let tactical = LolStaffEffects::for_team(&[tactics], "team-1");
-
-        assert!(development.development > tactical.development);
-        assert!(tactical.tactics > development.tactics);
-        assert!(tactical.execution >= development.execution);
     }
 }

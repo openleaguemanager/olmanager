@@ -98,7 +98,7 @@ pub fn skip_to_match_day(state: State<'_, StateManager>) -> Result<serde_json::V
 
         let today = game.clock.current_date.format("%Y-%m-%d").to_string();
 
-        let has_match = game.league.as_ref().is_some_and(|league| {
+        let has_match = game.leagues.first().is_some_and(|league| {
             league.fixtures.iter().any(|fixture| {
                 fixture.date == today
                     && fixture.status == domain::league::FixtureStatus::Scheduled
@@ -179,7 +179,7 @@ mod tests {
     use domain::league::{Fixture, FixtureCompetition, FixtureStatus};
     use domain::manager::Manager;
     use domain::message::{InboxMessage, MessagePriority};
-    use domain::player::{Injury, Player, PlayerAttributes, Position};
+    use domain::player::{Injury, Player, PlayerAttributes, LolRole};
     use domain::stats::StatsState;
     use domain::team::Team;
     use ofm_core::clock::GameClock;
@@ -189,29 +189,19 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
-            mental_resilience: 60,
-            strength: 60,
-            champion_pool: 60,
-            passing: 60,
-            laning: 60,
-            tackling: 60,
             mechanics: 60,
-            defending: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
-            handling: 60,
-            reflexes: 60,
-            aerial: 60,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 
-    fn make_player(id: &str, name: &str, team_id: &str, position: Position) -> Player {
+    fn make_player(id: &str, name: &str, team_id: &str, position: LolRole) -> Player {
         let mut player = Player::new(
             id.to_string(),
             name.to_string(),
@@ -239,15 +229,15 @@ mod tests {
         let players: Vec<Player> = (1..=roster_size)
             .map(|idx| {
                 let position = if idx == 1 {
-                    Position::Goalkeeper
+                    LolRole::Support
                 } else if idx <= 5 {
-                    Position::Defender
+                    LolRole::Top
                 } else if idx == 6 {
-                    Position::AttackingMidfielder
+                    LolRole::Mid
                 } else if idx <= 9 {
-                    Position::Midfielder
+                    LolRole::Jungle
                 } else {
-                    Position::Forward
+                    LolRole::Adc
                 };
 
                 make_player(
@@ -304,10 +294,11 @@ mod tests {
 
         game.teams[0].active_lineup_ids =
             game.players.iter().take(11).map(|p| p.id.clone()).collect();
-        game.league = Some(domain::league::League {
+        game.leagues = vec![domain::league::League {
             id: "league-1".to_string(),
             name: "League".to_string(),
             season: 2025,
+            competition_id: None,
             fixtures: vec![Fixture {
                 id: "fixture-1".to_string(),
                 matchday: 1,
@@ -323,7 +314,7 @@ mod tests {
                 domain::league::StandingEntry::new("team1".to_string()),
                 domain::league::StandingEntry::new("team2".to_string()),
             ],
-        });
+        }];
         game
     }
 
@@ -519,7 +510,6 @@ mod tests {
             .unwrap();
         first_key_player.contract_end = Some("2025-07-15".to_string());
         first_key_player.wage = 35_000;
-        first_key_player.attributes.pace = 92;
         first_key_player.attributes.laning = 94;
         first_key_player.attributes.mechanics = 90;
 
@@ -530,7 +520,6 @@ mod tests {
             .unwrap();
         second_key_player.contract_end = Some("2025-07-15".to_string());
         second_key_player.wage = 25_000;
-        second_key_player.attributes.pace = 90;
         second_key_player.attributes.laning = 91;
         second_key_player.attributes.mechanics = 89;
 
@@ -653,14 +642,14 @@ mod tests {
                 &format!("{}-gk", prefix),
                 &format!("{} GK", prefix),
                 team_id,
-                Position::Goalkeeper,
+                LolRole::Support,
             ));
             for idx in 0..4 {
                 players.push(make_player(
                     &format!("{}-def{}", prefix, idx),
                     &format!("{} Def{}", prefix, idx),
                     team_id,
-                    Position::Defender,
+                    LolRole::Top,
                 ));
             }
             for idx in 0..4 {
@@ -668,7 +657,7 @@ mod tests {
                     &format!("{}-mid{}", prefix, idx),
                     &format!("{} Mid{}", prefix, idx),
                     team_id,
-                    Position::Midfielder,
+                    LolRole::Jungle,
                 ));
             }
             for idx in 0..2 {
@@ -676,7 +665,7 @@ mod tests {
                     &format!("{}-fwd{}", prefix, idx),
                     &format!("{} Fwd{}", prefix, idx),
                     team_id,
-                    Position::Forward,
+                    LolRole::Adc,
                 ));
             }
         }
@@ -685,6 +674,7 @@ mod tests {
             id: "league1".to_string(),
             name: "Test League".to_string(),
             season: 1,
+            competition_id: None,
             fixtures: vec![
                 domain::league::Fixture {
                     id: "fix1".to_string(),
@@ -718,7 +708,7 @@ mod tests {
         };
 
         let mut game = Game::new(clock, manager, teams, players, vec![], vec![]);
-        game.league = Some(league);
+        game.leagues = vec![league];
         game
     }
 

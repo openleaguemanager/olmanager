@@ -136,7 +136,7 @@ pub fn apply_match_report_with_capture<F>(
     let mut counts_for_standings = false;
 
     // Update fixture status, standings
-    if let Some(league) = game.league.as_mut() {
+    if let Some(league) = game.leagues.first_mut() {
         let fixture = &mut league.fixtures[fixture_index];
         fixture.status = FixtureStatus::Completed;
         counts_for_standings = fixture.counts_for_league_standings();
@@ -174,7 +174,7 @@ pub fn apply_match_report_with_capture<F>(
     apply_lol_profile_progression(game, report, home_team_id, away_team_id);
     resolve_post_match_promises(game, report, home_team_id, away_team_id);
 
-    // Deplete stamina for players who played, scaled by minutes on pitch
+    // Deplete stamina for players who played, scaled by minutes in game
     deplete_match_stamina(game, home_team_id, report);
     deplete_match_stamina(game, away_team_id, report);
 
@@ -224,7 +224,7 @@ pub fn apply_match_report_with_capture<F>(
         && let Some(user_team_id) = &game.manager.team_id
         && (*user_team_id == home_team_id || *user_team_id == away_team_id)
     {
-        let fixture = &game.league.as_ref().unwrap().fixtures[fixture_index];
+        let fixture = &game.leagues.first().unwrap().fixtures[fixture_index];
         let res = fixture.result.as_ref().unwrap();
         let home_name = game
             .teams
@@ -267,7 +267,7 @@ fn build_stats_state_capture(
     away_team_id: &str,
     report: &engine::MatchReport,
 ) -> StatsState {
-    let Some(league) = game.league.as_ref() else {
+    let Some(league) = game.leagues.first() else {
         return StatsState::default();
     };
     let Some(fixture) = league.fixtures.get(fixture_index) else {
@@ -427,18 +427,7 @@ fn apply_player_stats(
                     (player.stats.avg_rating * (n - 1.0) + match_rating.clamp(0.0, 10.0)) / n;
             }
 
-            if player.id.ends_with("_gk") {
-                let conceded = if player.team_id.as_deref() == Some(_home_team_id) {
-                    report.away_wins
-                } else if player.team_id.as_deref() == Some(_away_team_id) {
-                    report.home_wins
-                } else {
-                    1
-                };
-                if minutes_played > 0 && conceded == 0 {
-                    player.stats.clean_sheets += 1;
-                }
-            }
+            // clean_sheets removed — LoL has no keeper clean sheet stat (legacy).
         }
     }
 }
@@ -600,8 +589,8 @@ fn apply_lol_profile_progression(
             clamp_attr_range(i16::from(player.attributes.champion_pool) + d_agility);
         player.attributes.laning =
             clamp_attr_range(i16::from(player.attributes.laning) + d_shooting);
-        player.attributes.positioning =
-            clamp_attr_range(i16::from(player.attributes.positioning) + d_positioning);
+        player.attributes.consistency =
+            clamp_attr_range(i16::from(player.attributes.consistency) + d_positioning);
         player.attributes.teamfighting =
             clamp_attr_range(i16::from(player.attributes.teamfighting) + d_teamwork);
         player.attributes.mental_resilience =
@@ -614,8 +603,8 @@ fn apply_lol_profile_progression(
             clamp_attr_range(i16::from(player.attributes.discipline) + d_composure);
         player.attributes.shotcalling =
             clamp_attr_range(i16::from(player.attributes.shotcalling) + d_leadership);
-        player.attributes.passing =
-            clamp_attr_range(i16::from(player.attributes.passing) + d_passing);
+        player.attributes.teamfighting =
+            clamp_attr_range(i16::from(player.attributes.teamfighting) + d_passing);
     }
 }
 

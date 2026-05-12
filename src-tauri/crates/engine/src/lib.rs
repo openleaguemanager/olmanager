@@ -10,7 +10,6 @@ pub mod engine;
 pub mod event;
 pub mod live_match;
 pub mod report;
-pub(crate) mod shared;
 pub mod types;
 
 // Re-export key types for convenience
@@ -22,4 +21,4 @@ pub use live_match::{
     TeamRoles,
 };
 pub use report::{KillDetail, MatchReport, MatchReportEndReason, PlayerMatchStats, TeamStats};
-pub use types::{MatchConfig, PlayStyle, PlayerData, Side, TeamData, Zone};
+pub use types::{DraftStrategy, MatchConfig, PlayerData, Side, TeamData, Zone};

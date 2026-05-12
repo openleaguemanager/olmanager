@@ -5,7 +5,6 @@ import PreMatchLineup, {
   condColor,
   getPlayerLolRole,
   getPositionOvr,
-  parseFormationNeeds,
   statColor,
 } from "./PreMatchLineup";
 import type { EnginePlayerData, EngineTeamData } from "./types";
@@ -48,8 +47,7 @@ const makePlayer = (overrides: Partial<EnginePlayerData> = {}): EnginePlayerData
 const makeTeam = (overrides: Partial<EngineTeamData> = {}): EngineTeamData => ({
   id: "team1",
   name: "Test FC",
-  formation: "4-4-2",
-  play_style: "Balanced",
+  draft_strategy: "Balanced",
   players: [
     makePlayer({ id: "top", name: "Top One", role: "Top" }),
     makePlayer({ id: "jg", name: "Jg One", role: "Jungle" }),
@@ -82,10 +80,6 @@ describe("PreMatchLineup helpers", () => {
       mental_resilience: 74,
     });
     expect(getPositionOvr(player)).toBe(Math.round((80 + 70 + 75 + 65 + 60 + 70 + 68 + 72 + 74) / 9));
-  });
-
-  it("returns fixed LoL role needs", () => {
-    expect(parseFormationNeeds("anything")).toEqual({ TOP: 1, JUNGLE: 1, MID: 1, ADC: 1, SUPPORT: 1 });
   });
 
   it("keeps condition/stat color helpers", () => {

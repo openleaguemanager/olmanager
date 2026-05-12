@@ -9,7 +9,7 @@ import { findAcademyTeamForParent, getTeamAcademyRoster } from "../../store/acad
 import type { AcademyAcquisitionOptionData } from "../../store/gameStore";
 import { Badge, Button, Card, CardBody, CardHeader } from "../ui";
 import { resolvePlayerLolRole } from "../../lib/lolIdentity";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 interface YouthAcademyTabProps {
@@ -203,7 +203,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
     <div className="max-w-5xl mx-auto flex flex-col gap-5">
       <div className="flex items-center gap-3 flex-wrap">
         {(() => {
-          const academyLogo = academyTeam ? resolveExampleTeamLogo(academyTeam.name) : null;
+          const academyLogo = academyTeam ? resolveTeamLogo(academyTeam.name) : null;
           if (academyLogo) {
             return (
               <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center shrink-0">
@@ -356,7 +356,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
               {acquisitionOptions.length > 0 && (
                 <div className="grid gap-3 md:grid-cols-2">
                   {acquisitionOptions.map((option) => {
-                    const optionLogoSrc = option.source_team_logo_url ?? resolveExampleTeamLogo(option.source_team_name);
+                    const optionLogoSrc = option.source_team_logo_url ?? resolveTeamLogo(option.source_team_name);
 
                     return (
                     <div key={option.source_team_id} className="rounded-lg border border-gray-100 dark:border-navy-600 p-4 flex items-center gap-3">
