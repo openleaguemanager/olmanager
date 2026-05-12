@@ -370,4 +370,27 @@ describe("dashboardHelpers", function (): void {
     expect(alertIds).not.toContain("match_lineup");
     expect(alertIds).not.toContain("injured_lineup");
   });
+
+  it("does not warn when healthy roster candidates can repair shifted role slots after transfers", function (): void {
+    const roster = [
+      createPlayer({ id: "maynter", position: "TOP", natural_position: "TOP" }),
+      createPlayer({ id: "rhilech", position: "JUNGLE", natural_position: "JUNGLE" }),
+      createPlayer({ id: "saken", position: "MID", natural_position: "MID" }),
+      createPlayer({ id: "deft", position: "ADC", natural_position: "ADC" }),
+      createPlayer({ id: "trayton", position: "SUPPORT", natural_position: "SUPPORT" }),
+    ];
+    const team = createTeam({
+      active_lineup_ids: ["maynter", "rhilech", "deft", "trayton"],
+    });
+    const gameState = createGameState({
+      teams: [team],
+      players: roster,
+    });
+
+    const alerts = getDashboardAlerts(gameState, true, translateDashboardAlert);
+    const alertIds = alerts.map((alert) => alert.id);
+
+    expect(alertIds).not.toContain("incomplete_lineup");
+    expect(alertIds).not.toContain("match_lineup");
+  });
 });
