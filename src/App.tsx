@@ -2,6 +2,8 @@ import { useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useSettingsStore } from "./store/settingsStore";
 import { preloadAudio } from "./lib/audioManager";
+import { useUpdater } from "./hooks/useUpdater";
+import UpdateModal from "./components/updater/UpdateModal";
 import i18n from "./i18n";
 import "./App.css";
 import GlobalNotificationSound from "./components/GlobalNotificationSound";
@@ -29,8 +31,20 @@ const SCALE_MAP: Record<string, string> = {
   xlarge: "20px",
 };
 
+const AUTO_CHECK_UPDATES = import.meta.env.PROD;
+
 function App() {
   const { settings, loaded, loadSettings } = useSettingsStore();
+  const {
+    updateAvailable,
+    updateInfo,
+    downloading,
+    progress,
+    error,
+    dismissed,
+    install,
+    dismiss,
+  } = useUpdater(AUTO_CHECK_UPDATES);
 
   useEffect(() => {
     if (!loaded) loadSettings();
@@ -127,6 +141,16 @@ function App() {
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </Suspense>
+      {updateAvailable && !dismissed && updateInfo && (
+        <UpdateModal
+          updateInfo={updateInfo}
+          downloading={downloading}
+          progress={progress}
+          error={error}
+          onInstall={install}
+          onDismiss={dismiss}
+        />
+      )}
     </BrowserRouter>
   );
 }

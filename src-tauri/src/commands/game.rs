@@ -1,6 +1,6 @@
 use chrono::{Datelike, TimeZone};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use domain::player::{Player, PlayerAttributes, Position};
+use domain::player::{Player, PlayerAttributes};
 use domain::team::{
     AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
 };
@@ -18,7 +18,10 @@ use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::state::StateManager;
 
+use crate::application::game_setup::avatar;
+use crate::error::AppError;
 use crate::SaveManagerState;
+use validator::Validate;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct TeamSelectionData {
@@ -28,6 +31,14 @@ pub struct TeamSelectionData {
 }
 
 const ACADEMY_FALLBACK_PHOTO: &str = "/player-photos/107455908655055017.png";
+
+fn calculate_age_on_date(birth_date: chrono::NaiveDate, as_of_date: chrono::NaiveDate) -> i32 {
+    let mut age = as_of_date.year() - birth_date.year();
+    if (as_of_date.month(), as_of_date.day()) < (birth_date.month(), birth_date.day()) {
+        age -= 1;
+    }
+    age
+}
 
 #[derive(Debug, Clone)]
 pub(crate) struct ExampleAcademyPlayerSeed {
@@ -408,6 +419,25 @@ fn generated_academy_potential(player_name: &str, ovr: u8) -> u8 {
     potential.min(90)
 }
 
+fn round_seed_market_value(value: u64) -> u64 {
+    value.max(50_000).div_ceil(10_000) * 10_000
+}
+
+fn suggested_seed_market_value(ovr: u8, potential: u8, is_academy: bool) -> u64 {
+    let skill_gap = u64::from(ovr.saturating_sub(60));
+    let potential_gap = u64::from(potential.saturating_sub(ovr));
+    let skill_value = 50_000 + skill_gap * skill_gap * 300;
+    let potential_value = potential_gap * if is_academy { 3_000 } else { 6_000 };
+    let raw_value = skill_value + potential_value;
+    let adjusted_value = if is_academy {
+        raw_value * 70 / 100
+    } else {
+        raw_value
+    };
+
+    round_seed_market_value(adjusted_value)
+}
+
 fn academy_overview_message(
     parent_team: &Team,
     academy_team: &Team,
@@ -511,12 +541,15 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
                 potential: Some(potential),
                 salary: Some(8_000),
                 contract_end: Some("2028-11-30".to_string()),
-                market_value: Some(220_000 + u64::from(ovr.saturating_sub(60)) * 20_000),
+                market_value: Some(suggested_seed_market_value(ovr, potential, true)),
                 reputation: Some(62),
+                photo: seed_profile_image_url(
+                    (!seed_player.image_url.is_empty()).then_some(seed_player.image_url.as_str()),
+                ),
             };
 
             let attributes = build_attributes_from_seed(&seed);
-            let position = role_to_position(seed.role.as_deref());
+            let position = role_to_lol_role(seed.role.as_deref());
             let player_id = format!("{}-player-{}", academy_id, player_index + 1);
 
             let mut player = Player::new(
@@ -535,6 +568,7 @@ pub(crate) fn bootstrap_example_academy_pool_from_example(
             player.wage = seed.salary.unwrap_or(8_000);
             player.market_value = seed.market_value.unwrap_or(240_000);
             player.potential_base = potential;
+            player.profile_image_url = seed.photo.clone();
             player.morale = 68;
             player.condition = 100;
 
@@ -625,6 +659,7 @@ pub(crate) fn ensure_example_academy_pool(game: &mut Game) {
         &mut game.players,
         &bootstrap_date,
     );
+    remove_free_agents_shadowed_by_academy(&mut game.players, &game.teams);
 }
 
 fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
@@ -684,6 +719,7 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
     Err("Default LEC world database not found (lec_world.json).".to_string())
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Copy)]
 struct LolSeedRatings {
     mechanics: u8,
@@ -704,6 +740,7 @@ struct DraftSeedRoot {
 
 #[derive(Debug, Deserialize)]
 struct DraftSeedData {
+    #[allow(dead_code)]
     rostered_seeds: Vec<DraftPlayerSeed>,
     #[serde(default)]
     free_agent_seeds: Vec<DraftPlayerSeed>,
@@ -741,6 +778,19 @@ struct DraftPlayerSeed {
     market_value: Option<u64>,
     #[serde(default)]
     reputation: Option<u8>,
+    #[serde(default)]
+    photo: Option<String>,
+}
+
+fn seed_profile_image_url(photo: Option<&str>) -> Option<String> {
+    let value = photo?.trim();
+    if value.is_empty() {
+        return None;
+    }
+    if value.starts_with("/images/") {
+        return Some(format!("/data/lec{}", value));
+    }
+    Some(value.to_string())
 }
 
 fn load_draft_seed_root() -> DraftSeedRoot {
@@ -820,6 +870,7 @@ fn draft_seed_root() -> &'static DraftSeedRoot {
     ROOT.get_or_init(load_draft_seed_root)
 }
 
+#[allow(dead_code)]
 fn draft_potential_map() -> &'static HashMap<String, u8> {
     static POTENTIALS: OnceLock<HashMap<String, u8>> = OnceLock::new();
     POTENTIALS.get_or_init(|| {
@@ -841,7 +892,7 @@ fn draft_potential_map() -> &'static HashMap<String, u8> {
     })
 }
 
-fn potential_seed_for_player(match_name: &str) -> Option<u8> {
+pub(crate) fn potential_seed_for_player(match_name: &str) -> Option<u8> {
     let key = normalize_seed_name(match_name);
     draft_potential_map().get(&key).copied().or_else(
         || {
@@ -854,6 +905,48 @@ fn potential_seed_for_player(match_name: &str) -> Option<u8> {
     )
 }
 
+pub(crate) fn apply_seed_potential_defaults(players: &mut [Player]) {
+    for player in players.iter_mut() {
+        let Some(seed_potential) = potential_seed_for_player(&player.match_name) else {
+            continue;
+        };
+        let current_ovr = ofm_core::potential::calculate_lol_ovr(player);
+        player.potential_base = seed_potential.max(current_ovr).min(99);
+        player.potential_revealed = None;
+        player.potential_research_started_on = None;
+        player.potential_research_eta_days = None;
+    }
+}
+
+#[allow(dead_code)]
+fn draft_photo_map() -> &'static HashMap<String, String> {
+    static PHOTOS: OnceLock<HashMap<String, String>> = OnceLock::new();
+    PHOTOS.get_or_init(|| {
+        let parsed = draft_seed_root();
+
+        let mut all_seeds = parsed.data.rostered_seeds.clone();
+        all_seeds.extend(parsed.data.free_agent_seeds.clone());
+
+        all_seeds
+            .into_iter()
+            .filter_map(|seed| {
+                let key = normalize_seed_name(&seed.ign);
+                let photo = seed_profile_image_url(seed.photo.as_deref())?;
+                if key.is_empty() {
+                    return None;
+                }
+                Some((key, photo))
+            })
+            .collect()
+    })
+}
+
+#[allow(dead_code)]
+fn photo_seed_for_player(match_name: &str) -> Option<String> {
+    let key = normalize_seed_name(match_name);
+    draft_photo_map().get(&key).cloned()
+}
+
 fn normalize_seed_name(value: &str) -> String {
     value
         .trim()
@@ -863,6 +956,7 @@ fn normalize_seed_name(value: &str) -> String {
         .collect()
 }
 
+#[allow(dead_code)]
 fn lol_ratings_seed_for_player(match_name: &str) -> Option<LolSeedRatings> {
     let key = normalize_seed_name(match_name);
     let ratings = match key.as_str() {
@@ -1422,7 +1516,8 @@ fn lol_ratings_seed_for_player(match_name: &str) -> Option<LolSeedRatings> {
     Some(ratings)
 }
 
-fn apply_lol_seed_ratings(players: &mut [Player]) {
+#[allow(dead_code)]
+pub(crate) fn apply_lol_seed_ratings(players: &mut [Player]) {
     for player in players.iter_mut() {
         let Some(seed) = lol_ratings_seed_for_player(&player.match_name) else {
             continue;
@@ -1430,18 +1525,21 @@ fn apply_lol_seed_ratings(players: &mut [Player]) {
 
         // Keep legacy schema compatibility but use a strict 1:1 mapping to LoL stats.
         // These are now treated as the source for LoL profile/training progression.
-        player.attributes.dribbling = seed.mechanics;
-        player.attributes.shooting = seed.laning;
-        player.attributes.teamwork = seed.teamfighting;
-        player.attributes.vision = seed.macro_play;
-        player.attributes.decisions = seed.consistency;
-        player.attributes.leadership = seed.shotcalling;
-        player.attributes.agility = seed.champion_pool;
-        player.attributes.composure = seed.discipline;
-        player.attributes.stamina = seed.mental_resilience;
+        player.attributes.mechanics = seed.mechanics;
+        player.attributes.laning = seed.laning;
+        player.attributes.teamfighting = seed.teamfighting;
+        player.attributes.macro_play = seed.macro_play;
+        player.attributes.consistency = seed.consistency;
+        player.attributes.shotcalling = seed.shotcalling;
+        player.attributes.champion_pool = seed.champion_pool;
+        player.attributes.discipline = seed.discipline;
+        player.attributes.mental_resilience = seed.mental_resilience;
 
         if let Some(potential_base) = potential_seed_for_player(&player.match_name) {
             player.potential_base = potential_base.min(99);
+        }
+        if player.profile_image_url.is_none() {
+            player.profile_image_url = photo_seed_for_player(&player.match_name);
         }
         player.potential_revealed = None;
         player.potential_research_started_on = None;
@@ -1449,13 +1547,86 @@ fn apply_lol_seed_ratings(players: &mut [Player]) {
     }
 }
 
-fn apply_default_initial_contract_end(players: &mut [Player]) {
-    const DEFAULT_INITIAL_CONTRACT_END: &str = "2025-12-20";
+fn default_initial_contract_end_for_start_year(start_year: i32) -> String {
+    format!("{}-11-30", start_year + 1)
+}
+
+pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
+    let default_initial_contract_end = default_initial_contract_end_for_start_year(2025);
 
     for player in players.iter_mut() {
         if player.contract_end.is_none() {
-            player.contract_end = Some(DEFAULT_INITIAL_CONTRACT_END.to_string());
+            player.contract_end = Some(default_initial_contract_end.clone());
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{apply_default_initial_contract_end, default_initial_contract_end_for_start_year};
+    use domain::player::{Player, PlayerAttributes, Position};
+
+    fn default_attrs() -> PlayerAttributes {
+        PlayerAttributes {
+            pace: 60,
+            mental_resilience: 60,
+            strength: 60,
+            champion_pool: 60,
+            passing: 60,
+            laning: 60,
+            tackling: 60,
+            mechanics: 60,
+            defending: 60,
+            positioning: 60,
+            macro_play: 60,
+            consistency: 60,
+            discipline: 60,
+            aggression: 60,
+            teamfighting: 60,
+            shotcalling: 60,
+            handling: 60,
+            reflexes: 60,
+            aerial: 60,
+        }
+    }
+
+    fn player_with_contract(id: &str, contract_end: Option<&str>) -> Player {
+        let mut player = Player::new(
+            id.to_string(),
+            id.to_string(),
+            id.to_string(),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            Position::Midfielder,
+            default_attrs(),
+        );
+        player.contract_end = contract_end.map(str::to_string);
+        player
+    }
+
+    #[test]
+    fn default_initial_contract_end_survives_first_next_season_friendlies() {
+        assert_eq!(
+            default_initial_contract_end_for_start_year(2025),
+            "2026-11-30"
+        );
+        assert_eq!(
+            default_initial_contract_end_for_start_year(2026),
+            "2027-11-30"
+        );
+    }
+
+    #[test]
+    fn apply_default_initial_contract_end_only_fills_missing_contracts() {
+        let mut players = vec![
+            player_with_contract("missing", None),
+            player_with_contract("existing", Some("2028-11-30")),
+        ];
+
+        apply_default_initial_contract_end(&mut players);
+
+        assert_eq!(players[0].contract_end.as_deref(), Some("2026-11-30"));
+        assert_eq!(players[1].contract_end.as_deref(), Some("2028-11-30"));
     }
 }
 
@@ -1467,15 +1638,15 @@ fn seed_is_free_agent(seed: &DraftPlayerSeed) -> bool {
         .unwrap_or(true)
 }
 
-fn role_to_position(role: Option<&str>) -> Position {
+fn role_to_lol_role(role: Option<&str>) -> domain::stats::LolRole {
     let key = role.map(normalize_seed_name).unwrap_or_default();
     match key.as_str() {
-        "top" => Position::Defender,
-        "jungle" => Position::Midfielder,
-        "mid" | "middle" => Position::AttackingMidfielder,
-        "bot" | "adc" | "bottom" => Position::Forward,
-        "support" | "sup" | "utility" => Position::DefensiveMidfielder,
-        _ => Position::Midfielder,
+        "top" => domain::stats::LolRole::Top,
+        "jungle" => domain::stats::LolRole::Jungle,
+        "mid" | "middle" => domain::stats::LolRole::Mid,
+        "bot" | "adc" | "bottom" => domain::stats::LolRole::Adc,
+        "support" | "sup" | "utility" => domain::stats::LolRole::Support,
+        _ => domain::stats::LolRole::Mid,
     }
 }
 
@@ -1545,21 +1716,21 @@ fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
 
     PlayerAttributes {
         pace: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
-        stamina: mental_resilience,
+        mental_resilience: mental_resilience,
         strength: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
-        agility: champion_pool,
+        champion_pool: champion_pool,
         passing: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
-        shooting: laning,
+        laning: laning,
         tackling: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
-        dribbling: mechanics,
+        mechanics: mechanics,
         defending,
         positioning: clamp_stat((i16::from(macro_play) + i16::from(consistency)) / 2),
-        vision: macro_play,
-        decisions: consistency,
-        composure: discipline,
+        macro_play: macro_play,
+        consistency: consistency,
+        discipline: discipline,
         aggression: clamp_stat((i16::from(teamfighting) + i16::from(mental_resilience)) / 2 - 4),
-        teamwork: teamfighting,
-        leadership: shotcalling,
+        teamfighting: teamfighting,
+        shotcalling: shotcalling,
         handling: 20,
         reflexes: 22,
         aerial: if role_key == "top" {
@@ -1588,7 +1759,7 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
 
     let dob = seed.dob.clone().unwrap_or_else(|| "2002-01-01".to_string());
     let nationality = seed.nationality.clone().unwrap_or_else(|| "KR".to_string());
-    let position = role_to_position(seed.role.as_deref());
+    let position = role_to_lol_role(seed.role.as_deref());
     let attributes = build_attributes_from_seed(seed);
 
     let seed_key = normalize_seed_name(ign);
@@ -1606,7 +1777,11 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
     player.team_id = None;
     player.transfer_listed = true;
     player.loan_listed = false;
-    player.market_value = seed.market_value.unwrap_or(300_000);
+    let seed_ovr = seed.rating.unwrap_or(70);
+    let seed_potential = seed.potential.unwrap_or(seed_ovr).max(seed_ovr);
+    player.market_value = seed
+        .market_value
+        .unwrap_or_else(|| suggested_seed_market_value(seed_ovr, seed_potential, false));
     player.wage = seed.salary.unwrap_or(40_000);
     player.contract_end = seed.contract_end.clone();
     player.condition = 100;
@@ -1615,11 +1790,12 @@ fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<Playe
         .potential
         .unwrap_or(seed.rating.unwrap_or(70))
         .clamp(45, 99);
+    player.profile_image_url = seed_profile_image_url(seed.photo.as_deref());
 
     Some(player)
 }
 
-fn inject_seed_free_agents(players: &mut Vec<Player>) {
+pub(crate) fn inject_seed_free_agents(players: &mut Vec<Player>) {
     let existing_ids: HashSet<String> = players
         .iter()
         .map(|player| normalize_seed_name(&player.match_name))
@@ -1643,6 +1819,40 @@ fn inject_seed_free_agents(players: &mut Vec<Player>) {
     }
 }
 
+pub(crate) fn remove_free_agents_shadowed_by_academy(players: &mut Vec<Player>, teams: &[Team]) {
+    let academy_team_ids: HashSet<&str> = teams
+        .iter()
+        .filter(|team| team.team_kind == TeamKind::Academy)
+        .map(|team| team.id.as_str())
+        .collect();
+
+    if academy_team_ids.is_empty() {
+        return;
+    }
+
+    let academy_names: HashSet<String> = players
+        .iter()
+        .filter(|player| {
+            player
+                .team_id
+                .as_deref()
+                .map(|team_id| academy_team_ids.contains(team_id))
+                .unwrap_or(false)
+        })
+        .map(|player| normalize_seed_name(&player.match_name))
+        .filter(|key| !key.is_empty())
+        .collect();
+
+    if academy_names.is_empty() {
+        return;
+    }
+
+    players.retain(|player| {
+        player.team_id.is_some()
+            || !academy_names.contains(&normalize_seed_name(&player.match_name))
+    });
+}
+
 /// Step 1: Create manager + generate world. No team assigned yet.
 /// Returns the Game object so the frontend can show team selection.
 /// world_source: "random" (default) or a file path to a JSON world database.
@@ -1656,6 +1866,7 @@ pub async fn start_new_game(
     dob: String,
     nationality: String,
     world_source: Option<String>,
+    avatar_path: Option<String>,
 ) -> Result<String, String> {
     info!(
         "[cmd] start_new_game: {} {} (nickname={:?}, nationality={}, world_source={:?})",
@@ -1679,11 +1890,12 @@ pub async fn start_new_game(
         return Err("Nationality is required.".to_string());
     }
 
-    // Validate DOB: must be a valid date and within a sensible range
+    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
+
+    // Validate DOB: must be a valid date and within a sensible range for the game start date.
     let birth_date = chrono::NaiveDate::parse_from_str(&dob, "%Y-%m-%d")
         .map_err(|_| "Invalid date of birth. Use YYYY-MM-DD format.".to_string())?;
-    let today = chrono::Utc::now().date_naive();
-    let age = today.signed_duration_since(birth_date).num_days() / 365;
+    let age = calculate_age_on_date(birth_date, start_date.date_naive());
     if age > 99 {
         return Err("Invalid date of birth.".to_string());
     }
@@ -1696,9 +1908,8 @@ pub async fn start_new_game(
         nationality,
     );
     manager.nickname = nickname;
+    manager.avatar_path = avatar_path;
 
-    use chrono::TimeZone;
-    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
     let clock = GameClock::new(start_date);
 
     // Load world based on source
@@ -1709,23 +1920,31 @@ pub async fn start_new_game(
         let path = resolve_default_world_path(&app_handle)?;
         let json = std::fs::read_to_string(&path)
             .map_err(|e| format!("Failed to read default LEC world database: {}", e))?;
-        let world = ofm_core::generator::load_world_from_json(&json)?;
+        let has_explicit_potential_base = json.contains("\"potential_base\"");
+        let mut world = ofm_core::generator::load_world_from_json(&json)?;
+        if !has_explicit_potential_base {
+            apply_seed_potential_defaults(&mut world.players);
+        }
         (world.teams, world.players, world.staff)
     } else {
         // Try to load from file path (strip "file:" prefix if present)
         let path = world_source.strip_prefix("file:").unwrap_or(&world_source);
         let json = std::fs::read_to_string(path)
             .map_err(|e| format!("Failed to read world database: {}", e))?;
-        let world = ofm_core::generator::load_world_from_json(&json)?;
+        let has_explicit_potential_base = json.contains("\"potential_base\"");
+        let mut world = ofm_core::generator::load_world_from_json(&json)?;
+        if !has_explicit_potential_base {
+            apply_seed_potential_defaults(&mut world.players);
+        }
         (world.teams, world.players, world.staff)
     };
 
-    inject_seed_free_agents(&mut players);
-    apply_lol_seed_ratings(&mut players);
-    apply_default_initial_contract_end(&mut players);
     let academy_bootstrap_date = clock.current_date.format("%Y-%m-%d").to_string();
     let mut teams = teams;
     bootstrap_example_academy_pool_from_example(&mut teams, &mut players, &academy_bootstrap_date);
+    remove_free_agents_shadowed_by_academy(&mut players, &teams);
+    inject_seed_free_agents(&mut players);
+    apply_default_initial_contract_end(&mut players);
 
     let new_game = Game::new(clock, manager, teams, players, staff, vec![]);
 
@@ -1910,33 +2129,56 @@ pub async fn load_game(
     save_id: String,
 ) -> Result<String, String> {
     info!("[cmd] load_game: save_id={}", save_id);
+
     let mut sm = sm_state
         .0
         .lock()
         .map_err(|e| format!("Lock error: {}", e))?;
+
+    info!("[cmd] load_game: loading game data from save");
     let mut game = sm.load_game(&save_id)?;
+    info!(
+        "[cmd] load_game: game loaded, players={}, teams={}",
+        game.players.len(),
+        game.teams.len()
+    );
+
+    remove_free_agents_shadowed_by_academy(&mut game.players, &game.teams);
     inject_seed_free_agents(&mut game.players);
-    apply_lol_seed_ratings(&mut game.players);
     ofm_core::champions::bootstrap_champion_state(&mut game);
+
+    info!("[cmd] load_game: loading stats state");
     let stats_state = sm.load_stats_state(&save_id)?;
+    info!("[cmd] load_game: stats state loaded");
+
     ofm_core::season_context::refresh_game_context(&mut game);
+    info!("[cmd] load_game: context refreshed");
 
     let mgr_name = game.manager.display_name();
+    info!("[cmd] load_game: manager={}", mgr_name);
 
+    info!("[cmd] load_game: setting state");
     state.set_save_id(save_id);
     state.set_game(game);
     state.set_stats_state(stats_state);
+    info!("[cmd] load_game: state set, returning manager name");
+
     Ok(mgr_name)
 }
 
 #[tauri::command]
 pub async fn get_active_game(state: State<'_, StateManager>) -> Result<Game, String> {
-    log::debug!("[cmd] get_active_game");
-    let mut game = state
-        .get_game(|g: &Game| g.clone())
-        .ok_or("No active game session".to_string())?;
-    ofm_core::champions::bootstrap_champion_state(&mut game);
-    state.set_game(game.clone());
+    log::info!("[cmd] get_active_game: start");
+    let game = state.get_game(|g: &Game| g.clone()).ok_or_else(|| {
+        log::error!("[cmd] get_active_game: no active game in state");
+        "No active game session".to_string()
+    })?;
+    log::info!(
+        "[cmd] get_active_game: found game with {} players, {} teams",
+        game.players.len(),
+        game.teams.len()
+    );
+    ofm_core::champions::bootstrap_champion_state(&mut game.clone());
     Ok(game)
 }
 
@@ -2013,4 +2255,217 @@ pub async fn exit_to_menu(
     state.clear_save_id();
 
     Ok(())
+}
+
+/// Save manager avatar file to app data directory
+#[tauri::command]
+pub async fn save_manager_avatar(
+    app_handle: tauri::AppHandle,
+    filename: String,
+    data: Vec<u8>,
+) -> Result<String, AppError> {
+    info!("[cmd] save_manager_avatar: filename={}", filename);
+
+    let safe_name = avatar::safe_avatar_filename(&filename)?;
+
+    let app_data_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| AppError::Io(format!("Failed to get app data dir: {}", e)))?;
+
+    let avatar_dir = app_data_dir.join("manager-avatars");
+    std::fs::create_dir_all(&avatar_dir)
+        .map_err(|e| AppError::Io(format!("Failed to create avatar directory: {}", e)))?;
+
+    let file_path = avatar_dir.join(&safe_name);
+    // Extra safety: verify resolved path is within the avatar directory
+    let canonical = file_path
+        .canonicalize()
+        .map_err(|e| AppError::Io(format!("Failed to resolve avatar path: {}", e)))?;
+    let canonical_dir = avatar_dir
+        .canonicalize()
+        .map_err(|e| AppError::Io(format!("Failed to resolve avatar directory: {}", e)))?;
+    if !canonical.starts_with(&canonical_dir) {
+        return Err(AppError::Validation(
+            "Avatar path traversal detected".into(),
+        ));
+    }
+
+    std::fs::write(&file_path, &data)
+        .map_err(|e| AppError::Io(format!("Failed to write avatar file: {}", e)))?;
+
+    info!("[cmd] save_manager_avatar: saved to {:?}", file_path);
+    Ok(safe_name)
+}
+
+/// Load manager avatar as base64 data URL
+#[tauri::command]
+pub async fn load_manager_avatar(
+    app_handle: tauri::AppHandle,
+    filename: String,
+) -> Result<String, AppError> {
+    info!("[cmd] load_manager_avatar: filename={}", filename);
+
+    let safe_name = avatar::safe_avatar_filename(&filename)?;
+
+    let app_data_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| AppError::Io(format!("Failed to get app data dir: {}", e)))?;
+
+    let avatar_dir = app_data_dir.join("manager-avatars");
+    let file_path = avatar_dir.join(&safe_name);
+    // Extra safety: verify resolved path is within the avatar directory
+    let canonical = file_path
+        .canonicalize()
+        .map_err(|e| AppError::Io(format!("Failed to resolve avatar path: {}", e)))?;
+    let canonical_dir = avatar_dir
+        .canonicalize()
+        .map_err(|e| AppError::Io(format!("Failed to resolve avatar directory: {}", e)))?;
+    if !canonical.starts_with(&canonical_dir) {
+        return Err(AppError::Validation(
+            "Avatar path traversal detected".into(),
+        ));
+    }
+
+    if !file_path.exists() {
+        return Err(AppError::NotFound(format!(
+            "Avatar file not found: {}",
+            safe_name
+        )));
+    }
+
+    let data = std::fs::read(&file_path)
+        .map_err(|e| AppError::Io(format!("Failed to read avatar file: {}", e)))?;
+
+    // Determine MIME type from extension
+    let mime_type = match safe_name.rsplit('.').next() {
+        Some("png") => "image/png",
+        Some("jpg") | Some("jpeg") => "image/jpeg",
+        Some("webp") => "image/webp",
+        _ => "application/octet-stream",
+    };
+
+    // Use modern base64 API (0.22+)
+    use base64::Engine;
+    let base64_data = base64::engine::general_purpose::STANDARD.encode(&data);
+    let data_url = format!("data:{};base64,{}", mime_type, base64_data);
+
+    info!("[cmd] load_manager_avatar: loaded {} bytes", data.len());
+    Ok(data_url)
+}
+
+/// Validated input for updating manager profile fields.
+#[derive(Debug, validator::Validate)]
+struct ManagerProfileInput {
+    #[validate(length(max = 30))]
+    nickname: Option<String>,
+    #[validate(length(max = 30))]
+    first_name: Option<String>,
+    #[validate(length(max = 30))]
+    last_name: Option<String>,
+    #[validate(custom(function = "validate_date_format"))]
+    dob: Option<String>,
+    #[validate(length(max = 3))]
+    nationality: Option<String>,
+    avatar_path: Option<String>,
+}
+
+fn validate_date_format(date: &str) -> Result<(), validator::ValidationError> {
+    if chrono::NaiveDate::parse_from_str(date, "%Y-%m-%d").is_ok() {
+        Ok(())
+    } else {
+        Err(validator::ValidationError::new("invalid_date_format"))
+    }
+}
+
+/// Update manager profile fields (nickname, name, dob, nationality, avatar)
+#[tauri::command]
+pub async fn update_manager_profile(
+    state: State<'_, StateManager>,
+    nickname: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    dob: Option<String>,
+    nationality: Option<String>,
+    avatar_path: Option<String>,
+) -> Result<(), AppError> {
+    info!("[cmd] update_manager_profile");
+
+    // Validate input
+    let input = ManagerProfileInput {
+        nickname: nickname.clone(),
+        first_name: first_name.clone(),
+        last_name: last_name.clone(),
+        dob: dob.clone(),
+        nationality: nationality.clone(),
+        avatar_path: avatar_path.clone(),
+    };
+    input
+        .validate()
+        .map_err(|e| AppError::Validation(format!("Validation failed: {}", e)))?;
+
+    let mut game = state
+        .get_game(|g: &Game| g.clone())
+        .ok_or(AppError::Session("No active game session".into()))?;
+
+    // Update only the provided fields (not None)
+    if let Some(nick) = nickname {
+        let trimmed = nick.trim().to_string();
+        if !trimmed.is_empty() {
+            game.manager.nickname = trimmed;
+        }
+    }
+    if let Some(first) = first_name {
+        let trimmed = first.trim().to_string();
+        if !trimmed.is_empty() {
+            game.manager.first_name = trimmed;
+        }
+    }
+    if let Some(last) = last_name {
+        let trimmed = last.trim().to_string();
+        if !trimmed.is_empty() {
+            game.manager.last_name = trimmed;
+        }
+    }
+    if let Some(date) = dob {
+        // Already validated by validator custom function
+        game.manager.date_of_birth = date;
+    }
+    if let Some(nat) = nationality {
+        let trimmed = nat.trim().to_string();
+        if !trimmed.is_empty() {
+            game.manager.nationality = trimmed;
+        }
+    }
+    if let Some(avatar) = avatar_path {
+        game.manager.avatar_path = Some(avatar);
+    }
+
+    // Save the game state back
+    state.set_game(game.clone());
+
+    info!("[cmd] update_manager_profile: completed");
+    Ok(())
+}
+
+#[cfg(test)]
+mod player_age_tests {
+    use super::*;
+
+    #[test]
+    fn calculates_age_against_game_date_not_system_date() {
+        let birth_date = chrono::NaiveDate::from_ymd_opt(2000, 1, 2).unwrap();
+        let game_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
+
+        assert_eq!(calculate_age_on_date(birth_date, game_date), 24);
+    }
+
+    #[test]
+    fn increments_age_on_birthday() {
+        let birth_date = chrono::NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+        let game_date = chrono::NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
+
+        assert_eq!(calculate_age_on_date(birth_date, game_date), 25);
+    }
 }

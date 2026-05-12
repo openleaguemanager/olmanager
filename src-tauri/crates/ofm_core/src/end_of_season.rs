@@ -132,9 +132,19 @@ fn prize_money_for_position(position: u32) -> i64 {
         .unwrap_or(150_000)
 }
 
+fn refresh_hiring_cycle_budgets(team: &mut domain::team::Team) {
+    // Minimal hook: after split settlements (prize/objectives), rebalance next-cycle
+    // planning budgets from current treasury so offseason hiring decisions have
+    // coherent funds available without a full finance redesign.
+    team.wage_budget = ((team.finance.max(0) as f64) * 0.06).round() as i64;
+    team.transfer_budget = ((team.finance.max(0) as f64) * 0.22).round() as i64;
+}
+
 /// Process end-of-season: record history, compute awards, reset stats, generate next season.
 /// Returns a summary struct for the frontend to display.
 pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
+    crate::board_objectives::update_objective_progress(game);
+
     let league = match &game.league {
         Some(l) => l,
         None => return EndOfSeasonSummary::default(),
@@ -212,8 +222,8 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
         user_won: user_standing.as_ref().map(|s| s.won).unwrap_or(0),
         user_drawn: user_standing.as_ref().map(|s| s.drawn).unwrap_or(0),
         user_lost: user_standing.as_ref().map(|s| s.lost).unwrap_or(0),
-        user_goals_for: user_standing.as_ref().map(|s| s.goals_for).unwrap_or(0),
-        user_goals_against: user_standing.as_ref().map(|s| s.goals_against).unwrap_or(0),
+        user_kills_for: user_standing.as_ref().map(|s| s.kills_for).unwrap_or(0),
+        user_kills_against: user_standing.as_ref().map(|s| s.kills_against).unwrap_or(0),
         golden_boot_player: awards
             .golden_boot
             .first()
@@ -250,8 +260,8 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                 won: standing.won,
                 drawn: standing.drawn,
                 lost: standing.lost,
-                goals_for: standing.goals_for,
-                goals_against: standing.goals_against,
+                kills_for: standing.kills_for,
+                kills_against: standing.kills_against,
             });
             // Reset form
             team.form.clear();
@@ -271,6 +281,8 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                     kind: FinancialTransactionKind::PrizeMoney,
                 });
             }
+
+            refresh_hiring_cycle_budgets(team);
         }
     }
 
@@ -290,7 +302,7 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                 team_id,
                 team_name,
                 appearances: player.stats.appearances,
-                goals: player.stats.goals,
+                goals: player.stats.kills,
                 assists: player.stats.assists,
             });
         }
@@ -303,7 +315,6 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
         let total_matches = standing.won + standing.drawn + standing.lost;
         game.manager.career_stats.matches_managed += total_matches;
         game.manager.career_stats.wins += standing.won;
-        game.manager.career_stats.draws += standing.drawn;
         game.manager.career_stats.losses += standing.lost;
         if user_position == 1 {
             game.manager.career_stats.trophies += 1;
@@ -353,7 +364,8 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
     }
 
     // 6b. Evaluate board objectives and adjust satisfaction
-    let obj_delta = crate::board_objectives::evaluate_objectives(game);
+    let objective_result = crate::board_objectives::evaluate_objective_result(game);
+    let obj_delta = objective_result.satisfaction_delta;
     let new_sat = (game.manager.satisfaction as i16 + obj_delta as i16).clamp(0, 100) as u8;
     game.manager.satisfaction = new_sat;
     // Clear objectives for next season (will be regenerated on first process_day)
@@ -369,12 +381,18 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
         .iter()
         .map(|standing| standing.team_id.clone())
         .collect();
+    let expected_round_count = team_ids.len().saturating_sub(1);
+    let next_round_offsets = if round_offsets.len() == expected_round_count {
+        Some(round_offsets.as_slice())
+    } else {
+        None
+    };
     let mut new_league = generate_single_round_league_with_offsets_and_bo(
         &next_league_name,
         next_season,
         &team_ids,
         next_start,
-        Some(&round_offsets),
+        next_round_offsets,
         regular_best_of(next_split),
     );
     if !user_team_id.is_empty() {
@@ -444,6 +462,40 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
 
     let existing_ids: std::collections::HashSet<String> =
         game.messages.iter().map(|m| m.id.clone()).collect();
+
+    let objective_msg_id = format!("board_objective_review_{}", season);
+    if objective_result.total > 0 && !existing_ids.contains(&objective_msg_id) {
+        let delta_label = if obj_delta > 0 {
+            format!("+{}", obj_delta)
+        } else {
+            obj_delta.to_string()
+        };
+        let objective_message = InboxMessage::new(
+            objective_msg_id,
+            format!("Season {} — Board Objective Review", season),
+            format!(
+                "The board has completed its end-of-split objective review. You delivered {}/{} objectives.\n\nManager satisfaction impact: {}.\n\nThis review reflects competitive performance across the split: final standing, series wins, map wins, draft preparation, and roster execution.",
+                objective_result.met_count,
+                objective_result.total,
+                delta_label
+            ),
+            "Board of Directors".to_string(),
+            last_fixture_date.clone(),
+        )
+        .with_category(MessageCategory::BoardDirective)
+        .with_priority(MessagePriority::High)
+        .with_sender_role("Chairman")
+        .with_i18n("be.msg.boardObjectiveReview.subject", "be.msg.boardObjectiveReview.body", {
+            let mut params = std::collections::HashMap::new();
+            params.insert("season".to_string(), season.to_string());
+            params.insert("metCount".to_string(), objective_result.met_count.to_string());
+            params.insert("total".to_string(), objective_result.total.to_string());
+            params.insert("satisfactionDelta".to_string(), delta_label);
+            params
+        })
+        .with_sender_i18n("be.sender.boardOfDirectors", "be.role.chairman");
+        game.messages.push(objective_message);
+    }
 
     let payout_msg_id = format!("season_payout_{}", season);
     let user_prize_money = prize_money_for_position(user_position);
@@ -564,8 +616,8 @@ pub struct EndOfSeasonSummary {
     pub user_won: u32,
     pub user_drawn: u32,
     pub user_lost: u32,
-    pub user_goals_for: u32,
-    pub user_goals_against: u32,
+    pub user_kills_for: u32,
+    pub user_kills_against: u32,
     pub golden_boot_player: String,
     pub golden_boot_goals: u32,
     pub poty_player: String,

@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS = {
   language: "es",
   currency: "EUR",
   default_match_mode: "live",
+  scrim_review_mode: "manual",
   auto_save: true,
   match_speed: "normal",
   show_match_commentary: true,
@@ -20,6 +21,7 @@ const DEFAULT_SETTINGS = {
   master_volume: 0.5,
   sound_effects_enabled: true,
   music_enabled: true,
+  debug_tools_enabled: false,
   lol_hybrid_open_trade_confidence_high: 0.6,
   lol_hybrid_disengage_confidence_low: 0.32,
 } as const;

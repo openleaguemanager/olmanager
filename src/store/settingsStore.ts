@@ -6,6 +6,7 @@ export interface AppSettings {
   language: string;
   currency: "EUR" | "GBP" | "USD";
   default_match_mode: "live" | "spectator" | "delegate";
+  scrim_review_mode: "manual" | "assistant";
   auto_save: boolean;
   match_speed: "slow" | "normal" | "fast";
   show_match_commentary: boolean;
@@ -15,6 +16,7 @@ export interface AppSettings {
   master_volume: number;
   sound_effects_enabled: boolean;
   music_enabled: boolean;
+  debug_tools_enabled: boolean;
   lol_hybrid_open_trade_confidence_high: number;
   lol_hybrid_disengage_confidence_low: number;
 }
@@ -24,6 +26,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   language: "es",
   currency: "EUR",
   default_match_mode: "live",
+  scrim_review_mode: "manual",
   auto_save: true,
   match_speed: "normal",
   show_match_commentary: true,
@@ -33,6 +36,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   master_volume: 0.5,
   sound_effects_enabled: true,
   music_enabled: true,
+  debug_tools_enabled: false,
   lol_hybrid_open_trade_confidence_high: 0.6,
   lol_hybrid_disengage_confidence_low: 0.32,
 };

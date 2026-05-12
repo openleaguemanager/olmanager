@@ -4,6 +4,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameStore";
+import { useSettingsStore } from "../store/settingsStore";
 import { Button, ThemeToggle, DatePicker, CountryFlag } from "../components/ui";
 import SavesList from "../components/menu/SavesList";
 import {
@@ -16,6 +17,7 @@ import {
   ChevronDown,
   Check,
   Power,
+  Database,
 } from "lucide-react";
 import { countryName, allNationalities } from "../lib/countries";
 
@@ -116,6 +118,9 @@ function logNationalityDebug(
 export default function MainMenu() {
   const navigate = useNavigate();
   const setGameActive = useGameStore((state) => state.setGameActive);
+  const debugToolsEnabled = useSettingsStore(
+    (state) => state.settings.debug_tools_enabled,
+  );
   const { t, i18n } = useTranslation();
 
   const [menuState, setMenuState] = useState<
@@ -274,7 +279,7 @@ export default function MainMenu() {
     try {
       if (!canUseTauriInvoke()) {
         throw new Error(
-          "Backend Tauri no disponible. Cerrá cualquier `npm run dev` suelto y ejecutá `npm run tauri dev`.",
+          "Backend Tauri no disponible. Cierra cualquier `npm run tauri dev` suelto y ejecutá `npm run tauri dev`.",
         );
       }
 
@@ -287,10 +292,15 @@ export default function MainMenu() {
         dob: formData.dob,
         nationality: formData.nationality,
         worldSource,
+        avatarPath: null,
       });
-      const displayName = formData.nickname?.trim() || `${formData.firstName} ${formData.lastName}`;
+
+      const displayName =
+        formData.nickname?.trim() || `${formData.firstName} ${formData.lastName}`;
       setGameActive(true, displayName.trim());
-      console.debug("[MainMenu] start_new_game completed, navigating to /select-team");
+      console.debug(
+        "[MainMenu] start_new_game completed, navigating to /select-team",
+      );
       navigate("/select-team");
     } catch (error) {
       console.error("Failed to start game:", error);
@@ -314,10 +324,13 @@ export default function MainMenu() {
   };
 
   const handleLoadGame = async (saveId: string) => {
+    console.log("[MainMenu] handleLoadGame start, saveId:", saveId);
     setLoadingSaveId(saveId);
     try {
       const managerName = await invoke<string>("load_game", { saveId });
+      console.log("[MainMenu] load_game returned, managerName:", managerName);
       setGameActive(true, managerName);
+      console.log("[MainMenu] setGameActive called, navigating to /dashboard");
       navigate("/dashboard");
     } catch (error) {
       console.error("Failed to load game:", error);
@@ -366,7 +379,7 @@ export default function MainMenu() {
           {/* Logo */}
           <img
             src="/openfootlogo.svg"
-            alt="OpenFootball"
+            alt="League Manager"
             className="text-center w-full h-full object-cover"
           />
 
@@ -416,6 +429,32 @@ export default function MainMenu() {
 
               <button
                 onClick={() => {
+                  if (debugToolsEnabled) navigate("/world-editor");
+                }}
+                disabled={!debugToolsEnabled}
+                aria-disabled={!debugToolsEnabled}
+                title={
+                  debugToolsEnabled
+                    ? "World Editor"
+                    : "Enable debug tools in Settings to access World Editor"
+                }
+                className={`group flex items-center justify-between w-full p-4 rounded-xl transition-all duration-300 border shadow-sm ${
+                  debugToolsEnabled
+                    ? "bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-navy-600 hover:border-primary-400 dark:hover:border-primary-400"
+                    : "bg-gray-100 dark:bg-navy-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-navy-700 opacity-60 cursor-not-allowed"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Database className={`w-6 h-6 ${debugToolsEnabled ? "text-primary-500 dark:text-primary-400" : "text-gray-400 dark:text-gray-600"}`} />
+                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
+                    World Editor
+                  </span>
+                </div>
+                <ChevronRight className={`w-5 h-5 transition-all ${debugToolsEnabled ? "opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 text-primary-500" : "opacity-30 text-gray-400"}`} />
+              </button>
+
+              <button
+                onClick={() => {
                   void handleExitApp();
                 }}
                 className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-red-200 dark:hover:border-red-500/30 shadow-sm"
@@ -437,7 +476,7 @@ export default function MainMenu() {
               className="flex flex-col gap-4"
             >
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white transition-colors">
+                <h2 className="text-xl font-sans font-bold uppercase tracking-wide text-gray-900 dark:text-white transition-colors">
                   {t("createManager.title")}
                 </h2>
                 <button

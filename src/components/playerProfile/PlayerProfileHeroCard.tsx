@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import { Pencil, Shield, User } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { EyeOff, Pencil, Shield, User } from "lucide-react";
 import type { PlayerData } from "../../store/gameStore";
 import { formatPlayerMarketValue, formatPlayerWage } from "./PlayerProfile.helpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolveExampleTeamLogo } from "../../lib/teamLogos";
 import type {
   PlayerProfileScoutStatus,
   ScoutAvailability,
 } from "./PlayerProfile.scouting";
 import PlayerProfileScoutAction from "./PlayerProfileScoutAction";
-import { Badge, Card } from "../ui";
+import { RoleBadge, Card } from "../ui";
 
 type TranslateFn = (
   key: string,
@@ -18,7 +19,9 @@ type TranslateFn = (
 interface PlayerProfileHeroCardProps {
   player: PlayerData;
   ovr: number;
-  primaryRole: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
+  primaryRole?: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
+  /** @deprecated Legacy prop name kept for older focused tests. */
+  primaryPosition?: string;
   age: number;
   teamName: string;
   weeklySuffix: string;
@@ -44,7 +47,7 @@ interface PlayerProfileHeroCardProps {
 export default function PlayerProfileHeroCard({
   player,
   ovr,
-  primaryRole,
+  primaryRole = "MID",
   age,
   teamName,
   weeklySuffix,
@@ -66,8 +69,7 @@ export default function PlayerProfileHeroCard({
   t,
 }: PlayerProfileHeroCardProps) {
   const role = primaryRole;
-  const roleVariant = getLolRoleBadgeVariant(role);
-  const playerPhoto = resolvePlayerPhoto(player.id, player.match_name);
+  const playerPhoto = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
   const [insigniaBackground, setInsigniaBackground] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState(false);
   const potentialRevealed = player.potential_revealed ?? null;
@@ -168,7 +170,7 @@ export default function PlayerProfileHeroCard({
           <div className="absolute inset-0 bg-linear-to-r from-navy-700 to-navy-800" />
         )}
 
-        <div className="relative z-10 flex items-center gap-6">
+        <div className="relative z-10 flex items-start gap-6">
           <div className="relative w-24 h-24 shrink-0">
             <div
               className={`w-24 h-24 rounded-2xl overflow-hidden border-2 ${
@@ -202,7 +204,7 @@ export default function PlayerProfileHeroCard({
               {player.match_name}
             </h2>
             <div className="flex items-center gap-3 mt-2">
-              <Badge variant={roleVariant}>{role}</Badge>
+              <RoleBadge role={role} size="sm" />
               {isOwnClub && academyActionLabel && onAcademyAction ? (
                 <button
                   type="button"
@@ -264,7 +266,14 @@ export default function PlayerProfileHeroCard({
               </div>
             ) : null}
             <p className="text-gray-400 text-sm mt-2 flex items-center gap-1.5">
-              <Shield className="w-4 h-4" />
+              {(() => {
+                const logoUrl = resolveExampleTeamLogo(teamName);
+                return logoUrl ? (
+                  <img src={logoUrl} alt={teamName} className="w-4 h-4 object-contain" />
+                ) : (
+                  <Shield className="w-4 h-4" />
+                );
+              })()}
               {player.team_id ? (
                 <button
                   onClick={() => onSelectTeam?.(player.team_id!)}
@@ -276,9 +285,34 @@ export default function PlayerProfileHeroCard({
                 <span>{teamName}</span>
               )}
             </p>
-          </div>
 
-          {!isOwnClub ? (
+            {isOwnClub ? (
+              <div className="mt-3 inline-flex items-center gap-3 rounded-lg border border-white/15 bg-black/20 px-3 py-2 text-sm text-gray-200">
+                <span className="font-heading font-bold uppercase tracking-wider text-gray-400">
+                  {t("common.potential", { defaultValue: "Potencial" })}
+                </span>
+                <span className="font-heading font-bold text-accent-300">{potentialValueLabel}</span>
+                {potentialActive ? (
+                  <span className="text-xs text-gray-300">
+                    {t("playerProfile.potentialResearchProgress", {
+                      defaultValue: `Investigando… ${potentialProgress}/7`,
+                      current: potentialProgress,
+                      total: 7,
+                    })}
+                  </span>
+                ) : canStartPotentialResearch ? (
+                  <button
+                    type="button"
+                    onClick={onStartPotentialResearch}
+                    disabled={potentialResearchSubmitting}
+                    className="rounded-md border border-primary-400/60 px-2 py-1 text-xs font-heading font-bold uppercase tracking-wide text-primary-200 hover:bg-primary-500/20 disabled:opacity-60"
+                  >
+                    {t("playerProfile.startPotentialResearch", { defaultValue: "Investigar potencial" })}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+
             <div className="mt-3">
               <PlayerProfileScoutAction
                 availability={scoutAvailability}
@@ -287,60 +321,15 @@ export default function PlayerProfileHeroCard({
                 onScout={onScout}
               />
             </div>
-          ) : null}
+          </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <div className={isOwnClub && potentialRevealed === null ? "min-w-[170px]" : ""}>
-              {isOwnClub && potentialRevealed === null ? (
-                <div className="bg-black/42 border border-white/20 rounded-xl px-4 py-3 text-center backdrop-blur-xs">
-                  <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">
-                    {t("common.potential", { defaultValue: "Potencial" })}
-                  </p>
-                  <p className="font-heading font-bold text-xl mt-0.5 text-gray-200">{potentialValueLabel}</p>
-
-                  {potentialActive ? (
-                    <p className="text-xs text-primary-300 font-semibold mt-1">
-                      {t("playerProfile.potentialResearchProgress", {
-                        defaultValue: "Investigando… {{progress}}/7",
-                        progress: potentialProgress,
-                      })}
-                    </p>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={onStartPotentialResearch}
-                      disabled={!canStartPotentialResearch}
-                      className={`mt-1 w-full px-2.5 py-1.5 rounded-md text-[11px] font-heading font-bold uppercase tracking-wide border transition-colors ${
-                        canStartPotentialResearch
-                          ? "bg-primary-500/20 border-primary-400 text-primary-200 hover:bg-primary-500/30"
-                          : "bg-gray-700/40 border-gray-600 text-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      {potentialResearchSubmitting
-                        ? t("common.loading", { defaultValue: "Cargando…" })
-                        : t("playerProfile.startPotentialResearch", {
-                            defaultValue: "Investigar potencial",
-                          })}
-                    </button>
-                  )}
-
-                  {isPotentialResearchBlockedByOther ? (
-                    <p className="text-[11px] text-gray-400 mt-1">
-                      {t("playerProfile.potentialResearchBusy", {
-                        defaultValue: "Ya hay otra investigación de potencial activa.",
-                      })}
-                    </p>
-                  ) : null}
-                </div>
-              ) : (
-                <QuickStat
-                  label={t("common.potential", { defaultValue: "Potencial" })}
-                  value={potentialValueLabel}
-                  color="text-gray-200"
-                />
-              )}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3 flex-1">
+              <QuickStat
+                label={t("common.ovr")}
+                value={String(ovr)}
+                color="text-accent-300"
+              />
               <QuickStat
                 label={t("common.condition", { defaultValue: "Condition" })}
                 value={`${player.condition}%`}
@@ -350,6 +339,12 @@ export default function PlayerProfileHeroCard({
                 label={t("common.morale")}
                 value={`${player.morale}%`}
                 color={player.morale >= 70 ? "text-primary-400" : "text-accent-400"}
+              />
+              <QuickStat
+                label={t("common.potential", { defaultValue: "Potencial" })}
+                value={potentialRevealed !== null ? String(potentialRevealed) : "—"}
+                color="text-gray-200"
+                icon={potentialRevealed === null ? <EyeOff className="w-4 h-4" /> : undefined}
               />
               <QuickStat
                 label={t("common.value")}
@@ -366,9 +361,14 @@ export default function PlayerProfileHeroCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
+      <div className="grid grid-cols-3 gap-px bg-gray-200 dark:bg-navy-600 md:hidden">
         <MobileQuickStat
-          label={t("common.energy", { defaultValue: "Energía" })}
+          label={t("common.ovr")}
+          value={String(ovr)}
+          color="text-accent-500"
+        />
+        <MobileQuickStat
+          label={t("common.condition", { defaultValue: "Energía" })}
           value={`${player.condition}%`}
           color={player.condition >= 70 ? "text-primary-500" : "text-red-500"}
         />
@@ -376,6 +376,12 @@ export default function PlayerProfileHeroCard({
           label={t("common.morale")}
           value={`${player.morale}%`}
           color={player.morale >= 70 ? "text-primary-500" : "text-accent-500"}
+        />
+        <MobileQuickStat
+          label={t("common.potential", { defaultValue: "Potencial" })}
+          value={potentialRevealed !== null ? String(potentialRevealed) : "—"}
+          color="text-gray-700 dark:text-gray-200"
+          icon={potentialRevealed === null ? <EyeOff className="w-4 h-4" /> : undefined}
         />
         <MobileQuickStat
           label={t("common.value")}
@@ -445,36 +451,25 @@ function canLoadImage(url: string): Promise<boolean> {
   });
 }
 
-function getLolRoleBadgeVariant(role: "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT") {
-  switch (role) {
-    case "TOP":
-      return "accent" as const;
-    case "JUNGLE":
-      return "success" as const;
-    case "MID":
-      return "primary" as const;
-    case "ADC":
-      return "danger" as const;
-    case "SUPPORT":
-      return "neutral" as const;
-  }
-}
-
 function QuickStat({
   label,
   value,
   color,
+  icon,
 }: {
   label: string;
   value: string;
   color: string;
+  icon?: ReactNode;
 }) {
   return (
     <div className="bg-black/42 border border-white/20 rounded-xl px-5 py-3 text-center min-w-25 backdrop-blur-xs">
       <p className="text-xs text-gray-400 font-heading uppercase tracking-wider">
         {label}
       </p>
-      <p className={`font-heading font-bold text-xl mt-0.5 ${color}`}>{value}</p>
+      <p className={`font-heading font-bold text-xl mt-0.5 ${color} inline-flex items-center gap-1 justify-center`}>
+        {icon ?? value}
+      </p>
     </div>
   );
 }
@@ -483,17 +478,21 @@ function MobileQuickStat({
   label,
   value,
   color,
+  icon,
 }: {
   label: string;
   value: string;
   color: string;
+  icon?: ReactNode;
 }) {
   return (
     <div className="bg-white dark:bg-navy-800 p-3 text-center">
       <p className="text-xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
         {label}
       </p>
-      <p className={`font-heading font-bold text-lg mt-0.5 ${color}`}>{value}</p>
+      <p className={`font-heading font-bold text-lg mt-0.5 ${color} inline-flex items-center gap-1 justify-center`}>
+        {icon ?? value}
+      </p>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach } from "vitest";
 import i18n from "../i18n";
 import {
   resolveBackendText,
@@ -32,10 +32,17 @@ beforeAll(async () => {
     "test.headline": "Breaking: {{team}} wins!",
     "test.newsBody": "Match report for {{team}}.",
     "test.source": "OFM Sports",
+    "test.recommendation": "Translated recommendation",
+    "test.focus": "Translated focus",
+    "test.issue": "Translated issue",
     "boardObjectives.objective.LeaguePosition": "Finish in the top {{target}}",
-    "boardObjectives.objective.Wins": "Win at least {{target}} matches",
-    "boardObjectives.objective.GoalsScored": "Score at least {{target}} goals",
+    "boardObjectives.objective.Wins": "Win at least {{target}} series",
+    "boardObjectives.objective.GoalsScored": "Win at least {{target}} maps",
   }, true, true);
+});
+
+beforeEach(async () => {
+  await i18n.changeLanguage("en");
 });
 
 // ---------------------------------------------------------------------------
@@ -277,6 +284,55 @@ describe("resolveMessage", () => {
     expect(result.sender_role).toBe("Staff");
   });
 
+  it("resolves i18n keys passed as message params", () => {
+    const msg = makeMessage({
+      subject: "raw",
+      body: "Recommendation: test.recommendation",
+      body_key: "be.msg.scrimWeekly.body",
+      i18n_params: {
+        played: "2",
+        wins: "1",
+        losses: "1",
+        cancellations: "0",
+        avgQuality: "76",
+        lossStreak: "1",
+        topFocus: "test.focus",
+        recurringIssue: "test.issue",
+        topChampion: "Azir",
+        recommendation: "test.recommendation",
+      },
+    });
+
+    const result = resolveMessage(msg);
+
+    expect(result.body).toContain("Main focus: Translated focus");
+    expect(result.body).toContain("Recurring issue: Translated issue");
+    expect(result.body).toContain("Recommendation: Translated recommendation");
+  });
+
+  it("resolves board objective review messages with persisted params", () => {
+    const msg = makeMessage({
+      subject: "Season 1 — Board Objective Review",
+      body: "The board has completed its end-of-split objective review. You delivered 1/3 objectives.",
+      subject_key: "be.msg.boardObjectiveReview.subject",
+      body_key: "be.msg.boardObjectiveReview.body",
+      i18n_params: {
+        season: "1",
+        metCount: "1",
+        total: "3",
+        satisfactionDelta: "-5",
+      },
+    });
+
+    const result = resolveMessage(msg);
+
+    expect(result.subject).toBe("Season 1 — Board Objective Review");
+    expect(result.body).toContain("You delivered 1/3 objectives.");
+    expect(result.body).toContain("Manager satisfaction impact: -5.");
+    expect(result.body).toContain("series wins");
+    expect(result.body).toContain("map wins");
+  });
+
   it("localizes legacy delegated renewal messages without persisted i18n keys", async () => {
     const previousLanguage = i18n.language;
     await i18n.changeLanguage("pt-BR");
@@ -367,7 +423,7 @@ describe("resolveNewsArticle", () => {
 
       const result = resolveNewsArticle(article);
 
-      expect(result.headline).toBe("Resumo Semanal — Semana de 2026-07-27");
+      expect(result.headline).toBe("Power rankings semanal — semana de 2026-07-27");
     } finally {
       await i18n.changeLanguage(previousLanguage);
     }
@@ -393,6 +449,17 @@ describe("resolveBoardObjective", () => {
     const result = resolveBoardObjective(objective);
 
     expect(result.description).toBe("Finish in the top 6");
+  });
+
+  it("uses esports terminology for map-win objectives", () => {
+    const objective = makeBoardObjective({
+      target: 8,
+      objective_type: "GoalsScored",
+    });
+
+    const result = resolveBoardObjective(objective);
+
+    expect(result.description).toBe("Win at least 8 maps");
   });
 
   it("falls back to raw description for unknown objective types", () => {
