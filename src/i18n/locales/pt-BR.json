@@ -923,6 +923,13 @@
     "currentlyTraining": "Treinando atualmente: <strong>{{attrs}}</strong> com intensidade <strong>{{intensity}}</strong>.",
     "recoveryNote": "Os jogadores vão priorizar reset, descanso e recuperação de condição em todos os dias de treino.",
     "effectiveFocus": "Foco",
+    "soloQRanks": "Ranks de SoloQ",
+    "roleIconAlt": "Função do jogador",
+    "soloQTiers": {
+      "Challenger": "Desafiante",
+      "Grandmaster": "Grão-mestre",
+      "Master": "Mestre"
+    },
     "trainingAppliedNote": "O treino é aplicado nos dias programados quando você avança o tempo. Dias de descanso proporcionam recuperação total.",
     "criticalCondition": "{{count}} jogador(es) em condição crítica (<25%)",
     "exhaustedPlayers": "{{count}} jogador(es) exausto(s) (<40%)",
@@ -941,6 +948,13 @@
         "warnBalanced": "Uma programação Leve poderia ajudar o elenco a se recuperar.",
         "warnLight": "Reset mental / recuperação maximizaria a recuperação de condição."
       }
+    },
+    "staffImpact": {
+      "title": "Impacto da comissão",
+      "learning": "Aprendizado",
+      "scrims": "Preparação de scrims",
+      "recovery": "Recuperação",
+      "note": "A comissão melhora de forma conservadora o aprendizado, a preparação e a recuperação; os atributos dos jogadores continuam determinando os resultados."
     },
     "focuses": {
       "Scrims": {

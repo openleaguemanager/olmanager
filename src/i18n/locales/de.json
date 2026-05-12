@@ -923,6 +923,13 @@
     "currentlyTraining": "Aktuelles Training: <strong>{{attrs}}</strong> mit <strong>{{intensity}}</strong> Intensität.",
     "recoveryNote": "Die Spieler priorisieren an allen Trainingstagen Reset, Ruhe und Erholung.",
     "effectiveFocus": "Fokus",
+    "soloQRanks": "SoloQ-Ränge",
+    "roleIconAlt": "Spielerrolle",
+    "soloQTiers": {
+      "Challenger": "Herausforderer",
+      "Grandmaster": "Großmeister",
+      "Master": "Meister"
+    },
     "trainingAppliedNote": "Training wird an geplanten Tagen angewendet, wenn du die Zeit vorrückst. Ruhetage bieten volle Erholung.",
     "criticalCondition": "{{count}} Spieler in kritischem Zustand (<25%)",
     "exhaustedPlayers": "{{count}} Spieler erschöpft (<40%)",
@@ -941,6 +948,13 @@
         "warnBalanced": "Ein Leichter Zeitplan könnte dem Team helfen, sich zu erholen.",
         "warnLight": "Mental Reset / Regeneration würde die Fitness-Erholung maximieren."
       }
+    },
+    "staffImpact": {
+      "title": "Staff-Einfluss",
+      "learning": "Lernen",
+      "scrims": "Scrim-Vorbereitung",
+      "recovery": "Erholung",
+      "note": "Der Staff verbessert Lernen, Vorbereitung und Erholung konservativ; Spielerattribute bleiben weiterhin entscheidend."
     },
     "focuses": {
       "Scrims": {

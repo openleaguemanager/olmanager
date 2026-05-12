@@ -906,6 +906,13 @@
     "currentlyTraining": "Şu anki antrenman: <strong>{{intensity}}</strong> yoğunluğunda <strong>{{attrs}}</strong>.",
     "recoveryNote": "Oyuncular tüm antrenman günlerinde zihinsel sıfırlanma, dinlenme ve kondisyon toparlamaya öncelik verecektir.",
     "effectiveFocus": "Odak",
+    "soloQRanks": "SoloQ Sıralamaları",
+    "roleIconAlt": "Oyuncu rolü",
+    "soloQTiers": {
+      "Challenger": "Şampiyonluk",
+      "Grandmaster": "Üstat",
+      "Master": "Usta"
+    },
     "trainingAppliedNote": "Antrenman, zamanı ilerlettiğinizde planlanan antrenman günlerinde uygulanır. Dinlenme günleri tam toparlanma sağlar.",
     "criticalCondition": "{{count}} oyuncunun durumu kritik (<%25)",
     "exhaustedPlayers": "{{count}} oyuncu bitkin (<%40)",
@@ -924,6 +931,13 @@
         "warnBalanced": "Hafif bir program takımın toparlanmasına yardımcı olabilir.",
         "warnLight": "Zihinsel Sıfırlanma / Toparlanma, kondisyon geri kazanımını en üst düzeye çıkaracaktır."
       }
+    },
+    "staffImpact": {
+      "title": "Personel etkisi",
+      "learning": "Öğrenme",
+      "scrims": "Scrim hazırlığı",
+      "recovery": "Toparlanma",
+      "note": "Personel öğrenme, hazırlık ve toparlanmayı ölçülü şekilde iyileştirir; sonuçları hâlâ oyuncu özellikleri belirler."
     },
     "focuses": {
       "Scrims": {
