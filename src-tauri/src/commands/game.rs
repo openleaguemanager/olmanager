@@ -1894,7 +1894,7 @@ pub(crate) fn remove_free_agents_shadowed_by_academy(players: &mut Vec<Player>, 
 /// Used when the frontend wants to show league/team selection first.
 #[tauri::command]
 pub async fn start_new_game_lightweight(
-    app_handle: tauri::AppHandle,
+    _app_handle: tauri::AppHandle,
     state: State<'_, StateManager>,
     nickname: Option<String>,
     first_name: String,
@@ -2124,7 +2124,7 @@ fn assemble_world_from_modular_data(
     }
 
     // 2. Load staff free agents
-    let mut staff = crate::commands::competitions::load_staff_free_agents(app_handle)?;
+    let staff = crate::commands::competitions::load_staff_free_agents(app_handle)?;
 
     // 3. Bootstrap academy seeds from ERL references
     let academy_bootstrap_date = "2025-01-01".to_string();
@@ -2751,6 +2751,7 @@ pub async fn load_manager_avatar(
 
 /// Validated input for updating manager profile fields.
 #[derive(Debug, validator::Validate)]
+#[allow(dead_code)]
 struct ManagerProfileInput {
     #[validate(length(max = 30))]
     nickname: Option<String>,
