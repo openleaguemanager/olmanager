@@ -132,6 +132,7 @@ mod tests {
             "Premier Division".to_string(),
             2026,
             &team_ids,
+            None,
         );
         league.fixtures = vec![
             Fixture {
@@ -222,7 +223,7 @@ mod tests {
         let mut league = sample_league();
         upsert_league(db.conn(), &league).unwrap();
 
-        // Modify and re-upsert — old fixtures should be replaced
+        // Modify and re-upsert — old fixtures for this competition should be replaced
         league.fixtures = vec![Fixture {
             id: "fix-003".to_string(),
             matchday: 3,
@@ -237,7 +238,7 @@ mod tests {
         upsert_league(db.conn(), &league).unwrap();
 
         let loaded = load_league(db.conn()).unwrap().unwrap();
-        assert_eq!(loaded.fixtures.len(), 1);
+        assert_eq!(loaded.fixtures.len(), 1, "should have exactly 1 fixture for this competition");
         assert_eq!(loaded.fixtures[0].id, "fix-003");
     }
 
@@ -249,9 +250,10 @@ mod tests {
 
         // Re-upsert same league with different fixtures — old data for this competition is replaced
         let replacement = League {
-            id: "league-1".to_string(),
+            id: "league-2".to_string(),
             name: "Premier Division".to_string(),
             season: 2027,
+            competition_id: None,
             fixtures: vec![Fixture {
                 id: "fix-101".to_string(),
                 matchday: 1,
@@ -277,8 +279,9 @@ mod tests {
             .unwrap();
         let loaded = load_league(db.conn()).unwrap().unwrap();
 
-        assert_eq!(league_count, 1);
-        assert_eq!(loaded.id, "league-1");
+        // Two markers exist (different IDs), load_league picks the highest season
+        assert_eq!(league_count, 2);
+        assert_eq!(loaded.id, "league-2");
         assert_eq!(loaded.season, 2027);
         assert_eq!(loaded.fixtures.len(), 1);
         assert_eq!(loaded.fixtures[0].id, "fix-101");
@@ -294,6 +297,7 @@ mod tests {
             id: "league-old".to_string(),
             name: "Premier Division".to_string(),
             season: 2026,
+            competition_id: None,
             fixtures: vec![Fixture {
                 id: "fix-old".to_string(),
                 matchday: 1,
@@ -313,6 +317,7 @@ mod tests {
             id: "league-new".to_string(),
             name: "Premier Division".to_string(),
             season: 2027,
+            competition_id: None,
             fixtures: vec![Fixture {
                 id: "fix-new".to_string(),
                 matchday: 1,
