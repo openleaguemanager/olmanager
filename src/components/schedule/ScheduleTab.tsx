@@ -151,7 +151,7 @@ export default function ScheduleTab({
   );
 
   return (
-    <div className={view === "calendar" ? "w-full" : "max-w-6xl mx-auto"}>
+    <div className={view === "calendar" ? "w-full" : "w-[92%] max-w-[2000px] mx-auto"}>
       {isPreseason && (
         <Card accent="accent" className="mb-5">
           <CardBody>

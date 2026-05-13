@@ -149,7 +149,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <div className="text-center">
               <Users className="w-5 h-5 text-gray-400 dark:text-gray-500 mx-auto mb-1" />
               <p className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">{youthPlayers.length}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              <p className="text-2xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
                 {t("youthAcademy.academyPlayersStartingMayus")}
               </p>
             </div>
@@ -160,7 +160,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <div className="text-center">
               <Star className="w-5 h-5 text-accent-400 mx-auto mb-1" />
               <p className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">{avgOvr}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              <p className="text-2xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
                 {t("youthAcademy.avgOvr")}
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <div className="text-center">
               <TrendingUp className="w-5 h-5 text-green-500 mx-auto mb-1" />
               <p className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">{avgPotential ?? "??"}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              <p className="text-2xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
                 {t("youthAcademy.avgPotential")}
               </p>
             </div>
@@ -182,7 +182,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
             <div className="text-center">
               <Sparkles className="w-5 h-5 text-accent-400 mx-auto mb-1" />
               <p className="font-heading font-bold text-2xl text-accent-500">{highPotential}</p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
+              <p className="text-2xs text-gray-400 dark:text-gray-500 font-heading uppercase tracking-wider">
                 {t("youthAcademy.highPotential")}
               </p>
             </div>
@@ -262,7 +262,7 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
                               loading="lazy"
                             />
                           ) : (
-                            <span className="text-[10px] font-heading text-gray-300">{option.source_team_short_name}</span>
+                            <span className="text-2xs font-heading text-gray-300">{option.source_team_short_name}</span>
                           )}
                         </div>
                         <div className="min-w-0">
@@ -317,70 +317,72 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
               <p className="text-sm text-gray-500 dark:text-gray-400">{t("youthAcademy.noYouthPlayers")}</p>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.player")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.pos")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.age")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.ovr")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.potential")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.condition")}</th>
-                  <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
-                    {t("common.actions")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
-                {youthPlayers.map((player) => {
-                  return (
-                    <tr
-                      key={player.id}
-                      onClick={() => onSelectPlayer?.(player.id)}
-                      className="hover:bg-gray-50 dark:hover:bg-navy-700/50 cursor-pointer transition-colors"
-                    >
-                      <td className="py-2.5 px-4">
-                        <div>
-                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{player.match_name || player.id}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{player.full_name}</p>
-                        </div>
-                      </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.player")}</th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("youthAcademy.pos")}</th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.age")}</th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.ovr")}</th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.potential")}</th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("youthAcademy.condition")}</th>
+                    <th className="py-3 px-4 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
+                      {t("common.actions")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
+                  {youthPlayers.map((player) => {
+                    return (
+                      <tr
+                        key={player.id}
+                        onClick={() => onSelectPlayer?.(player.id)}
+                        className="hover:bg-gray-50 dark:hover:bg-navy-700/50 cursor-pointer transition-colors"
+                      >
                         <td className="py-2.5 px-4">
-                          <RoleBadge role={player.role} size="sm" />
+                          <div>
+                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{player.match_name || player.id}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{player.full_name}</p>
+                          </div>
                         </td>
-                      <td className="py-2.5 px-4 text-center text-sm text-gray-700 dark:text-gray-300">{player.age}</td>
-                      <td className="py-2.5 px-4 text-center">
-                        <span className="font-heading font-bold text-gray-800 dark:text-gray-100">{player.ovr}</span>
-                      </td>
-                      <td className="py-2.5 px-4 text-center">
-                        <span className="font-heading font-bold text-accent-500">{player.potential ?? "??"}</span>
-                      </td>
-                      <td className="py-2.5 px-4 text-center text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {player.condition}%
-                      </td>
-                      <td className="py-2.5 px-4 text-center">
-                        <Button
-                          size="sm"
-                          disabled={promotingPlayerId === player.id}
-                          onClick={async (event) => {
-                            event.stopPropagation();
-                            try {
-                              setPromotingPlayerId(player.id);
-                              const updated = await promoteAcademyPlayer(player.id);
-                              onGameUpdate?.(updated);
-                            } finally {
-                              setPromotingPlayerId(null);
-                            }
-                          }}
-                        >
-                          {promotingPlayerId === player.id ? t("youthAcademy.promoting") : t("youthAcademy.promote")}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                          <td className="py-2.5 px-4">
+                            <RoleBadge role={player.role} size="sm" />
+                          </td>
+                        <td className="py-2.5 px-4 text-center text-sm text-gray-700 dark:text-gray-300">{player.age}</td>
+                        <td className="py-2.5 px-4 text-center">
+                          <span className="font-heading font-bold text-gray-800 dark:text-gray-100">{player.ovr}</span>
+                        </td>
+                        <td className="py-2.5 px-4 text-center">
+                          <span className="font-heading font-bold text-accent-500">{player.potential ?? "??"}</span>
+                        </td>
+                        <td className="py-2.5 px-4 text-center text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {player.condition}%
+                        </td>
+                        <td className="py-2.5 px-4 text-center">
+                          <Button
+                            size="sm"
+                            disabled={promotingPlayerId === player.id}
+                            onClick={async (event) => {
+                              event.stopPropagation();
+                              try {
+                                setPromotingPlayerId(player.id);
+                                const updated = await promoteAcademyPlayer(player.id);
+                                onGameUpdate?.(updated);
+                              } finally {
+                                setPromotingPlayerId(null);
+                              }
+                            }}
+                          >
+                            {promotingPlayerId === player.id ? t("youthAcademy.promoting") : t("youthAcademy.promote")}
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </CardBody>
       </Card>

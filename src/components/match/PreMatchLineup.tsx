@@ -135,7 +135,7 @@ export default function PreMatchLineup({
     <div className="flex flex-col gap-4">
       <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-3 flex items-center justify-between transition-colors duration-300">
         <div className="flex items-center gap-4">
-          <span className="text-[10px] font-heading uppercase tracking-widest text-gray-700 dark:text-gray-500">
+          <span className="text-2xs font-heading uppercase tracking-widest text-gray-700 dark:text-gray-500">
             {t("match.formationFit")}
           </span>
           {LOL_ROLE_ORDER.map((role) => {
@@ -143,7 +143,7 @@ export default function PreMatchLineup({
             const ok = actual === 1;
             return (
               <div key={role} className="flex items-center gap-1">
-                <span className="text-[10px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-400">
+                <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 dark:text-gray-400">
                   {role === "JUNGLE" ? "JG" : role}
                 </span>
                 <span
@@ -180,7 +180,7 @@ export default function PreMatchLineup({
               {selectedStarterId && (
                 <button
                   onClick={() => onSelectStarter(null)}
-                  className="text-[10px] text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 font-heading uppercase tracking-wider"
+                  className="text-2xs text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 font-heading uppercase tracking-wider"
                 >
                   {t("match.cancel")}
                 </button>
@@ -191,7 +191,7 @@ export default function PreMatchLineup({
             </div>
           </div>
           {selectedStarterId && (
-            <p className="text-[10px] text-accent-400 font-heading uppercase tracking-wider mb-2">
+            <p className="text-2xs text-accent-400 font-heading uppercase tracking-wider mb-2">
               {t("match.swapPrompt")}
             </p>
           )}
@@ -203,36 +203,36 @@ export default function PreMatchLineup({
               <div key={role} className="mb-3">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[10px] font-heading uppercase tracking-widest text-gray-600">
+                    <p className="text-2xs font-heading uppercase tracking-widest text-gray-600">
                       {role === "JUNGLE" ? "JG" : role}
                     </p>
                     {players.length !== 1 && (
                       <span className="flex items-center gap-0.5">
                         <AlertTriangle className="w-2.5 h-2.5 text-amber-400" />
-                        <span className="text-[9px] font-heading text-amber-400">{players.length}/1</span>
+                        <span className="text-2xs font-heading text-amber-400">{players.length}/1</span>
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-0">
-                    <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 w-7 text-center">
+                    <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 w-7 text-center">
                       OVR
                     </span>
                     {keyStats.map((s) => (
                       <span
                         key={s.label}
-                        className="text-[8px] font-heading uppercase tracking-widest text-gray-600 w-7 text-center"
+                        className="text-2xs font-heading uppercase tracking-widest text-gray-600 w-7 text-center"
                       >
                         {s.label}
                       </span>
                     ))}
-                    <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 w-8 text-right">
+                    <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 w-8 text-right">
                       FIT
                     </span>
                   </div>
                 </div>
 
                 {players.length === 0 ? (
-                  <div className="py-1.5 px-2 text-[11px] text-gray-500 dark:text-gray-400">
+                  <div className="py-1.5 px-2 text-xs text-gray-500 dark:text-gray-400">
                     {t("match.noBenchAvailable2")}
                   </div>
                 ) : (
@@ -258,7 +258,7 @@ export default function PreMatchLineup({
                           />
                         ) : (
                           <div
-                            className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-heading font-bold flex-shrink-0"
+                            className="w-7 h-7 rounded-full flex items-center justify-center text-2xs font-heading font-bold flex-shrink-0"
                             style={{
                               backgroundColor: userColor + "30",
                               color: userColor,
@@ -273,7 +273,7 @@ export default function PreMatchLineup({
                         {isSelected && <ArrowUpDown className="w-3.5 h-3.5 text-primary-400 flex-shrink-0" />}
                         <div className="flex items-center gap-0">
                           <span
-                            className={`text-[10px] font-heading font-bold tabular-nums w-7 text-center ${
+                            className={`text-2xs font-heading font-bold tabular-nums w-7 text-center ${
                               ovr >= 70 ? "text-primary-400" : ovr >= 50 ? "text-gray-300" : "text-red-400"
                             }`}
                           >
@@ -282,7 +282,7 @@ export default function PreMatchLineup({
                           {keyStats.map((s) => (
                             <span
                               key={s.label}
-                              className={`text-[10px] font-heading tabular-nums w-7 text-center ${statColor(
+                              className={`text-2xs font-heading tabular-nums w-7 text-center ${statColor(
                                 getStatVal(p, s.key),
                               )}`}
                             >
@@ -318,13 +318,13 @@ export default function PreMatchLineup({
               <div className="flex items-center gap-2 px-2 pb-1">
                 <span className="w-7" />
                 <span className="flex-1" />
-                <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 w-8 text-center">
+                <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 w-8 text-center">
                   POS
                 </span>
-                <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 w-[84px] text-center">
+                <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 w-[84px] text-center">
                   {t("match.keyStats")}
                 </span>
-                <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 w-8 text-right">
+                <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 w-8 text-right">
                   FIT
                 </span>
               </div>
@@ -350,7 +350,7 @@ export default function PreMatchLineup({
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-[10px] font-heading font-bold text-gray-500 dark:text-gray-400 flex-shrink-0 transition-colors duration-300">
+                      <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-2xs font-heading font-bold text-gray-500 dark:text-gray-400 flex-shrink-0 transition-colors duration-300">
                         {bp.name.substring(0, 1).toUpperCase()}
                       </div>
                     )}
@@ -364,7 +364,7 @@ export default function PreMatchLineup({
                       {keyStats.map((s) => (
                         <span
                           key={s.label}
-                          className={`text-[10px] font-heading tabular-nums w-7 text-center ${statColor(
+                          className={`text-2xs font-heading tabular-nums w-7 text-center ${statColor(
                             getStatVal(bp, s.key),
                           )}`}
                         >
@@ -418,7 +418,7 @@ export default function PreMatchLineup({
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-navy-600 text-[10px] font-heading font-bold flex items-center justify-center text-gray-700 dark:text-gray-300">
+                      <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-navy-600 text-2xs font-heading font-bold flex items-center justify-center text-gray-700 dark:text-gray-300">
                         {player.name.substring(0, 1).toUpperCase()}
                       </div>
                     )}

@@ -332,7 +332,7 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
                             {cp.champion_name || champKey}
                           </p>
                           {cp.role && (
-                            <p className="text-[10px] text-gray-400">
+                            <p className="text-2xs text-gray-400">
                               {cp.role}
                             </p>
                           )}
@@ -383,7 +383,7 @@ export default function ChampionProfile({ champion, onClose }: ChampionProfilePr
                             {syn.champion_name || champKey}
                           </p>
                           {syn.role && (
-                            <p className="text-[10px] text-gray-400">
+                            <p className="text-2xs text-gray-400">
                               {syn.role}
                             </p>
                           )}

@@ -163,7 +163,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
             onClick={() =>
               setAccounts((current) => [...current, newAccount(current.length + 1, editorLanguage)])
             }
-            className="rounded-full border border-gray-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:border-navy-500 dark:text-gray-300"
+            className="rounded-full border border-gray-300 px-2 py-0.5 text-2xs font-bold uppercase tracking-wider text-gray-600 dark:border-navy-500 dark:text-gray-300"
           >
             + Cuenta
           </button>
@@ -250,7 +250,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                 <button
                   type="button"
                   onClick={() => setAccounts((current) => current.filter((entry) => entry.id !== account.id))}
-                  className="rounded-full border border-red-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-500"
+                  className="rounded-full border border-red-300 px-2 py-0.5 text-2xs font-bold uppercase tracking-wider text-red-500"
                 >
                   Eliminar
                 </button>
@@ -270,7 +270,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
             onClick={() =>
               setTemplates((current) => [...current, newTemplate(current.length + 1, editorLanguage)])
             }
-            className="rounded-full border border-gray-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:border-navy-500 dark:text-gray-300"
+            className="rounded-full border border-gray-300 px-2 py-0.5 text-2xs font-bold uppercase tracking-wider text-gray-600 dark:border-navy-500 dark:text-gray-300"
           >
             + Template
           </button>
@@ -285,7 +285,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                 </summary>
                 <div className="mt-2 space-y-2">
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-                    <label className="text-[11px] text-gray-500">
+                    <label className="text-xs text-gray-500">
                       language
                       <select
                         value={template.language}
@@ -305,7 +305,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                         <option value="en">en</option>
                       </select>
                     </label>
-                    <label className="text-[11px] text-gray-500">
+                    <label className="text-xs text-gray-500">
                       slot
                       <input
                         value={template.slot}
@@ -319,7 +319,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                         className="mt-1 w-full rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 dark:border-navy-500 dark:bg-navy-800 dark:text-gray-200"
                       />
                     </label>
-                    <label className="text-[11px] text-gray-500">
+                    <label className="text-xs text-gray-500">
                       weight
                       <input
                         type="number"
@@ -373,7 +373,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                     className="min-h-[88px] w-full rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 dark:border-navy-500 dark:bg-navy-800 dark:text-gray-200"
                   />
                   <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-                    <label className="text-[11px] text-gray-500">
+                    <label className="text-xs text-gray-500">
                       requires_stomp
                       <select
                         value={
@@ -400,7 +400,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                         <option value="false">false</option>
                       </select>
                     </label>
-                    <label className="text-[11px] text-gray-500">
+                    <label className="text-xs text-gray-500">
                       winner_team_slug
                       <input
                         value={parsedConditions.winner_team_slug ?? ""}
@@ -420,7 +420,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                         className="mt-1 w-full rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 dark:border-navy-500 dark:bg-navy-800 dark:text-gray-200"
                       />
                     </label>
-                    <label className="inline-flex items-center gap-1 self-end text-[11px] text-gray-500">
+                    <label className="inline-flex items-center gap-1 self-end text-xs text-gray-500">
                       <input
                         type="checkbox"
                         checked={Boolean(parsedConditions.requires_player_name)}
@@ -442,7 +442,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                     </label>
                   </div>
                   <div className="flex items-center justify-between">
-                    <label className="inline-flex items-center gap-1 text-[11px] text-gray-500">
+                    <label className="inline-flex items-center gap-1 text-xs text-gray-500">
                       <input
                         type="checkbox"
                         checked={template.active}
@@ -463,7 +463,7 @@ export default function SocialEditor({ onGameUpdate }: SocialEditorProps) {
                       onClick={() =>
                         setTemplates((current) => current.filter((entry) => entry.id !== template.id))
                       }
-                      className="rounded-full border border-red-300 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-500"
+                      className="rounded-full border border-red-300 px-2 py-0.5 text-2xs font-bold uppercase tracking-wider text-red-500"
                     >
                       Eliminar
                     </button>

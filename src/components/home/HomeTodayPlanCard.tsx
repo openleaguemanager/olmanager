@@ -431,7 +431,7 @@ export default function HomeTodayPlanCard({
                             : option.label}
                     </span>
                     {suggestedDecision === option.id ? (
-                      <span className="mt-1 inline-block text-[10px] font-heading uppercase tracking-wider text-primary-600 dark:text-primary-300">
+                      <span className="mt-1 inline-block text-2xs font-heading uppercase tracking-wider text-primary-600 dark:text-primary-300">
                         Recomendado ahora
                       </span>
                     ) : null}
@@ -442,7 +442,7 @@ export default function HomeTodayPlanCard({
                       {decisionImpactTags[option.id].map((tag) => (
                         <span
                           key={tag}
-                          className="text-[10px] font-heading uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                          className="text-2xs font-heading uppercase tracking-wider text-gray-500 dark:text-gray-400"
                         >
                           {tag}
                         </span>

@@ -312,7 +312,7 @@ function Section<T extends string>({
                 <span className="block font-heading text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-100">
                   {option.label}
                 </span>
-                <span className="mt-1 block text-[11px] leading-tight text-gray-500 dark:text-gray-400">
+                <span className="mt-1 block text-xs leading-tight text-gray-500 dark:text-gray-400">
                   {option.description}
                 </span>
               </button>
@@ -450,7 +450,7 @@ export default function TacticsTab({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-5">
+    <div className="w-[92%] max-w-[2000px] mx-auto flex flex-col gap-5">
       <Card accent="accent">
         <CardHeader>{t("tactics.lol.gamePlan")}</CardHeader>
         <CardBody>
@@ -609,7 +609,7 @@ export default function TacticsTab({
                         <p className="truncate text-sm font-heading font-bold text-gray-900 dark:text-gray-100">
                           {row.playerName}
                         </p>
-                        <p className="text-[11px] text-gray-500 dark:text-gray-300">
+                        <p className="text-xs text-gray-500 dark:text-gray-300">
                           {Math.round(row.base)} OVR · {roleMetaLabels[row.role]}
                         </p>
                       </div>
@@ -624,7 +624,7 @@ export default function TacticsTab({
                         {row.modifier >= 0 ? "+" : ""}
                         {row.modifier.toFixed(1)}
                       </p>
-                      <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                      <p className="text-2xs text-gray-500 dark:text-gray-400">
                         ±{row.variance.toFixed(1)} {t("tactics.lol.variance")}
                       </p>
                     </div>

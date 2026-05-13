@@ -28,7 +28,7 @@ export default function PlayerProfileAttributesCard({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {attrGroups.map((group) => (
                             <div key={group.label}>
-                                <h4 className="font-heading font-bold text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 pb-1.5 border-b border-gray-100 dark:border-navy-600">
+                                <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 pb-1.5 border-b border-gray-100 dark:border-navy-600">
                                     {group.label}
                                 </h4>
                                 <div className="flex flex-col gap-1.5">
