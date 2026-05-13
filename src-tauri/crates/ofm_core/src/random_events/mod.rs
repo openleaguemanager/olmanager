@@ -152,8 +152,8 @@ pub fn check_random_events(game: &mut Game) {
     // --- 3. Media story (12% chance per day if available) ---
     {
         let msg_id = format!("media_{}", today);
-        // if !existing_ids.contains(&msg_id) && rng.random_range(0..8) == 0 {
-        if !existing_ids.contains(&msg_id) {
+        if !existing_ids.contains(&msg_id) && rng.random_range(0..8) == 0 {
+        // if !existing_ids.contains(&msg_id) {
             let default_team = Team::new("league-your-club".to_string(), 
                 "Your Club".to_string(), 
                 "YC".to_string(), 
