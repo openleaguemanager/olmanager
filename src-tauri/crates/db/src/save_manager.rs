@@ -6,10 +6,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
-use domain::player::{LolRole, Player};
+use domain::player::Player;
 use ofm_core::game::Game;
 use ofm_core::player_identity;
-use ofm_core::player_rating::effective_rating_for_assignment;
+
 
 use crate::game_database::GameDatabase;
 use crate::game_persistence::{GamePersistenceReader, GamePersistenceWriter};
@@ -362,33 +362,6 @@ fn canonicalize_team_active_lineup_ids(
     team.active_lineup_ids.sort();
     team.active_lineup_ids.dedup();
     team.active_lineup_ids.len() != original_len
-}
-
-fn formation_row_lengths(formation: &str) -> Vec<usize> {
-    let parts: Vec<usize> = formation
-        .split('-')
-        .filter_map(|part| part.parse::<usize>().ok())
-        .collect();
-
-    match parts.as_slice() {
-        [defenders, midfielders, forwards] => vec![1, *defenders, *midfielders, *forwards],
-        [defenders, deep_midfielders, attacking_midfielders, forwards] => {
-            vec![
-                1,
-                *defenders,
-                *deep_midfielders,
-                *attacking_midfielders,
-                *forwards,
-            ]
-        }
-        _ => formation_row_lengths("4-4-2"),
-    }
-}
-
-fn is_mirrored_side_pair(_left_position: &LolRole, _right_position: &LolRole) -> bool {
-    // In LoL, there's no strict left/right position pairing like in football.
-    // All roles can potentially be swapped, so we always return true.
-    true
 }
 
 #[cfg(test)]

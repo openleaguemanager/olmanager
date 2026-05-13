@@ -340,35 +340,3 @@ pub fn load_erls_from_manifest(
 // Runtime file loading helpers
 // ---------------------------------------------------------------------------
 
-/// Read the contents of a data file at runtime, with multi-tier resolution.
-/// Searches: resource_dir/data/ → cwd/src-tauri/data/ → cwd/data/
-pub fn read_data_file(
-    app_handle: &tauri::AppHandle,
-    relative_path: &str,
-) -> Option<String> {
-    let data_base = resolve_data_base(app_handle)?;
-    let path = data_base.join(relative_path);
-
-    match std::fs::read_to_string(&path) {
-        Ok(content) => {
-            info!("[data] read runtime file: {:?}", path);
-            Some(content)
-        }
-        Err(err) => {
-            info!(
-                "[data] file '{}' not found at {:?}: {}",
-                relative_path, path, err
-            );
-            None
-        }
-    }
-}
-
-/// Load draft/champions seed data from a competition's championships_file at runtime.
-pub fn load_draft_seed_runtime(
-    app_handle: &tauri::AppHandle,
-    manifest: &CompetitionManifest,
-) -> Option<String> {
-    let championships_file = manifest.championships_file.as_deref()?;
-    read_data_file(app_handle, championships_file)
-}

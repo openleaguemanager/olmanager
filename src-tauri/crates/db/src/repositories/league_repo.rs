@@ -1,4 +1,4 @@
-use domain::league::{Fixture, FixtureStatus, League, MatchType, StandingEntry};
+use domain::league::{FixtureStatus, League, MatchType};
 use rusqlite::{Connection, params};
 
 use super::competition_repo;
@@ -119,7 +119,7 @@ pub(crate) fn parse_fixture_competition(s: &str) -> MatchType {
 mod tests {
     use super::*;
     use crate::game_database::GameDatabase;
-    use domain::league::MatchResult;
+    use domain::league::{Fixture, MatchResult, StandingEntry};
 
     fn test_db() -> GameDatabase {
         GameDatabase::open_in_memory().unwrap()

@@ -459,7 +459,7 @@ fn process_end_of_season_inner(
     // Determine next season number (may be used by both manifest and legacy paths)
     let next_season_num: u32;
 
-    let mut new_league = if let Some(config) = schedule_config {
+    let new_league = if let Some(config) = schedule_config {
         // Manifest-driven schedule generation
         let current_split_name = parse_lec_split(&league_name)
             .map(|s| match s {
