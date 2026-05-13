@@ -28,10 +28,6 @@
     "targets": "all",
     "createUpdaterArtifacts": true,
     "resources": [
-      "../data/competitions/**/*",
-      "../data/teams/**/*",
-      "../data/players/**/*",
-      "../data/staffs/**/*",
       "../data/erls/**/*",
       "../data/draft/**/*"
     ],
