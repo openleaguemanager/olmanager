@@ -283,7 +283,7 @@ export default function MainMenu() {
         );
       }
 
-      const worldSource = "lec-default";
+      const worldSource = "default";
 
       await invoke<string>("start_new_game", {
         nickname: formData.nickname,
@@ -377,11 +377,13 @@ export default function MainMenu() {
 
         <div className="bg-white dark:bg-navy-800 p-8 rounded-b-2xl shadow-xl dark:shadow-2xl border border-gray-200 dark:border-navy-600 border-t-0 transition-all duration-500">
           {/* Logo */}
-          <img
-            src="/openfootlogo.svg"
-            alt="League Manager"
-            className="text-center w-full h-full object-cover"
-          />
+          <div className="text-center mb-6">
+            <img
+              src="/olmanager-logo.svg"
+              alt="Open League Manager"
+              className="h-20 mx-auto"
+            />
+          </div>
 
           <div className="border-t border-gray-200 dark:border-navy-600 my-8 transition-colors duration-500" />
 

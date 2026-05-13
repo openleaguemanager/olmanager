@@ -16,12 +16,12 @@ fn resolve_default_world_editor_path(
     let candidates = [
         cwd.join("src-tauri")
             .join("databases")
-            .join("lec_world.json"),
-        cwd.join("databases").join("lec_world.json"),
+            .join("world.json"),
+        cwd.join("databases").join("world.json"),
         app_handle
             .path()
             .resource_dir()
-            .map(|dir| dir.join("databases").join("lec_world.json"))
+            .map(|dir| dir.join("databases").join("world.json"))
             .unwrap_or_else(|_| std::path::PathBuf::new()),
     ];
 
@@ -31,7 +31,7 @@ fn resolve_default_world_editor_path(
         }
     }
 
-    Err("Default LEC world database not found (lec_world.json).".to_string())
+    Err("Default world database not found (world.json).".to_string())
 }
 
 fn enrich_world_for_editor(world: &mut ofm_core::generator::WorldData) {
@@ -60,7 +60,7 @@ fn writable_world_editor_database_dir(
 fn writable_world_editor_database_path(
     app_handle: &tauri::AppHandle,
 ) -> Result<std::path::PathBuf, String> {
-    Ok(writable_world_editor_database_dir(app_handle)?.join("lec_world.json"))
+    Ok(writable_world_editor_database_dir(app_handle)?.join("world.json"))
 }
 
 fn write_world_database_with_fallback(
@@ -89,7 +89,7 @@ fn write_world_database_with_fallback(
                 .map_err(|e| format!("Failed to create writable database directory: {}", e))?;
             let fallback_path = fallback_dir.join(
                 path.file_name()
-                    .unwrap_or_else(|| std::ffi::OsStr::new("lec_world.json")),
+                    .unwrap_or_else(|| std::ffi::OsStr::new("world.json")),
             );
             std::fs::write(&fallback_path, json)
                 .map_err(|e| format!("Failed to write fallback world database: {}", e))?;
@@ -256,7 +256,7 @@ mod tests {
     use super::{export_world_database_internal, write_database_json_to_dir};
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes, LolRole};
     use domain::team::Team;
     use ofm_core::clock::GameClock;
     use ofm_core::game::Game;
@@ -294,25 +294,15 @@ mod tests {
 
     fn sample_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 65,
-            mental_resilience: 65,
-            strength: 65,
-            champion_pool: 65,
-            passing: 65,
-            laning: 65,
-            tackling: 65,
             mechanics: 65,
-            defending: 65,
-            positioning: 65,
+            laning: 65,
+            teamfighting: 65,
             macro_play: 65,
             consistency: 65,
-            discipline: 65,
-            aggression: 50,
-            teamfighting: 65,
             shotcalling: 50,
-            handling: 20,
-            reflexes: 20,
-            aerial: 60,
+            champion_pool: 65,
+            discipline: 65,
+            mental_resilience: 65,
         }
     }
 
@@ -343,7 +333,7 @@ mod tests {
             "John Doe".to_string(),
             "2000-01-01".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Jungle,
             sample_attrs(),
         );
         player.team_id = Some("team-1".to_string());
@@ -389,8 +379,7 @@ mod tests {
               "transfer_budget": 250000,
               "season_income": 0,
               "season_expenses": 0,
-              "formation": "4-4-2",
-              "play_style": "Balanced",
+              "draft_strategy": "Balanced",
               "training_focus": "Scrims",
               "training_intensity": "Medium",
               "training_schedule": "Balanced",

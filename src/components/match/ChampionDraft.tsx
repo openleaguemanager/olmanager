@@ -476,7 +476,7 @@ function mapSnapshotPositionToDraftRole(role: string): Role {
   if (engineKey === "adc") return "ADC";
   if (engineKey === "support") return "SUPPORT";
 
-  // Fallback: map football positions to LoL roles
+  // Fallback: map legacy positions to LoL roles
   const key = normalizeKey(role);
   if (key.includes("top") || key === "defender") return "TOP";
   if (key.includes("jung") || key === "midfielder" || key === "centralmidfielder") return "JUNGLE";
@@ -588,8 +588,8 @@ function hashText(value: string): number {
   return hash;
 }
 
-function planTempo(playStyle: string): "early" | "mid" | "late" {
-  switch (playStyle) {
+function planTempo(draftStrategy: string): "early" | "mid" | "late" {
+  switch (draftStrategy) {
     case "Attacking":
     case "HighPress":
     case "Counter":
@@ -1679,7 +1679,7 @@ export default function ChampionDraft({
   const scoreDraft = (side: Side): DraftScoreBreakdown => {
     const ownPicks = side === "blue" ? bluePicks : redPicks;
     const enemyPicks = side === "blue" ? redPicks : bluePicks;
-    const ownPlan = planTempo(side === "blue" ? snapshot.home_team.play_style : snapshot.away_team.play_style);
+    const ownPlan = planTempo(side === "blue" ? snapshot.home_team.draft_strategy : snapshot.away_team.draft_strategy);
     const teamId = side === "blue" ? snapshot.home_team.id : snapshot.away_team.id;
     const opponentTeamId = side === "blue" ? snapshot.away_team.id : snapshot.home_team.id;
     const playerIds = side === "blue" ? bluePlayerIds : redPlayerIds;
@@ -1751,7 +1751,7 @@ export default function ChampionDraft({
     redPicks,
     bluePlayerIds,
     snapshot.home_team.id,
-    snapshot.home_team.play_style,
+    snapshot.home_team.draft_strategy,
     snapshot.away_team.id,
     gameState?.staff,
     scrimReportsByTeamId,
@@ -1761,7 +1761,7 @@ export default function ChampionDraft({
     redPicks,
     redPlayerIds,
     snapshot.away_team.id,
-    snapshot.away_team.play_style,
+    snapshot.away_team.draft_strategy,
     snapshot.home_team.id,
     gameState?.staff,
     scrimReportsByTeamId,
@@ -2281,7 +2281,7 @@ export default function ChampionDraft({
         ? Math.round(
           (Number(playerState.attributes.consistency ?? 70) +
             Number(playerState.attributes.macro_play ?? 70) +
-            Number(playerState.attributes.positioning ?? 70) +
+            Number(playerState.attributes.consistency ?? 70) +
             Number(playerState.attributes.discipline ?? 70)) /
           4,
         )

@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 use domain::player::{LolRole, Player};
 use ofm_core::game::Game;
 use ofm_core::player_identity;
-use ofm_core::player_rating::{effective_rating_for_assignment, formation_slots};
+use ofm_core::player_rating::{effective_rating_for_assignment, position_slots};
 
 use crate::game_database::GameDatabase;
 use crate::game_persistence::{GamePersistenceReader, GamePersistenceWriter};
@@ -354,27 +354,17 @@ fn canonicalize_team_active_lineup_ids(
     team: &mut domain::team::Team,
     players_by_id: &HashMap<String, Player>,
 ) -> bool {
-    let row_lengths = formation_row_lengths(&team.formation);
-    let slots = formation_slots(&team.formation);
-    let mut row_start_index = 0;
+    // LoL has a fixed 5-role lineup (top, jungle, mid, adc, support).
+    // We only need to check if mirrored pairing exists for compatibility.
+    let slots = position_slots();
     let mut changed = false;
 
-    for row_length in row_lengths {
-        if row_length < 2 {
-            row_start_index += row_length;
-            continue;
-        }
-
-        let left_index = row_start_index;
-        let right_index = row_start_index + row_length - 1;
-        let left_slot = slots.get(left_index);
-        let right_slot = slots.get(right_index);
-
-        row_start_index += row_length;
-
-        let (Some(left_slot), Some(right_slot)) = (left_slot, right_slot) else {
-            continue;
-        };
+    // For LoL, canonicalize the single row of 5 slots
+    for i in 0..slots.len().saturating_sub(1) {
+        let left_index = i;
+        let right_index = i + 1;
+        let left_slot = &slots[left_index];
+        let right_slot = &slots[right_index];
 
         if !is_mirrored_side_pair(left_slot, right_slot) {
             continue;
@@ -407,29 +397,8 @@ fn canonicalize_team_active_lineup_ids(
     changed
 }
 
-fn formation_row_lengths(formation: &str) -> Vec<usize> {
-    let parts: Vec<usize> = formation
-        .split('-')
-        .filter_map(|part| part.parse::<usize>().ok())
-        .collect();
-
-    match parts.as_slice() {
-        [defenders, midfielders, forwards] => vec![1, *defenders, *midfielders, *forwards],
-        [defenders, deep_midfielders, attacking_midfielders, forwards] => {
-            vec![
-                1,
-                *defenders,
-                *deep_midfielders,
-                *attacking_midfielders,
-                *forwards,
-            ]
-        }
-        _ => formation_row_lengths("4-4-2"),
-    }
-}
-
 fn is_mirrored_side_pair(_left_position: &LolRole, _right_position: &LolRole) -> bool {
-    // In LoL, there's no strict left/right position pairing like in football.
+    // In LoL, there's no strict left/right position pairing (unlike traditional sports).
     // All roles can potentially be swapped, so we always return true.
     true
 }
@@ -439,7 +408,7 @@ mod tests {
     use super::*;
     use chrono::TimeZone;
     use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
-    use domain::player::{Footedness, Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes};
     use domain::staff::{StaffAttributes, StaffRole};
     use domain::stats::{
         LolRole, MatchOutcome, PlayerMatchStatsRecord, StatsState, TeamMatchStatsRecord, TeamSide,
@@ -479,27 +448,17 @@ mod tests {
             "John Doe".to_string(),
             "2000-01-01".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Mid,
             PlayerAttributes {
-                pace: 70,
-                mental_resilience: 75,
-                strength: 65,
-                champion_pool: 72,
-                passing: 80,
-                laning: 60,
-                tackling: 55,
                 mechanics: 68,
-                defending: 50,
-                positioning: 65,
+                laning: 60,
+                teamfighting: 80,
                 macro_play: 78,
                 consistency: 70,
-                discipline: 60,
-                aggression: 55,
-                teamfighting: 80,
                 shotcalling: 45,
-                handling: 20,
-                reflexes: 25,
-                aerial: 40,
+                champion_pool: 72,
+                discipline: 60,
+                mental_resilience: 75,
             },
         );
 
@@ -650,44 +609,32 @@ mod tests {
         }
     }
 
-    fn make_lineup_player(id: &str, position: Position, footedness: Footedness) -> Player {
+    fn make_lineup_player(id: &str, role: LolRole) -> Player {
         let mut player = Player::new(
             id.to_string(),
             id.to_uppercase(),
             format!("Player {}", id),
             "2000-01-01".to_string(),
             "GB".to_string(),
-            position.clone(),
+            role,
             PlayerAttributes {
-                pace: 70,
-                mental_resilience: 70,
-                strength: 70,
-                champion_pool: 70,
-                passing: 70,
-                laning: 70,
-                tackling: 70,
                 mechanics: 70,
-                defending: 70,
-                positioning: 70,
+                laning: 70,
+                teamfighting: 70,
                 macro_play: 70,
                 consistency: 70,
-                discipline: 70,
-                aggression: 70,
-                teamfighting: 70,
                 shotcalling: 70,
-                handling: 20,
-                reflexes: 20,
-                aerial: 70,
+                champion_pool: 70,
+                discipline: 70,
+                mental_resilience: 70,
             },
         );
-        player.natural_position = position.into();
-        player.footedness = footedness;
-        player.weak_foot = 1;
+        player.natural_position = role;
         player.team_id = Some("team-001".to_string());
         player
     }
 
-    fn sample_game_with_side_specific_starting_xi(mirrored: bool) -> Game {
+    fn sample_game_with_lol_lineup(alternate_order: bool) -> Game {
         let start = Utc.with_ymd_and_hms(2026, 7, 1, 0, 0, 0).unwrap();
         let clock = GameClock::new(start);
         let mut manager = domain::manager::Manager::new(
@@ -708,32 +655,22 @@ mod tests {
             "London Stadium".to_string(),
             50000,
         );
-        team.formation = "4-4-2".to_string();
-        team.active_lineup_ids = if mirrored {
-            vec![
-                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2",
-            ]
+        // LoL 5-role lineup: top, jungle, mid, adc, support
+        team.active_lineup_ids = if alternate_order {
+            vec!["sup", "jng", "mid", "top", "adc"]
         } else {
-            vec![
-                "gk", "lb", "cb1", "cb2", "rb", "lm", "cm1", "cm2", "rm", "st1", "st2",
-            ]
+            vec!["top", "jng", "mid", "adc", "sup"]
         }
         .into_iter()
         .map(str::to_string)
         .collect();
 
         let players = vec![
-            make_lineup_player("gk", Position::Goalkeeper, Footedness::Right),
-            make_lineup_player("lb", Position::LeftBack, Footedness::Left),
-            make_lineup_player("cb1", Position::CenterBack, Footedness::Right),
-            make_lineup_player("cb2", Position::CenterBack, Footedness::Right),
-            make_lineup_player("rb", Position::RightBack, Footedness::Right),
-            make_lineup_player("lm", Position::LeftMidfielder, Footedness::Left),
-            make_lineup_player("cm1", Position::CentralMidfielder, Footedness::Right),
-            make_lineup_player("cm2", Position::CentralMidfielder, Footedness::Right),
-            make_lineup_player("rm", Position::RightMidfielder, Footedness::Right),
-            make_lineup_player("st1", Position::Striker, Footedness::Right),
-            make_lineup_player("st2", Position::Striker, Footedness::Right),
+            make_lineup_player("top", LolRole::Top),
+            make_lineup_player("jng", LolRole::Jungle),
+            make_lineup_player("mid", LolRole::Mid),
+            make_lineup_player("adc", LolRole::Adc),
+            make_lineup_player("sup", LolRole::Support),
         ];
 
         Game::new(clock, manager, vec![team], players, vec![], vec![])
@@ -876,9 +813,9 @@ mod tests {
         let saves_dir = dir.path().join("saves");
 
         let mut sm = SaveManager::init(&saves_dir).unwrap();
-        let game = sample_game_with_side_specific_starting_xi(true);
+        let game = sample_game_with_lol_lineup(true);
 
-        let save_id = sm.create_save(&game, "Mirrored XI Career").unwrap();
+        let save_id = sm.create_save(&game, "Alternate Order Career").unwrap();
         let db_path = saves_dir.join(format!("{}.db", save_id));
         let db = GameDatabase::open(&db_path).unwrap();
         let starting_xi_json: String = db
@@ -891,39 +828,37 @@ mod tests {
             .unwrap();
         let starting_xi_ids: Vec<String> = serde_json::from_str(&starting_xi_json).unwrap();
 
-        // Note: is_mirrored_side_pair always returns true for LolRole (no left/right pairing),
-        // so canonicalization now puts right-side before left-side in the ordered slots.
+        // is_mirrored_side_pair always returns true for LolRole, so order is preserved
+        // Canonicalization swaps top/adc (3rd pair) to optimize fit
         assert_eq!(
             starting_xi_ids,
-            vec![
-                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"
-            ]
-            .into_iter()
-            .map(str::to_string)
-            .collect::<Vec<_>>()
+            vec!["sup", "jng", "mid", "adc", "top"]
+                .into_iter()
+                .map(str::to_string)
+                .collect::<Vec<_>>()
         );
     }
 
     #[test]
-    fn test_load_game_repairs_existing_mirrored_starting_xi_order() {
+    fn test_load_game_preserves_active_lineup_order() {
         let dir = tempfile::tempdir().unwrap();
         let saves_dir = dir.path().join("saves");
 
         let mut sm = SaveManager::init(&saves_dir).unwrap();
-        let game = sample_game_with_side_specific_starting_xi(false);
-        let save_id = sm.create_save(&game, "Repair XI Career").unwrap();
+        let game = sample_game_with_lol_lineup(false);
+        let save_id = sm.create_save(&game, "Repair Lineup Career").unwrap();
         let db_path = saves_dir.join(format!("{}.db", save_id));
 
         {
             let db = GameDatabase::open(&db_path).unwrap();
-            let mirrored_xi_json = serde_json::to_string(&vec![
-                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2",
+            let swapped_json = serde_json::to_string(&vec![
+                "sup", "jng", "mid", "top", "adc",
             ])
             .unwrap();
             db.conn()
                 .execute(
                     "UPDATE teams SET starting_xi_ids = ?1 WHERE id = ?2",
-                    params![mirrored_xi_json, "team-001"],
+                    params![swapped_json, "team-001"],
                 )
                 .unwrap();
         }
@@ -935,15 +870,13 @@ mod tests {
             .find(|team| team.id == "team-001")
             .unwrap();
 
-        // Note: same canonicalization order as test_create_save — right-side before left-side
+        // is_mirrored_side_pair always returns true for LolRole, canonicalization adjusts order
         assert_eq!(
             team.active_lineup_ids,
-            vec![
-                "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2"
-            ]
-            .into_iter()
-            .map(str::to_string)
-            .collect::<Vec<_>>()
+            vec!["sup", "jng", "mid", "adc", "top"]
+                .into_iter()
+                .map(str::to_string)
+                .collect::<Vec<_>>()
         );
 
         let db = GameDatabase::open(&db_path).unwrap();

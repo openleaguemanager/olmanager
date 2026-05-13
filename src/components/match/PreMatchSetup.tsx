@@ -114,7 +114,7 @@ export default function PreMatchSetup({
     benchCount: (snapshot.home_bench || []).length,
     homeTeam: snapshot.home_team.name,
     phase: snapshot.phase,
-    playStyle: userTeam.play_style,
+    draftStrategy: userTeam.draft_strategy,
     selectedStarterId,
     startingPlayerCount: userTeam.players.length,
     userSide,

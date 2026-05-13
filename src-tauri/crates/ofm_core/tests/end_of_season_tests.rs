@@ -28,25 +28,15 @@ fn make_team(id: &str, name: &str) -> Team {
 
 fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
     let attrs = PlayerAttributes {
-        pace: 65,
         mental_resilience: 65,
-        strength: 65,
         champion_pool: 65,
-        passing: 65,
         laning: 65,
-        tackling: 65,
         mechanics: 65,
-        defending: 65,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
-        handling: 20,
-        reflexes: 30,
-        aerial: 60,
     };
     let mut p = Player::new(
         id.to_string(),
@@ -86,20 +76,18 @@ fn make_completed_fixture(id: &str, home: &str, away: &str, hg: u8, ag: u8) -> F
 fn make_standing(
     team_id: &str,
     won: u32,
-    drawn: u32,
     lost: u32,
-    gf: u32,
-    ga: u32,
+    maps_won: u32,
+    maps_lost: u32,
 ) -> StandingEntry {
     StandingEntry {
         team_id: team_id.to_string(),
-        played: won + drawn + lost,
+        played: won + lost,
         won,
-        drawn,
         lost,
-        kills_for: gf,
-        kills_against: ga,
-        points: won * 3 + drawn,
+        maps_won,
+        maps_lost,
+        points: won * 3,
     }
 }
 
@@ -125,7 +113,6 @@ fn make_completed_season_game() -> Game {
         appearances: 30,
         kills: 20,
         assists: 10,
-        clean_sheets: 0,
         avg_rating: 7.5,
         minutes_played: 2700,
         ..PlayerSeasonStats::default()
@@ -136,7 +123,6 @@ fn make_completed_season_game() -> Game {
         appearances: 28,
         kills: 15,
         assists: 8,
-        clean_sheets: 0,
         avg_rating: 7.0,
         minutes_played: 2500,
         ..PlayerSeasonStats::default()
@@ -149,8 +135,8 @@ fn make_completed_season_game() -> Game {
 
     // team1 won both: 6 pts, team2 lost both: 0 pts
     let standings = vec![
-        make_standing("team1", 2, 0, 0, 3, 1),
-        make_standing("team2", 0, 0, 2, 1, 3),
+        make_standing("team1", 2, 0, 3, 1),
+        make_standing("team2", 0, 2, 1, 3),
     ];
 
     let league = League {
@@ -219,10 +205,10 @@ fn season_not_complete_with_truncated_completed_fixture_list() {
 
     if let Some(league) = &mut game.league {
         league.standings = vec![
-            make_standing("team1", 1, 0, 0, 2, 0),
-            make_standing("team4", 1, 0, 0, 1, 0),
-            make_standing("team3", 0, 0, 1, 0, 1),
-            make_standing("team2", 0, 0, 1, 0, 2),
+            make_standing("team1", 1, 0, 2, 0),
+            make_standing("team4", 1, 0, 1, 0),
+            make_standing("team3", 0, 1, 0, 1),
+            make_standing("team2", 0, 1, 0, 2),
         ];
         league.fixtures = vec![
             Fixture {
@@ -289,7 +275,6 @@ fn summary_has_correct_user_position() {
     assert_eq!(summary.user_position, 1);
     assert_eq!(summary.user_points, 6);
     assert_eq!(summary.user_won, 2);
-    assert_eq!(summary.user_drawn, 0);
     assert_eq!(summary.user_lost, 0);
 }
 
@@ -297,8 +282,8 @@ fn summary_has_correct_user_position() {
 fn summary_has_correct_goals() {
     let mut game = make_completed_season_game();
     let summary = process_end_of_season(&mut game);
-    assert_eq!(summary.user_kills_for, 3);
-    assert_eq!(summary.user_kills_against, 1);
+    assert_eq!(summary.user_maps_won, 3);
+    assert_eq!(summary.user_maps_lost, 1);
 }
 
 #[test]
@@ -323,7 +308,6 @@ fn team_history_recorded() {
     assert_eq!(record.season, 1);
     assert_eq!(record.league_position, 1);
     assert_eq!(record.won, 2);
-    assert_eq!(record.drawn, 0);
     assert_eq!(record.lost, 0);
 
     let team2 = game.teams.iter().find(|t| t.id == "team2").unwrap();
@@ -364,8 +348,9 @@ fn player_career_entry_added() {
     let entry = &p1.career[0];
     assert_eq!(entry.season, 1);
     assert_eq!(entry.appearances, 30);
-    assert_eq!(entry.goals, 20);
+    assert_eq!(entry.kills, 20);
     assert_eq!(entry.assists, 10);
+    assert!((entry.avg_rating - 7.5).abs() < f32::EPSILON);
 }
 
 #[test]
@@ -422,8 +407,8 @@ fn manager_no_trophy_for_non_first() {
     // Swap standings so team2 is first
     if let Some(league) = &mut game.league {
         league.standings = vec![
-            make_standing("team2", 2, 0, 0, 3, 1),
-            make_standing("team1", 0, 0, 2, 1, 3),
+            make_standing("team2", 2, 0, 3, 1),
+            make_standing("team1", 0, 2, 1, 3),
         ];
     }
     process_end_of_season(&mut game);
@@ -463,7 +448,6 @@ fn manager_career_history_entry_updated_on_second_season() {
             end_date: None,
             matches: 10,
             wins: 5,
-            draws: 3,
             losses: 2,
             best_league_position: Some(3),
         });
@@ -691,10 +675,10 @@ fn top_half_finish_receives_expected_prize_money() {
 
     if let Some(league) = &mut game.league {
         league.standings = vec![
-            make_standing("team2", 6, 0, 0, 12, 2),
-            make_standing("team1", 4, 0, 2, 8, 5),
-            make_standing("team3", 2, 0, 4, 4, 8),
-            make_standing("team4", 0, 0, 6, 2, 12),
+            make_standing("team2", 6, 0, 12, 2),
+            make_standing("team1", 4, 2, 8, 5),
+            make_standing("team3", 2, 4, 4, 8),
+            make_standing("team4", 0, 6, 2, 12),
         ];
     }
 
@@ -725,10 +709,10 @@ fn lower_table_finish_receives_expected_prize_money() {
         let mut standings = Vec::new();
 
         for i in 2..=10 {
-            standings.push(make_standing(&format!("team{}", i), 10, 2, 6, 20, 15));
+            standings.push(make_standing(&format!("team{}", i), 10, 6, 20, 15));
         }
 
-        standings.push(make_standing("team1", 0, 0, 18, 2, 40));
+        standings.push(make_standing("team1", 0, 18, 2, 40));
         league.standings = standings;
     }
 
@@ -862,10 +846,10 @@ fn mid_table_gets_appropriate_message() {
 
     if let Some(league) = &mut game.league {
         league.standings = vec![
-            make_standing("team2", 6, 0, 0, 12, 2),
-            make_standing("team3", 4, 0, 2, 8, 5),
-            make_standing("team1", 2, 0, 4, 4, 8), // user team 3rd of 4
-            make_standing("team4", 0, 0, 6, 2, 12),
+            make_standing("team2", 6, 0, 12, 2),
+            make_standing("team3", 4, 2, 8, 5),
+            make_standing("team1", 2, 4, 4, 8), // user team 3rd of 4
+            make_standing("team4", 0, 6, 2, 12),
         ];
     }
 
@@ -887,10 +871,10 @@ fn bottom_half_gets_concerned_message() {
     if let Some(league) = &mut game.league {
         let mut standings = Vec::new();
         for i in 2..=10 {
-            standings.push(make_standing(&format!("team{}", i), 10, 2, 6, 20, 15));
+            standings.push(make_standing(&format!("team{}", i), 10, 6, 20, 15));
         }
         // team1 (user) finishes dead last
-        standings.push(make_standing("team1", 0, 0, 18, 2, 40));
+        standings.push(make_standing("team1", 0, 18, 2, 40));
         league.standings = standings;
     }
 
@@ -924,16 +908,16 @@ fn next_season_generation_ignores_academy_team_ids() {
 
     if let Some(league) = &mut game.league {
         league.standings = vec![
-            make_standing("team1", 14, 2, 2, 36, 18),
-            make_standing("team2", 13, 2, 3, 34, 19),
-            make_standing("team3", 11, 3, 4, 30, 22),
-            make_standing("team4", 10, 4, 4, 27, 21),
-            make_standing("team5", 9, 4, 5, 24, 23),
-            make_standing("team6", 8, 3, 7, 22, 25),
-            make_standing("team7", 6, 5, 7, 20, 26),
-            make_standing("team8", 5, 5, 8, 19, 28),
-            make_standing("team9", 4, 4, 10, 16, 31),
-            make_standing("team10", 2, 4, 12, 12, 36),
+            make_standing("team1", 14, 2, 36, 18),
+            make_standing("team2", 13, 3, 34, 19),
+            make_standing("team3", 11, 4, 30, 22),
+            make_standing("team4", 10, 4, 27, 21),
+            make_standing("team5", 9, 5, 24, 23),
+            make_standing("team6", 8, 7, 22, 25),
+            make_standing("team7", 6, 7, 20, 26),
+            make_standing("team8", 5, 8, 19, 28),
+            make_standing("team9", 4, 10, 16, 31),
+            make_standing("team10", 2, 12, 12, 36),
         ];
     }
 
@@ -1167,8 +1151,8 @@ fn season_end_board_message_top_four_uses_correct_body_key() {
     // Make team1 finish 2nd (top-4 branch)
     if let Some(league) = &mut game.league {
         league.standings = vec![
-            make_standing("team2", 2, 0, 0, 3, 1),
-            make_standing("team1", 0, 0, 2, 1, 3),
+            make_standing("team2", 2, 0, 3, 1),
+            make_standing("team1", 0, 2, 1, 3),
         ];
     }
     process_end_of_season(&mut game);

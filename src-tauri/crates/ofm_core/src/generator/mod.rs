@@ -99,7 +99,7 @@ pub fn generate_world(
             primary: tdef.colors.primary.clone(),
             secondary: tdef.colors.secondary.clone(),
         };
-        team.play_style = play_style_from_str(&tdef.play_style);
+        team.draft_strategy = draft_strategy_from_str(&tdef.play_style);
         teams_out.push(team);
 
         // Generate 22 players
@@ -218,7 +218,7 @@ mod tests {
         let (first, last) = pick_name_from_def("ES", &names_def, &mut rng);
         assert!(!first.is_empty());
         assert!(!last.is_empty());
-        // Football identity falls back to GB pool if a dedicated pool does not exist yet.
+        // Legacy: national identity falls back to GB pool if a dedicated pool does not exist yet.
         let (eng_first, eng_last) = pick_name_from_def("ENG", &names_def, &mut rng);
         assert!(!eng_first.is_empty());
         assert!(!eng_last.is_empty());

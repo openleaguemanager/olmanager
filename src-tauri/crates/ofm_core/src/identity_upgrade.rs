@@ -3,8 +3,8 @@ use domain::identity::derive_birth_country_code;
 use domain::player::Player;
 use domain::staff::Staff;
 
-/// Upgrade football identity fields.
-/// With the LoL migration complete, `football_nation` is removed from domain types.
+/// Legacy: upgrade national identity fields (birth_country normalization).
+/// After LoL migration, `football_nation` is removed from domain types.
 /// Only `birth_country` normalization remains active.
 pub fn upgrade_game_football_identities(game: &mut Game) -> bool {
     let mut changed = false;
@@ -38,7 +38,7 @@ pub fn upgrade_game_football_identities(game: &mut Game) -> bool {
     changed
 }
 
-/// Upgrade world football identities (used by world export).
+/// Legacy: upgrade world national identities (used by world export).
 pub fn upgrade_world_football_identities(
     _teams: &mut [domain::team::Team],
     players: &mut [Player],
@@ -89,25 +89,15 @@ mod tests {
 
     fn sample_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 70,
-            mental_resilience: 70,
-            strength: 70,
-            champion_pool: 70,
-            passing: 70,
-            laning: 70,
-            tackling: 70,
             mechanics: 70,
-            defending: 70,
-            positioning: 70,
+            laning: 70,
+            teamfighting: 70,
             macro_play: 70,
             consistency: 70,
-            discipline: 70,
-            aggression: 70,
-            teamfighting: 70,
             shotcalling: 70,
-            handling: 20,
-            reflexes: 20,
-            aerial: 60,
+            champion_pool: 70,
+            discipline: 70,
+            mental_resilience: 70,
         }
     }
 

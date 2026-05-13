@@ -4,17 +4,22 @@ use serde::{Deserialize, Serialize};
 pub use crate::live_match::LolRole;
 
 // ---------------------------------------------------------------------------
-// PlayStyle — mirrors domain::team::PlayStyle
+// DraftStrategy — mirrors domain::team::DraftStrategy
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PlayStyle {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum DraftStrategy {
+    #[default]
     Balanced,
-    Attacking,
-    Defensive,
-    Possession,
-    Counter,
-    HighPress,
+    #[serde(rename = "Attacking", alias = "HighPress")]
+    Aggressive,
+    #[serde(rename = "Defensive")]
+    Passive,
+    #[serde(rename = "Possession")]
+    Scaling,
+    #[serde(rename = "Counter")]
+    CounterPick,
+    PriorityBans,
 }
 
 // ---------------------------------------------------------------------------
@@ -51,10 +56,6 @@ pub struct PlayerData {
     pub traits: Vec<String>,
 }
 
-fn default_engine_attr() -> u8 {
-    50
-}
-
 fn default_fitness() -> u8 {
     75
 }
@@ -88,8 +89,7 @@ impl PlayerData {
 pub struct TeamData {
     pub id: String,
     pub name: String,
-    pub formation: String,
-    pub play_style: PlayStyle,
+    pub draft_strategy: DraftStrategy,
     pub players: Vec<PlayerData>,
 }
 
@@ -228,7 +228,7 @@ impl Side {
 }
 
 // ---------------------------------------------------------------------------
-// Zone — regions of the pitch from the perspective of the match (not a team)
+// Zone — regions of the rift from the perspective of the match (not a team)
 // ---------------------------------------------------------------------------
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]

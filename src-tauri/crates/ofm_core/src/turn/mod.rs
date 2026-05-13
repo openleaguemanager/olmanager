@@ -151,23 +151,21 @@ pub fn finish_live_match_day(game: &mut Game) {
 
 fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
     let team = game.teams.iter().find(|t| t.id == team_id);
-    let (name, formation, play_style) = match team {
+    let (name, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
-            t.formation.clone(),
-            match t.play_style {
-                domain::team::PlayStyle::Attacking => engine::PlayStyle::Attacking,
-                domain::team::PlayStyle::Defensive => engine::PlayStyle::Defensive,
-                domain::team::PlayStyle::Possession => engine::PlayStyle::Possession,
-                domain::team::PlayStyle::Counter => engine::PlayStyle::Counter,
-                domain::team::PlayStyle::HighPress => engine::PlayStyle::HighPress,
-                _ => engine::PlayStyle::Balanced,
+            match t.draft_strategy {
+                domain::team::DraftStrategy::Aggressive => engine::DraftStrategy::Aggressive,
+                domain::team::DraftStrategy::Passive => engine::DraftStrategy::Passive,
+                domain::team::DraftStrategy::Scaling => engine::DraftStrategy::Scaling,
+                domain::team::DraftStrategy::CounterPick => engine::DraftStrategy::CounterPick,
+                domain::team::DraftStrategy::PriorityBans => engine::DraftStrategy::PriorityBans,
+                _ => engine::DraftStrategy::Balanced,
             },
         ),
         None => (
             "Unknown".into(),
-            "4-4-2".into(),
-            engine::PlayStyle::Balanced,
+            engine::DraftStrategy::Balanced,
         ),
     };
 
@@ -200,8 +198,7 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
     engine::TeamData {
         id: team_id.to_string(),
         name,
-        formation,
-        play_style,
+        draft_strategy,
         players,
     }
 }
@@ -288,12 +285,11 @@ fn maybe_push_weekly_academy_report(game: &mut Game, today: &str) {
                     league_position: 0,
                     played: 0,
                     won: 0,
-                    drawn: 0,
                     lost: 0,
                     kills_for: 0,
                     kills_against: 0,
                 });
-            let points = record.won.saturating_mul(3).saturating_add(record.drawn);
+            let points = record.won.saturating_mul(3);
             let goal_diff = record.kills_for as i32 - record.kills_against as i32;
             (
                 team.id.clone(),
@@ -515,7 +511,6 @@ fn ensure_team_season_record(team: &mut Team, season: u32) -> &mut TeamSeasonRec
         league_position: 0,
         played: 0,
         won: 0,
-        drawn: 0,
         lost: 0,
         kills_for: 0,
         kills_against: 0,
@@ -752,10 +747,10 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                 b.points
                     .cmp(&a.points)
                     .then(
-                        (b.kills_for as i32 - b.kills_against as i32)
-                            .cmp(&(a.kills_for as i32 - a.kills_against as i32)),
+                        (b.maps_won as i32 - b.maps_lost as i32)
+                            .cmp(&(a.maps_won as i32 - a.maps_lost as i32)),
                     )
-                    .then(b.kills_for.cmp(&a.kills_for))
+                    .then(b.maps_won.cmp(&a.maps_won))
             });
             if sorted.len() >= 4 {
                 let next_matchday = league

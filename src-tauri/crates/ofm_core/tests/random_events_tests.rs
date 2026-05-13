@@ -21,25 +21,15 @@ use std::collections::HashMap;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 60,
         mental_resilience: 60,
-        strength: 60,
         champion_pool: 60,
-        passing: 60,
         laning: 60,
-        tackling: 60,
         mechanics: 60,
-        defending: 60,
-        positioning: 60,
         macro_play: 60,
         consistency: 60,
         discipline: 60,
-        aggression: 60,
         teamfighting: 60,
         shotcalling: 60,
-        handling: 30,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
@@ -1181,25 +1171,15 @@ fn unfit_players_get_more_training_injuries() {
             "England".to_string(),
             LolRole::Jungle,
             PlayerAttributes {
-                pace: 60,
                 mental_resilience: 60,
-                strength: 60,
                 champion_pool: 60,
-                passing: 60,
                 laning: 60,
-                tackling: 60,
                 mechanics: 60,
-                defending: 60,
-                positioning: 60,
                 macro_play: 60,
                 consistency: 60,
                 discipline: 60,
-                aggression: 60,
                 teamfighting: 60,
                 shotcalling: 60,
-                handling: 30,
-                reflexes: 30,
-                aerial: 60,
             },
         );
         player.team_id = Some("team1".to_string());

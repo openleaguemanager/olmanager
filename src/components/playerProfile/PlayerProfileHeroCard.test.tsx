@@ -59,7 +59,6 @@ function makePlayer(overrides?: Partial<PlayerData>): PlayerData {
       interceptions: 0,
       fouls_committed: 0,
       fouls_suffered: 0,
-      offsides: 0,
       saves: 0,
       goals_conceded: 0,
       penalties_scored: 0,

@@ -64,7 +64,6 @@ pub struct ManagerCareerEntry {
     pub end_date: Option<String>,
     pub matches: u32,
     pub wins: u32,
-    pub draws: u32,
     pub losses: u32,
     pub best_league_position: Option<u32>,
 }

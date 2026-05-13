@@ -28,6 +28,8 @@ pub struct Team {
     pub academy_team_id: Option<String>,
     #[serde(default)]
     pub academy: Option<AcademyMetadata>,
+    #[serde(default)]
+    pub logo_url: Option<String>,
 
     // Financial breakdown
     pub wage_budget: i64,
@@ -42,8 +44,8 @@ pub struct Team {
     pub facilities: Facilities,
 
     // Tactical
-    pub formation: String,
-    pub play_style: PlayStyle,
+    #[serde(alias = "play_style")]
+    pub draft_strategy: DraftStrategy,
     #[serde(default)]
     pub lol_tactics: LolTactics,
 
@@ -402,7 +404,6 @@ mod academy_team_metadata_tests {
             "transfer_budget": 500000,
             "season_income": 0,
             "season_expenses": 0,
-            "formation": "4-4-2",
             "play_style": "Balanced",
             "founded_year": 1900,
             "colors": { "primary": "#000000", "secondary": "#ffffff" },
@@ -433,7 +434,6 @@ mod academy_team_metadata_tests {
             "transfer_budget": 500000,
             "season_income": 0,
             "season_expenses": 0,
-            "formation": "4-4-2",
             "play_style": "Balanced",
             "founded_year": 1900,
             "colors": { "primary": "#000000", "secondary": "#ffffff" },
@@ -660,16 +660,21 @@ pub struct TeamColors {
     pub secondary: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
-pub enum PlayStyle {
+pub enum DraftStrategy {
+    #[default]
     Balanced,
-    Attacking,
-    Defensive,
-    Possession,
-    Counter,
-    HighPress,
+    #[serde(rename = "Attacking", alias = "HighPress")]
+    Aggressive,
+    #[serde(rename = "Defensive")]
+    Passive,
+    #[serde(rename = "Possession")]
+    Scaling,
+    #[serde(rename = "Counter")]
+    CounterPick,
+    PriorityBans,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -680,7 +685,6 @@ pub struct TeamSeasonRecord {
     pub league_position: u32,
     pub played: u32,
     pub won: u32,
-    pub drawn: u32,
     pub lost: u32,
     pub kills_for: u32,
     pub kills_against: u32,
@@ -1225,6 +1229,7 @@ impl Team {
             parent_team_id: None,
             academy_team_id: None,
             academy: None,
+            logo_url: None,
             wage_budget: 200_000,
             transfer_budget: 500_000,
             season_income: 0,
@@ -1232,8 +1237,7 @@ impl Team {
             financial_ledger: Vec::new(),
             sponsorship: None,
             facilities: Facilities::default(),
-            formation: "4-4-2".to_string(),
-            play_style: PlayStyle::Balanced,
+            draft_strategy: DraftStrategy::Balanced,
             lol_tactics: LolTactics::default(),
             training_focus: TrainingFocus::default(),
             training_intensity: TrainingIntensity::default(),

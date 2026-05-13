@@ -6,7 +6,7 @@ import type { TeamProfileTranslate } from "./TeamProfile.types";
 import { QuickStat } from "./TeamProfile.primitives";
 import type { TeamProfileViewModel } from "./TeamProfile.types";
 import type { TeamData } from "../../store/gameStore";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 
 function defaultTeamLogoSrc(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
@@ -45,7 +45,7 @@ function teamLogoSrc(team: TeamData): string {
   }
 
   if (team.team_kind === "Academy") {
-    const exampleLogo = resolveExampleTeamLogo(team.name);
+    const exampleLogo = resolveTeamLogo(team.name);
     if (exampleLogo) {
       return exampleLogo;
     }

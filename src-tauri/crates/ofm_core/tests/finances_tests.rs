@@ -34,25 +34,15 @@ fn make_team(id: &str, name: &str) -> Team {
 
 fn make_player(id: &str, team_id: &str, wage: u32) -> Player {
     let attrs = PlayerAttributes {
-        pace: 65,
         mental_resilience: 65,
-        strength: 65,
         champion_pool: 65,
-        passing: 65,
         laning: 65,
-        tackling: 65,
         mechanics: 65,
-        defending: 65,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
-        handling: 20,
-        reflexes: 30,
-        aerial: 60,
     };
     let mut p = Player::new(
         id.to_string(),

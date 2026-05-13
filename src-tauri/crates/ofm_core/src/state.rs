@@ -168,31 +168,15 @@ mod tests {
         let is_fwd = matches!(group, Position::Forward);
 
         PlayerAttributes {
-            pace: 65,
-            mental_resilience: 65,
-            strength: 65,
-            champion_pool: 65,
-            passing: 65,
-            laning: if is_gk { 30 } else { 65 },
-            tackling: if is_gk || is_fwd { 35 } else { 65 },
             mechanics: if is_gk { 30 } else { 65 },
-            defending: if is_gk {
-                30
-            } else if is_def {
-                75
-            } else {
-                55
-            },
-            positioning: 65,
+            laning: if is_gk { 30 } else { 65 },
+            teamfighting: 65,
             macro_play: 65,
             consistency: 65,
-            discipline: 65,
-            aggression: 50,
-            teamfighting: 65,
             shotcalling: 50,
-            handling: if is_gk { 75 } else { 20 },
-            reflexes: if is_gk { 75 } else { 30 },
-            aerial: 60,
+            champion_pool: 65,
+            discipline: 65,
+            mental_resilience: 65,
         }
     }
 

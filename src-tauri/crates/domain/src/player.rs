@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "typescript")]
 use ts_rs::TS;
 
-// Re-export both LolRole and Position for backward compatibility
-pub use crate::stats::{LolRole, Position};
+pub use crate::stats::LolRole;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(TS))]
@@ -29,13 +28,6 @@ pub struct Player {
     /// Alternate roles this player can also play (with reduced effectiveness)
     #[serde(default)]
     pub alternate_positions: Vec<LolRole>,
-
-    /// Deprecated: LoL roles are lane-agnostic, footedness no longer affects ratings
-    #[serde(default)]
-    pub footedness: Footedness,
-
-    #[serde(default = "default_weak_foot")]
-    pub weak_foot: u8,
 
     // Core attributes 0-100
     pub attributes: PlayerAttributes,
@@ -88,8 +80,6 @@ pub struct Player {
     #[serde(default)]
     pub potential_research_eta_days: Option<u8>,
     #[serde(default)]
-    pub champion_training_target: Option<String>,
-    #[serde(default)]
     pub champion_training_targets: Vec<String>,
 }
 
@@ -109,53 +99,48 @@ pub enum Footedness {
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 pub struct PlayerAttributes {
-    // Physical
-    pub pace: u8,
-    #[serde(alias = "stamina")]
-    pub mental_resilience: u8,
-    pub strength: u8,
+    // These 9 attributes are used by the engine simulation.
+    // Aliases provide backward compat with old save files (football-era names + removed fields).
+
+    /// Mechanical skill — replaces reaction_speed
+    #[serde(alias = "dribbling", alias = "reaction_speed")]
+    pub mechanics: u8,
+
+    /// Lane phase skill
+    #[serde(alias = "shooting")]
+    pub laning: u8,
+
+    /// Teamfight performance — replaces coordination
+    #[serde(default = "default_attr", alias = "teamwork", alias = "coordination")]
+    pub teamfighting: u8,
+
+    /// Macro / map awareness — replaces interception
+    #[serde(alias = "vision", alias = "interception")]
+    pub macro_play: u8,
+
+    /// Consistency — replaces positioning
+    #[serde(alias = "decisions", alias = "positioning")]
+    pub consistency: u8,
+
+    /// Leadership / decision-making — replaces aggression
+    #[serde(default = "default_attr", alias = "leadership", alias = "aggression")]
+    pub shotcalling: u8,
+
+    /// Champion versatility
     #[serde(default = "default_attr", alias = "agility")]
     pub champion_pool: u8,
 
-    // Technical
-    pub passing: u8,
-    #[serde(alias = "shooting")]
-    pub laning: u8,
-    pub tackling: u8,
-    #[serde(alias = "dribbling")]
-    pub mechanics: u8,
-    pub defending: u8,
-
-    // Mental
-    pub positioning: u8,
-    #[serde(alias = "vision")]
-    pub macro_play: u8,
-    #[serde(alias = "decisions")]
-    pub consistency: u8,
-    #[serde(default = "default_attr", alias = "composure")]
+    /// Discipline / composure — replaces positional_defense
+    #[serde(default = "default_attr", alias = "composure", alias = "positional_defense")]
     pub discipline: u8,
-    #[serde(default = "default_attr")]
-    pub aggression: u8,
-    #[serde(default = "default_attr", alias = "teamwork")]
-    pub teamfighting: u8,
-    #[serde(default = "default_attr", alias = "leadership")]
-    pub shotcalling: u8,
 
-    // Goalkeeper
-    #[serde(default = "default_attr")]
-    pub handling: u8,
-    #[serde(default = "default_attr")]
-    pub reflexes: u8,
-    #[serde(default = "default_attr")]
-    pub aerial: u8,
+    /// Mental resilience / stamina — replaces durability
+    #[serde(alias = "stamina", alias = "durability")]
+    pub mental_resilience: u8,
 }
 
 fn default_attr() -> u8 {
     50
-}
-
-fn default_weak_foot() -> u8 {
-    2
 }
 
 fn default_fitness() -> u8 {
@@ -326,7 +311,6 @@ pub struct PlayerSeasonStats {
     pub appearances: u32,
     pub kills: u32,
     pub assists: u32,
-    pub clean_sheets: u32,
     pub avg_rating: f32,
     pub minutes_played: u32,
     pub shots: u32,
@@ -345,8 +329,10 @@ pub struct CareerEntry {
     pub team_id: String,
     pub team_name: String,
     pub appearances: u32,
-    pub goals: u32,
+    pub kills: u32,
+    pub deaths: u32,
     pub assists: u32,
+    pub avg_rating: f32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -389,40 +375,40 @@ pub enum PlayerTrait {
     #[serde(alias = "Speedster")]
     LightningQuick, // mechanics >= 85
     #[serde(alias = "Tank")]
-    Immovable, // durability >= 85 && stamina >= 75
+    Immovable, // mental_resilience >= 85
     #[serde(alias = "Agile")]
-    NimbleFingers, // mechanics >= 85
+    NimbleFingers, // champion_pool >= 85
     #[serde(alias = "Tireless")]
-    MarathonMan, // stamina >= 90
+    MarathonMan, // mental_resilience >= 90
     // Game Knowledge
     #[serde(alias = "Playmaker")]
-    GameManager, // game_knowledge >= 80 && macro_play >= 80
+    GameManager, // teamfighting >= 80 && macro_play >= 80
     #[serde(alias = "Sharpshooter")]
     Lethal, // laning >= 85
     #[serde(alias = "Dribbler")]
     KiteMaster, // mechanics >= 85
     #[serde(alias = "BallWinner")]
-    Interceptor, // teamfight >= 80 && aggression >= 70
+    Interceptor, // macro_play >= 80 && shotcalling >= 70
     #[serde(alias = "Rock")]
-    Sentinel, // laning >= 85 && macro_play >= 75
+    Sentinel, // discipline >= 85 && consistency >= 75
     // Mental
     #[serde(alias = "Leader")]
-    ShotCaller, // shotcalling >= 85 && teamfight >= 75
+    ShotCaller, // shotcalling >= 85 && teamfighting >= 75
     #[serde(alias = "CoolHead")]
-    IceCold, // consistency >= 85 && decisions >= 80
+    IceCold, // discipline >= 85 && consistency >= 80
     #[serde(alias = "Visionary")]
     Visionary, // macro_play >= 85
     #[serde(alias = "HotHead")]
-    Intimidator, // aggression >= 85 && discipline < 50
+    Intimidator, // shotcalling >= 85 && discipline < 50
     #[serde(alias = "TeamPlayer")]
-    TeamPlayer, // teamfight >= 85
+    TeamPlayer, // teamfighting >= 85
     // Special
     #[serde(alias = "CompleteForward")]
-    HyperCarry, // laning >= 75 && mechanics >= 75 && consistency >= 70
+    HyperCarry, // laning >= 75 && mechanics >= 75 && mental_resilience >= 70
     #[serde(alias = "Engine")]
-    Workhorse, // stamina >= 85 && consistency >= 70 && teamfight >= 75
+    Workhorse, // mental_resilience >= 85 && mechanics >= 70 && teamfighting >= 75
     #[serde(alias = "SetPieceSpecialist")]
-    MacroSpecialist, // game_knowledge >= 80 && laning >= 75 && macro_play >= 75
+    MacroSpecialist, // teamfighting >= 80 && laning >= 75 && macro_play >= 75
 }
 
 /// Derive traits purely from a player's attributes (role-independent).
@@ -430,10 +416,13 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     let mut traits = Vec::new();
 
     // Mechanics
-    if attrs.pace >= 85 {
+    if attrs.mechanics >= 85 {
         traits.push(PlayerTrait::LightningQuick);
     }
-    if attrs.strength >= 85 && attrs.mental_resilience >= 75 {
+    if attrs.mental_resilience >= 85 {
+        traits.push(PlayerTrait::Immovable);
+    }
+    if attrs.mental_resilience >= 85 {
         traits.push(PlayerTrait::Immovable);
     }
     if attrs.champion_pool >= 85 {
@@ -444,7 +433,7 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     }
 
     // Game Knowledge
-    if attrs.passing >= 80 && attrs.macro_play >= 80 {
+    if attrs.teamfighting >= 80 && attrs.macro_play >= 80 {
         traits.push(PlayerTrait::GameManager);
     }
     if attrs.laning >= 85 {
@@ -453,10 +442,10 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     if attrs.mechanics >= 85 {
         traits.push(PlayerTrait::KiteMaster);
     }
-    if attrs.tackling >= 80 && attrs.aggression >= 70 {
+    if attrs.macro_play >= 80 && attrs.shotcalling >= 70 {
         traits.push(PlayerTrait::Interceptor);
     }
-    if attrs.defending >= 85 && attrs.positioning >= 75 {
+    if attrs.discipline >= 85 && attrs.consistency >= 75 {
         traits.push(PlayerTrait::Sentinel);
     }
 
@@ -470,7 +459,7 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     if attrs.macro_play >= 85 {
         traits.push(PlayerTrait::Visionary);
     }
-    if attrs.aggression >= 85 && attrs.discipline < 50 {
+    if attrs.shotcalling >= 85 && attrs.discipline < 50 {
         traits.push(PlayerTrait::Intimidator);
     }
     if attrs.teamfighting >= 85 {
@@ -478,13 +467,13 @@ pub fn compute_traits(attrs: &PlayerAttributes, _role: &LolRole) -> Vec<PlayerTr
     }
 
     // Special — purely attribute-based
-    if attrs.laning >= 75 && attrs.mechanics >= 75 && attrs.pace >= 70 && attrs.strength >= 70 {
+    if attrs.laning >= 75 && attrs.mechanics >= 75 && attrs.mental_resilience >= 70 {
         traits.push(PlayerTrait::HyperCarry);
     }
-    if attrs.mental_resilience >= 85 && attrs.pace >= 70 && attrs.teamfighting >= 75 {
+    if attrs.mental_resilience >= 85 && attrs.mechanics >= 70 && attrs.teamfighting >= 75 {
         traits.push(PlayerTrait::Workhorse);
     }
-    if attrs.passing >= 80 && attrs.laning >= 75 && attrs.macro_play >= 75 {
+    if attrs.teamfighting >= 80 && attrs.laning >= 75 && attrs.macro_play >= 75 {
         traits.push(PlayerTrait::MacroSpecialist);
     }
 
@@ -515,8 +504,6 @@ impl Player {
             natural_position: role,
             position: role,
             alternate_positions: Vec::new(),
-            footedness: Footedness::default(),
-            weak_foot: default_weak_foot(),
             attributes,
             condition: 100,
             morale: 100,
@@ -538,7 +525,6 @@ impl Player {
             potential_revealed: None,
             potential_research_started_on: None,
             potential_research_eta_days: None,
-            champion_training_target: None,
             champion_training_targets: Vec::new(),
         }
     }
@@ -550,42 +536,16 @@ mod tests {
 
     fn sample_attributes() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 70,
-            mental_resilience: 72,
-            strength: 65,
-            champion_pool: 68,
-            passing: 74,
-            laning: 61,
-            tackling: 58,
             mechanics: 69,
-            defending: 56,
-            positioning: 67,
+            laning: 61,
+            teamfighting: 76,
             macro_play: 73,
             consistency: 71,
-            discipline: 66,
-            aggression: 54,
-            teamfighting: 76,
             shotcalling: 49,
-            handling: 20,
-            reflexes: 24,
-            aerial: 44,
+            champion_pool: 68,
+            discipline: 66,
+            mental_resilience: 72,
         }
-    }
-
-    #[test]
-    fn player_new_defaults_footedness_and_weak_foot() {
-        let player = Player::new(
-            "p-001".to_string(),
-            "J. Smith".to_string(),
-            "John Smith".to_string(),
-            "2000-01-15".to_string(),
-            "GB".to_string(),
-            LolRole::Mid,
-            sample_attributes(),
-        );
-
-        assert_eq!(player.footedness, Footedness::Right);
-        assert_eq!(player.weak_foot, 2);
     }
 
     #[test]
@@ -619,8 +579,6 @@ mod tests {
         }))
         .expect("legacy player json should deserialize");
 
-        assert_eq!(player.footedness, Footedness::Right);
-        assert_eq!(player.weak_foot, 2);
         // "Midfielder" should map to LolRole::Jungle per the spec
         assert_eq!(player.natural_position, LolRole::Jungle);
         assert_eq!(player.potential_base, 99);

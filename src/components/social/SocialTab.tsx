@@ -5,7 +5,7 @@ import type { GameStateData, PlayerData, SocialPostData, TeamData } from "../../
 import { Badge } from "../ui";
 import { formatDateShort } from "../../lib/helpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 import { createManagerSocialPost, relocalizeSocialFeed } from "../../services/socialService";
 import SocialEditor from "./SocialEditor";
 
@@ -111,7 +111,7 @@ function academyLogoFromMetadata(team: TeamData): string | null {
 }
 
 function teamLogoSrc(team: TeamData): string {
-  return resolveExampleTeamLogo(team.name) ?? defaultTeamLogoSrc(team.id) ?? academyLogoFromMetadata(team) ?? "";
+  return resolveTeamLogo(team.name) ?? defaultTeamLogoSrc(team.id) ?? academyLogoFromMetadata(team) ?? "";
 }
 
 function findPostTeam(post: SocialPostData, teams: TeamData[]): TeamData | null {

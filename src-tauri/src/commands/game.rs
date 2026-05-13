@@ -1,6 +1,6 @@
 use chrono::{Datelike, TimeZone};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use domain::player::{Player, PlayerAttributes};
+use domain::player::{Player, PlayerAttributes, LolRole};
 use domain::team::{
     AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
 };
@@ -669,22 +669,22 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
             .path()
             .resource_dir()
             .ok()
-            .map(|dir| dir.join("databases").join("lec_world.json")),
+            .map(|dir| dir.join("databases").join("world.json")),
         cwd.join("src-tauri")
             .join("databases")
-            .join("lec_world.json")
+            .join("world.json")
             .into(),
-        cwd.join("databases").join("lec_world.json").into(),
+        cwd.join("databases").join("world.json").into(),
     ];
 
     if let Ok(exe_path) = std::env::current_exe() {
         if let Some(exe_dir) = exe_path.parent() {
-            candidates.push(Some(exe_dir.join("databases").join("lec_world.json")));
+            candidates.push(Some(exe_dir.join("databases").join("world.json")));
             candidates.push(Some(
                 exe_dir
                     .join("resources")
                     .join("databases")
-                    .join("lec_world.json"),
+                    .join("world.json"),
             ));
         }
     }
@@ -695,10 +695,10 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
         }
     }
 
-    let embedded_world_json = include_str!("../../databases/lec_world.json");
+    let embedded_world_json = include_str!("../../databases/world.json");
     let app_data_dir = app_handle.path().app_data_dir().map_err(|e| {
         format!(
-            "Default LEC world database not found and app data dir is unavailable: {}",
+            "Default world database not found and app data dir is unavailable: {}",
             e
         )
     })?;
@@ -706,17 +706,17 @@ fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path
     std::fs::create_dir_all(&db_dir)
         .map_err(|e| format!("Failed to create fallback databases directory: {}", e))?;
 
-    let fallback_path = db_dir.join("lec_world.json");
+    let fallback_path = db_dir.join("world.json");
     if !fallback_path.exists() {
         std::fs::write(&fallback_path, embedded_world_json)
-            .map_err(|e| format!("Failed to write fallback LEC world database: {}", e))?;
+            .map_err(|e| format!("Failed to write fallback world database: {}", e))?;
     }
 
     if fallback_path.exists() {
         return Ok(fallback_path);
     }
 
-    Err("Default LEC world database not found (lec_world.json).".to_string())
+    Err("Default world database not found (world.json).".to_string())
 }
 
 #[allow(dead_code)]
@@ -1564,29 +1564,19 @@ pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
 #[cfg(test)]
 mod tests {
     use super::{apply_default_initial_contract_end, default_initial_contract_end_for_start_year};
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes, LolRole};
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
-            mental_resilience: 60,
-            strength: 60,
-            champion_pool: 60,
-            passing: 60,
-            laning: 60,
-            tackling: 60,
             mechanics: 60,
-            defending: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
-            handling: 60,
-            reflexes: 60,
-            aerial: 60,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 
@@ -1597,7 +1587,7 @@ mod tests {
             id.to_string(),
             "2000-01-01".to_string(),
             "ES".to_string(),
-            Position::Midfielder,
+            LolRole::Jungle,
             default_attrs(),
         );
         player.contract_end = contract_end.map(str::to_string);
@@ -1706,40 +1696,16 @@ fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
     let [mechanics, laning, teamfighting, macro_play, consistency, shotcalling, champion_pool, discipline, mental_resilience] =
         build_lol_stats_from_seed(seed);
 
-    let role_key = normalize_seed_name(seed.role.as_deref().unwrap_or(""));
-
-    let defending = if role_key == "top" || role_key == "support" {
-        clamp_stat(((i16::from(teamfighting) + i16::from(discipline)) / 2) + 4)
-    } else {
-        clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2)
-    };
-
     PlayerAttributes {
-        pace: clamp_stat((i16::from(mechanics) + i16::from(laning)) / 2),
-        mental_resilience: mental_resilience,
-        strength: clamp_stat((i16::from(teamfighting) + i16::from(discipline)) / 2),
-        champion_pool: champion_pool,
-        passing: clamp_stat((i16::from(macro_play) + i16::from(shotcalling)) / 2),
-        laning: laning,
-        tackling: clamp_stat((i16::from(discipline) + i16::from(teamfighting)) / 2),
-        mechanics: mechanics,
-        defending,
-        positioning: clamp_stat((i16::from(macro_play) + i16::from(consistency)) / 2),
-        macro_play: macro_play,
-        consistency: consistency,
-        discipline: discipline,
-        aggression: clamp_stat((i16::from(teamfighting) + i16::from(mental_resilience)) / 2 - 4),
-        teamfighting: teamfighting,
-        shotcalling: shotcalling,
-        handling: 20,
-        reflexes: 22,
-        aerial: if role_key == "top" {
-            68
-        } else if role_key == "support" {
-            64
-        } else {
-            52
-        },
+        mechanics,
+        laning,
+        teamfighting,
+        macro_play,
+        consistency,
+        shotcalling,
+        champion_pool,
+        discipline,
+        mental_resilience,
     }
 }
 
@@ -1913,13 +1879,13 @@ pub async fn start_new_game(
     let clock = GameClock::new(start_date);
 
     // Load world based on source
-    let world_source = world_source.unwrap_or_else(|| "lec-default".to_string());
+    let world_source = world_source.unwrap_or_else(|| "default".to_string());
     let (teams, mut players, staff) = if world_source == "random" {
         ofm_core::generator::generate_world(None)
-    } else if world_source == "lec-default" {
+    } else if world_source == "default" {
         let path = resolve_default_world_path(&app_handle)?;
         let json = std::fs::read_to_string(&path)
-            .map_err(|e| format!("Failed to read default LEC world database: {}", e))?;
+            .map_err(|e| format!("Failed to read world database: {}", e))?;
         let has_explicit_potential_base = json.contains("\"potential_base\"");
         let mut world = ofm_core::generator::load_world_from_json(&json)?;
         if !has_explicit_potential_base {

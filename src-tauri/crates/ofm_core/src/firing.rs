@@ -211,7 +211,6 @@ mod tests {
             end_date: None,
             matches: 10,
             wins: 2,
-            draws: 3,
             losses: 5,
             best_league_position: Some(12),
         });

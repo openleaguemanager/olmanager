@@ -20,25 +20,15 @@ use ofm_core::player_events;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 60,
         mental_resilience: 60,
-        strength: 60,
         champion_pool: 60,
-        passing: 60,
         laning: 60,
-        tackling: 60,
         mechanics: 60,
-        defending: 60,
-        positioning: 60,
         macro_play: 60,
         consistency: 60,
         discipline: 60,
-        aggression: 60,
         teamfighting: 60,
         shotcalling: 60,
-        handling: 30,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
@@ -939,13 +929,11 @@ fn recent_player_talk_enters_cooldown_and_blocks_same_day_repeat() {
 #[test]
 fn weighted_response_bias_changes_with_player_context() {
     let mut volatile = make_player("volatile", "Volatile", "team1", LolRole::Adc);
-    volatile.attributes.aggression = 95;
     volatile.attributes.discipline = 20;
     volatile.attributes.shotcalling = 20;
     volatile.morale_core.manager_trust = 30;
 
     let mut composed = make_player("composed", "Composed", "team1", LolRole::Adc);
-    composed.attributes.aggression = 20;
     composed.attributes.discipline = 95;
     composed.attributes.shotcalling = 95;
     composed.morale_core.manager_trust = 75;
@@ -1478,10 +1466,9 @@ fn action_marked_resolved() {
 #[test]
 fn volatile_player_worse_outcomes_from_tough_love() {
     let mut game = make_game();
-    // Make player volatile: high aggression, low composure
+    // Make player volatile: low composure, low shotcalling
     let player = game.players.iter_mut().find(|p| p.id == "p_fwd0").unwrap();
     player.morale = 50;
-    player.attributes.aggression = 95;
     player.attributes.discipline = 20;
     player.attributes.shotcalling = 20;
     inject_player_message(&mut game, "morale_talk_p_fwd0", "p_fwd0", "respond");
@@ -1503,7 +1490,6 @@ fn volatile_player_worse_outcomes_from_tough_love() {
 
     // Now test composed player
     let player = game.players.iter_mut().find(|p| p.id == "p_fwd0").unwrap();
-    player.attributes.aggression = 20;
     player.attributes.discipline = 95;
     player.attributes.shotcalling = 95;
 

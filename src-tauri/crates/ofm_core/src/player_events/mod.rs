@@ -158,7 +158,7 @@ pub fn check_player_events(game: &mut Game) {
                 if player.injury.is_some() {
                     continue;
                 }
-                // In LoL, no Goalkeeper - this check no longer applies (supports are valid)
+                // In LoL, all roles including Support can be benched (no legacy goalkeeper exclusion)
                 if talk_cooldown_active(player, &today) {
                     continue;
                 }
@@ -169,18 +169,16 @@ pub fn check_player_events(game: &mut Game) {
                 }
 
                 let attrs = &player.attributes;
-                let ovr = (attrs.pace as u16
-                    + attrs.mental_resilience as u16
-                    + attrs.strength as u16
-                    + attrs.passing as u16
+                let ovr = (attrs.mechanics as u16
                     + attrs.laning as u16
-                    + attrs.tackling as u16
-                    + attrs.mechanics as u16
-                    + attrs.defending as u16
-                    + attrs.positioning as u16
+                    + attrs.teamfighting as u16
                     + attrs.macro_play as u16
-                    + attrs.consistency as u16)
-                    / 11;
+                    + attrs.consistency as u16
+                    + attrs.shotcalling as u16
+                    + attrs.champion_pool as u16
+                    + attrs.discipline as u16
+                    + attrs.mental_resilience as u16)
+                    / 9;
 
                 // Player must have decent OVR, low morale, and few appearances
                 // relative to team matches. 10% daily chance to avoid flooding.
