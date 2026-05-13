@@ -28,7 +28,6 @@
     "targets": "all",
     "createUpdaterArtifacts": true,
     "resources": [
-      "databases/world.json",
       "../data/competitions/**/*",
       "../data/teams/**/*",
       "../data/players/**/*",
