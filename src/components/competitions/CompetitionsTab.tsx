@@ -99,11 +99,10 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
               gameState.teams.filter((t) => t.competition_id === league.id)
                 .length
             }
-            onSelect={() =>
-              setSelectedCid(
-                selectedCid === league.id ? null : league.id,
-              )
-            }
+            onSelect={() => {
+              const cid = league.competition_id ?? league.id;
+              setSelectedCid(selectedCid === cid ? null : cid);
+            }}
           />
         ))}
       </div>
