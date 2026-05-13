@@ -18,6 +18,7 @@ import {
   Check,
   Power,
   Database,
+  Sparkles,
 } from "lucide-react";
 import { countryName, allNationalities } from "../lib/countries";
 
@@ -425,6 +426,19 @@ export default function MainMenu() {
                   </span>
                 </div>
                 <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-gray-400" />
+              </button>
+
+              <button
+                onClick={() => navigate("/ultimate-sandbox")}
+                className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-accent-400 dark:hover:border-accent-400 shadow-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <Sparkles className="w-6 h-6 text-accent-500 dark:text-accent-400" />
+                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
+                    Ultimate Sandbox
+                  </span>
+                </div>
+                <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-accent-500" />
               </button>
 
               <button

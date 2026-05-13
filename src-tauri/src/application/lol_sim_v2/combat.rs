@@ -1484,6 +1484,14 @@ pub(super) fn resolve_champion_combat(runtime: &mut RuntimeState) {
     let mut neutral_timers = decode_neutral_timers_state(&runtime.neutral_timers)
         .unwrap_or_else(neutral_timers_default_runtime_state);
 
+    for champion in &mut runtime.champions {
+        if champion.ultimate_buff_until > 0.0 && champion.ultimate_buff_until <= now {
+            champion.ultimate_buff_until = 0.0;
+            champion.ultimate_damage_multiplier = 1.0;
+            champion.ultimate_damage_reduction = 1.0;
+        }
+    }
+
     tick_ignite_dot_effects(runtime, now);
 
     for idx in 0..runtime.champions.len() {

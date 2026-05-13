@@ -338,6 +338,39 @@ pub fn skip_to_end(
     })
 }
 
+pub fn debug_force_ultimate(
+    store: &LolSimV2StoreState,
+    request: LolSimV2DebugForceUltimateRequest,
+) -> Result<LolSimV2DebugForceUltimateResponse, String> {
+    let mut sessions = store
+        .sessions
+        .lock()
+        .map_err(|_| "lol sim v2 session store lock poisoned".to_string())?;
+
+    let session = sessions
+        .get_mut(&request.session_id)
+        .ok_or_else(|| format!("lol sim v2 session not found: {}", request.session_id))?;
+
+    let mut runtime = session.state.clone();
+    runtime.lane_combat_state_by_champion = session.lane_combat_state_by_champion.clone();
+    runtime.ai_mode = session.ai_mode;
+    runtime.policy = session.policy.clone();
+
+    let result = force_debug_ultimate_cast(&mut runtime, &request.caster_id);
+    let reason = result.as_ref().err().cloned();
+    let casted = result.unwrap_or(false);
+
+    session.lane_combat_state_by_champion = runtime.lane_combat_state_by_champion.clone();
+    session.state = runtime;
+
+    Ok(LolSimV2DebugForceUltimateResponse {
+        session_id: session.id.clone(),
+        state: encode_runtime_state(&session.state)?,
+        casted,
+        reason,
+    })
+}
+
 fn decode_runtime_state(state: Value) -> Result<RuntimeState, String> {
     serde_json::from_value(state)
         .map_err(|err| format!("failed to decode lol_sim_v2 runtime state: {err}"))

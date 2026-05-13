@@ -82,6 +82,9 @@ pub(super) fn test_champion(
         support_last_roam_role: String::new(),
         path_stuck_for_sec: 0.0,
         forced_lane_recall_cd_until: 0.0,
+        ultimate_buff_until: 0.0,
+        ultimate_damage_multiplier: 1.0,
+        ultimate_damage_reduction: 1.0,
         debug_ai_decision: String::new(),
     }
 }

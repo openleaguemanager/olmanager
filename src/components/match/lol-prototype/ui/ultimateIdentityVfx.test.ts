@@ -2,10 +2,18 @@ import { describe, expect, it } from "vitest";
 import rustUltimateCatalog from "../../../../../src-tauri/src/application/lol_sim_v2/ultimate_identity.rs?raw";
 
 import {
+  BESPOKE_SIGNATURE_KINDS,
+  FALLBACK_SIGNATURE_ID,
   getUltimateSilhouetteKind,
+  hasExplicitUltimateSignatureVisual,
+  resolveUltimateRenderPhase,
+  resolveUltimateRenderTiming,
+  resolveUltimateSpatialRenderContext,
   resolveUltimateVisualConfig,
   SIGNATURE_COMPOSITE_RATIONALES,
   SIGNATURE_SILHOUETTE_OVERRIDES,
+  type UltimateIdentityEventMetadata,
+  type UltimateSpatialShape,
 } from "./ultimateIdentityVfx";
 
 interface CatalogSignature {
@@ -13,18 +21,26 @@ interface CatalogSignature {
   championName: string;
   primitive: string;
   signatureId: string;
+  palette: string[];
+  shapeLanguage: string[];
+  motionHints: string[];
 }
 
 const catalogSignatures = (): CatalogSignature[] => {
   const matches = rustUltimateCatalog.matchAll(
-    /ident!\(\s*"([^"]+)",\s*"([^"]+)",\s*(\w+),\s*"([^"]+)"/g,
+    /ident!\(\s*"([^"]+)",\s*"([^"]+)",\s*(\w+),\s*"([^"]+)",\s*\[[^\]]*\],\s*\[[^\]]*\],\s*\[([^\]]*)\],\s*\[([^\]]*)\],\s*\[([^\]]*)\]/g,
   );
 
-  return Array.from(matches, ([, championKey, championName, primitive, signatureId]) => ({
+  const quoted = (raw: string) => Array.from(raw.matchAll(/"([^"]+)"/g), ([, value]) => value);
+
+  return Array.from(matches, ([, championKey, championName, primitive, signatureId, palette, shapeLanguage, motionHints]) => ({
     championKey,
     championName,
     primitive,
     signatureId,
+    palette: quoted(palette),
+    shapeLanguage: quoted(shapeLanguage),
+    motionHints: quoted(motionHints),
   }));
 };
 
@@ -38,12 +54,12 @@ const catalogMetadata = (signature: CatalogSignature) => ({
     championName: signature.championName,
     technicalPrimitive: toSnakePrimitive(signature.primitive),
     signatureId: signature.signatureId,
-    visual: {
-      visualEventId: `ultimate.${signature.signatureId}`,
-      palette: ["#f8fafc", "#60a5fa", "#111827"],
-      shapeLanguage: [signature.signatureId],
-      motionHints: [signature.signatureId],
-    },
+      visual: {
+        visualEventId: `ultimate.${signature.signatureId}`,
+        palette: signature.palette,
+        shapeLanguage: signature.shapeLanguage,
+        motionHints: signature.motionHints,
+      },
   },
 });
 
@@ -461,6 +477,86 @@ describe("ultimate identity VFX", () => {
     }
   });
 
+  it("Bache 5: every catalog signature resolves through explicit non-fallback visual identity", () => {
+    const catalog = catalogSignatures();
+
+    expect(catalog).toHaveLength(171);
+    for (const signature of catalog) {
+      const config = resolveUltimateVisualConfig(catalogMetadata(signature));
+      expect(config.signatureId, signature.championName).toBe(signature.signatureId);
+      expect(config.signatureId, signature.championName).not.toBe(FALLBACK_SIGNATURE_ID);
+      expect(config.primitive, signature.championName).not.toBe("fallback");
+      expect(hasExplicitUltimateSignatureVisual(signature.signatureId), signature.signatureId).toBe(true);
+      expect(config.palette.length, signature.signatureId).toBeGreaterThanOrEqual(2);
+      expect(config.shapeLanguage.length, signature.signatureId).toBeGreaterThan(0);
+      expect(config.motion.length, signature.signatureId).toBeGreaterThan(0);
+      expect(getUltimateSilhouetteKind(config), signature.signatureId).toBe(SIGNATURE_SILHOUETTE_OVERRIDES[signature.signatureId]);
+    }
+  });
+
+  it("Bache 5: visual groups have concrete champion-specific silhouette language", () => {
+    expect(SIGNATURE_SILHOUETTE_OVERRIDES).toMatchObject({
+      aatrox_world_ender: "darkin_wings",
+      swain_demonic_ascension: "demonic_wings",
+      shyvana_dragons_descent: "dragon_descent",
+      galio_heroes_entrance: "colossus_landing",
+      irelia_vanguard_edge: "blade_curtain",
+      maokai_natures_grasp: "nature_vines",
+      sona_crescendo: "music_wave",
+      bard_tempered_fate: "cosmic_stars",
+      belveth_endless_banquet: "void_bloom",
+      viktor_chaos_storm: "hextech_construct",
+      nami_tidal_wave: "water_wave",
+      lissandra_frozen_tomb: "ice_prison",
+      brand_pyroclasm_bounce: "fire_explosion",
+    });
+  });
+
+  it("Bache 5: critical champions preserve target, direction, timing, and spatial shape assertions", () => {
+    const critical: Array<[string, UltimateSpatialShape, Partial<UltimateIdentityEventMetadata>]> = [
+      ["ezreal", "projectile", { direction: { x: 1, y: 0 }, targetPos: { x: 0.82, y: 0.4 } }],
+      ["ashe", "projectile", { direction: { x: 1, y: 0 }, targetPos: { x: 0.85, y: 0.35 } }],
+      ["jinx", "projectile", { direction: { x: 1, y: 0 }, targetPos: { x: 0.86, y: 0.62 } }],
+      ["draven", "projectile", { targetPos: { x: 0.82, y: 0.55 }, returnToOrigin: true, returnPath: [{ x: 0.2, y: 0.55 }, { x: 0.82, y: 0.55 }, { x: 0.2, y: 0.55 }] }],
+      ["lux", "beam", { direction: { x: 1, y: 0 } }],
+      ["caitlyn", "beam", { targetId: "red-carry", targetPos: { x: 0.75, y: 0.42 }, followTarget: true }],
+      ["malphite", "projectile", { targetId: "red-carry", targetPos: { x: 0.72, y: 0.44 } }],
+      ["orianna", "zone", { targetPos: { x: 0.58, y: 0.46 }, proxyOriginKind: "ball_or_target_point" }],
+      ["karthus", "global", { global: true, delayMs: 2400 }],
+      ["mordekaiser", "lock", { targetId: "red-top", lockedTargetId: "red-top", targetPos: { x: 0.62, y: 0.4 }, followTarget: true }],
+      ["kindred", "zone", { targetPos: { x: 0.5, y: 0.5 }, persistent: true }],
+      ["ryze", "global_overlay", { global: true, destinationPos: { x: 0.8, y: 0.3 } }],
+      ["twistedfate", "global_overlay", { global: true, destinationPos: { x: 0.7, y: 0.25 } }],
+      ["shen", "lock", { targetId: "blue-ally", targetPos: { x: 0.7, y: 0.25 }, destinationPos: { x: 0.7, y: 0.25 }, followTarget: true }],
+      ["azir", "zone", { targetPos: { x: 0.55, y: 0.45 }, zoneOrientation: { x: 0, y: 1 } }],
+      ["taliyah", "line", { targetPos: { x: 0.8, y: 0.5 }, direction: { x: 1, y: 0 } }],
+      ["yasuo", "lock", { targetId: "red-mid", targetPos: { x: 0.66, y: 0.42 }, followTarget: true }],
+      ["nocturne", "global_overlay", { global: true, targetId: "red-adc", targetPos: { x: 0.82, y: 0.7 }, destinationPos: { x: 0.82, y: 0.7 } }],
+    ];
+
+    const catalog = new Map(catalogSignatures().map((signature) => [signature.championKey, signature]));
+    for (const [championKey, shape, metadata] of critical) {
+      const signature = catalog.get(championKey);
+      expect(signature, championKey).toBeDefined();
+      const config = resolveUltimateVisualConfig(catalogMetadata(signature!));
+      const timing = resolveUltimateRenderTiming({ ...catalogMetadata(signature!), ...metadata, shape }, signature!.signatureId);
+      const spatial = resolveUltimateSpatialRenderContext(
+        { ...catalogMetadata(signature!), ...metadata, originPos: { x: 0.2, y: 0.4 }, shape },
+        { x: 0.2, y: 0.4 },
+        config,
+        new Map([["red-carry", { x: 0.77, y: 0.43 }], ["red-top", { x: 0.64, y: 0.41 }], ["blue-ally", { x: 0.72, y: 0.24 }], ["red-mid", { x: 0.67, y: 0.43 }], ["red-adc", { x: 0.83, y: 0.71 }]]),
+      );
+
+      expect(spatial.shape, championKey).toBe(shape);
+      expect(timing.durationMs, championKey).toBeGreaterThan(0);
+      if (shape === "projectile" || shape === "beam" || shape === "line" || shape === "lock") {
+        expect(spatial.usedFallbackAngle, championKey).toBe(false);
+      }
+      if (metadata.targetId || metadata.targetPos) expect(spatial.target, championKey).toBeDefined();
+      if (metadata.destinationPos) expect(spatial.destination, championKey).toEqual(metadata.destinationPos);
+    }
+  });
+
   it("covers A-H catalog signatures with explicit silhouette counts", () => {
     const batch = catalogSignatures().filter(({ championKey }) => /^[a-h]/.test(championKey));
 
@@ -486,5 +582,464 @@ describe("ultimate identity VFX", () => {
     expect(
       batch.filter(({ signatureId }) => SIGNATURE_SILHOUETTE_OVERRIDES[signatureId]).length,
     ).toBe(59);
+  });
+
+  it("prioriza metadata espacial y evita actor-angle random en críticos", () => {
+    const config = resolveSample(
+      "linear_projectile",
+      "ezreal_trueshot_barrage",
+      ["#60a5fa", "#f8fafc"],
+      ["arcane_wave"],
+      ["map_long_sweep"],
+    );
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.2, y: 0.3 },
+        targetPos: { x: 0.8, y: 0.9 },
+        shape: "projectile",
+      },
+      { x: 0.1, y: 0.1 },
+      config,
+    );
+
+    expect(spatial.usedFallbackAngle).toBe(false);
+    expect(spatial.angle).toBeCloseTo(Math.atan2(0.6, 0.6), 5);
+  });
+
+  it("clasifica shapes A-H, I-R y S-Z con uso coherente de target/dirección", () => {
+    const asheShape = resolveUltimateSpatialRenderContext(
+      { event: "champion_ultimate_cast", shape: "projectile", direction: { x: 1, y: 0 } },
+      { x: 0.3, y: 0.5 },
+      resolveSample("linear_projectile", "ashe_enchanted_crystal_arrow", ["#fff", "#00f"], ["arrow"], ["long_glide"]),
+    );
+    const oriannaShape = resolveUltimateSpatialRenderContext(
+      { event: "champion_ultimate_cast", shape: "zone", targetPos: { x: 0.4, y: 0.4 } },
+      { x: 0.2, y: 0.2 },
+      resolveSample("aoe_pulse", "orianna_command_shockwave", ["#fff", "#00f"], ["ring"], ["pull"]),
+    );
+    const karthusShape = resolveUltimateSpatialRenderContext(
+      { event: "champion_ultimate_cast", shape: "global", global: true },
+      { x: 0.5, y: 0.5 },
+      resolveSample("global_presence", "karthus_requiem", ["#fff", "#00f"], ["omen"], ["channel"]),
+    );
+
+    expect(asheShape.shape).toBe("projectile");
+    expect(asheShape.usedFallbackAngle).toBe(false);
+    expect(oriannaShape.shape).toBe("zone");
+    expect(oriannaShape.target).toEqual({ x: 0.4, y: 0.4 });
+    expect(karthusShape.shape).toBe("global");
+  });
+
+  it("mantiene fallback seguro cuando metadata espacial llega incompleta", () => {
+    const config = resolveSample("beam_line", "lux_final_spark", ["#fff", "#00f"], ["beam"], ["instant_laser"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      { event: "champion_ultimate_cast", originPos: { x: 0.5, y: 0.5 }, shape: "line" },
+      { x: 0.2, y: 0.2 },
+      config,
+    );
+
+    expect(spatial.origin).toEqual({ x: 0.5, y: 0.5 });
+    expect(spatial.usedFallbackAngle).toBe(true);
+    expect(spatial.shape).toBe("line");
+  });
+
+  it("usa direction explícita para projectile/beam/line antes que signatureAngle", () => {
+    const origin = { x: 0.2, y: 0.2 };
+    const config = resolveSample("beam_line", "lux_final_spark", ["#fff", "#00f"], ["beam"], ["instant_laser"]);
+
+    for (const shape of ["projectile", "beam", "line"] as const) {
+      const spatial = resolveUltimateSpatialRenderContext(
+        { event: "champion_ultimate_cast", originPos: origin, direction: { x: 0, y: 3 }, shape },
+        { x: 0.9, y: 0.9 },
+        config,
+      );
+
+      expect(spatial.shape).toBe(shape);
+      expect(spatial.usedFallbackAngle).toBe(false);
+      expect(spatial.direction).toEqual({ x: 0, y: 1 });
+      expect(spatial.angle).toBeCloseTo(Math.PI / 2, 5);
+    }
+  });
+
+  it("circle/zone usan targetPos como anchor espacial cuando viene en metadata", () => {
+    const config = resolveSample("aoe_pulse", "orianna_command_shockwave", ["#fff", "#00f"], ["ring"], ["pull"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.1, y: 0.1 },
+        targetPos: { x: 0.65, y: 0.45 },
+        shape: "circle",
+      },
+      { x: 0.2, y: 0.2 },
+      config,
+    );
+
+    expect(spatial.origin).toEqual({ x: 0.1, y: 0.1 });
+    expect(spatial.target).toEqual({ x: 0.65, y: 0.45 });
+    expect(spatial.shape).toBe("circle");
+    expect(spatial.usedFallbackAngle).toBe(false);
+  });
+
+  it("global overlay es una shape explícita y no necesita orientación del actor", () => {
+    const config = resolveSample("global_presence", "karthus_requiem", ["#fff", "#00f"], ["omen"], ["channel"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      { event: "champion_ultimate_cast", originPos: { x: 0.05, y: 0.95 }, shape: "global_overlay", global: true },
+      { x: 0.8, y: 0.1 },
+      config,
+    );
+
+    expect(spatial.shape).toBe("global_overlay");
+    expect(spatial.origin).toEqual({ x: 0.05, y: 0.95 });
+    expect(spatial.target).toBeUndefined();
+    expect(spatial.usedFallbackAngle).toBe(true);
+  });
+
+  it("delayed ground AoE expone telegraph antes del impacto", () => {
+    const timing = resolveUltimateRenderTiming({
+      event: "champion_ultimate_cast",
+      shape: "circle",
+      ultimateIdentity: {
+        technicalPrimitive: "artillery",
+        signatureId: "leona_solar_flare",
+        gameplayTags: ["delayed_impact", "stun"],
+        visual: { palette: ["#facc15"], shapeLanguage: [], motionHints: [] },
+      },
+    });
+
+    expect(timing.delayMs).toBeGreaterThan(0);
+    expect(timing.impactAt).toBe(timing.delayMs);
+    expect(resolveUltimateRenderPhase(timing.impactAt - 1, timing)).toBe("windup");
+    expect(resolveUltimateRenderPhase(timing.impactAt, timing)).toBe("impact");
+  });
+
+  it("persistent zones remain visible across duration with pulses", () => {
+    const config = resolveUltimateVisualConfig({
+      event: "champion_ultimate_cast",
+      shape: "zone",
+      ultimateIdentity: {
+        technicalPrimitive: "aoe_pulse",
+        signatureId: "anivia_glacial_storm",
+        gameplayTags: ["zone", "slow"],
+        visual: {
+          visualEventId: "ultimate.anivia_glacial_storm",
+          palette: ["#7dd3fc", "#e0f2fe"],
+          shapeLanguage: ["snow_spiral"],
+          motionHints: ["persistent_swirl"],
+        },
+      },
+    });
+
+    expect(config.persistent).toBe(true);
+    expect(config.durationMs).toBeGreaterThan(3000);
+    expect(config.pulseCount).toBeGreaterThan(3);
+  });
+
+  it("Bache 1 real ultimates resolve non-fallback VFX with honest timing and shape", () => {
+    const batch = [
+      ["aatrox", "aura", "darkin_wings", true],
+      ["ahri", "lock", "spirit_dash", false],
+      ["akali", "lock", "two_stage_execution", false],
+      ["akshan", "lock", "precision_snipe", false],
+      ["alistar", "aura", "beast_charge", true],
+      ["ambessa", "projectile", "gauntlet_lockon", false],
+      ["amumu", "circle", "shockwave_ring", false],
+      ["anivia", "zone", "ice_prison", true],
+      ["annie", "circle", "tibbers_bear", true],
+      ["aphelios", "projectile", "moonlight_vigil", false],
+    ] as const;
+    const catalog = new Map(catalogSignatures().map((signature) => [signature.championKey, signature]));
+
+    for (const [championKey, shape, silhouette, persistent] of batch) {
+      const signature = catalog.get(championKey)!;
+      const config = resolveUltimateVisualConfig({
+        ...catalogMetadata(signature),
+        shape,
+        persistent,
+        targetPos: { x: 0.7, y: 0.4 },
+        direction: { x: 1, y: 0 },
+      });
+      const spatial = resolveUltimateSpatialRenderContext(
+        { ...catalogMetadata(signature), shape, persistent, targetPos: { x: 0.7, y: 0.4 }, direction: { x: 1, y: 0 } },
+        { x: 0.2, y: 0.4 },
+        config,
+      );
+
+      expect(config.signatureId, championKey).not.toBe(FALLBACK_SIGNATURE_ID);
+      expect(hasExplicitUltimateSignatureVisual(signature.signatureId), championKey).toBe(true);
+      expect(getUltimateSilhouetteKind(config), championKey).toBe(silhouette);
+      expect(spatial.shape, championKey).toBe(shape);
+      expect(config.durationMs, championKey).toBeGreaterThan(0);
+      if (persistent) expect(config.persistent, championKey).toBe(true);
+    }
+  });
+
+  it("channel beam/cone uses duration and pulse stream instead of a single flash", () => {
+    const lucian = resolveUltimateVisualConfig({
+      event: "champion_ultimate_cast",
+      ultimateIdentity: {
+        technicalPrimitive: "beam_line",
+        signatureId: "lucian_the_culling",
+        gameplayTags: ["channeled_beam", "bullets"],
+        visual: {
+          visualEventId: "ultimate.lucian_the_culling",
+          palette: ["#fde68a", "#facc15"],
+          shapeLanguage: ["dual_pistols", "bullet_lanes"],
+          motionHints: ["rapid_barrage"],
+        },
+      },
+    });
+
+    expect(lucian.durationMs).toBeGreaterThan(2500);
+    expect(lucian.pulseCount).toBeGreaterThan(3);
+  });
+
+  it("Karthus/Taric/Kayle/Zyra delayed events expose timing metadata defaults", () => {
+    for (const signatureId of [
+      "karthus_requiem",
+      "taric_cosmic_radiance",
+      "kayle_divine_judgment",
+      "zyra_stranglethorns",
+    ]) {
+      const timing = resolveUltimateRenderTiming({
+        event: "champion_ultimate_cast",
+        ultimateIdentity: {
+          signatureId,
+          gameplayTags: ["delayed_impact"],
+          visual: { palette: ["#fff"], shapeLanguage: [], motionHints: [] },
+        },
+      });
+
+      expect(timing.delayMs).toBeGreaterThan(0);
+      expect(timing.durationMs).toBeGreaterThan(0);
+      expect(timing.totalMs).toBeGreaterThan(timing.delayMs);
+    }
+  });
+
+  it("fallback timing remains backward-compatible without timing metadata", () => {
+    const config = resolveUltimateVisualConfig({ event: "champion_ultimate_cast" });
+    const timing = resolveUltimateRenderTiming({ event: "champion_ultimate_cast" });
+
+    expect(config.primitive).toBe("fallback");
+    expect(timing.delayMs).toBe(0);
+    expect(timing.persistent).toBe(false);
+    expect(timing.pulseCount).toBe(1);
+  });
+
+  it("lock-on usa targetId/targetPos y sigue el target vivo cuando las unidades se mueven", () => {
+    const config = resolveSample("suppression_lock", "malzahar_nether_grasp", ["#7c3aed", "#111827"], ["void_lock"], ["suppress"]);
+    const movedUnits = new Map([["red-mid", { x: 0.72, y: 0.41 }]]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.25, y: 0.4 },
+        targetId: "red-mid",
+        lockedTargetId: "red-mid",
+        targetPos: { x: 0.5, y: 0.5 },
+        followTarget: true,
+        shape: "lock",
+      },
+      { x: 0.25, y: 0.4 },
+      config,
+      movedUnits,
+    );
+
+    expect(spatial.target).toEqual({ x: 0.72, y: 0.41 });
+    expect(spatial.lockedTarget).toEqual({ x: 0.72, y: 0.41 });
+    expect(spatial.usedFallbackAngle).toBe(false);
+  });
+
+  it("tether expone línea actor-target cuando llega tetherKind", () => {
+    const config = resolveSample("suppression_lock", "morgana_soul_shackles", ["#7f1d1d", "#a855f7"], ["soul_chain"], ["tether"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.3, y: 0.3 },
+        targetId: "red-jgl",
+        targetPos: { x: 0.6, y: 0.5 },
+        tetherKind: "soul_chain",
+        followTarget: true,
+        shape: "lock",
+      },
+      { x: 0.3, y: 0.3 },
+      config,
+      new Map([["red-jgl", { x: 0.62, y: 0.52 }]]),
+    );
+
+    expect(spatial.tetherKind).toBe("soul_chain");
+    expect(spatial.target).toEqual({ x: 0.62, y: 0.52 });
+  });
+
+  it("bounce chain usa múltiples posiciones de target reales", () => {
+    const config = resolveSample("linear_projectile", "brand_pyroclasm_bounce", ["#fb923c", "#facc15"], ["bouncing_fire"], ["ricochet"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        targetIds: ["red-top", "red-mid", "red-bot"],
+        bounceCount: 3,
+        sequenceKind: "chain",
+      },
+      { x: 0.2, y: 0.2 },
+      config,
+      new Map([
+        ["red-top", { x: 0.4, y: 0.2 }],
+        ["red-mid", { x: 0.55, y: 0.45 }],
+        ["red-bot", { x: 0.7, y: 0.7 }],
+      ]),
+    );
+
+    expect(spatial.bouncePoints).toEqual([{ x: 0.4, y: 0.2 }, { x: 0.55, y: 0.45 }, { x: 0.7, y: 0.7 }]);
+  });
+
+  it("return path diferencia ida/vuelta en vez de proyectil random one-way", () => {
+    const config = resolveSample("linear_projectile", "draven_whirling_death", ["#facc15", "#ef4444"], ["spinning_axes"], ["returning_axes"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.2, y: 0.5 },
+        targetPos: { x: 0.8, y: 0.5 },
+        returnToOrigin: true,
+        returnPath: [{ x: 0.2, y: 0.5 }, { x: 0.8, y: 0.5 }, { x: 0.2, y: 0.5 }],
+        shape: "projectile",
+      },
+      { x: 0.2, y: 0.5 },
+      config,
+    );
+
+    expect(spatial.returnPathPoints).toEqual([{ x: 0.2, y: 0.5 }, { x: 0.8, y: 0.5 }, { x: 0.2, y: 0.5 }]);
+  });
+
+  it("multi-stage expone stage metadata y el renderer puede diferenciar la etapa", () => {
+    const config = resolveSample("artillery", "jhin_curtain_call", ["#f8fafc", "#dc2626"], ["curtain_scope"], ["fourth_shot"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        targetPos: { x: 0.8, y: 0.35 },
+        stage: 3,
+        stageCount: 4,
+        sequenceKind: "multi_shot_channel",
+        recastWindowMs: 9000,
+      },
+      { x: 0.2, y: 0.35 },
+      config,
+    );
+
+    expect(spatial.stage).toBe(3);
+    expect(spatial.stageCount).toBe(4);
+    expect(spatial.sequenceKind).toBe("multi_shot_channel");
+    expect(spatial.recastWindowMs).toBe(9000);
+  });
+
+  it("Bache 4 asigna bespokeKind explícito a cada priority signature", () => {
+    expect(BESPOKE_SIGNATURE_KINDS).toMatchObject({
+      sylas_hijack: "stolen_ultimate_pending",
+      mordekaiser_realm_death: "death_realm",
+      ryze_realm_warp: "portal",
+      twistedfate_destiny: "global_reveal_gate",
+      shen_stand_united: "ally_shield_arrival",
+      kindred_lambs_respite: "sanctuary_heal",
+      taliyah_weavers_wall: "terrain_wall",
+      azir_emperors_divide: "soldier_wall",
+      yasuo_last_breath: "airborne_slash",
+      orianna_command_shockwave: "proxy_shockwave",
+      ornn_call_forge_god: "two_stage_ram",
+      nocturne_paranoia: "blackout_dash",
+      galio_heroes_entrance: "global_landing",
+      pantheon_grand_starfall: "global_landing",
+      ekko_chronobreak: "rewind_ghost",
+      xayah_featherstorm: "feather_fan_recall",
+      yuumi_final_chapter: "host_waves",
+    });
+  });
+
+  it("Orianna proxy shockwave usa ball/target point como origen renderizable, no actor origin", () => {
+    const config = resolveSample("aoe_pulse", "orianna_command_shockwave", ["#fff", "#00f"], ["shockwave_ring"], ["pull"]);
+    const spatial = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.1, y: 0.1 },
+        targetPos: { x: 0.62, y: 0.44 },
+        proxyOriginKind: "ball_or_target_point",
+        shape: "zone",
+      },
+      { x: 0.2, y: 0.2 },
+      config,
+    );
+
+    expect(spatial.bespokeKind).toBe("proxy_shockwave");
+    expect(spatial.proxyOriginKind).toBe("ball_or_target_point");
+    expect(spatial.origin).toEqual({ x: 0.62, y: 0.44 });
+  });
+
+  it("Ryze/TF/Shen preservan destination/target semantics", () => {
+    for (const [signatureId, bespokeKind] of [
+      ["ryze_realm_warp", "portal"],
+      ["twistedfate_destiny", "global_reveal_gate"],
+      ["shen_stand_united", "ally_shield_arrival"],
+    ] as const) {
+      const config = resolveSample("global_presence", signatureId, ["#fff", "#00f"], [signatureId], [signatureId]);
+      const spatial = resolveUltimateSpatialRenderContext(
+        {
+          event: "champion_ultimate_cast",
+          originPos: { x: 0.3, y: 0.35 },
+          targetId: "blue-top",
+          targetPos: { x: 0.74, y: 0.22 },
+          destinationPos: { x: 0.8, y: 0.25 },
+          global: true,
+        },
+        { x: 0.1, y: 0.1 },
+        config,
+      );
+
+      expect(spatial.bespokeKind).toBe(bespokeKind);
+      expect(spatial.destination).toEqual({ x: 0.8, y: 0.25 });
+      expect(spatial.target).toEqual({ x: 0.74, y: 0.22 });
+    }
+  });
+
+  it("Mordekaiser/Kindred quedan centrados en target/zone y Nocturne combina overlay global con dash target", () => {
+    const morde = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        targetId: "red-top",
+        lockedTargetId: "red-top",
+        targetPos: { x: 0.7, y: 0.4 },
+        followTarget: true,
+        shape: "lock",
+      },
+      { x: 0.3, y: 0.4 },
+      resolveSample("duel_realm", "mordekaiser_realm_death", ["#fff", "#000"], ["death_realm"], ["realm"]),
+      new Map([["red-top", { x: 0.72, y: 0.42 }]]),
+    );
+    const kindred = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        targetPos: { x: 0.5, y: 0.5 },
+        shape: "zone",
+      },
+      { x: 0.2, y: 0.2 },
+      resolveSample("ally_aura", "kindred_lambs_respite", ["#fff", "#000"], ["lamb_mask"], ["heal"]),
+    );
+    const nocturne = resolveUltimateSpatialRenderContext(
+      {
+        event: "champion_ultimate_cast",
+        originPos: { x: 0.2, y: 0.2 },
+        targetId: "red-adc",
+        targetPos: { x: 0.8, y: 0.7 },
+        destinationPos: { x: 0.8, y: 0.7 },
+        global: true,
+        shape: "global_overlay",
+      },
+      { x: 0.2, y: 0.2 },
+      resolveSample("global_presence", "nocturne_paranoia", ["#000", "#900"], ["blackout"], ["lights_out"]),
+    );
+
+    expect(morde.bespokeKind).toBe("death_realm");
+    expect(morde.target).toEqual({ x: 0.72, y: 0.42 });
+    expect(kindred.bespokeKind).toBe("sanctuary_heal");
+    expect(kindred.target).toEqual({ x: 0.5, y: 0.5 });
+    expect(nocturne.bespokeKind).toBe("blackout_dash");
+    expect(nocturne.destination).toEqual({ x: 0.8, y: 0.7 });
+    expect(nocturne.shape).toBe("global_overlay");
   });
 });

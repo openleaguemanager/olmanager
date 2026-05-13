@@ -36,7 +36,7 @@ use objectives::{
     process_dragon_capture, resolve_neutral_capture_decision, sync_objectives_from_neutral_timers,
     tick_neutral_timers, NeutralCaptureKind,
 };
-pub use runtime::{dispose, init, reset, run_to_completion, skip_to_end, tick};
+pub use runtime::{debug_force_ultimate, dispose, init, reset, run_to_completion, skip_to_end, tick};
 pub use session::*;
 use state_init::{build_neutral_timers_state, create_initial_state, ensure_runtime_state_defaults};
 use structures::{
@@ -49,6 +49,7 @@ use types::{
 };
 use ultimate_identity::{
     ultimate_cast_event_metadata, ultimate_identity_for, ultimate_identity_value,
+    UltimateCastSpatialMetadata, UltimateSpatialShape,
 };
 use util::{as_mut_object, clamp, dist, normalize, ratio_or_zero, read_time_sec, read_winner};
 use vision::{place_wards, process_sweepers, team_has_vision_at};
@@ -211,7 +212,17 @@ struct ChampionRuntime {
     #[serde(default)]
     forced_lane_recall_cd_until: f64,
     #[serde(default)]
+    ultimate_buff_until: f64,
+    #[serde(default = "default_ultimate_multiplier")]
+    ultimate_damage_multiplier: f64,
+    #[serde(default = "default_ultimate_multiplier")]
+    ultimate_damage_reduction: f64,
+    #[serde(default)]
     debug_ai_decision: String,
+}
+
+fn default_ultimate_multiplier() -> f64 {
+    1.0
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -4047,7 +4058,276 @@ fn try_cast_special_ultimate(
     now: f64,
 ) -> Option<bool> {
     let champion = runtime.champions.get(champion_idx)?.clone();
-    let key = champion.champion_id.to_lowercase();
+    let key = ultimate_identity::normalize_champion_key(&champion.champion_id);
+
+    if key == "aatrox" {
+        runtime.champions[champion_idx].ultimate_buff_until = now + 12.0;
+        runtime.champions[champion_idx].ultimate_damage_multiplier = 1.25;
+        runtime.champions[champion_idx].hp = (runtime.champions[champion_idx].hp + champion.max_hp * 0.18)
+            .min(champion.max_hp);
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast World Ender",
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Aura,
+                radius: Some(0.12),
+                duration_ms: Some(12000),
+                persistent: Some(true),
+                pulse_count: Some(8),
+                bespoke_kind: Some("darkin_self_buff"),
+                target_pos: Some(champion.pos),
+                affected_target_ids: Some(vec![champion.id.clone()]),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
+        return Some(true);
+    }
+
+    if key == "alistar" {
+        runtime.champions[champion_idx].ultimate_buff_until = now + 7.0;
+        runtime.champions[champion_idx].ultimate_damage_reduction = 0.45;
+        runtime.champions[champion_idx].debug_ai_decision.push_str("|ultimate:cleanse_damage_reduction");
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast Unbreakable Will",
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Aura,
+                radius: Some(0.11),
+                duration_ms: Some(7000),
+                persistent: Some(true),
+                pulse_count: Some(5),
+                bespoke_kind: Some("cleanse_damage_reduction"),
+                target_pos: Some(champion.pos),
+                affected_target_ids: Some(vec![champion.id.clone()]),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
+        return Some(true);
+    }
+
+    if key == "ahri" {
+        let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else {
+            return Some(false);
+        };
+        let origin = champion.pos;
+        let target = runtime.champions[target_idx].pos;
+        let dir = direction_to(origin, target).unwrap_or(Vec2 { x: 1.0, y: 0.0 });
+        let destination = Vec2 {
+            x: clamp(origin.x + dir.x * 0.075, 0.01, 0.99),
+            y: clamp(origin.y + dir.y * 0.075, 0.01, 0.99),
+        };
+        runtime.champions[champion_idx].pos = destination;
+        runtime.champions[champion_idx].target_path.clear();
+        runtime.champions[champion_idx].target_path_index = 0;
+        attack_enemy_champion(runtime, champion_idx, target_idx);
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast Spirit Rush",
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Lock,
+                target_id: Some(runtime.champions[target_idx].id.clone()),
+                target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                affected_target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                target_pos: Some(target),
+                destination_pos: Some(destination),
+                direction: Some(dir),
+                stage: Some(1),
+                stage_count: Some(3),
+                sequence_kind: Some("recast_dash_charges"),
+                recast_window_ms: Some(10000),
+                bespoke_kind: Some("triple_spirit_dash"),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
+        return Some(true);
+    }
+
+    if key == "akali" {
+        let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else {
+            return Some(false);
+        };
+        let target_pos = runtime.champions[target_idx].pos;
+        let low_hp = ratio_or_zero(runtime.champions[target_idx].hp, runtime.champions[target_idx].max_hp) <= 0.45;
+        runtime.champions[champion_idx].pos = target_pos;
+        attack_enemy_champion(runtime, champion_idx, target_idx);
+        if low_hp && runtime.champions[target_idx].alive {
+            attack_enemy_champion(runtime, champion_idx, target_idx);
+        }
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast Perfect Execution",
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Lock,
+                target_id: Some(runtime.champions[target_idx].id.clone()),
+                locked_target_id: Some(runtime.champions[target_idx].id.clone()),
+                target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                affected_target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                target_pos: Some(target_pos),
+                destination_pos: Some(target_pos),
+                direction: direction_to(champion.pos, target_pos),
+                stage: Some(if low_hp { 2 } else { 1 }),
+                stage_count: Some(2),
+                sequence_kind: Some("execute_recast_dash"),
+                recast_window_ms: Some(2500),
+                requires_condition: Some("stage_2_or_low_hp_execute"),
+                bespoke_kind: Some("two_stage_neon_execution"),
+                follow_target: Some(true),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
+        return Some(true);
+    }
+
+    if key == "ambessa" {
+        let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else {
+            return Some(false);
+        };
+        let target_pos = runtime.champions[target_idx].pos;
+        runtime.champions[champion_idx].pos = target_pos;
+        runtime.champions[target_idx].attack_cd_until = now + 1.1;
+        attack_enemy_champion(runtime, champion_idx, target_idx);
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast Public Execution",
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Projectile,
+                target_id: Some(runtime.champions[target_idx].id.clone()),
+                locked_target_id: Some(runtime.champions[target_idx].id.clone()),
+                target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                affected_target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                target_pos: Some(target_pos),
+                destination_pos: Some(target_pos),
+                direction: direction_to(champion.pos, target_pos),
+                duration_ms: Some(1350),
+                follow_target: Some(true),
+                tether_kind: Some("brief_suppression"),
+                bespoke_kind: Some("noxian_execution_dash"),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
+        return Some(true);
+    }
+
+    if key == "akshan" {
+        let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else {
+            return Some(false);
+        };
+        let target_pos = runtime.champions[target_idx].pos;
+        for _ in 0..3 {
+            if runtime.champions[target_idx].alive {
+                attack_enemy_champion(runtime, champion_idx, target_idx);
+            }
+        }
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "channeled Comeuppance",
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Lock,
+                target_id: Some(runtime.champions[target_idx].id.clone()),
+                locked_target_id: Some(runtime.champions[target_idx].id.clone()),
+                target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                affected_target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                target_pos: Some(target_pos),
+                direction: direction_to(champion.pos, target_pos),
+                duration_ms: Some(2400),
+                pulse_count: Some(5),
+                follow_target: Some(true),
+                sequence_kind: Some("lock_on_multi_shot_channel"),
+                stage_count: Some(5),
+                tether_kind: Some("target_reticle_channel"),
+                bespoke_kind: Some("comeuppance_lock_on_shots"),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
+        return Some(true);
+    }
+
+    if key == "amumu" {
+        let affected: Vec<usize> = runtime.champions.iter().enumerate()
+            .filter(|(idx, enemy)| *idx != champion_idx && enemy.alive && normalized_team(&enemy.team) != normalized_team(&champion.team) && dist(enemy.pos, champion.pos) <= 0.14)
+            .map(|(idx, _)| idx)
+            .collect();
+        if affected.is_empty() { return Some(false); }
+        let ids: Vec<String> = affected.iter().map(|idx| runtime.champions[*idx].id.clone()).collect();
+        for target_idx in affected {
+            runtime.champions[target_idx].attack_cd_until = now + 1.4;
+            attack_enemy_champion(runtime, champion_idx, target_idx);
+        }
+        log_ultimate_cast(runtime, &champion, "cast Curse of the Sad Mummy", Some(UltimateCastSpatialMetadata {
+            shape: UltimateSpatialShape::Circle,
+            radius: Some(0.14),
+            target_pos: Some(champion.pos),
+            target_ids: Some(ids.clone()),
+            affected_target_ids: Some(ids),
+            duration_ms: Some(1600),
+            pulse_count: Some(2),
+            tether_kind: Some("bandage_root"),
+            bespoke_kind: Some("aoe_bandage_lockdown"),
+            ..default_ultimate_spatial_metadata(&champion)
+        }));
+        return Some(true);
+    }
+
+    if key == "anivia" {
+        let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else { return Some(false); };
+        let zone_pos = runtime.champions[target_idx].pos;
+        let affected: Vec<usize> = runtime.champions.iter().enumerate()
+            .filter(|(idx, enemy)| *idx != champion_idx && enemy.alive && normalized_team(&enemy.team) != normalized_team(&champion.team) && dist(enemy.pos, zone_pos) <= 0.12)
+            .map(|(idx, _)| idx)
+            .collect();
+        let ids: Vec<String> = affected.iter().map(|idx| runtime.champions[*idx].id.clone()).collect();
+        for target_idx in affected {
+            runtime.champions[target_idx].move_speed *= 0.92;
+            attack_enemy_champion(runtime, champion_idx, target_idx);
+            if runtime.champions[target_idx].alive { attack_enemy_champion(runtime, champion_idx, target_idx); }
+        }
+        log_ultimate_cast(runtime, &champion, "cast Glacial Storm", Some(UltimateCastSpatialMetadata {
+            shape: UltimateSpatialShape::Zone,
+            radius: Some(0.12),
+            target_id: Some(runtime.champions[target_idx].id.clone()),
+            target_pos: Some(zone_pos),
+            target_ids: Some(ids.clone()),
+            affected_target_ids: Some(ids),
+            duration_ms: Some(5200),
+            persistent: Some(true),
+            pulse_count: Some(8),
+            bespoke_kind: Some("persistent_slow_damage_storm"),
+            ..default_ultimate_spatial_metadata(&champion)
+        }));
+        return Some(true);
+    }
+
+    if key == "aphelios" {
+        let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else { return Some(false); };
+        let target_pos = runtime.champions[target_idx].pos;
+        let affected: Vec<usize> = runtime.champions.iter().enumerate()
+            .filter(|(idx, enemy)| *idx != champion_idx && enemy.alive && normalized_team(&enemy.team) != normalized_team(&champion.team) && dist(enemy.pos, target_pos) <= 0.09)
+            .map(|(idx, _)| idx)
+            .collect();
+        let ids: Vec<String> = affected.iter().map(|idx| runtime.champions[*idx].id.clone()).collect();
+        for target_idx in affected { attack_enemy_champion(runtime, champion_idx, target_idx); }
+        log_ultimate_cast(runtime, &champion, "cast Moonlight Vigil", Some(UltimateCastSpatialMetadata {
+            shape: UltimateSpatialShape::Projectile,
+            target_id: Some(runtime.champions[target_idx].id.clone()),
+            target_pos: Some(target_pos),
+            target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+            affected_target_ids: Some(ids),
+            direction: direction_to(champion.pos, target_pos),
+            radius: Some(0.09),
+            duration_ms: Some(1900),
+            impact_at: Some(650),
+            bespoke_kind: Some("moonlight_bloom_weapon_pending"),
+            requires_condition: Some("weapon_specific_followup_pending"),
+            ..default_ultimate_spatial_metadata(&champion)
+        }));
+        return Some(true);
+    }
 
     if ["yorick", "annie", "ivern", "shaco"].contains(&key.as_str()) {
         let (summon_kind, hp_ratio, damage_ratio, duration_sec) = summon_profile(&key);
@@ -4085,8 +4365,33 @@ fn try_cast_special_ultimate(
             path_index: 0,
         };
 
+        let summon_pos = summon.pos;
         runtime.minions.push(summon);
-        log_ultimate_cast(runtime, &champion, &format!("summoned {}", summon_kind));
+        if key == "annie" {
+            let affected: Vec<usize> = runtime.champions.iter().enumerate()
+                .filter(|(idx, enemy)| *idx != champion_idx && enemy.alive && normalized_team(&enemy.team) != normalized_team(&champion.team) && dist(enemy.pos, summon_pos) <= 0.105)
+                .map(|(idx, _)| idx)
+                .collect();
+            for target_idx in affected {
+                attack_enemy_champion(runtime, champion_idx, target_idx);
+            }
+        }
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            &format!("summoned {}", summon_kind),
+            Some(UltimateCastSpatialMetadata {
+                shape: UltimateSpatialShape::Circle,
+                radius: Some(if key == "annie" { 0.105 } else { 0.08 }),
+                target_pos: Some(summon_pos),
+                destination_pos: Some(summon_pos),
+                bespoke_kind: Some(if key == "annie" { "tibbers_drop_burst_pet" } else { "summon_pet" }),
+                duration_ms: Some((duration_sec * 1000.0) as u32),
+                persistent: Some(true),
+                pulse_count: Some(6),
+                ..default_ultimate_spatial_metadata(&champion)
+            }),
+        );
         return Some(true);
     }
 
@@ -4131,7 +4436,47 @@ fn try_cast_special_ultimate(
         runtime.champions[champion_idx].target_path.clear();
         runtime.champions[champion_idx].target_path_index = 0;
         runtime.champions[champion_idx].next_decision_at = now;
-        log_ultimate_cast(runtime, &champion, "cast Stand United");
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast Stand United",
+            Some(UltimateCastSpatialMetadata {
+                origin_pos: champion.pos,
+                bespoke_kind: Some("ally_shield_arrival"),
+                secondary_pos: None,
+                destination_pos: Some(ally_pos),
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some(runtime.champions[ally_idx].id.clone()),
+                locked_target_id: Some(runtime.champions[ally_idx].id.clone()),
+                target_ids: Some(vec![runtime.champions[ally_idx].id.clone()]),
+                affected_target_ids: Some(vec![runtime.champions[ally_idx].id.clone()]),
+                target_pos: Some(ally_pos),
+                direction: direction_to(champion.pos, ally_pos),
+                shape: UltimateSpatialShape::Lock,
+                radius: Some(0.09),
+                width: None,
+                range: Some(ULTIMATE_GLOBAL_RANGE),
+                delay_ms: Some(3000),
+                duration_ms: Some(1200),
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: Some(true),
+                stage: Some(1),
+                stage_count: Some(1),
+                sequence_kind: Some("target_lock_channel"),
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: Some("protective_channel"),
+                global: Some(true),
+            }),
+        );
         return Some(true);
     }
 
@@ -4158,7 +4503,47 @@ fn try_cast_special_ultimate(
         runtime.champions[champion_idx].target_path_index = 0;
         runtime.champions[target_idx].target_path_index = 0;
 
-        log_ultimate_cast(runtime, &champion, "cast Realm of Death");
+        log_ultimate_cast(
+            runtime,
+            &champion,
+            "cast Realm of Death",
+            Some(UltimateCastSpatialMetadata {
+                origin_pos: caster_pos,
+                bespoke_kind: Some("death_realm"),
+                secondary_pos: Some(caster_pos),
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some(runtime.champions[target_idx].id.clone()),
+                locked_target_id: Some(runtime.champions[target_idx].id.clone()),
+                target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                affected_target_ids: Some(vec![runtime.champions[target_idx].id.clone()]),
+                target_pos: Some(target_pos),
+                direction: direction_to(caster_pos, target_pos),
+                shape: UltimateSpatialShape::Lock,
+                radius: Some(0.14),
+                width: None,
+                range: Some(ULTIMATE_BURST_RANGE + 0.03),
+                delay_ms: Some(300),
+                duration_ms: Some((ULTIMATE_MORDE_REALM_DURATION_SEC * 1000.0) as u32),
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: Some(false),
+                stage: Some(1),
+                stage_count: Some(1),
+                sequence_kind: Some("target_lock"),
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: Some("duel_banish"),
+                global: Some(false),
+            }),
+        );
         return Some(true);
     }
 
@@ -4200,6 +4585,7 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
         return false;
     }
 
+    let mut cast_metadata = default_ultimate_spatial_metadata(&champion_snapshot);
     let casted = match archetype.as_str() {
         "execute" => {
             let Some(target_idx) =
@@ -4215,6 +4601,11 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
             if hp_ratio > 0.38 {
                 return false;
             }
+            cast_metadata.target_id = Some(runtime.champions[target_idx].id.clone());
+            cast_metadata.target_pos = Some(runtime.champions[target_idx].pos);
+            cast_metadata.direction = direction_to(champion_snapshot.pos, runtime.champions[target_idx].pos);
+            cast_metadata.shape = UltimateSpatialShape::Lock;
+            cast_metadata.follow_target = Some(true);
             attack_enemy_champion(runtime, champion_idx, target_idx);
             attack_enemy_champion(runtime, champion_idx, target_idx);
             true
@@ -4226,6 +4617,11 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
                 return false;
             };
             let target = runtime.champions[target_idx].pos;
+            cast_metadata.target_id = Some(runtime.champions[target_idx].id.clone());
+            cast_metadata.target_pos = Some(target);
+            cast_metadata.direction = direction_to(champion_snapshot.pos, target);
+            cast_metadata.shape = UltimateSpatialShape::Projectile;
+            cast_metadata.follow_target = Some(false);
             runtime.champions[champion_idx].pos = target;
             runtime.champions[champion_idx].target_path.clear();
             runtime.champions[champion_idx].target_path_index = 0;
@@ -4241,6 +4637,9 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
                 return false;
             }
             let heal_amount = champion_snapshot.max_hp * 0.26;
+            cast_metadata.shape = UltimateSpatialShape::Circle;
+            cast_metadata.radius = Some(0.08);
+            cast_metadata.target_pos = Some(champion_snapshot.pos);
             runtime.champions[champion_idx].hp = (runtime.champions[champion_idx].hp + heal_amount)
                 .min(runtime.champions[champion_idx].max_hp);
             true
@@ -4251,6 +4650,9 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
             else {
                 return false;
             };
+            cast_metadata.target_id = Some(runtime.champions[target_idx].id.clone());
+            cast_metadata.target_pos = Some(runtime.champions[target_idx].pos);
+            cast_metadata.direction = direction_to(champion_snapshot.pos, runtime.champions[target_idx].pos);
             attack_enemy_champion(runtime, champion_idx, target_idx);
             true
         }
@@ -4260,6 +4662,9 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
             else {
                 return false;
             };
+            cast_metadata.target_id = Some(runtime.champions[target_idx].id.clone());
+            cast_metadata.target_pos = Some(runtime.champions[target_idx].pos);
+            cast_metadata.direction = direction_to(champion_snapshot.pos, runtime.champions[target_idx].pos);
             attack_enemy_champion(runtime, champion_idx, target_idx);
             true
         }
@@ -4267,6 +4672,14 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
 
     if !casted {
         return false;
+    }
+
+    if let Some(target_id) = cast_metadata.target_id.clone() {
+        cast_metadata.target_ids = Some(vec![target_id.clone()]);
+        cast_metadata.affected_target_ids = Some(vec![target_id.clone()]);
+        if matches!(cast_metadata.shape, UltimateSpatialShape::Lock) {
+            cast_metadata.locked_target_id = Some(target_id);
+        }
     }
 
     if set_ultimate_cd(
@@ -4278,23 +4691,188 @@ fn try_cast_ultimate(runtime: &mut RuntimeState, champion_idx: usize, now: f64) 
             runtime,
             &champion_snapshot,
             &format!("cast Ultimate ({})", archetype),
+            Some(cast_metadata),
         );
         return true;
     }
     false
 }
 
-fn log_ultimate_cast(runtime: &mut RuntimeState, champion: &ChampionRuntime, action: &str) {
+fn log_ultimate_cast(
+    runtime: &mut RuntimeState,
+    champion: &ChampionRuntime,
+    action: &str,
+    spatial: Option<UltimateCastSpatialMetadata>,
+) {
     let text = format!("{} {}", champion.name, action);
     if let Some(identity) = ultimate_identity_for(&champion.champion_id) {
+        let metadata = spatial.unwrap_or_else(|| default_ultimate_spatial_metadata(champion));
         log_event_with_metadata(
             runtime,
             &text,
             "info",
-            ultimate_cast_event_metadata(identity, &champion.id),
+            ultimate_cast_event_metadata(identity, &champion.id, &metadata),
         );
     } else {
         log_event(runtime, &text, "info");
+    }
+}
+
+pub(crate) fn force_debug_ultimate_cast(
+    runtime: &mut RuntimeState,
+    caster_id: &str,
+) -> Result<bool, String> {
+    let champion_idx = runtime
+        .champions
+        .iter()
+        .position(|champion| champion.id == caster_id)
+        .ok_or_else(|| format!("caster not found: {caster_id}"))?;
+
+    if !runtime.champions[champion_idx].alive {
+        return Err("caster is not alive".to_string());
+    }
+
+    let Some(target_idx) = nearest_enemy_in_range(runtime, champion_idx, ULTIMATE_GLOBAL_RANGE) else {
+        return Err("no viable enemy target".to_string());
+    };
+
+    let now = runtime.time_sec;
+    runtime.champions[champion_idx].level = runtime.champions[champion_idx].level.max(ULTIMATE_UNLOCK_LEVEL);
+    if let Some(ultimate) = runtime.champions[champion_idx].ultimate.as_mut() {
+        ultimate.cd_until = 0.0;
+    }
+
+    let champion_snapshot = runtime.champions[champion_idx].clone();
+    let target = runtime.champions[target_idx].clone();
+    let archetype = champion_snapshot
+        .ultimate
+        .as_ref()
+        .map(|ultimate| ultimate.archetype.to_lowercase())
+        .unwrap_or_else(|| default_ultimate_archetype_for_role(&champion_snapshot.role).to_string());
+
+    let mut cast_metadata = default_ultimate_spatial_metadata(&champion_snapshot);
+    cast_metadata.target_id = Some(target.id.clone());
+    cast_metadata.target_pos = Some(target.pos);
+    cast_metadata.direction = direction_to(champion_snapshot.pos, target.pos);
+    cast_metadata.target_ids = Some(vec![target.id.clone()]);
+    cast_metadata.affected_target_ids = Some(vec![target.id.clone()]);
+    if matches!(cast_metadata.shape, UltimateSpatialShape::Lock) {
+        cast_metadata.locked_target_id = Some(target.id.clone());
+        cast_metadata.follow_target = Some(true);
+    }
+
+    attack_enemy_champion(runtime, champion_idx, target_idx);
+    if set_ultimate_cd(&mut runtime.champions[champion_idx], now, ULTIMATE_BASE_CD_SEC) {
+        log_ultimate_cast(
+            runtime,
+            &champion_snapshot,
+            &format!("debug forced Ultimate ({archetype})"),
+            Some(cast_metadata),
+        );
+        Ok(true)
+    } else {
+        Err("caster has no ultimate slot".to_string())
+    }
+}
+
+fn direction_to(origin: Vec2, target: Vec2) -> Option<Vec2> {
+    let dx = target.x - origin.x;
+    let dy = target.y - origin.y;
+    let len = (dx * dx + dy * dy).sqrt();
+    if len <= f64::EPSILON {
+        return None;
+    }
+    Some(Vec2 {
+        x: dx / len,
+        y: dy / len,
+    })
+}
+
+fn default_ultimate_spatial_metadata(champion: &ChampionRuntime) -> UltimateCastSpatialMetadata {
+    let primitive = ultimate_identity_for(&champion.champion_id).map(|identity| identity.technical_primitive);
+    let shape = if let Some(primitive) = primitive {
+        match primitive {
+            ultimate_identity::UltimatePrimitive::SelfAura
+            | ultimate_identity::UltimatePrimitive::AllyAura => UltimateSpatialShape::Aura,
+            ultimate_identity::UltimatePrimitive::LinearProjectile => UltimateSpatialShape::Projectile,
+            ultimate_identity::UltimatePrimitive::BeamLine => UltimateSpatialShape::Beam,
+            ultimate_identity::UltimatePrimitive::Artillery => UltimateSpatialShape::Circle,
+            ultimate_identity::UltimatePrimitive::GlobalPresence => UltimateSpatialShape::GlobalOverlay,
+            ultimate_identity::UltimatePrimitive::TargetedDash
+            | ultimate_identity::UltimatePrimitive::UnstoppableCharge => UltimateSpatialShape::Projectile,
+            ultimate_identity::UltimatePrimitive::ExecuteMarker
+            | ultimate_identity::UltimatePrimitive::SuppressionLock
+            | ultimate_identity::UltimatePrimitive::DuelRealm
+            | ultimate_identity::UltimatePrimitive::AssassinMark
+            | ultimate_identity::UltimatePrimitive::BlinkBurst => UltimateSpatialShape::Lock,
+            ultimate_identity::UltimatePrimitive::ZoneSummon => UltimateSpatialShape::Zone,
+            _ => UltimateSpatialShape::Circle,
+        }
+    } else {
+        UltimateSpatialShape::Circle
+    };
+    let (radius, width, range, duration_ms, travel_speed) = ultimate_spatial_defaults(primitive, shape);
+
+    UltimateCastSpatialMetadata {
+        origin_pos: champion.pos,
+        bespoke_kind: None,
+        secondary_pos: None,
+        destination_pos: None,
+        zone_orientation: None,
+        requires_condition: None,
+        proxy_origin_kind: None,
+        target_id: None,
+        locked_target_id: None,
+        target_ids: None,
+        affected_target_ids: None,
+        target_pos: None,
+        direction: None,
+        shape,
+        radius: Some(radius),
+        width,
+        range: Some(range),
+        delay_ms: Some(250),
+        duration_ms: Some(duration_ms),
+        impact_at: None,
+        persistent: None,
+        pulse_count: None,
+        travel_speed,
+        follow_target: Some(false),
+        stage: None,
+        stage_count: None,
+        sequence_kind: None,
+        return_path: None,
+        return_to_origin: None,
+        bounce_targets: None,
+        bounce_count: None,
+        recast_window_ms: None,
+        tether_kind: None,
+        global: Some(matches!(shape, UltimateSpatialShape::Global | UltimateSpatialShape::GlobalOverlay)),
+    }
+}
+
+fn ultimate_spatial_defaults(
+    primitive: Option<ultimate_identity::UltimatePrimitive>,
+    shape: UltimateSpatialShape,
+) -> (f64, Option<f64>, f64, u32, Option<f64>) {
+    match shape {
+        UltimateSpatialShape::Aura => (0.1, None, ULTIMATE_BURST_RANGE, 1700, None),
+        UltimateSpatialShape::Circle | UltimateSpatialShape::Zone => {
+            let radius = if matches!(primitive, Some(ultimate_identity::UltimatePrimitive::Artillery)) {
+                0.11
+            } else {
+                0.09
+            };
+            (radius, None, ULTIMATE_GLOBAL_RANGE, 1600, None)
+        }
+        UltimateSpatialShape::Line => (0.04, Some(0.045), ULTIMATE_GLOBAL_RANGE, 1400, None),
+        UltimateSpatialShape::Projectile => (0.035, Some(0.04), ULTIMATE_GLOBAL_RANGE, 1800, Some(0.42)),
+        UltimateSpatialShape::Beam => (0.04, Some(0.055), ULTIMATE_GLOBAL_RANGE, 1250, None),
+        UltimateSpatialShape::Global | UltimateSpatialShape::GlobalOverlay => {
+            (0.18, None, ULTIMATE_GLOBAL_RANGE, 2200, None)
+        }
+        UltimateSpatialShape::Cone => (0.1, Some(0.14), ULTIMATE_BURST_RANGE, 1400, None),
+        UltimateSpatialShape::Lock => (0.08, None, ULTIMATE_BURST_RANGE, 1500, None),
     }
 }
 
@@ -5450,7 +6028,9 @@ fn attack_enemy_champion(runtime: &mut RuntimeState, attacker_idx: usize, target
         let outgoing = attacker.attack_damage
             * CHAMPION_DAMAGE_TO_CHAMPION_MULTIPLIER
             * attack_damage_multiplier
-            * attacker_micro_mult;
+            * attacker_micro_mult
+            * attacker.ultimate_damage_multiplier.max(1.0)
+            * defender.ultimate_damage_reduction.clamp(0.05, 1.0);
         defender.hp -= outgoing;
         defender.last_damaged_by_champion_id = Some(attacker.id.clone());
         defender.last_damaged_by_champion_at = now;
@@ -5487,7 +6067,9 @@ fn attack_enemy_champion(runtime: &mut RuntimeState, attacker_idx: usize, target
         let outgoing = attacker.attack_damage
             * CHAMPION_DAMAGE_TO_CHAMPION_MULTIPLIER
             * attack_damage_multiplier
-            * attacker_micro_mult;
+            * attacker_micro_mult
+            * attacker.ultimate_damage_multiplier.max(1.0)
+            * defender.ultimate_damage_reduction.clamp(0.05, 1.0);
         defender.hp -= outgoing;
         defender.last_damaged_by_champion_id = Some(attacker.id.clone());
         defender.last_damaged_by_champion_at = now;

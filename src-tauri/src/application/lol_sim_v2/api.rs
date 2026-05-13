@@ -166,6 +166,22 @@ pub struct LolSimV2SkipToEndResponse {
     pub elapsed_simulated_sec: f64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LolSimV2DebugForceUltimateRequest {
+    pub session_id: String,
+    pub caster_id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LolSimV2DebugForceUltimateResponse {
+    pub session_id: String,
+    pub state: Value,
+    pub casted: bool,
+    pub reason: Option<String>,
+}
+
 fn default_run_to_completion_dt_sec() -> f64 {
     0.2
 }

@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import type {
   LolSimV1DisposeRequest,
   LolSimV1DisposeResponse,
+  LolSimV1DebugForceUltimateRequest,
+  LolSimV1DebugForceUltimateResponse,
   LolSimV1InitRequest,
   LolSimV1RunToCompletionRequest,
   LolSimV1RunToCompletionResponse,
@@ -56,6 +58,12 @@ export async function lolSimV2SkipToEnd(
   request: LolSimV1SkipToEndRequest,
 ): Promise<LolSimV1SkipToEndResponse> {
   return invoke<LolSimV1SkipToEndResponse>("lol_sim_v2_skip_to_end", { request });
+}
+
+export async function lolSimV2DebugForceUltimate(
+  request: LolSimV1DebugForceUltimateRequest,
+): Promise<LolSimV1DebugForceUltimateResponse> {
+  return invoke<LolSimV1DebugForceUltimateResponse>("lol_sim_v2_debug_force_ultimate", { request });
 }
 
 export async function lolSimV3Init(request: LolSimV3InitRequest): Promise<LolSimV3TickResponse> {
@@ -113,6 +121,12 @@ export class LolSimV2Client {
 
   async skipToEnd(request?: Omit<LolSimV1SkipToEndRequest, "sessionId">): Promise<LolSimV1SkipToEndResponse> {
     return lolSimV2SkipToEnd({ sessionId: this.sessionId, ...(request ?? {}) });
+  }
+
+  async debugForceUltimate(
+    request: Omit<LolSimV1DebugForceUltimateRequest, "sessionId">,
+  ): Promise<LolSimV1DebugForceUltimateResponse> {
+    return lolSimV2DebugForceUltimate({ ...request, sessionId: this.sessionId });
   }
 }
 

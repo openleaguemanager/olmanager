@@ -1,6 +1,8 @@
 use serde::Serialize;
 use serde_json::{json, Value};
 
+use super::Vec2;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub(super) enum UltimatePrimitive {
@@ -20,6 +22,92 @@ pub(super) enum UltimatePrimitive {
     AssassinMark,
     UnstoppableCharge,
     BlinkBurst,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub(super) enum UltimateSpatialShape {
+    Aura,
+    Line,
+    Projectile,
+    Beam,
+    Cone,
+    Circle,
+    Lock,
+    Global,
+    GlobalOverlay,
+    Zone,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UltimateCastSpatialMetadata {
+    pub origin_pos: Vec2,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bespoke_kind: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub secondary_pos: Option<Vec2>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub destination_pos: Option<Vec2>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub zone_orientation: Option<Vec2>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub requires_condition: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub proxy_origin_kind: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub locked_target_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target_ids: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub affected_target_ids: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target_pos: Option<Vec2>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub direction: Option<Vec2>,
+    pub shape: UltimateSpatialShape,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub radius: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub range: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub delay_ms: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duration_ms: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub impact_at: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub persistent: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pulse_count: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub travel_speed: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub follow_target: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stage: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stage_count: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sequence_kind: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub return_path: Option<Vec<Vec2>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub return_to_origin: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bounce_targets: Option<Vec<Vec2>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bounce_count: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recast_window_ms: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tether_kind: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub global: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -469,7 +557,7 @@ pub(super) const ULTIMATE_IDENTITIES: &[UltimateIdentity] = &[
         ["#84cc16", "#a855f7", "#22c55e"],
         ["chemical_bubbles", "jagged_heart"],
         ["sloshing_surge", "elastic_pulse"],
-        Active
+        Partial
     ),
     ident!(
         "fiora",
@@ -493,7 +581,7 @@ pub(super) const ULTIMATE_IDENTITIES: &[UltimateIdentity] = &[
         ["#7c3aed", "#f59e0b", "#312e81"],
         ["lamp_flare", "three_strikes"],
         ["measured_orbits", "spark_pop"],
-        Active
+        Partial
     ),
     ident!(
         "jayce",
@@ -1237,7 +1325,7 @@ pub(super) const ULTIMATE_IDENTITIES: &[UltimateIdentity] = &[
         ["#c7d2fe", "#818cf8", "#111827"],
         ["lunar_disc", "five_weapon_orbit"],
         ["silent_moon_arc", "delayed_weapon_bloom"],
-        Active
+        Partial
     ),
     ident!(
         "ashe",
@@ -1873,7 +1961,7 @@ pub(super) const ULTIMATE_IDENTITIES: &[UltimateIdentity] = &[
         ["#f9a8d4", "#fef3c7", "#60a5fa"],
         ["nine_tail_arc", "heart_wisp"],
         ["triple_blink", "charm_spark"],
-        Active
+        Partial
     ),
     ident!(
         "akali",
@@ -2506,11 +2594,317 @@ pub(super) fn ultimate_identity_value(identity: &UltimateIdentity) -> Value {
     json!(identity)
 }
 
-pub(super) fn ultimate_cast_event_metadata(identity: &UltimateIdentity, actor_id: &str) -> Value {
+fn ultimate_timing_defaults(
+    identity: &UltimateIdentity,
+    spatial: &UltimateCastSpatialMetadata,
+) -> (u32, u32, u32, bool, u32) {
+    let signature = identity.signature_id;
+    let tags = identity.gameplay_tags;
+    let delayed_ground_aoe = matches!(
+        signature,
+        "leona_solar_flare"
+            | "ziggs_mega_inferno_bomb"
+            | "aurelionsol_falling_star"
+            | "bard_tempered_fate"
+            | "karthus_requiem"
+            | "kayle_divine_judgment"
+            | "taric_cosmic_radiance"
+            | "zyra_stranglethorns"
+            | "nunu_absolute_zero"
+            | "fizz_chum_waters"
+            | "xerath_rite_arcane"
+            | "gangplank_cannon_barrage"
+    ) || tags.iter().any(|tag| tag.contains("delayed"));
+    let persistent_zone = matches!(
+        signature,
+        "anivia_glacial_storm"
+            | "rumble_equalizer"
+            | "viktor_chaos_storm"
+            | "kindred_lambs_respite"
+            | "morgana_soul_shackles"
+            | "fiddlesticks_crowstorm"
+            | "kennen_slicing_maelstrom"
+            | "swain_demonic_ascension"
+            | "janna_monsoon"
+            | "nunu_absolute_zero"
+            | "gangplank_cannon_barrage"
+            | "zyra_stranglethorns"
+    ) || matches!(spatial.shape, UltimateSpatialShape::Zone)
+        || tags.iter().any(|tag| tag == &"zone" || tag.contains("global_zone") || tag.contains("line_zone"));
+    let channel = matches!(
+        signature,
+        "lucian_the_culling"
+            | "missfortune_bullet_time"
+            | "velkoz_life_form_disintegration_ray"
+            | "katarina_death_lotus"
+            | "samira_inferno_trigger"
+            | "xerath_rite_arcane"
+    ) || tags.iter().any(|tag| tag.contains("channel"));
+
+    let delay_ms = if delayed_ground_aoe {
+        match signature {
+            "karthus_requiem" | "taric_cosmic_radiance" => 2400,
+            "nunu_absolute_zero" => 1800,
+            "bard_tempered_fate" => 900,
+            "gangplank_cannon_barrage" | "xerath_rite_arcane" => 650,
+            _ => 750,
+        }
+    } else {
+        spatial.delay_ms.unwrap_or(250)
+    };
+    let duration_ms = if persistent_zone {
+        match signature {
+            "anivia_glacial_storm" | "rumble_equalizer" | "swain_demonic_ascension" => 5200,
+            "gangplank_cannon_barrage" | "kindred_lambs_respite" => 4400,
+            "nunu_absolute_zero" | "janna_monsoon" => 3600,
+            _ => 3200,
+        }
+    } else if channel {
+        match signature {
+            "lucian_the_culling" | "missfortune_bullet_time" | "velkoz_life_form_disintegration_ray" => 3000,
+            "xerath_rite_arcane" => 4200,
+            _ => 2400,
+        }
+    } else {
+        spatial.duration_ms.unwrap_or(1700)
+    };
+    let impact_at = spatial.impact_at.unwrap_or(delay_ms);
+    let persistent = spatial.persistent.unwrap_or(persistent_zone);
+    let pulse_count = spatial.pulse_count.unwrap_or_else(|| {
+        if channel || persistent {
+            (duration_ms / 450).clamp(3, 12)
+        } else if delayed_ground_aoe {
+            2
+        } else {
+            1
+        }
+    });
+
+    (delay_ms, duration_ms, impact_at, persistent, pulse_count)
+}
+
+fn ultimate_target_ids(spatial: &UltimateCastSpatialMetadata) -> Option<Vec<String>> {
+    spatial.target_ids.clone().or_else(|| {
+        spatial
+            .target_id
+            .as_ref()
+            .map(|target_id| vec![target_id.clone()])
+    })
+}
+
+fn is_target_lock_signature(identity: &UltimateIdentity, spatial: &UltimateCastSpatialMetadata) -> bool {
+    matches!(
+        identity.technical_primitive,
+        UltimatePrimitive::TargetedDash
+            | UltimatePrimitive::ExecuteMarker
+            | UltimatePrimitive::SuppressionLock
+            | UltimatePrimitive::DuelRealm
+            | UltimatePrimitive::AssassinMark
+    ) || matches!(spatial.shape, UltimateSpatialShape::Lock)
+        || identity
+            .gameplay_tags
+            .iter()
+            .any(|tag| tag.contains("target") || tag.contains("lock") || tag.contains("execute"))
+}
+
+fn inferred_sequence_kind(identity: &UltimateIdentity) -> Option<&'static str> {
+    match identity.signature_id {
+        "ahri_spirit_rush" | "akali_perfect_execution" | "wukong_cyclone" | "zoe_portal_jump" => Some("recast"),
+        "jhin_curtain_call" | "xerath_rite_arcane" | "lucian_the_culling" | "missfortune_bullet_time" => Some("multi_shot_channel"),
+        "draven_whirling_death" | "talon_shadow_assault" | "xayah_featherstorm" => Some("return_path"),
+        "brand_pyroclasm_bounce" | "seraphine_encore" | "varus_chain_corruption" | "morgana_soul_shackles" => Some("chain"),
+        _ => None,
+    }
+}
+
+fn inferred_stage_count(identity: &UltimateIdentity) -> Option<u32> {
+    match identity.signature_id {
+        "jhin_curtain_call" => Some(4),
+        "xerath_rite_arcane" => Some(4),
+        "ahri_spirit_rush" => Some(3),
+        "akali_perfect_execution" | "wukong_cyclone" => Some(2),
+        "lucian_the_culling" => Some(8),
+        "missfortune_bullet_time" => Some(6),
+        _ => None,
+    }
+}
+
+fn inferred_recast_window_ms(identity: &UltimateIdentity) -> Option<u32> {
+    match identity.signature_id {
+        "ahri_spirit_rush" => Some(10000),
+        "akali_perfect_execution" => Some(2500),
+        "wukong_cyclone" => Some(8000),
+        "zoe_portal_jump" => Some(900),
+        _ => None,
+    }
+}
+
+fn inferred_tether_kind(identity: &UltimateIdentity) -> Option<&'static str> {
+    match identity.signature_id {
+        "malzahar_nether_grasp" => Some("suppression_channel"),
+        "morgana_soul_shackles" => Some("soul_chain"),
+        "camille_hextech_ultimatum" => Some("duel_lock"),
+        "warwick_infinite_duress" | "skarner_impale" => Some("suppress_tether"),
+        "lulu_wild_growth" | "zilean_chrono_shift" | "tahmkench_devour" => Some("ally_tether"),
+        _ => None,
+    }
+}
+
+fn inferred_bespoke_kind(identity: &UltimateIdentity) -> Option<&'static str> {
+    match identity.signature_id {
+        "sylas_hijack" => Some("stolen_ultimate_pending"),
+        "mordekaiser_realm_death" => Some("death_realm"),
+        "ryze_realm_warp" => Some("portal"),
+        "twistedfate_destiny" => Some("global_reveal_gate"),
+        "shen_stand_united" => Some("ally_shield_arrival"),
+        "kindred_lambs_respite" => Some("sanctuary_heal"),
+        "taliyah_weavers_wall" => Some("terrain_wall"),
+        "azir_emperors_divide" => Some("soldier_wall"),
+        "yasuo_last_breath" => Some("airborne_slash"),
+        "orianna_command_shockwave" => Some("proxy_shockwave"),
+        "ornn_call_forge_god" => Some("two_stage_ram"),
+        "nocturne_paranoia" => Some("blackout_dash"),
+        "galio_heroes_entrance" | "pantheon_grand_starfall" => Some("global_landing"),
+        "ekko_chronobreak" => Some("rewind_ghost"),
+        "xayah_featherstorm" => Some("feather_fan_recall"),
+        "yuumi_final_chapter" => Some("host_waves"),
+        _ => None,
+    }
+}
+
+fn inferred_requires_condition(identity: &UltimateIdentity) -> Option<&'static str> {
+    match identity.signature_id {
+        "yasuo_last_breath" => Some("target_airborne"),
+        "sylas_hijack" => Some("copyable_enemy_ultimate"),
+        _ => None,
+    }
+}
+
+fn inferred_proxy_origin_kind(identity: &UltimateIdentity) -> Option<&'static str> {
+    match identity.signature_id {
+        "orianna_command_shockwave" => Some("ball_or_target_point"),
+        "yuumi_final_chapter" => Some("attached_ally_host"),
+        "ekko_chronobreak" => Some("previous_position_ghost"),
+        _ => None,
+    }
+}
+
+fn inferred_global(identity: &UltimateIdentity) -> Option<bool> {
+    match identity.signature_id {
+        "nocturne_paranoia"
+        | "twistedfate_destiny"
+        | "ryze_realm_warp"
+        | "shen_stand_united"
+        | "galio_heroes_entrance"
+        | "pantheon_grand_starfall" => Some(true),
+        _ => None,
+    }
+}
+
+fn inferred_zone_orientation(identity: &UltimateIdentity, spatial: &UltimateCastSpatialMetadata) -> Option<Vec2> {
+    spatial.zone_orientation.or_else(|| match identity.signature_id {
+        "taliyah_weavers_wall" | "azir_emperors_divide" => spatial.direction,
+        _ => None,
+    })
+}
+
+fn inferred_destination_pos(identity: &UltimateIdentity, spatial: &UltimateCastSpatialMetadata) -> Option<Vec2> {
+    spatial.destination_pos.or_else(|| match identity.signature_id {
+        "ryze_realm_warp"
+        | "twistedfate_destiny"
+        | "shen_stand_united"
+        | "galio_heroes_entrance"
+        | "pantheon_grand_starfall"
+        | "nocturne_paranoia" => spatial.target_pos,
+        _ => None,
+    })
+}
+
+pub(super) fn ultimate_cast_event_metadata(
+    identity: &UltimateIdentity,
+    actor_id: &str,
+    spatial: &UltimateCastSpatialMetadata,
+) -> Value {
+    let (delay_ms, duration_ms, impact_at, persistent, pulse_count) =
+        ultimate_timing_defaults(identity, spatial);
+    let target_ids = ultimate_target_ids(spatial);
+    let affected_target_ids = spatial.affected_target_ids.clone().or_else(|| target_ids.clone());
+    let locked_target_id = spatial.locked_target_id.clone().or_else(|| {
+        if is_target_lock_signature(identity, spatial) {
+            spatial.target_id.clone()
+        } else {
+            None
+        }
+    });
+    let follow_target = spatial.follow_target.unwrap_or_else(|| {
+        spatial.target_id.is_some()
+            && (matches!(spatial.shape, UltimateSpatialShape::Lock)
+                || matches!(
+                    identity.technical_primitive,
+                    UltimatePrimitive::TargetedDash
+                        | UltimatePrimitive::ExecuteMarker
+                        | UltimatePrimitive::SuppressionLock
+                        | UltimatePrimitive::AssassinMark
+                ))
+    });
+    let stage_count = spatial.stage_count.or_else(|| inferred_stage_count(identity));
+    let stage = spatial.stage.or_else(|| stage_count.map(|_| 1));
+    let sequence_kind = spatial.sequence_kind.or_else(|| inferred_sequence_kind(identity));
+    let return_to_origin = spatial.return_to_origin.or_else(|| {
+        matches!(sequence_kind, Some("return_path")).then_some(true)
+    });
+    let bounce_count = spatial.bounce_count.or_else(|| {
+        matches!(sequence_kind, Some("chain")).then_some(affected_target_ids.as_ref().map_or(3, |ids| ids.len().max(2) as u32))
+    });
+    let tether_kind = spatial.tether_kind.or_else(|| inferred_tether_kind(identity));
+    let bespoke_kind = spatial.bespoke_kind.or_else(|| inferred_bespoke_kind(identity));
+    let destination_pos = inferred_destination_pos(identity, spatial);
+    let zone_orientation = inferred_zone_orientation(identity, spatial);
+    let requires_condition = spatial
+        .requires_condition
+        .or_else(|| inferred_requires_condition(identity));
+    let proxy_origin_kind = spatial
+        .proxy_origin_kind
+        .or_else(|| inferred_proxy_origin_kind(identity));
+    let global = spatial.global.or_else(|| inferred_global(identity));
     json!({
         "event": "champion_ultimate_cast",
         "actorId": actor_id,
         "championId": identity.champion_key,
+        "originPos": spatial.origin_pos,
+        "bespokeKind": bespoke_kind,
+        "secondaryPos": spatial.secondary_pos,
+        "destinationPos": destination_pos,
+        "zoneOrientation": zone_orientation,
+        "requiresCondition": requires_condition,
+        "proxyOriginKind": proxy_origin_kind,
+        "targetId": spatial.target_id,
+        "lockedTargetId": locked_target_id,
+        "targetIds": target_ids,
+        "affectedTargetIds": affected_target_ids,
+        "targetPos": spatial.target_pos,
+        "direction": spatial.direction,
+        "shape": spatial.shape,
+        "radius": spatial.radius,
+        "width": spatial.width,
+        "range": spatial.range,
+        "delayMs": delay_ms,
+        "durationMs": duration_ms,
+        "impactAt": impact_at,
+        "persistent": persistent,
+        "pulseCount": pulse_count,
+        "travelSpeed": spatial.travel_speed,
+        "followTarget": follow_target,
+        "stage": stage,
+        "stageCount": stage_count,
+        "sequenceKind": sequence_kind,
+        "returnPath": spatial.return_path,
+        "returnToOrigin": return_to_origin,
+        "bounceTargets": spatial.bounce_targets,
+        "bounceCount": bounce_count,
+        "recastWindowMs": spatial.recast_window_ms.or_else(|| inferred_recast_window_ms(identity)),
+        "tetherKind": tether_kind,
+        "global": global,
         "ultimateIdentity": identity,
     })
 }
@@ -2519,6 +2913,45 @@ pub(super) fn ultimate_cast_event_metadata(identity: &UltimateIdentity, actor_id
 mod tests {
     use super::*;
     use std::collections::HashSet;
+
+    fn base_spatial() -> UltimateCastSpatialMetadata {
+        UltimateCastSpatialMetadata {
+            origin_pos: Vec2 { x: 0.25, y: 0.4 },
+            bespoke_kind: None,
+            secondary_pos: None,
+            destination_pos: None,
+            zone_orientation: None,
+            requires_condition: None,
+            proxy_origin_kind: None,
+            target_id: Some("red-mid".to_string()),
+            locked_target_id: None,
+            target_ids: None,
+            affected_target_ids: None,
+            target_pos: Some(Vec2 { x: 0.75, y: 0.45 }),
+            direction: Some(Vec2 { x: 1.0, y: 0.0 }),
+            shape: UltimateSpatialShape::Circle,
+            radius: Some(0.1),
+            width: None,
+            range: Some(0.7),
+            delay_ms: None,
+            duration_ms: None,
+            impact_at: None,
+            persistent: None,
+            pulse_count: None,
+            travel_speed: None,
+            follow_target: None,
+            stage: None,
+            stage_count: None,
+            sequence_kind: None,
+            return_path: None,
+            return_to_origin: None,
+            bounce_targets: None,
+            bounce_count: None,
+            recast_window_ms: None,
+            tether_kind: None,
+            global: Some(false),
+        }
+    }
 
     #[test]
     fn batch_1_catalog_covers_requested_champions() {
@@ -2831,13 +3264,440 @@ mod tests {
     #[test]
     fn semantic_event_serializes_expected_shape() {
         let identity = ultimate_identity_for("Amumu").unwrap();
-        let event = ultimate_cast_event_metadata(identity, "blue-mid");
+        let event = ultimate_cast_event_metadata(
+            identity,
+            "blue-mid",
+            &UltimateCastSpatialMetadata {
+                origin_pos: Vec2 { x: 0.25, y: 0.4 },
+                bespoke_kind: None,
+                secondary_pos: None,
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some("red-mid".to_string()),
+                locked_target_id: None,
+                target_ids: None,
+                affected_target_ids: None,
+                target_pos: Some(Vec2 { x: 0.8, y: 0.4 }),
+                direction: Some(Vec2 { x: 1.0, y: 0.0 }),
+                shape: UltimateSpatialShape::Circle,
+                radius: Some(0.1),
+                width: None,
+                range: Some(0.7),
+                delay_ms: Some(250),
+                duration_ms: Some(1250),
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: Some(false),
+                stage: None,
+                stage_count: None,
+                sequence_kind: None,
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: None,
+                global: Some(false),
+            },
+        );
         assert_eq!(event["event"], "champion_ultimate_cast");
         assert_eq!(event["actorId"], "blue-mid");
+        assert_eq!(event["originPos"]["x"], 0.25);
+        assert_eq!(event["shape"], "circle");
         assert_eq!(event["ultimateIdentity"]["technicalPrimitive"], "aoe_pulse");
         assert_eq!(
             event["ultimateIdentity"]["visual"]["visualEventId"],
             "ultimate.amumu_curse_sad_mummy"
         );
+    }
+
+    #[test]
+    fn semantic_event_contract_serializes_origin_and_base_shapes() {
+        let identity = ultimate_identity_for("Lux").unwrap();
+        let event = ultimate_cast_event_metadata(
+            identity,
+            "blue-mid",
+            &UltimateCastSpatialMetadata {
+                origin_pos: Vec2 { x: 0.25, y: 0.4 },
+                bespoke_kind: None,
+                secondary_pos: None,
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some("red-mid".to_string()),
+                locked_target_id: None,
+                target_ids: None,
+                affected_target_ids: None,
+                target_pos: Some(Vec2 { x: 0.9, y: 0.42 }),
+                direction: Some(Vec2 { x: 1.0, y: 0.0 }),
+                shape: UltimateSpatialShape::Beam,
+                radius: None,
+                width: Some(0.055),
+                range: Some(0.82),
+                delay_ms: Some(250),
+                duration_ms: Some(1250),
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: Some(false),
+                stage: None,
+                stage_count: None,
+                sequence_kind: None,
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: None,
+                global: Some(false),
+            },
+        );
+
+        assert_eq!(event["originPos"]["x"], 0.25);
+        assert_eq!(event["targetPos"]["x"], 0.9);
+        assert_eq!(event["direction"]["x"], 1.0);
+        assert_eq!(event["shape"], "beam");
+        assert_eq!(event["width"], 0.055);
+        assert_eq!(event["range"], 0.82);
+
+        let serialized_shapes = [
+            (UltimateSpatialShape::Aura, "aura"),
+            (UltimateSpatialShape::Circle, "circle"),
+            (UltimateSpatialShape::Line, "line"),
+            (UltimateSpatialShape::Projectile, "projectile"),
+            (UltimateSpatialShape::Beam, "beam"),
+            (UltimateSpatialShape::GlobalOverlay, "global_overlay"),
+        ];
+        for (shape, expected) in serialized_shapes {
+            assert_eq!(json!(shape), expected);
+        }
+    }
+
+    #[test]
+    fn delayed_and_persistent_ultimates_expose_timing_metadata() {
+        let cases = [
+            ("Karthus", 2400, false),
+            ("Taric", 2400, false),
+            ("Kayle", 750, false),
+            ("Zyra", 750, true),
+        ];
+
+        for (champion, minimum_delay, expected_persistent) in cases {
+            let identity = ultimate_identity_for(champion).unwrap();
+            let event = ultimate_cast_event_metadata(
+                identity,
+                "blue-mid",
+                &UltimateCastSpatialMetadata {
+                    origin_pos: Vec2 { x: 0.25, y: 0.4 },
+                    bespoke_kind: None,
+                    secondary_pos: None,
+                    destination_pos: None,
+                    zone_orientation: None,
+                    requires_condition: None,
+                    proxy_origin_kind: None,
+                    target_id: Some("red-mid".to_string()),
+                    locked_target_id: None,
+                    target_ids: None,
+                    affected_target_ids: None,
+                    target_pos: Some(Vec2 { x: 0.8, y: 0.4 }),
+                    direction: Some(Vec2 { x: 1.0, y: 0.0 }),
+                    shape: UltimateSpatialShape::Circle,
+                    radius: Some(0.1),
+                    width: None,
+                    range: Some(0.7),
+                    delay_ms: None,
+                    duration_ms: None,
+                    impact_at: None,
+                    persistent: None,
+                    pulse_count: None,
+                    travel_speed: None,
+                    follow_target: Some(false),
+                    stage: None,
+                    stage_count: None,
+                    sequence_kind: None,
+                    return_path: None,
+                    return_to_origin: None,
+                    bounce_targets: None,
+                    bounce_count: None,
+                    recast_window_ms: None,
+                    tether_kind: None,
+                    global: Some(false),
+                },
+            );
+
+            assert!(event["delayMs"].as_u64().unwrap() >= minimum_delay);
+            assert_eq!(event["impactAt"], event["delayMs"]);
+            assert!(event["durationMs"].as_u64().unwrap() > 0);
+            assert_eq!(event["persistent"], expected_persistent);
+            assert!(event["pulseCount"].as_u64().unwrap() >= 1);
+        }
+    }
+
+    #[test]
+    fn target_follow_chain_return_and_stage_metadata_are_inferred_safely() {
+        let malzahar = ultimate_identity_for("Malzahar").unwrap();
+        let lock_event = ultimate_cast_event_metadata(
+            malzahar,
+            "blue-mid",
+            &UltimateCastSpatialMetadata {
+                origin_pos: Vec2 { x: 0.25, y: 0.4 },
+                bespoke_kind: None,
+                secondary_pos: None,
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some("red-mid".to_string()),
+                locked_target_id: None,
+                target_ids: None,
+                affected_target_ids: None,
+                target_pos: Some(Vec2 { x: 0.7, y: 0.4 }),
+                direction: None,
+                shape: UltimateSpatialShape::Lock,
+                radius: None,
+                width: None,
+                range: None,
+                delay_ms: None,
+                duration_ms: None,
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: None,
+                stage: None,
+                stage_count: None,
+                sequence_kind: None,
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: None,
+                global: Some(false),
+            },
+        );
+        assert_eq!(lock_event["lockedTargetId"], "red-mid");
+        assert_eq!(lock_event["targetIds"][0], "red-mid");
+        assert_eq!(lock_event["affectedTargetIds"][0], "red-mid");
+        assert_eq!(lock_event["followTarget"], true);
+        assert_eq!(lock_event["tetherKind"], "suppression_channel");
+
+        let brand = ultimate_identity_for("Brand").unwrap();
+        let chain_event = ultimate_cast_event_metadata(
+            brand,
+            "blue-mid",
+            &UltimateCastSpatialMetadata {
+                origin_pos: Vec2 { x: 0.25, y: 0.4 },
+                bespoke_kind: None,
+                secondary_pos: None,
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some("red-mid".to_string()),
+                locked_target_id: None,
+                target_ids: Some(vec!["red-mid".to_string(), "red-bot".to_string()]),
+                affected_target_ids: None,
+                target_pos: Some(Vec2 { x: 0.7, y: 0.4 }),
+                direction: None,
+                shape: UltimateSpatialShape::Projectile,
+                radius: None,
+                width: None,
+                range: None,
+                delay_ms: None,
+                duration_ms: None,
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: None,
+                stage: None,
+                stage_count: None,
+                sequence_kind: None,
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: None,
+                global: Some(false),
+            },
+        );
+        assert_eq!(chain_event["sequenceKind"], "chain");
+        assert_eq!(chain_event["bounceCount"], 2);
+
+        let draven = ultimate_identity_for("Draven").unwrap();
+        let return_event = ultimate_cast_event_metadata(
+            draven,
+            "blue-adc",
+            &UltimateCastSpatialMetadata {
+                origin_pos: Vec2 { x: 0.2, y: 0.6 },
+                bespoke_kind: None,
+                secondary_pos: None,
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some("red-adc".to_string()),
+                locked_target_id: None,
+                target_ids: None,
+                affected_target_ids: None,
+                target_pos: Some(Vec2 { x: 0.8, y: 0.6 }),
+                direction: None,
+                shape: UltimateSpatialShape::Projectile,
+                radius: None,
+                width: None,
+                range: None,
+                delay_ms: None,
+                duration_ms: None,
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: None,
+                stage: None,
+                stage_count: None,
+                sequence_kind: None,
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: None,
+                global: Some(false),
+            },
+        );
+        assert_eq!(return_event["sequenceKind"], "return_path");
+        assert_eq!(return_event["returnToOrigin"], true);
+
+        let jhin = ultimate_identity_for("Jhin").unwrap();
+        let stage_event = ultimate_cast_event_metadata(
+            jhin,
+            "blue-adc",
+            &UltimateCastSpatialMetadata {
+                origin_pos: Vec2 { x: 0.2, y: 0.6 },
+                bespoke_kind: None,
+                secondary_pos: None,
+                destination_pos: None,
+                zone_orientation: None,
+                requires_condition: None,
+                proxy_origin_kind: None,
+                target_id: Some("red-adc".to_string()),
+                locked_target_id: None,
+                target_ids: None,
+                affected_target_ids: None,
+                target_pos: Some(Vec2 { x: 0.8, y: 0.6 }),
+                direction: None,
+                shape: UltimateSpatialShape::Line,
+                radius: None,
+                width: None,
+                range: None,
+                delay_ms: None,
+                duration_ms: None,
+                impact_at: None,
+                persistent: None,
+                pulse_count: None,
+                travel_speed: None,
+                follow_target: None,
+                stage: Some(2),
+                stage_count: None,
+                sequence_kind: None,
+                return_path: None,
+                return_to_origin: None,
+                bounce_targets: None,
+                bounce_count: None,
+                recast_window_ms: None,
+                tether_kind: None,
+                global: Some(false),
+            },
+        );
+        assert_eq!(stage_event["stage"], 2);
+        assert_eq!(stage_event["stageCount"], 4);
+        assert_eq!(stage_event["sequenceKind"], "multi_shot_channel");
+    }
+
+    #[test]
+    fn batch_4_bespoke_signatures_emit_specific_metadata() {
+        let expected = [
+            ("Sylas", "stolen_ultimate_pending"),
+            ("Mordekaiser", "death_realm"),
+            ("Ryze", "portal"),
+            ("Twisted Fate", "global_reveal_gate"),
+            ("Shen", "ally_shield_arrival"),
+            ("Kindred", "sanctuary_heal"),
+            ("Taliyah", "terrain_wall"),
+            ("Azir", "soldier_wall"),
+            ("Yasuo", "airborne_slash"),
+            ("Orianna", "proxy_shockwave"),
+            ("Ornn", "two_stage_ram"),
+            ("Nocturne", "blackout_dash"),
+            ("Galio", "global_landing"),
+            ("Pantheon", "global_landing"),
+            ("Ekko", "rewind_ghost"),
+            ("Xayah", "feather_fan_recall"),
+            ("Yuumi", "host_waves"),
+        ];
+
+        for (champion, bespoke_kind) in expected {
+            let identity = ultimate_identity_for(champion).unwrap();
+            let event = ultimate_cast_event_metadata(identity, "blue-mid", &base_spatial());
+
+            assert_eq!(event["bespokeKind"], bespoke_kind, "{champion}");
+        }
+    }
+
+    #[test]
+    fn batch_4_bespoke_metadata_preserves_critical_semantics() {
+        let spatial = base_spatial();
+
+        let orianna = ultimate_cast_event_metadata(
+            ultimate_identity_for("Orianna").unwrap(),
+            "blue-mid",
+            &spatial,
+        );
+        assert_eq!(orianna["proxyOriginKind"], "ball_or_target_point");
+        assert_eq!(orianna["bespokeKind"], "proxy_shockwave");
+
+        for champion in ["Ryze", "Twisted Fate", "Shen"] {
+            let event = ultimate_cast_event_metadata(
+                ultimate_identity_for(champion).unwrap(),
+                "blue-mid",
+                &spatial,
+            );
+            assert_eq!(event["destinationPos"]["x"], 0.75, "{champion}");
+        }
+
+        let morde = ultimate_cast_event_metadata(
+            ultimate_identity_for("Mordekaiser").unwrap(),
+            "blue-mid",
+            &spatial,
+        );
+        assert_eq!(morde["lockedTargetId"], "red-mid");
+        assert_eq!(morde["followTarget"], false);
+
+        let kindred = ultimate_cast_event_metadata(
+            ultimate_identity_for("Kindred").unwrap(),
+            "blue-mid",
+            &spatial,
+        );
+        assert_eq!(kindred["persistent"], true);
+        assert_eq!(kindred["bespokeKind"], "sanctuary_heal");
+
+        let mut global_spatial = base_spatial();
+        global_spatial.global = None;
+        let nocturne = ultimate_cast_event_metadata(
+            ultimate_identity_for("Nocturne").unwrap(),
+            "blue-jgl",
+            &global_spatial,
+        );
+        assert_eq!(nocturne["global"], true);
+        assert_eq!(nocturne["destinationPos"]["x"], 0.75);
+        assert_eq!(nocturne["bespokeKind"], "blackout_dash");
     }
 }

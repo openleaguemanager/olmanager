@@ -195,6 +195,7 @@ pub fn run() {
             lol_sim_v2_dispose,
             lol_sim_v2_run_to_completion,
             lol_sim_v2_skip_to_end,
+            lol_sim_v2_debug_force_ultimate,
             lol_sim_v3_init,
             lol_sim_v3_tick,
             lol_sim_v3_reset,

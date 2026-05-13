@@ -1,7 +1,8 @@
 use tauri::State;
 
 use crate::application::lol_sim_v2::{
-    dispose, init, reset, run_to_completion, skip_to_end, tick, LolSimV2DisposeRequest,
+    debug_force_ultimate, dispose, init, reset, run_to_completion, skip_to_end, tick,
+    LolSimV2DebugForceUltimateRequest, LolSimV2DebugForceUltimateResponse, LolSimV2DisposeRequest,
     LolSimV2DisposeResponse, LolSimV2ResetRequest, LolSimV2RunToCompletionRequest,
     LolSimV2RunToCompletionResponse, LolSimV2SkipToEndRequest, LolSimV2SkipToEndResponse,
     LolSimV2StateResponse, LolSimV2StoreState, LolSimV2TickRequest,
@@ -53,4 +54,12 @@ pub fn lol_sim_v2_skip_to_end(
     request: LolSimV2SkipToEndRequest,
 ) -> Result<LolSimV2SkipToEndResponse, String> {
     skip_to_end(&state, request)
+}
+
+#[tauri::command]
+pub fn lol_sim_v2_debug_force_ultimate(
+    state: State<'_, LolSimV2StoreState>,
+    request: LolSimV2DebugForceUltimateRequest,
+) -> Result<LolSimV2DebugForceUltimateResponse, String> {
+    debug_force_ultimate(&state, request)
 }

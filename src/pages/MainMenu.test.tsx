@@ -176,6 +176,14 @@ describe("MainMenu", () => {
     vi.unstubAllGlobals();
   });
 
+  it("shows the ultimate sandbox option and opens it", () => {
+    render(<MainMenu />);
+
+    fireEvent.click(screen.getByRole("button", { name: /ultimate sandbox/i }));
+
+    expect(navigateMock).toHaveBeenCalledWith("/ultimate-sandbox");
+  });
+
   it.each(["es", "de", "fr", "it", "pt", "pt-BR"])(
     "stores the nationality as an ISO code and starts directly in %s",
     async (language: string) => {

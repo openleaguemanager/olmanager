@@ -149,6 +149,18 @@ export interface LolSimV1SkipToEndResponse {
   elapsedSimulatedSec: number;
 }
 
+export interface LolSimV1DebugForceUltimateRequest {
+  sessionId: string;
+  casterId: string;
+}
+
+export interface LolSimV1DebugForceUltimateResponse {
+  sessionId: string;
+  state: LolSimV1RuntimeState;
+  casted: boolean;
+  reason?: string | null;
+}
+
 export interface LolSimV1MatchReportEventInput {
   t: number;
   text: string;

@@ -13,6 +13,124 @@ fn decode_neutral_for_tests(runtime: &RuntimeState) -> NeutralTimersRuntime {
         .unwrap_or_else(neutral_timers_default_runtime_state)
 }
 
+fn batch_ultimate_champion(id: &str, champion_id: &str, pos: Vec2) -> ChampionRuntime {
+    let mut champion = test_champion(id, "blue", "MID", "mid", pos);
+    champion.champion_id = champion_id.to_string();
+    champion.level = 6;
+    champion.ultimate = Some(RuntimeUltimateSlot {
+        archetype: "burst".to_string(),
+        icon: String::new(),
+        cd_until: 0.0,
+        ..Default::default()
+    });
+    champion
+}
+
+fn last_ultimate_metadata(runtime: &RuntimeState) -> serde_json::Value {
+    runtime
+        .events
+        .iter()
+        .rev()
+        .find_map(|event| event.metadata.clone())
+        .unwrap_or_else(|| panic!("missing ultimate metadata"))
+}
+
+#[test]
+fn batch_one_ultimates_emit_real_metadata_not_generic_damage_only() {
+    for champion_id in [
+        "Aatrox", "Ahri", "Akali", "Akshan", "Alistar", "Ambessa", "Amumu", "Anivia",
+        "Annie", "Aphelios",
+    ] {
+        let caster = batch_ultimate_champion("mid-blue", champion_id, Vec2 { x: 0.50, y: 0.50 });
+        let target = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.56, y: 0.50 });
+        let mut runtime = test_runtime(vec![caster, target], vec![], vec![], empty_neutral());
+
+        resolve_champion_combat(&mut runtime);
+
+        let metadata = last_ultimate_metadata(&runtime);
+        assert_eq!(metadata["event"], "champion_ultimate_cast", "{champion_id}");
+        assert_ne!(metadata["ultimateIdentity"]["signatureId"], serde_json::Value::Null, "{champion_id}");
+        assert!(
+            metadata["bespokeKind"].is_string()
+                || metadata["sequenceKind"].is_string()
+                || metadata["persistent"].as_bool().unwrap_or(false)
+                || metadata["destinationPos"].is_object(),
+            "{champion_id} fell back to generic-only metadata: {metadata}"
+        );
+    }
+}
+
+#[test]
+fn amumu_ultimate_affects_multiple_nearby_targets() {
+    let caster = batch_ultimate_champion("sup-blue", "Amumu", Vec2 { x: 0.50, y: 0.50 });
+    let enemy_1 = test_champion("red-1", "red", "MID", "mid", Vec2 { x: 0.55, y: 0.50 });
+    let enemy_2 = test_champion("red-2", "red", "JGL", "mid", Vec2 { x: 0.51, y: 0.56 });
+    let mut runtime = test_runtime(vec![caster, enemy_1, enemy_2], vec![], vec![], empty_neutral());
+
+    resolve_champion_combat(&mut runtime);
+
+    assert!(runtime.champions[1].hp < runtime.champions[1].max_hp);
+    assert!(runtime.champions[2].hp < runtime.champions[2].max_hp);
+    let metadata = last_ultimate_metadata(&runtime);
+    assert_eq!(metadata["bespokeKind"], "aoe_bandage_lockdown");
+    assert!(metadata["affectedTargetIds"].as_array().unwrap().len() >= 2);
+}
+
+#[test]
+fn anivia_ultimate_persists_and_ticks_zone_damage() {
+    let caster = batch_ultimate_champion("mid-blue", "Anivia", Vec2 { x: 0.50, y: 0.50 });
+    let enemy_1 = test_champion("red-1", "red", "MID", "mid", Vec2 { x: 0.56, y: 0.50 });
+    let enemy_2 = test_champion("red-2", "red", "JGL", "mid", Vec2 { x: 0.58, y: 0.52 });
+    let mut runtime = test_runtime(vec![caster, enemy_1, enemy_2], vec![], vec![], empty_neutral());
+
+    resolve_champion_combat(&mut runtime);
+
+    assert!(runtime.champions[1].hp <= runtime.champions[1].max_hp - 15.0);
+    let metadata = last_ultimate_metadata(&runtime);
+    assert_eq!(metadata["shape"], "zone");
+    assert_eq!(metadata["persistent"], true);
+    assert!(metadata["pulseCount"].as_u64().unwrap_or(0) >= 8);
+}
+
+#[test]
+fn annie_ultimate_spawns_tibbers_and_impacts_area() {
+    let caster = batch_ultimate_champion("mid-blue", "Annie", Vec2 { x: 0.50, y: 0.50 });
+    let enemy = test_champion("red-1", "red", "MID", "mid", Vec2 { x: 0.515, y: 0.51 });
+    let mut runtime = test_runtime(vec![caster, enemy], vec![], vec![], empty_neutral());
+
+    resolve_champion_combat(&mut runtime);
+
+    assert!(runtime.minions.iter().any(|minion| minion.summon_kind.as_deref() == Some("tibbers")));
+    assert!(runtime.champions[1].hp < runtime.champions[1].max_hp);
+    assert_eq!(last_ultimate_metadata(&runtime)["bespokeKind"], "tibbers_drop_burst_pet");
+}
+
+#[test]
+fn batch_one_lock_channel_and_dash_metadata_is_explicit() {
+    for (champion_id, expected) in [
+        ("Akshan", "lock_on_multi_shot_channel"),
+        ("Ahri", "recast_dash_charges"),
+        ("Akali", "execute_recast_dash"),
+    ] {
+        let caster = batch_ultimate_champion("mid-blue", champion_id, Vec2 { x: 0.50, y: 0.50 });
+        let mut target = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.56, y: 0.50 });
+        target.hp = 35.0;
+        let mut runtime = test_runtime(vec![caster, target], vec![], vec![], empty_neutral());
+        resolve_champion_combat(&mut runtime);
+        let metadata = last_ultimate_metadata(&runtime);
+        assert_eq!(metadata["sequenceKind"], expected, "{champion_id}");
+        assert!(metadata["targetId"].is_string(), "{champion_id}");
+    }
+
+    let caster = batch_ultimate_champion("mid-blue", "Ambessa", Vec2 { x: 0.50, y: 0.50 });
+    let target = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.56, y: 0.50 });
+    let mut runtime = test_runtime(vec![caster, target], vec![], vec![], empty_neutral());
+    resolve_champion_combat(&mut runtime);
+    let metadata = last_ultimate_metadata(&runtime);
+    assert_eq!(metadata["bespokeKind"], "noxian_execution_dash");
+    assert!(metadata["destinationPos"].is_object());
+}
+
 #[test]
 fn heal_spell_casts_when_self_is_low_hp() {
     let neutral = NeutralTimersRuntime {
