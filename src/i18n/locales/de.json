@@ -2156,7 +2156,7 @@
       "academyCoordinator": "Academy Coordinator",
       "esportmaniacos": "Esportmaníacos",
       "allioPodcast": "Al Lío Podcast",
-      "elYuste": "el_yuste"
+      "media": "Medienteam"
     },
     "role": {
       "chairman": "Vorsitzender",
@@ -2176,7 +2176,7 @@
       "academyCoordinator": "Academy Coordinator",
       "esportmaniacos": "Panel",
       "allioPodcast": "Eros",
-      "elYuste": "el_yuste"
+      "leadCom": "Leiter Kommunikation"
     },
     "source": {
       "sportsGazette": "Esports Gazette",
@@ -2602,47 +2602,156 @@
         "body": "Academy weekly summary:\n- Active players: {{activePlayers}}\n- Average OVR: {{avgOvr}}\n- High potential talents (>= 80): {{highPotential}}\n- Highlights: {{highlights}}\n- Current ERL rank: #{{position}} of {{total}}\n- Quick table: {{tablePreview}}",
         "bodyWithPromotion": "Academy weekly summary:\n- Active players: {{activePlayers}}\n- Average OVR: {{avgOvr}}\n- High potential talents (>= 80): {{highPotential}}\n- Highlights: {{highlights}}\n- Current ERL rank: #{{position}} of {{total}}\n- Quick table: {{tablePreview}}\n\nRecommendation: {{promotionCount}} player(s) ready for promotion -> {{promotionList}}."
       },
-      "esportmaniacos": {
+      "podcast": {
+        "player": {
+          "positive": {
+            "subject0": "{{podcast}} — Im Fokus: {{player}}",
+            "body0": "{{host}} befragte {{guest}} zu den jüngsten Leistungen von {{player}}: „Ich könnte mir derzeit keinen besseren Spieler in der Liga für diese Position vorstellen. Ich meine, schaut euch mal die CS- und Gold-Differenz nach 15 Minuten an, das spricht für sich. Ein {{player}} in Topform macht {{team}} zu einer dominanten Mannschaft.“\n\nStellt sicher, dass ihr {{player}}s volles Potenzial ausschöpft.",
+            "subject1": "{{podcast}} — {{player}} rettet {{team_short}}",
+            "body1": "{{guest}} hat sich besonders deutlich über den Einfluss von {{player}} geäußert: „Lassen Sie uns klarstellen: {{team}} spielt schlecht. Sie sollten besser sein als das. Dennoch sind ihre Ergebnisse immer noch in Ordnung, und das liegt ausschließlich an {{player}}. Ohne die erstklassigen Leistungen, die wir gesehen haben, wären diese Spiele niemals zu gewinnen gewesen. {{player}} rettet {{team}}. Punkt.“\n\nAchte während der Draft-Phase auf die Champions, die {{player}} spielen möchte.",
+            "subject2": "{{podcast}} — {{player}} spielt gut",
+            "body2": "{{guest}} hob diese Woche {{player}} hervor: „Ich war überrascht, wie {{player}} kürzlich auf der Karte gespielt hat. {{team_short}} als Ganzes ist perfekt auf {{player}} abgestimmt, und jeder Spielzug auf der einen Seite der Karte wird auf der anderen Seite perfekt umgesetzt. Sie übertrumpfen ihre Gegner in puncto Tempo, was auf den Druck zurückzuführen ist, den {{team_short}} ausübt. Das Einzige, was sie derzeit von den besten Teams trennt, sind Teamkämpfe und ein bisschen mehr Zurückhaltung im späten Spielverlauf, um Fehlentscheidungen zu vermeiden.“\n\n„Sollten wir uns darauf konzentrieren, unsere Stärken zu verfeinern oder an unseren Schwächen zu arbeiten?",
+            "subject3": "{{podcast}} — Verbesserung bei {{player}}",
+            "body3": "{{guest}} wollte in der Folge dieser Woche über die jüngsten Leistungen von {{player}} sprechen: „Man merkt, wenn ein Spieler danach strebt, bessere Ergebnisse zu erzielen. Ich habe jedoch das Gefühl, dass viele Beobachter vergessen, Verbesserungen zu erwähnen, wenn sie eintreten. Deshalb möchte ich {{player}} hervorheben, da ich eine drastische Veränderung in Bezug auf sein Verhalten im Spiel festgestellt habe. Man spürt andere Reaktionen, schnelle Entscheidungen und fast keine verfehlten Skillshots.“\n\n{{player}} könnte in Zukunft unser Starspieler werden.",
+            "subject4": "{{podcast}} lobt {{player}} – die Redaktion ist sich einig",
+            "body4": "Die {{podcast}}-Redaktion widmete einen Großteil des heutigen Streams {{player}} von {{team_short}}: „Diese Woche gibt es nichts zu kritisieren. Der Typ dominiert absolut.“\n\nDie positive Berichterstattung dürfte für Zuversicht in der Umkleidekabine sorgen.",
+            "subject5": "{{podcast}} – {{player}} trägt {{team_short}} in dieser Saison",
+            "body5": "Die {{podcast}}-Runde ist sich selten einig, aber {{player}} bekam heute uneingeschränktes Lob: „Beständig, solide, keine Formtiefs. Einer der derzeit besten Spieler der Liga. {{team_short}} sollte alles tun, um ihn zu halten.“\n\nGut für die Moral – und für den Marktwert."
+          },
+          "negative": {
+            "subject0": "{{podcast}} — {{player}}s schwache Leistungen",
+            "body0": "{{guest}} wollte in der Folge dieser Woche über {{player}}s jüngste Leistungen sprechen: „Ich weiß nicht, was hinter den Kulissen vor sich geht, aber ich muss sagen, dass ich {{player}} nicht mehr wiedererkenne. Die Spiele, die Interviews. Es fühlt sich an, als gäbe es kein Selbstvertrauen mehr. Was passiert bei {{team_short}}?“.\n\nWir sollten mit {{player}} sprechen.",
+            "subject1": "{{podcast}} — Die Konkurrenz ist zu stark für {{player}}",
+            "body1": "{{guest}} relativiert die schlechten Leistungen von {{player}} angesichts des Niveaus der Konkurrenz: „Ehrlich gesagt spielt {{player}} nicht schlecht. Es gibt gute Ideen, gute Spielzüge, gute Makrobewegungen. Es reicht einfach nicht aus. Die Konkurrenz auf dieser Position ist viel zu hart und {{player}} tut sich schwer, sich zu verbessern. {{team_short}} sollte mit einem anderen Spieler besser abschneiden, aber ich denke immer noch, dass {{player}} es verdient, auf diesem Niveau zu spielen“.\n\nWir sollten vielleicht einen weiteren Positionscoach ernennen, der sich speziell um {{player}} kümmert.",
+            "subject2": "{{podcast}} — {{player}} ist der SCHLECHTESTE Spieler, den ich je gesehen habe",
+            "body2": "{{guest}} hat sich diese Woche besonders kritisch gegenüber {{player}} geäußert: „{{player}} ist der SCHLECHTESTE Spieler, den ich je gesehen habe. Was war das denn bitte für eine Leistung? Willst du etwa sagen, dass es in der Offseason keinen einzigen Spieler gab, der eine Maus halten konnte? An diesem Punkt kann der Trainerstab von {{team_short}} keine Wunder mehr vollbringen. Ich schwöre, wenn {{team_short}} {{player}} am Ende des Splits nicht gegen einen anderen Spieler austauscht, ist das ein regelrechter Schlag ins Gesicht der Fans.“\n\nWir sollten die verschiedenen Optionen für die Position von {{player}} in Betracht ziehen.",
+            "subject3": "{{podcast}} — Das Meta ist schlecht für {{player}}",
+            "body3": "{{guest}} erwähnte den Einfluss des Metas auf die Form von {{player}}: „Ich denke, dass die Spieler von {{team_short}} besser sind, als sie es derzeit zeigen, insbesondere {{player}}. Ich meine, {{player}}s Champion-Pool ist ziemlich einseitig und passte perfekt zum Meta, aber mit all diesen gewagten Picks und den Änderungen an den Gegenständen und Runen ist {{team_short}} überrumpelt und muss ein ganz neues Gleichgewicht finden. So wie ich es sehe, gibt es nur zwei Optionen. Entweder schafft es {{player}}, sich anzupassen, oder {{team_short}} muss das Meta vergessen und zu dem zurückkehren, was sie gut gemacht hat.“\n\nWir sollten darüber nachdenken.",
+            "subject4": "{{podcast}} nimmt {{player}} ins Visier – Die Runde zeigt keine Gnade",
+            "body4": "Die {{podcast}}-Runde hat heute gegenüber {{player}} kein Blatt vor den Mund genommen: „Der Typ ist komplett von der Bildfläche verschwunden. Was ist während dieser Pause passiert? {{team_short}} kann sich nicht weiter auf jemanden verlassen, der so spielt.“\n\nDiese Art der Berichterstattung wirkt sich meist stark auf die Moral aus. Es lohnt sich, ein Wort mit {{player}} zu wechseln.",
+            "subject5": "{{podcast}} hinterfragt {{player}}s Konstanz",
+            "body5": "Die heutige {{podcast}}-Sendung entwickelte sich zu einer umfassenden Analyse von {{player}}s aktueller Form. Das Urteil: „Unbeständig. Keine Regelmäßigkeit. An manchen Tagen auf höchstem Niveau, an anderen völlig unsichtbar. {{team_short}} verdient von jemandem in dieser Rolle bessere Leistungen.“\n\nBehalte die Moral des Spielers im Auge."
+          }
+        },
+        "general": {
+          "positive": {
+            "subject0": "{{podcast}} — Der Trainerstab von {{team_short}}",
+            "body0": "In der Folge dieser Woche sprach {{host}} über den Trainerstab von {{team_short}}: „Ehrlich gesagt glaube ich, dass ich so einen Stil bei der Spieleraufstellung noch nie gesehen habe. Es scheint, als würde ihr Trainerstab ständig neue Champions und neue Rollen für sie erfinden. Das ist sowohl effektiv als auch besonders unterhaltsam anzusehen!“\n\nWir wollen unseren Trainerstab unbedingt behalten. Sie leisten großartige Arbeit.",
+            "subject1": "{{podcast}} — {{team}} ist der absolute HIT",
+            "body1": "{{guest}} erzählte, wie sehr {{team_short}} in der Liga für Begeisterung sorgt: „Ich glaube, ich war schon lange nicht mehr so begeistert. Ich weiß, dass die Leute mich vielleicht für verrückt halten, aber ich meine es ernst. Die Art und Weise, wie {{team_short}} spielt und draftet, lässt mich glauben, dass sie die Weltspitze herausfordern können. Und ich bin nicht der Einzige. Schaut euch die Begeisterung in den sozialen Medien an. Die Fans werden immer lauter, der Hype wächst. Ich bin mir sicher, dass sie mehr Trikots verkaufen als je zuvor. {{team_short}} sollte wirklich alles tun, um diesen Schwung zu nutzen und zu den Besten zu gehören.“\n\nDas ist ein sehr gutes Zeichen für uns. Ich werde auf jeden Fall die Auswirkungen auf unseren Umsatz überprüfen.",
+            "subject2": "{{podcast}} — Die Spieler von {{team_short}} wirken so cool",
+            "body2": "{{guest}} sprach über die Inhalte von {{team_short}}: „Ich finde, das Medienteam von {{team_short}} wird unterschätzt. Ihre Inhalte sind frisch, sie haben gute Ideen und finden immer wieder neue Wege, die Spieler sympathisch zu machen. Die Liga sollte sich ein Beispiel an ihnen nehmen.“\n\nIch wollte euch das nur mitteilen. Manchmal wollen die Spieler das zwar nicht, aber es hat einen positiven Einfluss auf {{team}}.",
+            "subject3": "{{podcast}} — {{team_short}} hat so viele gute Spieler",
+            "body3": "{{guest}} betonte besonders die Bedeutung von Synergie beim Aufbau eines Kaders wie dem von {{team_short}}: „Man hat in der Vergangenheit viele Superteams gesehen, die unter dem Druck und den Egos zusammengebrochen sind. {{team_short}} gehört nicht dazu. Sie haben sehr talentierte Spieler, die zu den besten der Liga gehören, und derzeit sind sie alle in Topform. Aber der Unterschied liegt im Zusammenspiel des Teams. Beobachte die Wege des Junglers, schau dir die Wards an, achte auf die Pings.“\n\nAndere Teams könnten an unseren Spielern interessiert sein. Wir sollten auf ihre Verträge achten."
+          },
+          "negative": {
+            "subject0": "{{podcast}} — Kontroverse Meinung: {{team_short}} wird zusammenbrechen",
+            "body0": "{{guest}} äußerte eine kontroverse Meinung zu {{team_short}}: „Wir haben alle dieselben Spiele an diesem Wochenende gesehen. Unklare Lanes, sinnlose 50/50-Situationen bei den Objectives, seltsame Todesfälle auf den Sidelanes. Für mich ist es offensichtlich, dass {{team_short}} in naher Zukunft zusammenbrechen wird. Sogar {{player}} hat in ihrem letzten Match eine schlechte Leistung gezeigt.“\n\n Sollten wir vielleicht unsere Trainingsmethoden ändern?",
+            "subject1": "{{podcast}} — {{team_short}} ist ein WITZ",
+            "body1": "{{guest}} hat mit dem Finger auf uns gezeigt: „Was macht das Management von {{team_short}} eigentlich?! Sie haben einen Trainerstab, der Unsinn redet, Spieler, die auf der Bühne gähnen, und eine Off-Season, die jegliches Verständnis übersteigt! Soll das die Besten der Besten repräsentieren? Verkauft den Startplatz endlich!“.\n\nWas können wir in Bezug auf das Budget tun, um die Situation zu verbessern?",
+            "subject2": "{{podcast}} – Was kann {{team_short}} tun, um ein Comeback zu schaffen?",
+            "body2": "{{host}} fragte {{guest}}, was {{team_short}} tun könnte, um ein Comeback zu schaffen: „Es ist schwierig, wissen Sie. Ich kann nur Mitgefühl für den Trainerstab und die Spieler von {{team_short}} empfinden. Ich bin mir sicher, dass sie ihr Bestes geben, aber vielleicht sollten sie es vorrangig darauf anlegen, gegen Teams aus anderen Ligen zu spielen, selbst aus den unteren Ligen. Das könnte ihnen helfen, Schwung aufzubauen und mit Selbstvertrauen zu spielen. In dieser Situation ist man selbst sein größter Feind.“\n\n„Könnten wir vielleicht unseren Trainingsplan anpassen?",
+            "subject3": "{{podcast}} — {{team_short}}s Trainerstab",
+            "body3": "In der Folge dieser Woche sprach {{host}} über {{team_short}}s Trainerstab: „Ich verstehe nicht, wie diese Leute im Moment noch ihren Job haben können. So wie sie am vergangenen Wochenende gedraftet haben? Schaue ich mir hier etwa die dritte Liga von League of Legends an? Es ist schmerzhaft, das mit anzusehen. Stellt euren Spielern ein richtiges Team zur Seite, wenn ihr wirklich gewinnen wollt!“\n\nWir sollten auf solche Kommentare achten. Diese Gäste kennen sich im Spiel gut aus und haben Einfluss auf ihr Publikum."
+          }
+        }
+      },
+      "broadcast": {
+        "player": {
+          "positive": {
+            "subject0": "{{broadcast}} — {{player}} dominiert die Statistiken",
+            "body0": "{{guest}} hat {{player}} mit den anderen Konkurrenten verglichen: „Wir haben uns die Daten angesehen und ich war von {{player}}s Statistiken völlig verblüfft. Was die Nähe zum Dschungel und die Präsenz bei frühen Zielen angeht, gibt es keinen Spieler, der besser abschneidet. Und der Einfluss in der frühen Spielphase ist offensichtlich. {{team_short}} hat bei frühen Zielen eine bessere Aufstellung, was entweder zu kostenlosen Kills oder kostenlosen Zielen führt.\n\nWir müssen dafür sorgen, dass {{player}}s Moral hoch bleibt.",
+            "subject1": "{{broadcast}} — {{player}}s Spiel in der Sendung analysiert",
+            "body1": "{{guest}} analysierte {{player}}s Spiel in der Sendung {{broadcast}}: „Wie ihr hier sehen könnt, findet {{player}} den richtigen Winkel, um eine rosa Wache in diesem Busch zu platzieren, und nur wenige Sekunden später deckt sie die Flanke ab. Diese Wache ist ein Spielveränderer, und in dem Moment, in dem {{team}} beschließt, umzukehren, ist es wieder einmal {{player}}, der hineingeht und den Teamkampf entscheidet“.\n\nDiese Art von Arbeit wird selten hervorgehoben. Weisen Sie das Trainerteam unbedingt darauf hin.",
+            "subject2": "{{broadcast}} — {{player}} Live-Interview",
+            "body2": "{{host}} hat diese Woche {{player}} interviewt: \n{{host}} – „Du hast heute besonders gut gespielt, hattest du etwas gegen den heutigen Gegner?“\n{{player}} – „Nun, irgendwie schon. In den Trainingsspielen hatten wir Schwierigkeiten gegen sie, und das war hauptsächlich meine Schuld. Ich habe mein Ego mal zurückgesteckt und wollte unbedingt gewinnen, also habe ich mich voll und ganz auf die Vorbereitung der heutigen Matches konzentriert.“\n\n{{player}} gibt sich große Mühe, sich zu verbessern.",
+            "subject3": "{{broadcast}} — Begeisterung um {{player}}",
+            "body3": "Die gesamte {{broadcast}}-Übertragung war begeistert von {{player}}s jüngsten Leistungen in dieser Woche. Insbesondere {{guest}} hob viele Verbesserungen hervor: „Ich hätte nicht erwartet, dass sich {{player}} in so kurzer Zeit so sehr verbessern würde. Ich glaube, ich habe noch nie einen Spieler gesehen, der sich so schnell verändert hat. Wie weit wird {{team_short}} mit {{player}} kommen? Wie weit wird sich {{player}} mit {{team_short}} weiterentwickeln können? Ich bin gespannt, was die Zukunft für sie bereithält.“\n\nDie Stimmung ändert sich!"
+          },
+          "negative": {
+            "subject0": "{{broadcast}} — {{player}} landete in der Statistik auf dem letzten Platz",
+            "body0": "{{guest}} bewegte sich bei der Diskussion über die Statistiken von {{player}} auf dünnem Eis: „{{team_short}} ist eine gute Mannschaft, aber sie kann nicht gewinnen, und statistisch gesehen deuten die Daten auf einen Sündenbock hin. {{player}} ist in vielen Bereichen das Schlusslicht der Liga, und wir haben im Spiel große Fehler gesehen. Normalerweise spielt {{team_short}} gut, aber jedes Mal, wenn sie kurz vor dem Sieg stehen, geht {{player}} einen Schritt zu weit und das Momentum kippt komplett.“\n\nHaben wir Optionen, um {{player}} zu ersetzen?",
+            "subject1": "{{broadcast}} — Negative Berichterstattung rund um {{team}}",
+            "body1": "{{guest}} kritisierte {{team_short}} trotz guter Ergebnisse: „Alle überschätzen {{team_short}} völlig. Hat jemand auf ihre Bildkonfiguration geachtet? Die Hände der Spieler verbergen einfach ihre schrecklichen Schwächen. In ein paar Wochen werdet ihr sehen, dass ich Recht habe. {{team_short}} wird so nicht in der Lage sein, auch nur ein einziges Ziel zu erreichen.“\n\nHat {{guest}} damit Recht?",
+            "subject2": "{{broadcast}} — Live-Interview mit {{player}}",
+            "body2": "{{player}} zeigte sich in einem Interview mit {{host}} zurückhaltend: \n{{host}} – „Euer Team scheint weiterhin mit einem Top-Spieler auf der schwachen Seite zu spielen. Ist das ein Spielstil, den ihr als Team auf der Grundlage von Scrims festgelegt habt?“ \n{{player}} – „Ich weiß es nicht. Nicht wirklich. Vielleicht liegt es daran, dass ich mich auf der Bühne nicht schnell genug an das anpassen kann, was auf der Karte passiert. Ich glaube nicht, dass es eine bewusste Entscheidung ist, zumindest nicht von mir.“\n\nDas ist wirklich ein schlechtes Interview. Wir müssen {{player}} so schnell wie möglich ein Medientraining geben.",
+            "subject3": "{{broadcast}} — {{player}} in der Übertragung beleidigt",
+            "body3": "{{guest}} war gegenüber {{player}} besonders hart, während er die Spiele von {{team_short}} kommentierte. Während eines Teamkampfs, bei dem {{player}} einen Skillshot verfehlte, schrie {{guest}} sofort: „Alter, wie kannst du das verfehlen?! Du hast nur eine Aufgabe.“ und beendete die Beschwerde mit einem „Wortwitz“, der auf {{player}}s Pseudonym basiert und den ich hier nicht schreiben werde. Es ist nicht das erste Mal, dass {{guest}} {{player}} ins Visier nimmt. Das grenzt mittlerweile an Belästigung. Ich habe Riot kontaktiert, um sicherzustellen, dass so etwas in der {{broadcast}}-Übertragung nicht noch einmal vorkommt."
+          }
+        },
+        "general": {
+          "positive": {
+            "subject0": "{{broadcast}} — {{team}}-Fans in der Sendung gelobt",
+            "body0": "{{guest}} wollte diese Woche eine Botschaft an die Liga-Communities senden: „An alle Fans, die mir zuhören. Schaut euch an, was die {{team_short}}-Fans online und bei Veranstaltungen leisten. Lasst euch davon inspirieren, macht es euch zu eigen, verfeinert es und feuert euer Team noch lauter an. Wir brauchen unbedingt diese Art von Begeisterung, die die Fans von {{team_short}} mitbringen. Niemand hat erwartet, dass sie so viel bewegen würden, und doch sind sie es. Wacht auf, Fans! Zeigt euren Stolz und sorgt dafür, dass ich das nächste Mal euch lobe statt sie.“\n\nDie Fans sind in Hochstimmung. Gebt ihnen die Show, die sie verlangen!",
+            "subject1": "{{broadcast}} — {{team_short}} dominiert in den Statistiken",
+            "body1": "{{guest}} wies auf die Dominanz von {{team}} in den Statistiken hin: „Ich war neugierig darauf, also habe ich nachgeschaut. {{team_short}} hat fast immer den ersten und zweiten Drachen. Sie bauen auf der Bot-Seite der Karte einen starken Schneeball auf, und ihr Top-Laner achtet sehr gut auf die schwache Seite. Wenn die Mitte des Spiels kommt, können sie je nach Draft entweder Drachen gegen Gold auf der gegnerischen Seite tauschen oder um eine frühe Seele kämpfen. Sie haben die Freiheit zu entscheiden, was sie auf der Karte tun wollen, und das verändert alles.“\n\nAchtet auf den Trainingsplan des Teams. Wir müssen zur richtigen Zeit in Topform sein.",
+            "subject2": "{{broadcast}} – Wer kann {{team}} noch aufhalten?",
+            "body2": "In der Sendung {{broadcast}} moderierte {{guest}} einen Sonderbeitrag über {{team_short}}, wobei er insbesondere das Makrospiel und den Einfluss des Jungler/Support-Duos auf die gesamte Karte hervorhob. Laut {{guest}}: “{{team}} ist im Moment nicht zu stoppen. Ihre Laner mögen zwar gefordert sein, aber ihr Jungler/Support-Duo ist in diesem Meta gottgleich.\n\nIch habe einige besondere Inhalte für Fans zusammengestellt, die Fanfiction über unser Jungler-Support-Duo schreiben.",
+            "subject3": "{{broadcast}} — Vorbereitung von {{team_short}} in der Sendung hervorgehoben",
+            "body3": "Die Vorbereitung von {{team_short}} wurde in der Sendung {{broadcast}} gelobt. {{host}} erwähnte ein aktuelles Interview mit dem Headcoach von {{team_short}}, in dem dieser sagte, dass sie viel an ihren Vorbereitungstools gearbeitet hätten: „Unser Analyst hat großartige Arbeit beim Aufbau unserer internen Tools geleistet. Ich denke, dass diese Tools heutzutage unverzichtbar sind, und natürlich ersetzen sie keine langfristige Arbeit und spezifische Counter-Picks, aber sie helfen dabei, eine solide tägliche Grundlage zu haben, wenn wir unsere Drafts erstellen und die Scrims vorbereiten.“\n\n Wir müssen den Vertrag unseres Analysten überprüfen."
+          },
+          "negative": {
+            "subject0": "{{broadcast}} — Fans von {{team}} in der Sendung kritisiert",
+            "body0": "Fans von {{team_short}} haben während der Sendung {{broadcast}} den Zorn von {{guest}} auf sich gezogen: „Es sind immer die Fans von {{team_short}}, die keine Grenzen kennen. Leute, ich weiß, dass ihr eure Mannschaft liebt, aber ihr könnt nicht ständig die anderen Fangemeinden beleidigen. Ich sage laut, was andere nicht sagen. Der Großteil eurer Fangemeinde ist toxisch, und ihr solltet die Verantwortung für die Belästigungen übernehmen, die ihr provoziert.“\n\nDieser Kommentar entfachte erneut einen Krieg in den sozialen Medien. Rassistische Kommentare richteten sich gegen {{team}}. Das dürfen wir nicht zulassen.",
+            "subject1": "{{broadcast}} — {{team}} liegt in den Statistiken zurück",
+            "body1": "{{guest}} zeigte mit dem Finger auf {{team}}: „Die Wahrheit trifft hart, aber die Statistiken lügen nicht. Egal, wie viel Gold sie im frühen Spielverlauf sammeln, {{team_short}} kann keine Spiele gewinnen. Sie erwecken den Eindruck, sich zu wehren, aber sie sichern sich nie Ziele in der Mitte des Spiels und vor allem spielen sie im Dunkeln. Schaut euch die Sichtweitenwerte an. Wie können sie erwarten, Kämpfe zu gewinnen, wenn sie nicht wissen, wo sich ihre Gegner auf der Karte befinden?“.\n\nLeider hat {{guest}} damit recht.",
+            "subject2": "{{broadcast}} – Wer kann {{team}} retten?",
+            "body2": "{{host}} gab in der Sendung {{broadcast}} Anregungen, wie {{team_short}} ein Comeback schaffen könnte: „Ich denke, {{team_short}} sollte an dieser Stelle sein Mentaltraining verbessern. In den letzten Spielen gab es eindeutig mentale Probleme. Wenn sie das nicht beheben können, müssen sie in der Saisonpause Spieler austauschen, um neuen Schwung zu erzeugen.\n\nKönnten wir vielleicht unseren Trainingsplan anpassen?",
+            "subject3": "{{broadcast}} — Vorbereitung von {{team_short}} in der Sendung kritisiert",
+            "body3": "{{host}} kritisierte diese Woche in der Sendung {{broadcast}} das Trainerteam von {{team_short}}: „Ich habe zwar nicht die Daten, die sie aus den Testspielen haben, aber ehrlich gesagt ist es in dieser Phase des Drafts geradezu kriminell, diesen Champion auszuwählen. Es scheint zwar aus Sicht der Spielpaarung eine gute Idee zu sein, aber insgesamt wird ihr Draft dadurch inkohärent. Sie können nicht angreifen, sie können nicht verteidigen, sie machen alles und nichts zugleich.\n\nWir sollten auf die Kohärenz unserer Drafts achten."
+          }
+        }
+      },
+      "rumour": {
+        "subject0": "{{rumour_media}} — Transfergerücht: {{player}} im Visier",
+        "body0": "{{host}} hat heute einen Transferhinweis gegeben: „Ich höre einiges über {{player}}. Mehrere Teams haben sich erkundigt. Es ist noch nichts bestätigt, aber der Transfermarkt rund um {{team_short}} heizt sich auf.“\n\nBehalte das im Hinterkopf, wenn du deinen Kader für den nächsten Split planst.",
+        "subject1": "{{rumour_media}} — Transfergerücht: {{player}} könnte auf die Bank gesetzt werden",
+        "body1": "{{host}} hat heute einen Transferhinweis gegeben: „Quellen haben mir erzählt, dass {{player}} am Ende des Splits auf die Bank gesetzt werden soll. {{team_short}} sucht derzeit nach Optionen in der zweiten Liga, hat aber nur begrenzte Möglichkeiten. Ich werde euch mehr erzählen, sobald ich kann.“\n\nWir sollten prüfen, ob wir diese Situation zu unserem Vorteil nutzen können.",
+        "subject2": "{{rumour_media}} — Transfergerücht: {{player}} von anderen Teams abgeworben",
+        "body2": "{{host}} hat heute {{player}}s Vertrag angesprochen: „{{team_short}} hat Schwierigkeiten, {{player}}s Vertrag zu verlängern. Viele Leute haben sich hinter den Kulissen an {{player}} gewandt, und Riot drückt bei dieser Situation ein Auge zu. Es ist sehr wahrscheinlich, dass {{player}} als Free Agent das Team wechselt, wenn der Vertrag bei {{team_short}} ausläuft.“\n\nDas erinnert uns an schwere Zeiten.",
+        "subject3": "{{rumour_media}} — Transfergerücht: Gespräche um {{player}}",
+        "body3": "{{host}} erwähnte aktive Gespräche um einen Spieler von {{team_short}}: „Es gibt Gespräche mit {{team_short}} über {{player}}. Wir sind noch weit davon entfernt, ein konkretes Angebot auf dem Tisch zu haben, aber die Teams sind interessiert.“\n\nWir sollten uns an den Gesprächen beteiligen, falls dies nicht bereits der Fall ist.",
+        "subject4": "{{rumour_media}} — Transfergerücht: {{player}} im Visier anderer Teams",
+        "body4": "{{host}} deutete Aktivitäten rund um den Vertrag von {{player}} an: „Ich kenne Leute, die mit mir über {{player}} gesprochen haben. Anscheinend hat {{team_short}} Interesse von mindestens zwei anderen Teams an {{player}} erhalten. Es ist ungewiss, ob {{team_short}} ihren Spieler behalten oder vorerst eine Kaderänderung vornehmen möchte. Ich werde euch auf dem Laufenden halten.“\n\nBehaltet dies im Hinterkopf, wenn ihr euren Kader für den nächsten Split plant.",
+        "subject5": "{{rumour_media}} — {{host}} deutet bevorstehenden Transfer für {{team}} an",
+        "body5": "{{host}} hat Andeutungen über einen bevorstehenden Wechsel gemacht: „Mir wurde gesagt, dass Gespräche rund um {{team_short}} stattfinden. Da ist etwas im Gange. Ich kann noch keine Namen nennen, aber bleibt dran – dieser Transfermarkt ist noch lange nicht vorbei.“\n\nKönnte nur Gerede sein, könnte aber auch wahr sein. Es lohnt sich, das im Auge zu behalten.",
+        "subject6": "{{rumour_media}} – Durchsickerte Informationen zum Ligaformat, {{host}} geht ins Detail",
+        "body6": "Gestern hat {{host}} einen möglichen Informationsleck aufgedeckt: „Mir wurde gesagt, dass die Liga Änderungen am Split-Format plant. Das ist zwar nicht bestätigt, aber meine Quellen sind normalerweise zuverlässig. Das könnte die Art und Weise, wie Teams ihre Kader zusammenstellen, durcheinanderbringen.“\n\nWenn das stimmt, könnte das Auswirkungen auf eure langfristige Planung haben.",
+        "subject7": "{{rumour_media}} – Großer Wechsel steht bevor, Liga in Aufruhr",
+        "body7": "{{host}} wird wegen bevorstehendem Wechsel auf die Schippe genommen: „In der Liga steht eine bedeutende Spielerbewegung bevor, über die noch niemand spricht. Ich sage nur so viel: Einige Teams werden ihre Kader komplett überdenken müssen.“\n\nBleiben Sie wachsam – der Markt ist in Bewegung.",
+        "subject8": "{{rumour_media}} — {{player}} wird wahrscheinlich an ein anderes Team abgegeben",
+        "body8": "{{host}} hat einen möglichen Kaderwechsel rund um {{player}} enthüllt: „Quellen haben mir mitgeteilt, dass {{team_short}} derzeit versucht, {{player}} an ein anderes Team abzugeben, um ihre Dynamik zu verändern. Es ist noch nicht unter Dach und Fach, aber angesichts der jüngsten Leistungen von {{team_short}} besteht durchaus die Möglichkeit, dass es dazu kommt.“\n\nWir könnten versuchen, weitere Informationen zu beschaffen, falls du daran interessiert bist.",
+        "subject9": "{{rumour_media}} — {{player}} ist während der Trainingsspiele ausgerastet",
+        "body9": "{{host}} gab weitere Einblicke in das jüngste Drama rund um {{team_short}}: „Soweit ich weiß, hat {{player}} den Cheftrainer nicht wirklich geschlagen, wie man auf X oder Reddit lesen kann, aber es gab während der Trainingsspiele eindeutig viel Feindseligkeit. Das Trainerteam hat für die letzten Trainingsspiele sogar einen Ersatzspieler eingesetzt. Es ist ungewiss, ob {{player}} in den nächsten Spielen spielen kann. Solche Verhaltensprobleme können schnell verfliegen oder ein Team komplett auseinanderbrechen lassen. Ich bleibe am Ball und gebe Bescheid, sobald ich mehr Informationen habe.“\n\n{{player}} hat offenbar Verhaltensprobleme. Behaltet das im Hinterkopf, falls ihr euch für diesen Spieler in der kommenden Offseason interessiert."
+      },
+      "streamer": {
         "positive": {
-          "subject0": "Esportmaníacos lobt {{player}} — das Panel ist sich einig",
-          "body0": "Die Tertulianos von Esportmaníacos haben einen guten Teil des heutigen Streams damit verbracht, über {{player}} bei {{team}} zu reden.\n\n„Diese Woche gibt es nichts zu kritisieren. Der Typ dominiert einfach.“ Schwer zu widersprechen. Die positive Berichterstattung sollte die Stimmung in der Kabine heben.",
-          "subject1": "Esportmaníacos: {{player}} trägt {{team}} in diesem Split",
-          "body1": "Die Tertulianos von Esportmaníacos sind selten einer Meinung, aber {{player}} bekam heute einen Freifahrtschein: „Konstant, solide, keine Formkrise. Einer der besten Spieler der Liga im Moment. {{team}} sollte alles tun, um ihn zu halten.“\n\nGut für die Moral — und für den Marktwert."
+          "subject0": "{{channel}} — Selbst {{pseudo}} gibt zu: Die Zuschauerzahlen sind diese Woche gestiegen",
+          "body0": "{{pseudo}} überraschte mit einer seltenen positiven Einschätzung: „Ich bin ehrlich – die Zahlen sind diese Woche gestiegen, und ich werde nicht so tun, als wäre es anders. Wenn die Spiele gut sind, kommen die Zuschauer. Ganz einfach“.\n\nEin positiver Moment für die gesamte Szene.",
+          "subject1": "{{channel}} — {{pseudo}} lobte {{team}}",
+          "body1": "{{pseudo}} hob hervor, wie gut {{team_short}} im letzten Spiel gespielt hat. Den Zuschauern gefiel besonders die ausführliche Erklärung der Sichtkonfiguration und des Makrospiels.\n\nDas ist die Art von Sichtbarkeit, die wir mögen.",
+          "subject2": "{{channel}} — {{player}} ist der Lieblingsspieler von {{pseudo}}",
+          "body2": "{{pseudo}} kann gar nicht aufhören, von {{player}} zu schwärmen: „Ich will ehrlich sein, ich finde, dass {{player}} ein wirklich guter Spieler ist. Die ausführliche Erklärung der Sichtkonfiguration und des Makrospiels hat mir gefallen.“\n\n{{player}} erhält in letzter Zeit viel Lob.",
+          "subject3": "{{channel}} — {{pseudo}} ist besonders begeistert vom Spielstil von {{team_short}}",
+          "body3": "{{pseudo}} hob hervor, wie gut {{player}} im letzten Spiel gespielt hat: „{{player}} ist momentan wirklich gut und gehört zu den besten Spielern der Liga. Ich habe den Hatern zugestimmt, aber um ehrlich zu sein, habe ich mich in Bezug auf {{team_short}} geirrt.“\n\n{{pseudo}} gibt selten zu, dass er sich geirrt hat.",
+          "subject4": "{{channel}} — {{pseudo}} lobte die Fans von {{team_short}}",
+          "body4": "{{pseudo}} lobte in einem kürzlich ausgestrahlten Stream besonders die Fans von {{team_short}}: „Das ist die Art von Atmosphäre, die ich jeden Tag sehen möchte. Gesunde Rivalität, guter Schlagabtausch, mehr kann ich mir nicht wünschen. Hut ab vor euch, {{team_short}}-Fans, ihr habt euren Verein wirklich stolz gemacht!“.\n\nWir können uns glücklich schätzen, eine so tolle Community zu haben.",
+          "subject5": "{{channel}} — Die Spiele dieser Woche haben {{pseudo}} tatsächlich begeistert",
+          "body5": "Das hört man nicht jeden Tag: {{pseudo}} zeigte sich in einem kürzlichen Stream begeistert: „Diese Woche hat es geklappt. Echte Spiele, echte Spannung, Zuschauer, die bis zum Schluss dabei blieben. So kann die Liga sein, wenn sie sich Mühe gibt.\n\nEine gute Woche für den E-Sport."
         },
         "negative": {
-          "subject0": "Esportmaníacos greift {{player}} an — das Panel kennt keine Gnade",
-          "body0": "Die Tertulianos von Esportmaníacos haben heute kein Blatt vor den Mund genommen bei {{player}}: „Der Typ ist völlig verschwunden. Was ist ihm in diesem Split passiert? {{team}} kann nicht weiterhin von einem Spieler abhängen, der so performed.“\n\nDiese Art von Berichterstattung trifft die Moral hart. Ein Gespräch mit dem Spieler wäre sinnvoll.",
-          "subject1": "Esportmaníacos zweifelt an der Konstanz von {{player}} bei {{team}}",
-          "body1": "Die heutige Tertulianos-Session von Esportmaníacos entwickelte sich zu einer vollständigen Analyse von {{player}}s jüngster Form. Das Urteil: „Inkonstant. Keine Regelmäßigkeit. Manchmal auf Top-Level, dann wieder unsichtbar. {{team}} verdient mehr von einem Spieler in dieser Rolle.“\n\nBehalte die Moral des Spielers im Blick."
-        }
-      },
-      "allio": {
-        "subject0": "Al Lío Podcast — Transfergerücht: {{player}} wird beobachtet",
-        "body0": "Eros hat im letzten Al-Lío-Episode einen Markttipp fallen lassen: „Ich höre Dinge über {{player}}. Mehrere Teams haben Fragen gestellt. Noch nichts bestätigt, aber der Mercato rund um {{team}} heizt sich auf.“\n\nBehalte das im Hinterkopf, wenn du deinen Kader für das nächste Split planst.",
-        "subject1": "Al Lío Podcast — Eros deutet eine eingehende Verpflichtung für {{team}} an",
-        "body1": "Eros lässt seit Tagen Hinweise auf Al Lío fallen: „Mir wurde gesagt, dass rund um {{team}} Gespräche stattfinden. Etwas wird gekocht. Ich kann noch keine Namen nennen, aber bleibt dran — dieser Mercato ist noch nicht vorbei.“\n\nKann Lärm sein, kann real sein. Es lohnt sich, aufzupassen.",
-        "subject2": "Al Lío Podcast — Liga-Format-Leak, Eros erklärt alles",
-        "body2": "Die heutige Al-Lío-Episode lief aus dem Ruder, als Eros einen möglichen Leak enthüllte: „Mir wurde gesagt, dass die Liga Formatänderungen für das nächste Split plant. Nicht offiziell, aber meine Quellen sind normalerweise zuverlässig. Das könnte die Art und Weise ändern, wie Teams ihre Kader aufbauen.“\n\nWenn es stimmt, könnte das deine langfristige Planung beeinflussen.",
-        "subject3": "Al Lío Podcast — Großer Transfer im Anmarsch, die Liga wird aufgewühlt",
-        "body3": "Eros ging live auf Al Lío mit dem, was er einen „Bombazo“ nannte: „Es steht eine bedeutende Spielerbewegung in der Liga bevor, über die noch niemand spricht. Ich sage nur das — einige Teams werden ihren Kader komplett überdenken müssen.“\n\nBleibt wachsam — der Markt bewegt sich.",
-        "rivalInterest": {
-          "subject": "Al Lío Podcast — {{player}} im Visier von {{rival}}",
-          "body0": "Eros eröffnete die letzte Al-Lío-Episode mit einer Bombe: 'Ich habe Informationen, dass {{rival}} begonnen hat, sich um {{player}} zu bemühen. Ihre Analysten überprüfen seit Wochen die letzten Serien und Solo-Queue-Daten. Noch kein formales Angebot, aber es wird schnell heiss.'\n\nWas ist eure Haltung, wenn sie Kontakt aufnehmen?",
-          "body1": "Al Lío Podcast hat exklusiv berichtet, dass {{player}} jetzt ein konkretes Ziel für {{rival}} ist.\n\nLaut Eros hat der Spieler nach jüngsten Bühnenauftritten Aufmerksamkeit erregt. Noch kein offizielles Angebot, aber der Druck steigt schnell.\n\nWas ist deine Haltung?"
-        }
-      },
-      "yuste": {
-        "up": {
-          "subject0": "el_yuste — sogar Yuste gibt zu: Viewer steigen diese Woche",
-          "body0": "Yuste überraschte seinen Stream mit einer seltenen positiven Meinung: „Ich bin ehrlich — die Zahlen steigen diese Woche und ich werde nicht so tun als ob nicht. Wenn die Matches gut sind, kommt das Publikum. So einfach ist das.“\n\nEin positiver Moment für die ganze Szene.",
-          "subject1": "el_yuste — die Matches dieser Woche haben sogar Yuste begeistert",
-          "body1": "Nicht etwas, das man jeden Tag hört: Yuste war in seinem Morgen-Stream enthusiastisch. „Diese Woche hat geliefert. Echte Matches, echte Stakes, Viewer, die bis zum Ende geblieben sind. Das ist das, was die Liga sein kann, wenn sie es versucht.“\n\nGute Woche für Esports."
-        },
-        "down": {
-          "subject0": "el_yuste — Liga-Viewerzahlen im freien Fall und niemand tut etwas",
-          "body0": "Antonio Yuste eröffnete seinen Morgen-Stream mit einer richtigen Beschwerde: „Die Zahlen lügen nicht. Die Viewer fallen Woche für Woche und die Liga macht weiterhin dasselbe und erwartet andere Ergebnisse. C'est fini, wenn sich nichts ändert.“\n\nNur Hintergrundrauschen — aber wenn Yuste spricht, hört die Community zu.",
-          "subject1": "el_yuste — das Liga-Produkt ist kaputt, laut Yuste",
-          "body1": "Yuste hat eine gute halbe Stunde seines Morgen-Streams damit verbracht, das sinkende Engagement der Liga zu analysieren: „Ich sage das seit Monaten. Das Produkt ist nicht gut genug. Das Format langweilt, der Spielplan killt den Schwung. Die Daten sind eindeutig.“\n\nHart, aber Yustes Publikum nimmt es ernst."
+          "subject0": "{{channel}} – Die Zuschauerzahlen der Liga brechen ein, und niemand kümmert sich darum",
+          "body0": "{{name}} eröffnete den morgendlichen Stream mit einer heftigen Tirade: „Die Zahlen lügen nicht. Die Zuschauerzahlen sinken Woche für Woche, und die Liga macht immer wieder dasselbe und erwartet andere Ergebnisse. C’est fini, wenn sich nichts ändert.“\n\nNur Hintergrundgeräusche – aber wenn {{pseudo}} spricht, hört die Community zu.",
+          "subject1": "{{channel}} — {{pseudo}} hat {{player}} scharf kritisiert",
+          "body1": "{{pseudo}} hat in einem aktuellen Stream darauf bestanden, {{player}} zu kritisieren: „Wie kann man nur so schlecht sein? Im Ernst, {{player}}, schau dir deine Karte an! Ich schwöre, selbst in Bronze spielen die Leute besser.“\n\nIch habe mich privat mit {{pseudo}} unterhalten, um sicherzustellen, dass eine Entschuldigung erfolgt.",
+          "subject2": "{{channel}} — {{player}} gehört laut {{pseudo}} zu den schlechtesten Spielern der Liga",
+          "body2": "{{pseudo}} hat sich unnachgiebig über {{player}} geäußert: „Ich werde schonungslos sein. {{player}} gehört in allen Positionen zu den drei Schlechtesten der Liga. {{team_short}} hat alles getan, um dieses Team zum Funktionieren zu bringen, aber wenn {{player}} keine Hände hat, können sie keine Wunder vollbringen.“\n\n{{pseudo}} grenzt an dieser Stelle schon an Belästigung von {{player}}",
+          "subject3": "{{channel}} — {{pseudo}} äußert sich besonders kritisch über {{player}}",
+          "body3": "{{pseudo}} geht hart mit {{player}} ins Gericht: „Ich will ehrlich sein. Ich glaube nicht, dass {{player}} gut genug ist, um auf diesem Niveau mitzuspielen. In der zweiten Liga werden solche Fehler nicht bestraft, aber in dieser Liga ist das ein absolutes No-Go. Ich wünsche {{player}} nichts Schlechtes, aber ich denke, dass es in der zweiten Liga andere Spieler gibt, die besser sind und die die Chance bekommen sollten, das zu beweisen„.\n\nWas sind unsere Optionen in Tier 2?",
+          "subject4": "{{channel}} — {{pseudo}} hat einen Streit mit den Fans von {{team_short}} angezettelt",
+          "body4": "{{pseudo}} hat unsere Fans ins Visier genommen: „Ihr seid wirklich Tiere. Eure Community ist so toxisch, dass es unglaublich ist. Und ich bin mir sicher, dass euer Besitzer wie immer keinen Mucks von sich geben wird. Haltet euch einfach verdammt noch mal von meinem Stream fern und fresst Scheiße, Arschlöcher.“\n\nDieses Verhalten ist absolut unerträglich. Ich habe eine Nachricht an Riot geschickt. Sorgt einfach dafür, dass die Spieler unsere Community auf dem Rift verteidigen.",
+          "subject5": "{{channel}} — Laut {{pseudo}} ist das Liga-Produkt kaputt",
+          "body5": "{{pseudo}} hat in einem aktuellen Stream gut und gerne dreißig Minuten damit verbracht, das sinkende Engagement in der Liga zu analysieren: „Ich sage das schon seit Monaten. Das Produkt ist nicht gut genug. Das Format ist langweilig und der Spielplan bremst den Schwung.“\n\nHarsh, aber {{pseudo}}s Publikum nimmt das ernst."
         }
       }
     },
