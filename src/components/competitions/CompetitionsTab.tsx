@@ -49,15 +49,25 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
     : null;
 
   // Teams in selected competition
+  const allTeams = gameState.teams ?? [];
   const selectedTeamIds = selectedCompId
-    ? gameState.teams
-        .filter((t) => t.competition_id != null && t.competition_id === selectedCompId)
+    ? allTeams
+        .filter((t) => {
+          const cid = t.competition_id;
+          return cid != null && String(cid) === selectedCompId;
+        })
         .map((t) => t.id)
     : [];
 
+  // Debug info visible when teams don't match
+  const debugInfo = selectedCompId && allTeams.length > 0 && selectedTeamIds.length === 0
+    ? `Total equipos: ${allTeams.length}. Primeros: ${allTeams.slice(0, 3).map(t => `${t.id} (cid:${t.competition_id})`).join(', ')}`
+    : null;
+
   // Players in selected competition
+  const allPlayers = gameState.players ?? [];
   const selectedPlayers = selectedTeamIds.length > 0
-    ? gameState.players.filter((p) => p.team_id != null && selectedTeamIds.includes(p.team_id))
+    ? allPlayers.filter((p) => p.team_id != null && selectedTeamIds.includes(p.team_id))
     : [];
 
   // Standings sorted
@@ -426,6 +436,11 @@ function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
             {t("competitions.noTeams", "No hay equipos en esta competición.")}
           </p>
+          {debugInfo && (
+            <p className="text-xs text-red-400 text-center pb-4 font-mono">
+              {debugInfo}
+            </p>
+          )}
         </CardBody>
       </Card>
     );
