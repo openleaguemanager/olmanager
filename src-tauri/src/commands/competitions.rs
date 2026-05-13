@@ -256,23 +256,16 @@ pub fn get_league_selection_data(
             });
         }
 
-        // Only show Tier 1 competitions as playable
         let tier = manifest.tier.unwrap_or(0);
-        if tier >= 1 {
-            competitions.push(CompetitionSummary {
-                id: manifest.id.clone(),
-                name: manifest.name.clone(),
-                region: manifest.region.clone(),
-                logo: manifest.logo.clone(),
-                team_count: manifest.schedule.team_count,
-                teams: team_summaries,
-            });
-        } else {
-            info!(
-                "[competitions] skipping '{}' — Tier {} not playable",
-                manifest.id, tier
-            );
-        }
+        competitions.push(CompetitionSummary {
+            id: manifest.id.clone(),
+            name: manifest.name.clone(),
+            region: manifest.region.clone(),
+            logo: manifest.logo.clone(),
+            tier,
+            team_count: manifest.schedule.team_count,
+            teams: team_summaries,
+        });
     }
 
     info!(

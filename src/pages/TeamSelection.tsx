@@ -428,47 +428,62 @@ export default function TeamSelection() {
         </header>
 
         <div className="max-w-4xl mx-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {leagueData.competitions.map((comp) => (
-              <button
-                key={comp.id}
-                onClick={() => setSelectedCompetitionId(comp.id)}
-                className="text-left transition-all duration-200 rounded-xl hover:scale-[1.01]"
-              >
-                <Card className="h-full">
-                  <div className="p-5 rounded-xl">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-navy-700 flex items-center justify-center overflow-hidden">
-                        {comp.logo ? (
-                          <img
-                            src={comp.logo}
-                            alt={`${comp.name} logo`}
-                            className="w-10 h-10 object-contain"
-                          />
-                        ) : (
-                          <Globe className="w-6 h-6 text-gray-400" />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-heading font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide text-sm">
-                          {comp.name}
-                        </h3>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                          {comp.region}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                      <Users className="w-3.5 h-3.5" />
-                      <span>
-                        {comp.team_count} {t("teamSelect.teams", "teams")}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </button>
-            ))}
-          </div>
+          {([1, 2] as const).map((tier) => {
+            const tierComps = leagueData.competitions.filter((c) => c.tier === tier);
+            if (tierComps.length === 0) return null;
+            return (
+              <div key={tier} className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-navy-600" />
+                  <span className="text-xs font-heading font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                    {tier === 1 ? "Tier 1" : "Tier 2"}
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-navy-600" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tierComps.map((comp) => (
+                    <button
+                      key={comp.id}
+                      onClick={() => setSelectedCompetitionId(comp.id)}
+                      className="text-left transition-all duration-200 rounded-xl hover:scale-[1.01]"
+                    >
+                      <Card className="h-full">
+                        <div className="p-5 rounded-xl">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-navy-700 flex items-center justify-center overflow-hidden">
+                              {comp.logo ? (
+                                <img
+                                  src={comp.logo}
+                                  alt={`${comp.name} logo`}
+                                  className="w-10 h-10 object-contain"
+                                />
+                              ) : (
+                                <Globe className="w-6 h-6 text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-heading font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide text-sm">
+                                {comp.name}
+                              </h3>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                {comp.region}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                            <Users className="w-3.5 h-3.5" />
+                            <span>
+                              {comp.team_count} {t("teamSelect.teams", "teams")}
+                            </span>
+                          </div>
+                        </div>
+                      </Card>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     );

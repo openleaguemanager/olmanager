@@ -674,6 +674,7 @@ export interface CompetitionSummary {
   name: string;
   region: string;
   logo: string | null;
+  tier: number;
   team_count: number;
   teams: TeamSummary[];
 }

@@ -1,0 +1,1657 @@
+{
+  "name": "LRN Players",
+  "description": "LRN - 2026 Season",
+  "players": [
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Beşiktaş Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Eternal Fire",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "OK BRION Challengers",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "OK BRION Challengers",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Shadow Academy",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Liiv SANDBOX Academy",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "LSB Challengers",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "SANDBOX Academy",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "loan_listed": false,
+      "contract_end": "2026-11-16",
+      "transfer_listed": false,
+      "id": "558e85b3-1873-4ea9-a20e-e23bc7e80a15",
+      "match_name": "Jeong Ye-chan",
+      "full_name": "Ivory",
+      "position": "Mid",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778493559142_0iinhg857hnt.webp"
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "team-cb9503c1",
+          "team_name": "LYON",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Movistar R7",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Movistar R7",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Movistar R7",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Movistar R7",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Isurus",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2019,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Isurus",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2018,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Movistar R7",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2017,
+          "assists": 0,
+          "team_id": "team-cb9503c1",
+          "team_name": "LYON",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2016,
+          "assists": 0,
+          "team_id": "team-cb9503c1",
+          "team_name": "LYON",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2016,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Galactic Gamers",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2015,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Gaming Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2015,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Dash9 Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2014,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Team ANG",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2013,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Ducks on Fire",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "attributes": {
+        "laning": 78,
+        "mechanics": 75,
+        "discipline": 78,
+        "macro_play": 76,
+        "consistency": 79,
+        "shotcalling": 81,
+        "teamfighting": 76,
+        "champion_pool": 73,
+        "mental_resilience": 79
+      },
+      "loan_listed": false,
+      "contract_end": "2026-11-16",
+      "potential_base": 85,
+      "transfer_listed": false,
+      "id": "8cdb4eb9-322b-4657-a634-caee984dfb8a",
+      "match_name": "Sebastián Alonso Niño Zavaleta",
+      "full_name": "Oddie",
+      "position": "Jungle",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778493248497_goqayj38ecb.webp",
+      "overall": 77
+    },
+    {
+      "id": "player-0e4ae1fb",
+      "wage": 113000,
+      "stats": {
+        "appearances": 0
+      },
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "G3V E-sports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "RX Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "3v Team",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "LYON Academy",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zeu5 Esport",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "3v Team",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "3v Team",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Tomorrow Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Pirates IDV",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Vandals Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Ramo Awake Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Mayan Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zenith Esports",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "team-6613965b",
+      "position": "Jungle",
+      "condition": 100,
+      "full_name": "Gato",
+      "attributes": {
+        "laning": 63,
+        "mechanics": 64,
+        "discipline": 67,
+        "macro_play": 64,
+        "consistency": 67,
+        "shotcalling": 72,
+        "teamfighting": 60,
+        "champion_pool": 70,
+        "mental_resilience": 67
+      },
+      "match_name": "Sergio Steven Bautista Grajales",
+      "loan_listed": false,
+      "morale_core": {},
+      "nationality": "Colombia",
+      "contract_end": "2026-12-20",
+      "market_value": 1695000,
+      "birth_country": null,
+      "date_of_birth": "2000-01-01",
+      "potential_base": 73,
+      "training_focus": null,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "natural_position": "Mid",
+      "profile_image_url": "/player-photos/37420bb8.webp",
+      "potential_revealed": null,
+      "alternate_positions": [],
+      "champion_training_target": null,
+      "champion_training_targets": [],
+      "potential_research_eta_days": null,
+      "potential_research_started_on": null,
+      "overall": 66
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "NCG Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "AG Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Academy",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports Red\t",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "attributes": {
+        "laning": 60,
+        "mechanics": 61,
+        "discipline": 67,
+        "macro_play": 61,
+        "consistency": 61,
+        "shotcalling": 68,
+        "teamfighting": 62,
+        "champion_pool": 68,
+        "mental_resilience": 67
+      },
+      "loan_listed": false,
+      "potential_base": 75,
+      "transfer_listed": false,
+      "id": "bd115949-d87b-4b31-bcf5-9ba61116bbb5",
+      "match_name": "Alan Francisco Barajas Ontiveros",
+      "full_name": "Alitan",
+      "position": "Jungle",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778521788205_jk5vjguc1ff.webp",
+      "overall": 64
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "LYON Academy",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "SaiHun",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Magic Hunter Blue",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Magic Hunter Red\t",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Waia Snikt",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Aguilas Doradas",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "attributes": {
+        "laning": 67,
+        "mechanics": 68,
+        "discipline": 62,
+        "macro_play": 65,
+        "consistency": 63,
+        "shotcalling": 68,
+        "teamfighting": 67,
+        "champion_pool": 67,
+        "mental_resilience": 65
+      },
+      "loan_listed": false,
+      "potential_base": 75,
+      "transfer_listed": false,
+      "id": "1947b668-b672-4455-bc4f-d70f1ecb9859",
+      "match_name": "Juan Fernando Bernal Garzón",
+      "full_name": "Keis",
+      "position": "Jungle",
+      "overall": 66
+    },
+    {
+      "id": "player-06e1af72",
+      "wage": 116000,
+      "stats": {
+        "appearances": 0
+      },
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Polar Squad Esport",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Hot N Ready",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Hot N Ready",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Xibalbá",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "STMN Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "LDU Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Ascendent Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Tomorrow Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Waia Snikt",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zylant Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zylant Esports",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "team-f0cf6322",
+      "position": "Jungle",
+      "condition": 100,
+      "full_name": "Saens",
+      "attributes": {
+        "laning": 67,
+        "mechanics": 72,
+        "discipline": 67,
+        "macro_play": 71,
+        "consistency": 64,
+        "shotcalling": 70,
+        "teamfighting": 74,
+        "champion_pool": 68,
+        "mental_resilience": 65
+      },
+      "match_name": "Ángel Santiago Saens Aguilar",
+      "loan_listed": false,
+      "morale_core": {},
+      "nationality": "Mexico",
+      "contract_end": "2026-12-20",
+      "market_value": 1740000,
+      "birth_country": null,
+      "date_of_birth": "2003-06-17",
+      "potential_base": 82,
+      "training_focus": null,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "natural_position": "Mid",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778584873578_u5teeyi053e.webp",
+      "potential_revealed": null,
+      "alternate_positions": [],
+      "champion_training_target": null,
+      "champion_training_targets": [],
+      "potential_research_eta_days": null,
+      "potential_research_started_on": null,
+      "overall": 69
+    },
+    {
+      "id": "player-6f1ee624",
+      "wage": 101000,
+      "stats": {
+        "appearances": 0
+      },
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Space Rabbit e-Sports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "DSC3V",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Janus Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "PÊEK Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Pirate Dream",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zeu5 Bogota",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Furious Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zeu5 Bogota",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Arctic Mexico",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2019,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Estral Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2018,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Just Toys Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2018,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Pixel Esports Club\t",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2018,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "DP5 Gaming",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "team-dcg2025",
+      "position": "Jungle",
+      "condition": 100,
+      "full_name": "Feng",
+      "attributes": {
+        "laning": 59,
+        "mechanics": 63,
+        "discipline": 68,
+        "macro_play": 61,
+        "consistency": 61,
+        "shotcalling": 72,
+        "teamfighting": 67,
+        "champion_pool": 65,
+        "mental_resilience": 68
+      },
+      "match_name": "Jose Sergio Ricalday Ramirez",
+      "loan_listed": false,
+      "morale_core": {},
+      "nationality": "Mexico",
+      "contract_end": "2026-12-20",
+      "market_value": 1515000,
+      "birth_country": null,
+      "date_of_birth": "1998-08-21",
+      "potential_base": 70,
+      "training_focus": null,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "natural_position": "Mid",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778585326098_46cl4kxhkbz.webp",
+      "potential_revealed": null,
+      "alternate_positions": [],
+      "champion_training_target": null,
+      "champion_training_targets": [],
+      "potential_research_eta_days": null,
+      "potential_research_started_on": null,
+      "overall": 65
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "NCG Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "AG Esports Blue",
+          "appearances": 0
+        }
+      ],
+      "attributes": {
+        "laning": 60,
+        "mechanics": 62,
+        "discipline": 62,
+        "macro_play": 61,
+        "consistency": 60,
+        "shotcalling": 67,
+        "teamfighting": 64,
+        "champion_pool": 61,
+        "mental_resilience": 65
+      },
+      "loan_listed": false,
+      "stats.injury": "",
+      "stats.morale": "100",
+      "stats.fitness": "100",
+      "potential_base": 75,
+      "stats.condition": "100",
+      "transfer_listed": false,
+      "id": "ffb5ef9c-cb3c-4c13-9676-60b6b903441d",
+      "match_name": "Daniel Elías",
+      "full_name": "ZellDun",
+      "position": "Jungle",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778586869308_sgdgfs5i09r.webp",
+      "overall": 62
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Isurus",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Isurus",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Isurus",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Team Aze",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "LDM Mexico",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Pixel Esports Club",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Estral Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2019,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Cream Mexico",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2018,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "INFINITY",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "loan_listed": false,
+      "contract_end": "2026-11-16",
+      "transfer_listed": false,
+      "id": "ed3493c0-00ab-4fb7-bb81-fa5fd56585a2",
+      "match_name": "Omar André Gavotto",
+      "full_name": "Gavotto",
+      "position": "ADC",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778493741720_6ohd3pg4gv.webp"
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "G3V E-sports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "3v Team",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Milk Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Zeu5 Esport",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "PÊEK Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "PÊEK Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Ascendent Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Ascendent Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Tomorrow Esports\t",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Maycam Evolve",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Atheris Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Atheris Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Pixel Esports Club",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "XTEN Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2019,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "XTEN Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2018,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Feint Gaming",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "id": "fd18d533-f094-415d-8c16-f4c9a3aa861f",
+      "match_name": "Gabriel Grimaldi Moreau",
+      "full_name": "Crecre",
+      "position": "Support",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778507641248_y7dwjrr20kk.webp"
+    },
+    {
+      "id": "player-cd1f25da",
+      "wage": 98000,
+      "stats": {
+        "appearances": 0
+      },
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "G3V E-sports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Icon Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "RX Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Kai Cenat",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "3v Team",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "McDonals Workers",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "LYON Academy",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Rosso Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "3v Team",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Osaka",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Ramo Awake Gaming",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Mayan Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Skull Cracker",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "team-6613965b",
+      "position": "ADC",
+      "condition": 100,
+      "full_name": "Intio",
+      "attributes": {
+        "laning": 82,
+        "mechanics": 79,
+        "discipline": 75,
+        "macro_play": 74,
+        "consistency": 74,
+        "shotcalling": 66,
+        "teamfighting": 75,
+        "champion_pool": 80,
+        "mental_resilience": 71
+      },
+      "match_name": "Andres Felipe Rodriguez Silva",
+      "loan_listed": false,
+      "morale_core": {},
+      "nationality": "Colombia",
+      "contract_end": "2026-12-20",
+      "market_value": 1470000,
+      "birth_country": null,
+      "date_of_birth": "2004-06-17",
+      "potential_base": 84,
+      "training_focus": null,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "natural_position": "Adc",
+      "profile_image_url": "/player-photos/6b4a9cff.webp",
+      "potential_revealed": null,
+      "alternate_positions": [],
+      "champion_training_target": null,
+      "champion_training_targets": [],
+      "potential_research_eta_days": null,
+      "potential_research_started_on": null,
+      "overall": 75
+    },
+    {
+      "id": "player-b10e73cf",
+      "wage": 113000,
+      "stats": {
+        "appearances": 0
+      },
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "team-0c8be917",
+          "team_name": "Leviatán",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Estral Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Estral Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "All Knights",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2021,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "All Knights",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2020,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Coscu Army",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "team-1aec474f",
+      "position": "Top",
+      "condition": 100,
+      "full_name": "Zothve",
+      "attributes": {
+        "laning": 73,
+        "mechanics": 75,
+        "discipline": 71,
+        "macro_play": 70,
+        "consistency": 70,
+        "shotcalling": 68,
+        "teamfighting": 70,
+        "champion_pool": 70,
+        "mental_resilience": 71
+      },
+      "match_name": "Cristóbal Arróspide",
+      "loan_listed": false,
+      "morale_core": {},
+      "nationality": "Chile",
+      "contract_end": "2026-12-20",
+      "market_value": 1695000,
+      "birth_country": null,
+      "date_of_birth": "2003-02-18",
+      "potential_base": 79,
+      "training_focus": null,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "natural_position": "Top",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778492733838_ifsojhan8xj.webp",
+      "potential_revealed": null,
+      "alternate_positions": [],
+      "champion_training_target": null,
+      "champion_training_targets": [],
+      "potential_research_eta_days": null,
+      "potential_research_started_on": null,
+      "overall": 71
+    },
+    {
+      "career": [
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2026,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "NCG Esports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Golden Lions",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Fuego",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Dark Project",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Senshi eSports",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2024,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Spectacled Bears",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Spectacled Bears",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2023,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Vipers",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2022,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Lightning",
+          "appearances": 0
+        },
+        {
+          "kills": 0,
+          "deaths": 0,
+          "season": 2025,
+          "assists": 0,
+          "team_id": "",
+          "team_name": "Kai Cenat",
+          "appearances": 0
+        }
+      ],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "condition": 100,
+      "loan_listed": false,
+      "contract_end": "2026-11-16",
+      "transfer_listed": false,
+      "id": "37cecd91-30b9-4f80-95ef-9ac0e8cc299d",
+      "match_name": "Carlo Andre Carrion Zapata",
+      "full_name": "Shiku",
+      "position": "Support",
+      "profile_image_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778494411010_x6smc9k5lya.webp"
+    }
+  ]
+}
