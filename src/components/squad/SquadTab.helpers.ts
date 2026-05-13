@@ -421,9 +421,21 @@ export function buildActiveLineupIds(
 ): string[] {
   const byId = new Map(available.map((player) => [player.id, player]));
   const used = new Set<string>();
-  const activeIds: string[] = [];
+  const activeIds: string[] = Array(LOL_ACTIVE_ROLES.length).fill("");
 
-  for (const role of LOL_ACTIVE_ROLES) {
+  LOL_ACTIVE_ROLES.forEach((role, index) => {
+    const savedSlotPlayer = byId.get(savedIds[index] ?? "");
+
+    if (
+      savedSlotPlayer &&
+      !used.has(savedSlotPlayer.id) &&
+      getLolRoleForPlayer(savedSlotPlayer) === role
+    ) {
+      activeIds[index] = savedSlotPlayer.id;
+      used.add(savedSlotPlayer.id);
+      return;
+    }
+
     const savedRolePlayer = savedIds
       .map((id) => byId.get(id))
       .find(
@@ -432,9 +444,9 @@ export function buildActiveLineupIds(
       );
 
     if (savedRolePlayer) {
-      activeIds.push(savedRolePlayer.id);
+      activeIds[index] = savedRolePlayer.id;
       used.add(savedRolePlayer.id);
-      continue;
+      return;
     }
 
     const roleCandidates = available
@@ -443,12 +455,12 @@ export function buildActiveLineupIds(
 
     const bestRolePlayer = roleCandidates[0];
     if (bestRolePlayer) {
-      activeIds.push(bestRolePlayer.id);
+      activeIds[index] = bestRolePlayer.id;
       used.add(bestRolePlayer.id);
     }
-  }
+  });
 
-  return activeIds.slice(0, LOL_ACTIVE_ROLES.length);
+  return activeIds;
 }
 
 export function buildActiveLineupSlots(

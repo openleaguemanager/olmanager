@@ -122,6 +122,49 @@ describe("SquadTab helpers", () => {
     expect(slots.find((slot) => slot.role === "SUPPORT")?.player).toBeNull();
   });
 
+  it("keeps role slots stable when persisted lineup ids were compacted after transfers", () => {
+    const players = [
+      makePlayer("maynter", "TOP"),
+      makePlayer("rhilech", "JUNGLE"),
+      makePlayer("saken", "MID"),
+      makePlayer("deft", "ADC"),
+      makePlayer("trayton", "SUPPORT"),
+    ];
+
+    const ids = buildActiveLineupIds(players, ["maynter", "rhilech", "deft", "trayton"]);
+    const slots = buildActiveLineupSlots(
+      LOL_ACTIVE_ROLES,
+      ids,
+      new Map(players.map((player) => [player.id, player])),
+    );
+
+    expect(ids).toEqual(["maynter", "rhilech", "saken", "deft", "trayton"]);
+    expect(slots.find((slot) => slot.role === "MID")?.player?.id).toBe("saken");
+    expect(slots.find((slot) => slot.role === "ADC")?.player?.id).toBe("deft");
+    expect(slots.find((slot) => slot.role === "SUPPORT")?.player?.id).toBe("trayton");
+  });
+
+  it("preserves empty role placeholders so later roles do not shift left", () => {
+    const players = [
+      makePlayer("top", "TOP"),
+      makePlayer("jng", "JUNGLE"),
+      makePlayer("adc", "ADC"),
+      makePlayer("sup", "SUPPORT"),
+    ];
+
+    const ids = buildActiveLineupIds(players, ["top", "jng", "missing-mid", "adc", "sup"]);
+    const slots = buildActiveLineupSlots(
+      LOL_ACTIVE_ROLES,
+      ids,
+      new Map(players.map((player) => [player.id, player])),
+    );
+
+    expect(ids).toEqual(["top", "jng", "", "adc", "sup"]);
+    expect(slots.find((slot) => slot.role === "MID")?.player).toBeNull();
+    expect(slots.find((slot) => slot.role === "ADC")?.player?.id).toBe("adc");
+    expect(slots.find((slot) => slot.role === "SUPPORT")?.player?.id).toBe("sup");
+  });
+
   it("builds preferred positions using normalised natural and alternate roles", () => {
     const player = makePlayer("p1", "TOP", {
       natural_position: "TOP",

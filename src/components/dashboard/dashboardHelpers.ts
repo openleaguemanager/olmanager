@@ -11,7 +11,6 @@ import { getSponsorshipContractView } from "../../lib/lolFinanceContracts";
 import {
   buildActiveLineupIds,
   LOL_ACTIVE_ROLES,
-  type LolRole,
 } from "../squad/SquadTab.helpers";
 
 export interface DashboardAlert {
@@ -144,24 +143,13 @@ export function getDashboardAlerts(
     return !message.read && message.priority === "Urgent";
   }).length;
   const savedLineupIds = myTeam?.active_lineup_ids ?? myTeam?.starting_xi_ids ?? [];
+  const availableRoster = roster.filter((player) => !player.injury);
   const effectiveLineupIds = myTeam
-    ? buildActiveLineupIds(roster, savedLineupIds)
+    ? buildActiveLineupIds(availableRoster, savedLineupIds)
     : [];
-  const lineupPlayersOnRoster = effectiveLineupIds.filter((playerId) => {
-    return roster.some((player) => player.id === playerId);
-  });
-  const activeLineupRoleCount = new Set(
-    lineupPlayersOnRoster
-      .map((playerId) => roster.find((player) => player.id === playerId))
-      .filter((player): player is PlayerData => player !== undefined && !player.injury)
-      .map((player) => player.natural_position as LolRole)
-      .filter((role) => LOL_ACTIVE_ROLES.includes(role)),
-  ).size;
+  const activeLineupRoleCount = effectiveLineupIds.filter(Boolean).length;
   const healthyRosterRoleCount = new Set(
-    roster
-      .filter((player) => !player.injury)
-      .map((player) => player.natural_position as LolRole)
-      .filter((role) => LOL_ACTIVE_ROLES.includes(role)),
+    buildActiveLineupIds(availableRoster, []).filter(Boolean),
   ).size;
   const savedLineupPlayersOnRoster = savedLineupIds.filter((playerId) => {
     return roster.some((player) => player.id === playerId);

@@ -838,6 +838,47 @@ fn selling_key_player_can_reduce_remaining_starters_morale() {
 }
 
 #[test]
+fn accepted_sale_reconciles_lol_lineup_slots_without_shifting_roles() {
+    let mut sold_mid =
+        make_player_with_position("sold-mid", LolRole::Mid, Some("team-1"), 900_000);
+    sold_mid
+        .transfer_offers
+        .push(make_pending_incoming_offer("offer-sold-mid", 1_100_000));
+
+    let mut game = make_game_with_player(sold_mid, vec![], 5_000_000, 2_000_000);
+    game.players.extend([
+        make_player_with_position("top", LolRole::Top, Some("team-1"), 700_000),
+        make_player_with_position("jungle", LolRole::Jungle, Some("team-1"), 700_000),
+        make_player_with_position("bench-mid", LolRole::Mid, Some("team-1"), 800_000),
+        make_player_with_position("deft", LolRole::Adc, Some("team-1"), 950_000),
+        make_player_with_position("trayton", LolRole::Support, Some("team-1"), 650_000),
+    ]);
+    game.teams[0].active_lineup_ids = vec![
+        "top".to_string(),
+        "jungle".to_string(),
+        "sold-mid".to_string(),
+        "deft".to_string(),
+        "trayton".to_string(),
+    ];
+    game.teams[1].finance = 6_000_000;
+    game.teams[1].transfer_budget = 3_000_000;
+
+    respond_to_offer(&mut game, "sold-mid", "offer-sold-mid", true)
+        .expect("accepting the pending offer should succeed");
+
+    assert_eq!(
+        game.teams[0].active_lineup_ids,
+        vec![
+            "top".to_string(),
+            "jungle".to_string(),
+            "bench-mid".to_string(),
+            "deft".to_string(),
+            "trayton".to_string(),
+        ]
+    );
+}
+
+#[test]
 fn accepted_major_transfer_generates_news_article() {
     let mut player = make_player("player-news-major");
     player.market_value = 1_400_000;
