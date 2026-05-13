@@ -437,7 +437,6 @@ mod tests {
     use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
     use domain::manager::Manager;
     use domain::player::{Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, LolRole};
->>>>>>> origin/pr/166-171
     use domain::team::Team;
     use ofm_core::clock::GameClock;
     use ofm_core::game::Game;

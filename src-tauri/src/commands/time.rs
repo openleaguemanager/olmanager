@@ -180,7 +180,6 @@ mod tests {
     use domain::manager::Manager;
     use domain::message::{InboxMessage, MessagePriority};
     use domain::player::{Injury, Player, PlayerAttributes, LolRole};
->>>>>>> origin/pr/166-171
     use domain::stats::StatsState;
     use domain::team::Team;
     use ofm_core::clock::GameClock;
