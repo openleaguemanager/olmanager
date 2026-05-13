@@ -335,8 +335,15 @@ fn migrate_multi_competitions(tx: &Transaction<'_>) -> HookResult {
     Ok(())
 }
 
+/// V53 hook: drop formation column from teams table (table rebuild).
+fn migrate_v53_drop_formation(tx: &Transaction<'_>) -> HookResult {
+    tx.execute_batch(include_str!("sql/v053_remove_formation.sql"))?;
+    log::info!("[migration] V53: dropped formation column from teams");
+    Ok(())
+}
+
 /// Number of migrations defined. Keep in sync with the vec in `all_migrations`.
-pub const MIGRATION_COUNT: usize = 53;
+pub const MIGRATION_COUNT: usize = 55;
 
 /// All migrations for a per-save game database.
 /// Each save `.db` file gets this schema applied via `rusqlite_migration`.
@@ -451,6 +458,10 @@ pub fn all_migrations() -> Migrations<'static> {
         // V52: Multi-competition schema — competitions + seasons tables,
         // competition_id on fixtures/standings, backfill from legacy league
         M::up_with_hook("SELECT 1;", migrate_multi_competitions),
+        // V53: Drop formation column from teams table (table rebuild)
+        M::up_with_hook("SELECT 1;", migrate_v53_drop_formation),
+        // V54: Rename play_style column to draft_strategy
+        M::up(include_str!("sql/v054_rename_play_style_to_draft_strategy.sql")),
     ])
 }
 
