@@ -2731,7 +2731,7 @@
           "subject1": "{{channel}} — {{pseudo}} elogiou a {{team}}",
           "body1": "{{pseudo}} destacou o bom desempenho da {{team_short}} no último jogo. Os espectadores gostaram particularmente da explicação detalhada da configuração de visão e do jogo macro.\n\nÉ este tipo de visibilidade que gostamos.",
           "subject2": "{{channel}} — {{player}} é o jogador favorito de {{pseudo}}",
-          "body2": "{{pseudo}} não consegue parar de elogiar {{player}}: “Não vou mentir, acho que {{player}} é um jogador realmente bom. Gostei da explicação detalhada sobre a configuração de visão e o jogo macro”.\n\n{{player}} tem recebido muitos elogios ultimamente.",
+          "body2": "{{pseudo}} não consegue parar de elogiar {{player}}: “Não vou mentir, acho que {{player}} é um jogador realmente bom”.\n\n{{player}} tem recebido muitos elogios ultimamente.",
           "subject3": "{{channel}} — {{pseudo}} gosta particularmente da forma de jogar da {{team_short}}",
           "body3": "{{pseudo}} destacou o bom desempenho de {{player}} no último jogo: “{{player}} está em grande forma neste momento e está entre os melhores jogadores da liga. Eu concordava com os críticos, mas a verdade tem de ser dita: eu estava errado em relação ao {{team_short}}”.\n\n{{pseudo}} raramente admite estar errado.",
           "subject4": "{{channel}} — {{pseudo}} elogiou os adeptos do {{team_short}}",

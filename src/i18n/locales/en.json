@@ -2736,7 +2736,7 @@
           "subject1": "{{channel}} — {{pseudo}} praised {{team}}",
           "body1": "{{pseudo}} emphasized how {{team_short}} played good in the last match. The viewers particularly enjoyed the in-depth explanation of the vision setup and the macro game.\n\nThis is the kind of visibility we like.",
           "subject2": "{{channel}} — {{player}} favorite player of {{pseudo}}",
-          "body2": "{{pseudo}} cannot stop raving about {{player}}: \"I won't lie, I think that {{player}} is a really good player. enjoyed the in-depth explanation of the vision setup and the macro game\".\n\n{{player}} receives a lot of praises these days.",
+          "body2": "{{pseudo}} cannot stop raving about {{player}}: \"I won't lie, I think that {{player}} is a really good player\".\n\n{{player}} receives a lot of praises these days.",
           "subject3": "{{channel}} — {{pseudo}} particularly fond of {{team_short}}'s gameplay",
           "body3": "{{pseudo}} emphasized how {{player}} played good in the last match: \"{{player}} is really good right now and among the best players of the league. I agreed with the haters but truth has to be told, I was wrong about {{team_short}}\".\n\n{{pseudo}} rarely admits to being wrong.",
           "subject4": "{{channel}} — {{pseudo}} commended {{team_short}} fans",
