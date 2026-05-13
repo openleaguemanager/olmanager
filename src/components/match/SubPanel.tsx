@@ -350,37 +350,6 @@ export function SubPanel({
                   </table>
                 </div>
               </div>
-                            </td>
-                            <td className="py-2 w-12 text-center">
-                               <span className="text-xs font-heading text-gray-500 dark:text-gray-400">
-                                {translatePositionAbbreviation(t, p.role ?? "")}
-                              </span>
-                            </td>
-                             <td className="py-2 w-12 text-center font-heading font-bold text-gray-500 dark:text-gray-400">
-                              {ovr}
-                            </td>
-                            <td className="py-2 w-24">
-                              <div className="flex items-center gap-1.5">
-                                 <div className="flex-1 h-2 bg-gray-300 dark:bg-navy-600 rounded-full overflow-hidden transition-colors duration-300">
-                                  <div
-                                    className={`h-full ${condColor(p.condition)} rounded-full`}
-                                    style={{ width: `${p.condition}%` }}
-                                  />
-                                </div>
-                                <span
-                                  className={`text-xs tabular-nums font-heading w-7 text-right ${condText(p.condition)}`}
-                                >
-                                  {Math.round(p.condition)}
-                                </span>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
 
             {/* Right: Bench Players + Comparison */}
             <div className="flex-1 flex flex-col">
@@ -561,83 +530,6 @@ export function SubPanel({
                   </div>
                 )}
               </div>
-                ) : (
-                  <table className="w-full text-left">
-                    <thead>
-                       <tr className="text-2xs font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 border-b border-gray-200 dark:border-navy-700">
-                        <th className="py-2 pr-2">{t("match.player")}</th>
-                        <th className="py-2 w-12 text-center">
-                          {t("common.position")}
-                        </th>
-                        <th className="py-2 w-12 text-center">
-                          {t("common.ovr")}
-                        </th>
-                        <th className="py-2 w-24">{t("match.fitness")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {availableBench.map((p) => {
-                        const ovr = getOvr(p);
-                        // Off-position indicator: compare with selected player's position
-                        const posMatch = selectedPlayer
-                          ? (p.role ?? "") === (selectedPlayer.role ?? "")
-                          : true;
-                        return (
-                          <tr
-                            key={p.id}
-                            onClick={() => {
-                              handleSelectBenchPlayer(p.id);
-                            }}
-                            className={`transition-colors text-sm ${
-                              selectedOff
-                                ? selectedBench === p.id
-                                  ? "cursor-pointer bg-green-500/15 ring-1 ring-green-500/30"
-                                  : "cursor-pointer hover:bg-green-500/10"
-                                : "opacity-60"
-                            }`}
-                          >
-                            <td className="py-2 pr-2">
-                              <div className="flex items-center gap-1.5">
-                                {selectedOff && (
-                                  <UserPlus className="w-3.5 h-3.5 text-green-400/50 shrink-0" />
-                                )}
-                                 <span className="font-medium truncate text-gray-700 dark:text-gray-300">
-                                  {p.name}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="py-2 w-12 text-center">
-                              <span
-                                   className={`text-xs font-heading ${!posMatch && selectedOff ? "text-yellow-400" : "text-gray-500 dark:text-gray-400"}`}
-                              >
-                                {translatePositionAbbreviation(t, p.role ?? "")}
-                                {!posMatch && selectedOff && " !"}
-                              </span>
-                            </td>
-                             <td className="py-2 w-12 text-center font-heading font-bold text-gray-500 dark:text-gray-400">
-                              {ovr}
-                            </td>
-                            <td className="py-2 w-24">
-                              <div className="flex items-center gap-1.5">
-                                 <div className="flex-1 h-2 bg-gray-300 dark:bg-navy-600 rounded-full overflow-hidden transition-colors duration-300">
-                                  <div
-                                    className={`h-full ${condColor(p.condition)} rounded-full`}
-                                    style={{ width: `${p.condition}%` }}
-                                  />
-                                </div>
-                                <span
-                                  className={`text-xs tabular-nums font-heading w-7 text-right ${condText(p.condition)}`}
-                                >
-                                  {Math.round(p.condition)}
-                                </span>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                )}
               </div>
 
               {/* Sub History */}
