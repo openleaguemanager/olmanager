@@ -4,7 +4,7 @@
   "teams": [
     {
       "id": "team-012b64d1",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Solary",
       "colors": {
@@ -60,7 +60,7 @@
     },
     {
       "id": "team-92b46fef",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Skillcamp",
       "colors": {
@@ -116,7 +116,7 @@
     },
     {
       "id": "team-da97809e",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Galions",
       "colors": {
@@ -172,7 +172,7 @@
     },
     {
       "id": "team-c12fef91",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Ici Japon Corp. Esport",
       "colors": {
@@ -228,7 +228,7 @@
     },
     {
       "id": "team-d78a4aff",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "French Flair",
       "colors": {
@@ -284,7 +284,7 @@
     },
     {
       "id": "team-f8f7f78d",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "ZYB Esport",
       "colors": {
@@ -340,7 +340,7 @@
     },
     {
       "id": "team-ab04f649",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "JOblife",
       "colors": {
@@ -396,7 +396,7 @@
     },
     {
       "id": "team-af25d742",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Karmine Corp Blue",
       "colors": {
@@ -452,7 +452,7 @@
     },
     {
       "id": "team-0f9010b5",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "TLN Pirates",
       "colors": {
@@ -508,7 +508,7 @@
     },
     {
       "id": "team-8f3d532a",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Vitality Academy",
       "colors": {

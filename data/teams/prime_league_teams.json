@@ -4,7 +4,7 @@
   "teams": [
     {
       "id": "team-1cba5c67",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "A One Man Army",
       "colors": {
@@ -60,7 +60,7 @@
     },
     {
       "id": "team-a72b6e41",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "E WIE EINFACH E-SPORTS",
       "colors": {
@@ -116,7 +116,7 @@
     },
     {
       "id": "team-069c707b",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "G2 Nord",
       "colors": {
@@ -172,7 +172,7 @@
     },
     {
       "id": "team-e48c23c9",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Unicorns of Love Sexy Edition",
       "colors": {
@@ -228,7 +228,7 @@
     },
     {
       "id": "team-3cef0cfa",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Kaufland Hangry Knights",
       "colors": {
@@ -284,7 +284,7 @@
     },
     {
       "id": "team-0be37b7e",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Berlin International Gaming",
       "colors": {
@@ -340,7 +340,7 @@
     },
     {
       "id": "team-5dc37618",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Eintracht Frankfurt",
       "colors": {
@@ -396,7 +396,7 @@
     },
     {
       "id": "team-f3b86137",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "ROSSMANN Centaurs",
       "colors": {
@@ -452,7 +452,7 @@
     },
     {
       "id": "team-bec332f5",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Eintracht Spandau",
       "colors": {
@@ -508,7 +508,7 @@
     },
     {
       "id": "team-1347e217",
-      "city": null,
+      "city": "",
       "form": [],
       "name": "Team Orange Gaming",
       "colors": {
