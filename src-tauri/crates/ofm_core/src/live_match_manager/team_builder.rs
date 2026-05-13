@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use crate::game::Game;
 use crate::potential::calculate_lol_ovr;
 use domain::player::LolRole as DomainLolRole;
@@ -49,50 +50,12 @@ pub(super) fn build_team_with_bench(game: &Game, team_id: &str) -> (TeamData, Ve
         .iter()
         .map(|player| player.id.as_str())
         .collect::<HashSet<_>>();
-    let mut bench_domain = available_players
+    let bench_domain = available_players
         .into_iter()
         .filter(|player| !starter_ids.contains(player.id.as_str()))
         .collect::<Vec<_>>();
-    bench_domain.sort_by(|left, right| {
-        calculate_lol_ovr(right)
-            .cmp(&calculate_lol_ovr(left))
-            .then_with(|| right.condition.cmp(&left.condition))
-    });
 
-    let mut starters = ordered_players;
-    let bench_domain = if starters.len() > 5 {
-        starters.split_off(5)
-    } else {
-        Vec::new()
-    };
-
-    // Ensure unique roles: if the top 5 by OVR don't cover all 5 roles,
-    // replace duplicates with the best available player of the missing role.
-    let mut seen_roles = std::collections::HashSet::new();
-    let mut uniq = Vec::with_capacity(5);
-    let mut dup = Vec::new();
-    let old_starters = std::mem::take(&mut starters);
-    for player in old_starters {
-        if seen_roles.insert(player.natural_position) {
-            uniq.push(player);
-        } else {
-            dup.push(player);
-        }
-    }
-    if uniq.len() < 5 {
-        for player in bench_domain.iter().cloned() {
-            if seen_roles.insert(player.natural_position) {
-                uniq.push(player);
-            }
-            if uniq.len() == 5 {
-                break;
-            }
-        }
-    }
-    uniq.extend(dup);
-    starters = uniq.into_iter().take(5).collect();
     // Keep LoL lane order stable for draft/pre-match UIs.
-    // Selection follows the reconciled role slots; this only normalizes display order.
     let mut starters = starters;
     starters.sort_by(|left, right| {
         lol_role_rank(&left.natural_position)

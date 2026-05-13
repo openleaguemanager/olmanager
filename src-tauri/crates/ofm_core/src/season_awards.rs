@@ -1,7 +1,6 @@
 use crate::game::Game;
 use chrono::{Datelike, NaiveDate};
 use domain::player::Player;
-use domain::stats::LolRole;
 use serde::{Deserialize, Serialize};
 
 /// A single award entry (player + stat value).
