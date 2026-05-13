@@ -21,6 +21,7 @@ import {
   normalizeTrainingFocus,
 } from "../../lib/trainingFocus";
 import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
+import { resolvePlayerCurrentLolRole } from "../../lib/lolIdentity";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
 import type { GameStateData } from "../../store/gameStore";
@@ -149,16 +150,11 @@ function soloQEmblemUrl(tier: SoloQTier): string {
   return "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/master.png";
 }
 
-type UiRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
-
-function inferRoleIcon(player: GameStateData["players"][number]): string {
-  const key = String(player.natural_position || player.position || "").toLowerCase().replace(/[^a-z]/g, "");
-  let role: UiRole = "SUPPORT";
-  if (key.includes("defender") && !key.includes("midfielder")) role = "TOP";
-  else if (key.includes("midfielder") && !key.includes("attacking")) role = "JUNGLE";
-  else if (key.includes("attackingmidfielder")) role = "MID";
-  else if (key.includes("forward") || key.includes("striker")) role = "ADC";
-  return ROLE_ICON_PATHS[role];
+function inferRoleIcon(
+  player: GameStateData["players"][number],
+  team: GameStateData["teams"][number],
+): string {
+  return ROLE_ICON_PATHS[resolvePlayerCurrentLolRole(player, team)];
 }
 
 interface TrainingTabProps {
@@ -391,6 +387,8 @@ export default function TrainingTab({
                     currentIntensity,
                     currentSchedule,
                   );
+                  const soloQTierLabel = t(`training.soloQTiers.${soloQ.tier}`);
+
                   return (
                     <div key={player.id} className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 px-3 py-2 dark:border-navy-600">
                       <div className="flex min-w-0 items-center gap-2">
@@ -405,8 +403,8 @@ export default function TrainingTab({
                             }}
                           />
                           <img
-                            src={inferRoleIcon(player)}
-                            alt="role"
+                            src={inferRoleIcon(player, myTeam)}
+                            alt={t("training.roleIconAlt")}
                             className="absolute bottom-0 left-0 h-4 w-4 rounded-tr bg-navy-900/90 p-0.5"
                             loading="lazy"
                           />
@@ -415,7 +413,7 @@ export default function TrainingTab({
                           {player.match_name}
                         </p>
                         <p className={`text-[11px] font-heading uppercase tracking-wide ${soloQTierClass(soloQ.tier)}`}>
-                          {soloQ.tier} · {soloQ.lp} LP
+                          {soloQTierLabel} · {soloQ.lp} LP
                           <span className={`ml-1 ${soloQ.delta >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
                             {soloQ.delta >= 0 ? `+${soloQ.delta}` : soloQ.delta}
                           </span>
@@ -423,7 +421,7 @@ export default function TrainingTab({
                       </div>
                       <img
                         src={soloQEmblemUrl(soloQ.tier)}
-                        alt={soloQ.tier}
+                        alt={soloQTierLabel}
                         className="h-7 w-7 shrink-0 object-contain"
                         loading="lazy"
                         onError={(event) => {
@@ -450,10 +448,7 @@ export default function TrainingTab({
                 </div>
               ))}
               <p className="pt-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-navy-700">
-                {t(
-                  "training.staffImpact.note",
-                  "Staff improves learning, preparation and recovery conservatively; player attributes still drive results.",
-                )}
+                {t("training.staffImpact.note")}
               </p>
             </div>
           </CardBody>

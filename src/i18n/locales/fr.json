@@ -923,6 +923,13 @@
     "currentlyTraining": "Entraînement actuel : <strong>{{attrs}}</strong> à intensité <strong>{{intensity}}</strong>.",
     "recoveryNote": "Les joueurs privilégieront reset, repos et récupération à chaque jour d'entraînement.",
     "effectiveFocus": "Focus",
+    "soloQRanks": "Rangs SoloQ",
+    "roleIconAlt": "Rôle du joueur",
+    "soloQTiers": {
+      "Challenger": "Challenger",
+      "Grandmaster": "Grand maître",
+      "Master": "Maître"
+    },
     "trainingAppliedNote": "L'entraînement est appliqué les jours programmés quand vous avancez le temps. Les jours de repos offrent une récupération totale.",
     "criticalCondition": "{{count}} joueur(s) en condition critique (<25%)",
     "exhaustedPlayers": "{{count}} joueur(s) épuisé(s) (<40%)",
@@ -941,6 +948,13 @@
         "warnBalanced": "Un programme Léger pourrait aider l'équipe à rebondir.",
         "warnLight": "Reset mental / récupération maximiserait la récupération de condition."
       }
+    },
+    "staffImpact": {
+      "title": "Impact du staff",
+      "learning": "Apprentissage",
+      "scrims": "Préparation scrim",
+      "recovery": "Récupération",
+      "note": "Le staff améliore prudemment l'apprentissage, la préparation et la récupération ; les attributs des joueurs restent déterminants."
     },
     "focuses": {
       "Scrims": {

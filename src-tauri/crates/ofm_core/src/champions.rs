@@ -161,6 +161,46 @@ fn normalize_key(value: &str) -> String {
         .replace(|ch: char| !ch.is_ascii_alphanumeric(), "")
 }
 
+fn role_for_lineup_index(index: usize) -> Option<domain::player::LolRole> {
+    match index {
+        0 => Some(domain::player::LolRole::Top),
+        1 => Some(domain::player::LolRole::Jungle),
+        2 => Some(domain::player::LolRole::Mid),
+        3 => Some(domain::player::LolRole::Adc),
+        4 => Some(domain::player::LolRole::Support),
+        _ => None,
+    }
+}
+
+fn role_label_for_position(pos: domain::player::LolRole) -> &'static str {
+    match pos {
+        domain::player::LolRole::Top => "Top",
+        domain::player::LolRole::Jungle => "Jungle",
+        domain::player::LolRole::Mid => "Mid",
+        domain::player::LolRole::Adc => "ADC",
+        domain::player::LolRole::Support => "Support",
+        domain::player::LolRole::Unknown => "Unknown",
+    }
+}
+
+fn current_role_for_player(
+    game: &Game,
+    team_id: &str,
+    player_id: &str,
+    natural_position: domain::player::LolRole,
+) -> domain::player::LolRole {
+    game.teams
+        .iter()
+        .find(|team| team.id == team_id)
+        .and_then(|team| {
+            team.active_lineup_ids
+                .iter()
+                .position(|id| id == player_id)
+                .and_then(role_for_lineup_index)
+        })
+        .unwrap_or(natural_position)
+}
+
 fn normalize_role(value: &str) -> Option<String> {
     match normalize_key(value).as_str() {
         "top" => Some("Top".to_string()),
@@ -789,17 +829,6 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
         }
     };
 
-    let role_for_position = |pos: &domain::player::LolRole| -> String {
-        match pos {
-            domain::player::LolRole::Top => "Top".to_string(),
-            domain::player::LolRole::Jungle => "Jungle".to_string(),
-            domain::player::LolRole::Mid => "Mid".to_string(),
-            domain::player::LolRole::Adc => "ADC".to_string(),
-            domain::player::LolRole::Support => "Support".to_string(),
-            domain::player::LolRole::Unknown => "Unknown".to_string(),
-        }
-    };
-
     // Collect all meta entries upfront
     let meta_entries: Vec<ChampionMetaEntry> = game.champion_patch.hidden_meta.clone();
 
@@ -832,7 +861,12 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
 
     for player_id in player_ids {
         let player = game.players.iter().find(|p| p.id == player_id).unwrap();
-        let role = role_for_position(&player.natural_position);
+        let role = role_label_for_position(current_role_for_player(
+            game,
+            &manager_team_id,
+            &player_id,
+            player.natural_position,
+        ));
 
         let role_meta: Vec<&ChampionMetaEntry> = meta_entries
             .iter()
@@ -1395,4 +1429,113 @@ pub fn process_daily_champion_system(game: &mut Game) {
     }
 
     process_meta_discovery(game);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::clock::GameClock;
+    use chrono::Utc;
+    use domain::manager::Manager;
+    use domain::player::{LolRole, Player, PlayerAttributes};
+    use domain::team::Team;
+
+    fn attrs() -> PlayerAttributes {
+        PlayerAttributes {
+            pace: 60,
+            mental_resilience: 60,
+            strength: 60,
+            champion_pool: 60,
+            passing: 60,
+            laning: 60,
+            tackling: 60,
+            mechanics: 60,
+            defending: 60,
+            positioning: 60,
+            macro_play: 60,
+            consistency: 60,
+            discipline: 60,
+            aggression: 60,
+            teamfighting: 60,
+            shotcalling: 60,
+            handling: 20,
+            reflexes: 20,
+            aerial: 20,
+        }
+    }
+
+    fn game_with_lineup(lineup: Vec<&str>) -> Game {
+        let mut manager = Manager::new(
+            "manager-1".to_string(),
+            "Jane".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "ES".to_string(),
+        );
+        manager.hire("team-1".to_string());
+
+        let mut team = Team::new(
+            "team-1".to_string(),
+            "Team One".to_string(),
+            "ONE".to_string(),
+            "ES".to_string(),
+            "Madrid".to_string(),
+            "Arena".to_string(),
+            10_000,
+        );
+        team.active_lineup_ids = lineup.into_iter().map(str::to_string).collect();
+
+        Game::new(
+            GameClock::new(Utc::now()),
+            manager,
+            vec![team],
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        )
+    }
+
+    #[test]
+    fn current_role_for_player_uses_active_lineup_slot_before_natural_role() {
+        let mut game = game_with_lineup(vec!["new-top", "jungle", "mid", "adc", "support"]);
+        let mut player = Player::new(
+            "new-top".to_string(),
+            "New Top".to_string(),
+            "New Top".to_string(),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            LolRole::Support,
+            attrs(),
+        );
+        player.team_id = Some("team-1".to_string());
+        game.players.push(player.clone());
+
+        expect_role(&game, &player, LolRole::Top);
+    }
+
+    #[test]
+    fn current_role_for_player_keeps_bench_player_natural_role() {
+        let mut game = game_with_lineup(vec!["top", "jungle", "mid", "adc", "support"]);
+        let mut player = Player::new(
+            "bench-support".to_string(),
+            "Bench Support".to_string(),
+            "Bench Support".to_string(),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            LolRole::Support,
+            attrs(),
+        );
+        player.team_id = Some("team-1".to_string());
+        game.players.push(player.clone());
+
+        expect_role(&game, &player, LolRole::Support);
+    }
+
+    fn expect_role(game: &Game, player: &Player, expected: LolRole) {
+        let team_id = player.team_id.as_deref().unwrap();
+        assert_eq!(
+            current_role_for_player(game, team_id, &player.id, player.natural_position),
+            expected,
+        );
+    }
 }
