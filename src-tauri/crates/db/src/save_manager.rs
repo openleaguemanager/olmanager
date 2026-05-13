@@ -851,10 +851,8 @@ mod tests {
 
         {
             let db = GameDatabase::open(&db_path).unwrap();
-            let swapped_json = serde_json::to_string(&vec![
-                "sup", "jng", "mid", "top", "adc",
-            ])
-            .unwrap();
+            let swapped_json =
+                serde_json::to_string(&vec!["sup", "jng", "mid", "top", "adc"]).unwrap();
             db.conn()
                 .execute(
                     "UPDATE teams SET starting_xi_ids = ?1 WHERE id = ?2",

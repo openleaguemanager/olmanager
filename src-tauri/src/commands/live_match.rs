@@ -436,7 +436,7 @@ mod tests {
     use chrono::{TimeZone, Utc};
     use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, LolRole};
+    use domain::player::{LolRole, Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory};
     use domain::team::Team;
     use ofm_core::clock::GameClock;
     use ofm_core::game::Game;

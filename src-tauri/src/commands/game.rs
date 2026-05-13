@@ -1,6 +1,6 @@
 use chrono::{Datelike, TimeZone};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use domain::player::{Player, PlayerAttributes, LolRole};
+use domain::player::{LolRole, Player, PlayerAttributes};
 use domain::team::{
     AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
 };
@@ -18,9 +18,9 @@ use ofm_core::clock::GameClock;
 use ofm_core::game::Game;
 use ofm_core::state::StateManager;
 
+use crate::SaveManagerState;
 use crate::application::game_setup::avatar;
 use crate::error::AppError;
-use crate::SaveManagerState;
 use validator::Validate;
 
 #[derive(Debug, Clone, Serialize)]
@@ -896,11 +896,7 @@ pub(crate) fn potential_seed_for_player(match_name: &str) -> Option<u8> {
     let key = normalize_seed_name(match_name);
     draft_potential_map().get(&key).copied().or_else(
         || {
-            if key == "kyeahoo" {
-                Some(89)
-            } else {
-                None
-            }
+            if key == "kyeahoo" { Some(89) } else { None }
         },
     )
 }
@@ -1564,7 +1560,7 @@ pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
 #[cfg(test)]
 mod tests {
     use super::{apply_default_initial_contract_end, default_initial_contract_end_for_start_year};
-    use domain::player::{Player, PlayerAttributes, LolRole};
+    use domain::player::{LolRole, Player, PlayerAttributes};
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
@@ -1693,8 +1689,17 @@ fn build_lol_stats_from_seed(seed: &DraftPlayerSeed) -> [u8; 9] {
 }
 
 fn build_attributes_from_seed(seed: &DraftPlayerSeed) -> PlayerAttributes {
-    let [mechanics, laning, teamfighting, macro_play, consistency, shotcalling, champion_pool, discipline, mental_resilience] =
-        build_lol_stats_from_seed(seed);
+    let [
+        mechanics,
+        laning,
+        teamfighting,
+        macro_play,
+        consistency,
+        shotcalling,
+        champion_pool,
+        discipline,
+        mental_resilience,
+    ] = build_lol_stats_from_seed(seed);
 
     PlayerAttributes {
         mechanics,

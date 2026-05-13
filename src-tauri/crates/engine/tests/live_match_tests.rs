@@ -1,7 +1,7 @@
 use engine::ai::{AiProfile, ai_decide};
 use engine::{
-    EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase, MinuteResult,
-    DraftStrategy, PlayerData, Side, TeamData,
+    DraftStrategy, EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase,
+    MinuteResult, PlayerData, Side, TeamData,
 };
 use rand::SeedableRng;
 use rand::rngs::StdRng;
@@ -939,76 +939,16 @@ fn make_player_with_traits(
 
 fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> TeamData {
     let players = vec![
-        make_player_with_traits(
-            &format!("{}_gk1", id),
-            "GK1",
-            "Goalkeeper",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_def1", id),
-            "DEF1",
-            "Defender",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_def2", id),
-            "DEF2",
-            "Defender",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_def3", id),
-            "DEF3",
-            "Defender",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_def4", id),
-            "DEF4",
-            "Defender",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_mid1", id),
-            "MID1",
-            "Midfielder",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_mid2", id),
-            "MID2",
-            "Midfielder",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_mid3", id),
-            "MID3",
-            "Midfielder",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_mid4", id),
-            "MID4",
-            "Midfielder",
-            skill,
-            vec![],
-        ),
-        make_player_with_traits(
-            &format!("{}_fwd1", id),
-            "FWD1",
-            "Forward",
-            skill,
-            vec![],
-        ),
+        make_player_with_traits(&format!("{}_gk1", id), "GK1", "Goalkeeper", skill, vec![]),
+        make_player_with_traits(&format!("{}_def1", id), "DEF1", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_def2", id), "DEF2", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_def3", id), "DEF3", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_def4", id), "DEF4", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid1", id), "MID1", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid2", id), "MID2", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid3", id), "MID3", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid4", id), "MID4", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_fwd1", id), "FWD1", "Forward", skill, vec![]),
         make_player_with_traits(
             &format!("{}_fwd2", id),
             "FWD2",

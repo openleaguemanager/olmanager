@@ -17,9 +17,9 @@ pub struct AwardEntry {
 /// Season award standings — top 5 in each category.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SeasonAwards {
-    pub golden_boot: Vec<AwardEntry>,      // Top scorers
-    pub assist_king: Vec<AwardEntry>,      // Top assists
-    pub player_of_year: Vec<AwardEntry>,   // Best avg rating (min 5 apps)
+    pub golden_boot: Vec<AwardEntry>,    // Top scorers
+    pub assist_king: Vec<AwardEntry>,    // Top assists
+    pub player_of_year: Vec<AwardEntry>, // Best avg rating (min 5 apps)
     pub most_appearances: Vec<AwardEntry>,
     pub young_player: Vec<AwardEntry>, // Best avg rating, age <= 21
 }
@@ -424,5 +424,4 @@ mod tests {
             .collect();
         assert_eq!(young_player_ids, vec!["young-four-apps", "young-eligible"]);
     }
-
 }

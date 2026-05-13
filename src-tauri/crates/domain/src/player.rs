@@ -101,7 +101,6 @@ pub enum Footedness {
 pub struct PlayerAttributes {
     // These 9 attributes are used by the engine simulation.
     // Aliases provide backward compat with old save files (football-era names + removed fields).
-
     /// Mechanical skill — replaces reaction_speed
     #[serde(alias = "dribbling", alias = "reaction_speed")]
     pub mechanics: u8,
@@ -131,7 +130,11 @@ pub struct PlayerAttributes {
     pub champion_pool: u8,
 
     /// Discipline / composure — replaces positional_defense
-    #[serde(default = "default_attr", alias = "composure", alias = "positional_defense")]
+    #[serde(
+        default = "default_attr",
+        alias = "composure",
+        alias = "positional_defense"
+    )]
     pub discipline: u8,
 
     /// Mental resilience / stamina — replaces durability
