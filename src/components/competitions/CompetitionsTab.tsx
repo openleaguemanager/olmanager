@@ -60,8 +60,9 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
     : [];
 
   // Debug info visible when teams don't match
+  const uniqueCids = [...new Set(allTeams.map((t) => t.competition_id ?? "undefined"))];
   const debugInfo = selectedCompId && allTeams.length > 0 && selectedTeamIds.length === 0
-    ? `Total equipos: ${allTeams.length}. Primeros: ${allTeams.slice(0, 3).map(t => `${t.id} (cid:${t.competition_id})`).join(', ')}`
+    ? `Total:${allTeams.length} | selectedCompId:${selectedCompId} | cids:[${uniqueCids.join(',')}] | sample:${allTeams.slice(0, 3).map(t => `${t.id}(${t.competition_id})`).join(' ')}`
     : null;
 
   // Players in selected competition
@@ -172,6 +173,7 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
             <TeamsGrid
               teamIds={selectedTeamIds}
               gameState={gameState}
+              debugInfo={debugInfo}
             />
           )}
 
@@ -420,9 +422,10 @@ function StandingsTable({ standings, gameState }: StandingsTableProps) {
 interface TeamsGridProps {
   teamIds: string[];
   gameState: GameStateData;
+  debugInfo?: string | null;
 }
 
-function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
+function TeamsGrid({ teamIds, gameState, debugInfo }: TeamsGridProps) {
   const { t } = useTranslation();
 
   const teams = teamIds
