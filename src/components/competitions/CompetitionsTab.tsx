@@ -40,30 +40,21 @@ function getCompetitionColor(id: string): string {
 
 export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
   const { t } = useTranslation();
-  const [selectedCompId, setSelectedCompId] = useState<string | null>(null);
+  const [selectedCid, setSelectedCid] = useState<string | null>(null);
   const [detailView, setDetailView] = useState<DetailView>("calendar");
 
   const leagues = gameState.leagues;
-  const selectedLeague = selectedCompId
-    ? leagues.find((l) => l.id === selectedCompId) ?? null
+  const selectedLeague = selectedCid
+    ? leagues.find((l) => l.competition_id === selectedCid) ?? null
     : null;
 
-  // Teams in selected competition
+  // Teams in selected competition (competition_id = manifest id like "lec", not UUID)
   const allTeams = gameState.teams ?? [];
-  const selectedTeamIds = selectedCompId
+  const selectedTeamIds = selectedCid
     ? allTeams
-        .filter((t) => {
-          const cid = t.competition_id;
-          return cid != null && String(cid) === selectedCompId;
-        })
+        .filter((t) => t.competition_id === selectedCid)
         .map((t) => t.id)
     : [];
-
-  // Debug info visible when teams don't match
-  const uniqueCids = [...new Set(allTeams.map((t) => t.competition_id ?? "undefined"))];
-  const debugInfo = selectedCompId && allTeams.length > 0 && selectedTeamIds.length === 0
-    ? `Total:${allTeams.length} | selectedCompId:${selectedCompId} | cids:[${uniqueCids.join(',')}] | sample:${allTeams.slice(0, 3).map(t => `${t.id}(${t.competition_id})`).join(' ')}`
-    : null;
 
   // Players in selected competition
   const allPlayers = gameState.players ?? [];
@@ -102,15 +93,15 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
           <CompetitionCard
             key={league.id}
             league={league}
-            selected={selectedCompId === league.id}
+            selected={selectedCid === league.id}
             colorClass={getCompetitionColor(league.id)}
             teamsCount={
               gameState.teams.filter((t) => t.competition_id === league.id)
                 .length
             }
             onSelect={() =>
-              setSelectedCompId(
-                selectedCompId === league.id ? null : league.id,
+              setSelectedCid(
+                selectedCid === league.id ? null : league.id,
               )
             }
           />
@@ -173,7 +164,6 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
             <TeamsGrid
               teamIds={selectedTeamIds}
               gameState={gameState}
-              debugInfo={debugInfo}
             />
           )}
 
@@ -422,10 +412,9 @@ function StandingsTable({ standings, gameState }: StandingsTableProps) {
 interface TeamsGridProps {
   teamIds: string[];
   gameState: GameStateData;
-  debugInfo?: string | null;
 }
 
-function TeamsGrid({ teamIds, gameState, debugInfo }: TeamsGridProps) {
+function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
   const { t } = useTranslation();
 
   const teams = teamIds
@@ -439,11 +428,6 @@ function TeamsGrid({ teamIds, gameState, debugInfo }: TeamsGridProps) {
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
             {t("competitions.noTeams", "No hay equipos en esta competición.")}
           </p>
-          {debugInfo && (
-            <p className="text-xs text-red-400 text-center pb-4 font-mono">
-              {debugInfo}
-            </p>
-          )}
         </CardBody>
       </Card>
     );

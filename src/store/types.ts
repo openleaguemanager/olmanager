@@ -716,6 +716,8 @@ export interface LeagueData {
   season: number;
   fixtures: FixtureData[];
   standings: StandingData[];
+  /** Competition short ID (e.g. "lec", "lcs") — set by backend, NOT the same as league.id (UUID) */
+  competition_id?: string | null;
 }
 
 export type SeasonPhase = "Preseason" | "InSeason" | "PostSeason";
