@@ -15,7 +15,7 @@
       "country": "ES",
       "finance": 2496829,
       "history": [],
-      "logo_url": "/team-logos/movistar-koi-f-nix.webp",
+      "logo_url": "/teams-icons/movistar-koi-f-nix.webp",
       "team_kind": "Main",
       "arena_name": "Movistar KOI FÃ©nix Arena",
       "facilities": {
@@ -71,7 +71,7 @@
       "country": "ES",
       "finance": 1739827,
       "history": [],
-      "logo_url": "/team-logos/barcelona-esports.webp",
+      "logo_url": "/teams-icons/barcelona-esports.webp",
       "team_kind": "Main",
       "arena_name": "Barcelona Esports Arena",
       "facilities": {
@@ -115,18 +115,21 @@
       "training_intensity": "Medium"
     },
     {
-      "logo_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778620569280_291twpop3ok.webp",
-      "id": "team-854f6893",
-      "name": "GiantX Itero",
-      "short_name": "GXI",
+      "logo_url": "/teams-icons/giantx-itero.webp",
+      "form": [],
+      "history": [],
+      "scrim_results": [],
+      "training_groups": [],
+      "financial_ledger": [],
+      "season_income": 0,
+      "season_expenses": 0,
+      "arena_capacity": 0,
       "city": "",
       "country": "",
       "arena_name": "",
-      "history": [],
-      "form": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": []
+      "id": "team-854f6893",
+      "name": "GiantX Itero",
+      "short_name": "GXI"
     },
     {
       "id": "team-129835c5",
@@ -141,7 +144,7 @@
       "country": "ES",
       "finance": 2729120,
       "history": [],
-      "logo_url": "/team-logos/ucam-esports.webp",
+      "logo_url": "/teams-icons/ucam-esports.webp",
       "team_kind": "Main",
       "arena_name": "UCAM Esports Arena",
       "facilities": {
@@ -197,7 +200,7 @@
       "country": "ES",
       "finance": 2693453,
       "history": [],
-      "logo_url": "/team-logos/falke-esports.webp",
+      "logo_url": "/teams-icons/falke-esports.webp",
       "team_kind": "Main",
       "arena_name": "Falke Esports Arena",
       "facilities": {
@@ -253,7 +256,7 @@
       "country": "ES",
       "finance": 3189278,
       "history": [],
-      "logo_url": "/team-logos/lua-gaming.webp",
+      "logo_url": "/teams-icons/lua-gaming.webp",
       "team_kind": "Main",
       "arena_name": "LUA Gaming Arena",
       "facilities": {
@@ -297,18 +300,21 @@
       "training_intensity": "Medium"
     },
     {
-      "logo_url": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778620576682_tbzurlej70i.webp",
-      "id": "team-ac846213",
-      "name": "UB Alma Mater",
-      "short_name": "UAM",
+      "logo_url": "/teams-icons/ub-alma-mater.webp",
+      "form": [],
+      "history": [],
+      "scrim_results": [],
+      "training_groups": [],
+      "financial_ledger": [],
+      "season_income": 0,
+      "season_expenses": 0,
+      "arena_capacity": 0,
       "city": "",
       "country": "",
       "arena_name": "",
-      "history": [],
-      "form": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": []
+      "id": "team-ac846213",
+      "name": "UB Alma Mater",
+      "short_name": "UAM"
     },
     {
       "id": "team-f10b156f",
@@ -323,7 +329,7 @@
       "country": "ES",
       "finance": 1999037,
       "history": [],
-      "logo_url": "/team-logos/team-heretics-academy.webp",
+      "logo_url": "/teams-icons/team-heretics-academy.webp",
       "team_kind": "Main",
       "arena_name": "Team Heretics Arena",
       "facilities": {

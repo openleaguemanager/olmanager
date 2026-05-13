@@ -1,11 +1,11 @@
 {
   "id": "lfl",
   "name": "LFL",
-  "full_name": "La Ligue Fran\u00c3\u00a7aise (French ERL)",
+  "full_name": "La Ligue Française (French ERL)",
   "region": "LFL",
   "country": "FR",
   "tier": 2,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778617587308_rpikj120jkd.webp",
+  "logo": null,
   "teams_file": "teams/lfl_teams.json",
   "players_file": "players/lfl_players.json",
   "schedule": {
@@ -14,14 +14,14 @@
     "preseason_friendlies": 3,
     "splits": [
       {
-        "superweek_offsets": [],
-        "season_start": {
-          "day": 1,
-          "month": 1
-        },
+        "name": "Spring",
         "best_of": 1,
         "playoffs": null,
-        "name": "Season"
+        "season_start": {
+          "month": 1,
+          "day": 1
+        },
+        "superweek_offsets": []
       }
     ]
   }

@@ -5,7 +5,7 @@
   "region": "LRN",
   "country": "LATAM",
   "tier": 2,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778498889782_zslrvxvdhyi.webp",
+  "logo": null,
   "teams_file": "teams/lrn_teams.json",
   "players_file": "players/lrn_players.json",
   "schedule": {

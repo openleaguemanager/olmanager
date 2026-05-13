@@ -5,7 +5,7 @@
   "region": "LES",
   "country": "ES",
   "tier": 2,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778617584007_v28ztn1vq9e.webp",
+  "logo": null,
   "teams_file": "teams/les_teams.json",
   "players_file": "players/les_players.json",
   "schedule": {
@@ -14,14 +14,14 @@
     "preseason_friendlies": 3,
     "splits": [
       {
-        "superweek_offsets": [],
-        "season_start": {
-          "day": 1,
-          "month": 1
-        },
+        "name": "Spring",
         "best_of": 1,
         "playoffs": null,
-        "name": "Season"
+        "season_start": {
+          "month": 1,
+          "day": 1
+        },
+        "superweek_offsets": []
       }
     ]
   }
