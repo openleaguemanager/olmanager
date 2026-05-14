@@ -563,7 +563,7 @@ fn register_parallel_result(
 /// the borrow checker permits simultaneous mutable access.
 fn simulate_background_league(
     teams: &mut [Team],
-    players: &[Player],
+    players: &mut [Player],
     league: &mut League,
     today: &str,
     season: u32,
@@ -593,6 +593,7 @@ fn simulate_background_league(
 
     // Simulate each fixture
     let mut simulated_results: Vec<(usize, String, String, u8, u8)> = Vec::new();
+    let mut match_reports: Vec<engine::MatchReport> = Vec::new();
     for (fixture_index, home_team_id, away_team_id) in fixtures_to_play {
         let home_data = build_engine_team_from(teams, players, &home_team_id);
         let away_data = build_engine_team_from(teams, players, &away_team_id);
@@ -610,10 +611,13 @@ fn simulate_background_league(
             report.home_wins,
             report.away_wins,
         ));
+        match_reports.push(report);
     }
 
     // Store results and update standings
-    for (fixture_index, home_team_id, away_team_id, home_wins, away_wins) in &simulated_results {
+    for ((fixture_index, home_team_id, away_team_id, home_wins, away_wins), report) in
+        simulated_results.iter().zip(match_reports.iter())
+    {
         if let Some(fixture) = league.fixtures.get_mut(*fixture_index) {
             fixture.result = Some(MatchResult {
                 home_wins: *home_wins,
@@ -628,6 +632,16 @@ fn simulate_background_league(
             *home_wins,
             *away_wins,
         ));
+
+        // Apply basic player stats without news/messages (light mode)
+        for player in players.iter_mut() {
+            if let Some(ps) = report.player_stats.get(&player.id) {
+                player.stats.appearances += 1;
+                player.stats.kills += u32::from(ps.kills);
+                player.stats.assists += u32::from(ps.assists);
+                player.stats.minutes_played += ps.duration_seconds / 60;
+            }
+        }
     }
 
     for (home_team_id, away_team_id, home_wins, away_wins) in &completed_fixtures {
@@ -671,7 +685,7 @@ fn process_background_leagues(game: &mut Game, today: &str) {
     let season = game.clock.current_date.year() as u32;
     for i in 1..game.leagues.len() {
         let league = &mut game.leagues[i];
-        simulate_background_league(&mut game.teams, &game.players, league, today, season);
+        simulate_background_league(&mut game.teams, &mut game.players, league, today, season);
     }
 }
 
@@ -774,7 +788,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
 
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
     if let Some(ref mut league) = game.academy_league {
-        simulate_background_league(&mut game.teams, &game.players, league, &today, season);
+        simulate_background_league(&mut game.teams, &mut game.players, league, &today, season);
 
         // Academy-specific: generate playoffs when regular season completes
         let regular_fixtures_total = league
