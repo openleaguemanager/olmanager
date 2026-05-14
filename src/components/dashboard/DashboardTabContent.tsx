@@ -133,7 +133,7 @@ export default function DashboardTabContent({
       )}
 
       {activeTab === "Competitions" && (
-        <CompetitionsTab gameState={gameState} />
+        <CompetitionsTab gameState={gameState} onSelectTeam={onSelectTeam} />
       )}
 
       {activeTab === "Staff" && (

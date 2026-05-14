@@ -311,9 +311,10 @@ function CompetitionCard({
 interface StandingsTableProps {
   standings: LeagueData["standings"];
   gameState: GameStateData;
+  onSelectTeam?: (id: string) => void;
 }
 
-function StandingsTable({ standings, gameState }: StandingsTableProps) {
+function StandingsTable({ standings, gameState, onSelectTeam }: StandingsTableProps) {
   const { t } = useTranslation();
 
   return (
@@ -356,7 +357,8 @@ function StandingsTable({ standings, gameState }: StandingsTableProps) {
               {standings.map((entry, idx) => (
                 <tr
                   key={entry.team_id}
-                  className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors"
+                  onClick={() => onSelectTeam?.(entry.team_id)}
+                  className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer"
                 >
                   <td className="px-4 py-3 text-gray-500 dark:text-gray-400 font-mono text-xs">
                     {idx + 1}
@@ -426,9 +428,10 @@ function StandingsTable({ standings, gameState }: StandingsTableProps) {
 interface TeamsGridProps {
   teamIds: string[];
   gameState: GameStateData;
+  onSelectTeam?: (id: string) => void;
 }
 
-function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
+function TeamsGrid({ teamIds, gameState, onSelectTeam }: TeamsGridProps) {
   const { t } = useTranslation();
 
   const teams = teamIds
@@ -450,7 +453,7 @@ function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {teams.map((team) => (
-        <Card key={team.id}>
+        <Card key={team.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onSelectTeam?.(team.id)}>
           <CardBody>
             <div className="flex items-center gap-3">
               <img
