@@ -3,12 +3,15 @@ mod message_builders;
 mod responses;
 
 pub use builders_reports::build_fan_petition_from_narrative;
+use domain::team::Team;
 pub use message_builders::build_media_story_from_narrative;
+use rand::distr::Distribution;
+use rand::distr::weighted::WeightedIndex;
 pub use responses::apply_event_response;
 
 use crate::contracts::{ContractWarningStage, contract_warning_stage};
-use crate::game::Game;
-use chrono::Datelike;
+use crate::game::{Game};
+use chrono::{Datelike};
 use domain::message::*;
 use rand::RngExt;
 use std::collections::HashMap;
@@ -146,17 +149,26 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 3. Media story (5% chance per day) ---
+    // --- 3. Media story (12% chance per day if available) ---
     {
         let msg_id = format!("media_{}", today);
-        if !existing_ids.contains(&msg_id) && rng.random_range(0..20) == 0 {
-            let team_name = game
+        if !existing_ids.contains(&msg_id) && rng.random_range(0..8) == 0 {
+        // if !existing_ids.contains(&msg_id) {
+            let default_team = Team::new("league-your-club".to_string(), 
+                "Your Club".to_string(), 
+                "YC".to_string(), 
+                "Your country".to_string(), 
+                "Your city".to_string(), 
+                "Your arena".to_string(), 
+                3000);
+            let team = game
                 .teams
                 .iter()
                 .find(|t| t.id == user_team_id)
-                .map(|t| t.name.as_str())
-                .unwrap_or("Your Club");
+                .unwrap_or(&default_team);
 
+            // The story will be centered on a specific player in 70% of the cases
+            let centered_on_player = rng.random_bool(0.7);
             // Pick a random player for the story
             let team_players: Vec<&domain::player::Player> = game
                 .players
@@ -167,30 +179,115 @@ pub fn check_random_events(game: &mut Game) {
                 let player = team_players[rng.random_range(0..team_players.len())];
                 let is_positive = rng.random_bool(0.6); // 60% positive stories
 
-                new_messages.push(message_builders::media_story_message(
+                let media_story: Option<InboxMessage>; 
+                media_story = message_builders::media_story_message(
                     &msg_id,
-                    team_name,
-                    &player.id,
-                    &player.match_name,
                     is_positive,
+                    centered_on_player,
+                    team,
+                    &game.manager,
+                    player,
                     &today,
-                ));
+                );
+                
+                // We need to recheck that it is not empty because there can be days
+                // where there is not any media available (broadcast days and interview additional randomness)
+                if media_story.is_some() {
+                    new_messages.push(media_story.unwrap());
 
-                // Apply morale effect
-                let pid = player.id.clone();
-                if let Some(p) = game.players.iter_mut().find(|p| p.id == pid) {
-                    let delta: i16 = if is_positive {
-                        rng.random_range(2..=5)
-                    } else {
-                        rng.random_range(-5..=-1)
-                    };
-                    p.morale = ((p.morale as i16) + delta).clamp(10, 100) as u8;
+                    if centered_on_player {
+                        // Apply morale effect only if the story is centered on the player
+                        let pid = player.id.clone();
+                        if let Some(p) = game.players.iter_mut().find(|p| p.id == pid) {
+                            let delta: i16 = if is_positive {
+                                rng.random_range(2..=5)
+                            } else {
+                                rng.random_range(-5..=-1)
+                            };
+                            p.morale = ((p.morale as i16) + delta).clamp(10, 100) as u8;
+                        }
+                    }
                 }
             }
         }
     }
 
-    // --- 4. International call-up (5% chance per day, only if match in next 7 days) ---
+    // --- 4. Rumours (5% chance per day) ---
+    {
+        let msg_id = format!("rumour_{}", today);
+        if !existing_ids.contains(&msg_id) && rng.random_range(0..20) == 0 {
+            let default_team = Team::new("league-your-club".to_string(), 
+                "Your Club".to_string(), 
+                "YC".to_string(), 
+                "Your country".to_string(), 
+                "Your city".to_string(), 
+                "Your arena".to_string(), 
+                3000);
+            let team = game
+                .teams
+                .iter()
+                .find(|t| t.id == user_team_id)
+                .unwrap_or(&default_team);
+
+            // Pick a random player for the story
+            let team_players: Vec<&domain::player::Player> = game
+                .players
+                .iter()
+                .filter(|p| p.team_id.as_deref() == Some(&user_team_id))
+                .collect();
+            if !team_players.is_empty() {
+                let player = team_players[rng.random_range(0..team_players.len())];
+                let manager_lang = &game.manager.nationality;
+
+                new_messages.push(message_builders::rumour_message(&msg_id, 
+                                                                   manager_lang,
+                                                                   team,
+                                                                   player, 
+                                                                   &today));
+            }
+        }
+    }
+
+    // --- 5. Sreamer comment (5% chance per day) ---
+    {
+        let msg_id = format!("general_comment_{}", today);
+        if !existing_ids.contains(&msg_id) && rng.random_range(0..33) == 0 {
+            let default_team = Team::new("league-your-club".to_string(), 
+                "Your Club".to_string(), 
+                "YC".to_string(), 
+                "Your country".to_string(), 
+                "Your city".to_string(), 
+                "Your arena".to_string(), 
+                3000);
+            let team = game
+                .teams
+                .iter()
+                .find(|t| t.id == user_team_id)
+                .unwrap_or(&default_team);
+
+            // Pick a random player for the story
+            let team_players: Vec<&domain::player::Player> = game
+                .players
+                .iter()
+                .filter(|p| p.team_id.as_deref() == Some(&user_team_id))
+                .collect();
+            if !team_players.is_empty() {
+                let player = team_players[rng.random_range(0..team_players.len())];
+                let is_positive = rng.random_bool(0.5);
+
+                new_messages.push(message_builders::stream_message(
+                    &msg_id,
+                    is_positive,
+                    team,
+                    &game.manager,
+                    player,
+                    &today,
+                ));
+            }
+        }
+    }
+
+    // --- 6. International call-up (5% chance per day, only if match in next 7 days) ---
     {
         let upcoming_match = game.league.as_ref().and_then(|l| {
             let current = game.clock.current_date;
@@ -234,7 +331,7 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 5. Community event / club milestone (1% chance per day) ---
+    // --- 7. Community event / club milestone (1% chance per day) ---
     {
         let msg_id = format!("community_{}", today);
         if !existing_ids.contains(&msg_id) && rng.random_range(0..100) == 0 {
@@ -250,7 +347,7 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 6. Dressing room mood report (once per week, deterministic on Monday) ---
+    // --- 8. Dressing room mood report (once per week, deterministic on Monday) ---
     {
         let is_monday = game.clock.current_date.weekday() == chrono::Weekday::Mon;
         let msg_id = format!("mood_report_{}", today);
@@ -278,7 +375,7 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 7. Board confidence check (after 3+ consecutive losses, 100% trigger once) ---
+    // --- 9. Board confidence check (after 3+ consecutive losses, 100% trigger once) ---
     {
         if let Some(league) = &game.league {
             let completed: Vec<_> = league
@@ -323,7 +420,7 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 8. Fan petition (2% chance per day) ---
+    // --- 10. Fan petition (2% chance per day) ---
     {
         let msg_id = format!("fan_petition_{}", today);
         if !existing_ids.contains(&msg_id) && rng.random_range(0..50) == 0 {
@@ -339,7 +436,7 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 9. Rival interest in player (5% chance per day) ---
+    // --- 11. Rival interest in player (5% chance per day) ---
     {
         let msg_id = format!("rival_interest_{}", today);
         if !existing_ids.contains(&msg_id) && rng.random_range(0..20) == 0 {
@@ -373,51 +470,6 @@ pub fn check_random_events(game: &mut Game) {
             }
         }
     }
-
-    // --- 10. Al Lío podcast (5% chance per day) ---
-    {
-        let msg_id = format!("allio_{}", today);
-        if !existing_ids.contains(&msg_id) && rng.random_range(0..20) == 0 {
-            let team_name = game
-                .teams
-                .iter()
-                .find(|t| t.id == user_team_id)
-                .map(|t| t.name.as_str())
-                .unwrap_or("Your Club");
-            let team_players: Vec<&domain::player::Player> = game
-                .players
-                .iter()
-                .filter(|p| p.team_id.as_deref() == Some(&user_team_id))
-                .collect();
-            let (player_id, player_name) = if !team_players.is_empty() {
-                let p = team_players[rng.random_range(0..team_players.len())];
-                (Some(p.id.as_str()), Some(p.match_name.as_str()))
-            } else {
-                (None, None)
-            };
-            new_messages.push(message_builders::allio_podcast_message(
-                &msg_id,
-                team_name,
-                player_id,
-                player_name,
-                &today,
-            ));
-        }
-    }
-
-    // --- 11. el_yuste stream (3% chance per day) ---
-    {
-        let msg_id = format!("yuste_{}", today);
-        if !existing_ids.contains(&msg_id) && rng.random_range(0..33) == 0 {
-            let is_positive = rng.random_bool(0.5);
-            new_messages.push(message_builders::yuste_stream_message(
-                &msg_id,
-                is_positive,
-                &today,
-            ));
-        }
-    }
-
     game.messages.extend(new_messages);
 }
 

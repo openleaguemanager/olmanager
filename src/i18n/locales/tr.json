@@ -2220,7 +2220,7 @@
       "academyCoordinator": "Akademi Koordinatörü",
       "esportmaniacos": "Esportmaníacos",
       "allioPodcast": "Al Lío Podcast",
-      "elYuste": "el_yuste"
+      "media": "Medya ekibi"
     },
     "role": {
       "chairman": "Başkan",
@@ -2240,7 +2240,7 @@
       "academyCoordinator": "Akademi Koordinatörü",
       "esportmaniacos": "Panel",
       "allioPodcast": "Eros",
-      "elYuste": "el_yuste"
+      "leadCom": "İletişim Lideri"
     },
     "source": {
       "sportsGazette": "Dot Esports",
@@ -2666,47 +2666,156 @@
         "body": "Akademi haftalık özeti:\n- Aktif oyuncular: {{activePlayers}}\n- Ortalama OVR: {{avgOvr}}\n- Yüksek potansiyelli yetenekler (>= 80): {{highPotential}}\n- Önemli anlar: {{highlights}}\n- Mevcut ERL sırası: {{total}} takım içinde #{{position}}.\n- Hızlı tablo: {{tablePreview}}",
         "bodyWithPromotion": "Akademi haftalık özeti:\n- Aktif oyuncular: {{activePlayers}}\n- Ortalama OVR: {{avgOvr}}\n- Yüksek potansiyelli yetenekler (>= 80): {{highPotential}}\n- Önemli anlar: {{highlights}}\n- Mevcut ERL sırası: {{total}} takım içinde #{{position}}.\n- Hızlı tablo: {{tablePreview}}\n\nÖneri: {{promotionCount}} oyuncu as takıma çıkmaya hazır -> {{promotionList}}."
       },
-      "esportmaniacos": {
+      "podcast": {
+        "player": {
+          "positive": {
+            "subject0": "{{podcast}} — {{player}}'a Odaklanalım",
+            "body0": "{{host}}, {{guest}}'e {{player}}'nun son dönemdeki performansları hakkında şu soruyu yöneltti: “Şu anda ligde bu pozisyonda daha iyi bir oyuncu aklıma gelmiyor. Yani, 15. dakikadaki CS farkına ve altın farkına bakın, her şey ortada. Formda bir {{player}}, {{team}}'e hakimiyet kazandırır“.\n\n{{player}}'ın tüm potansiyelini kullandığınızdan emin olun.",
+            "subject1": "{{podcast}} — {{player}}, {{team_short}}'u kurtarıyor",
+            "body1": "{{guest}}, {{player}}'ın etkisi konusunda özellikle ısrarcı: “Açık konuşalım. {{team}} kötü oynuyor. Bundan daha iyisini yapmaları gerekir. Yine de sonuçları hala iyi ve bunun tek nedeni {{player}}. Gördüğümüz birinci sınıf sahte performanslar olmasaydı, bu maçları asla kazanamazlardı. {{player}}, {{team}}'i kurtarıyor. Nokta”.\n\nDraft aşamasında {{player}}'ın oynamak istediği şampiyonlara dikkat edin.",
+            "subject2": "{{podcast}} — {{player}} iyi oynuyor",
+            "body2": "{{guest}} bu hafta {{player}}'ı öne çıkardı: “Son zamanlarda {{player}}'ın haritada sergilediği performansa şaşırdım. {{team_short}} bir bütün olarak {{player}} ile mükemmel bir uyum içinde ve haritanın bir tarafında yapılan her oyun diğer tarafta da mükemmel bir şekilde destekleniyor. Rakiplerinin temposunu tamamen alt ediyorlar ve bu, {{team_short}}'un uyguladığı baskıdan kaynaklanıyor. Şu anda onları en iyi takımlardan ayıran tek şey, takım savaşları ve oyunun sonlarında hataları önlemek için biraz daha sabırlı olmaları.”\n\nGüçlü yanlarımızı geliştirmeye mi yoksa zayıf yanlarımızı düzeltmeye mi odaklanmalıyız?",
+            "subject3": "{{podcast}} — {{player}}'dan gelişme",
+            "body3": "{{guest}} bu haftaki bölümde {{player}}'ın son performansları hakkında konuşmak istedi: “Bir oyuncunun daha iyi sonuçlar elde etmek için çabaladığını anlayabilirsiniz. Ancak, birçok gözlemcinin gelişmelerden bahsetmeyi unuttuğunu düşünüyorum. Bu yüzden, oyun içi davranışlarında büyük bir değişiklik gördüğüm için {{player}}'ı öne çıkarmak istiyorum. Farklı tıklamalar, keskin kararlar ve neredeyse hiç kaçırılmayan skillshot'lar hissedilebiliyor“.\n\n{{player}} gelecekte yıldız oyuncumuz olabilir.",
+            "subject4": "{{podcast}}, {{player}}'ı övüyor — ekip oybirliğiyle aynı fikirde",
+            "body4": "{{podcast}} ekibi, bugünkü yayının önemli bir bölümünü {{team_short}}'taki {{player}}'a ayırdı: “Bu hafta eleştirilecek hiçbir şey yok. Adam sahayı resmen domine ediyor“.\n\nBu olumlu haberler soyunma odasına güven aşılayacaktır.",
+            "subject5": "{{podcast}} — {{player}} bu sezon {{team_short}}'u sırtlıyor",
+            "body5": "{{podcast}} paneli nadiren bir konuda hemfikir olur, ancak {{player}} bugün tam not aldı: “Tutarlı, sağlam, formunda düşüş yok. Şu anda ligin en iyi oyuncularından biri. {{team_short}} onu tutmak için her şeyi yapmalı”.\n\nMoral için iyi — ve piyasa değeri için de."
+          },
+          "negative": {
+            "subject0": "{{podcast}} — {{player}}'ın kötü performansları",
+            "body0": "{{guest}}, bu haftaki bölümde {{player}}'ın son dönemdeki performansları hakkında konuşmak istedi: “Perde arkasında neler olup bittiğini bilmiyorum ama şunu söylemeliyim ki, artık {{player}}'ı tanıyamıyorum. Oyunlar, röportajlar. Artık kendine güveni kalmamış gibi görünüyor. {{team_short}}'da neler oluyor?”.\n\n{{player}} ile konuşmalıyız.",
+            "subject1": "{{podcast}} — Rekabet {{player}} için çok fazla",
+            "body1": "{{guest}}, rekabetin seviyesini göz önünde bulundurarak {{player}}'ın kötü performansını incelikli bir şekilde değerlendirdi: “Dürüst olmak gerekirse, {{player}} kötü oynamıyor. İyi fikirler, iyi paslar, iyi makro hareketler var. Ama bu yeterli değil. Bu pozisyondaki rekabet çok fazla ve {{player}} gelişmekte zorlanıyor. {{team_short}} başka bir oyuncuyla daha iyi sonuçlar almalı ama yine de {{player}}'ın bu seviyede oynamayı hak ettiğini düşünüyorum”.\n\nBelki de {{player}}'a özel başka bir pozisyon koçu atamalıyız.",
+            "subject2": "{{podcast}} — {{player}} şimdiye kadar gördüğüm EN KÖTÜ oyuncu",
+            "body2": "{{guest}} bu hafta {{player}}'a karşı özellikle sert eleştirilerde bulundu: “{{player}} şimdiye kadar gördüğüm EN KÖTÜ oyuncu. Cidden, o performans da neydi öyle? Sezon arası dönemde fareyi tutabilecek tek bir oyuncu bile yok muydu? Bu noktada, {{team_short}}'un teknik kadrosu mucize yaratamaz. Yemin ederim, eğer {{team_short}} split sonunda {{player}}'ı başka bir oyuncuyla değiştirmezse, bu hayranlara tam bir tokat atmak olur“.\n\n{{player}}'ın pozisyonu için çeşitli seçenekleri değerlendirmeliyiz.",
+            "subject3": "{{podcast}} — Meta, {{player}} için kötü",
+            "body3": "{{guest}}, metanın {{player}}'ın formuna etkisinden bahsetti: “Bence {{team_short}} oyuncuları şu anda gösterdiklerinden daha iyiler, özellikle de {{player}}. Yani, {{player}}'ın şampiyon havuzu oldukça tek taraflı ve metaya mükemmel bir şekilde uyuyordu, ancak tüm bu ilginç seçimler ve eşyalarda ve rünlerde yapılan değişikliklerle {{team_short}} hazırlıksız yakalandı ve yepyeni bir denge bulmak zorundalar. Bana göre sadece iki seçenek var. Ya {{player}} uyum sağlamayı başarır ya da {{team_short}} meta'yı unutur ve kendilerini iyi yapan şeye geri döner“.\n\nBunu düşünmeliyiz.",
+            "subject4": "{{podcast}}, {{player}}'ın peşine düştü — Panel merhamet göstermedi",
+            "body4": "{{podcast}} paneli bugün {{player}}'a karşı hiç çekinmedi: “Adam tamamen ortadan kayboldu. Bu ara dönemde ne oldu? {{team_short}} böyle performans gösteren birine güvenmeye devam edemez”.\n\nBu tür haberler moral üzerinde ağır bir etki yaratır. {{player}} ile konuşmaya değer.",
+            "subject5": "{{podcast}}, {{player}}'ın istikrarını sorguluyor",
+            "body5": "Bugünkü {{podcast}} oturumu, {{player}}'ın son dönemdeki formunun tam bir analizine dönüştü. Karar: “İstikrarsız. Düzen yok. Bazı günler en üst seviyede, diğer günler ise tamamen görünmez. {{team_short}} o pozisyonda oynayan birinden daha iyi bir performans bekliyor“.\n\nOyuncunun moralini gözlemle."
+          }
+        },
+        "general": {
+          "positive": {
+            "subject0": "{{podcast}} — {{team_short}}'un teknik kadrosu",
+            "body0": "Bu haftaki bölümde {{host}}, {{team_short}}'un teknik kadrosu hakkında konuştu: “Dürüst olmak gerekirse, daha önce hiç böyle bir oyuncu seçme tarzı görmemiştim. Koç kadrosu sürekli yeni şampiyonlar ve onları oynatacak yeni roller icat ediyor gibi görünüyor. Bu hem etkili hem de izlemesi çok keyifli!”.\n\nKoç kadromuzu gerçekten korumak istiyoruz. Harika bir iş çıkarıyorlar.",
+            "subject1": "{{podcast}} — {{team}} çok heyecan verici",
+            "body1": "{{guest}}, {{team_short}}'un ligde ne kadar heyecan yarattığını anlattı: “Sanırım uzun zamandır bu kadar heyecanlanmamıştım. İnsanlar deli olduğumu düşünebilir ama ben ciddiyim. {{team_short}}'un oynama ve draft yapma şekli, dünyanın zirvesine meydan okuyabileceklerini düşündürüyor. Ve yalnız değilim. Sosyal medyadaki heyecana bakın. Taraftarlar seslerini daha fazla duyuruyor, heyecan artıyor. Eminim ki hiç olmadığı kadar çok forma satıyorlar. {{team_short}} bu ivmeyi sürdürmek ve en iyilerden biri olmak için gerçekten elinden geleni yapmalı“.\n\nBu bizim için çok iyi bir işaret. Satışlarımız üzerindeki etkisini mutlaka kontrol edeceğim.",
+            "subject2": "{{podcast}} — {{team_short}} oyuncuları çok havalı görünüyor",
+            "body2": "{{guest}}, {{team_short}}'un içeriklerinden bahsetti: “Bence {{team_short}}'un medya ekibi hak ettiği değeri görmüyor. İçerikleri taze, iyi fikirleri var ve oyuncuları sevimli kılmak için sürekli yeni yollar buluyorlar. Lig, onlardan ilham almalı.\n\nSadece bunu bilmenizi istedim. Bazen oyuncular istemese de, bunun {{team}} üzerinde olumlu bir etkisi var.",
+            "subject3": "{{podcast}} — {{team_short}}'da çok iyi oyuncular var",
+            "body3": "{{guest}}, {{team_short}} gibi bir kadro oluştururken sinerjinin önemini özellikle vurguladı: “Geçmişte birçok süper takımın baskı ve egolar altında çöktüğünü gördünüz. {{team_short}} onlardan biri değil. Ligin en iyileri arasında yer alan çok yetenekli oyuncuları var ve şu anda hepsi de en iyi formlarında. Ancak fark, takım oyunlarından geliyor. Ormancının rotasına bakın, gözetleme kulübelerine bakın, pinglere dikkat edin“.\n\nDiğer takımlar oyuncularımızla ilgilenebilir. Sözleşmelerine dikkat etmeliyiz."
+          },
+          "negative": {
+            "subject0": "{{podcast}} — Sıcak Yorum: {{team_short}} çökecek",
+            "body0": "{{guest}}, {{team_short}} hakkında şu sıcak yorumu paylaştı: “Bu hafta sonu hepimiz aynı maçları izledik. Belirsiz koridorlar, hedeflerdeki anlamsız 50/50'ler, yan koridorlarda tuhaf ölümler. Bana göre {{team_short}}'un yakın gelecekte çökeceği çok açık. Hatta {{player}} bile son maçında kötü bir performans sergiledi“.\n\n Belki de antrenman yöntemlerimizi değiştirmeliyiz?",
+            "subject1": "{{podcast}} — {{team_short}} bir ŞAKA",
+            "body1": "{{guest}} bizi suçladı: “{{team_short}}'un yönetimi ne yapıyor?! Saçma sapan şeyler söyleyen bir koç kadrosu, sahnede esneyen oyuncular ve akıl almaz bir sezon dışı dönemi var! Bu, en iyilerin en iyisini mi temsil ediyor? Hadi şu yeri satın artık!”.\n\nBütçe açısından, durumu düzeltmek için ne yapabiliriz?",
+            "subject2": "{{podcast}} — {{team_short}} geri dönüş yapmak için ne yapabilir?",
+            "body2": "{{host}}, {{guest}}'e {{team_short}}'un geri dönüş yapmak için ne yapabileceğini sordu: “Bu zor bir durum, biliyorsun. {{team_short}}'un teknik ekibine ve oyuncularına sadece sempati duyabilirim. Eminim ellerinden geleni yapıyorlar ama belki de diğer liglerden, hatta küçük liglerden takımlarla antrenman maçları yapmaya öncelik vermeliler. Bu, ivme kazanmalarına ve güvenle oynamalarına yardımcı olabilir. Bu durumda en büyük düşmanınız kendinizsiniz“.\n\nBelki antrenman programımızı uyarlayabiliriz?",
+            "subject3": "{{podcast}} — {{team_short}}'un koç kadrosu",
+            "body3": "Bu haftaki bölümde {{host}}, {{team_short}}'un koç kadrosu hakkında konuştu: “Bu insanların şu anda nasıl hala işleri olabildiğini anlamıyorum. Geçen hafta sonu yaptıkları oyuncu seçimi nasıl da kötüydü? Tier 3 League of Legends'ı mı izliyorum? İzlemesi acı verici. Gerçekten kazanmak istiyorsanız oyuncularınıza gerçek bir kadro verin!“\n\nBu tür yorumlara dikkat etmeliyiz. Bu konuklar oyun hakkında bilgili ve dinleyicileri üzerinde etkisi var."
+          }
+        }
+      },
+      "broadcast": {
+        "player": {
+          "positive": {
+            "subject0": "{{broadcast}} — {{player}} istatistiklerde başı çekiyor",
+            "body0": "{{guest}}, {{player}}'ı diğer rakiplerle karşılaştırarak zaman geçirdi: “Verileri inceledik ve {{player}}'ın istatistikleri karşısında hayrete düştüm. Orman yakınlığı ve erken hedeflerdeki varlığı açısından daha iyi performans gösteren başka bir oyuncu yok. Ve oyunun erken aşamasındaki etkisi açık. {{team_short}} erken hedeflerde daha iyi bir yapıya sahip ve bu da ya bedava öldürmeler ya da bedava hedefler sağlıyor.\n\n{{player}}'ın moralinin yüksek kalmasını sağlamalıyız.",
+            "subject1": "{{broadcast}} — {{player}}'ın oyunu yayında analiz edildi",
+            "body1": "{{guest}}, {{broadcast}} yayınında {{player}}'ın oyununu analiz etti: “Burada da görebileceğiniz gibi, {{player}} bu çalılığa pembe bir gözetleme kulesi yerleştirmek için bir açı buluyor ve sadece birkaç saniye sonra, bu kule yan tarafı gizliyor. Bu gözetleme kulesi oyunun gidişatını değiştiriyor ve {{team}} geri dönmeye karar verdiği anda, yine {{player}} devreye girip takım savaşını kazanıyor.”\n\nBu tür çalışmalar nadiren vurgulanır. Bunu koç ekibine mutlaka iletin.",
+            "subject2": "{{broadcast}} — {{player}} canlı röportaj",
+            "body2": "{{host}} bu hafta {{player}} ile röportaj yaptı: \n{{host}} - „Bugün özellikle iyi oynadın, bugünkü rakibe karşı kişisel bir hesabın mı vardı?„\n{{player}} - „Şey, sayılır. Antrenman maçlarında onlara karşı zorlanıyorduk ve bu çoğunlukla benim hatamdı. Egomu bir kenara bıraktım ve gerçekten kazanmak istedim, bu yüzden bugünkü maçların hazırlıklarına kendimi adadım”.\n\n{{player}} kendini geliştirmek için çok çaba sarf ediyor.",
+            "subject3": "{{broadcast}} — {{player}} etrafındaki coşku",
+            "body3": "Tüm {{broadcast}} yayını, bu hafta {{player}}'ın son performansları konusunda coşkulu bir havadaydı. Özellikle {{guest}}, birçok gelişmeyi vurguladı: “{{player}}'ın bu kadar kısa sürede bu kadar gelişeceğini beklemiyordum. Sanırım bu kadar hızlı değişen bir oyuncu daha önce hiç görmedim. {{team_short}}, {{player}} ile ne kadar ileri gidebilecek? {{player}}, {{team_short}} ile ne kadar gelişebilecek? Onları nelerin beklediğini görmek için sabırsızlanıyorum“.\n\nHikaye değişiyor!"
+          },
+          "negative": {
+            "subject0": "{{broadcast}} — {{player}} istatistiklerde en alt sırada yer aldı",
+            "body0": "{{guest}}, {{player}}'ın istatistiklerini tartışırken çok dikkatli davranıyordu: “{{team_short}} iyi bir takım ama kazanamıyorlar ve istatistiklere bakıldığında veriler bir günah keçisi olduğunu gösteriyor. {{player}} birçok göstergede ligin sonuncusu ve maçta büyük hatalar yaptığını gördük. Genellikle {{team_short}} iyi oynar ama kazanmaya yaklaştıklarında, {{player}} bir adım fazla ileri gidiyor ve momentum tamamen değişiyor”.\n\n{{player}}'ı değiştirecek seçeneklerimiz var mı?",
+            "subject1": "{{broadcast}} — {{team}} hakkında olumsuz anlatı",
+            "body1": "{{guest}}, iyi sonuçlara rağmen {{team_short}}'u eleştirdi: “Herkes {{team_short}}'u tamamen abartıyor. Kimse onların vizyon ayarlarına dikkat etti mi? Oyuncuların elleri, korkunç zayıflıklarını gizliyor. Birkaç hafta içinde haklı olduğumu göreceksiniz. {{team_short}} bu şekilde oynayarak tek bir hedef bile alamayacak“.\n\n{{guest}} bu konuda haklı mı?",
+            "subject2": "{{broadcast}} — {{player}} canlı röportaj",
+            "body2": "{{player}}, {{host}} ile yaptığı röportajda tereddütlüydü: \n{{host}} - „Takımınız sürekli zayıf tarafta üst koridorda oynuyor gibi görünüyor. Bu, hazırlık maçlarına dayanarak takım olarak karar verdiğiniz bir takım stili mi?“ \n{{player}} - ”Bilmiyorum. Pek sayılmaz. Belki de sahnede haritada olanlara yeterince hızlı adapte olamadığım içindir. Bunun bilinçli bir karar olduğunu sanmıyorum, en azından benim açımdan değil.”\n\nBu gerçekten kötü bir röportaj. {{player}}'a bir an önce medya eğitimi vermemiz gerekiyor.",
+            "subject3": "{{broadcast}} — {{player}} yayında hakarete uğradı",
+            "body3": "{{guest}}, {{team_short}} maçlarını yorumlarken {{player}}'a karşı özellikle sert davrandı. {{player}}'ın bir skillshot'ı kaçırdığı bir takım savaşı sırasında, {{guest}} anında \"Dostum, bunu nasıl kaçırırsın?! Tek bir işin var“. diye bağırdı ve şikayetini {{player}}'ın takma adına dayalı, burada yazmayacağım bir ”kelime oyunu“ ile tamamladı. Bu, {{guest}}'in {{player}}'ı hedef aldığı ilk sefer değil. Bu noktada bu durum tacize yakın bir hal almıştır. {{broadcast}} yayınında böyle bir şeyin bir daha yaşanmamasını sağlamak için Riot ile iletişime geçtim."
+          }
+        },
+        "general": {
+          "positive": {
+            "subject0": "{{broadcast}} — {{team}} taraftarları yayında övgü topladı",
+            "body0": "{{guest}} bu hafta lig topluluklarına bir mesaj iletmek istedi: “Beni dinleyen her taraftara. {{team_short}} taraftarlarının çevrimiçi ortamda ve etkinlikler sırasında neler yaptıklarına bakın. Bundan ilham alın, kendinize uyarlayın, geliştirin ve takımınız için daha yüksek sesle tezahürat yapın. {{team_short}} taraftarlarının yarattığı bu heyecana kesinlikle ihtiyacımız var. Kimse onların bu kadar büyük bir fark yaratacağını beklemiyordu, ama işte buradalar. Uyanın taraftarlar! Gururunuzu gösterin ve bir dahaki sefere onları değil, sizi övmem için elinizden geleni yapın”.\n\nTaraftarlar coşmuş durumda. Onlara istedikleri şovu verin!",
+            "subject1": "{{broadcast}} — {{team_short}} istatistiklerde üstün",
+            "body1": "{{guest}}, {{team}}'in istatistiklerdeki üstünlüğüne dikkat çekti: “Merak ettim, o yüzden kontrol ettim. {{team_short}} neredeyse her zaman birinci ve ikinci ejderhayı alıyor. Haritanın bot tarafında güçlü bir şekilde baskı kuruyorlar ve üst koridor oyuncusu zayıf tarafı çok iyi koruyor. Oyunun ortasına gelindiğinde, draftlarına bağlı olarak ya ejderhaları karşı tarafta altınla takas edebilirler ya da erken bir ruh için savaşabilirler. Haritada ne yapmak istediklerini seçme yetkisi var ve bu her şeyi değiştiriyor”.\n\nTakımın antrenman programına dikkat edin. Doğru zamanda en iyi formda olmamız gerekiyor.",
+            "subject2": "{{broadcast}} — {{team}}'i kim durdurabilir?",
+            "body2": "{{broadcast}} yayını sırasında {{guest}}, {{team_short}} üzerine özel bir bölüm sundu ve özellikle makro oyuna ve ormancı/destek ikilisinin tüm harita üzerindeki etkisine vurgu yaptı. {{guest}}'e göre: “{{team}} şu anda durdurulamaz. Laner'ları zorlanabilir ama orman/destek ikilisi bu metada tanrı gibi“.\n\nOrman-destek ikilimiz hakkında fanfiction yazan hayranlar için özel içerikler hazırladım.",
+            "subject3": "{{broadcast}} — {{team_short}}'un hazırlıkları yayında öne çıktı",
+            "body3": "{{team_short}}'un hazırlıkları, {{broadcast}} yayınına konu oldu. {{host}}, {{team_short}}'un baş antrenörünün yakın zamanda verdiği bir röportajdan bahsetti; röportajda hazırlık araçları üzerinde çok çalıştıklarını söylemişlerdi: “Analistimiz, iç araçlarımızı oluşturmak için muazzam bir iş çıkardı. Bence bu araçlar günümüzde vazgeçilmez ve elbette uzun vadeli çalışmanın ve spesifik karşı seçimlerin yerini almıyorlar, ancak draftlarımızı oluştururken ve antrenman maçlarına hazırlanırken sağlam bir günlük temel oluşturmamıza yardımcı oluyorlar“.\n\n Analistimizin sözleşmesini kontrol etmeliyiz."
+          },
+          "negative": {
+            "subject0": "{{broadcast}} — {{team}} taraftarları yayında eleştirildi",
+            "body0": "{{team_short}} taraftarları, {{broadcast}} yayını sırasında {{guest}}'in öfkesini uyandırdı: “Sınırlarını bilmeyenler her zaman {{team_short}} taraftarları oluyor. Arkadaşlar, takımınızı sevdiğinizi biliyorum ama diğer toplulukları sürekli aşağılamaya devam edemezsiniz. Başkalarının söylemediğini ben yüksek sesle söyleyeceğim. Topluluğunuzun çoğunluğu zehirli ve kışkırttığınız tacizden sorumlu olmalısınız”.\n\nBu yorum, sosyal medyada bir savaşı yeniden alevlendirdi. {{team}}'i hedef alan ırkçı yorumlar yapıldı. Bunun olmasına izin veremeyiz.",
+            "subject1": "{{broadcast}} — İstatistiklerde geride kalan {{team}}",
+            "body1": "{{guest}}, {{team}}'i işaret etti: “Gerçek acıdır ama istatistikler yalan söylemez. Oyunun başlarında ne kadar altın toplarlarsa toplasınlar, {{team_short}} maçları kazanamıyor. Karşı koyuyormuş gibi bir izlenim veriyorlar ama oyunun ortasında hedefleri asla güvence altına alamıyorlar ve her şeyden öte, karanlıkta oynuyorlar. Görüş puanlarına bakın. Rakiplerinin haritada nerede olduğunu bilmeden nasıl kavgaları kazanmayı bekleyebilirler?”.\n\nNe yazık ki, {{guest}} bu konuda haklı.",
+            "subject2": "{{broadcast}} — {{team}}'i kim kurtarabilir?",
+            "body2": "{{host}}, {{broadcast}} yayını sırasında {{team_short}}'un nasıl geri dönüş yapabileceğine dair fikirlerini paylaştı: “Bu noktada, {{team_short}}'un zihinsel koçluk kadrosunu güçlendirmesi gerektiğini düşünüyorum. Son maçlarında açık bir zihinsel sorun var. Bunu düzeltemezlerse, yeni bir ivme yaratmak için sezon dışında oyuncu değişikliği yapmak zorunda kalacaklar“.\n\nBelki antrenman programımızı uyarlayabiliriz?",
+            "subject3": "{{broadcast}} — {{team_short}}'un hazırlığı yayında eleştirildi",
+            "body3": "{{host}} bu hafta {{broadcast}} yayınında {{team_short}}'un koç kadrosunu eleştirdi: “Onların hazırlık maçlarından elde ettikleri verilere sahip değilim ama dürüst olmak gerekirse, draftın bu aşamasında o şampiyonu seçmek suç sayılır. Karşılaşma açısından iyi bir fikir gibi görünüyor ama genel olarak draftları tutarsız hale geliyor. Hücum edemiyorlar, pas alamıyorlar, her şeyi ve hiçbir şeyi aynı anda yapıyorlar.\n\nDraftlarımızın tutarlılığına dikkat etmeliyiz."
+          }
+        }
+      },
+      "rumour": {
+        "subject0": "{{rumour_media}} — Transfer söylentisi: {{player}}'ın durumu takip ediliyor",
+        "body0": "{{host}} bugün bir transfer ipucu verdi: “{{player}} hakkında bazı şeyler duyuyorum. Birçok takım bilgi almaya çalışıyor. Henüz kesinleşen bir şey yok, ancak {{team_short}} etrafındaki transfer piyasası kızışıyor“.\n\nBir sonraki sezon için kadronuzu planlarken bunu aklınızda bulundurun.",
+        "subject1": "{{rumour_media}} — Transfer söylentisi: {{player}} yedek kulübesine alınabilir",
+        "body1": "{{host}} bugün bir transfer ipucu verdi: “Kaynaklar bana {{player}}'ın split sonunda yedek kulübesine alınması gerektiğini söyledi. {{team_short}} şu anda 2. kademe takımlarda seçeneklerini araştırıyor ama seçenekleri sınırlı. Mümkün olduğunda size daha fazla bilgi vereceğim.",
+        "subject2": "{{rumour_media}} — Transfer söylentisi: {{player}} diğer takımlar tarafından kapıldı",
+        "body2": "{{host}} bugün {{player}}'ın sözleşmesinden bahsetti: “{{team_short}}, {{player}}'ın sözleşmesini uzatmakta zorlanıyor. Birçok kişi {{player}}'a gizlice teklifte bulunuyor ve Riot bu duruma göz yumuyor. {{team_short}}'un sözleşmesi sona erdiğinde {{player}}'ın serbest oyuncu olarak takım değiştireceği ihtimali çok yüksek.",
+        "subject3": "{{rumour_media}} — Transfer söylentisi: {{player}} ile ilgili görüşmeler",
+        "body3": "{{host}}, {{team_short}}'un oyuncusu hakkında aktif görüşmeler yapıldığını belirtti: “İnsanlar {{player}} hakkında {{team_short}} ile görüşüyor. Henüz masaya gerçek bir teklif konmadı ama takımlar ilgileniyor“.\n\nHenüz katılmadıysak bu görüşmelere katılmalıyız.",
+        "subject4": "{{rumour_media}} — Transfer söylentisi: {{player}} diğer takımların radarında",
+        "body4": "{{host}}, {{player}}'ın sözleşmesi etrafında hareketlilik olduğunu ima etti: “Bana {{player}} hakkında konuşan kişiler tanıyorum. Görünüşe göre, {{team_short}}, {{player}} hakkında en az iki başka takımdan ilgi gördü. {{team_short}}'un oyuncuyu tutmak mı yoksa şimdilik kadro değişikliği mi yapmak istediği belli değil. Size haber vereceğim.",
+        "subject5": "{{rumour_media}} — {{host}}, {{team}} için yaklaşan bir anlaşmaya işaret ediyor",
+        "body5": "{{host}} yakında gerçekleşecek bir hamle hakkında ipuçları veriyor: “Bana {{team_short}} ile ilgili görüşmeler yapıldığı söylendi. Bir şeyler pişiriliyor. Henüz isim veremem ama bizi takip etmeye devam edin — bu transfer dönemi henüz bitmedi.\n\nSöylenti de olabilir, gerçek de. Takip etmeye değer.",
+        "subject6": "{{rumour_media}} — Lig formatı sızıntısı, {{host}} ayrıntıları açıklıyor",
+        "body6": "Dün, {{host}} olası bir sızıntıyı ortaya çıkardı: “Ligin split formatında değişiklikler planladığı söylendi. Henüz teyit edilmedi, ancak kaynaklarım genellikle güvenilirdir. Bu, takımların kadrolarını oluşturma şeklini altüst edebilir.",
+        "subject7": "{{rumour_media}} — Büyük bir hamle geliyor, lig sarsıldı",
+        "body7": "{{host}}'un yaklaşan transferi hakkında ipucu verildi: “Ligde henüz kimsenin bahsetmediği önemli bir oyuncu hareketi gerçekleşmek üzere. Sadece şunu söyleyeyim — bazı takımlar kadrolarını tamamen yeniden düşünmek zorunda kalacaklar“.\n\nTetikte olun — transfer piyasası hareketleniyor.",
+        "subject8": "{{rumour_media}} — {{player}} muhtemelen başka bir takıma transfer olacak",
+        "body8": "{{host}}, {{player}} ile ilgili olası bir kadro değişikliğini duyurdu: “Kaynaklar, {{team_short}}'un takımdaki dinamikleri değiştirmek için şu anda {{player}}'ı başka bir takıma transfer etmeye çalıştığını bildirdi. Henüz kesinleşmiş bir durum yok, ancak {{team_short}}'un son performansları göz önüne alındığında, bunun gerçekleşme ihtimali yüksek.”\n\nEğer ilgilenirseniz, daha fazla bilgi almaya çalışabiliriz.",
+        "subject9": "{{rumour_media}} — {{player}} antrenman maçları sırasında çılgına döndü",
+        "body9": "{{host}}, {{team_short}} ile ilgili son gelişmeler hakkında daha fazla bilgi verdi: “Bildiğim kadarıyla, {{player}} X veya Reddit'te okuduğunuz gibi baş antrenörü gerçekten dövmedi, ancak antrenman maçları sırasında açıkça çok fazla düşmanlık vardı. Koç ekibi, son antrenman maçları için hatta bir yedek oyuncu bile sahaya sürdü. {{player}}'ın önümüzdeki maçlarda oynayıp oynayamayacağı belirsiz. Bu tür davranış sorunları çabucak geçebilir ya da bir takımı tamamen parçalayabilir. Konuyu takip edeceğim ve daha fazla bilgi edindiğimde haber vereceğim“.\n\n{{player}}'ın davranış sorunları olduğu görülüyor. Önümüzdeki sezon bu oyuncuya ilgi duyuyorsanız bunu aklınızda bulundurun."
+      },
+      "streamer": {
         "positive": {
-          "subject0": "Esportmaníacos, {{player}} oyuncusunu övüyor — masa hemfikir",
-          "body0": "Esportmaníacos paneli bugünkü yayının önemli bir bölümünü {{team}} takımındaki {{player}} hakkında konuşarak geçirdi.\n\n\"Bu hafta eleştirilecek hiçbir şey yok. Çocuk resmen domine ediyor.\" Bu olumlu haber soyunma odasında özgüveni artırmalı.",
-          "subject1": "Esportmaníacos: {{player}}, bu mevsim {{team}} takımını taşıyor",
-          "body1": "Esportmaníacos yorumcuları nadiren herhangi bir konuda aynı fikirde olur, ama {{player}} bugün tam not aldı: \"İstikrarlı, sağlam, form düşüşü yok. Şu anda ligin en iyi oyuncularından biri. {{team}} onu tutmak için elinden geleni yapmalı.\"\n\nMoral için de piyasa değeri için de iyi."
+          "subject0": "{{channel}} — {{pseudo}} bile itiraf ediyor: Bu hafta izleyici sayıları arttı",
+          "body0": "{{pseudo}} nadir görülen olumlu bir değerlendirmeyle şaşırttı: “Dürüst olacağım – bu hafta rakamlar arttı ve aksini iddia etmeyeceğim. Maçlar iyi olursa izleyiciler gelir. Bu kadar basit”.\n\nTüm sektör için olumlu bir an.",
+          "subject1": "{{channel}} — {{pseudo}}, {{team}}'i övdü",
+          "body1": "{{pseudo}}, {{team_short}}'un son maçta ne kadar iyi oynadığını vurguladı. İzleyiciler, kamera açısı ayarları ve makro oyunla ilgili ayrıntılı açıklamayı özellikle beğendi.\n\nİşte sevdiğimiz türden bir görünürlük.",
+          "subject2": "{{channel}} — {{player}}, {{pseudo}}'nun en sevdiği oyuncu",
+          "body2": "{{pseudo}}, {{player}}'dan övgüyle bahsetmekten kendini alamıyor: “Dürüst olmak gerekirse, {{player}}'ın gerçekten iyi bir oyuncu olduğunu düşünüyorum.\n\n{{player}} son zamanlarda çok övgü alıyor.",
+          "subject3": "{{channel}} — {{pseudo}}, {{team_short}}'un oyun stilinden özellikle etkilenmiş",
+          "body3": "{{pseudo}}, {{player}}'ın son maçtaki performansının ne kadar iyi olduğunu vurguladı: “{ {player}} şu anda gerçekten çok iyi ve ligin en iyi oyuncularından biri. Hater'lara katılıyordum ama dürüst olmak gerekirse, {{team_short}} konusunda yanılmışım”.\n\n{{pseudo}} nadiren yanıldığını kabul eder.",
+          "subject4": "{{channel}} — {{pseudo}}, {{team_short}} taraftarlarını övdü",
+          "body4": "{{pseudo}}, yakın zamanda yayınlanan bir canlı yayında özellikle {{team_short}} taraftarlarını övdü: “Her gün görmek istediğim atmosfer budur. Sağlıklı rekabet, iyi bir çekişme, daha fazlasını isteyemem. Sizlere şapka çıkarıyorum, {{team_short}} taraftarları, kulübünüzü gerçekten gururlandırdınız!”.\n\nBöylesine harika bir topluluğa sahip olduğumuz için kendimizi şanslı sayabiliriz.",
+          "subject5": "{{channel}} — Bu haftaki maçlar {{pseudo}}'yu gerçekten heyecanlandırdı",
+          "body5": "Bunu her gün duymazsınız: {{pseudo}} yakın zamanda yaptığı bir yayında heyecanını dile getirdi: “Bu hafta her şey yolunda gitti. Gerçek maçlar, gerçek heyecan, son ana kadar izleyen seyirciler. Lig çaba gösterirse böyle olabilir.\n\nE-spor için iyi bir hafta oldu."
         },
         "negative": {
-          "subject0": "Esportmaníacos, {{player}} üzerine gidiyor — panel acımadı",
-          "body0": "Esportmaníacos paneli bugün {{player}} konusunda kendini tutmadı: \"Çocuk tamamen kayboldu. Bu mevsim ona ne oldu? {{team}}, böyle performans gösteren bir oyuncuya güvenmeye devam edemez.\"\n\nBu tür haberler morali sert vurur. Oyuncuyla konuşmaya değer.",
-          "subject1": "Esportmaníacos, {{team}} takımındaki {{player}} oyuncusunun istikrarını sorguluyor",
-          "body1": "Bugünkü Esportmaníacos yorumcu oturumu, {{player}} oyuncusunun son formunun tam bir analizine dönüştü. Karar: \"İstikrarsız. Düzen yok. Bazı günler üst seviyede, bazı günler tamamen görünmez. {{team}}, bu roldeki bir oyuncudan daha iyi çıktı hak ediyor.\"\n\nOyuncunun moralini takip edin."
-        }
-      },
-      "allio": {
-        "subject0": "Al Lío Podcast — Transfer dedikodusu: {{player}} takip ediliyor",
-        "body0": "Eros bugünkü Al Lío bölümünde transfer iması yaptı: \"{{player}} hakkında bazı şeyler duyuyorum. Birden fazla takım soru sordu. Henüz doğrulanmış bir şey yok ama {{team}} etrafındaki market ısınıyor.\"\n\nGelecek mevsim kadronuzu planlarken bunu aklınızda bulundurun.",
-        "subject1": "Al Lío Podcast — Eros, {{team}} için yaklaşan bir hamleye işaret ediyor",
-        "body1": "Eros, son Al Lío bölümünde ipuçları vermeye devam etti: \"{{team}} etrafında bazı görüşmeler yapıldığı söylendi. Bir şeyler pişiyor. Henüz isim veremem ama takipte kalın — bu market bitmekten çok uzak.\"\n\nGürültü de olabilir, gerçek de. İzlemeye değer.",
-        "subject2": "Al Lío Podcast — Lig formatı sızıntısı, Eros detaylandırıyor",
-        "body2": "Bugünkü Al Lío bölümü, Eros'un potansiyel bir sızıntıyı açıklamasıyla plan dışına çıktı: \"Ligin mevsim formatında değişiklikler planladığı söylendi. Doğrulanmadı ama kaynaklarım genelde güvenilirdir. Bu, takımların kadrolarını kurma şeklini sarsabilir.\"\n\nDoğruysa uzun vadeli planlamanızı etkileyebilir.",
-        "subject3": "Al Lío Podcast — Büyük hamle geliyor, lig sarsılıyor",
-        "body3": "Eros, Al Lío canlı yayınında \"bomba\" dediği haberi verdi: \"Ligde kimsenin henüz konuşmadığı önemli bir oyuncu hareketi olmak üzere. Sadece şunu söyleyeyim — bazı takımlar kadrolarını tamamen yeniden düşünmek zorunda kalacak.\"\n\nDikkatli olun — piyasa hareketleniyor.",
-        "rivalInterest": {
-          "subject": "Al Lío Podcast — {{player}}, {{rival}} ile anılıyor",
-          "body0": "Eros son Al Lío bölümünü bomba gibi bir haberle açtı: \"{{rival}} takımının {{player}} için hamle yapmaya başladığı bilgisine sahibim. Analistleri haftalardır son serileri ve tekli dereceli verilerini inceliyor. Henüz resmi teklif yok ama işler hızla ısınıyor.\"\n\nTemasa geçerlerse tavrınız ne olacak?",
-          "body1": "Al Lío Podcast, {{player}} oyuncusunun artık {{rival}} için somut bir hedef olduğunu özel olarak bildirdi.\n\nEros'a göre oyuncu, son maç performanslarının ardından dikkat çekti. Henüz resmi teklif yok ama baskı hızla artıyor.\n\nTavrınız ne?"
-        }
-      },
-      "yuste": {
-        "up": {
-          "subject0": "el_yuste — Yuste bile kabul ediyor: bu hafta izlenme arttı",
-          "body0": "Yuste yayınında nadir görülen olumlu bir yorumla herkesi şaşırttı: \"Dürüst olayım — rakamlar bu hafta yükseldi ve bunun aksini iddia etmeyeceğim. Maçlar iyi olduğunda izleyici geliyor. Bu kadar basit.\"\n\nTüm sahne için olumlu bir an.",
-          "subject1": "el_yuste — bu haftaki maçlar Yuste'yi gerçekten heyecanlandırdı",
-          "body1": "Her gün duyacağınız bir şey değil: Yuste sabah yayınında hevesliydi. \"Bu hafta hakkını verdi. Gerçek maçlar, ciddi bahisler, sonuna kadar kalan izleyiciler. Lig uğraştığında böyle olabilir.\"\n\nEsporda olmak için iyi bir hafta."
-        },
-        "down": {
-          "subject0": "el_yuste — lig izlenmeleri çakılıyor ve kimse umursamıyor",
-          "body0": "Antonio Yuste sabah yayınını tam bir rant ile açtı: \"Rakamlar yalan söylemez. İzlenme haftadan haftaya düşüyor ve lig farklı sonuçlar bekleyerek aynı şeyleri yapmaya devam ediyor. Bir şey değişmezse herşey bitebilir.\"\n\nSadece arka plan gürültüsü — ama Yuste konuştuğunda topluluk dinler.",
-          "subject1": "el_yuste — Yuste'ye göre lig bozuk",
-          "body1": "Yuste sabah yayınında ligin düşen etkileşimini analiz etmek için otuz dakika harcadı: \"Bunu aylardır söylüyorum. Ürün yeterince iyi değil. Format insanları sıkıyor, programlama momentumu öldürüyor. Veri net.\"\n\nSert, ama Yuste'nin kitlesi bunu ciddiye alıyor."
+          "subject0": "{{channel}} – Ligin izleyici sayıları dibe vuruyor ve kimse umursamıyor",
+          "body0": "{{name}} sabah yayınına sert bir tiradla başladı: “Rakamlar yalan söylemez. İzleyici sayıları her hafta düşüyor, ama lig hep aynı şeyi yapıp farklı sonuçlar bekliyor. Eğer bir şey değişmezse, her şey biter.“\n\nSadece arka plan sesleri – ama {{pseudo}} konuştuğunda, topluluk dinliyor.",
+          "subject1": "{{channel}} — {{pseudo}}, {{player}}'ı sert bir şekilde eleştirdi",
+          "body1": "{{pseudo}}, son yayınında {{player}}'ı eleştirmekte ısrar etti: “Nasıl bu kadar kötü olabilirsin? Cidden {{player}}, haritana bir bak! Yemin ederim, Bronz liginde bile insanlar daha iyi oynuyor.”\n\nBir özür dilendiğinden emin olmak için {{pseudo}} ile özel olarak konuştum.",
+          "subject2": "{{channel}} — {{pseudo}}'ya göre {{player}} ligin en kötü oyuncularından biri",
+          "body2": "{{pseudo}}, {{player}} hakkında acımasızca konuştu: “Acımasız olacağım. {{player}}, tüm pozisyonlarda ligin en kötü üç oyuncusundan biri. {{team_short}} bu takımın işleyişi için elinden geleni yaptı, ancak {{player}}'ın elleri yoksa mucize yaratamazlar.“\n\n{{pseudo}} bu noktada {{player}}'ı taciz etmeye yakın bir tavır sergiliyor",
+          "subject3": "{{channel}} — {{pseudo}}, {{player}}'a karşı özellikle eleştirel",
+          "body3": "{{pseudo}}, {{player}}'a sert çıktı: “Dürüst olmak istiyorum. {{player}}'ın bu seviyede oynamak için yeterince iyi olduğunu düşünmüyorum. İkinci ligde bu tür hatalar cezalandırılmaz, ancak bu ligde bu kesinlikle kabul edilemez. {{player}}'a kötü bir şey dilemiyorum, biliyorsun, ama ikinci ligde daha iyi olan ve bunu kanıtlama şansı verilmesi gereken başka oyuncular olduğunu düşünüyorum”.\n\n2. Lig'de seçeneklerimiz neler?",
+          "subject4": "{{channel}} — {{pseudo}}, {{team_short}} taraftarlarıyla bir kavga başlattı",
+          "body4": "{{pseudo}} hayranlarımızı hedef aldı: “Sizler gerçekten hayvan gibisiniz. Topluluğunuz o kadar zehirli ki inanılmaz. Ve eminim ki sahibi her zamanki gibi tek kelime bile etmeyecektir. Lanet olası yayınımdan uzak durun ve bok yiyin, pislikler”.\n\nBu davranış kesinlikle tahammül edilemez. Riot'a bir mesaj gönderdim. Oyuncuların Rift'teki topluluğumuzu savunmasını sağlayın.",
+          "subject5": "{{channel}} — {{pseudo}}'ya göre League ürünü bozuk",
+          "body5": "{{pseudo}}, son yayınında tam otuz dakika boyunca League'deki azalan ilgiyi analiz etti: “Bunu aylardır söylüyorum. Ürün yeterince iyi değil. Format sıkıcı ve maç programı ivmeyi frenliyor”.\n\nSert bir ifade, ancak {{pseudo}}'nun izleyicileri bunu ciddiye alıyor."
         }
       }
     },

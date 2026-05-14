@@ -2331,7 +2331,7 @@
       "academyCoordinator": "Academy Coordinator",
       "esportmaniacos": "Esportmaníacos",
       "allioPodcast": "Al Lío Podcast",
-      "elYuste": "el_yuste"
+      "media": "Media team"
     },
     "role": {
       "top": "Top",
@@ -2356,7 +2356,7 @@
       "academyCoordinator": "Academy Coordinator",
       "esportmaniacos": "Panel",
       "allioPodcast": "Eros",
-      "elYuste": "el_yuste"
+      "leadCom": "Lead Communication"
     },
     "source": {
       "sportsGazette": "Dot Esports",
@@ -2806,47 +2806,156 @@
         "body": "Academy weekly summary:\n- Active players: {{activePlayers}}\n- Average OVR: {{avgOvr}}\n- High potential talents (>= 80): {{highPotential}}\n- Highlights: {{highlights}}\n- Current ERL rank: #{{position}} of {{total}}\n- Quick table: {{tablePreview}}",
         "bodyWithPromotion": "Academy weekly summary:\n- Active players: {{activePlayers}}\n- Average OVR: {{avgOvr}}\n- High potential talents (>= 80): {{highPotential}}\n- Highlights: {{highlights}}\n- Current ERL rank: #{{position}} of {{total}}\n- Quick table: {{tablePreview}}\n\nRecommendation: {{promotionCount}} player(s) ready for promotion -> {{promotionList}}."
       },
-      "esportmaniacos": {
+      "podcast": {
+        "player": {
+          "positive": {
+            "subject0": "{{podcast}} — Focus on {{player}}",
+            "body0": "{{host}} asked {{guest}} about {{player}}'s performances recently: \"I could not think about a better player in the league right now at this role. I mean, look at the CS diff and the gold diff at 15 minutes, it speaks for itself. A {{player}} in a good shape gives a dominant {{team}}\".\n\nMake sure to use {{player}}'s full potential.",
+            "subject1": "{{podcast}} — {{player}} saves {{team_short}}",
+            "body1": "{{guest}} has been particularly adamant about the impact of {{player}}: \"Let's be clear. {{team}} plays badly. They should be doing better than that. Yet their results are still okay and it is entirely because of {{player}}. If it was not for the prime faker-level performances we saw, these games would never be winnable. {{player}} saves {{team}}. Period\".\n\nPay attention to the champions {{player}} wants to play during the draft phase.",
+            "subject2": "{{podcast}} — {{player}} is playing good",
+            "body2": "{{guest}} highlighted {{player}} this week: \"I was surprised by how {{player}} played on the map recently. {{team_short}} as a whole is perfectly in sync with {{player}} and each play made on one side of the map is perfectly respected at the other. They completely out-tempo their oponnents and that comes from the pressure {{team_short}} imposes. The only thing that separates them from the best teams right now are teamfights and a bit of temperance in late-game to avoid throws\".\n\nShould we focus on refining our strengths or working on our weaknesses?",
+            "subject3": "{{podcast}} — Improvement from {{player}}",
+            "body3": "{{guest}} wanted to talk about {{player}} recent performances in this week episode: \"You can tell when a player strives to get better results. However, I feel like a lot of observers forget to mention improvements when they come. So I want to highlight {{player}} as I saw a drastic change in terms of in-game behavior. You can sense different clicks, sharp decisions and almost no missed skillshots\".\n\n{{player}} could become our star player in the future.",
+            "subject4": "{{podcast}} praises {{player}} — the desk is unanimous",
+            "body4": "The {{podcast}} panel spent a good chunk of today's stream on {{player}} at {{team_short}}: \"Nothing to criticize this week. The guy is absolutely dominating\".\n\nThe positive coverage should give confidence in the locker room.",
+            "subject5": "{{podcast}} — {{player}} is carrying {{team_short}} this split",
+            "body5": "The {{podcast}} panel rarely agree on anything, but {{player}} got a full pass today: \"Consistent, solid, no dips in form. One of the best players in the league right now. {{team_short}} should do everything to keep him\".\n\nGood for morale — and for the market value."
+          },
+          "negative": {
+            "subject0": "{{podcast}} — {{player}} bad performances",
+            "body0": "{{guest}} wanted to talk about {{player}} recent performances in this week episode: \"I don't know what's happenning behind the scenes but I have to say that I don't recognize {{player}} anymore. The plays, the interviews. It feels like there is no confidence anymore. What is happening in {{team_short}}?\".\n\nWe should speak with {{player}}.",
+            "subject1": "{{podcast}} — The competition is too strong for {{player}}",
+            "body1": "{{guest}} nuanced {{player}} bad performances considering the level of the competition: \"Honestly, {{player}} does not play badly. There are good ideas, good trades, good macro movement. It is simply not enough. The competition at this position is way too fierce and {{player}} struggles to improve. {{team_short}} should do better with another player but I still think that {{player}} deserves to play at this level\".\n\nWe should maybe appoint another positional coach dedicated to {{player}}.",
+            "subject2": "{{podcast}} — {{player}} is the WORST player I have ever seen",
+            "body2": "{{guest}} has been particularly critical towards {{player}} this week: \"{{player}} is the WORST player I have ever seen. What was that performance seriously? Are you saying there was not any player available in the off-season that could hold a mouse? At this point, {{team_short}}'s coaching staff can't do miracles. I swear, if {{team_short}} does not change {{player}} for another player at the end of the split, it will be a total slap in the face to the fans\".\n\nWe should consider the various options for the position of {{player}}.",
+            "subject3": "{{podcast}} — The meta is bad for {{player}}",
+            "body3": "{{guest}} mentionned the impact of the meta on {{player}}'s form: \"I think that {{team_short}} players are better than what they are showing right now, especially {{player}}. I mean, {{player}}'s champion pool is quite one-sided and corresponded perfectly to the meta but with all those spicy picks coming and the changes made to the items and the runes, {{team_short}} is caught of guard and they have to find a whole new balance. As I see it, there are only two options. Either {{player}} manages to adapt or {{team_short}} has to forget about the meta and go back to what made them good\".\n\nWe should think about it.",
+            "subject4": "{{podcast}} goes after {{player}} — Panel shows no mercy",
+            "body4": "The {{podcast}} panel did not hold back today on {{player}}: \"The guy has completely disappeared. What happened during this split? {{team_short}} can't keep relying on someone performing like this\".\n\nThis kind of coverage tends to hit morale hard. Worth having a word with {{player}}.",
+            "subject5": "{{podcast}} questions {{player}}'s consistency",
+            "body5": "Today's {{podcast}} session turned into a full breakdown of {{player}}'s recent form. The verdict: \"Inconsistent. No regularity. Some days at top level, others completely invisible. {{team_short}} deserves better output from someone in that role\".\n\nKeep an eye on the player's morale."
+          }
+        },
+        "general": {
+          "positive": {
+            "subject0": "{{podcast}} — {{team_short}}'s coaching staff",
+            "body0": "In this week episode {{host}} spent time talking about {{team_short}}'s coaching staff: \"To be honest, I think I never saw such a drafting style before. It seems like their coaching staff keeps inventing new champions, new roles to play them in. It is both effective and particularly enjoyable to watch !\".\n\nWe really want to keep our coaching staff. They are doing a great job.",
+            "subject1": "{{podcast}} — {{team}} is HYPE",
+            "body1": "{{guest}} shared how much {{team_short}} builds hype in the league: \"I think I have not been this hyped for a long time. I know that people might think I am crazy but I am serious. The way {{team_short}} plays and drafts makes me think they can challenge the top of the world. And I am not alone. Look at the excitement on social medias. The fans are getting louder, the hype is growing. I am sure they are selling more jerseys than they ever did. {{team_short}} should really do everything they can to foster this momentum and become one of the best\".\n\nThis is a very good sign for us. I will make sure to check the impact on our sales.",
+            "subject2": "{{podcast}} — {{team_short}} players seem so cool",
+            "body2": "{{guest}} talked about {{team_short}}'s content: \"I think that {{team_short}}'s media team is underrated. Their content is fresh, they have good ideas and they keep finding new ways to make the players loveable. The league should draw their aspiration from them\".\n\nI just wanted to let you know. Sometimes, the players don't want to, but it has a positive impact on {{team}}.",
+            "subject3": "{{podcast}} — {{team_short}} has so many good players",
+            "body3": "{{guest}} particularly emphasized the importance of synergy when building a roster like {{team_short}}'s: \"You saw many superteams in the past crumbling under the pressure and the egos. {{team_short}} is not one of them. They have very talented players, among the best in the league and currently they are all in a top shape. But the difference comes from the team plays. Watch the jungler pathing, look at the wards, pay attention to the pings\".\n\nOther teams might be interested in our players. We should pay attention to their contracts."
+          },
+          "negative": {
+            "subject0": "{{podcast}} — Hot Take: {{team_short}} will crumble",
+            "body0": "{{guest}} shared a hot take about {{team_short}}: \"We all saw the same games this weekend. Uncertain lanes, pointless 50/50s on objectives, weird deaths on the sidelanes. For me it is obvious that {{team_short}} will crumble in the near future. Even {{player}} had a bad performance in their last match\".\n\n We should maybe change our training methods?",
+            "subject1": "{{podcast}} — {{team_short}} is a JOKE",
+            "body1": "{{guest}} pointed fingers at us: \"What is {{team_short}}'s management doing ?! They have a coaching staff drating nonsense, players yawning on stage and an off-season beyond understanding ! Is this supposed to represented the best of the best? Sell the slot already !\".\n\nIn terms of budget, what can we do to repair the situation?",
+            "subject2": "{{podcast}} — What can {{team_short}} do to make a comeback?",
+            "body2": "{{host}} asked {{guest}} what could {{team_short}} do to make a comeback: \"It's difficult you know. I can only have compassion with {{team_short}}'s coaching staff and players. I am sure they are doing their best but maybe they should prioritize scrimming against teams from other leagues, even minor ones. This could help them build a momentum and play with trust. In this situation, your biggest ennemy is yourself\".\n\nWe could maybe adapt our training schedule?",
+            "subject3": "{{podcast}} — {{team_short}}'s coaching staff",
+            "body3": "In this week episode {{host}} spent time talking about {{team_short}}'s coaching staff: \"I don't understand how these people can still have a job right now. The way they drafted last weekend? Am I watching tier 3 League of Legends? It is painfull to watch. Give your players a real staff if you really want to win !\".\n\nWe should pay attention to this kind of comment. These guests are knowledgeable about the game and they have influence over their audience."
+          }
+        }
+      },
+      "broadcast": {
+        "player": {
+          "positive": {
+            "subject0": "{{broadcast}} — {{player}} dominates the statistics",
+            "body0": "{{guest}} spent time comparing {{player}} with the other competitors: \"We checked the data and I was flabbergasted by {{player}}'s statistics. In terms of jungle proximity and presence on early objectives there is not any player that performs better. And the impact in the early game is clear. {{team_short}} has a better setup on early objectives and it gives either free kills or free objectives.\n\nWe need to make sure {{player}}'s morale stays up.",
+            "subject1": "{{broadcast}} — {{player}}'s play analyzed on broadcast",
+            "body1": "{{guest}} analyzed {{player}}'s play on the {{broadcast}} broadcast: \"As you can see right here, {{player}} finds the angle to put a pink ward in this bush and just a few seconds after, it hides the flank. This ward is a game changer and at the moment {{team}} decides to turn, it's yet again {{player}} that goes in and clutch the teamfight\".\n\nThis kind of work is rarely emphasized. Make sure to mention it to the coaching staff.",
+            "subject2": "{{broadcast}} — {{player}} live interview",
+            "body2": "{{host}} interviewed {{player}} this week: \n{{host}} - \"You played particularly good today, was there something personal against today's opponent?\"\n{{player}} - \"Well, kind of. In scrims, we have been struggling to play against them and it was mainly my fault. I had an ego check and I really wanted to win so I poured a lot of me into preparing today's matchups\".\n\n{{player}} is doing a lot of efforts to improve.",
+            "subject3": "{{broadcast}} — Enthusiasm around {{player}}",
+            "body3": "The whole {{broadcast}} broadcast was enthustiast about {{player}} recent performances this week. {{guest}} in particular, highlighted a lot of improvements: \"I did not expect {{player}} to improve that much in such a short time. I think I never saw a player changing that fast. How far will {{team_short}} be able to go with {{player}}? How far {{player}} will be able to grow with {{team_short}}? I can wait to see what's coming for them\".\n\nThe narrative is shifting!"
+          },
+          "negative": {
+            "subject0": "{{broadcast}} — {{player}} showed as bottom in statistics",
+            "body0": "{{guest}} was walking on eggshells discussing {{player}} statistics: \"{{team_short}} is a good team but they can't win and statistically speaking, the data points towards a scapegoat. {{player}} is last of the league in a lot of indicators and we saw huge mistakes in game. Usually, {{team_short}} plays good but each time they are close to win, {{player}} goes one step too far and the momentum shifts completely\".\n\nDo we have options to replace {{player}}?",
+            "subject1": "{{broadcast}} — Detrimental narrative around {{team}}",
+            "body1": "{{guest}} criticized {{team_short}} despite good results: \"Everybody completely overestimate {{team_short}}. Have anyone paid attention to their vision setup? The players' hands simply hide their awfull weaknesses. In a few weeks you will see I am right. {{team_short}} will not able to take a single objective playing like that\".\n\nIs {{guest}} right on this?",
+            "subject2": "{{broadcast}} — {{player}} live interview",
+            "body2": "{{player}} has been hesitant in an interview with {{host}}: \n{{host}} - \"You team seems to keep playing with a weakside top. Is this a team style you decided as a team based on scrims?\" \n{{player}} - \"I don't know. Not really. Maybe it's because I can't adapt fast enough on stage to what happens on the map. I don't think it is a conscious decision, at least not from me\".\n\nThis is really a bad interview. We need to provide media training to {{player}} as soon as possible.",
+            "subject3": "{{broadcast}} — {{player}} insulted on broadcast",
+            "body3": "{{guest}} has been particularly harsh towards {{player}} while casting {{team_short}} games. During a teamfight where {{player}} missed a skillshot, {{guest}} instantly shouted \"Bro how do you miss that?! You have one job.\" and completed the complaint with a \"pun\" based on {{player}}'s pseudo I won't write here. This is not the first time {{guest}} targets {{player}}. This is borderline harassment at this point. I contacted Riot to make sure this is the last time something like that happens on the {{broadcast}} broadcast."
+          }
+        },
+        "general": {
+          "positive": {
+            "subject0": "{{broadcast}} — {{team}} fans praised on broadcast",
+            "body0": "{{guest}} wanted to send a message to the league communities this week: \"To every fan that listens to me. Look at what {{team_short}} fans are doing online and during events.Take inspiration from it, make it your own, refine it and shout louder for your team. We absolutely need this kind of hype that {{team_short}} fans are brining. Nobody expected them to be that game changer and yet here they are. Wake up fans! Show your pride and make sure that next time, I praise you instead of them\".\n\nThe fans are on fire. Give them the show they demand!",
+            "subject1": "{{broadcast}} — {{team_short}} dominant in statistics",
+            "body1": "{{guest}} pointed out {{team}} dominance in statistics: \"I was curious about it so I checked. {{team_short}} almost always has the first and second drake. They snowball hard on the botside of the map and their toplaner respects really well the weakside. When the midgame comes, they can either trade drakes for gold at the opposite or fight for an early soul depending on their draft. They have the agency to choose what they want to do on the map and that changes everything\".\n\nPay attention to the team's training schedule. We need to be in peak condition at the right time.",
+            "subject2": "{{broadcast}} — Who can stop {{team}}?",
+            "body2": "On the {{broadcast}} broadcast, {{guest}} hosted a special segment around {{team_short}}, emphasizing in particular the macro game and the impact of the jungler/support duo on the whole map. According to {{guest}}: \"{{team}} is unstoppable right now. Their laners might be challenged but their jungle/support duo is god-like in this meta\".\n\nI have put together some special content for fans who write fanfiction about our jungle-support duo.",
+            "subject3": "{{broadcast}} — {{team_short}} preparation emphasized on broadcast",
+            "body3": "The preparation of {{team_short}} has been praised on the {{broadcast}} broadcast. {{host}} mentioned a recent interview of {{team_short}}'s headcoach where they said they had worked a lot on their preparation tools: \"Our analyst has done a huge job building our internal tools. I think that these tools are essential nowadays and of course they don't remplace long-term work and specific counter-picks but they help having a solid dauy-to-day baseline when building our drafts and preparing the scrims\".\n\n We need to check the contract of our analyst."
+          },
+          "negative": {
+            "subject0": "{{broadcast}} — {{team}} fans criticized on broadcast",
+            "body0": "{{team_short}} fans sparked {{guest}}'s anger during the {{broadcast}} broadcast: \"It's always {{team_short}} fans that don't know the limits. Guys, I know you love your team but you can't keep insulting the other communities. I will say out loud what others don't. The majority of your community is toxic and you should take responsability for the harassment you provoke\".\n\nThis comment reignited a war on social media. Racist comments targetted {{team}}. We can't let that happen.",
+            "subject1": "{{broadcast}} — {{team}} behind in statistics",
+            "body1": "{{guest}} pointed fingers at {{team}}: \"The truth hits hard but the statistics don't lie. No matter how much gold they get in the early game, {{team_short}} can't win games. They give the impression of fighting back but they never secure objectives in mid-game and above all, they play in the dark. Look at the vision scores. How can they expect to win fights if they don't know where their opponents are on the map?\".\n\nUnfortunately, {{guest}} is right on that.",
+            "subject2": "{{broadcast}} — Who can save {{team}}?",
+            "body2": "{{host}} gave ideas in the {{broadcast}} broadcast about how {{team_short}} could make a comeback: \"At this point, I think that {{team_short}} should improve their mental coaching staff. There is a clear mental problem in their recent games. If they can't fix that, they will have to change players at the off-season to create a new momentum\".\n\nWe could maybe adapt our training schedule?",
+            "subject3": "{{broadcast}} — {{team_short}} preparation criticized on broadcast",
+            "body3": "{{host}} critized {{team_short}}'s coaching staff on the {{broadcast}} broadcast this week: \"I don't have the data they have from the scrims but honestly at this moment of the draft, what picking that champion is criminal. It seems like a good idea matchup wise but overall their draft becomes incoherent. They can't go in, they can't receive, they do everything and nothing at the same time \".\n\nWe should pay attention to the coherence of our drafts."
+          }
+        }
+      },
+      "rumour": {
+        "subject0": "{{rumour_media}} — Transfer rumour: {{player}} being tracked",
+        "body0": "{{host}} dropped a transfer hint today: \"I'm hearing things about {{player}}. Multiple teams have been asking questions. Nothing confirmed yet, but the mercato around {{team_short}} is heating up\".\n\nKeep this in mind when planning your squad for next split.",
+        "subject1": "{{rumour_media}} — Transfer rumour: {{player}} might be benched",
+        "body1": "{{host}} dropped a transfer hint today: \"Sources told me that {{player}} should be benched at the end of the split. {{team_short}} is currently looking for their options in tier 2 but they have limited options. I'll tell you more when I can\".\n\nWe should evaluate if we can take advantage of that situation.",
+        "subject2": "{{rumour_media}} — Transfer rumour: {{player}} poached by other teams",
+        "body2": "{{host}} mentionned {{player}}'s contract today: \"{{team_short}} is having a hard time extending {{player}}'s contract. Many people have been approaching {{player}} behind the scenes and Riot is turning a blind eye on this situation. It is highly probable that {{player}} will switch teams as a free agent when the {{team_short}} contract expires\".\n\nThis reminds us hard times.",
+        "subject3": "{{rumour_media}} — Transfer rumour: discussions around {{player}}",
+        "body3": "{{host}} mentionned active discussions around {{team_short}}'s player: \"People are talking with {{team_short}} about {{player}}. We are still far from having a real offer on the table but teams are interested\".\n\nWe should take part in the discussions if it is not already the case.",
+        "subject4": "{{rumour_media}} — Transfer rumour: {{player}} envisionned by other teams",
+        "body4": "{{host}} hinted activity around {{player}}'s contract: \"I know people that talked to me about {{player}}. Apparently, {{team_short}} has received interest from at least two other teams about {{player}}. It is unsure if {{team_short}} would want to keep their player or act a roster change for now. I will let you know\".\n\nKeep this in mind when planning your squad for next split.",
+        "subject5": "{{rumour_media}} — {{host}} hints at incoming deal for {{team}}",
+        "body5": "{{host}} has been dropping hints about a incoming move: \"I've been told there are conversations happening around {{team_short}}. Something is being cooked. I can't give names yet but stay tuned — this mercato is far from over\".\n\nCould be noise, could be real. Worth watching.",
+        "subject6": "{{rumour_media}} — League format leak, {{host}} breaks it down",
+        "body6": "Yesterday, {{host}} revealed a potential leak: \"I've been told the league is planning changes to the split format. Not confirmed, but my sources are usually reliable. This could shake up how teams build their rosters\".\n\nIf true, this could affect your long-term planning.",
+        "subject7": "{{rumour_media}} — Big move incoming, league shaken up",
+        "body7": "{{host}} teased for incoming move: \"There's a significant player movement about to happen in the league that nobody is talking about yet. I'll just say this — some teams are going to have to rethink their rosters completely\".\n\nStay alert — the market is moving.",
+        "subject8": "{{rumour_media}} — {{player}} likely to be swaped with another team",
+        "body8": "{{host}} revealed a potential roster move around {{player}}: \"Sources told me that {{team_short}} is currently looking to swap {{player}} with another team to change their dynamic. It's not done yet, but there are chances for it to happen considering {{team_short}}'s recent performances\".\n\nWe could try to get more info if you are interested.",
+        "subject9": "{{rumour_media}} — {{player}} crashed out during scrims",
+        "body9": "{{host}} gave more insight on the recent drama around {{team_short}}: \"As far as I know, {{player}} did not exactly punch the head coach as you can read on X or Reddit but there was clearly a lot of animosity during scrims. The coaching staff even made a sub play for the latest scrims. It is unsure if {{player}} will be able to play for the next matches. Behavior issues like that can fade quickly or completely break a team. I'll stay alert and tell you when I have more information\".\n\n{{player}} apparently has behavior issues. Keep that in mind in case you were interested by this player for the upcoming off-season"
+      },
+      "streamer": {
         "positive": {
-          "subject0": "Esportmaníacos praises {{player}} — the desk is unanimous",
-          "body0": "The Esportmaníacos panel spent a good chunk of today's stream on {{player}} at {{team}}.\n\n\"Nothing to criticize this week. The guy is absolutely dominating.\" The positive coverage should give confidence a boost in the locker room.",
-          "subject1": "Esportmaníacos: {{player}} is carrying {{team}} this split",
-          "body1": "The Esportmaníacos tertulianos rarely agree on anything, but {{player}} got a full pass today: \"Consistent, solid, no dips in form. One of the best players in the league right now. {{team}} should do everything to keep him.\"\n\nGood for morale — and for the market value."
+          "subject0": "{{channel}} — Even {{pseudo}} admits: viewership is up this week",
+          "body0": "{{pseudo}} surprised with a rare positive take: \"I'll be honest — the numbers are up this week and I'm not going to pretend otherwise. When the matches are good, the audience comes. Simple\".\n\nA positive moment for the whole scene.",
+          "subject1": "{{channel}} — {{pseudo}} praised {{team}}",
+          "body1": "{{pseudo}} emphasized how {{team_short}} played good in the last match. The viewers particularly enjoyed the in-depth explanation of the vision setup and the macro game.\n\nThis is the kind of visibility we like.",
+          "subject2": "{{channel}} — {{player}} favorite player of {{pseudo}}",
+          "body2": "{{pseudo}} cannot stop raving about {{player}}: \"I won't lie, I think that {{player}} is a really good player\".\n\n{{player}} receives a lot of praises these days.",
+          "subject3": "{{channel}} — {{pseudo}} particularly fond of {{team_short}}'s gameplay",
+          "body3": "{{pseudo}} emphasized how {{player}} played good in the last match: \"{{player}} is really good right now and among the best players of the league. I agreed with the haters but truth has to be told, I was wrong about {{team_short}}\".\n\n{{pseudo}} rarely admits to being wrong.",
+          "subject4": "{{channel}} — {{pseudo}} commended {{team_short}} fans",
+          "body4": "{{pseudo}} particularly praised {{team_short}} fans in a recent stream: \"This is the kind of atmosphere I want to see every day. Sane rivalry, good banter, I cannot ask more. Props to you {{team_short}} fans, you really made your club proud!\".\n\nWe are lucky to have such a good community.",
+          "subject5": "{{channel}} — This week's matches actually got {{pseudo}} excited",
+          "body5": "Not something you hear every day, {{pseudo}} was enthusiastic on a recent stream: \"This week delivered. Real matches, proper stakes, viewers who stayed till the end. This is what the league can be when it tries\".\n\nGood week to be in esports."
         },
         "negative": {
-          "subject0": "Esportmaníacos goes after {{player}} — panel shows no mercy",
-          "body0": "The Esportmaníacos panel did not hold back today on {{player}}: \"The guy has completely disappeared. What happened to him this split? {{team}} can't keep relying on a player performing like this.\"\n\nThis kind of coverage tends to hit morale hard. Worth having a word with the player.",
-          "subject1": "Esportmaníacos questions {{player}}'s consistency at {{team}}",
-          "body1": "Today's Esportmaníacos tertulianos session turned into a full breakdown of {{player}}'s recent form. The verdict: \"Inconsistent. No regularity. Some days at top level, others completely invisible. {{team}} deserves better output from a player in that role.\"\n\nKeep an eye on the player's morale."
-        }
-      },
-      "allio": {
-        "subject0": "Al Lío Podcast — Transfer rumour: {{player}} being tracked",
-        "body0": "Eros dropped a transfer hint on today's Al Lío episode: \"I'm hearing things about {{player}}. Multiple teams have been asking questions. Nothing confirmed yet, but the mercato around {{team}} is heating up.\"\n\nKeep this in mind when planning your squad for next split.",
-        "subject1": "Al Lío Podcast — Eros hints at incoming deal for {{team}}",
-        "body1": "Eros has been dropping hints on the latest Al Lío episode: \"I've been told there are conversations happening around {{team}}. Something is being cooked. I can't give names yet but stay tuned — this mercato is far from over.\"\n\nCould be noise, could be real. Worth watching.",
-        "subject2": "Al Lío Podcast — League format leak, Eros breaks it down",
-        "body2": "Today's Al Lío episode went off-script when Eros revealed a potential leak: \"I've been told the league is planning changes to the split format. Not confirmed, but my sources are usually reliable. This could shake up how teams build their rosters.\"\n\nIf true, this could affect your long-term planning.",
-        "subject3": "Al Lío Podcast — Big move incoming, league shaken up",
-        "body3": "Eros went live on Al Lío with what he called a \"bombazo\": \"There's a significant player movement about to happen in the league that nobody is talking about yet. I'll just say this — some teams are going to have to rethink their rosters completely.\"\n\nStay alert — the market is moving.",
-        "rivalInterest": {
-          "subject": "Al Lío Podcast — {{player}} linked with {{rival}}",
-          "body0": "Eros opened the latest Al Lío episode with a bombshell: \"I have information that {{rival}} have started making moves for {{player}}. Their analysts have been reviewing recent series and solo queue data for weeks. No formal offer yet, but things are heating up fast.\"\n\nWhat's your stance if they make contact?",
-          "body1": "Al Lío Podcast has exclusively reported that {{player}} is now a concrete target for {{rival}}.\n\nAccording to Eros, the player attracted attention after recent stage performances. No formal bid yet, but pressure is building fast.\n\nWhat's your stance?"
-        }
-      },
-      "yuste": {
-        "up": {
-          "subject0": "el_yuste — even Yuste admits: viewership is up this week",
-          "body0": "Yuste surprised his stream with a rare positive take: \"I'll be honest — the numbers are up this week and I'm not going to pretend otherwise. When the matches are good, the audience comes. Simple.\"\n\nA positive moment for the whole scene.",
-          "subject1": "el_yuste — this week's matches actually got Yuste excited",
-          "body1": "Not something you hear every day: Yuste was enthusiastic on his morning stream. \"This week delivered. Real matches, proper stakes, viewers who stayed till the end. This is what the league can be when it tries.\"\n\nGood week to be in esports."
-        },
-        "down": {
-          "subject0": "el_yuste — league viewers are tanking and nobody cares",
-          "body0": "Antonio Yuste opened his morning stream with a full rant: \"The numbers don't lie. Viewership is going down week after week and the league keeps doing the same things expecting different results. C'est fini if nothing changes.\"\n\nJust background noise — but when Yuste talks, the community listens.",
-          "subject1": "el_yuste — the league product is broken, according to Yuste",
-          "body1": "Yuste spent a solid thirty minutes analysing the league's declining engagement on his morning stream: \"I've been saying this for months. The product isn't good enough. The format bores people, the scheduling kills momentum. The data is clear.\"\n\nHarsh, but Yuste's audience takes it seriously."
+          "subject0": "{{channel}} — league viewers are tanking and nobody cares",
+          "body0": "{{name}} opened the morning stream with a full rant: \"The numbers don't lie. Viewership is going down week after week and the league keeps doing the same things expecting different results. C'est fini if nothing changes\".\n\nJust background noise — but when {{pseudo}} talks, the community listens.",
+          "subject1": "{{channel}} — {{pseudo}} strongly critized {{player}}",
+          "body1": "{{pseudo}} insisted on critizing {{player}} in a recent stream: \"How is it possible to be that bad? Seriously {{player}}, look at your map! I swear even in Bronze, people play better\".\n\nI went to discuss with {{pseudo}} in private to make sure excuses are made.",
+          "subject2": "{{channel}} — {{player}} is among the worst players of the league according to {{pseudo}}",
+          "body2": "{{pseudo}} has been adamant about {{player}}: \"I will be brutal. {{player}} is among the bottom 3 of the league across all position. {{team_short}} did all they could to make this team work but if {{player}} has no hands, they cannot do miracles\".\n\n{{pseudo}} is borderline harassing {{player}} at this point.",
+          "subject3": "{{channel}} — {{pseudo}} particularly critical about {{player}}",
+          "body3": "{{pseudo}} has been hard on {{player}}: \"I won't lie. I don't think {{player}} is good enough to compete at this level. In tier 2, this kind of mistake is not punished but in this league, it's a big no. I don't wish {{player}} bad things you know but I think that there are other players in tier 2 that are better and who should be given the chance to prove it\".\n\nWhat are our options in tier 2?",
+          "subject4": "{{channel}} — {{pseudo}} started a drama with {{team_short}} fans",
+          "body4": "{{pseudo}} has targetted our fans: \"You are animals really. Your community is so toxic it's unbelievable. And I am sure your owner won't tell shit as always. Just fucking back off my stream and eat shit, assholes\".\n\nThis behavior is absolutely unbearable. I sent a message to Riot. Just make sure the players defend our community on the Rift.",
+          "subject5": "{{channel}} — The league product is broken, according to {{pseudo}}",
+          "body5": "{{pseudo}} spent a solid thirty minutes analysing the league's declining engagement on a recent stream: \"I've been saying this for months. The product isn't good enough. The format is boring and the scheduling kills momentum\".\n\nHarsh, but {{pseudo}}'s audience takes it seriously."
         }
       }
     },
