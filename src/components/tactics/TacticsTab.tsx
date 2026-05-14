@@ -259,6 +259,20 @@ function playerPhotoUrl(playerId: string): string | null {
   return null;
 }
 
+function ImageWithFallback({ playerId, playerName, gameState }: { playerId: string; playerName: string; gameState: GameStateData }) {
+  const player = gameState.players.find(p => p.id === playerId || p.match_name === playerName);
+  const photo = player?.profile_image_url ?? resolvePlayerPhoto(playerId, playerName);
+  return (
+    <img
+      src={playerPhotoUrl(playerId) ?? photo ?? ""}
+      alt={playerName}
+      className="h-10 w-10 shrink-0 rounded object-cover"
+      onError={(e) => { (e.target as HTMLImageElement).src = photo ?? ""; }}
+      loading="lazy"
+    />
+  );
+}
+
 function Section<T extends string>({
   title,
   options,
@@ -649,12 +663,10 @@ export default function TacticsTab({
                       </div>
 
                       {row.playerId ? (
-                        <img
-                          src={playerPhotoUrl(row.playerId) ?? resolvePlayerPhoto(row.playerId, row.playerName) ?? ""}
-                          alt={row.playerName}
-                          className="h-10 w-10 shrink-0 rounded object-cover"
-                          onError={(e) => { (e.target as HTMLImageElement).src = resolvePlayerPhoto(row.playerId, row.playerName) ?? ""; }}
-                          loading="lazy"
+                        <ImageWithFallback
+                          playerId={row.playerId}
+                          playerName={row.playerName}
+                          gameState={gameState}
                         />
                       ) : (
                         <div className="h-10 w-10 shrink-0 rounded bg-gray-100 dark:bg-navy-700/40" />
