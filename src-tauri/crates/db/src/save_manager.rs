@@ -234,7 +234,7 @@ impl SaveManager {
 
         if league_repo::needs_cleanup(
             db.conn(),
-            game.leagues.first().map(|league| league.id.as_str()),
+            game.active_league().map(|league| league.id.as_str()),
         )? {
             info!(
                 "[save_manager] cleaning stale league rows for save {}",

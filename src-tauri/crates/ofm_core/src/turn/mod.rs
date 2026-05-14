@@ -63,7 +63,7 @@ where
 {
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
 
-    let has_match_today = game.leagues.first().is_some_and(|league| {
+    let has_match_today = game.active_league().is_some_and(|league| {
         league
             .fixtures
             .iter()
@@ -1209,7 +1209,7 @@ pub fn simulate_other_matches_with_capture<F>(
         "[turn] simulate_other_matches: date={}, skip={:?}",
         today, skip_fixture
     );
-    let fixture_indices: Vec<usize> = game.leagues.first().map_or(vec![], |league| {
+    let fixture_indices: Vec<usize> = game.active_league().map_or(vec![], |league| {
         league
             .fixtures
             .iter()
@@ -1233,7 +1233,7 @@ where
     F: FnMut(StatsState),
 {
     let (home_team_id, away_team_id, best_of) = {
-        let f = &game.leagues.first().unwrap().fixtures[idx];
+        let f = &game.active_league().unwrap().fixtures[idx];
         (f.home_team_id.clone(), f.away_team_id.clone(), f.best_of)
     };
 
@@ -1550,7 +1550,7 @@ mod tests {
         game.leagues = vec![league];
 
         // Create a fixture dated today
-        if let Some(league) = game.leagues.first_mut() {
+        if let Some(league) = game.active_league_mut() {
             league.fixtures.push(Fixture {
                 id: "fix-1".to_string(),
                 matchday: 1,
@@ -1629,7 +1629,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             &today_str,
             season,
         );
@@ -1661,7 +1661,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             &today_str,
             season,
         );
@@ -1690,7 +1690,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             &today_str,
             season,
         );
@@ -1706,14 +1706,14 @@ mod tests {
         let (mut game, _) = bg_test_game(today);
 
         // Remove the fixture — no due fixtures
-        if let Some(league) = game.leagues.first_mut() {
+        if let Some(league) = game.active_league_mut() {
             league.fixtures.clear();
         }
 
         let season = 2025;
 
         // Add a future fixture instead
-        if let Some(league) = game.leagues.first_mut() {
+        if let Some(league) = game.active_league_mut() {
             league.fixtures.push(Fixture {
                 id: "fix-future".to_string(),
                 matchday: 2,
@@ -1730,7 +1730,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             "2025-06-15",
             season,
         );

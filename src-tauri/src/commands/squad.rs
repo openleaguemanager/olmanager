@@ -1621,7 +1621,7 @@ pub fn get_scrim_context(state: State<'_, StateManager>) -> Result<ScrimContextR
         .max_by_key(|(_, count)| *count)
         .map(|(issue, _)| issue);
 
-    let next_official_fixture = game.leagues.first().and_then(|league| {
+    let next_official_fixture = game.active_league().and_then(|league| {
         let mut fixtures: Vec<&domain::league::Fixture> = league
             .fixtures
             .iter()

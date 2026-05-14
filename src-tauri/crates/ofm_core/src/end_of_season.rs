@@ -108,7 +108,7 @@ fn next_lec_split(
 
 /// Check if the season is complete (all fixtures played).
 pub fn is_season_complete(game: &Game) -> bool {
-    game.leagues.first().is_some_and(is_league_complete)
+    game.active_league().is_some_and(is_league_complete)
 }
 
 const PRIZE_MONEY_BY_POSITION: [i64; 10] = [
@@ -223,7 +223,7 @@ fn process_end_of_season_inner(
 ) -> EndOfSeasonSummary {
     crate::board_objectives::update_objective_progress(game);
 
-    let league = match game.leagues.first() {
+    let league = match game.active_league() {
         Some(l) => l,
         None => return EndOfSeasonSummary::default(),
     };
@@ -549,7 +549,7 @@ fn process_end_of_season_inner(
         }
         league
     };
-    if let Some(active) = game.leagues.first_mut() {
+    if let Some(active) = game.active_league_mut() {
         *active = new_league;
     }
 

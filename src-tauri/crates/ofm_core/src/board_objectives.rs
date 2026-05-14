@@ -203,7 +203,7 @@ pub fn generate_objectives(game: &mut Game) {
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
     let existing_ids: std::collections::HashSet<String> =
         game.messages.iter().map(|m| m.id.clone()).collect();
-    let season = game.leagues.first().map(|l| l.season).unwrap_or(1);
+    let season = game.active_league().map(|l| l.season).unwrap_or(1);
     let msg_id = board_message_id(season);
     if !existing_ids.contains(&msg_id) {
         let msg = build_objectives_message(&targets, season, today);
@@ -218,7 +218,7 @@ pub fn update_objective_progress(game: &mut Game) {
         None => return,
     };
 
-    let league = match game.leagues.first() {
+    let league = match game.active_league() {
         Some(l) => l,
         None => return,
     };
@@ -620,7 +620,7 @@ mod tests {
             make_objective("obj_goals", ObjectiveType::GoalsScored, 6, false),
         ];
 
-        let mut league = game.leagues.first().cloned().unwrap();
+        let mut league = game.active_league().cloned().unwrap();
         league.standings = vec![
             StandingEntry {
                 team_id: "team1".to_string(),
@@ -693,7 +693,7 @@ mod tests {
             false,
         )];
 
-        let mut league = game.leagues.first().cloned().unwrap();
+        let mut league = game.active_league().cloned().unwrap();
         let fixture = |id: &str,
                        matchday: u32,
                        home_team_id: &str,

@@ -186,7 +186,7 @@ fn weekly_storyline_articles(
     date: &str,
 ) -> Vec<domain::news::NewsArticle> {
     let mut articles = Vec::new();
-    let league = match game.leagues.first() {
+    let league = match game.active_league() {
         Some(league) => league,
         None => return articles,
     };
@@ -245,7 +245,7 @@ pub(super) fn generate_weekly_digest_news(game: &mut Game, today: &str) {
         return;
     }
 
-    let league = match game.leagues.first() {
+    let league = match game.active_league() {
         Some(league) => league,
         None => return,
     };
@@ -290,7 +290,7 @@ pub(super) fn generate_match_news(
     away_team_id: &str,
     report: &engine::MatchReport,
 ) {
-    let fixture = &game.leagues.first().unwrap().fixtures[fixture_index];
+    let fixture = &game.active_league().unwrap().fixtures[fixture_index];
     let article_id = format!("report_{}", fixture.id);
     if game.news.iter().any(|n| n.id == article_id) {
         return;
@@ -319,6 +319,7 @@ pub(super) fn generate_match_news(
 
 /// After all matches in a matchday are simulated, generate roundup + standings news.
 pub fn generate_matchday_news(game: &mut Game, today: &str) {
+    // Use leagues.first() directly for borrow checker compatibility
     let league = match game.leagues.first() {
         Some(l) => l,
         None => return,
@@ -558,7 +559,7 @@ mod tests {
     }
 
     fn standing_mut<'a>(game: &'a mut Game, team_id: &str) -> &'a mut StandingEntry {
-        game.leagues.first_mut()
+        game.active_league_mut()
             .unwrap()
             .standings
             .iter_mut()
@@ -574,7 +575,7 @@ mod tests {
     }
 
     fn reset_to_preseason(game: &mut Game) {
-        let league = game.leagues.first_mut().unwrap();
+        let league = game.active_league_mut().unwrap();
         for fixture in &mut league.fixtures {
             fixture.status = FixtureStatus::Scheduled;
         }
@@ -750,7 +751,7 @@ mod tests {
     #[test]
     fn generate_pre_match_messages_skips_fixtures_without_user_team() {
         let mut game = make_game("2025-08-15", FixtureStatus::Scheduled);
-        let fixture = &mut game.leagues.first_mut().unwrap().fixtures[0];
+        let fixture = &mut game.active_league_mut().unwrap().fixtures[0];
         fixture.home_team_id = "team2".to_string();
         fixture.away_team_id = "team3".to_string();
 

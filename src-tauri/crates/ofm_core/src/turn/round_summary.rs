@@ -76,7 +76,7 @@ pub fn build_round_summary(
     matchday: u32,
     previous_standings: &[StandingEntry],
 ) -> Option<RoundSummary> {
-    let league = game.leagues.first()?;
+    let league = game.active_league()?;
     let round_fixtures: Vec<&Fixture> = league
         .fixtures
         .iter()
