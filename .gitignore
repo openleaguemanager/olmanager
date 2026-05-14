@@ -76,7 +76,5 @@ src-tauri/gen/
 # SDD artifacts (openspec)
 # =========================
 openspec/
-<<<<<<< HEAD
 =======
-.engram/
->>>>>>> origin/feat/calendar-overrides
+
