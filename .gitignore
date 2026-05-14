@@ -76,9 +76,5 @@ src-tauri/gen/
 # SDD artifacts (openspec)
 # =========================
 openspec/
-<<<<<<< HEAD
-=======
-.engram/
->>>>>>> origin/feat/frontend-dto-store
 
 public/player-photos/*.webp
