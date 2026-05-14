@@ -14,7 +14,7 @@ use crate::scouting;
 use crate::training;
 use crate::transfers;
 use chrono::Datelike;
-use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, MatchResult};
+use domain::league::{Fixture, MatchType, FixtureStatus, League, MatchResult};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
 use domain::player::{LolRole as DomainLolRole, Player};
 use domain::stats::StatsState;
@@ -762,7 +762,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                         date: date.clone(),
                         home_team_id,
                         away_team_id,
-                        competition: FixtureCompetition::League,
+                        match_type: MatchType::League,
                         best_of: 3,
                         status: FixtureStatus::Scheduled,
                         result: None,
@@ -780,20 +780,20 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
         let regular_fixtures_total = league
             .fixtures
             .iter()
-            .filter(|fixture| fixture.competition == FixtureCompetition::League)
+            .filter(|fixture| fixture.match_type == MatchType::League)
             .count();
         let regular_completed = league
             .fixtures
             .iter()
             .filter(|fixture| {
-                fixture.competition == FixtureCompetition::League
+                fixture.match_type == MatchType::League
                     && fixture.status == FixtureStatus::Completed
             })
             .count();
         let has_playoffs = league
             .fixtures
             .iter()
-            .any(|fixture| fixture.competition == FixtureCompetition::Playoffs);
+            .any(|fixture| fixture.match_type == MatchType::Playoffs);
 
         if regular_fixtures_total > 0
             && regular_completed == regular_fixtures_total
@@ -832,7 +832,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                         date: semis_date.format("%Y-%m-%d").to_string(),
                         home_team_id,
                         away_team_id,
-                        competition: FixtureCompetition::Playoffs,
+                        match_type: MatchType::Playoffs,
                         best_of: 5,
                         status: FixtureStatus::Scheduled,
                         result: None,
@@ -844,7 +844,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                     date: final_date.format("%Y-%m-%d").to_string(),
                     home_team_id: sorted[0].team_id.clone(),
                     away_team_id: sorted[1].team_id.clone(),
-                    competition: FixtureCompetition::Playoffs,
+                    match_type: MatchType::Playoffs,
                     best_of: 5,
                     status: FixtureStatus::Scheduled,
                     result: None,
@@ -867,7 +867,7 @@ fn maybe_schedule_playoffs(game: &mut Game) {
     let playoff_fixtures_exist = league
         .fixtures
         .iter()
-        .any(|fixture| fixture.competition == FixtureCompetition::Playoffs);
+        .any(|fixture| fixture.match_type == MatchType::Playoffs);
 
     if !playoff_fixtures_exist {
         if !regular_season_complete(league) {
@@ -923,7 +923,7 @@ fn maybe_schedule_playoffs(game: &mut Game) {
     }
 
     let has_pending_playoffs = league.fixtures.iter().any(|fixture| {
-        fixture.competition == FixtureCompetition::Playoffs
+        fixture.match_type == MatchType::Playoffs
             && fixture.status != FixtureStatus::Completed
     });
     if has_pending_playoffs {
@@ -947,7 +947,7 @@ fn maybe_schedule_playoffs(game: &mut Game) {
     let next_matchday = league
         .fixtures
         .iter()
-        .filter(|fixture| fixture.competition == FixtureCompetition::Playoffs)
+        .filter(|fixture| fixture.match_type == MatchType::Playoffs)
         .map(|fixture| fixture.matchday)
         .max()
         .unwrap_or(0)
@@ -1000,7 +1000,7 @@ fn build_playoff_round_fixtures(
             date: date.clone(),
             home_team_id,
             away_team_id,
-            competition: FixtureCompetition::Playoffs,
+            match_type: MatchType::Playoffs,
             best_of,
             status: FixtureStatus::Scheduled,
             result: None,
@@ -1012,7 +1012,7 @@ fn playoff_round_fixtures(league: &League, round: u32) -> Vec<&Fixture> {
     let Some(start_matchday) = league
         .fixtures
         .iter()
-        .filter(|fixture| fixture.competition == FixtureCompetition::Playoffs)
+        .filter(|fixture| fixture.match_type == MatchType::Playoffs)
         .map(|fixture| fixture.matchday)
         .min()
     else {
@@ -1024,7 +1024,7 @@ fn playoff_round_fixtures(league: &League, round: u32) -> Vec<&Fixture> {
         .fixtures
         .iter()
         .filter(|fixture| {
-            fixture.competition == FixtureCompetition::Playoffs
+            fixture.match_type == MatchType::Playoffs
                 && fixture.matchday == target_matchday
         })
         .collect()
@@ -1557,7 +1557,7 @@ mod tests {
                 date: today.to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
@@ -1720,7 +1720,7 @@ mod tests {
                 date: "2025-06-22".to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
@@ -1766,7 +1766,7 @@ mod tests {
                 date: today.to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
@@ -1831,7 +1831,7 @@ mod tests {
                 date: "2025-06-22".to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,

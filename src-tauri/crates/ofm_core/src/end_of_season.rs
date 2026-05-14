@@ -745,7 +745,7 @@ fn process_end_of_season_inner(
             "be.msg.newSeasonSchedule.body",
             sched_params,
         )
-        .with_sender_i18n("be.sender.leagueOffice", "be.role.competitionSecretary");
+        .with_sender_i18n("be.sender.leagueOffice", "be.role.match_typeSecretary");
         game.messages.push(sched_msg);
     }
 

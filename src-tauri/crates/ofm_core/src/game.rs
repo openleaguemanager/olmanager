@@ -113,6 +113,9 @@ pub struct Game {
     /// Multi-league storage. The first element is the player's active league.
     #[serde(default)]
     pub leagues: Vec<League>,
+    /// The competition_id of the player's active league.
+    #[serde(default)]
+    pub user_competition_id: Option<String>,
     #[serde(default)]
     pub academy_league: Option<League>,
     #[serde(default)]
@@ -199,6 +202,7 @@ impl<'de> Deserialize<'de> for Game {
             social_accounts: legacy.social_accounts,
             social_templates: legacy.social_templates,
             leagues,
+            user_competition_id: None,
             academy_league: legacy.academy_league,
             scouting_assignments: legacy.scouting_assignments,
             board_objectives: legacy.board_objectives,
@@ -233,6 +237,7 @@ impl Game {
             social_accounts: vec![],
             social_templates: vec![],
             leagues: vec![],
+            user_competition_id: None,
             academy_league: None,
             scouting_assignments: vec![],
             board_objectives: vec![],
@@ -247,4 +252,31 @@ impl Game {
         game
     }
 
+    /// Returns a reference to the player's active league, identified by
+    /// `user_competition_id`. Falls back to `leagues.first()` if not set.
+    pub fn active_league(&self) -> Option<&League> {
+        self.user_competition_id
+            .as_ref()
+            .and_then(|cid| self.leagues.iter().find(|l| l.competition_id.as_deref() == Some(cid)))
+            .or_else(|| self.leagues.first())
+    }
+
+    /// Returns a mutable reference to the player's active league.
+    pub fn active_league_mut(&mut self) -> Option<&mut League> {
+        let cid = self.user_competition_id.clone();
+        if let Some(ref cid) = cid {
+            if let Some(pos) = self.leagues.iter().position(|l| l.competition_id.as_deref() == Some(cid)) {
+                return self.leagues.get_mut(pos);
+            }
+        }
+        self.leagues.first_mut()
+    }
+
+    /// Returns the index of the player's active league.
+    pub fn active_league_index(&self) -> usize {
+        self.user_competition_id
+            .as_ref()
+            .and_then(|cid| self.leagues.iter().position(|l| l.competition_id.as_deref() == Some(cid)))
+            .unwrap_or(0)
+    }
 }

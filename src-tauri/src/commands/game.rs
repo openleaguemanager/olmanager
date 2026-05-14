@@ -2062,6 +2062,7 @@ pub async fn select_team(
     }
 
     game.leagues = all_leagues;
+    game.user_competition_id = user_cid.map(String::from);
     ofm_core::champions::bootstrap_champion_state(&mut game);
     ofm_core::season_context::refresh_game_context(&mut game);
 
