@@ -92,66 +92,6 @@ pub(crate) fn academy_seed_team_id(league_id: &str, team_name: &str) -> String {
     academy_id
 }
 
-fn short_name_from_team_name(team_name: &str) -> String {
-    let words: Vec<&str> = team_name
-        .split_whitespace()
-        .filter(|part| !part.trim().is_empty())
-        .collect();
-    if words.is_empty() {
-        return "ACD".to_string();
-    }
-
-    let mut short = String::new();
-    for part in words.iter().take(4) {
-        if let Some(ch) = part.chars().find(|ch| ch.is_ascii_alphanumeric()) {
-            short.push(ch.to_ascii_uppercase());
-        }
-    }
-
-    if short.is_empty() {
-        "ACD".to_string()
-    } else {
-        short
-    }
-}
-
-fn sanitize_image_url(value: &str) -> String {
-    let trimmed = value.trim();
-    if trimmed.is_empty() || !trimmed.starts_with("http") {
-        return ACADEMY_FALLBACK_PHOTO.to_string();
-    }
-    trimmed.to_string()
-}
-
-fn looks_like_url(value: &str) -> bool {
-    let trimmed = value.trim().to_lowercase();
-    trimmed.starts_with("http://") || trimmed.starts_with("https://")
-}
-
-fn infer_team_name_from_url(url: &str) -> Option<String> {
-    let lower = url.trim().to_lowercase();
-    if lower.contains("team_vitality") {
-        return Some("Team Vitality.Bee".to_string());
-    }
-    None
-}
-
-fn parse_example_date(raw: &str) -> Option<String> {
-    let cleaned = raw.replace('\t', " ").trim().to_string();
-    if cleaned.is_empty() || cleaned.contains('?') {
-        return None;
-    }
-
-    let formats = ["%B %d, %Y", "%b %d, %Y", "%Y-%m-%d"];
-    for format in formats {
-        if let Ok(date) = chrono::NaiveDate::parse_from_str(&cleaned, format) {
-            return Some(date.format("%Y-%m-%d").to_string());
-        }
-    }
-
-    None
-}
-
 fn generate_fallback_dob(seed: &str) -> String {
     let hash = seed.bytes().fold(0_u32, |acc, byte| {
         acc.wrapping_mul(31).wrapping_add(u32::from(byte))
@@ -160,43 +100,6 @@ fn generate_fallback_dob(seed: &str) -> String {
     let month = 1 + ((hash / 7) % 12);
     let day = 1 + ((hash / 13) % 28);
     format!("{year:04}-{month:02}-{day:02}")
-}
-
-fn nationality_name_to_code(raw: &str) -> String {
-    let key = normalize_academy_key(raw);
-    match key.as_str() {
-        "spain" => "ES",
-        "france" => "FR",
-        "germany" => "DE",
-        "portugal" => "PT",
-        "poland" => "PL",
-        "turkey" => "TR",
-        "korea" | "southkorea" => "KR",
-        "ukraine" => "UA",
-        "belgium" => "BE",
-        "denmark" => "DK",
-        "sweden" => "SE",
-        "netherlands" => "NL",
-        "algeria" => "DZ",
-        "austria" => "AT",
-        "romania" => "RO",
-        "norway" => "NO",
-        "greece" => "GR",
-        "czechrepublic" => "CZ",
-        "unitedkingdom" => "GB",
-        "hungary" => "HU",
-        "serbia" => "RS",
-        "lithuania" => "LT",
-        "northmacedonia" => "MK",
-        "croatia" => "HR",
-        "montenegro" => "ME",
-        "andorra" => "AD",
-        "albania" => "AL",
-        "unitedstates" => "US",
-        "jordan" => "JO",
-        _ => "EU",
-    }
-    .to_string()
 }
 
 fn seed_role_to_canonical(role: &str) -> String {
@@ -211,178 +114,85 @@ fn seed_role_to_canonical(role: &str) -> String {
     .to_string()
 }
 
-pub(crate) fn parse_example_academy_file(
-    league_id: &str,
-    league_name: &str,
-    country_code: &str,
-    content: &str,
-) -> Vec<ExampleAcademyTeamSeed> {
-    let mut teams: Vec<ExampleAcademyTeamSeed> = Vec::new();
-    let mut current_team: Option<ExampleAcademyTeamSeed> = None;
-    let mut current_player: Option<ExampleAcademyPlayerSeed> = None;
-
-    let push_player = |team: &mut Option<ExampleAcademyTeamSeed>,
-                       player: &mut Option<ExampleAcademyPlayerSeed>| {
-        if let (Some(team_ref), Some(player_ref)) = (team.as_mut(), player.take()) {
-            if !player_ref.nickname.trim().is_empty() {
-                team_ref.players.push(player_ref);
-            }
-        }
-    };
-
-    let push_team = |teams_vec: &mut Vec<ExampleAcademyTeamSeed>,
-                     team: &mut Option<ExampleAcademyTeamSeed>,
-                     player: &mut Option<ExampleAcademyPlayerSeed>| {
-        push_player(team, player);
-        if let Some(team_ref) = team.take() {
-            if !team_ref.players.is_empty() {
-                teams_vec.push(team_ref);
-            }
-        }
-    };
-
-    for line in content.lines() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-
-        if let Some(name) = trimmed.strip_prefix("Team:") {
-            push_team(&mut teams, &mut current_team, &mut current_player);
-            let raw_team_name = name.trim();
-            let team_name = if looks_like_url(raw_team_name) {
-                infer_team_name_from_url(raw_team_name)
-                    .unwrap_or_else(|| "Unknown Academy Team".to_string())
-            } else {
-                raw_team_name.to_string()
-            };
-            current_team = Some(ExampleAcademyTeamSeed {
-                league_id: league_id.to_string(),
-                league_name: league_name.to_string(),
-                country_code: country_code.to_string(),
-                short_name: short_name_from_team_name(&team_name),
-                team_name,
-                logo_url: None,
-                players: Vec::new(),
-            });
-            continue;
-        }
-
-        if let Some(logo) = trimmed.strip_prefix("Team Logo:") {
-            if let Some(team) = current_team.as_mut() {
-                let url = logo.trim();
-                if !url.is_empty() && looks_like_url(url) {
-                    team.logo_url = Some(url.to_string());
-                }
-                if team.team_name == "Unknown Academy Team" {
-                    if let Some(inferred_name) = infer_team_name_from_url(url) {
-                        team.team_name = inferred_name;
-                        team.short_name = short_name_from_team_name(&team.team_name);
-                    }
-                }
-            }
-            continue;
-        }
-
-        let role_prefixes = [
-            ("Toplaner:", "top"),
-            ("Jungle:", "jungle"),
-            ("Midlaner:", "mid"),
-            ("ADC:", "adc"),
-            ("Support:", "support"),
-        ];
-        let mut created_player = false;
-        for (prefix, role) in role_prefixes {
-            if let Some(nickname) = trimmed.strip_prefix(prefix) {
-                push_player(&mut current_team, &mut current_player);
-                current_player = Some(ExampleAcademyPlayerSeed {
-                    role: role.to_string(),
-                    nickname: nickname.trim().to_string(),
-                    full_name: nickname.trim().to_string(),
-                    nationality: "EU".to_string(),
-                    dob: None,
-                    image_url: ACADEMY_FALLBACK_PHOTO.to_string(),
-                });
-                created_player = true;
-                break;
-            }
-        }
-        if created_player {
-            continue;
-        }
-
-        if let Some(raw) = trimmed.strip_prefix("Born:") {
-            if let Some(player) = current_player.as_mut() {
-                let born_raw = raw.trim();
-                if let Some(parsed_dob) = parse_example_date(born_raw) {
-                    player.dob = Some(parsed_dob);
-                } else if !born_raw.chars().any(|ch| ch.is_ascii_digit()) {
-                    player.nationality = nationality_name_to_code(born_raw);
-                }
-            }
-            continue;
-        }
-
-        if let Some(raw) = trimmed.strip_prefix("Nationality:") {
-            if let Some(player) = current_player.as_mut() {
-                let nationality_raw = raw.trim();
-                if let Some(parsed_dob) = parse_example_date(nationality_raw) {
-                    if player.dob.is_none() {
-                        player.dob = Some(parsed_dob);
-                    }
-                } else {
-                    player.nationality = nationality_name_to_code(nationality_raw);
-                }
-            }
-            continue;
-        }
-
-        if let Some(raw) = trimmed.strip_prefix("Full name:") {
-            if let Some(player) = current_player.as_mut() {
-                let full_name = raw.trim();
-                if !full_name.is_empty() {
-                    player.full_name = full_name.to_string();
-                }
-            }
-            continue;
-        }
-
-        if let Some(raw) = trimmed.strip_prefix("Image:") {
-            if let Some(player) = current_player.as_mut() {
-                player.image_url = sanitize_image_url(raw);
-            }
-            continue;
-        }
-    }
-
-    push_team(&mut teams, &mut current_team, &mut current_player);
-    teams
-}
-
 pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamSeed> {
     static CATALOG: OnceLock<Vec<ExampleAcademyTeamSeed>> = OnceLock::new();
     CATALOG.get_or_init(|| {
+        // Read ERL teams from JSON data files at runtime to power the academy candidate catalog.
+        // The runtime academy bootstrapping uses bootstrap_academy_pool_from_erl_json() instead.
+        let data_base = resolve_data_dir_for_seed_catalog();
+        let Some(data_base) = data_base else { return vec![] };
+
+        let erls_dir = data_base.join("erls").join("competitions");
+        let entries = match std::fs::read_dir(&erls_dir) {
+            Ok(e) => e,
+            Err(_) => return vec![],
+        };
+
         let mut teams = Vec::new();
-        teams.extend(parse_example_academy_file(
-            "liga-espanola",
-            "Liga Espanola",
-            "ES",
-            include_str!("../../../data/erls/les.txt"),
-        ));
-        teams.extend(parse_example_academy_file(
-            "lfl",
-            "LFL",
-            "FR",
-            include_str!("../../../data/erls/lfl.txt"),
-        ));
-        teams.extend(parse_example_academy_file(
-            "prime-league",
-            "Prime League",
-            "DE",
-            include_str!("../../../data/erls/Prime League.txt"),
-        ));
+        for entry in entries.flatten() {
+            let dir_path = entry.path();
+            if !dir_path.is_dir() { continue; }
+            let file_name = match dir_path.file_name().and_then(|n| n.to_str()) {
+                Some(n) => n.to_string(),
+                None => continue,
+            };
+
+            // Read manifest to get country code
+            let manifest_path = dir_path.join("manifest.json");
+            let league_meta = match std::fs::read_to_string(&manifest_path)
+                .ok()
+                .and_then(|json| serde_json::from_str::<serde_json::Value>(&json).ok())
+            {
+                Some(m) => (
+                    m["name"].as_str().unwrap_or(&file_name).to_string(),
+                    m["country"].as_str().unwrap_or("EU").to_string(),
+                ),
+                None => (file_name.clone(), "EU".to_string()),
+            };
+            let (league_name, country_code) = league_meta;
+
+            // Read teams from data/erls/teams/{file_name}_teams.json
+            let teams_path = data_base.join("erls").join("teams").join(format!("{}_teams.json", file_name));
+            let json_str = match std::fs::read_to_string(&teams_path) {
+                Ok(s) => s,
+                Err(_) => continue,
+            };
+            if let Ok(data) = serde_json::from_str::<serde_json::Value>(&json_str) {
+                if let Some(entries) = data["teams"].as_array() {
+                    let academy_league_id = if file_name == "les" { "liga-espanola" } else { &file_name };
+                    for entry in entries {
+                        let team_name = entry["name"].as_str().unwrap_or("Unknown").to_string();
+                        let short_name = entry["short_name"].as_str().unwrap_or("ACD").to_string();
+                        let logo_url = entry["logo_url"].as_str().map(|s| s.to_string());
+                        teams.push(ExampleAcademyTeamSeed {
+                            league_id: academy_league_id.to_string(),
+                            league_name: league_name.clone(),
+                            country_code: country_code.clone(),
+                            team_name,
+                            short_name,
+                            logo_url,
+                            players: Vec::new(),
+                        });
+                    }
+                }
+            }
+        }
         teams
     })
+}
+
+fn resolve_data_dir_for_seed_catalog() -> Option<std::path::PathBuf> {
+    let cwd = std::env::current_dir().ok()?;
+    for candidate in [
+        cwd.join("..").join("data"),
+        cwd.join("data"),
+        cwd.join("src-tauri").join("data"),
+    ] {
+        if candidate.is_dir() {
+            return Some(candidate);
+        }
+    }
+    None
 }
 
 fn academy_team_alias_for_parent(parent_name: &str) -> Option<&'static str> {
@@ -2126,17 +1936,19 @@ fn assemble_world_from_modular_data(
     // 2. Load staff free agents
     let mut staff = crate::commands::competitions::load_staff_free_agents(app_handle)?;
 
-    // 3. Bootstrap academy seeds from ERL references
+    // 3. Bootstrap academy seeds from ERL JSON data
     let academy_bootstrap_date = "2025-01-01".to_string();
-    if let Ok(lec_manifest) = crate::commands::competitions::load_competition_manifest(app_handle, "lec") {
-        let erl_teams = crate::commands::competitions::load_erls_from_manifest(app_handle, &lec_manifest);
-        if !erl_teams.is_empty() {
-            bootstrap_example_academy_pool_from_erl_teams(&mut all_teams, &mut all_players, &erl_teams, &academy_bootstrap_date);
-        } else {
-            bootstrap_example_academy_pool_from_example(&mut all_teams, &mut all_players, &academy_bootstrap_date);
-        }
-        remove_free_agents_shadowed_by_academy(&mut all_players, &all_teams);
+    let academy_count = crate::commands::competitions::bootstrap_academy_pool_from_erl_json(
+        app_handle,
+        &mut all_teams,
+        &mut all_players,
+        &academy_bootstrap_date,
+    );
+    if academy_count == 0 {
+        // Fallback: compile-time .txt catalog (legacy worlds)
+        bootstrap_example_academy_pool_from_example(&mut all_teams, &mut all_players, &academy_bootstrap_date);
     }
+    remove_free_agents_shadowed_by_academy(&mut all_players, &all_teams);
 
     // 4. Inject free agent players from JSON
     inject_json_free_agents(&mut all_players);
@@ -2151,157 +1963,6 @@ fn assemble_world_from_modular_data(
     );
 
     Ok((all_teams, all_players, staff))
-}
-
-/// Alternative to `bootstrap_example_academy_pool_from_example` that takes
-/// a pre-loaded Vec<ExampleAcademyTeamSeed> (from runtime ERL loading).
-fn bootstrap_example_academy_pool_from_erl_teams(
-    teams: &mut Vec<Team>,
-    players: &mut Vec<Player>,
-    seed_catalog: &[ExampleAcademyTeamSeed],
-    current_date_iso: &str,
-) {
-    if seed_catalog.is_empty() {
-        return;
-    }
-
-    let mut existing_team_ids: HashSet<String> = teams.iter().map(|team| team.id.clone()).collect();
-
-    for seed_team in seed_catalog.iter() {
-        let academy_id = academy_seed_team_id(&seed_team.league_id, &seed_team.team_name);
-        if existing_team_ids.contains(&academy_id) {
-            continue;
-        }
-
-        let mut academy_team = Team::new(
-            academy_id.clone(),
-            seed_team.team_name.clone(),
-            seed_team.short_name.clone(),
-            seed_team.country_code.clone(),
-            seed_team.league_name.clone(),
-            format!("{} Academy Arena", seed_team.short_name),
-            2_500,
-        );
-        academy_team.team_kind = TeamKind::Academy;
-        academy_team.parent_team_id = None;
-        academy_team.manager_id = None;
-        academy_team.reputation = 6_000;
-        academy_team.finance = 0;
-        academy_team.wage_budget = 0;
-        academy_team.transfer_budget = 0;
-        academy_team.academy = Some(AcademyMetadata {
-            lifecycle: AcademyLifecycle::Planned,
-            erl_assignment: ErlAssignment {
-                erl_league_id: seed_team.league_id.clone(),
-                country_rule: ErlAssignmentRule::Domestic,
-                fallback_reason: Some(format!(
-                    "Seeded from {} academy roster",
-                    seed_team.league_name
-                )),
-                reputation: 60,
-                acquisition_cost: 0,
-                acquired_at: String::new(),
-                creation_cost: 0,
-                created_at: current_date_iso.to_string(),
-            },
-            source_team_id: academy_id.clone(),
-            original_name: seed_team.team_name.clone(),
-            original_short_name: seed_team.short_name.clone(),
-            original_logo_url: seed_team.logo_url.clone(),
-            current_logo_url: seed_team.logo_url.clone(),
-            acquisition_cost: 0,
-            acquired_at: String::new(),
-        });
-
-        for (player_index, seed_player) in seed_team.players.iter().enumerate() {
-            let ovr = generated_academy_ovr(&seed_player.nickname);
-            let potential = generated_academy_potential(&seed_player.nickname, ovr);
-            let seed = DraftPlayerSeed {
-                ign: seed_player.nickname.clone(),
-                first_name: None,
-                last_name: None,
-                dob: Some(
-                    seed_player
-                        .dob
-                        .clone()
-                        .unwrap_or_else(|| generate_fallback_dob(&seed_player.nickname)),
-                ),
-                nationality: Some(seed_player.nationality.clone()),
-                role: Some(seed_role_to_canonical(&seed_player.role)),
-                team_id: Some(academy_id.clone()),
-                rating: Some(ovr),
-                potential: Some(potential),
-                salary: Some(8_000),
-                contract_end: Some("2028-11-30".to_string()),
-                market_value: Some(suggested_seed_market_value(ovr, potential, true)),
-                reputation: Some(62),
-                photo: seed_profile_image_url(
-                    (!seed_player.image_url.is_empty()).then_some(seed_player.image_url.as_str()),
-                ),
-            };
-
-            let attributes = build_attributes_from_seed(&seed);
-            let position = role_to_lol_role(seed.role.as_deref());
-            let player_id = format!("{}-player-{}", academy_id, player_index + 1);
-
-            let mut player = Player::new(
-                player_id,
-                seed_player.nickname.clone(),
-                seed_player.full_name.clone(),
-                seed.dob
-                    .clone()
-                    .unwrap_or_else(|| generate_fallback_dob(&seed_player.nickname)),
-                seed_player.nationality.clone(),
-                position,
-                attributes,
-            );
-            player.team_id = Some(academy_id.clone());
-            player.contract_end = seed.contract_end.clone();
-            player.wage = seed.salary.unwrap_or(8_000);
-            player.market_value = seed.market_value.unwrap_or(240_000);
-            player.potential_base = potential;
-            player.profile_image_url = seed.photo.clone();
-            player.morale = 68;
-            player.condition = 100;
-
-            players.push(player);
-        }
-
-        existing_team_ids.insert(academy_id.clone());
-        teams.push(academy_team);
-    }
-
-    // Link parent teams to academy teams
-    let link_ids: Vec<(String, String)> = {
-        let mut links = Vec::new();
-        for seed_team in seed_catalog.iter() {
-            let academy_id = academy_seed_team_id(&seed_team.league_id, &seed_team.team_name);
-            let normalized_academy = normalize_academy_key(&seed_team.team_name);
-
-            if let Some(parent) = teams.iter().find(|team| {
-                team.team_kind == TeamKind::Main
-                    && team.academy_team_id.is_none()
-                    && academy_team_alias_for_parent(&team.name)
-                        .map_or(false, |a| normalize_academy_key(a) == normalized_academy)
-            }) {
-                links.push((parent.id.clone(), academy_id));
-            }
-        }
-        links
-    };
-
-    for (parent_id, academy_id) in link_ids {
-        if let Some(parent) = teams.iter_mut().find(|t| t.id == parent_id) {
-            parent.academy_team_id = Some(academy_id.clone());
-        }
-        if let Some(academy) = teams.iter_mut().find(|t| t.id == academy_id) {
-            academy.parent_team_id = Some(parent_id);
-            if let Some(ref mut meta) = academy.academy {
-                meta.lifecycle = AcademyLifecycle::Active;
-                meta.erl_assignment.reputation = 62;
-            }
-        }
-    }
 }
 
 /// Step 2: User picks a team. Assigns manager, generates welcome message, saves to DB.

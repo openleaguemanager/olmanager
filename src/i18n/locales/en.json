@@ -1435,7 +1435,9 @@
     "playStyleBalanced": "Balanced",
     "playStyleCounter": "Scaling & counter",
     "playStyleDirect": "Early skirmish",
-    "winRateShort": "WR"
+    "winRateShort": "WR",
+    "nTeams": "{{count}} teams",
+    "nTeamsInLeague": "{{count}} teams in {{league}}"
   },
   "playersList": {
     "searchPlaceholder": "Search by name or nationality...",

@@ -1,6 +1,6 @@
-import lesExampleRaw from "../../data/erls/les.txt?raw";
-import lflExampleRaw from "../../data/erls/lfl.txt?raw";
-import primeLeagueExampleRaw from "../../data/erls/Prime League.txt?raw";
+import lesPlayersData from "../../data/erls/players/les_players.json";
+import lflPlayersData from "../../data/erls/players/lfl_players.json";
+import primeLeaguePlayersData from "../../data/erls/players/prime-league_players.json";
 
 const FALLBACK_PLAYER_PHOTO = "/player-photos/107455908655055017.webp";
 
@@ -8,37 +8,21 @@ function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function parseExamplePhotoMap(content: string): Map<string, string> {
+function buildPhotoMapFromJson(data: { players: { match_name: string; profile_image_url?: string | null }[] }): Map<string, string> {
   const map = new Map<string, string>();
-  let currentIgn = "";
-
-  const rolePrefixes = ["Toplaner:", "Jungle:", "Midlaner:", "ADC:", "Support:"];
-
-  content.split(/\r?\n/).forEach((rawLine) => {
-    const line = rawLine.trim();
-    if (!line) return;
-
-    const rolePrefix = rolePrefixes.find((prefix) => line.startsWith(prefix));
-    if (rolePrefix) {
-      currentIgn = line.slice(rolePrefix.length).trim();
-      return;
-    }
-
-    if (line.startsWith("Image:")) {
-      const rawUrl = line.slice("Image:".length).trim();
-      if (!currentIgn) return;
-      if (!rawUrl || rawUrl.includes("??") || !rawUrl.startsWith("http")) return;
-      map.set(normalizeKey(currentIgn), rawUrl);
-    }
-  });
-
+  for (const player of data.players) {
+    const key = normalizeKey(player.match_name);
+    if (!key) continue;
+    if (!player.profile_image_url) continue;
+    map.set(key, player.profile_image_url);
+  }
   return map;
 }
 
 const EXAMPLE_PHOTO_MAP = new Map<string, string>([
-  ...parseExamplePhotoMap(lesExampleRaw).entries(),
-  ...parseExamplePhotoMap(lflExampleRaw).entries(),
-  ...parseExamplePhotoMap(primeLeagueExampleRaw).entries(),
+  ...buildPhotoMapFromJson(lesPlayersData).entries(),
+  ...buildPhotoMapFromJson(lflPlayersData).entries(),
+  ...buildPhotoMapFromJson(primeLeaguePlayersData).entries(),
 ]);
 
 function normalizeProfileImageUrl(url?: string | null): string | null {

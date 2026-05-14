@@ -1,6 +1,6 @@
-import lesExampleRaw from "../../data/erls/les.txt?raw";
-import lflExampleRaw from "../../data/erls/lfl.txt?raw";
-import primeLeagueExampleRaw from "../../data/erls/Prime League.txt?raw";
+import lesTeamsData from "../../data/erls/teams/les_teams.json";
+import lflTeamsData from "../../data/erls/teams/lfl_teams.json";
+import primeLeagueTeamsData from "../../data/erls/teams/prime-league_teams.json";
 
 function normalizeKey(value: string): string {
   return value
@@ -10,34 +10,21 @@ function normalizeKey(value: string): string {
     .replace(/[^a-z0-9]/g, "");
 }
 
-function parseExampleTeamLogoMap(content: string): Map<string, string> {
+function buildLogoMapFromJson(data: { teams: { name: string; logo_url?: string | null }[] }): Map<string, string> {
   const map = new Map<string, string>();
-  let currentTeam = "";
-
-  content.split(/\r?\n/).forEach((rawLine) => {
-    const line = rawLine.trim();
-    if (!line) return;
-
-    if (line.startsWith("Team:")) {
-      currentTeam = line.slice("Team:".length).trim();
-      return;
-    }
-
-    if (line.startsWith("Team Logo:")) {
-      const rawUrl = line.slice("Team Logo:".length).trim();
-      if (!currentTeam) return;
-      if (!rawUrl || rawUrl.includes("??") || !rawUrl.startsWith("http")) return;
-      map.set(normalizeKey(currentTeam), rawUrl);
-    }
-  });
-
+  for (const team of data.teams) {
+    const key = normalizeKey(team.name);
+    if (!key) continue;
+    if (!team.logo_url) continue;
+    map.set(key, team.logo_url);
+  }
   return map;
 }
 
 const EXAMPLE_TEAM_LOGO_MAP = new Map<string, string>([
-  ...parseExampleTeamLogoMap(lesExampleRaw).entries(),
-  ...parseExampleTeamLogoMap(lflExampleRaw).entries(),
-  ...parseExampleTeamLogoMap(primeLeagueExampleRaw).entries(),
+  ...buildLogoMapFromJson(lesTeamsData).entries(),
+  ...buildLogoMapFromJson(lflTeamsData).entries(),
+  ...buildLogoMapFromJson(primeLeagueTeamsData).entries(),
 ]);
 
 const MAIN_TEAM_LOGOS: Record<string, string> = {
