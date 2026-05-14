@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Trophy,
-  Calendar as CalendarIcon,
-  TrendingUp,
-  Globe,
   Users,
+  Globe,
+  Search,
+  Loader2,
   Building2,
+
   ListOrdered,
 } from "lucide-react";
 import type { GameStateData, LeagueData } from "../../store/gameStore";
@@ -229,7 +229,6 @@ function CompetitionCard({
   onSelect,
 }: CompetitionCardProps) {
   const { t } = useTranslation();
-  const [logoError, setLogoError] = useState(false);
 
   const totalMatches = league.fixtures.length;
   const playedMatches = league.fixtures.filter(
@@ -255,16 +254,17 @@ function CompetitionCard({
           <div
             className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClass} border`}
           >
-            {logoError ? (
-              <Trophy className="w-5 h-5" />
-            ) : (
-              <img
-                src={`/competitions-icons/${league.id}.webp`}
-                alt={league.name}
-                className="w-10 h-10 object-contain"
-                onError={() => setLogoError(true)}
-              />
-            )}
+            {(() => {
+              const iconId = (league.competition_id ?? league.id).replace(/\s+/g, '_');
+              return (
+                <img
+                  src={`/competitions-icons/${iconId}.webp`}
+                  alt={league.name}
+                  className="w-10 h-10 object-contain"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              );
+            })()}
           </div>
           <div>
             <h4 className="font-heading font-bold text-sm text-gray-800 dark:text-gray-100">
