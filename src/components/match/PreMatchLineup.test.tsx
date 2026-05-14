@@ -31,25 +31,16 @@ const makePlayer = (overrides: Partial<EnginePlayerData> = {}): EnginePlayerData
   name: "Test",
   role: "Midfielder",
   condition: 100,
-  pace: 70,
-  stamina: 70,
-  strength: 70,
-  agility: 70,
-  passing: 70,
-  shooting: 70,
-  tackling: 70,
-  dribbling: 70,
-  defending: 70,
-  positioning: 70,
-  vision: 70,
-  decisions: 70,
-  composure: 70,
-  aggression: 50,
-  teamwork: 70,
-  leadership: 50,
-  handling: 70,
-  reflexes: 70,
-  aerial: 70,
+  fitness: 75,
+  mechanics: 70,
+  laning: 70,
+  teamfighting: 70,
+  macro_play: 70,
+  consistency: 70,
+  shotcalling: 50,
+  champion_pool: 70,
+  discipline: 70,
+  mental_resilience: 70,
   traits: [],
   ...overrides,
 });
@@ -80,15 +71,15 @@ describe("PreMatchLineup helpers", () => {
 
   it("computes LoL OVR from visible 9 stats", () => {
     const player = makePlayer({
-      dribbling: 80,
-      shooting: 70,
-      teamwork: 75,
-      vision: 65,
-      decisions: 60,
-      leadership: 70,
-      agility: 68,
-      composure: 72,
-      stamina: 74,
+      mechanics: 80,
+      laning: 70,
+      teamfighting: 75,
+      macro_play: 65,
+      consistency: 60,
+      shotcalling: 70,
+      champion_pool: 68,
+      discipline: 72,
+      mental_resilience: 74,
     });
     expect(getPositionOvr(player)).toBe(Math.round((80 + 70 + 75 + 65 + 60 + 70 + 68 + 72 + 74) / 9));
   });
@@ -108,11 +99,13 @@ describe("PreMatchLineup helpers", () => {
 });
 
 describe("PreMatchLineup component", () => {
+  const homeTeam = makeTeam();
+  const awayTeam = makeTeam({ id: "away", name: "Rival United" });
   const defaultProps = {
-    userTeam: makeTeam(),
-    userBench: [makePlayer({ id: "b1", name: "Bench One", role: "Top", condition: 90 })],
-    oppTeam: makeTeam({ id: "opp", name: "Rival United" }),
-    userColor: "#00ff00",
+    homeTeam,
+    homeBench: [makePlayer({ id: "b1", name: "Bench One", role: "Top", condition: 90 })],
+    awayTeam,
+    awayBench: [makePlayer({ id: "ab1", name: "Away Bench", role: "Mid", condition: 85 })],
     homeTeamColor: "#ff0000",
     awayTeamColor: "#0000ff",
     userSide: "Home" as const,
@@ -123,17 +116,44 @@ describe("PreMatchLineup component", () => {
     onAutoSelect: vi.fn(),
   };
 
-  it("renders 5 LoL starters and bench", () => {
+  it("renders both teams' 5 LoL starters and bench", () => {
     render(<PreMatchLineup {...defaultProps} />);
+    // Home team players
     expect(screen.getAllByText("Top One").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Jg One").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Mid One").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Adc One").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Sup One").length).toBeGreaterThan(0);
+    // Home bench
     expect(screen.getByText("Bench One")).toBeInTheDocument();
+    // Away bench
+    expect(screen.getByText("Away Bench")).toBeInTheDocument();
   });
 
-  it("calls callbacks for auto-select, starter select and swap", () => {
+  it("renders explicit profile images from match player snapshots", () => {
+    render(
+      <PreMatchLineup
+        {...defaultProps}
+        homeTeam={makeTeam({
+          players: [
+            makePlayer({
+              id: "custom-top",
+              name: "Custom Top",
+              role: "Top",
+              profile_image_url: "/images/players/custom-top.webp",
+            }),
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: "Custom Top" })).toHaveAttribute(
+      "src",
+      "/data/lec/images/players/custom-top.webp",
+    );
+  });
+
+  it("calls callbacks for auto-select, starter select and swap on user side", () => {
     const onAutoSelect = vi.fn();
     const onSelectStarter = vi.fn();
     const onSwap = vi.fn();

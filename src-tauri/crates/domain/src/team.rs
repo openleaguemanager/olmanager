@@ -11,8 +11,8 @@ pub struct Team {
     pub short_name: String,
     pub country: String,
     pub city: String,
-    pub arena_name: String,
-    pub arena_capacity: u32,
+    pub stadium_name: String,
+    pub stadium_capacity: u32,
 
     // Current state
     pub finance: i64,
@@ -64,9 +64,24 @@ pub struct Team {
     pub training_groups: Vec<TrainingGroup>,
 
     // Weekly scrim plan: ordered opponent team IDs.
-    // Number of effective scrims depends on training_schedule.
     #[serde(default)]
     pub weekly_scrim_opponent_ids: Vec<String>,
+    // Per-slot fallback plan. Each slot stores ordered opponent IDs: Plan A, Plan B, Plan C.
+    #[serde(default)]
+    pub weekly_scrim_plan_team_ids: Vec<Vec<String>>,
+    // Optional weekly intent. When unset, reports infer focus from observed issues.
+    #[serde(default)]
+    pub scrim_weekly_objective: Option<ScrimFocus>,
+    // 0 means legacy/default capacity; otherwise effective weekly scrim slots.
+    #[serde(default)]
+    pub scrim_weekly_slots: u8,
+    // Optional week key when manager explicitly locks weekly scrim setup.
+    #[serde(default)]
+    pub scrim_setup_locked_week_key: Option<String>,
+    #[serde(default = "default_scrim_reputation")]
+    pub scrim_reputation: u8,
+    #[serde(default)]
+    pub scrim_weekly_cancellations: u8,
     #[serde(default)]
     pub scrim_loss_streak: u8,
     #[serde(default)]
@@ -77,10 +92,12 @@ pub struct Team {
     pub scrim_weekly_losses: u8,
     #[serde(default)]
     pub scrim_slot_results: Vec<ScrimSlotResult>,
-
-    // Persistent starting XI (player IDs). If empty, auto-select by OVR.
     #[serde(default)]
-    pub starting_xi_ids: Vec<String>,
+    pub scrim_reports: Vec<ScrimReport>,
+
+    // Persistent active League of Legends lineup (player IDs). If empty, auto-select by OVR.
+    #[serde(default, alias = "starting_xi_ids")]
+    pub active_lineup_ids: Vec<String>,
 
     #[serde(default)]
     pub team_roles: TeamRoles,
@@ -299,6 +316,10 @@ impl TrainingFocus {
     }
 }
 
+fn default_scrim_reputation() -> u8 {
+    50
+}
+
 #[cfg(test)]
 mod training_focus_tests {
     use super::TrainingFocus;
@@ -372,8 +393,8 @@ mod academy_team_metadata_tests {
             "short_name": "FNC",
             "country": "GB",
             "city": "London",
-            "arena_name": "Fnatic HQ",
-            "arena_capacity": 5000,
+            "stadium_name": "Fnatic HQ",
+            "stadium_capacity": 5000,
             "finance": 1000000,
             "manager_id": null,
             "reputation": 500,
@@ -393,6 +414,60 @@ mod academy_team_metadata_tests {
         assert_eq!(team.parent_team_id, None);
         assert_eq!(team.academy_team_id, None);
         assert_eq!(team.academy, None);
+    }
+
+    #[test]
+    fn legacy_starting_xi_ids_deserializes_as_active_lineup() {
+        let team: Team = serde_json::from_value(serde_json::json!({
+            "id": "g2",
+            "name": "G2 Esports",
+            "short_name": "G2",
+            "country": "DE",
+            "city": "Berlin",
+            "stadium_name": "G2 Arena",
+            "stadium_capacity": 10000,
+            "finance": 1000000,
+            "manager_id": null,
+            "reputation": 500,
+            "wage_budget": 200000,
+            "transfer_budget": 500000,
+            "season_income": 0,
+            "season_expenses": 0,
+            "formation": "4-4-2",
+            "play_style": "Balanced",
+            "founded_year": 1900,
+            "colors": { "primary": "#000000", "secondary": "#ffffff" },
+            "starting_xi_ids": ["top", "jungle", "mid", "adc", "support"],
+            "history": []
+        }))
+        .unwrap();
+
+        assert_eq!(
+            team.active_lineup_ids,
+            vec!["top", "jungle", "mid", "adc", "support"]
+        );
+    }
+
+    #[test]
+    fn active_lineup_ids_serializes_as_preferred_field() {
+        let mut team = Team::new(
+            "g2".to_string(),
+            "G2 Esports".to_string(),
+            "G2".to_string(),
+            "DE".to_string(),
+            "Berlin".to_string(),
+            "G2 Arena".to_string(),
+            10_000,
+        );
+        team.active_lineup_ids = vec!["top".to_string(), "jungle".to_string()];
+
+        let json = serde_json::to_value(&team).unwrap();
+
+        assert_eq!(
+            json["active_lineup_ids"],
+            serde_json::json!(["top", "jungle"])
+        );
+        assert!(json.get("starting_xi_ids").is_none());
     }
 
     #[test]
@@ -498,6 +573,83 @@ pub struct ScrimSlotResult {
     pub opponent_team_id: String,
     pub won: bool,
     pub simulated_on: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub enum ScrimStatus {
+    Pending,
+    Accepted,
+    Rejected,
+    Cancelled,
+    Played,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub enum ScrimFocus {
+    DraftPrep,
+    ChampionPool,
+    EarlyGame,
+    Teamfighting,
+    Macro,
+    Mental,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub enum ScrimIssue {
+    DraftGap,
+    LanePressure,
+    ObjectiveSetup,
+    TeamfightExecution,
+    ChampionComfort,
+    Tilt,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub enum PostScrimDecision {
+    ContinuePlan,
+    VodReview,
+    MentalReset,
+    TargetedDrills,
+    PushThrough,
+    DayOff,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub struct ScrimChampionPick {
+    pub player_id: String,
+    pub champion_id: String,
+    pub role: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub struct ScrimReport {
+    pub date: String,
+    pub week_key: String,
+    pub slot_index: u8,
+    pub weekday: u8,
+    pub team_id: String,
+    pub opponent_team_id: String,
+    pub status: ScrimStatus,
+    pub won: Option<bool>,
+    pub focus: ScrimFocus,
+    pub issue: Option<ScrimIssue>,
+    pub severity: u8,
+    pub quality: u8,
+    pub player_champion_picks: Vec<ScrimChampionPick>,
+    pub post_decision: Option<PostScrimDecision>,
+    pub created_on: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1055,8 +1207,8 @@ impl Team {
         short_name: String,
         country: String,
         city: String,
-        arena_name: String,
-        arena_capacity: u32,
+        stadium_name: String,
+        stadium_capacity: u32,
     ) -> Self {
         Self {
             id,
@@ -1064,8 +1216,8 @@ impl Team {
             short_name,
             country,
             city,
-            arena_name,
-            arena_capacity,
+            stadium_name,
+            stadium_capacity,
             finance: 1_000_000,
             manager_id: None,
             reputation: 500,
@@ -1088,17 +1240,24 @@ impl Team {
             training_schedule: TrainingSchedule::default(),
             training_groups: Vec::new(),
             weekly_scrim_opponent_ids: Vec::new(),
+            weekly_scrim_plan_team_ids: Vec::new(),
+            scrim_weekly_objective: None,
+            scrim_weekly_slots: 0,
+            scrim_setup_locked_week_key: None,
+            scrim_reputation: default_scrim_reputation(),
+            scrim_weekly_cancellations: 0,
             scrim_loss_streak: 0,
             scrim_weekly_played: 0,
             scrim_weekly_wins: 0,
             scrim_weekly_losses: 0,
             scrim_slot_results: Vec::new(),
+            scrim_reports: Vec::new(),
             founded_year: 1900,
             colors: TeamColors {
                 primary: "#10b981".to_string(),
                 secondary: "#ffffff".to_string(),
             },
-            starting_xi_ids: Vec::new(),
+            active_lineup_ids: Vec::new(),
             team_roles: TeamRoles::default(),
             form: Vec::new(),
             history: Vec::new(),

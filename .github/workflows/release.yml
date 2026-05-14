@@ -222,7 +222,7 @@ jobs:
               name = path.name
               if not (name.endswith(allowed_suffixes) or name.endswith(allowed_double_suffixes)):
                   continue
-              destination = out_dir / f"olmanager-{version}-{platform}-{name}"
+              destination = out_dir / f"{name}"
               shutil.copy2(path, destination)
               copied.append(destination)
 

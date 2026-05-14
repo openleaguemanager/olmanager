@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Transaction};
-use rusqlite_migration::{HookResult, Migrations, M};
+use rusqlite_migration::{HookResult, M, Migrations};
 
 fn column_exists(tx: &Transaction<'_>, table: &str, column: &str) -> rusqlite::Result<bool> {
     let mut stmt = tx.prepare(&format!("PRAGMA table_info({table})"))?;
@@ -40,11 +40,11 @@ fn migrate_manager_avatar_path(tx: &Transaction<'_>) -> HookResult {
 }
 
 fn migrate_stadium_to_arena(tx: &Transaction<'_>) -> HookResult {
-    add_column_if_missing(tx, "teams", "arena_name", "TEXT")?;
+    add_column_if_missing(tx, "teams", "stadium_name", "TEXT")?;
     // Only migrate data if the legacy column exists (old save files)
     if column_exists(tx, "teams", "stadium_name")? {
         tx.execute(
-            "UPDATE teams SET arena_name = COALESCE(stadium_name, 'Unknown Arena') WHERE arena_name IS NULL",
+            "UPDATE teams SET stadium_name = COALESCE(stadium_name, 'Unknown Arena') WHERE stadium_name IS NULL",
             [],
         )?;
     }
@@ -52,11 +52,11 @@ fn migrate_stadium_to_arena(tx: &Transaction<'_>) -> HookResult {
 }
 
 fn migrate_stadium_to_arena_capacity(tx: &Transaction<'_>) -> HookResult {
-    add_column_if_missing(tx, "teams", "arena_capacity", "INTEGER")?;
+    add_column_if_missing(tx, "teams", "stadium_capacity", "INTEGER")?;
     // Only migrate data if the legacy column exists (old save files)
     if column_exists(tx, "teams", "stadium_capacity")? {
         tx.execute(
-            "UPDATE teams SET arena_capacity = COALESCE(stadium_capacity, 0) WHERE arena_capacity IS NULL",
+            "UPDATE teams SET stadium_capacity = COALESCE(stadium_capacity, 0) WHERE stadium_capacity IS NULL",
             [],
         )?;
     }
@@ -68,10 +68,20 @@ fn migrate_stadium_to_arena_capacity(tx: &Transaction<'_>) -> HookResult {
 /// then recreates each table via CREATE TABLE AS (SQLite lacks DROP COLUMN).
 fn migrate_drop_football_nation(tx: &Transaction<'_>) -> HookResult {
     // Add missing columns (safe: no-op if already present)
-    add_column_if_missing(tx, "players", "nationality_code", "TEXT NOT NULL DEFAULT ''")?;
+    add_column_if_missing(
+        tx,
+        "players",
+        "nationality_code",
+        "TEXT NOT NULL DEFAULT ''",
+    )?;
     add_column_if_missing(tx, "players", "competitive_region", "TEXT")?;
     add_column_if_missing(tx, "players", "profile_image_url", "TEXT")?;
-    add_column_if_missing(tx, "managers", "nationality_code", "TEXT NOT NULL DEFAULT ''")?;
+    add_column_if_missing(
+        tx,
+        "managers",
+        "nationality_code",
+        "TEXT NOT NULL DEFAULT ''",
+    )?;
     add_column_if_missing(tx, "managers", "competitive_region", "TEXT")?;
     add_column_if_missing(tx, "managers", "avatar_path", "TEXT")?;
     add_column_if_missing(tx, "staff", "nationality_code", "TEXT NOT NULL DEFAULT ''")?;
@@ -101,9 +111,7 @@ fn migrate_audit_teams_legacy(tx: &Transaction<'_>) -> HookResult {
             non_default
         );
     } else {
-        log::info!(
-            "[migration] V40 audit: no teams use legacy columns — safe to remove"
-        );
+        log::info!("[migration] V40 audit: no teams use legacy columns — safe to remove");
     }
     Ok(())
 }
@@ -111,8 +119,8 @@ fn migrate_audit_teams_legacy(tx: &Transaction<'_>) -> HookResult {
 /// V42 pre-hook: normalize teams schema so the rebuild SQL can run on
 /// very old/branch-divergent saves that still use stadium_* names.
 fn migrate_prepare_teams_for_v42(tx: &Transaction<'_>) -> HookResult {
-    add_column_if_missing(tx, "teams", "arena_name", "TEXT")?;
-    add_column_if_missing(tx, "teams", "arena_capacity", "INTEGER")?;
+    add_column_if_missing(tx, "teams", "stadium_name", "TEXT")?;
+    add_column_if_missing(tx, "teams", "stadium_capacity", "INTEGER")?;
     add_column_if_missing(
         tx,
         "teams",
@@ -122,24 +130,24 @@ fn migrate_prepare_teams_for_v42(tx: &Transaction<'_>) -> HookResult {
 
     if column_exists(tx, "teams", "stadium_name")? {
         tx.execute(
-            "UPDATE teams SET arena_name = COALESCE(arena_name, stadium_name, 'Unknown Arena')",
+            "UPDATE teams SET stadium_name = COALESCE(stadium_name, stadium_name, 'Unknown Arena')",
             [],
         )?;
     } else {
         tx.execute(
-            "UPDATE teams SET arena_name = COALESCE(arena_name, 'Unknown Arena')",
+            "UPDATE teams SET stadium_name = COALESCE(stadium_name, 'Unknown Arena')",
             [],
         )?;
     }
 
     if column_exists(tx, "teams", "stadium_capacity")? {
         tx.execute(
-            "UPDATE teams SET arena_capacity = COALESCE(arena_capacity, stadium_capacity, 0)",
+            "UPDATE teams SET stadium_capacity = COALESCE(stadium_capacity, stadium_capacity, 0)",
             [],
         )?;
     } else {
         tx.execute(
-            "UPDATE teams SET arena_capacity = COALESCE(arena_capacity, 0)",
+            "UPDATE teams SET stadium_capacity = COALESCE(stadium_capacity, 0)",
             [],
         )?;
     }
@@ -156,6 +164,64 @@ fn migrate_prepare_teams_for_v42(tx: &Transaction<'_>) -> HookResult {
 fn migrate_v42_drop_dead_team_columns(tx: &Transaction<'_>) -> HookResult {
     migrate_prepare_teams_for_v42(tx)?;
     tx.execute_batch(include_str!("sql/v042_drop_dead_team_columns.sql"))?;
+    Ok(())
+}
+
+fn migrate_day_phase(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(
+        tx,
+        "game_meta",
+        "day_phase",
+        "TEXT NOT NULL DEFAULT 'Morning'",
+    )?;
+    Ok(())
+}
+
+fn migrate_scrim_reports(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(tx, "teams", "scrim_reports", "TEXT NOT NULL DEFAULT '[]'")?;
+    Ok(())
+}
+
+fn migrate_scrim_weekly_objective(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(tx, "teams", "scrim_weekly_objective", "TEXT")?;
+    Ok(())
+}
+
+fn migrate_scrim_setup_lock_week_key(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(tx, "teams", "scrim_setup_locked_week_key", "TEXT")?;
+    Ok(())
+}
+
+fn migrate_social_post_media_url(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(tx, "social_posts", "media_url", "TEXT")?;
+    Ok(())
+}
+
+fn migrate_missing_scrim_columns(tx: &Transaction<'_>) -> HookResult {
+    add_column_if_missing(
+        tx,
+        "teams",
+        "weekly_scrim_plan_team_ids",
+        "TEXT NOT NULL DEFAULT '[]'",
+    )?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "scrim_weekly_slots",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "scrim_reputation",
+        "INTEGER NOT NULL DEFAULT 50",
+    )?;
+    add_column_if_missing(
+        tx,
+        "teams",
+        "scrim_weekly_cancellations",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
     Ok(())
 }
 
@@ -194,11 +260,44 @@ pub fn ensure_compatible_schema(conn: &Connection) -> rusqlite::Result<()> {
     connection_add_column_if_missing(conn, "managers", "avatar_path", "TEXT")?;
     connection_add_column_if_missing(conn, "players", "profile_image_url", "TEXT")?;
     connection_add_column_if_missing(conn, "staff", "profile_image_url", "TEXT")?;
+    connection_add_column_if_missing(
+        conn,
+        "teams",
+        "weekly_scrim_plan_team_ids",
+        "TEXT NOT NULL DEFAULT '[]'",
+    )?;
+    connection_add_column_if_missing(conn, "teams", "scrim_weekly_objective", "TEXT")?;
+    connection_add_column_if_missing(conn, "teams", "scrim_setup_locked_week_key", "TEXT")?;
+    connection_add_column_if_missing(
+        conn,
+        "teams",
+        "scrim_weekly_slots",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
+    connection_add_column_if_missing(
+        conn,
+        "teams",
+        "scrim_reputation",
+        "INTEGER NOT NULL DEFAULT 50",
+    )?;
+    connection_add_column_if_missing(
+        conn,
+        "teams",
+        "scrim_weekly_cancellations",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
+    connection_add_column_if_missing(conn, "teams", "scrim_reports", "TEXT NOT NULL DEFAULT '[]'")?;
+    connection_add_column_if_missing(
+        conn,
+        "game_meta",
+        "day_phase",
+        "TEXT NOT NULL DEFAULT 'Morning'",
+    )?;
     Ok(())
 }
 
 /// Number of migrations defined. Keep in sync with the vec in `all_migrations`.
-pub const MIGRATION_COUNT: usize = 44;
+pub const MIGRATION_COUNT: usize = 52;
 
 /// All migrations for a per-save game database.
 /// Each save `.db` file gets this schema applied via `rusqlite_migration`.
@@ -275,9 +374,9 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up("SELECT 1;"),
         // V34: Add profile_image_url to staff (no-op: already handled by V29 hook)
         M::up("SELECT 1;"),
-        // V35: Rename stadium_name to arena_name for LoL terminology
+        // V35: Rename stadium_name to stadium_name for LoL terminology
         M::up_with_hook("SELECT 1;", migrate_stadium_to_arena),
-        // V36: Rename stadium_capacity to arena_capacity for LoL terminology
+        // V36: Rename stadium_capacity to stadium_capacity for LoL terminology
         M::up_with_hook("SELECT 1;", migrate_stadium_to_arena_capacity),
         // V37: Rename legacy football stat tables to _deprecated_ prefix
         M::up(include_str!("sql/v037_rename_legacy_stats.sql")),
@@ -294,6 +393,22 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up_with_hook("SELECT 1;", migrate_v42_drop_dead_team_columns),
         // V43: Add bans_json column to lol_player_match_stats for ban rate
         M::up(include_str!("sql/v043_add_bans_column.sql")),
+        // V44: Persist day phase for phase-based advancement
+        M::up_with_hook("SELECT 1;", migrate_day_phase),
+        // V45: Enriched scrim reports for gameplay consequences
+        M::up_with_hook("SELECT 1;", migrate_scrim_reports),
+        // V46: Optional weekly scrim objective for planning intent
+        M::up_with_hook("SELECT 1;", migrate_scrim_weekly_objective),
+        // V47: Optional weekly setup lock marker key
+        M::up_with_hook("SELECT 1;", migrate_scrim_setup_lock_week_key),
+        // V48: Persist humorous social feed posts per save
+        M::up(include_str!("sql/v035_social_posts.sql")),
+        // V49: Add optional media URL to social posts
+        M::up_with_hook("SELECT 1;", migrate_social_post_media_url),
+        // V50: Persist social accounts and templates for editor workflows
+        M::up(include_str!("sql/v036_social_registry.sql")),
+        // V51: Add missing scrim columns to teams table (weekly_scrim_plan_team_ids, scrim_weekly_slots, scrim_reputation, scrim_weekly_cancellations)
+        M::up_with_hook("SELECT 1;", migrate_missing_scrim_columns),
     ])
 }
 
@@ -353,6 +468,18 @@ mod tests {
         );
         assert!(tables.contains(&"messages".to_string()), "missing messages");
         assert!(tables.contains(&"news".to_string()), "missing news");
+        assert!(
+            tables.contains(&"social_posts".to_string()),
+            "missing social_posts"
+        );
+        assert!(
+            tables.contains(&"social_accounts".to_string()),
+            "missing social_accounts"
+        );
+        assert!(
+            tables.contains(&"social_templates".to_string()),
+            "missing social_templates"
+        );
         assert!(
             tables.contains(&"board_objectives".to_string()),
             "missing board_objectives"

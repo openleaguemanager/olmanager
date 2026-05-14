@@ -1,5 +1,6 @@
 import type { PlayerData } from "../../store/gameStore";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { resolvePlayerLolRole } from "../../lib/lolIdentity";
 
 export type SquadSection = "xi" | "bench";
 export type DragState = {
@@ -255,7 +256,7 @@ export function translatePositionAbbreviation(
  * (no mapping needed - already LolRole from backend)
  */
 export function getLolRoleForPlayer(player: PlayerData): LolRole {
-  return canonicalPosition(player.natural_position) as LolRole;
+  return resolvePlayerLolRole(player);
 }
 
 export function getPreferredPositions(player: PlayerData): string[] {
@@ -420,20 +421,32 @@ export function buildActiveLineupIds(
 ): string[] {
   const byId = new Map(available.map((player) => [player.id, player]));
   const used = new Set<string>();
-  const activeIds: string[] = [];
+  const activeIds: string[] = Array(LOL_ACTIVE_ROLES.length).fill("");
 
-  for (const role of LOL_ACTIVE_ROLES) {
+  LOL_ACTIVE_ROLES.forEach((role, index) => {
+    const savedSlotPlayer = byId.get(savedIds[index] ?? "");
+
+    if (
+      savedSlotPlayer &&
+      !used.has(savedSlotPlayer.id) &&
+      getLolRoleForPlayer(savedSlotPlayer) === role
+    ) {
+      activeIds[index] = savedSlotPlayer.id;
+      used.add(savedSlotPlayer.id);
+      return;
+    }
+
     const savedRolePlayer = savedIds
       .map((id) => byId.get(id))
       .find(
         (player): player is PlayerData =>
-          Boolean(player) && !used.has(player.id) && getLolRoleForPlayer(player) === role,
+          player !== undefined && !used.has(player.id) && getLolRoleForPlayer(player) === role,
       );
 
     if (savedRolePlayer) {
-      activeIds.push(savedRolePlayer.id);
+      activeIds[index] = savedRolePlayer.id;
       used.add(savedRolePlayer.id);
-      continue;
+      return;
     }
 
     const roleCandidates = available
@@ -442,12 +455,12 @@ export function buildActiveLineupIds(
 
     const bestRolePlayer = roleCandidates[0];
     if (bestRolePlayer) {
-      activeIds.push(bestRolePlayer.id);
+      activeIds[index] = bestRolePlayer.id;
       used.add(bestRolePlayer.id);
     }
-  }
+  });
 
-  return activeIds.slice(0, LOL_ACTIVE_ROLES.length);
+  return activeIds;
 }
 
 export function buildActiveLineupSlots(

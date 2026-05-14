@@ -22,9 +22,9 @@ interface DashboardWorkspaceContentProps {
   onSelectTeam: (id: string) => void;
   onGameUpdate: (state: GameStateData) => void;
   isUnemployed: boolean;
-  viewingChampionKey: string | null;
-  onCloseChampion: () => void;
-  onViewChampion: (championKey: string) => void;
+  viewingChampionKey?: string | null;
+  onCloseChampion?: () => void;
+  onViewChampion?: (championKey: string) => void;
 }
 
 export default function DashboardWorkspaceContent({
@@ -39,8 +39,8 @@ export default function DashboardWorkspaceContent({
   onGameUpdate,
   isUnemployed,
   viewingChampionKey,
-  onCloseChampion,
-  onViewChampion,
+  onCloseChampion = () => undefined,
+  onViewChampion = () => undefined,
 }: DashboardWorkspaceContentProps) {
   const { t } = useTranslation();
 
@@ -61,7 +61,7 @@ export default function DashboardWorkspaceContent({
     : null;
 
   return (
-    <div className="flex-1 overflow-auto p-6 bg-gray-100 dark:bg-navy-900">
+    <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 bg-gray-100 dark:bg-navy-900">
       {isUnemployed && (
         <div className="mx-6 mt-4 flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-900/50 dark:bg-amber-950/30">
           <ShieldX className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-500" />
@@ -110,6 +110,7 @@ export default function DashboardWorkspaceContent({
               "Tactics",
               "Training",
               "Meta",
+              "Scrims",
               "Schedule",
               "Finances",
               "Transfers",
@@ -124,6 +125,7 @@ export default function DashboardWorkspaceContent({
               "Inbox",
               "Manager",
               "News",
+              "Social",
             ].includes(dashboardTabContentModel.activeTab) ? (
               <Card>
                 <CardBody>

@@ -202,6 +202,7 @@
     "squad": "Squad",
     "tactics": "Tactics",
     "training": "Training",
+    "scrims": "Scrims",
     "meta": "Meta",
     "staff": "Staff",
     "finances": "Finances",
@@ -212,6 +213,7 @@
     "champions_world": "Champions",
     "schedule": "Schedule",
     "news": "News",
+    "social": "Social",
     "settings": "Settings",
     "exitToMenu": "Exit to Menu",
     "continue": "Continue",
@@ -223,6 +225,7 @@
     "sectionWorld": "World",
     "searchTeams": "Teams",
     "searchPlayers": "Players",
+    "searchChampions": "Champions",
     "scouting": "Scouting",
     "youthAcademy": "Academy",
     "saveGame": "Save game",
@@ -362,7 +365,96 @@
     "income": "Income",
     "expenses": "Expenses",
     "noUpcomingPlayoffMatch": "No upcoming playoff match.",
-    "fullRoster": "Full roster"
+    "fullRoster": "Full roster",
+    "todayScrimReviewVs": "Review vs {{team}}",
+    "todayScrimReview": "Post-scrim review",
+    "todayScrimReviewDetail": "Choose how to turn today's scrim into learning.",
+    "todayMatch": "Today's match",
+    "today": "Today",
+    "currentPhase": "Current phase",
+    "recommendedNow": "Recommended now",
+    "riskRewardToday": "Risk and reward today",
+    "risk": "Risk",
+    "expectedLearning": "Expected learning",
+    "cancelCost": "Cancel cost",
+    "recommendation": "Recommendation",
+    "recommendationHighRisk": "High risk: consider cancelling and reviewing before forcing more volume.",
+    "recommendationNormalRisk": "Manageable risk: continue if you need reps, cancel if recovery is a priority.",
+    "scrimDecision": {
+      "cancelScrims": {
+        "desc": "Cancel the next block and switch to corrective work.",
+        "benefits": "Protects recovery and reduces immediate risk.",
+        "costs": "Loses planned volume for the day.",
+        "when": "When team state is unstable and quality is dropping."
+      },
+      "continueBlock2": {
+        "desc": "Keep the plan and play the second block."
+      },
+      "vodReview": {
+        "desc": "Review VOD to extract concrete learning from mistakes."
+      },
+      "mentalReset": {
+        "desc": "Prioritize morale and reset tilt before next sessions."
+      },
+      "targetedDrills": {
+        "desc": "Run focused drills on the detected issue."
+      },
+      "offerRest": {
+        "desc": "Offer rest after a good block to protect condition."
+      },
+      "dayOff": {
+        "desc": "Give the rest of the day off and recover."
+      },
+      "pushThrough": {
+        "desc": "Push volume despite the setback to maximize reps."
+      }
+    },
+    "scrimFeedback": {
+      "cancelledTitle": "Scrims cancelled for today",
+      "cancelledDetail": "Choose a corrective follow-up to close the day."
+    },
+    "todayScrimOpen": "Open scrim slot",
+    "todayScrimDetail": "Choose how to use today's scrim block.",
+    "todayTraining": "Training focus",
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
+  },
+  "scrims": {
+    "reputation": "Scrim rep",
+    "reviewBlockTitle": "Block review",
+    "reviewWin": "Win",
+    "reviewLoss": "Loss",
+    "reportFocus": "Focus",
+    "detectedIssue": "Detected issue",
+    "freeDayOff": "Give the rest of the day off",
+    "decision": {
+      "cancelScrims": "Cancel scrims",
+      "continueBlock2": "Continue to block 2",
+      "vodReview": "VOD Review",
+      "mentalReset": "Mental Reset",
+      "targetedDrills": "Targeted Drills",
+      "offerRest": "Offer rest",
+      "dayOff": "Day off",
+      "pushThrough": "Push through"
+    },
+    "tag": {
+      "momentumPlus": "Momentum +",
+      "fatigueMinus": "Fatigue -",
+      "volumePlus": "Volume +",
+      "recoveryPlus": "Recovery +",
+      "fatiguePlus": "Fatigue +",
+      "volumeMinus": "Volume -",
+      "learningPlus": "Learning +",
+      "mentalMinus": "Mental -",
+      "riskMinus": "Risk -",
+      "analysisPlus": "Analysis +",
+      "qualityPlus": "Quality +",
+      "recoveryMinus": "Recovery -",
+      "mentalPlus": "Mental +",
+      "techniqueMinus": "Technique -",
+      "issuePlus": "Issue +",
+      "mechanicsPlus": "Mechanics +"
+    },
+    "weeklySetup": "Weekly setup"
   },
   "season": {
     "preseasonStatus": "Preseason Status",
@@ -576,18 +668,18 @@
       "Light": "Light"
     },
     "trainingFocuses": {
-      "Scrims": "Scrims",
-      "VODReview": "VOD Review",
-      "IndividualCoaching": "Individual Coaching",
-      "ChampionPoolPractice": "Champion Pool Practice",
-      "MacroSystems": "Macro Systems",
-      "MentalResetRecovery": "Mental Reset / Recovery",
-      "Physical": "Scrims",
-      "Technical": "Champion Pool Practice",
-      "Tactical": "Macro Systems",
-      "Defending": "VOD Review",
-      "Attacking": "Individual Coaching",
-      "Recovery": "Mental Reset / Recovery",
+      "Scrims": "Ranked Grind",
+      "VODReview": "SoloQ Review",
+      "IndividualCoaching": "Micro & Trading",
+      "ChampionPoolPractice": "Champion Pool",
+      "MacroSystems": "Laning & Personal Macro",
+      "MentalResetRecovery": "Mental Reset",
+      "Physical": "Ranked Grind",
+      "Technical": "Champion Pool",
+      "Tactical": "Laning & Personal Macro",
+      "Defending": "SoloQ Review",
+      "Attacking": "Micro & Trading",
+      "Recovery": "Mental Reset",
       "General": "General"
     },
     "attributes": {
@@ -854,7 +946,7 @@
   },
   "training": {
     "weeklySchedule": "Weekly Schedule",
-    "trainingFocus": "Training Focus",
+    "trainingFocus": "SoloQ Focus",
     "intensity": "Intensity",
     "squadFitness": "Squad Fitness",
     "playerFitness": "Player Fitness",
@@ -868,6 +960,13 @@
     "currentlyTraining": "Currently training: <strong>{{attrs}}</strong> at <strong>{{intensity}}</strong> intensity.",
     "recoveryNote": "Players will prioritise reset, rest, and condition recovery on all training days.",
     "effectiveFocus": "Focus",
+    "soloQRanks": "SoloQ Ranks",
+    "roleIconAlt": "Player role",
+    "soloQTiers": {
+      "Challenger": "Challenger",
+      "Grandmaster": "Grandmaster",
+      "Master": "Master"
+    },
     "trainingAppliedNote": "Training is applied on scheduled training days when you advance time. Rest days provide full recovery.",
     "criticalCondition": "{{count}} player(s) in critical condition (<25%)",
     "exhaustedPlayers": "{{count}} player(s) exhausted (<40%)",
@@ -887,30 +986,37 @@
         "warnLight": "Mental Reset / Recovery would maximise fitness recovery."
       }
     },
+    "staffImpact": {
+      "title": "Staff impact",
+      "learning": "Learning",
+      "scrims": "Scrim prep",
+      "recovery": "Recovery",
+      "note": "Staff improves learning, preparation and recovery conservatively; player attributes still drive results."
+    },
     "focuses": {
       "Scrims": {
-        "label": "Scrims",
-        "desc": "Team reps for execution and coordination"
+        "label": "Ranked Grind",
+        "desc": "SoloQ volume for tempo, reactions, and decision speed"
       },
       "VODReview": {
-        "label": "VOD Review",
-        "desc": "Review decisions, vision, and positioning"
+        "label": "SoloQ Review",
+        "desc": "Review your replays to fix repeated mistakes"
       },
       "IndividualCoaching": {
-        "label": "Individual Coaching",
-        "desc": "Sharpen mechanics and consistency"
+        "label": "Micro & Trading",
+        "desc": "Sharpen mechanics, lane trading, and discipline"
       },
       "ChampionPoolPractice": {
-        "label": "Champion Pool Practice",
-        "desc": "Refine comfort picks and micro patterns"
+        "label": "Champion Pool",
+        "desc": "Expand playable picks and key matchup reps"
       },
       "MacroSystems": {
-        "label": "Macro Systems",
-        "desc": "Improve map play and team decisions"
+        "label": "Laning & Personal Macro",
+        "desc": "Improve wave control, tempo, and personal rotations"
       },
       "MentalResetRecovery": {
-        "label": "Mental Reset / Recovery",
-        "desc": "Low-load reset with max recovery"
+        "label": "Mental Reset",
+        "desc": "Low load to reset tilt and recover focus"
       }
     },
     "intensities": {
@@ -984,7 +1090,39 @@
       "autoRandom": "Auto-random active",
       "noOpponent": "Random",
       "randomResolved": "Random -> {{team}}",
-      "opponentLogoAlt": "Opponent logo"
+      "opponentLogoAlt": "Opponent logo",
+      "slot": "Slot",
+      "planA": "Plan A",
+      "planB": "Plan B",
+      "planC": "Plan C",
+      "noFallback": "No fallback",
+      "pending": "Pending",
+      "weeklyObjective": "Weekly objective",
+      "weeklyObjectiveDescription": "Define what you want to learn this week. The objective guides reports and gives Plan A/B/C intent.",
+      "staffSuggestions": "Staff suggestions",
+      "objectives": {
+        "none": "No objective set",
+        "draftPrep": "Prepare draft vs next rival",
+        "championPool": "Expand champion pool",
+        "earlyGame": "Fix early game",
+        "teamfighting": "Improve teamfights",
+        "macro": "Polish macro and objectives",
+        "mental": "Stabilize mental"
+      },
+      "staff": {
+        "pickObjective": "Pick a weekly objective before touching rivals: without intent, volume only creates noise.",
+        "mentalReset": "Prioritize Mental Reset or VOD Review: the streak is already hurting learning quality.",
+        "reduceCancellations": "Reduce cancellations this week; scrim reputation is competitive infrastructure too.",
+        "moreVolumeForPool": "To expand champion pool you need at least 4 blocks; two scrims are not enough sample.",
+        "noPlannedOpponents": "The objective is right, but no rivals are locked: set at least Plan A so the week has direction.",
+        "draftPrepPlan": "Use Plan A/B/C against strong teams: you want to pressure draft, not farm cheap confidence.",
+        "strongerOpponents": "For this objective you need rivals that make you uncomfortable; find at least one block against a stronger team.",
+        "softerMentalWeek": "Mental week: do not open with every rival above your level. Mix in one controlled block to rebuild confidence.",
+        "addFallbacksForReputation": "Your planned rivals have better scrim reputation; add Plan B/C or you will eat avoidable rejections.",
+        "macroReview": "Mark a VOD Review block: if the issue is objective setup, more scrims without review repeat the mistake.",
+        "narrowFocus": "Average quality is low; keep the volume, but narrow the focus before adding more rivals.",
+        "keepPlan": "The current plan is healthy: keep the objective, choose demanding rivals, and review the first report before increasing volume."
+      }
     }
   },
   "staff": {
@@ -1348,6 +1486,13 @@
       "Editorial": "Editorial",
       "ManagerialChange": "Managerial"
     }
+  },
+  "social": {
+    "title": "Social",
+    "subtitle": "Community timeline",
+    "description": "No gameplay effects. Just teams, players, fans and meme accounts being normal online.",
+    "emptyTitle": "The timeline is quiet",
+    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis."
   },
   "playerProfile": {
     "contractInfo": "Contract & Info",
@@ -1840,6 +1985,24 @@
     "simulatingFromTactics": "Simulating the match...",
     "simulateFailed": "Could not simulate the match. Please try again.",
     "startLive": "Go live",
+    "scrimPrep": {
+      "title": "Scrim prep carried into the match",
+      "summary": "Recent scrims gave this side a small {{focus}} execution signal. It affects timing and comfort, not a guaranteed result.",
+      "details": {
+        "opponentPrep": "Opponent prep +{{value}}",
+        "championComfort": "Champion comfort +{{value}}",
+        "focus": "Focus: {{focus}}"
+      },
+      "focus": {
+        "draftPrep": "draft prep",
+        "championPool": "champion pool",
+        "earlyGame": "early game",
+        "teamfighting": "teamfighting",
+        "macro": "macro",
+        "mental": "mental reset",
+        "general": "general prep"
+      }
+    },
     "draftResult": {
       "mvp": "MVP",
       "series": "Series",
@@ -2103,7 +2266,19 @@
     "startMatch": "Start Match",
     "notAssigned": "Not assigned",
     "keyStats": "Key Stats",
-    "continueDashboard": "Continue to Dashboard"
+    "continueDashboard": "Continue to Dashboard",
+    "opponentIntel": {
+      "kicker": "Pre-match preparation",
+      "title": "Opponent intelligence",
+      "confidence": "Intel confidence",
+      "rivalPoolByRole": "Rival champion pool by role",
+      "noPoolYet": "No champion pool revealed yet.",
+      "suggestedBans": "Suggested bans",
+      "threat": "Threat",
+      "metaThreats": "Meta threats",
+      "meta": "Meta",
+      "masteryHighlights": "Mastery highlights"
+    }
   },
   "endOfSeason": {
     "seasonComplete": "Season Complete",
@@ -2592,7 +2767,31 @@
       },
       "scrimWeekly": {
         "subject": "Weekly Scrim Staff Report",
-        "body": "Weekly scrim report:\n\nPlayed: {{played}}\nWins: {{wins}}\nLosses: {{losses}}\nCurrent loss streak: {{lossStreak}}\n\nScrim progress applies even on losses, but extended losing streaks are hurting morale."
+        "body": "Weekly scrim report:\n\nPlayed: {{played}}\nWins: {{wins}}\nLosses: {{losses}}\nCancellations: {{cancellations}}\nAverage quality: {{avgQuality}}\nCurrent loss streak: {{lossStreak}}\n\nMain focus: {{topFocus}}\nRecurring issue: {{recurringIssue}}\nMost practiced champion: {{topChampion}}\n\nRecommendation: {{recommendation}}",
+        "focus": {
+          "draftPrep": "Draft prep",
+          "championPool": "Champion pool",
+          "earlyGame": "Early game",
+          "teamfighting": "Teamfighting",
+          "macro": "Macro",
+          "mental": "Mental"
+        },
+        "issues": {
+          "draftGap": "Draft gap",
+          "lanePressure": "Lane pressure",
+          "objectiveSetup": "Objective setup",
+          "teamfightExecution": "Teamfight execution",
+          "championComfort": "Champion comfort",
+          "tilt": "Tilt"
+        },
+        "recommendations": {
+          "lockPlans": "Lock Plan A/B/C earlier next week so the staff has usable prep data.",
+          "reduceCancellations": "Reduce cancellations next week; scrim reputation is part of your competitive infrastructure.",
+          "resetBeforeVolume": "Open next week with Mental Reset or VOD Review before adding more volume.",
+          "narrowFocus": "Keep the volume but narrow the focus around the recurring issue; quality is too noisy right now.",
+          "targetedDrills": "Schedule Targeted Drills for the recurring issue and keep the main prep block stable.",
+          "keepPlan": "Keep the current plan: it is producing useful reps without overloading the roster."
+        }
       },
       "patchNotes": {
         "subject": "Patch {{label}} Notes",

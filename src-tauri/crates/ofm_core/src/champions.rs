@@ -2,13 +2,13 @@ use crate::game::Game;
 use crate::staff_effects::LolStaffEffects;
 use chrono::{Datelike, NaiveDate};
 use domain::message::{InboxMessage, MessageCategory, MessagePriority};
-#[cfg(feature = "typescript")]
-use ts_rs::TS;
 use domain::staff::StaffRole;
 use rand::RngExt;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
+#[cfg(feature = "typescript")]
+use ts_rs::TS;
 
 fn params(pairs: &[(&str, &str)]) -> HashMap<String, String> {
     pairs
@@ -159,6 +159,46 @@ fn normalize_key(value: &str) -> String {
     value
         .to_lowercase()
         .replace(|ch: char| !ch.is_ascii_alphanumeric(), "")
+}
+
+fn role_for_lineup_index(index: usize) -> Option<domain::player::LolRole> {
+    match index {
+        0 => Some(domain::player::LolRole::Top),
+        1 => Some(domain::player::LolRole::Jungle),
+        2 => Some(domain::player::LolRole::Mid),
+        3 => Some(domain::player::LolRole::Adc),
+        4 => Some(domain::player::LolRole::Support),
+        _ => None,
+    }
+}
+
+fn role_label_for_position(pos: domain::player::LolRole) -> &'static str {
+    match pos {
+        domain::player::LolRole::Top => "Top",
+        domain::player::LolRole::Jungle => "Jungle",
+        domain::player::LolRole::Mid => "Mid",
+        domain::player::LolRole::Adc => "ADC",
+        domain::player::LolRole::Support => "Support",
+        domain::player::LolRole::Unknown => "Unknown",
+    }
+}
+
+fn current_role_for_player(
+    game: &Game,
+    team_id: &str,
+    player_id: &str,
+    natural_position: domain::player::LolRole,
+) -> domain::player::LolRole {
+    game.teams
+        .iter()
+        .find(|team| team.id == team_id)
+        .and_then(|team| {
+            team.active_lineup_ids
+                .iter()
+                .position(|id| id == player_id)
+                .and_then(role_for_lineup_index)
+        })
+        .unwrap_or(natural_position)
 }
 
 fn normalize_role(value: &str) -> Option<String> {
@@ -645,17 +685,72 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
         return;
     }
 
-    let mut ranked_masteries: Vec<(String, u8)> = game
+    let role = game
+        .players
+        .iter()
+        .find(|candidate| candidate.id == player_id)
+        .map(|player| match player.natural_position {
+            domain::player::LolRole::Top => "Top",
+            domain::player::LolRole::Jungle => "Jungle",
+            domain::player::LolRole::Mid => "Mid",
+            domain::player::LolRole::Adc => "ADC",
+            domain::player::LolRole::Support => "Support",
+            domain::player::LolRole::Unknown => "Unknown",
+        })
+        .unwrap_or("Unknown");
+
+    let discovered: HashSet<String> = game
+        .champion_patch
+        .discovered_champion_ids
+        .iter()
+        .map(|id| normalize_key(id))
+        .collect();
+
+    let tier_score = |tier: &str| -> i32 {
+        match tier.to_uppercase().as_str() {
+            "S" => 100,
+            "A" => 85,
+            "B" => 70,
+            "C" => 55,
+            "D" => 40,
+            _ => 60,
+        }
+    };
+
+    let mastery_map: HashMap<String, u8> = game
         .champion_masteries
         .iter()
         .filter(|entry| entry.player_id == player_id)
-        .map(|entry| (entry.champion_id.clone(), entry.mastery))
+        .map(|entry| (normalize_key(&entry.champion_id), entry.mastery))
         .collect();
-    ranked_masteries.sort_by(|left, right| right.1.cmp(&left.1));
+
+    let mut by_meta: Vec<(String, i32)> = game
+        .champion_patch
+        .hidden_meta
+        .iter()
+        .filter(|meta| normalize_key(&meta.role) == normalize_key(role))
+        .filter(|meta| {
+            let key = normalize_key(&meta.champion_id);
+            discovered.is_empty() || discovered.contains(&key)
+        })
+        .map(|meta| {
+            let key = normalize_key(&meta.champion_id);
+            let mastery = i32::from(*mastery_map.get(&key).unwrap_or(&MIN_MASTERY));
+            let mastery_gap = i32::from(MASTERY_CAP) - mastery;
+            let role_fit = if normalize_key(&meta.role) == normalize_key(role) {
+                10
+            } else {
+                0
+            };
+            let score = tier_score(&meta.tier) * 2 + role_fit + mastery_gap;
+            (meta.champion_id.clone(), score)
+        })
+        .collect();
+    by_meta.sort_by(|left, right| right.1.cmp(&left.1));
 
     let mut selected: Vec<String> = Vec::new();
     let mut seen: HashSet<String> = HashSet::new();
-    for (champion_id, _) in ranked_masteries {
+    for (champion_id, _) in by_meta {
         let key = normalize_key(&champion_id);
         if seen.contains(&key) {
             continue;
@@ -664,6 +759,27 @@ pub fn ensure_training_targets_from_mastery(game: &mut Game, player_id: &str) {
         selected.push(champion_id);
         if selected.len() >= 3 {
             break;
+        }
+    }
+
+    if selected.len() < 3 {
+        let mut ranked_masteries: Vec<(String, u8)> = game
+            .champion_masteries
+            .iter()
+            .filter(|entry| entry.player_id == player_id)
+            .map(|entry| (entry.champion_id.clone(), entry.mastery))
+            .collect();
+        ranked_masteries.sort_by(|left, right| right.1.cmp(&left.1));
+        for (champion_id, _) in ranked_masteries {
+            let key = normalize_key(&champion_id);
+            if seen.contains(&key) {
+                continue;
+            }
+            seen.insert(key);
+            selected.push(champion_id);
+            if selected.len() >= 3 {
+                break;
+            }
         }
     }
 
@@ -713,17 +829,6 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
         }
     };
 
-    let role_for_position = |pos: &domain::player::LolRole| -> String {
-        match pos {
-            domain::player::LolRole::Top => "Top".to_string(),
-            domain::player::LolRole::Jungle => "Jungle".to_string(),
-            domain::player::LolRole::Mid => "Mid".to_string(),
-            domain::player::LolRole::Adc => "ADC".to_string(),
-            domain::player::LolRole::Support => "Support".to_string(),
-            domain::player::LolRole::Unknown => "Unknown".to_string(),
-        }
-    };
-
     // Collect all meta entries upfront
     let meta_entries: Vec<ChampionMetaEntry> = game.champion_patch.hidden_meta.clone();
 
@@ -731,7 +836,12 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
     let mastery_map: HashMap<String, u8> = game
         .champion_masteries
         .iter()
-        .map(|e| (format!("{}:{}", e.player_id, normalize_key(&e.champion_id)), e.mastery))
+        .map(|e| {
+            (
+                format!("{}:{}", e.player_id, normalize_key(&e.champion_id)),
+                e.mastery,
+            )
+        })
         .collect();
 
     let get_mastery = |player_id: &str, champ_id: &str| -> u8 {
@@ -751,7 +861,12 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
 
     for player_id in player_ids {
         let player = game.players.iter().find(|p| p.id == player_id).unwrap();
-        let role = role_for_position(&player.natural_position);
+        let role = role_label_for_position(current_role_for_player(
+            game,
+            &manager_team_id,
+            &player_id,
+            player.natural_position,
+        ));
 
         let role_meta: Vec<&ChampionMetaEntry> = meta_entries
             .iter()
@@ -827,7 +942,11 @@ pub fn delegate_champion_training_to_coach(game: &mut Game) -> Result<usize, Str
 
     let mut updated_count = 0;
     for (player_id, targets) in &results {
-        let player = game.players.iter_mut().find(|p| p.id == *player_id).unwrap();
+        let player = game
+            .players
+            .iter_mut()
+            .find(|p| p.id == *player_id)
+            .unwrap();
         let old_targets = player.champion_training_targets.clone();
         player.champion_training_targets = targets.clone();
         player.champion_training_targets.resize(3, String::new());
@@ -880,8 +999,8 @@ pub fn apply_training_mastery_progress(
         return;
     };
 
-    let mechanics = f64::from(player.attributes.dribbling.min(100)) / 100.0;
-    let champion_pool = f64::from(player.attributes.agility.min(100)) / 100.0;
+    let mechanics = f64::from(player.attributes.mechanics.min(100)) / 100.0;
+    let champion_pool = f64::from(player.attributes.champion_pool.min(100)) / 100.0;
     let stat_push = (mechanics * 0.6) + (champion_pool * 0.6);
 
     let headroom = f64::from(MASTERY_CAP.saturating_sub(current)) / 75.0;
@@ -909,6 +1028,51 @@ pub fn apply_training_mastery_progress(
     };
     let next = current.saturating_add(gain).min(MASTERY_CAP);
     upsert_mastery(game, player_id, champion_id, next);
+}
+
+pub fn apply_scrim_mastery_progress(
+    game: &mut Game,
+    player_id: &str,
+    champion_id: &str,
+    quality: u8,
+    won: bool,
+    decision: Option<&domain::team::PostScrimDecision>,
+) {
+    let current = mastery_for_player_champion(game, player_id, champion_id);
+    if !game.players.iter().any(|player| player.id == player_id) {
+        return;
+    }
+
+    let mut gain = if quality >= 82 {
+        2
+    } else if quality >= 55 {
+        1
+    } else {
+        0
+    };
+
+    if won && quality >= 70 {
+        gain += 1;
+    }
+
+    match decision {
+        Some(domain::team::PostScrimDecision::TargetedDrills) => gain += 1,
+        Some(domain::team::PostScrimDecision::VodReview) if quality >= 65 => gain += 1,
+        Some(domain::team::PostScrimDecision::PushThrough) if quality >= 75 => gain += 1,
+        Some(domain::team::PostScrimDecision::MentalReset) | None | Some(_) => {}
+    }
+
+    if gain == 0 {
+        return;
+    }
+
+    let capped_gain = if current >= 90 { 1 } else { gain.min(3) };
+    upsert_mastery(
+        game,
+        player_id,
+        champion_id,
+        current.saturating_add(capped_gain).min(MASTERY_CAP),
+    );
 }
 
 pub fn apply_match_mastery_progress(
@@ -1265,4 +1429,113 @@ pub fn process_daily_champion_system(game: &mut Game) {
     }
 
     process_meta_discovery(game);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::clock::GameClock;
+    use chrono::Utc;
+    use domain::manager::Manager;
+    use domain::player::{LolRole, Player, PlayerAttributes};
+    use domain::team::Team;
+
+    fn attrs() -> PlayerAttributes {
+        PlayerAttributes {
+            pace: 60,
+            mental_resilience: 60,
+            strength: 60,
+            champion_pool: 60,
+            passing: 60,
+            laning: 60,
+            tackling: 60,
+            mechanics: 60,
+            defending: 60,
+            positioning: 60,
+            macro_play: 60,
+            consistency: 60,
+            discipline: 60,
+            aggression: 60,
+            teamfighting: 60,
+            shotcalling: 60,
+            handling: 20,
+            reflexes: 20,
+            aerial: 20,
+        }
+    }
+
+    fn game_with_lineup(lineup: Vec<&str>) -> Game {
+        let mut manager = Manager::new(
+            "manager-1".to_string(),
+            "Jane".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "ES".to_string(),
+        );
+        manager.hire("team-1".to_string());
+
+        let mut team = Team::new(
+            "team-1".to_string(),
+            "Team One".to_string(),
+            "ONE".to_string(),
+            "ES".to_string(),
+            "Madrid".to_string(),
+            "Arena".to_string(),
+            10_000,
+        );
+        team.active_lineup_ids = lineup.into_iter().map(str::to_string).collect();
+
+        Game::new(
+            GameClock::new(Utc::now()),
+            manager,
+            vec![team],
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        )
+    }
+
+    #[test]
+    fn current_role_for_player_uses_active_lineup_slot_before_natural_role() {
+        let mut game = game_with_lineup(vec!["new-top", "jungle", "mid", "adc", "support"]);
+        let mut player = Player::new(
+            "new-top".to_string(),
+            "New Top".to_string(),
+            "New Top".to_string(),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            LolRole::Support,
+            attrs(),
+        );
+        player.team_id = Some("team-1".to_string());
+        game.players.push(player.clone());
+
+        expect_role(&game, &player, LolRole::Top);
+    }
+
+    #[test]
+    fn current_role_for_player_keeps_bench_player_natural_role() {
+        let mut game = game_with_lineup(vec!["top", "jungle", "mid", "adc", "support"]);
+        let mut player = Player::new(
+            "bench-support".to_string(),
+            "Bench Support".to_string(),
+            "Bench Support".to_string(),
+            "2000-01-01".to_string(),
+            "ES".to_string(),
+            LolRole::Support,
+            attrs(),
+        );
+        player.team_id = Some("team-1".to_string());
+        game.players.push(player.clone());
+
+        expect_role(&game, &player, LolRole::Support);
+    }
+
+    fn expect_role(game: &Game, player: &Player, expected: LolRole) {
+        let team_id = player.team_id.as_deref().unwrap();
+        assert_eq!(
+            current_role_for_player(game, team_id, &player.id, player.natural_position),
+            expected,
+        );
+    }
 }

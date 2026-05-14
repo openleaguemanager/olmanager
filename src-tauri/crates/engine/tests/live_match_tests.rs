@@ -1,7 +1,7 @@
 use engine::ai::{AiProfile, ai_decide};
 use engine::{
-    EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase,
-    MinuteResult, PlayStyle, PlayerData, Side, TeamData,
+    EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase, MinuteResult,
+    PlayStyle, PlayerData, Side, TeamData,
 };
 use rand::SeedableRng;
 use rand::rngs::StdRng;
@@ -32,28 +32,20 @@ fn make_player(id: &str, name: &str, pos: &str, skill: u8) -> PlayerData {
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
+        profile_image_url: None,
         role: football_position_to_lol_role(pos),
         condition: 90,
         fitness: 75,
-        pace: skill,
-        stamina: skill,
-        strength: skill,
-        agility: skill,
-        passing: skill,
-        shooting: skill,
-        tackling: skill,
-        dribbling: skill,
-        defending: skill,
-        positioning: skill,
-        vision: skill,
-        decisions: skill,
-        composure: skill,
-        aggression: skill,
-        teamwork: skill,
-        leadership: skill,
-        handling: skill,
-        reflexes: skill,
-        aerial: skill,
+        // LoL-native attributes
+        mechanics: skill,
+        laning: skill,
+        teamfighting: skill,
+        macro_play: skill,
+        consistency: skill,
+        shotcalling: skill,
+        champion_pool: skill,
+        discipline: skill,
+        mental_resilience: skill,
         traits: vec![],
     }
 }
@@ -173,7 +165,10 @@ fn match_produces_valid_report() {
 
     let report = state.into_report();
     assert!(report.total_minutes >= 55, "Match should reach time limit");
-    assert!(!report.player_stats.is_empty(), "Report should have player stats");
+    assert!(
+        !report.player_stats.is_empty(),
+        "Report should have player stats"
+    );
 }
 
 #[test]
@@ -651,7 +646,10 @@ fn average_kills_reasonable() {
     let avg = total_kills as f64 / trials as f64;
     // LoL simulations may have fewer kills than football goals;
     // just verify it's not NaN or negative.
-    assert!(avg >= 0.0, "Average kills should be non-negative, got {avg:.1}");
+    assert!(
+        avg >= 0.0,
+        "Average kills should be non-negative, got {avg:.1}"
+    );
 }
 
 // ===========================================================================
@@ -969,28 +967,20 @@ fn make_player_with_traits(
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
+        profile_image_url: None,
         role: football_position_to_lol_role(pos),
         condition: 90,
         fitness: 75,
-        pace: skill,
-        stamina: skill,
-        strength: skill,
-        agility: skill,
-        passing: skill,
-        shooting: skill,
-        tackling: skill,
-        dribbling: skill,
-        defending: skill,
-        positioning: skill,
-        vision: skill,
-        decisions: skill,
-        composure: skill,
-        aggression: skill,
-        teamwork: skill,
-        leadership: skill,
-        handling: skill,
-        reflexes: skill,
-        aerial: skill,
+        // LoL-native attributes
+        mechanics: skill,
+        laning: skill,
+        teamfighting: skill,
+        macro_play: skill,
+        consistency: skill,
+        shotcalling: skill,
+        champion_pool: skill,
+        discipline: skill,
+        mental_resilience: skill,
         traits: traits.iter().map(|t| t.to_string()).collect(),
     }
 }

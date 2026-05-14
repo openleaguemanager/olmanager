@@ -33,8 +33,8 @@ CREATE TABLE teams_new (
     short_name                  TEXT    NOT NULL,
     country                     TEXT    NOT NULL,
     city                        TEXT    NOT NULL,
-    arena_name                  TEXT    NOT NULL,
-    arena_capacity              INTEGER NOT NULL DEFAULT 0,
+    stadium_name                  TEXT    NOT NULL,
+    stadium_capacity              INTEGER NOT NULL DEFAULT 0,
     finance                     INTEGER NOT NULL DEFAULT 1000000,
     manager_id                  TEXT,
     reputation                  INTEGER NOT NULL DEFAULT 500,
@@ -72,7 +72,7 @@ CREATE TABLE teams_new (
 
 INSERT INTO teams_new SELECT
     id, name, short_name, country, city,
-    arena_name, arena_capacity,
+    stadium_name, stadium_capacity,
     finance, manager_id, reputation,
     wage_budget, transfer_budget, season_income, season_expenses,
     formation, play_style,

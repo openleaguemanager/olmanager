@@ -29,21 +29,21 @@ fn make_team(id: &str, name: &str) -> Team {
 fn make_player(id: &str, name: &str, team_id: &str, pos: LolRole) -> Player {
     let attrs = PlayerAttributes {
         pace: 65,
-        stamina: 65,
+        mental_resilience: 65,
         strength: 65,
-        agility: 65,
+        champion_pool: 65,
         passing: 65,
-        shooting: 65,
+        laning: 65,
         tackling: 65,
-        dribbling: 65,
+        mechanics: 65,
         defending: 65,
         positioning: 65,
-        vision: 65,
-        decisions: 65,
-        composure: 65,
+        macro_play: 65,
+        consistency: 65,
+        discipline: 65,
         aggression: 50,
-        teamwork: 65,
-        leadership: 50,
+        teamfighting: 65,
+        shotcalling: 50,
         handling: 20,
         reflexes: 30,
         aerial: 60,
@@ -297,8 +297,8 @@ fn summary_has_correct_user_position() {
 fn summary_has_correct_goals() {
     let mut game = make_completed_season_game();
     let summary = process_end_of_season(&mut game);
-    assert_eq!(summary.user_goals_for, 3);
-    assert_eq!(summary.user_goals_against, 1);
+    assert_eq!(summary.user_kills_for, 3);
+    assert_eq!(summary.user_kills_against, 1);
 }
 
 #[test]
@@ -667,6 +667,14 @@ fn champion_receives_prize_money_and_ledger_entry() {
     let team1 = game.teams.iter().find(|team| team.id == "team1").unwrap();
     assert_eq!(team1.finance, initial_finance + 800_000);
     assert_eq!(team1.season_income, 800_000);
+    assert_eq!(
+        team1.wage_budget,
+        ((team1.finance as f64) * 0.06).round() as i64
+    );
+    assert_eq!(
+        team1.transfer_budget,
+        ((team1.finance as f64) * 0.22).round() as i64
+    );
     assert_eq!(team1.financial_ledger.len(), 1);
     assert_eq!(
         team1.financial_ledger[0].kind,
@@ -933,10 +941,12 @@ fn next_season_generation_ignores_academy_team_ids() {
 
     let next_league = game.league.as_ref().expect("next league should exist");
     assert_eq!(next_league.standings.len(), 10);
-    assert!(!next_league
-        .standings
-        .iter()
-        .any(|entry| entry.team_id == "academy-1"));
+    assert!(
+        !next_league
+            .standings
+            .iter()
+            .any(|entry| entry.team_id == "academy-1")
+    );
 }
 
 // ---------------------------------------------------------------------------

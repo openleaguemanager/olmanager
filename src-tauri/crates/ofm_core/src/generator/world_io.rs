@@ -100,8 +100,8 @@ mod tests {
                             "short_name": "LFC",
                             "country": "GB",
                             "city": "London",
-                            "arena_name": "London Arena",
-                            "arena_capacity": 50000,
+                            "stadium_name": "London Arena",
+                            "stadium_capacity": 50000,
                             "finance": 1000000,
                             "manager_id": null,
                             "reputation": 500,
@@ -116,7 +116,7 @@ mod tests {
                             "training_schedule": "Balanced",
                             "founded_year": 1900,
                             "colors": { "primary": "#ffffff", "secondary": "#000000" },
-                            "starting_xi_ids": [],
+                            "active_lineup_ids": [],
                             "match_roles": { "captain": null, "shotcaller": null },
                             "form": [],
                             "history": []
@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn active_lec_world_seed_does_not_contain_football_nation() {
-        let json = include_str!("../../databases/lec_world.json");
+        let json = include_str!("../../../../databases/lec_world.json");
 
         // Assert: active seed data must NOT contain football_nation keys
         assert!(
@@ -196,5 +196,6 @@ mod tests {
         let json = export_world_to_json(&world).unwrap();
         let reparsed: WorldData = serde_json::from_str(&json).unwrap();
 
+        assert_eq!(reparsed.teams[0].country, "GB");
     }
 }

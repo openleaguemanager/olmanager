@@ -8,6 +8,7 @@ use domain::stats::LolRole;
 use domain::team::TeamKind;
 use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
+use std::collections::HashSet;
 use std::hash::{Hash, Hasher};
 use uuid::Uuid;
 
@@ -16,7 +17,7 @@ const PLAYER_INCOMING_OFFER_COOLDOWN_DAYS: i64 = 7;
 const MANAGED_SQUAD_INCOMING_OFFER_COOLDOWN_DAYS: i64 = 14;
 const TRANSFER_BUDGET_SELLING_REALLOCATION_PCT: i64 = 60;
 const CONTRACT_RELEASE_PENALTY_PCT: i64 = 40;
-const MAX_INCOMING_OFFERS_PER_DAY: usize = 1;
+const MAX_INCOMING_OFFERS_PER_DAY: usize = 2;
 const MAX_OFFERS_PER_TEAM_PER_WEEK: usize = 2;
 const MAX_AI_FREE_AGENT_SIGNINGS_PER_DAY: usize = 2;
 const MAX_AI_INTERCLUB_TRANSFERS_PER_DAY: usize = 1;
@@ -76,7 +77,11 @@ fn infer_player_importance(
     player: &domain::player::Player,
     owner_team: &domain::team::Team,
 ) -> PlayerImportance {
-    if owner_team.starting_xi_ids.iter().any(|id| id == &player.id) {
+    if owner_team
+        .active_lineup_ids
+        .iter()
+        .any(|id| id == &player.id)
+    {
         return PlayerImportance::Key;
     }
 
@@ -296,7 +301,7 @@ fn has_recent_incoming_offer(
             return false;
         };
         let age_days = (current_date - offer_date).num_days();
-        age_days >= 0 && age_days < cooldown_days
+        age_days > 0 && age_days < cooldown_days
     })
 }
 
@@ -339,7 +344,7 @@ fn allow_unsolicited_offer_for_player(
     }
 
     if let Some(team) = owner_team {
-        let is_key_player = team.starting_xi_ids.iter().any(|id| id == &player.id);
+        let is_key_player = team.active_lineup_ids.iter().any(|id| id == &player.id);
         if is_key_player {
             return false;
         }
@@ -1082,6 +1087,29 @@ pub fn make_transfer_bid(
     let date = game.clock.current_date.format("%Y-%m-%d").to_string();
 
     if player.team_id.is_none() {
+        let destination_team = game
+            .teams
+            .iter()
+            .find(|team| team.id == destination_team_id.as_str())
+            .ok_or("Destination team not found")?;
+
+        if !free_agent_accepts_offer(player, destination_team) {
+            return Ok(transfer_outcome(
+                TransferNegotiationDecision::Rejected,
+                None,
+                true,
+                build_transfer_feedback(
+                    "transfers.transferFeedbackRejectedHeadline",
+                    "transfers.transferFeedbackPlayerRejectedDetail",
+                    NegotiationMood::Guarded,
+                    58,
+                    41,
+                    1,
+                    &[("fee", round_transfer_fee(fee).to_string())],
+                ),
+            ));
+        }
+
         if let Some(p) = game.players.iter_mut().find(|p| p.id == player_id) {
             upsert_transfer_offer(
                 p,
@@ -1369,10 +1397,10 @@ fn execute_free_agent_signing_with_payer(
         team.transfer_budget -= fee as i64;
     }
 
+    let players_snapshot = game.players.clone();
     if let Some(team) = game.teams.iter_mut().find(|team| team.id == to_team_id) {
-        if let Some(pos) = team.starting_xi_ids.iter().position(|id| id == player_id) {
-            team.starting_xi_ids.remove(pos);
-        }
+        clear_player_from_active_lineup(team, player_id);
+        reconcile_lol_active_lineup(team, &players_snapshot);
     }
 
     Ok(())
@@ -1613,7 +1641,7 @@ fn round_transfer_fee(value: u64) -> u64 {
 }
 
 fn remove_player_from_team_references(team: &mut domain::team::Team, player_id: &str) {
-    team.starting_xi_ids.retain(|id| id != player_id);
+    clear_player_from_active_lineup(team, player_id);
 
     for group in &mut team.training_groups {
         group.player_ids.retain(|id| id != player_id);
@@ -1625,6 +1653,76 @@ fn remove_player_from_team_references(team: &mut domain::team::Team, player_id: 
     if team.team_roles.shotcaller.as_deref() == Some(player_id) {
         team.team_roles.shotcaller = None;
     }
+}
+
+fn clear_player_from_active_lineup(team: &mut domain::team::Team, player_id: &str) {
+    for lineup_id in &mut team.active_lineup_ids {
+        if lineup_id == player_id {
+            lineup_id.clear();
+        }
+    }
+}
+
+fn reconcile_lol_active_lineup(team: &mut domain::team::Team, players: &[domain::player::Player]) {
+    const ROLES: [LolRole; 5] = [
+        LolRole::Top,
+        LolRole::Jungle,
+        LolRole::Mid,
+        LolRole::Adc,
+        LolRole::Support,
+    ];
+
+    let saved_ids = team.active_lineup_ids.clone();
+    let mut next_ids = vec![String::new(); ROLES.len()];
+    let mut used: HashSet<String> = HashSet::new();
+
+    for (index, role) in ROLES.iter().enumerate() {
+        if let Some(player) = saved_ids
+            .get(index)
+            .and_then(|id| current_team_player_by_id(players, &team.id, id))
+            .filter(|player| !used.contains(&player.id) && player.natural_position == *role)
+        {
+            next_ids[index] = player.id.clone();
+            used.insert(player.id.clone());
+            continue;
+        }
+
+        if let Some(player) = saved_ids
+            .iter()
+            .filter_map(|id| current_team_player_by_id(players, &team.id, id))
+            .find(|player| !used.contains(&player.id) && player.natural_position == *role)
+        {
+            next_ids[index] = player.id.clone();
+            used.insert(player.id.clone());
+            continue;
+        }
+
+        if let Some(player) = players
+            .iter()
+            .filter(|player| player.team_id.as_deref() == Some(team.id.as_str()))
+            .filter(|player| !used.contains(&player.id) && player.natural_position == *role)
+            .max_by_key(|player| player.market_value)
+        {
+            next_ids[index] = player.id.clone();
+            used.insert(player.id.clone());
+        }
+    }
+
+    team.active_lineup_ids = next_ids;
+}
+
+fn current_team_player_by_id<'a>(
+    players: &'a [domain::player::Player],
+    team_id: &str,
+    player_id: &str,
+) -> Option<&'a domain::player::Player> {
+    if player_id.is_empty() {
+        return None;
+    }
+
+    players
+        .iter()
+        .find(|player| player.id == player_id && player.team_id.as_deref() == Some(team_id))
 }
 
 fn remaining_contract_salary(player: &domain::player::Player, current_date: NaiveDate) -> i64 {
@@ -1680,6 +1778,25 @@ fn player_accepts_transfer(
     }
 
     acceptance_score >= 22
+}
+
+fn free_agent_accepts_offer(
+    player: &domain::player::Player,
+    destination_team: &domain::team::Team,
+) -> bool {
+    let market_value = player.market_value;
+    let team_reputation = destination_team.reputation as i32;
+
+    // Lightweight realism guard for marquee free agents joining low-reputation teams.
+    if market_value >= 1_500_000 && team_reputation < 60 {
+        return false;
+    }
+
+    if market_value >= 900_000 && team_reputation < 45 {
+        return false;
+    }
+
+    true
 }
 
 pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, String> {
@@ -1969,9 +2086,9 @@ fn execute_transfer_with_payer(
         .teams
         .iter()
         .find(|team| team.id == from_team_id)
-        .filter(|team| team.starting_xi_ids.iter().any(|id| id == player_id))
+        .filter(|team| team.active_lineup_ids.iter().any(|id| id == player_id))
         .map(|team| {
-            team.starting_xi_ids
+            team.active_lineup_ids
                 .iter()
                 .filter(|id| id.as_str() != player_id)
                 .cloned()
@@ -2003,11 +2120,10 @@ fn execute_transfer_with_payer(
         t.transfer_budget -= fee as i64;
     }
 
+    let players_snapshot = game.players.clone();
     if let Some(t) = game.teams.iter_mut().find(|t| t.id == to_team_id) {
-        // Remove from starting XI if player was there
-        if let Some(pos) = t.starting_xi_ids.iter().position(|id| id == player_id) {
-            t.starting_xi_ids.remove(pos);
-        }
+        clear_player_from_active_lineup(t, player_id);
+        reconcile_lol_active_lineup(t, &players_snapshot);
     }
 
     let academy_owner_id = game
@@ -2023,15 +2139,14 @@ fn execute_transfer_with_payer(
         t.transfer_budget += (fee as i64 * TRANSFER_BUDGET_SELLING_REALLOCATION_PCT) / 100;
     }
 
-    // Remove sold player from selling team XI if present
-    if let Some(t) = game.teams.iter_mut().find(|t| t.id == from_team_id) {
-        if let Some(pos) = t.starting_xi_ids.iter().position(|id| id == player_id) {
-            t.starting_xi_ids.remove(pos);
-        }
-    }
-
     if selling_team_is_academy {
         ensure_academy_roster_continuity(game, from_team_id, &player_snapshot);
+    }
+
+    let players_snapshot = game.players.clone();
+    if let Some(t) = game.teams.iter_mut().find(|t| t.id == from_team_id) {
+        clear_player_from_active_lineup(t, player_id);
+        reconcile_lol_active_lineup(t, &players_snapshot);
     }
 
     if should_generate_major_transfer_news(&player_snapshot, fee) {

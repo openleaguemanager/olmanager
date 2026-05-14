@@ -6,7 +6,7 @@ use std::path::Path;
 use ofm_core::game::Game;
 use ofm_core::player_identity;
 
-use crate::save_manager::{SaveManager, canonicalize_game_starting_xi_ids};
+use crate::save_manager::{SaveManager, canonicalize_game_active_lineup_ids};
 
 /// A row extracted from the legacy `saves.db` file.
 #[derive(Debug)]
@@ -161,7 +161,7 @@ fn migrate_single_save(
     let mut game: Game = serde_json::from_str(&row.game_data)
         .map_err(|e| format!("Failed to parse game JSON: {}", e))?;
 
-    canonicalize_game_starting_xi_ids(&mut game);
+    canonicalize_game_active_lineup_ids(&mut game);
     player_identity::upgrade_game_player_identities(&mut game);
     ofm_core::identity_upgrade::upgrade_game_football_identities(&mut game);
 
@@ -233,21 +233,21 @@ mod tests {
             Position::Midfielder,
             PlayerAttributes {
                 pace: 50,
-                stamina: 50,
+                mental_resilience: 50,
                 strength: 50,
-                agility: 50,
+                champion_pool: 50,
                 passing: 50,
-                shooting: 50,
+                laning: 50,
                 tackling: 50,
-                dribbling: 50,
+                mechanics: 50,
                 defending: 50,
                 positioning: 50,
-                vision: 50,
-                decisions: 50,
-                composure: 50,
+                macro_play: 50,
+                consistency: 50,
+                discipline: 50,
                 aggression: 50,
-                teamwork: 50,
-                leadership: 50,
+                teamfighting: 50,
+                shotcalling: 50,
                 handling: 50,
                 reflexes: 50,
                 aerial: 50,
@@ -320,7 +320,7 @@ mod tests {
             30000,
         );
         team.formation = "4-4-2".to_string();
-        team.starting_xi_ids = vec![
+        team.active_lineup_ids = vec![
             "gk", "rb", "cb1", "cb2", "lb", "rm", "cm1", "cm2", "lm", "st1", "st2",
         ]
         .into_iter()
@@ -337,21 +337,21 @@ mod tests {
                 position.clone(),
                 PlayerAttributes {
                     pace: 70,
-                    stamina: 70,
+                    mental_resilience: 70,
                     strength: 70,
-                    agility: 70,
+                    champion_pool: 70,
                     passing: 70,
-                    shooting: 70,
+                    laning: 70,
                     tackling: 70,
-                    dribbling: 70,
+                    mechanics: 70,
                     defending: 70,
                     positioning: 70,
-                    vision: 70,
-                    decisions: 70,
-                    composure: 70,
+                    macro_play: 70,
+                    consistency: 70,
+                    discipline: 70,
                     aggression: 70,
-                    teamwork: 70,
-                    leadership: 70,
+                    teamfighting: 70,
+                    shotcalling: 70,
                     handling: 20,
                     reflexes: 20,
                     aerial: 70,

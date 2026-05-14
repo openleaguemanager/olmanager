@@ -24,7 +24,7 @@ vi.mock("react-i18next", () => ({
 
 const makePlayer = (
   id: string,
-  position: string,
+  position: PlayerData["position"],
   overrides: Partial<PlayerData> = {},
 ): PlayerData => ({
   id,
@@ -88,8 +88,8 @@ const makeTeam = (overrides: Partial<TeamData> = {}): TeamData => ({
   short_name: "TFC",
   country: "England",
   city: "Test City",
-  arena_name: "Test Ground",
-  arena_capacity: 20000,
+  stadium_name: "Test Ground",
+  stadium_capacity: 20000,
   finance: 1000000,
   manager_id: "mgr1",
   reputation: 50,

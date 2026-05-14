@@ -1,10 +1,13 @@
 // Pre-existing clippy warnings tracked in #92
-#![allow(clippy::manual_range_contains, clippy::bool_to_int_with_if, clippy::field_reassign_with_default)]
+#![allow(
+    clippy::manual_range_contains,
+    clippy::bool_to_int_with_if,
+    clippy::field_reassign_with_default
+)]
 
 use engine::LolRole;
 use engine::{
-    EventType, MatchConfig, MatchEvent, PlayStyle, PlayerData, Side, TeamData, Zone,
-    simulate_lol,
+    EventType, MatchConfig, MatchEvent, PlayStyle, PlayerData, Side, TeamData, Zone, simulate_lol,
 };
 use rand::SeedableRng;
 use rand::rngs::StdRng;
@@ -31,28 +34,20 @@ fn make_player(id: &str, name: &str, position: &str, skill: u8) -> PlayerData {
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
+        profile_image_url: None,
         role: football_position_to_lol_role(position),
         condition: 90,
         fitness: 75,
-        pace: skill,
-        stamina: skill,
-        strength: skill,
-        agility: skill,
-        passing: skill,
-        shooting: skill,
-        tackling: skill,
-        dribbling: skill,
-        defending: skill,
-        positioning: skill,
-        vision: skill,
-        decisions: skill,
-        composure: skill,
-        aggression: skill,
-        teamwork: skill,
-        leadership: skill,
-        handling: skill,
-        reflexes: skill,
-        aerial: skill,
+        // LoL-native attributes
+        mechanics: skill,
+        laning: skill,
+        teamfighting: skill,
+        macro_play: skill,
+        consistency: skill,
+        shotcalling: skill,
+        champion_pool: skill,
+        discipline: skill,
+        mental_resilience: skill,
         traits: vec![],
     }
 }
@@ -126,6 +121,60 @@ fn team_ratings_scale_with_skill() {
     assert!(strong.defense_rating() > weak.defense_rating());
     assert!(strong.midfield_rating() > weak.midfield_rating());
     assert!(strong.attack_rating() > weak.attack_rating());
+}
+
+#[test]
+fn team_ratings_use_lol_native_attributes() {
+    // Verify defense_rating uses LoL attributes (consistency + discipline + mental_resilience)
+    let mut team = make_team("t1", "Test FC", 60, PlayStyle::Balanced);
+    // Set low LoL-native stats but high legacy stats (should not affect rating)
+    for player in &mut team.players {
+        player.consistency = 30;
+        player.discipline = 30;
+        player.mental_resilience = 30;
+    }
+    let defense_before = team.defense_rating();
+
+    // Now set high LoL-native stats
+    for player in &mut team.players {
+        player.consistency = 90;
+        player.discipline = 90;
+        player.mental_resilience = 90;
+    }
+    let defense_after = team.defense_rating();
+
+    // Defense should increase significantly with higher LoL-native attributes
+    assert!(
+        defense_after > defense_before + 20.0,
+        "defense_rating should use LoL-native attributes: before={}, after={}",
+        defense_before,
+        defense_after
+    );
+
+    // Verify attack_rating uses LoL attributes (mechanics + laning + teamfighting + consistency)
+    let mut team2 = make_team("t2", "Test FC2", 60, PlayStyle::Balanced);
+    for player in &mut team2.players {
+        player.mechanics = 30;
+        player.laning = 30;
+        player.teamfighting = 30;
+        player.consistency = 30;
+    }
+    let attack_before = team2.attack_rating();
+
+    for player in &mut team2.players {
+        player.mechanics = 90;
+        player.laning = 90;
+        player.teamfighting = 90;
+        player.consistency = 90;
+    }
+    let attack_after = team2.attack_rating();
+
+    assert!(
+        attack_after > attack_before + 20.0,
+        "attack_rating should use LoL-native attributes: before={}, after={}",
+        attack_before,
+        attack_after
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -205,6 +254,50 @@ fn default_config_values_in_range() {
     let cfg = MatchConfig::default();
     assert!(cfg.home_advantage >= 1.0 && cfg.home_advantage <= 1.25);
     assert!(cfg.shot_accuracy_base > 0.0 && cfg.shot_accuracy_base < 1.0);
+    assert!(cfg.objective_swing_min > 0.9 && cfg.objective_swing_min < 1.05);
+    assert!(cfg.objective_swing_max > 1.0 && cfg.objective_swing_max < 1.1);
+    assert!(cfg.structure_damage_min >= 8.0 && cfg.structure_damage_min <= 12.0);
+    assert!(cfg.structure_damage_max >= 12.0 && cfg.structure_damage_max <= 16.0);
+    assert!(cfg.late_game_damage_scale >= 1.4 && cfg.late_game_damage_scale <= 1.6);
+}
+
+#[test]
+fn simulation_regression_sanity_no_extreme_drift() {
+    let home = make_team("home", "Home FC", 65, PlayStyle::Balanced);
+    let away = make_team("away", "Away FC", 65, PlayStyle::Balanced);
+    let config = MatchConfig::default();
+
+    let mut total_kills = 0u32;
+    let mut total_objectives = 0u32;
+    let trials = 120;
+    for seed in 0..trials {
+        let report = simulate_lol(&home, &away, &config, &mut seeded_rng(seed));
+        total_kills += (report.home_stats.kills + report.away_stats.kills) as u32;
+        total_objectives += report
+            .events
+            .iter()
+            .filter(|event| {
+                matches!(
+                    event.event_type,
+                    EventType::ObjectiveTaken
+                        | EventType::TowerDestroyed
+                        | EventType::InhibitorDestroyed
+                        | EventType::NexusTowerDestroyed
+                )
+            })
+            .count() as u32;
+    }
+
+    let avg_kills = total_kills as f64 / trials as f64;
+    let avg_objectives = total_objectives as f64 / trials as f64;
+    assert!(
+        avg_kills > 0.5 && avg_kills < 8.0,
+        "avg kills drifted too far: {avg_kills:.2}"
+    );
+    assert!(
+        avg_objectives > 0.5 && avg_objectives < 20.0,
+        "avg objective events drifted too far: {avg_objectives:.2}"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -294,8 +387,16 @@ fn goals_in_report_match_score() {
     for seed in 0..20 {
         let report = simulate_lol(&home, &away, &config, &mut seeded_rng(seed));
 
-        let home_goal_count = report.kill_feed.iter().filter(|g| g.side == Side::Home).count() as u8;
-        let away_goal_count = report.kill_feed.iter().filter(|g| g.side == Side::Away).count() as u8;
+        let home_goal_count = report
+            .kill_feed
+            .iter()
+            .filter(|g| g.side == Side::Home)
+            .count() as u8;
+        let away_goal_count = report
+            .kill_feed
+            .iter()
+            .filter(|g| g.side == Side::Away)
+            .count() as u8;
 
         assert_eq!(
             report.home_stats.kills, home_goal_count as u16,
@@ -694,7 +795,8 @@ fn all_play_styles_produce_valid_report() {
             assert!(
                 !report.events.is_empty(),
                 "No events for {:?} vs {:?}",
-                home_style, away_style
+                home_style,
+                away_style
             );
         }
     }
@@ -721,7 +823,11 @@ fn minimal_team_doesnt_crash() {
     let normal = make_team("normal", "Normal FC", 60, PlayStyle::Balanced);
     let config = MatchConfig::default();
     let report = simulate_lol(&minimal, &normal, &config, &mut seeded_rng(1));
-    assert!(report.total_minutes >= 55, "Minimal team match only lasted {} min", report.total_minutes);
+    assert!(
+        report.total_minutes >= 55,
+        "Minimal team match only lasted {} min",
+        report.total_minutes
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -736,7 +842,12 @@ fn extreme_skill_disparity_no_crash() {
 
     for seed in 0..10 {
         let report = simulate_lol(&elite, &amateur, &config, &mut seeded_rng(seed));
-        assert!(report.total_minutes >= 55, "Seed {} only lasted {} min", seed, report.total_minutes);
+        assert!(
+            report.total_minutes >= 55,
+            "Seed {} only lasted {} min",
+            seed,
+            report.total_minutes
+        );
         // Elite team should generally score more
         assert!(
             report.home_wins >= report.away_wins || seed > 0,

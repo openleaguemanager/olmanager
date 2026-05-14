@@ -6,8 +6,6 @@ use crate::board_objectives;
 use crate::champions;
 use crate::end_of_season;
 use crate::game::Game;
-use domain::player::LolRole as DomainLolRole;
-use engine::LolRole as EngineLolRole;
 use crate::player_events;
 use crate::potential;
 use crate::random_events;
@@ -18,8 +16,10 @@ use crate::transfers;
 use chrono::Datelike;
 use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, MatchResult};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
+use domain::player::LolRole as DomainLolRole;
 use domain::stats::StatsState;
 use domain::team::{Team, TeamKind, TeamSeasonRecord};
+use engine::LolRole as EngineLolRole;
 use log::{debug, info};
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -108,6 +108,7 @@ where
 
     debug!("[turn] process_day {}: complete, advancing clock", today);
     game.clock.advance_days(1);
+    game.day_phase = crate::game::DayPhase::Morning;
     crate::season_context::refresh_game_context(game);
 }
 
@@ -140,6 +141,7 @@ pub fn finish_live_match_day(game: &mut Game) {
     champions::process_daily_champion_system(game);
 
     game.clock.advance_days(1);
+    game.day_phase = crate::game::DayPhase::Morning;
     crate::season_context::refresh_game_context(game);
 }
 
@@ -173,34 +175,25 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
         .players
         .iter()
         .filter(|p| p.team_id.as_deref() == Some(team_id))
-        .map(|p| {
-            engine::PlayerData {
-                id: p.id.clone(),
-                name: p.match_name.clone(),
-                role: to_engine_role(p.natural_position),
-                condition: p.condition,
-                fitness: p.fitness,
-                pace: p.attributes.pace,
-                stamina: p.attributes.stamina,
-                strength: p.attributes.strength,
-                agility: p.attributes.agility,
-                passing: p.attributes.passing,
-                shooting: p.attributes.shooting,
-                tackling: p.attributes.tackling,
-                dribbling: p.attributes.dribbling,
-                defending: p.attributes.defending,
-                positioning: p.attributes.positioning,
-                vision: p.attributes.vision,
-                decisions: p.attributes.decisions,
-                composure: p.attributes.composure,
-                aggression: p.attributes.aggression,
-                teamwork: p.attributes.teamwork,
-                leadership: p.attributes.leadership,
-                handling: p.attributes.handling,
-                reflexes: p.attributes.reflexes,
-                aerial: p.attributes.aerial,
-                traits: p.traits.iter().map(|t| format!("{:?}", t)).collect(),
-            }
+        .map(|p| engine::PlayerData {
+            id: p.id.clone(),
+            name: p.match_name.clone(),
+            profile_image_url: p.profile_image_url.clone(),
+            role: to_engine_role(p.natural_position),
+            condition: p.condition,
+            fitness: p.fitness,
+            // Map OLD domain fields to NEW LoL-native engine structure
+            // Physical+Technical+Mental -> LoL attributes (post-#204 alignment)
+            mechanics: p.attributes.mechanics,
+            laning: p.attributes.laning,
+            teamfighting: p.attributes.teamfighting,
+            macro_play: p.attributes.macro_play,
+            consistency: p.attributes.consistency,
+            shotcalling: p.attributes.shotcalling,
+            champion_pool: p.attributes.champion_pool,
+            discipline: p.attributes.discipline,
+            mental_resilience: p.attributes.mental_resilience,
+            traits: p.traits.iter().map(|t| format!("{:?}", t)).collect(),
         })
         .collect();
 
@@ -215,15 +208,15 @@ fn build_engine_team(game: &Game, team_id: &str) -> engine::TeamData {
 
 fn academy_player_ovr(player: &domain::player::Player) -> u32 {
     let attrs = &player.attributes;
-    let total = u32::from(attrs.dribbling)
-        + u32::from(attrs.shooting)
-        + u32::from(attrs.teamwork)
-        + u32::from(attrs.vision)
-        + u32::from(attrs.decisions)
-        + u32::from(attrs.leadership)
-        + u32::from(attrs.agility)
-        + u32::from(attrs.composure)
-        + u32::from(attrs.stamina);
+    let total = u32::from(attrs.mechanics)
+        + u32::from(attrs.laning)
+        + u32::from(attrs.teamfighting)
+        + u32::from(attrs.macro_play)
+        + u32::from(attrs.consistency)
+        + u32::from(attrs.shotcalling)
+        + u32::from(attrs.champion_pool)
+        + u32::from(attrs.discipline)
+        + u32::from(attrs.mental_resilience);
     (total + 4) / 9
 }
 
@@ -1239,7 +1232,84 @@ where
         "[turn] match result: {} {} - {} {} (fixture #{})",
         home_name, report.home_wins, report.away_wins, away_name, idx
     );
+
+    let mastery_picks = auto_sim_mastery_picks(game, &home_team_id, &away_team_id);
+    let winner_team_id = if report.home_wins == report.away_wins {
+        if home_team_id <= away_team_id {
+            home_team_id.clone()
+        } else {
+            away_team_id.clone()
+        }
+    } else if report.home_wins > report.away_wins {
+        home_team_id.clone()
+    } else {
+        away_team_id.clone()
+    };
+    if !mastery_picks.is_empty() {
+        champions::apply_match_mastery_progress(game, &winner_team_id, &mastery_picks);
+    }
+
     apply_match_report_with_capture(game, idx, &home_team_id, &away_team_id, &report, on_capture);
+}
+
+fn auto_sim_mastery_picks(
+    game: &Game,
+    home_team_id: &str,
+    away_team_id: &str,
+) -> Vec<(String, String)> {
+    let mut picks: Vec<(String, String)> = Vec::new();
+
+    for team_id in [home_team_id, away_team_id] {
+        let mut player_ids = game
+            .teams
+            .iter()
+            .find(|team| team.id == *team_id)
+            .map(|team| team.active_lineup_ids.clone())
+            .unwrap_or_default();
+
+        if player_ids.len() < 5 {
+            let mut fallback_ids: Vec<String> = game
+                .players
+                .iter()
+                .filter(|player| player.team_id.as_deref() == Some(team_id))
+                .map(|player| player.id.clone())
+                .collect();
+            fallback_ids.sort();
+            for player_id in fallback_ids {
+                if !player_ids.contains(&player_id) {
+                    player_ids.push(player_id);
+                }
+                if player_ids.len() >= 5 {
+                    break;
+                }
+            }
+        }
+
+        for player_id in player_ids.into_iter().take(5) {
+            let champion_id = game
+                .players
+                .iter()
+                .find(|player| player.id == player_id)
+                .and_then(|player| {
+                    champions::training_targets_for_player(player)
+                        .into_iter()
+                        .find(|target| !target.trim().is_empty())
+                })
+                .or_else(|| {
+                    game.champion_masteries
+                        .iter()
+                        .filter(|entry| entry.player_id == player_id)
+                        .max_by_key(|entry| entry.mastery)
+                        .map(|entry| entry.champion_id.clone())
+                });
+
+            if let Some(champion_id) = champion_id {
+                picks.push((player_id, champion_id));
+            }
+        }
+    }
+
+    picks
 }
 
 fn simulate_series(

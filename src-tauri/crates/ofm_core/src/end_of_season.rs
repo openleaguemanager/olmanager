@@ -1,7 +1,7 @@
 use crate::game::Game;
 use crate::schedule::{
-    append_fixtures, generate_preseason_friendlies,
-    generate_single_round_league_with_offsets_and_bo, parse_lec_split, regular_best_of, LecSplit,
+    LecSplit, append_fixtures, generate_preseason_friendlies,
+    generate_single_round_league_with_offsets_and_bo, parse_lec_split, regular_best_of,
 };
 use crate::season_awards::compute_season_awards;
 use chrono::{TimeZone, Utc};
@@ -130,6 +130,14 @@ fn prize_money_for_position(position: u32) -> i64 {
         .get(position.saturating_sub(1) as usize)
         .copied()
         .unwrap_or(150_000)
+}
+
+fn refresh_hiring_cycle_budgets(team: &mut domain::team::Team) {
+    // Minimal hook: after split settlements (prize/objectives), rebalance next-cycle
+    // planning budgets from current treasury so offseason hiring decisions have
+    // coherent funds available without a full finance redesign.
+    team.wage_budget = ((team.finance.max(0) as f64) * 0.06).round() as i64;
+    team.transfer_budget = ((team.finance.max(0) as f64) * 0.22).round() as i64;
 }
 
 /// Process end-of-season: record history, compute awards, reset stats, generate next season.
@@ -273,6 +281,8 @@ pub fn process_end_of_season(game: &mut Game) -> EndOfSeasonSummary {
                     kind: FinancialTransactionKind::PrizeMoney,
                 });
             }
+
+            refresh_hiring_cycle_budgets(team);
         }
     }
 

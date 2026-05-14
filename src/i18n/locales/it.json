@@ -59,6 +59,7 @@
     "squad": "Rosa",
     "tactics": "Tattiche",
     "training": "Allenamento",
+    "scrims": "Scrims",
     "meta": "Meta",
     "staff": "Staff",
     "finances": "Finanze",
@@ -69,6 +70,7 @@
     "champions_world": "Campioni",
     "schedule": "Calendario",
     "news": "Notizie",
+    "social": "Social",
     "settings": "Impostazioni",
     "exitToMenu": "Esci al menu",
     "continue": "Continua",
@@ -80,6 +82,7 @@
     "sectionWorld": "Mondo",
     "searchTeams": "Squadre",
     "searchPlayers": "Giocatori",
+    "searchChampions": "Campioni",
     "scouting": "Osservazione",
     "youthAcademy": "Settore giovanile",
     "saveGame": "Salva partita",
@@ -203,7 +206,55 @@
     "inProgress": "In corso",
     "objectivesMet": "{{done}}/{{total}} obiettivi raggiunti — Soddisfazione dirigenza: {{pct}}%",
     "unavailablePlayers": "Giocatori indisponibili",
-    "daysUnavailable": "{{count}} giorno/i rimanente/i"
+    "daysUnavailable": "{{count}} giorno/i rimanente/i",
+    "today": "Today",
+    "currentPhase": "Current phase",
+    "recommendedNow": "Recommended now",
+    "riskRewardToday": "Risk and reward today",
+    "risk": "Risk",
+    "expectedLearning": "Expected learning",
+    "cancelCost": "Cancel cost",
+    "recommendation": "Recommendation",
+    "recommendationHighRisk": "High risk: consider cancelling and reviewing before forcing more volume.",
+    "recommendationNormalRisk": "Manageable risk: continue if you need reps, cancel if recovery is a priority.",
+    "scrimDecision": {
+      "cancelScrims": {
+        "desc": "Cancel the next block and switch to corrective work.",
+        "benefits": "Protects recovery and reduces immediate risk.",
+        "costs": "Loses planned volume for the day.",
+        "when": "When team state is unstable and quality is dropping."
+      },
+      "continueBlock2": {
+        "desc": "Keep the plan and play the second block."
+      },
+      "vodReview": {
+        "desc": "Review VOD to extract concrete learning from mistakes."
+      },
+      "mentalReset": {
+        "desc": "Prioritize morale and reset tilt before next sessions."
+      },
+      "targetedDrills": {
+        "desc": "Run focused drills on the detected issue."
+      },
+      "offerRest": {
+        "desc": "Offer rest after a good block to protect condition."
+      },
+      "dayOff": {
+        "desc": "Give the rest of the day off and recover."
+      },
+      "pushThrough": {
+        "desc": "Push volume despite the setback to maximize reps."
+      }
+    },
+    "scrimFeedback": {
+      "cancelledTitle": "Scrims cancelled for today",
+      "cancelledDetail": "Choose a corrective follow-up to close the day."
+    },
+    "todayMatch": "Today's match",
+    "todayScrimOpen": "Open scrim slot",
+    "todayScrimDetail": "Choose how to use today's scrim block.",
+    "todayTraining": "Training focus",
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
   },
   "season": {
     "preseasonStatus": "Stato del precampionato",
@@ -559,6 +610,13 @@
     "currentlyTraining": "Attualmente in allenamento: <strong>{{attrs}}</strong> con intensità <strong>{{intensity}}</strong>.",
     "recoveryNote": "I giocatori daranno priorità a reset, riposo e recupero della condizione in ogni giorno di allenamento.",
     "effectiveFocus": "Focus",
+    "soloQRanks": "Rank SoloQ",
+    "roleIconAlt": "Ruolo del giocatore",
+    "soloQTiers": {
+      "Challenger": "Challenger",
+      "Grandmaster": "Grandmaster",
+      "Master": "Master"
+    },
     "trainingAppliedNote": "L'allenamento viene applicato nei giorni previsti quando avanzi il tempo. I giorni di riposo garantiscono recupero completo.",
     "criticalCondition": "{{count}} giocatore/i in condizioni critiche (<25%)",
     "exhaustedPlayers": "{{count}} giocatore/i esausto/i (<40%)",
@@ -577,6 +635,13 @@
         "warnBalanced": "Un programma Leggero potrebbe aiutare la squadra a riprendersi.",
         "warnLight": "Reset mentale / recupero massimizzerebbe il recupero della condizione."
       }
+    },
+    "staffImpact": {
+      "title": "Impatto dello staff",
+      "learning": "Apprendimento",
+      "scrims": "Preparazione scrim",
+      "recovery": "Recupero",
+      "note": "Lo staff migliora in modo conservativo apprendimento, preparazione e recupero; gli attributi dei giocatori restano decisivi."
     },
     "focuses": {
       "Scrims": {
@@ -1536,7 +1601,19 @@
     "startMatch": "Inizia partita",
     "notAssigned": "Non assegnato",
     "keyStats": "Statistiche chiave",
-    "continueDashboard": "Continua alla dashboard"
+    "continueDashboard": "Continua alla dashboard",
+    "opponentIntel": {
+      "kicker": "Pre-match preparation",
+      "title": "Opponent intelligence",
+      "confidence": "Intel confidence",
+      "rivalPoolByRole": "Rival champion pool by role",
+      "noPoolYet": "No champion pool revealed yet.",
+      "suggestedBans": "Suggested bans",
+      "threat": "Threat",
+      "metaThreats": "Meta threats",
+      "meta": "Meta",
+      "masteryHighlights": "Mastery highlights"
+    }
   },
   "notifications": {
     "attentionRequired": "Attenzione Richiesta",
@@ -2267,5 +2344,43 @@
     "installing": "Installazione...",
     "installAndRestart": "Installa e Riavvia",
     "playWithoutUpdating": "Gioca Senza Aggiornare"
+  },
+  "scrims": {
+    "reputation": "Scrim rep",
+    "reviewBlockTitle": "Block review",
+    "reviewWin": "Win",
+    "reviewLoss": "Loss",
+    "reportFocus": "Focus",
+    "detectedIssue": "Detected issue",
+    "freeDayOff": "Give the rest of the day off",
+    "decision": {
+      "cancelScrims": "Cancel scrims",
+      "continueBlock2": "Continue to block 2",
+      "vodReview": "VOD Review",
+      "mentalReset": "Mental Reset",
+      "targetedDrills": "Targeted Drills",
+      "offerRest": "Offer rest",
+      "dayOff": "Day off",
+      "pushThrough": "Push through"
+    },
+    "tag": {
+      "momentumPlus": "Momentum +",
+      "fatigueMinus": "Fatigue -",
+      "volumePlus": "Volume +",
+      "recoveryPlus": "Recovery +",
+      "fatiguePlus": "Fatigue +",
+      "volumeMinus": "Volume -",
+      "learningPlus": "Learning +",
+      "mentalMinus": "Mental -",
+      "riskMinus": "Risk -",
+      "analysisPlus": "Analysis +",
+      "qualityPlus": "Quality +",
+      "recoveryMinus": "Recovery -",
+      "mentalPlus": "Mental +",
+      "techniqueMinus": "Technique -",
+      "issuePlus": "Issue +",
+      "mechanicsPlus": "Mechanics +"
+    },
+    "weeklySetup": "Weekly setup"
   }
 }

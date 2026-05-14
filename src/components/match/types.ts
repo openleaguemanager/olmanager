@@ -3,6 +3,7 @@
 import type { TFunction } from "i18next";
 import type { LolRole } from "../../store/gameStore";
 import type { LolStaffEffectsData } from "../../lib/lolStaffEffects";
+import type { LolScrimPrepPayload } from "../../lib/lolScrimPrep";
 
 export interface MatchEvent {
   minute: number;
@@ -108,28 +109,42 @@ export interface LolMapState {
 export interface EnginePlayerData {
   id: string;
   name: string;
+  profile_image_url?: string | null;
   role?: string;
+  /** @deprecated Legacy football test fixture field. */
+  position?: string;
   condition: number;
-  pace: number;
-  stamina: number;
-  strength: number;
-  agility: number;
-  passing: number;
-  shooting: number;
-  tackling: number;
-  dribbling: number;
-  defending: number;
-  positioning: number;
-  vision: number;
-  decisions: number;
-  composure: number;
-  aggression: number;
-  teamwork: number;
-  leadership: number;
-  handling: number;
-  reflexes: number;
-  aerial: number;
+  fitness: number;
+  mechanics: number;
+  laning: number;
+  teamfighting: number;
+  macro_play: number;
+  consistency: number;
+  shotcalling: number;
+  champion_pool: number;
+  discipline: number;
+  mental_resilience: number;
   traits: string[];
+  /** @deprecated Legacy football attributes retained for fixture compatibility. */
+  pace?: number;
+  stamina?: number;
+  strength?: number;
+  agility?: number;
+  passing?: number;
+  shooting?: number;
+  tackling?: number;
+  dribbling?: number;
+  defending?: number;
+  positioning?: number;
+  vision?: number;
+  decisions?: number;
+  composure?: number;
+  aggression?: number;
+  teamwork?: number;
+  leadership?: number;
+  handling?: number;
+  reflexes?: number;
+  aerial?: number;
 }
 
 export interface EngineTeamData {
@@ -181,6 +196,7 @@ export interface MatchSnapshot {
     home: LolStaffEffectsData;
     away: LolStaffEffectsData;
   };
+  lol_scrim_prep?: LolScrimPrepPayload;
 }
 
 export interface MinuteResult {

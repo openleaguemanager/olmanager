@@ -25,6 +25,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useUpdater } from "../hooks/useUpdater";
+import { APP_VERSION } from "../lib/appInfo";
+import { APP_NAME } from "../lib/appInfo";
 
 const CURRENCY_OPTIONS = [
   { value: "EUR", label: "Euro (€)", symbol: "€" },
@@ -464,7 +466,7 @@ export default function Settings() {
             description={t("settings.currentVersionDesc")}
           >
             <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              {updateInfo?.version ?? t("app.version")}
+              {updateInfo?.version ?? APP_VERSION}
             </span>
           </SettingRow>
 
@@ -516,14 +518,14 @@ export default function Settings() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                Open League Manager
+                {APP_NAME}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                {t("app.version")}
+                {APP_VERSION}
               </p>
             </div>
             <span className="text-[10px] font-heading uppercase tracking-widest text-gray-400 dark:text-gray-600">
-              Sturdy Robot
+              Open League Manager Community
             </span>
           </div>
         </Section>

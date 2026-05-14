@@ -153,7 +153,7 @@ export default function SquadRosterView({
 
   const roster = gameState.players.filter((player) => player.team_id === myTeam.id);
   const available = roster.filter((player) => !player.injury);
-  const activeLineupIds = buildActiveLineupIds(available, myTeam.starting_xi_ids || []);
+  const activeLineupIds = buildActiveLineupIds(available, myTeam.active_lineup_ids ?? myTeam.starting_xi_ids ?? []);
   const activeIds = new Set(activeLineupIds);
   const playersById = useMemo(
     () => new Map(roster.map((player) => [player.id, player])),
@@ -176,13 +176,13 @@ export default function SquadRosterView({
         case "morale":
           return a.morale - b.morale;
         case "age":
-          return calcAge(a.date_of_birth) - calcAge(b.date_of_birth);
+          return calcAge(a.date_of_birth, gameState.clock.current_date) - calcAge(b.date_of_birth, gameState.clock.current_date);
         default:
           return 0;
       }
     });
     return sortDir === "desc" ? sorted.reverse() : sorted;
-  }, [roster, sortDir, sortKey]);
+  }, [gameState.clock.current_date, roster, sortDir, sortKey]);
 
   const masteryTopChampionsByPlayer = useMemo(() => {
     const grouped = new Map<string, Array<{ champion: string; mastery: number }>>();

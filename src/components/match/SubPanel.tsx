@@ -64,17 +64,15 @@ export function SubPanel({
 
   const getOvr = (p: EnginePlayerData) => {
     const vals = [
-      p.pace,
-      p.stamina,
-      p.strength,
-      p.passing,
-      p.shooting,
-      p.tackling,
-      p.dribbling,
-      p.defending,
-      p.positioning,
-      p.vision,
-      p.decisions,
+      p.mental_resilience,
+      p.laning,
+      p.mechanics,
+      p.macro_play,
+      p.consistency,
+      p.shotcalling,
+      p.champion_pool,
+      p.discipline,
+      p.teamfighting,
     ];
     return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
   };
@@ -381,34 +379,34 @@ export function SubPanel({
                     </div>
                   </div>
                   <CompareBar
-                    label="PAC"
-                    valA={selectedPlayer.pace}
-                    valB={comparedPlayer.pace}
+                    label="MEC"
+                    valA={selectedPlayer.mechanics}
+                    valB={comparedPlayer.mechanics}
                   />
                   <CompareBar
-                    label="PAS"
-                    valA={selectedPlayer.passing}
-                    valB={comparedPlayer.passing}
+                    label="LAN"
+                    valA={selectedPlayer.laning}
+                    valB={comparedPlayer.laning}
                   />
                   <CompareBar
-                    label="SHO"
-                    valA={selectedPlayer.shooting}
-                    valB={comparedPlayer.shooting}
+                    label="TF"
+                    valA={selectedPlayer.teamfighting}
+                    valB={comparedPlayer.teamfighting}
                   />
                   <CompareBar
-                    label="DRI"
-                    valA={selectedPlayer.dribbling}
-                    valB={comparedPlayer.dribbling}
+                    label="MAC"
+                    valA={selectedPlayer.macro_play}
+                    valB={comparedPlayer.macro_play}
                   />
                   <CompareBar
-                    label="DEF"
-                    valA={selectedPlayer.defending}
-                    valB={comparedPlayer.defending}
+                    label="CONS"
+                    valA={selectedPlayer.consistency}
+                    valB={comparedPlayer.consistency}
                   />
                   <CompareBar
-                    label="TAC"
-                    valA={selectedPlayer.tackling}
-                    valB={comparedPlayer.tackling}
+                    label="SHOT"
+                    valA={selectedPlayer.shotcalling}
+                    valB={comparedPlayer.shotcalling}
                   />
                   <CompareBar
                     label="FIT"

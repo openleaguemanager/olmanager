@@ -25,6 +25,9 @@ pub enum PlayStyle {
 pub struct PlayerData {
     pub id: String,
     pub name: String,
+    /// Optional explicit player portrait URL carried from the domain roster.
+    #[serde(default)]
+    pub profile_image_url: Option<String>,
     /// Player's LoL role (Top, Jungle, Mid, Adc, Support)
     pub role: LolRole,
     pub condition: u8, // 0-100
@@ -32,40 +35,16 @@ pub struct PlayerData {
     #[serde(default = "default_fitness")]
     pub fitness: u8,
 
-    // Physical
-    pub pace: u8,
-    pub stamina: u8,
-    pub strength: u8,
-    #[serde(default = "default_engine_attr")]
-    pub agility: u8,
-
-    // Technical
-    pub passing: u8,
-    pub shooting: u8,
-    pub tackling: u8,
-    pub dribbling: u8,
-    pub defending: u8,
-
-    // Mental
-    pub positioning: u8,
-    pub vision: u8,
-    pub decisions: u8,
-    #[serde(default = "default_engine_attr")]
-    pub composure: u8,
-    #[serde(default = "default_engine_attr")]
-    pub aggression: u8,
-    #[serde(default = "default_engine_attr")]
-    pub teamwork: u8,
-    #[serde(default = "default_engine_attr")]
-    pub leadership: u8,
-
-    // Goalkeeper
-    #[serde(default = "default_engine_attr")]
-    pub handling: u8,
-    #[serde(default = "default_engine_attr")]
-    pub reflexes: u8,
-    #[serde(default = "default_engine_attr")]
-    pub aerial: u8,
+    // LoL Attributes
+    pub mechanics: u8,
+    pub laning: u8,
+    pub teamfighting: u8,
+    pub macro_play: u8,
+    pub consistency: u8,
+    pub shotcalling: u8,
+    pub champion_pool: u8,
+    pub discipline: u8,
+    pub mental_resilience: u8,
 
     // Traits (string names matching domain::player::PlayerTrait variants)
     #[serde(default)]
@@ -81,20 +60,18 @@ fn default_fitness() -> u8 {
 }
 
 impl PlayerData {
-    /// Overall rating (simple mean of core 11 attributes).
+    /// Overall rating (simple mean of 9 visible LoL stats, matching calculate_lol_ovr).
     pub fn overall(&self) -> f64 {
-        (self.pace as f64
-            + self.stamina as f64
-            + self.strength as f64
-            + self.passing as f64
-            + self.shooting as f64
-            + self.tackling as f64
-            + self.dribbling as f64
-            + self.defending as f64
-            + self.positioning as f64
-            + self.vision as f64
-            + self.decisions as f64)
-            / 11.0
+        (self.mechanics as f64
+            + self.laning as f64
+            + self.teamfighting as f64
+            + self.macro_play as f64
+            + self.consistency as f64
+            + self.shotcalling as f64
+            + self.champion_pool as f64
+            + self.discipline as f64
+            + self.mental_resilience as f64)
+            / 9.0
     }
 
     /// Effective rating accounting for current condition (0-100).
@@ -134,44 +111,38 @@ impl TeamData {
     /// Composite defense rating (from Top + Support).
     pub fn defense_rating(&self) -> f64 {
         let top_avg = self.role_attr_avg(LolRole::Top, |p| {
-            ((p.defending as u16 + p.tackling as u16 + p.positioning as u16 + p.strength as u16)
-                / 4) as u8
+            ((p.consistency as u16 + p.discipline as u16 + p.mental_resilience as u16) / 3) as u8
         });
         let support_avg = self.role_attr_avg(LolRole::Support, |p| {
-            ((p.vision as u16 + p.positioning as u16 + p.teamwork as u16) / 3) as u8
+            ((p.macro_play as u16 + p.teamfighting as u16 + p.discipline as u16) / 3) as u8
         });
         top_avg * 0.7 + support_avg * 0.3
-    }
-
-    /// Composite mid/jungle rating.
-    pub fn midfield_rating(&self) -> f64 {
-        let mid_avg = self.role_attr_avg(LolRole::Mid, |p| {
-            ((p.passing as u16 + p.vision as u16 + p.decisions as u16 + p.stamina as u16) / 4) as u8
-        });
-        let jg_avg = self.role_attr_avg(LolRole::Jungle, |p| {
-            ((p.decisions as u16 + p.vision as u16 + p.positioning as u16) / 3) as u8
-        });
-        mid_avg * 0.6 + jg_avg * 0.4
     }
 
     /// Composite attack rating (from ADC + Mid).
     pub fn attack_rating(&self) -> f64 {
         let adc_avg = self.role_attr_avg(LolRole::Adc, |p| {
-            ((p.shooting as u16 + p.dribbling as u16 + p.pace as u16 + p.positioning as u16) / 4)
-                as u8
+            ((p.mechanics as u16 + p.laning as u16 + p.teamfighting as u16) / 3) as u8
         });
         let mid_contrib = self.role_attr_avg(LolRole::Mid, |p| {
-            ((p.shooting as u16 + p.passing as u16 + p.vision as u16) / 3) as u8
+            ((p.mechanics as u16 + p.teamfighting as u16 + p.consistency as u16) / 3) as u8
         });
         adc_avg * 0.75 + mid_contrib * 0.25
     }
 
     /// Support contribution rating (Vision + Teamwork).
     pub fn support_rating(&self) -> f64 {
-        self.role_attr_avg(LolRole::Support, |p| {
-            ((p.vision as u16 + p.positioning as u16 + p.teamwork as u16 + p.passing as u16) / 4)
-                as u8
-        })
+        self.role_attr_avg(LolRole::Support, |p| p.champion_pool)
+    }
+
+    pub fn midfield_rating(&self) -> f64 {
+        let mid_avg = self.role_attr_avg(LolRole::Mid, |p| {
+            ((p.macro_play as u16 + p.shotcalling as u16 + p.laning as u16) / 3) as u8
+        });
+        let jg_avg = self.role_attr_avg(LolRole::Jungle, |p| {
+            ((p.macro_play as u16 + p.shotcalling as u16 + p.mental_resilience as u16) / 3) as u8
+        });
+        mid_avg * 0.6 + jg_avg * 0.4
     }
 }
 
@@ -187,6 +158,19 @@ pub struct MatchConfig {
     pub shot_accuracy_base: f64,
     /// Per-minute fatigue factor applied to condition.
     pub fatigue_per_minute: f64,
+    /// Random swing applied in objective control comparisons.
+    #[serde(default = "default_objective_swing_min")]
+    pub objective_swing_min: f64,
+    #[serde(default = "default_objective_swing_max")]
+    pub objective_swing_max: f64,
+    /// Per-tick structure damage random range.
+    #[serde(default = "default_structure_damage_min")]
+    pub structure_damage_min: f64,
+    #[serde(default = "default_structure_damage_max")]
+    pub structure_damage_max: f64,
+    /// Late-game combat scaling cap.
+    #[serde(default = "default_late_game_damage_scale")]
+    pub late_game_damage_scale: f64,
 }
 
 impl Default for MatchConfig {
@@ -195,8 +179,33 @@ impl Default for MatchConfig {
             home_advantage: 1.03,
             shot_accuracy_base: 0.45,
             fatigue_per_minute: 0.20,
+            objective_swing_min: default_objective_swing_min(),
+            objective_swing_max: default_objective_swing_max(),
+            structure_damage_min: default_structure_damage_min(),
+            structure_damage_max: default_structure_damage_max(),
+            late_game_damage_scale: default_late_game_damage_scale(),
         }
     }
+}
+
+fn default_objective_swing_min() -> f64 {
+    0.97
+}
+
+fn default_objective_swing_max() -> f64 {
+    1.06
+}
+
+fn default_structure_damage_min() -> f64 {
+    9.0
+}
+
+fn default_structure_damage_max() -> f64 {
+    15.0
+}
+
+fn default_late_game_damage_scale() -> f64 {
+    1.50
 }
 
 // ---------------------------------------------------------------------------

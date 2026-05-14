@@ -15,21 +15,21 @@ use ofm_core::live_match_manager::{self, MatchMode};
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
         pace: 65,
-        stamina: 65,
+        mental_resilience: 65,
         strength: 65,
-        agility: 65,
+        champion_pool: 65,
         passing: 65,
-        shooting: 65,
+        laning: 65,
         tackling: 55,
-        dribbling: 65,
+        mechanics: 65,
         defending: 55,
         positioning: 65,
-        vision: 65,
-        decisions: 65,
-        composure: 65,
+        macro_play: 65,
+        consistency: 65,
+        discipline: 65,
         aggression: 50,
-        teamwork: 65,
-        leadership: 50,
+        teamfighting: 65,
+        shotcalling: 50,
         handling: 20,
         reflexes: 30,
         aerial: 60,
@@ -309,8 +309,7 @@ fn auto_select_team_roles_picks_captain() {
         .map(|p| p.id.clone())
         .collect();
 
-    let (captain, shotcaller) =
-        live_match_manager::auto_select_team_roles(&game, &player_ids);
+    let (captain, shotcaller) = live_match_manager::auto_select_team_roles(&game, &player_ids);
 
     assert!(captain.is_some(), "Should pick a captain");
     assert!(shotcaller.is_some(), "Should pick a shotcaller");
@@ -319,8 +318,7 @@ fn auto_select_team_roles_picks_captain() {
 #[test]
 fn auto_select_team_roles_empty_ids_returns_none() {
     let game = make_game_with_fixture();
-    let (captain, shotcaller) =
-        live_match_manager::auto_select_team_roles(&game, &[]);
+    let (captain, shotcaller) = live_match_manager::auto_select_team_roles(&game, &[]);
     assert!(captain.is_none());
     assert!(shotcaller.is_none());
 }
@@ -334,8 +332,8 @@ fn auto_select_team_roles_prefers_high_leadership_captain() {
         .iter_mut()
         .find(|p| p.id == "team1_mid0")
         .unwrap();
-    leader.attributes.leadership = 99;
-    leader.attributes.teamwork = 99;
+    leader.attributes.shotcalling = 99;
+    leader.attributes.teamfighting = 99;
 
     let player_ids: Vec<String> = game
         .players
@@ -404,7 +402,10 @@ fn instant_mode_completes() {
         live_match_manager::create_live_match(&game, 0, MatchMode::Instant, false).unwrap();
     let results = session.run_to_completion();
     assert!(session.is_finished());
-    assert!(results.len() >= 55, "Match should reach time limit (~60 min)");
+    assert!(
+        results.len() >= 55,
+        "Match should reach time limit (~60 min)"
+    );
 }
 
 // ---------------------------------------------------------------------------
