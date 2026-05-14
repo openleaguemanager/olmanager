@@ -157,7 +157,7 @@ fn build_engine_team_from(
     team_id: &str,
 ) -> engine::TeamData {
     let team = teams.iter().find(|t| t.id == team_id);
->>>>>>> origin/pr/166-171
+
     let (name, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
@@ -174,7 +174,7 @@ fn build_engine_team_from(
             "Unknown".into(),
             engine::DraftStrategy::Balanced,
         ),
->>>>>>> origin/pr/166-171
+
     };
 
     let engine_players: Vec<engine::PlayerData> = players
@@ -207,7 +207,7 @@ fn build_engine_team_from(
         name,
         draft_strategy,
         players: engine_players,
->>>>>>> origin/pr/166-171
+
     }
 }
 
