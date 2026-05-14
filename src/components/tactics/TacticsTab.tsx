@@ -256,8 +256,7 @@ function positionToRole(position: string): DraftRole | null {
 function playerPhotoUrl(playerId: string): string | null {
   const match = playerId.match(/^lec-player-(.+)$/);
   if (match) return `/player-photos/${match[1]}.webp`;
-  // Generic fallback: try to find the file by player ID
-  return `/player-photos/${playerId}.webp`;
+  return null;
 }
 
 function Section<T extends string>({

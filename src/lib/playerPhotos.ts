@@ -49,15 +49,24 @@ function normalizeProfileImageUrl(url?: string | null): string | null {
 }
 
 export function resolvePlayerPhoto(playerId: string, matchName?: string, profileImageUrl?: string | null): string | null {
+  // 1. Explicit profile_image_url from data (highest priority)
   const explicit = normalizeProfileImageUrl(profileImageUrl);
   if (explicit) return explicit;
 
+  // 2. Legacy lec-player-XXXX pattern
   const legacy = playerId.match(/^lec-player-(.+)$/);
   if (legacy) return `/player-photos/${legacy[1]}.webp`;
 
+  // 3. Try playerId as direct photo filename (player-XXXX.webp)
+  const byId = `/player-photos/${playerId}.webp`;
+  if (playerId.startsWith("player-") || playerId.startsWith("team-")) return byId;
+
+  // 4. Match name lookup in example data
   const key = normalizeKey(matchName ?? "");
-  if (!key) return FALLBACK_PLAYER_PHOTO;
-  return EXAMPLE_PHOTO_MAP.get(key) ?? FALLBACK_PLAYER_PHOTO;
+  if (key && EXAMPLE_PHOTO_MAP.has(key)) return EXAMPLE_PHOTO_MAP.get(key)!;
+
+  // 5. Fallback
+  return FALLBACK_PLAYER_PHOTO;
 }
 
 export function resolveStaffPhoto(profileImageUrl?: string | null): string | null {
