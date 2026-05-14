@@ -706,7 +706,6 @@ export interface LeagueData {
   id: string;
   name: string;
   season: number;
-  competition_id?: string | null;
   fixtures: FixtureData[];
   standings: StandingData[];
 }
