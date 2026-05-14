@@ -23,6 +23,7 @@ import type { StoredFixtureDraftResult } from "../schedule/ScheduleTab.helpers";
 
 interface CompetitionsTabProps {
   gameState: GameStateData;
+  onSelectTeam?: (id: string) => void;
 }
 
 type DetailView = "calendar" | "standings" | "teams" | "players";
@@ -40,7 +41,7 @@ function getCompetitionColor(id: string): string {
   return COMPETITION_COLORS[id] ?? "bg-gray-500/20 text-gray-300 border-gray-500/30";
 }
 
-export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
+export default function CompetitionsTab({ gameState, onSelectTeam }: CompetitionsTabProps) {
   const { t } = useTranslation();
   const [selectedCid, setSelectedCid] = useState<string | null>(null);
   const [detailView, setDetailView] = useState<DetailView>("calendar");
@@ -157,6 +158,7 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
             <StandingsTable
               standings={sortedStandings}
               gameState={gameState}
+              onSelectTeam={onSelectTeam}
             />
           )}
 
@@ -165,6 +167,7 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
             <TeamsGrid
               teamIds={selectedTeamIds}
               gameState={gameState}
+              onSelectTeam={onSelectTeam}
             />
           )}
 

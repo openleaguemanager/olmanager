@@ -30,6 +30,7 @@ import {
 } from "../../lib/lolTactics";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { Card, CardBody, CardHeader } from "../ui";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 interface TacticsTabProps {
   gameState: GameStateData;
@@ -254,8 +255,9 @@ function positionToRole(position: string): DraftRole | null {
 
 function playerPhotoUrl(playerId: string): string | null {
   const match = playerId.match(/^lec-player-(.+)$/);
-  if (!match) return null;
-  return `/player-photos/${match[1]}.webp`;
+  if (match) return `/player-photos/${match[1]}.webp`;
+  // Generic fallback: try to find the file by player ID
+  return `/player-photos/${playerId}.webp`;
 }
 
 function Section<T extends string>({
@@ -649,9 +651,10 @@ export default function TacticsTab({
 
                       {row.playerId ? (
                         <img
-                          src={playerPhotoUrl(row.playerId) ?? ""}
+                          src={playerPhotoUrl(row.playerId) ?? resolvePlayerPhoto(row.playerId, row.playerName) ?? ""}
                           alt={row.playerName}
                           className="h-10 w-10 shrink-0 rounded object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).src = resolvePlayerPhoto(row.playerId, row.playerName) ?? ""; }}
                           loading="lazy"
                         />
                       ) : (
