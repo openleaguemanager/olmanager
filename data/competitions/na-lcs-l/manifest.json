@@ -1,0 +1,17 @@
+{
+  "id": "na-lcs-l",
+  "name": "NA-LCS-L",
+  "full_name": "NA-LCS-LEGACY",
+  "region": "NA-LCS-L",
+  "country": null,
+  "tier": 1,
+  "logo": "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/b/b5/LCS_2019_Logo.png/revision/latest/scale-to-width-down/220?cb=20181228123446",
+  "teams_file": "teams/na-lcs-l_teams.json",
+  "players_file": "players/na-lcs-l_players.json",
+  "schedule": {
+    "format": "unknown",
+    "team_count": 0,
+    "preseason_friendlies": 0,
+    "splits": []
+  }
+}

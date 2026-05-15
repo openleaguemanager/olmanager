@@ -5,40 +5,13 @@
   "region": "LRN",
   "country": "LATAM",
   "tier": 2,
-  "logo": "/competitions-icons/lrn.webp",
+  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778498889782_zslrvxvdhyi.webp",
   "teams_file": "erls/teams/lrn_teams.json",
   "players_file": "erls/players/lrn_players.json",
   "schedule": {
     "format": "single_round_robin",
     "team_count": 8,
-    "preseason_friendlies": 3,
-    "splits": [
-      {
-        "name": "Split 1",
-        "best_of": 3,
-        "playoffs": {
-          "teams": 6,
-          "format": "DoubleElimination"
-        },
-        "season_start": {
-          "day": 2,
-          "month": 3
-        },
-        "superweek_offsets": []
-      },
-      {
-        "name": "Split 2",
-        "best_of": 3,
-        "playoffs": {
-          "teams": 6,
-          "format": "DoubleElimination"
-        },
-        "season_start": {
-          "day": 1,
-          "month": 7
-        },
-        "superweek_offsets": []
-      }
-    ]
+    "preseason_friendlies": 0,
+    "splits": []
   }
 }

@@ -1,0 +1,168 @@
+{
+  "name": "LCK Staff",
+  "description": "LCK - 2026 Season",
+  "staff": [
+    {
+      "id": "staff-327825da",
+      "role": "Assistant Coach",
+      "wage": null,
+      "team_id": "team-61bd92d5",
+      "last_name": "Jae-hee",
+      "attributes": {
+        "coaching": 90,
+        "physiotherapy": 91,
+        "judging_ability": 87,
+        "judging_potential": 91
+      },
+      "first_name": "Kim Jae-hee",
+      "nationality": "South Korea",
+      "contract_end": "2026-11-16",
+      "birth_country": null,
+      "date_of_birth": "1990-01-01",
+      "specialization": null,
+      "profile_image_url": null,
+      "nickname": "Crazy"
+    },
+    {
+      "contract_end": "2026-11-16",
+      "id": "19be898a-24eb-453b-bc86-1a77145cc0ea",
+      "first_name": "Yang Hyeon-min",
+      "nickname": "Minit",
+      "role": "Assistant Coach",
+      "team_id": "team-2166882d",
+      "profile_image_url": null
+    },
+    {
+      "id": "staff-8cb087ff",
+      "role": "Assistant Coach",
+      "wage": null,
+      "team_id": "team-61bd92d5",
+      "last_name": "Seung-jin",
+      "attributes": {
+        "coaching": 84,
+        "physiotherapy": 87,
+        "judging_ability": 89,
+        "judging_potential": 91
+      },
+      "first_name": "Park Seung-jin",
+      "nationality": "South Korea",
+      "contract_end": "2027-11-15",
+      "birth_country": null,
+      "date_of_birth": "1990-01-01",
+      "specialization": null,
+      "profile_image_url": null,
+      "nickname": "Chelly"
+    },
+    {
+      "contract_end": "2026-11-16",
+      "id": "6a896ed3-479c-4d80-87c6-4499e107cc6d",
+      "first_name": "Nam Tae-yoo",
+      "nickname": "Lira",
+      "role": "Assistant Coach",
+      "team_id": "team-3f714e0d",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2026-11-16",
+      "id": "bc32309d-584b-4345-a9ec-11875c75f1bf",
+      "first_name": "Shin Hyeong-seop",
+      "nickname": "Rather",
+      "role": "Assistant Coach",
+      "team_id": "team-3f714e0d",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-11-16",
+      "id": "e686fc03-30af-4c76-bd59-dee4d96dc7f7",
+      "first_name": "Kevin Chou",
+      "nickname": "Kevin Chou",
+      "role": "Owner",
+      "team_id": "team-dae32fa2",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-11-16",
+      "id": "ac2940da-e7d5-4cfd-8fd9-28e1a49ad5dc",
+      "first_name": "Yoon Jun-ho",
+      "nickname": "Yoon Jun-ho",
+      "role": "Owner",
+      "team_id": "team-3f714e0d",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-01-01",
+      "id": "5ec92c2e-b47b-47cf-b9fe-55db4f292a94",
+      "first_name": "Choi Young-woo",
+      "nickname": "Choi Young-woo",
+      "role": "Owner",
+      "team_id": "team-2166882d",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-11-16",
+      "id": "dfd171b1-1114-4fc8-8490-9d8d16b3312b",
+      "first_name": "Lee Dong-hyeong",
+      "nickname": "Lee Dong-hyeong",
+      "role": "Owner",
+      "team_id": "team-41bf07a6",
+      "profile_image_url": null
+    },
+    {
+      "id": "staff-0139a0f6",
+      "role": "Assistant Coach",
+      "wage": null,
+      "team_id": "team-932ee946",
+      "last_name": "Seung-ik",
+      "attributes": {
+        "coaching": 86,
+        "physiotherapy": 81,
+        "judging_ability": 77,
+        "judging_potential": 78
+      },
+      "first_name": "Son Seung-ik",
+      "nationality": "South Korea",
+      "contract_end": "2026-11-16",
+      "birth_country": null,
+      "date_of_birth": "1990-01-01",
+      "specialization": null,
+      "profile_image_url": null,
+      "nickname": "Sonstar"
+    },
+    {
+      "contract_end": "2100-11-16",
+      "id": "a22d6dd0-2af6-4bbd-8c57-56aa391568d5",
+      "first_name": "Lim Woo-taek",
+      "nickname": "Lim Woo-taek",
+      "role": "Owner",
+      "team_id": "team-bd98ddef",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-11-16",
+      "id": "6cae705d-819c-44e7-bfcb-b1a3ea71d9ac",
+      "first_name": "Yeo Seung-joo",
+      "nickname": "Yeo Seung-joo",
+      "role": "Owner",
+      "team_id": "team-861ba8cb",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-01-01",
+      "id": "144cdda8-b752-4f7e-b218-db834dbc473a",
+      "first_name": "Yang Seon-il",
+      "nickname": "Yang Seon-il",
+      "role": "Owner",
+      "team_id": "team-bc4c40ec",
+      "profile_image_url": null
+    },
+    {
+      "contract_end": "2100-11-16",
+      "id": "0d054580-24d0-4812-8b01-2d65d645b65e",
+      "first_name": "Shin Ki-hyeok",
+      "nickname": "Shin Ki-hyeok",
+      "role": "Owner",
+      "team_id": "team-932ee946",
+      "profile_image_url": null
+    }
+  ]
+}

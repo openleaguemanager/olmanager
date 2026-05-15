@@ -1,0 +1,163 @@
+{
+  "name": "LCK-L Teams",
+  "description": "LCK-L - 2026 Season",
+  "teams": [
+    {
+      "id": "lck-l-griffin",
+      "country": "Korea",
+      "logo_url": "/teams-icons/griffin.webp",
+      "data.country": "Corea",
+      "name": "GRIFFIN",
+      "short_name": "GRF",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-liiv-sandbox",
+      "country": "South Korea",
+      "logo_url": "/teams-icons/liiv-sandbox.webp",
+      "name": "Liiv SANDBOX",
+      "short_name": "LSB",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-samsung-white",
+      "logo_url": "/teams-icons/samsung-white.webp",
+      "name": "Samsung White",
+      "short_name": "SSW",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-sk-telecom-t1",
+      "country": "KR",
+      "name": "SK Telecom T1",
+      "short_name": "SKT",
+      "logo_url": null,
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-samsung-galaxy",
+      "country": "KR",
+      "logo_url": "/teams-icons/samsung-galaxy.webp",
+      "data.country": "KR",
+      "name": "Samsung Galaxy",
+      "short_name": "SSG",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-longzhu-gaming",
+      "logo_url": "/teams-icons/longzhu-gaming.webp",
+      "data.country": "KR",
+      "name": "Longzhu Gaming",
+      "short_name": "LG",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-team-dynamics",
+      "country": "KR",
+      "logo_url": "/teams-icons/team-dynamics.webp",
+      "data.country": "KR",
+      "name": "Team Dynamics",
+      "short_name": "TD",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-afreeca-freecs",
+      "data.country": "South Korea",
+      "name": "Afreeca Freecs",
+      "short_name": "AF",
+      "country": "",
+      "logo_url": null,
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-rox-tigers",
+      "logo_url": "/teams-icons/rox-tigers.webp",
+      "data.country": "South Korea",
+      "name": "ROX Tigers",
+      "short_name": "ROX",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lck-l-damwon-gaming",
+      "data.country": "KR",
+      "name": "DAMWON GAMING",
+      "short_name": "DWG",
+      "country": "",
+      "logo_url": null,
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    }
+  ]
+}

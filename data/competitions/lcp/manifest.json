@@ -10,8 +10,6 @@
   "players_file": "players/lcp_players.json",
   "schedule": {
     "format": "double_round_robin",
-    "team_count": 8,
-    "preseason_friendlies": 3,
     "splits": [
       {
         "name": "Spring",
@@ -39,6 +37,8 @@
         },
         "superweek_offsets": []
       }
-    ]
+    ],
+    "team_count": 8,
+    "preseason_friendlies": 3
   }
 }

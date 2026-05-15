@@ -1,0 +1,22 @@
+{
+  "name": "NA-LCS-L Teams",
+  "description": "NA-LCS-L - 2026 Season",
+  "teams": [
+    {
+      "id": "na-lcs-l-team-solomid",
+      "country": "USA",
+      "logo_url": "/teams-icons/team-solomid.webp",
+      "data.country": "USA",
+      "name": "Team SoloMid",
+      "short_name": "TSM",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    }
+  ]
+}

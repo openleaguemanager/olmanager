@@ -330,9 +330,7 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium",
-      "season_income": 0,
-      "season_expenses": 0
+      "training_intensity": "Medium"
     },
     {
       "id": "team-d13da18a",
@@ -438,9 +436,7 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium",
-      "season_income": 0,
-      "season_expenses": 0
+      "training_intensity": "Medium"
     }
   ]
 }

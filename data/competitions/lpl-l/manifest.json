@@ -1,0 +1,17 @@
+{
+  "id": "lpl-l",
+  "name": "LPL-L",
+  "full_name": "LPL LEGACY",
+  "region": "LPL-L",
+  "country": "CN",
+  "tier": 1,
+  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778518479263_9bl81quf11n.webp",
+  "teams_file": "teams/lpl-l_teams.json",
+  "players_file": "players/lpl-l_players.json",
+  "schedule": {
+    "format": "unknown",
+    "team_count": 0,
+    "preseason_friendlies": 0,
+    "splits": []
+  }
+}

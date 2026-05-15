@@ -5,24 +5,13 @@
   "region": "LCK CL",
   "country": "South Korea",
   "tier": 2,
-  "logo": "/competitions-icons/lck-cl.webp",
+  "logo": "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/3/39/LCK_CL_logo.png/revision/latest/scale-to-width-down/220?cb=20210308224549",
   "teams_file": "erls/teams/lck-cl_teams.json",
   "players_file": "erls/players/lck-cl_players.json",
   "schedule": {
-    "format": "single_round_robin",
+    "format": "unknown",
     "team_count": 10,
-    "preseason_friendlies": 3,
-    "splits": [
-      {
-        "name": "Spring",
-        "best_of": 1,
-        "playoffs": null,
-        "season_start": {
-          "month": 1,
-          "day": 1
-        },
-        "superweek_offsets": []
-      }
-    ]
+    "preseason_friendlies": 0,
+    "splits": []
   }
 }

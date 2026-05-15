@@ -116,20 +116,18 @@
     },
     {
       "logo_url": "/teams-icons/giantx-itero.webp",
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "city": "",
-      "country": "",
-      "arena_name": "",
       "id": "team-854f6893",
       "name": "GiantX Itero",
-      "short_name": "GXI"
+      "short_name": "GXI",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
     },
     {
       "id": "team-129835c5",
@@ -301,20 +299,18 @@
     },
     {
       "logo_url": "/teams-icons/ub-alma-mater.webp",
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "city": "",
-      "country": "",
-      "arena_name": "",
       "id": "team-ac846213",
       "name": "UB Alma Mater",
-      "short_name": "UAM"
+      "short_name": "UAM",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
     },
     {
       "id": "team-f10b156f",
