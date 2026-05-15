@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Sparkles, Clock3, Search } from "lucide-react";
 import type { GameStateData } from "../../store/gameStore";
 import championsSeed from "../../../data/draft/champions.json";
-import playersSeed from "../../../data/draft/players.json";
 import { setPlayerChampionTrainingTarget, delegateChampionTraining } from "../../services/playerService";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
