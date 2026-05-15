@@ -13,6 +13,7 @@ pub struct Player {
     pub full_name: String,
     #[serde(default)]
     pub date_of_birth: String,
+    #[serde(default)]
     pub nationality: String,
     #[serde(default)]
     pub birth_country: Option<String>,
