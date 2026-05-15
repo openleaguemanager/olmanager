@@ -56,6 +56,7 @@ pub struct Player {
     pub stats: PlayerSeasonStats,
 
     // Career history
+    #[serde(default)]
     pub career: Vec<CareerEntry>,
 
     // Individual training focus override (takes priority over group and team default)
