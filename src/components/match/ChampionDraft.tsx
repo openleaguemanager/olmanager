@@ -285,13 +285,13 @@ const ASSISTANT_COACH_PLACEHOLDER = "/player-photos/103935359525547325.webp";
 const LEC_LOGO_URL = "/lec-logo.svg";
 const EMPTY_LOCKED_CHAMPION_IDS: string[] = [];
 const ROLE_ICON_URLS: Record<Role, string> = {
-  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
+  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.webp",
   JUNGLE:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
-  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
-  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
+    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.webp",
+  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.webp",
+  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.webp",
   SUPPORT:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.webp",
 };
 
 const DRAFT_SEQUENCE: DraftAction[] = [
@@ -401,20 +401,20 @@ function loadingUrl(championId: string): string {
 }
 
 const TEAM_BRAND_MAP: Record<string, { tricode: string; logo: string | null }> = {
-  "g2 esports": { tricode: "G2", logo: "/team-logos/g2-esports.png" },
-  fnatic: { tricode: "FNC", logo: "/team-logos/fnatic.png" },
-  "team vitality": { tricode: "VIT", logo: "/team-logos/team-vitality.png" },
-  vitality: { tricode: "VIT", logo: "/team-logos/team-vitality.png" },
-  "team heretics": { tricode: "HRTS", logo: "/team-logos/team-heretics-lec.png" },
-  "sk gaming": { tricode: "SK", logo: "/team-logos/sk-gaming.png" },
-  "movistar koi": { tricode: "MKOI", logo: "/team-logos/mad-lions.png" },
-  "mad lions koi": { tricode: "MKOI", logo: "/team-logos/mad-lions.png" },
-  "team bds": { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png" },
-  giantx: { tricode: "GX", logo: "/team-logos/giantx-lec.png" },
-  heretics: { tricode: "HRTS", logo: "/team-logos/team-heretics-lec.png" },
-  shifters: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png" },
-  "natus vincere": { tricode: "NAVI", logo: "/team-logos/natus-vincere.png" },
-  "karmine corp": { tricode: "KC", logo: "/team-logos/karmine-corp.png" },
+  "g2 esports": { tricode: "G2", logo: "/teams-icons/g2-esports.webp" },
+  fnatic: { tricode: "FNC", logo: "/teams-icons/fnatic.webp" },
+  "team vitality": { tricode: "VIT", logo: "/teams-icons/team-vitality.webp" },
+  vitality: { tricode: "VIT", logo: "/teams-icons/team-vitality.webp" },
+  "team heretics": { tricode: "HRTS", logo: "/teams-icons/team-heretics-lec.webp" },
+  "sk gaming": { tricode: "SK", logo: "/teams-icons/sk-gaming.webp" },
+  "movistar koi": { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
+  "mad lions koi": { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
+  "team bds": { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.webp" },
+  giantx: { tricode: "GX", logo: "/teams-icons/giantx-lec.webp" },
+  heretics: { tricode: "HRTS", logo: "/teams-icons/team-heretics-lec.webp" },
+  shifters: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.webp" },
+  "natus vincere": { tricode: "NAVI", logo: "/teams-icons/natus-vincere.webp" },
+  "karmine corp": { tricode: "KC", logo: "/teams-icons/karmine-corp.webp" },
 };
 
 const TEAM_SEEDS: TeamSeed[] = ((teamsSeed as { data?: { teams?: TeamSeed[] } })
@@ -714,7 +714,7 @@ function teamLogo(name: string): string | null {
   const fromSeed = TEAM_SEEDS.find((team) => normalizeKey(team.name) === normalizedName);
   if (fromSeed?.logo) {
     const logoFileName = fromSeed.logo.split("/").pop();
-    const fallback = logoFileName ? `/team-logos/${logoFileName.toLowerCase()}` : null;
+    const fallback = logoFileName ? `/teams-icons/${logoFileName.toLowerCase()}` : null;
     return fallback;
   }
 

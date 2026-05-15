@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   GameStateData,
   PlayerData,
   PlayerSelectionOptions,
   TransferOfferData,
 } from "../../store/gameStore";
-import { Card, CardBody, Badge, CountryFlag, RoleBadge } from "../ui";
+import { Card, CardBody, Badge, CountryFlag, RoleBadge, Select } from "../ui";
 import {
   Search,
   TrendingUp,
@@ -94,6 +94,7 @@ export default function TransfersTab({
   const userTeamId = gameState.manager.team_id;
   const [view, setView] = useState<TransferTabView>("my_list");
   const [search, setSearch] = useState("");
+  const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [posFilter, setPosFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<TransferSortState | null>(null);
 
@@ -361,9 +362,18 @@ export default function TransfersTab({
       },
     ];
 
+  const competitionTeamIds = useMemo(() => {
+    if (!competitionFilter) return null;
+    return new Set(gameState.teams.filter(t => t.competition_id === competitionFilter).map(t => t.id));
+  }, [gameState.teams, competitionFilter]);
+
+  const leagueOptions = useMemo(() => {
+    return gameState.leagues.map(l => ({ id: l.competition_id ?? l.id, name: l.name }));
+  }, [gameState.leagues]);
+
   const currentList = getCurrentTransferList(view, transferCollections);
   const filteredList = sortTransferPlayers(
-    filterTransferPlayers(currentList, search, posFilter),
+    filterTransferPlayers(currentList, search, posFilter, competitionTeamIds),
     sort,
   );
   const weeklyWageBudget = myTeam
@@ -517,6 +527,17 @@ export default function TransfersTab({
             {filteredList.length}
           </span>
         </div>
+        <Select
+          value={competitionFilter ?? ""}
+          onChange={(e) => setCompetitionFilter(e.target.value || null)}
+          selectSize="sm"
+          className="min-w-32 font-heading font-bold uppercase tracking-wider"
+        >
+          <option value="">{t("common.all")}</option>
+          {leagueOptions.map((l) => (
+            <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </Select>
         <div className="flex gap-1.5">
           <button
             onClick={() => setPosFilter(null)}
@@ -690,7 +711,7 @@ export default function TransfersTab({
                     const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const offersForThisPlayer = player.transfer_offers;
                     const lolRole = getLolRoleForPlayer(player);
-                    const photoSrc = resolvePlayerPhoto(player.id, player.match_name);
+                    const photoSrc = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
                     return (
                       <tr
                         key={player.id}

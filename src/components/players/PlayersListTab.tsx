@@ -51,6 +51,7 @@ export default function PlayersListTab({
   const [teamFilter, setTeamFilter] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>("ovr");
   const [sortAsc, setSortAsc] = useState(false);
+  const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | "transfer" | "loan">(
     "all",
   );
@@ -92,6 +93,21 @@ export default function PlayersListTab({
     return [...byNick.values()];
   }, [gameState.players]);
 
+  const competitionTeamIds = useMemo(() => {
+    if (!competitionFilter) return null;
+    const ids = gameState.teams
+      .filter(t => t.competition_id === competitionFilter)
+      .map(t => t.id);
+    return new Set(ids);
+  }, [gameState.teams, competitionFilter]);
+
+  const leagues = useMemo(() => {
+    return gameState.leagues.map(l => ({
+      id: l.competition_id ?? l.id,
+      name: l.name,
+    }));
+  }, [gameState.leagues]);
+
   let filtered = dedupedPlayers.filter((p) => {
     if (search.length >= 2) {
       const q = search.toLowerCase();
@@ -107,6 +123,7 @@ export default function PlayersListTab({
     }
     if (posFilter && getLolRoleForPlayer(p) !== posFilter) return false;
     if (teamFilter && p.team_id !== teamFilter) return false;
+    if (competitionTeamIds && (!p.team_id || !competitionTeamIds.has(p.team_id))) return false;
     if (statusFilter === "transfer" && !p.transfer_listed) return false;
     if (statusFilter === "loan" && !p.loan_listed) return false;
     return true;
@@ -227,6 +244,18 @@ export default function PlayersListTab({
         </div>
 
         <Select
+          value={competitionFilter ?? ""}
+          onChange={(e) => setCompetitionFilter(e.target.value || null)}
+          selectSize="sm"
+          className="min-w-32 font-heading font-bold uppercase tracking-wider"
+        >
+          <option value="">{t("common.all")}</option>
+          {leagues.map((l) => (
+            <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </Select>
+
+        <Select
           value={teamFilter || ""}
           onChange={(e) => setTeamFilter(e.target.value || null)}
           selectSize="sm"
@@ -318,7 +347,7 @@ export default function PlayersListTab({
                   .map((player) => {
                     const ovr = calculateLolOvr(player);
                     const age = calcAge(player.date_of_birth, gameState.clock.current_date);
-                    const photoSrc = resolvePlayerPhoto(player.id, player.match_name);
+                    const photoSrc = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
                     return (
                       <tr
                         key={player.id}

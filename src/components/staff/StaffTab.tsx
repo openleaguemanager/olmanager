@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { GameStateData, StaffData } from "../../store/gameStore";
-import { Card, CardBody, Badge, CountryFlag, ProgressBar } from "../ui";
+import { Card, CardBody, Badge, CountryFlag, ProgressBar, Select } from "../ui";
 import {
   UserCog,
   Search,
@@ -157,6 +157,7 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
   const [view, setView] = useState<"mystaff" | "available">("mystaff");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const myStaff = gameState.staff.filter((s) => s.team_id === userTeamId);
@@ -186,10 +187,20 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
     }
   };
 
+  const competitionTeamIds = useMemo(() => {
+    if (!competitionFilter) return null;
+    return new Set(gameState.teams.filter(t => t.competition_id === competitionFilter).map(t => t.id));
+  }, [gameState.teams, competitionFilter]);
+
+  const leagueOptions = useMemo(() => {
+    return gameState.leagues.map(l => ({ id: l.competition_id ?? l.id, name: l.name }));
+  }, [gameState.leagues]);
+
   const displayStaff = view === "mystaff" ? myStaff : availableStaff;
 
   const filtered = displayStaff.filter((s) => {
     if (roleFilter && s.role !== roleFilter) return false;
+    if (competitionTeamIds && (!s.team_id || !competitionTeamIds.has(s.team_id))) return false;
     if (search.length >= 2) {
       const q = search.toLowerCase();
       const fullName = `${s.first_name} ${s.last_name}`.toLowerCase();
@@ -242,6 +253,17 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
           />
         </div>
 
+        <Select
+          value={competitionFilter ?? ""}
+          onChange={(e) => setCompetitionFilter(e.target.value || null)}
+          selectSize="sm"
+          className="min-w-32 font-heading font-bold uppercase tracking-wider"
+        >
+          <option value="">{t("common.all")}</option>
+          {leagueOptions.map((l) => (
+            <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </Select>
         <div className="flex gap-1.5">
           <button
             onClick={() => setRoleFilter(null)}
