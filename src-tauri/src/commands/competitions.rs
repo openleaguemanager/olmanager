@@ -281,8 +281,3 @@ pub fn get_league_selection_data(
     );
     Ok(LeagueSelectionData { competitions })
 }
-
-// ---------------------------------------------------------------------------
-// Runtime file loading helpers
-// ---------------------------------------------------------------------------
-

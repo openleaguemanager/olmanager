@@ -255,7 +255,7 @@ mod tests {
 
         // Re-upsert same league with different fixtures — old data for this competition is replaced
         let replacement = League {
-            id: "league-2".to_string(),
+            id: "league-1".to_string(),
             name: "Premier Division".to_string(),
             season: 2027,
             competition_id: None,
