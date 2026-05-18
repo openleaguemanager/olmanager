@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api/core";
 import type { GameStateData } from "../../store/gameStore";
 import { formatVal, getTeamName } from "../../lib/helpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 
 function teamLogoFromId(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
@@ -21,7 +21,7 @@ function resolveTransferTeamLogo(teamId: string, teamName: string): string | nul
   if (primary.startsWith("/team-logos/") || primary.startsWith("http")) {
     return primary;
   }
-  return resolveExampleTeamLogo(teamName);
+  return resolveTeamLogo(teamName);
 }
 
 interface IncludedPlayerData {
