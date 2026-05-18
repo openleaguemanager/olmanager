@@ -210,6 +210,7 @@ impl<'de> Deserialize<'de> for Game {
             competition_configs: legacy.competition_configs,
         })
     }
+    pub transfer_history: domain::transfer_history::TransferHistory,
 }
 
 impl Game {
@@ -242,6 +243,7 @@ impl Game {
             champion_masteries: vec![],
             champion_patch: ChampionPatchState::default(),
             competition_configs: HashMap::new(),
+            transfer_history: domain::transfer_history::TransferHistory::default(),
         };
         crate::identity_upgrade::upgrade_game_football_identities(&mut game);
         crate::season_context::refresh_game_context(&mut game);
