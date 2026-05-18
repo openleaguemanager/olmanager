@@ -1,4 +1,5 @@
 import { memo, useState, useEffect, useRef } from "react";
+import { resolveChampionTile, ddragonTileUrl } from "../../lib/championImages";
 
 export interface ChampionCardProps {
   id: number;
@@ -7,13 +8,6 @@ export interface ChampionCardProps {
   roles: string[];
   imageTileUrl?: string;
   onClick: (id: number) => void;
-}
-
-/**
- * Fallback champion tile URL from Data Dragon
- */
-function fallbackTileUrl(championKey: string): string {
-  return `https://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${championKey}_0.jpg`;
 }
 
 /**
@@ -95,8 +89,8 @@ export const ChampionCard = memo(function ChampionCard({
   imageTileUrl,
   onClick,
 }: ChampionCardProps) {
-  const displayImage = imageTileUrl || fallbackTileUrl(championKey);
-  const fallback = fallbackTileUrl(championKey);
+  const displayImage = imageTileUrl || resolveChampionTile(championKey) || ddragonTileUrl(championKey) || "";
+  const fallback = ddragonTileUrl(championKey) || "";
 
   return (
     <button
