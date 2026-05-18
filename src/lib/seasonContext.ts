@@ -59,8 +59,8 @@ function deriveSeasonContext(gameState: GameStateData): SeasonContextData {
     return DEFAULT_SEASON_CONTEXT;
   }
 
-  const competitiveFixtures = playerLeague.fixtures.filter((fixture) =>
-    !fixture.competition || fixture.competition === "League",
+  const competitiveFixtures = league.fixtures.filter((fixture) =>
+    !fixture.match_type || fixture.match_type === "League",
   );
 
   const fixtureDates = competitiveFixtures

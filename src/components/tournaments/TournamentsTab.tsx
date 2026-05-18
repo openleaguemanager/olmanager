@@ -115,13 +115,39 @@ export default function TournamentsTab({ gameState, onSelectTeam }: TournamentsT
     );
   }
 
-  // Full tournament data view
-  const standings = [...playerLeague.standings].sort(compareStandingsByLolScore);
-  const playoffFixtures = league.fixtures.filter((f) => f.competition === "Playoffs");
+  const playoffFixtures = league.fixtures.filter((fixture) => fixture.match_type === "Playoffs");
   const hasPlayoffsStarted = playoffFixtures.length > 0;
-  const tournamentFixtures = league.fixtures.filter((f) => f.competition === "League" || f.competition === "Playoffs");
-  const matchdaySet = [...new Set(tournamentFixtures.map((f) => f.matchday))].sort((a, b) => a - b);
-  const sortedMatchdays = matchdaySet.map((md) => [md, tournamentFixtures.filter((f) => f.matchday === md)] as [number, FixtureData[]]);
+  const tournamentFixtures = league.fixtures.filter(
+    (fixture) => fixture.match_type === "League" || fixture.match_type === "Playoffs",
+  );
+
+  const matchdays = new Map<number, FixtureData[]>();
+  tournamentFixtures.forEach((f) => {
+    const list = matchdays.get(f.matchday) || [];
+    list.push(f);
+    matchdays.set(f.matchday, list);
+  });
+  const sortedMatchdays = Array.from(matchdays.entries()).sort(
+    (a, b) => a[0] - b[0],
+  );
+
+  const completedMatchdays = sortedMatchdays.filter(([, fixtures]) =>
+    fixtures.every((f) => f.status === "Completed"),
+  ).length;
+  const totalMatchdays = sortedMatchdays.length;
+  const userStanding = standings.find((entry) => entry.team_id === userTeamId);
+  const userWins = userStanding?.won ?? 0;
+  const completedMatches = tournamentFixtures.filter(
+    (f) => f.status === "Completed",
+  ).length;
+
+  const academyStandings = academyLeague
+      ? [...academyLeague.standings].sort(compareStandingsByLolScore)
+    : [];
+  const academyPlayoffFixtures = academyLeague
+    ? academyLeague.fixtures.filter((fixture) => fixture.match_type === "Playoffs")
+    : [];
+  const hasAcademyPlayoffsStarted = academyPlayoffFixtures.length > 0;
 
   return (
     <div className="flex flex-col gap-4">
@@ -256,8 +282,59 @@ export default function TournamentsTab({ gameState, onSelectTeam }: TournamentsT
               )}
             </CardBody>
           </Card>
-            {/* User team card */}
-            <div className="flex flex-col gap-3">
+
+          <Card>
+            <CardHeader>{t("schedule.matches")}</CardHeader>
+            <CardBody className="p-0">
+              {sortedMatchdays.length === 0 ? (
+                <p className="p-4 text-sm text-gray-400 dark:text-gray-500 text-center">
+                  {t("season.noOpener")}
+                </p>
+              ) : (
+                <div className="divide-y divide-gray-100 dark:divide-navy-600">
+                  {sortedMatchdays.slice(-5).map(([md, fixtures]) => {
+                    const first = fixtures[0];
+                    return (
+                      <div key={`overview-md-${md}`} className="px-4 py-3">
+                        <p className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-heading font-bold">
+                          {first.match_type === "Playoffs"
+                            ? `${t("schedule.playoffs")} · ${t("schedule.round", { number: md })}`
+                            : t("schedule.matchday", { number: md })}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          {formatMatchDate(first.date)} · {fixtures.length} {t("tournaments.matches").toLowerCase()}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardBody>
+          </Card>
+          </div>
+
+          {academyLeague ? (
+            <div className="space-y-4">
+              <Card accent="primary">
+                <div className="bg-gradient-to-r from-navy-700 to-navy-800 p-4 rounded-t-xl">
+                  <h3 className="text-lg font-heading font-bold text-white uppercase tracking-wide">
+                    {academyLeague.name}
+                  </h3>
+                  <p className="text-gray-400 text-xs mt-0.5">
+                    {t("schedule.season", { number: academyLeague.season })} — {t("tournaments.nTeams", { count: academyLeague.standings.length })}
+                  </p>
+                </div>
+              </Card>
+
+              {hasAcademyPlayoffsStarted ? (
+                <PlayoffBracketBoard
+                  league={academyLeague}
+                  teams={gameState.teams}
+                  onSelectTeam={onSelectTeam}
+                  title={`${t("schedule.playoffs")} · ${t("tournaments.bracket")}`}
+                />
+              ) : null}
+
               <Card>
                 <CardBody>
                   <div className="flex items-center gap-3">
@@ -323,19 +400,12 @@ export default function TournamentsTab({ gameState, onSelectTeam }: TournamentsT
         <div className="space-y-4">
           {filteredMatchdays.map(([md, fixtures]) => (
             <Card key={md}>
-              <div className="px-5 py-3 border-b border-gray-100 dark:border-navy-600">
-                <span className="font-heading font-bold text-sm uppercase tracking-wider">
-                  {`${t("schedule.matchday", { number: md })} — ${formatMatchDate(fixtures[0].date)}`}
-                </span>
-              </div>
-              <div className="divide-y divide-gray-100 dark:border-navy-600">
-                {fixtures.map((f) => (
-                  <div key={f.id} className="flex items-center px-5 py-3">
-                    <span className="flex-1 text-right text-sm font-medium">{getTeamName(gameState.teams, f.home_team_id)}</span>
-                    <span className="mx-4 text-sm font-heading font-bold text-gray-400">VS</span>
-                    <span className="flex-1 text-left text-sm font-medium">{getTeamName(gameState.teams, f.away_team_id)}</span>
-                  </div>
-                ))}
+              <div className="px-5 py-3 border-b border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800 rounded-t-xl">
+                <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                  {fixtures[0].match_type === "Playoffs"
+                    ? `${t("schedule.playoffs")} · ${t("schedule.round", { number: md })}`
+                    : t("schedule.matchday", { number: md })} — {formatMatchDate(fixtures[0].date)}
+                </h4>
               </div>
             </Card>
           ))}
