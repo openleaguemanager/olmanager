@@ -18,11 +18,10 @@ pub fn upsert_league(conn: &Connection, league: &League) -> Result<(), String> {
         "INSERT OR REPLACE INTO league (id, name, season) VALUES (?1, ?2, ?3)",
         params![league.id, league.name, league.season],
     )
-<<<<<<< HEAD
     .map_err(|e| format!("Failed to upsert league: {}", e))?;
 
     for f in &league.fixtures {
-        let competition_str = format!("{:?}", f.competition);
+        let competition_str = format!("{:?}", f.match_type);
         let status_str = format!("{:?}", f.status);
         let result_json = f
             .result
@@ -64,10 +63,6 @@ pub fn upsert_league(conn: &Connection, league: &League) -> Result<(), String> {
         )
         .map_err(|e| format!("Failed to insert standing: {}", e))?;
     }
-=======
-    .map_err(|e| format!("Failed to upsert league marker: {}", e))?;
->>>>>>> origin/feat/frontend-dto-store
-
     Ok(())
 }
 
@@ -102,7 +97,6 @@ pub fn load_league(conn: &Connection) -> Result<Option<League>, String> {
     if let Some(ref mut league) = league {
         league.season = season;
     }
-<<<<<<< HEAD
 
     // Load standings
     let mut stand_stmt = conn
@@ -137,10 +131,8 @@ pub fn load_league(conn: &Connection) -> Result<Option<League>, String> {
         season,
         fixtures,
         standings,
+        competition_id: None,
     }))
-=======
-    Ok(league)
->>>>>>> origin/feat/frontend-dto-store
 }
 
 /// Check if stale/unlinked competition data exists.
@@ -336,7 +328,7 @@ mod tests {
 
         // Re-upsert same league with different fixtures — old data for this competition is replaced
         let replacement = League {
-            id: "league-2".to_string(),
+            id: "league-1".to_string(),
             name: "Premier Division".to_string(),
             season: 2027,
             competition_id: None,
