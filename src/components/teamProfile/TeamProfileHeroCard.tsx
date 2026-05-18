@@ -6,14 +6,14 @@ import type { TeamProfileTranslate } from "./TeamProfile.types";
 import { QuickStat } from "./TeamProfile.primitives";
 import type { TeamProfileViewModel } from "./TeamProfile.types";
 import type { TeamData } from "../../store/gameStore";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 
 function defaultTeamLogoSrc(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
   if (slug === "shifters") {
     return "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png";
   }
-  return `/team-logos/${slug}.png`;
+  return `/teams-icons/${slug}.webp`;
 }
 
 function academyLogoFromMetadata(team: TeamData): string | null {
@@ -39,13 +39,16 @@ function academyLogoFromMetadata(team: TeamData): string | null {
 }
 
 function teamLogoSrc(team: TeamData): string {
+  // Use logo_url from backend if available (already mapped to /teams-icons/)
+  if (team.logo_url) return team.logo_url;
+
   const academyLogo = academyLogoFromMetadata(team);
   if (academyLogo) {
     return academyLogo;
   }
 
   if (team.team_kind === "Academy") {
-    const exampleLogo = resolveExampleTeamLogo(team.name);
+    const exampleLogo = resolveTeamLogo(team.name);
     if (exampleLogo) {
       return exampleLogo;
     }
@@ -133,6 +136,16 @@ export default function TeamProfileHeroCard({
                 <Calendar className="w-4 h-4" /> {t("teams.est")} {team.founded_year}
               </span>
             </div>
+            {team.competition_id && (
+              <div className="flex items-center gap-1.5 mt-1 text-white/80 text-sm">
+                <img
+                  src={`/competitions-icons/${team.competition_id}.webp`}
+                  alt={team.competition_id}
+                  className="w-4 h-4 object-contain"
+                />
+                {team.competition_id.toUpperCase()}
+              </div>
+            )}
             {viewModel.manager && (
               <p className="text-white/70 text-sm mt-1 flex items-center gap-1.5">
                 <Users className="w-4 h-4" /> {t("teamProfile.managerLabel")} {viewModel.manager.first_name} {viewModel.manager.last_name}

@@ -42,8 +42,7 @@ const makePlayer = (overrides: Partial<EnginePlayerData> = {}): EnginePlayerData
 const makeTeam = (overrides: Partial<EngineTeamData> = {}): EngineTeamData => ({
   id: "team1",
   name: "Test FC",
-  formation: "4-4-2",
-  play_style: "Balanced",
+  draft_strategy: "Balanced",
   players: [],
   ...overrides,
 });
@@ -120,7 +119,7 @@ describe("resolveMatchFixture", () => {
           date: "2026-08-01",
           home_team_id: "home1",
           away_team_id: "away1",
-          competition: "League",
+          match_type: "League",
           status: "Scheduled",
           result: null,
         },

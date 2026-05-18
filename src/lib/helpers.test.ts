@@ -39,8 +39,7 @@ const makeTeam = (overrides: Partial<TeamData> = {}): TeamData => ({
   transfer_budget: 500000,
   season_income: 0,
   season_expenses: 0,
-  formation: "4-4-2",
-  play_style: "Balanced",
+  draft_strategy: "Balanced",
   training_focus: "Physical",
   training_intensity: "Medium",
   training_schedule: "Balanced",
@@ -94,7 +93,7 @@ const makeFixture = (overrides: Partial<FixtureData> = {}): FixtureData => ({
   date: "2026-08-01",
   home_team_id: "team_1",
   away_team_id: "team_2",
-  competition: "League",
+  match_type: "League",
   status: "Scheduled",
   result: null,
   ...overrides,
@@ -175,10 +174,10 @@ describe("season helpers", () => {
         makeFixture({ id: "f2", status: "Completed", home_team_id: "team_3", away_team_id: "team_4" }),
       ],
       standings: [
-        { team_id: "team_1", played: 1, won: 1, drawn: 0, lost: 0, goals_for: 2, goals_against: 0, points: 3 },
-        { team_id: "team_2", played: 1, won: 0, drawn: 0, lost: 1, goals_for: 0, goals_against: 2, points: 0 },
-        { team_id: "team_3", played: 1, won: 0, drawn: 0, lost: 1, goals_for: 0, goals_against: 1, points: 0 },
-        { team_id: "team_4", played: 1, won: 1, drawn: 0, lost: 0, goals_for: 1, goals_against: 0, points: 3 },
+        { team_id: "team_1", played: 1, won: 1, lost: 0, maps_won: 2, maps_lost: 0, points: 3 },
+        { team_id: "team_2", played: 1, won: 0, lost: 1, maps_won: 0, maps_lost: 2, points: 0 },
+        { team_id: "team_3", played: 1, won: 0, lost: 1, maps_won: 0, maps_lost: 1, points: 0 },
+        { team_id: "team_4", played: 1, won: 1, lost: 0, maps_won: 1, maps_lost: 0, points: 3 },
       ],
     };
 
@@ -213,17 +212,17 @@ describe("season helpers", () => {
       fixtures: [
         makeFixture({
           id: "friendly-1",
-          competition: "Friendly",
+          match_type: "Friendly",
           matchday: 0,
           status: "Completed",
         }),
         ...competitiveFixtures,
       ],
       standings: [
-        { team_id: "team_1", played: 6, won: 6, drawn: 0, lost: 0, goals_for: 12, goals_against: 2, points: 18 },
-        { team_id: "team_2", played: 6, won: 3, drawn: 0, lost: 3, goals_for: 8, goals_against: 8, points: 9 },
-        { team_id: "team_3", played: 6, won: 2, drawn: 0, lost: 4, goals_for: 6, goals_against: 10, points: 6 },
-        { team_id: "team_4", played: 6, won: 1, drawn: 0, lost: 5, goals_for: 4, goals_against: 10, points: 3 },
+        { team_id: "team_1", played: 6, won: 6, lost: 0, maps_won: 12, maps_lost: 2, points: 18 },
+        { team_id: "team_2", played: 6, won: 3, lost: 3, maps_won: 8, maps_lost: 8, points: 9 },
+        { team_id: "team_3", played: 6, won: 2, lost: 4, maps_won: 6, maps_lost: 10, points: 6 },
+        { team_id: "team_4", played: 6, won: 1, lost: 5, maps_won: 4, maps_lost: 10, points: 3 },
       ],
     };
 
@@ -257,10 +256,10 @@ describe("season helpers", () => {
       season: 1,
       fixtures,
       standings: [
-        { team_id: "team_1", played: 6, won: 6, drawn: 0, lost: 0, goals_for: 12, goals_against: 2, points: 18 },
-        { team_id: "team_2", played: 6, won: 3, drawn: 0, lost: 3, goals_for: 8, goals_against: 8, points: 9 },
-        { team_id: "team_3", played: 6, won: 2, drawn: 0, lost: 4, goals_for: 6, goals_against: 10, points: 6 },
-        { team_id: "team_4", played: 6, won: 1, drawn: 0, lost: 5, goals_for: 4, goals_against: 10, points: 3 },
+        { team_id: "team_1", played: 6, won: 6, lost: 0, maps_won: 12, maps_lost: 2, points: 18 },
+        { team_id: "team_2", played: 6, won: 3, lost: 3, maps_won: 8, maps_lost: 8, points: 9 },
+        { team_id: "team_3", played: 6, won: 2, lost: 4, maps_won: 6, maps_lost: 10, points: 6 },
+        { team_id: "team_4", played: 6, won: 1, lost: 5, maps_won: 4, maps_lost: 10, points: 3 },
       ],
     };
 
@@ -282,7 +281,7 @@ describe("season helpers", () => {
             home_team_id: homeTeamId,
             away_team_id: awayTeamId,
             status: "Completed",
-            competition: "League",
+            match_type: "League",
           }),
         );
         fixtureCounter += 1;
@@ -292,7 +291,7 @@ describe("season helpers", () => {
     fixtures.push(
       makeFixture({
         id: "playoff-1",
-        competition: "Playoffs",
+        match_type: "Playoffs",
         status: "Scheduled",
         home_team_id: "team_1",
         away_team_id: "team_4",
@@ -305,10 +304,10 @@ describe("season helpers", () => {
       season: 1,
       fixtures,
       standings: [
-        { team_id: "team_1", played: 6, won: 6, drawn: 0, lost: 0, goals_for: 12, goals_against: 2, points: 18 },
-        { team_id: "team_2", played: 6, won: 3, drawn: 0, lost: 3, goals_for: 8, goals_against: 8, points: 9 },
-        { team_id: "team_3", played: 6, won: 2, drawn: 0, lost: 4, goals_for: 6, goals_against: 10, points: 6 },
-        { team_id: "team_4", played: 6, won: 1, drawn: 0, lost: 5, goals_for: 4, goals_against: 10, points: 3 },
+        { team_id: "team_1", played: 6, won: 6, lost: 0, maps_won: 12, maps_lost: 2, points: 18 },
+        { team_id: "team_2", played: 6, won: 3, lost: 3, maps_won: 8, maps_lost: 8, points: 9 },
+        { team_id: "team_3", played: 6, won: 2, lost: 4, maps_won: 6, maps_lost: 10, points: 6 },
+        { team_id: "team_4", played: 6, won: 1, lost: 5, maps_won: 4, maps_lost: 10, points: 3 },
       ],
     };
 
@@ -330,7 +329,7 @@ describe("season helpers", () => {
             home_team_id: homeTeamId,
             away_team_id: awayTeamId,
             status: "Completed",
-            competition: "League",
+            match_type: "League",
           }),
         );
         fixtureCounter += 1;
@@ -340,7 +339,7 @@ describe("season helpers", () => {
     fixtures.push(
       makeFixture({
         id: "playoff-1",
-        competition: "Playoffs",
+        match_type: "Playoffs",
         status: "Completed",
         home_team_id: "team_1",
         away_team_id: "team_4",
@@ -353,10 +352,10 @@ describe("season helpers", () => {
       season: 1,
       fixtures,
       standings: [
-        { team_id: "team_1", played: 6, won: 6, drawn: 0, lost: 0, goals_for: 12, goals_against: 2, points: 18 },
-        { team_id: "team_2", played: 6, won: 3, drawn: 0, lost: 3, goals_for: 8, goals_against: 8, points: 9 },
-        { team_id: "team_3", played: 6, won: 2, drawn: 0, lost: 4, goals_for: 6, goals_against: 10, points: 6 },
-        { team_id: "team_4", played: 6, won: 1, drawn: 0, lost: 5, goals_for: 4, goals_against: 10, points: 3 },
+        { team_id: "team_1", played: 6, won: 6, lost: 0, maps_won: 12, maps_lost: 2, points: 18 },
+        { team_id: "team_2", played: 6, won: 3, lost: 3, maps_won: 8, maps_lost: 8, points: 9 },
+        { team_id: "team_3", played: 6, won: 2, lost: 4, maps_won: 6, maps_lost: 10, points: 6 },
+        { team_id: "team_4", played: 6, won: 1, lost: 5, maps_won: 4, maps_lost: 10, points: 3 },
       ],
     };
 
@@ -592,7 +591,7 @@ describe("isSeasonComplete with unplayed season", () => {
           home_team_id: home,
           away_team_id: away,
           status: "Scheduled",
-          competition: "League",
+          match_type: "League",
         }));
       }
     }
@@ -602,8 +601,8 @@ describe("isSeasonComplete with unplayed season", () => {
       season: 1,
       fixtures,
       standings: teamIds.map(id => ({
-        team_id: id, played: 0, won: 0, drawn: 0, lost: 0,
-        goals_for: 0, goals_against: 0, points: 0,
+        team_id: id, played: 0, won: 0, lost: 0,
+        maps_won: 0, maps_lost: 0, points: 0,
       })),
     };
   }

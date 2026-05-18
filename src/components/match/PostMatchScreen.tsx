@@ -81,8 +81,8 @@ export default function PostMatchScreen({
 
   const resultType = userScore > oppScore ? "win" : "loss";
   const isLeagueFixture =
-    currentFixture?.competition !== "Friendly" &&
-    currentFixture?.competition !== "PreseasonTournament";
+    currentFixture?.match_type !== "Friendly" &&
+    currentFixture?.match_type !== "PreseasonTournament";
   const summaryTitle = isLeagueFixture
     ? t("match.roundSummary")
     : t("match.otherMatches");
@@ -143,13 +143,10 @@ export default function PostMatchScreen({
       return null;
     }
 
-    const totalYellowCards =
-      report.home_stats.yellow_cards + report.away_stats.yellow_cards;
-
     return [
       `${report.home_stats.possession_pct}-${report.away_stats.possession_pct} ${t("match.possession")}`,
-      `${report.home_stats.shots + report.away_stats.shots} ${t("match.shots")}`,
-      `${totalYellowCards} ${t("match.yellowCards")}`,
+      `${report.home_stats.kills + report.away_stats.kills} ${t("match.kills")}`,
+      `${report.home_stats.deaths + report.away_stats.deaths} ${t("match.deaths")}`,
     ].join(" • ");
   };
   const formatOtherMatchEvent = (event: CompactMatchEventData) => {
@@ -178,7 +175,7 @@ export default function PostMatchScreen({
     ? (roundSummary?.completed_results || [])
         .filter((result) => result.fixture_id !== currentFixture?.id)
         .map((result) => {
-          const fixture = gameState.league?.fixtures.find(
+          const fixture = gameState.leagues?.[0]?.fixtures.find(
             (candidate) => candidate.id === result.fixture_id,
           );
 
@@ -201,14 +198,14 @@ export default function PostMatchScreen({
             awayTeamName: string;
           } => entry !== null,
         )
-    : (gameState.league?.fixtures || [])
+    : (gameState.leagues?.[0]?.fixtures || [])
         .filter(
           (fixture) =>
             fixture.id !== currentFixture?.id &&
             fixture.status === "Completed" &&
             fixture.result &&
             fixture.date === currentFixture?.date &&
-            fixture.competition === currentFixture?.competition,
+            fixture.match_type === currentFixture?.match_type,
         )
         .map((fixture) => ({
           fixture,
@@ -848,29 +845,29 @@ export default function PostMatchScreen({
                     }
                   />
                   <QuickStat
-                    label={t("match.shots")}
-                    home={selectedOtherFixtureReport.home_stats.shots}
-                    away={selectedOtherFixtureReport.away_stats.shots}
+                    label={t("match.kills")}
+                    home={selectedOtherFixtureReport.home_stats.kills}
+                    away={selectedOtherFixtureReport.away_stats.kills}
                   />
                   <QuickStat
-                    label={t("match.shotsOnTarget")}
-                    home={selectedOtherFixtureReport.home_stats.shots_on_target}
-                    away={selectedOtherFixtureReport.away_stats.shots_on_target}
+                    label={t("match.deaths")}
+                    home={selectedOtherFixtureReport.home_stats.deaths}
+                    away={selectedOtherFixtureReport.away_stats.deaths}
                   />
                   <QuickStat
-                    label={t("match.fouls")}
-                    home={selectedOtherFixtureReport.home_stats.fouls}
-                    away={selectedOtherFixtureReport.away_stats.fouls}
+                    label={t("match.goldEarned")}
+                    home={selectedOtherFixtureReport.home_stats.gold_earned}
+                    away={selectedOtherFixtureReport.away_stats.gold_earned}
                   />
                   <QuickStat
-                    label={t("match.corners")}
-                    home={selectedOtherFixtureReport.home_stats.corners}
-                    away={selectedOtherFixtureReport.away_stats.corners}
+                    label={t("match.damageDealt")}
+                    home={selectedOtherFixtureReport.home_stats.damage_dealt}
+                    away={selectedOtherFixtureReport.away_stats.damage_dealt}
                   />
                   <QuickStat
-                    label={t("match.yellowCards")}
-                    home={selectedOtherFixtureReport.home_stats.yellow_cards}
-                    away={selectedOtherFixtureReport.away_stats.yellow_cards}
+                    label={t("match.objectives")}
+                    home={selectedOtherFixtureReport.home_stats.objectives}
+                    away={selectedOtherFixtureReport.away_stats.objectives}
                   />
                 </div>
 

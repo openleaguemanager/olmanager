@@ -166,7 +166,7 @@ pub fn match_report_article(
 
     let source_keys = [
         "be.source.sportsGazette",
-        "be.source.footballHerald",
+        "be.source.lolEsports",
         "be.source.matchDayPress",
         "be.source.leagueChronicle",
     ];
@@ -239,7 +239,7 @@ mod tests {
     fn assert_valid_source_pair(source: &str, source_key: &str) {
         let valid = [
             ("Dot Esports", "be.source.sportsGazette"),
-            ("LoL Esports", "be.source.footballHerald"),
+            ("LoL Esports", "be.source.lolEsports"),
             ("Dexerto Esports", "be.source.matchDayPress"),
             ("Sheep Esports", "be.source.leagueChronicle"),
         ];

@@ -156,43 +156,27 @@ mod tests {
     use crate::game::Game;
     use crate::live_match_manager::{self, MatchMode};
     use chrono::{TimeZone, Utc};
-    use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
+    use domain::league::{Fixture, MatchType, FixtureStatus, League, StandingEntry};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes};
     use domain::team::Team;
 
     fn default_attrs(pos: Position) -> PlayerAttributes {
         let group = pos.to_group_position();
         let is_gk = matches!(group, Position::Goalkeeper);
         let is_def = matches!(group, Position::Defender);
-        let is_fwd = matches!(group, Position::Forward);
+        let is_fwd = matches!(group, LolRole::Mid);
 
         PlayerAttributes {
-            pace: 65,
-            mental_resilience: 65,
-            strength: 65,
-            champion_pool: 65,
-            passing: 65,
-            laning: if is_gk { 30 } else { 65 },
-            tackling: if is_gk || is_fwd { 35 } else { 65 },
             mechanics: if is_gk { 30 } else { 65 },
-            defending: if is_gk {
-                30
-            } else if is_def {
-                75
-            } else {
-                55
-            },
-            positioning: 65,
+            laning: if is_gk { 30 } else { 65 },
+            teamfighting: 65,
             macro_play: 65,
             consistency: 65,
-            discipline: 65,
-            aggression: 50,
-            teamfighting: 65,
             shotcalling: 50,
-            handling: if is_gk { 75 } else { 20 },
-            reflexes: if is_gk { 75 } else { 30 },
-            aerial: 60,
+            champion_pool: 65,
+            discipline: 65,
+            mental_resilience: 65,
         }
     }
 
@@ -259,7 +243,7 @@ mod tests {
                 &format!("{}_fwd{}", team_id, idx),
                 &format!("Fwd{}", idx),
                 team_id,
-                Position::Forward,
+                LolRole::Mid,
             ));
         }
 
@@ -289,7 +273,7 @@ mod tests {
             date: "2025-06-15".to_string(),
             home_team_id: "team1".to_string(),
             away_team_id: "team2".to_string(),
-            competition: FixtureCompetition::League,
+            match_type: MatchType::League,
             best_of: 1,
             status: FixtureStatus::Scheduled,
             result: None,
@@ -299,6 +283,7 @@ mod tests {
             id: "league1".to_string(),
             name: "Test League".to_string(),
             season: 1,
+            competition_id: None,
             fixtures: vec![fixture],
             standings: vec![
                 StandingEntry::new("team1".to_string()),
@@ -307,7 +292,7 @@ mod tests {
         };
 
         let mut game = Game::new(clock, manager, vec![team1, team2], players, vec![], vec![]);
-        game.league = Some(league);
+        game.leagues = vec![league];
         game
     }
 

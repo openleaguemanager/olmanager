@@ -17,7 +17,7 @@ import { Badge, ThemeToggle } from "../ui";
 import { translatePositionAbbreviation } from "../squad/SquadTab.helpers";
 import { getPlayerBadgeVariant } from "./dashboardHelpers";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveExampleTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teamLogos";
 
 export interface DashboardMatchModeMeta {
   buttonColorClass: string;
@@ -208,7 +208,7 @@ function renderSearchResults(props: {
               className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-gray-50 dark:hover:bg-navy-600"
             >
               {(() => {
-                const teamLogo = resolveExampleTeamLogo(team.name);
+                const teamLogo = resolveTeamLogo(team.name);
                 if (teamLogo) {
                   return <img src={teamLogo} alt={team.name} className="w-6 h-6 rounded object-contain" />;
                 }

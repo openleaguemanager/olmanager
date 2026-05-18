@@ -15,7 +15,7 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, params?: Record<string, string | number>) => {
       if (key === "schedule.noLeague") return "No league";
-      if (key === "schedule.fixtures") return "Fixtures";
+      if (key === "schedule.matches") return "Fixtures";
       if (key === "schedule.standings") return "Standings";
       if (key === "common.team") return "Team";
       if (key === "common.played") return "P";
@@ -56,8 +56,7 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     transfer_budget: 250000,
     season_income: 0,
     season_expenses: 0,
-    formation: "4-4-2",
-    play_style: "Balanced",
+    draft_strategy: "Balanced",
     training_focus: "General",
     training_intensity: "Balanced",
     training_schedule: "Balanced",
@@ -77,7 +76,7 @@ function createFixture(overrides: Partial<FixtureData> = {}): FixtureData {
     date: "2026-08-01",
     home_team_id: "team-1",
     away_team_id: "team-2",
-    competition: "League",
+    match_type: "League",
     status: "Completed",
     result: {
       home_goals: 2,
@@ -108,7 +107,6 @@ function createGameState(withLeague: boolean): GameStateData {
       career_stats: {
         matches_managed: 0,
         wins: 0,
-        draws: 0,
         losses: 0,
         trophies: 0,
         best_finish: null,
@@ -134,20 +132,18 @@ function createGameState(withLeague: boolean): GameStateData {
               team_id: "team-1",
               played: 1,
               won: 1,
-              drawn: 0,
-              lost: 0,
-              goals_for: 2,
-              goals_against: 1,
+          lost: 0,
+          maps_won: 2,
+          maps_lost: 1,
               points: 3,
             },
             {
               team_id: "team-2",
               played: 1,
               won: 0,
-              drawn: 0,
-              lost: 1,
-              goals_for: 1,
-              goals_against: 2,
+          lost: 1,
+          maps_won: 1,
+          maps_lost: 2,
               points: 0,
             },
           ],
@@ -182,7 +178,7 @@ describe("ScheduleTab", () => {
 
   it("renders playoff series score from home_wins and away_wins", () => {
     const playoffFixture = createFixture({
-      competition: "Playoffs",
+      match_type: "Playoffs",
       matchday: 12,
       result: {
         home_wins: 2,
@@ -195,7 +191,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffFixture],
           },
         }}
@@ -209,7 +205,7 @@ describe("ScheduleTab", () => {
   it("uses stored fixture series wins when available", () => {
     const playoffFixture = createFixture({
       id: "fixture-playoff-1",
-      competition: "Playoffs",
+      match_type: "Playoffs",
       matchday: 12,
       result: {
         home_goals: 0,
@@ -236,7 +232,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffFixture],
           },
         }}
@@ -250,14 +246,14 @@ describe("ScheduleTab", () => {
   it("applies Bo3 to first playoff round and Bo5 to second", () => {
     const playoffRoundOne = createFixture({
       id: "playoff-r1",
-      competition: "Playoffs",
+      match_type: "Playoffs",
       matchday: 10,
       status: "Scheduled",
       result: undefined,
     });
     const playoffRoundTwo = createFixture({
       id: "playoff-r2",
-      competition: "Playoffs",
+      match_type: "Playoffs",
       matchday: 11,
       date: "2026-08-08",
       status: "Scheduled",
@@ -269,7 +265,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffRoundOne, playoffRoundTwo],
           },
         }}
@@ -284,7 +280,7 @@ describe("ScheduleTab", () => {
   it("shows Bo3 and Bo5 on the first two preseason friendlies", () => {
     const friendlyOne = createFixture({
       id: "friendly-1",
-      competition: "Friendly",
+      match_type: "Friendly",
       matchday: 0,
       date: "2026-01-04",
       status: "Scheduled",
@@ -292,7 +288,7 @@ describe("ScheduleTab", () => {
     });
     const friendlyTwo = createFixture({
       id: "friendly-2",
-      competition: "Friendly",
+      match_type: "Friendly",
       matchday: 0,
       date: "2026-01-11",
       status: "Scheduled",
@@ -304,7 +300,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [friendlyOne, friendlyTwo],
           },
         }}
@@ -319,7 +315,7 @@ describe("ScheduleTab", () => {
   it("passes stored series games to calendar draft result view", () => {
     const playoffFixture = createFixture({
       id: "fixture-playoff-1",
-      competition: "Playoffs",
+      match_type: "Playoffs",
       matchday: 12,
     });
 
@@ -344,7 +340,7 @@ describe("ScheduleTab", () => {
         gameState={{
           ...createGameState(true),
           league: {
-            ...createGameState(true).league!,
+            ...createGameState(true).leagues[0]s[0]!,
             fixtures: [playoffFixture],
           },
         }}

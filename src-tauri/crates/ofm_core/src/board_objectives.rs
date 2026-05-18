@@ -203,7 +203,7 @@ pub fn generate_objectives(game: &mut Game) {
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
     let existing_ids: std::collections::HashSet<String> =
         game.messages.iter().map(|m| m.id.clone()).collect();
-    let season = game.league.as_ref().map(|l| l.season).unwrap_or(1);
+    let season = game.leagues.first().map(|l| l.season).unwrap_or(1);
     let msg_id = board_message_id(season);
     if !existing_ids.contains(&msg_id) {
         let msg = build_objectives_message(&targets, season, today);
@@ -218,7 +218,7 @@ pub fn update_objective_progress(game: &mut Game) {
         None => return,
     };
 
-    let league = match &game.league {
+    let league = match game.leagues.first() {
         Some(l) => l,
         None => return,
     };
@@ -300,11 +300,11 @@ mod tests {
     use crate::game::{BoardObjective, Game, ObjectiveType};
     use chrono::{TimeZone, Utc};
     use domain::league::{
-        Fixture, FixtureCompetition, FixtureStatus, League, MatchResult, StandingEntry,
+        Fixture, MatchType, FixtureStatus, League, MatchResult, StandingEntry,
     };
     use domain::manager::Manager;
     use domain::message::{InboxMessage, MessageCategory, MessagePriority};
-    use domain::player::{Player, PlayerAttributes, Position};
+    use domain::player::{Player, PlayerAttributes};
     use domain::team::Team;
 
     fn make_team(id: &str, name: &str, reputation: u32) -> Team {
@@ -344,36 +344,27 @@ mod tests {
         let team_ids: Vec<String> = teams.iter().map(|team| team.id.clone()).collect();
 
         let mut game = Game::new(clock, manager, teams, vec![], vec![], vec![]);
-        game.league = Some(League::new(
+        game.leagues = vec![League::new(
             "league1".to_string(),
             "Test League".to_string(),
             season,
             &team_ids,
-        ));
+            None,
+        )];
         game
     }
 
     fn make_player(id: &str, team_id: &str, overall: u8) -> Player {
         let attrs = PlayerAttributes {
-            pace: overall,
-            mental_resilience: overall,
-            strength: overall,
-            champion_pool: overall,
-            passing: overall,
-            laning: overall,
-            tackling: overall,
             mechanics: overall,
-            defending: overall,
-            positioning: overall,
+            laning: overall,
+            teamfighting: overall,
             macro_play: overall,
             consistency: overall,
-            discipline: overall,
-            aggression: overall,
-            teamfighting: overall,
             shotcalling: overall,
-            handling: overall,
-            reflexes: overall,
-            aerial: overall,
+            champion_pool: overall,
+            discipline: overall,
+            mental_resilience: overall,
         };
         let mut player = Player::new(
             id.to_string(),
@@ -381,7 +372,7 @@ mod tests {
             format!("Full {id}"),
             "2000-01-01".to_string(),
             "ES".to_string(),
-            Position::Forward,
+            LolRole::Mid,
             attrs,
         );
         player.team_id = Some(team_id.to_string());
@@ -415,12 +406,13 @@ mod tests {
             .collect();
         let team_ids: Vec<String> = teams.iter().map(|team| team.id.clone()).collect();
         let mut game = Game::new(clock, manager, teams, vec![], vec![], vec![]);
-        game.league = Some(League::new(
+        game.leagues = vec![League::new(
             "league1".to_string(),
             "Test League".to_string(),
             1,
             &team_ids,
-        ));
+            None,
+        )];
 
         let opponent_strengths = [88, 82, 76, 70, 64, 58, 52, 46, 40];
         for idx in 1..=10 {
@@ -628,36 +620,33 @@ mod tests {
             make_objective("obj_goals", ObjectiveType::GoalsScored, 6, false),
         ];
 
-        let mut league = game.league.clone().unwrap();
+        let mut league = game.leagues.first().cloned().unwrap();
         league.standings = vec![
             StandingEntry {
                 team_id: "team1".to_string(),
                 played: 4,
                 won: 4,
-                drawn: 0,
                 lost: 0,
-                kills_for: 5,
-                kills_against: 1,
+                maps_won: 5,
+                maps_lost: 1,
                 points: 12,
             },
             StandingEntry {
                 team_id: "team2".to_string(),
                 played: 5,
                 won: 5,
-                drawn: 0,
                 lost: 0,
-                kills_for: 9,
-                kills_against: 2,
+                maps_won: 9,
+                maps_lost: 2,
                 points: 15,
             },
             StandingEntry {
                 team_id: "team3".to_string(),
                 played: 4,
                 won: 1,
-                drawn: 0,
                 lost: 3,
-                kills_for: 2,
-                kills_against: 7,
+                maps_won: 2,
+                maps_lost: 7,
                 points: 3,
             },
         ];
@@ -668,7 +657,7 @@ mod tests {
                 date: "2025-08-01".to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Completed,
                 result: Some(make_result(2, 1)),
@@ -679,13 +668,13 @@ mod tests {
                 date: "2025-08-08".to_string(),
                 home_team_id: "team3".to_string(),
                 away_team_id: "team1".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Completed,
                 result: Some(make_result(0, 3)),
             },
         ];
-        game.league = Some(league);
+        game.leagues = vec![league];
 
         update_objective_progress(&mut game);
 
@@ -704,7 +693,7 @@ mod tests {
             false,
         )];
 
-        let mut league = game.league.clone().unwrap();
+        let mut league = game.leagues.first().cloned().unwrap();
         let fixture = |id: &str,
                        matchday: u32,
                        home_team_id: &str,
@@ -717,7 +706,7 @@ mod tests {
                 date: format!("2025-08-{:02}", matchday),
                 home_team_id: home_team_id.to_string(),
                 away_team_id: away_team_id.to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status,
                 result: score.map(|(home_wins, away_wins)| make_result(home_wins, away_wins)),
@@ -728,40 +717,36 @@ mod tests {
                 team_id: "team1".to_string(),
                 played: 6,
                 won: 5,
-                drawn: 1,
                 lost: 0,
-                kills_for: 12,
-                kills_against: 3,
+                maps_won: 12,
+                maps_lost: 3,
                 points: 16,
             },
             StandingEntry {
                 team_id: "team2".to_string(),
                 played: 6,
                 won: 3,
-                drawn: 1,
                 lost: 2,
-                kills_for: 7,
-                kills_against: 6,
+                maps_won: 7,
+                maps_lost: 6,
                 points: 10,
             },
             StandingEntry {
                 team_id: "team3".to_string(),
                 played: 6,
                 won: 1,
-                drawn: 2,
                 lost: 3,
-                kills_for: 4,
-                kills_against: 8,
+                maps_won: 4,
+                maps_lost: 8,
                 points: 5,
             },
             StandingEntry {
                 team_id: "team4".to_string(),
                 played: 6,
                 won: 0,
-                drawn: 2,
                 lost: 4,
-                kills_for: 2,
-                kills_against: 8,
+                maps_won: 2,
+                maps_lost: 8,
                 points: 2,
             },
         ];
@@ -856,7 +841,7 @@ mod tests {
             ),
             fixture("f12", 12, "team3", "team2", FixtureStatus::Scheduled, None),
         ];
-        game.league = Some(league.clone());
+        game.leagues = vec![league.clone()];
 
         update_objective_progress(&mut game);
 
@@ -864,7 +849,7 @@ mod tests {
 
         league.fixtures[11].status = FixtureStatus::Completed;
         league.fixtures[11].result = Some(make_result(0, 1));
-        game.league = Some(league);
+        game.leagues = vec![league];
 
         update_objective_progress(&mut game);
 

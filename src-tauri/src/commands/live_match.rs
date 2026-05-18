@@ -167,8 +167,8 @@ pub fn record_fixture_champion_picks(
         .ok_or("No active game session".to_string())?;
 
     let league = game
-        .league
-        .as_mut()
+        .leagues
+        .first_mut()
         .ok_or("No active league in game state".to_string())?;
     let fixture = league
         .fixtures
@@ -436,40 +436,31 @@ mod tests {
     use chrono::{TimeZone, Utc};
     use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, Position};
+    use domain::player::{Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, LolRole};
+>>>>>>> origin/pr/166-171
     use domain::team::Team;
     use ofm_core::clock::GameClock;
     use ofm_core::game::Game;
     use ofm_core::live_match_manager::{self, MatchMode};
     use ofm_core::state::StateManager;
 
-    fn default_attrs(position: Position) -> PlayerAttributes {
-        let is_goalkeeper = matches!(position, Position::Goalkeeper);
+    fn default_attrs(position: LolRole) -> PlayerAttributes {
+        let is_goalkeeper = matches!(position, LolRole::Support);
 
         PlayerAttributes {
-            pace: 65,
-            mental_resilience: 65,
-            strength: 65,
-            champion_pool: 65,
-            passing: 65,
-            laning: if is_goalkeeper { 30 } else { 65 },
-            tackling: if is_goalkeeper { 30 } else { 65 },
             mechanics: if is_goalkeeper { 30 } else { 65 },
-            defending: if is_goalkeeper { 30 } else { 65 },
-            positioning: 65,
+            laning: if is_goalkeeper { 30 } else { 65 },
+            teamfighting: 65,
             macro_play: 65,
             consistency: 65,
-            discipline: 65,
-            aggression: 50,
-            teamfighting: 65,
             shotcalling: 50,
-            handling: if is_goalkeeper { 75 } else { 20 },
-            reflexes: if is_goalkeeper { 75 } else { 20 },
-            aerial: 60,
+            champion_pool: 65,
+            discipline: 65,
+            mental_resilience: 65,
         }
     }
 
-    fn make_player(id: &str, name: &str, team_id: &str, position: Position) -> Player {
+    fn make_player(id: &str, name: &str, team_id: &str, position: LolRole) -> Player {
         let mut player = Player::new(
             id.to_string(),
             name.to_string(),
@@ -503,14 +494,14 @@ mod tests {
             &format!("{}_gk", prefix),
             &format!("{} GK", prefix),
             team_id,
-            Position::Goalkeeper,
+            LolRole::Support,
         ));
         for index in 0..4 {
             players.push(make_player(
                 &format!("{}_def{}", prefix, index),
                 &format!("{} Def{}", prefix, index),
                 team_id,
-                Position::Defender,
+                LolRole::Top,
             ));
         }
         for index in 0..4 {
@@ -518,7 +509,7 @@ mod tests {
                 &format!("{}_mid{}", prefix, index),
                 &format!("{} Mid{}", prefix, index),
                 team_id,
-                Position::Midfielder,
+                LolRole::Jungle,
             ));
         }
         for index in 0..2 {
@@ -526,7 +517,7 @@ mod tests {
                 &format!("{}_fwd{}", prefix, index),
                 &format!("{} Fwd{}", prefix, index),
                 team_id,
-                Position::Forward,
+                LolRole::Adc,
             ));
         }
         players
@@ -558,6 +549,7 @@ mod tests {
             id: "league1".to_string(),
             name: "Test League".to_string(),
             season: 1,
+            competition_id: None,
             fixtures: vec![
                 Fixture {
                     id: "fix1".to_string(),
@@ -591,7 +583,7 @@ mod tests {
         };
 
         let mut game = Game::new(clock, manager, teams, players, vec![], vec![]);
-        game.league = Some(league);
+        game.leagues = vec![league];
         game
     }
 
@@ -675,7 +667,7 @@ mod tests {
         state.set_live_match(session);
 
         let response =
-            finish_live_match_internal(&state, None).expect("finish live match response");
+            finish_live_match_internal(&state, None, None).expect("finish live match response");
 
         let round_summary = response.round_summary.expect("round summary response");
         assert!(round_summary.is_complete);
@@ -702,7 +694,6 @@ mod tests {
             .unwrap();
         composed.attributes.discipline = 90;
         composed.attributes.shotcalling = 90;
-        composed.attributes.aggression = 20;
         composed.morale_core.manager_trust = 80;
 
         let volatile = game
@@ -712,7 +703,6 @@ mod tests {
             .unwrap();
         volatile.attributes.discipline = 20;
         volatile.attributes.shotcalling = 20;
-        volatile.attributes.aggression = 90;
         volatile.morale_core.manager_trust = 25;
         volatile.morale_core.unresolved_issue = Some(PlayerIssue {
             category: PlayerIssueCategory::Morale,

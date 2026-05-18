@@ -285,15 +285,13 @@ function makeSnapshot(
     home_team: {
       id: "home1",
       name: "Home FC",
-      formation: "4-4-2",
-      play_style: "Balanced",
+      draft_strategy: "Balanced",
       players: [makeEnginePlayer({ id: "home-p1", name: "Home Keeper" })],
     },
     away_team: {
       id: "away1",
       name: "Away FC",
-      formation: "4-4-2",
-      play_style: "Balanced",
+      draft_strategy: "Balanced",
       players: [makeEnginePlayer({ id: "away-p1", name: "Away Keeper" })],
     },
     home_bench: [],
@@ -340,7 +338,6 @@ function makeGameState(): Record<string, unknown> {
       career_stats: {
         matches_managed: 0,
         wins: 0,
-        draws: 0,
         losses: 0,
         trophies: 0,
         best_finish: null,
@@ -363,8 +360,7 @@ function makeGameState(): Record<string, unknown> {
         transfer_budget: 500000,
         season_income: 0,
         season_expenses: 0,
-        formation: "4-4-2",
-        play_style: "Balanced",
+        draft_strategy: "Balanced",
         training_focus: "General",
         training_intensity: "Balanced",
         training_schedule: "Balanced",
@@ -389,8 +385,7 @@ function makeGameState(): Record<string, unknown> {
         transfer_budget: 500000,
         season_income: 0,
         season_expenses: 0,
-        formation: "4-4-2",
-        play_style: "Balanced",
+        draft_strategy: "Balanced",
         training_focus: "General",
         training_intensity: "Balanced",
         training_schedule: "Balanced",
@@ -415,7 +410,7 @@ function makeGameStateWithSeriesFixture(
   fixture: Partial<Record<string, unknown>> = {},
 ): Record<string, unknown> {
   const gameState = makeGameState();
-  gameState.league = {
+  gameState.leagues[0] = {
     id: "league-1",
     name: "Test League",
     season: 1,
@@ -426,7 +421,7 @@ function makeGameStateWithSeriesFixture(
         date: "2026-08-01",
         home_team_id: "home1",
         away_team_id: "away1",
-        competition: "Playoffs",
+        match_type: "Playoffs",
         best_of: 3,
         status: "InProgress",
         result: {
@@ -516,8 +511,7 @@ describe("MatchSimulation", function (): void {
         home_team: {
           id: "home1",
           name: "Boot Snapshot FC",
-          formation: "4-4-2",
-          play_style: "Balanced",
+          draft_strategy: "Balanced",
           players: [makeEnginePlayer({ id: "boot-p1", name: "Boot Keeper" })],
         },
       }),
@@ -529,8 +523,7 @@ describe("MatchSimulation", function (): void {
         home_team: {
           id: "home1",
           name: "Restored FC",
-          formation: "4-4-2",
-          play_style: "Balanced",
+          draft_strategy: "Balanced",
           players: [
             makeEnginePlayer({ id: "restore-p1", name: "Restore Keeper" }),
           ],
@@ -722,7 +715,7 @@ describe("MatchSimulation", function (): void {
     };
 
     const gameStateWithPlayoff = makeGameState();
-    gameStateWithPlayoff.league = {
+    gameStateWithPlayoff.leagues[0] = {
       id: "league-1",
       name: "Test League",
       season: 1,
@@ -733,7 +726,7 @@ describe("MatchSimulation", function (): void {
           date: "2026-08-01",
           home_team_id: "home1",
           away_team_id: "away1",
-          competition: "Playoffs",
+          match_type: "Playoffs",
           status: "InProgress",
           result: {
             home_wins: 1,
@@ -811,7 +804,7 @@ describe("MatchSimulation", function (): void {
       best_of: 3,
     });
     const finishedGameStateWithBo3 = JSON.parse(JSON.stringify(gameStateWithBo3)) as Record<string, unknown>;
-    const finishedLeague = finishedGameStateWithBo3.league as { fixtures: Array<Record<string, unknown>> };
+    const finishedLeague = finishedGameStateWithBo3.leagues[0] as { fixtures: Array<Record<string, unknown>> };
     finishedLeague.fixtures[0] = {
       ...finishedLeague.fixtures[0],
       status: "Finished",
@@ -929,7 +922,7 @@ describe("MatchSimulation", function (): void {
     };
 
     const gameStateWithPlayoff = makeGameState();
-    gameStateWithPlayoff.league = {
+    gameStateWithPlayoff.leagues[0] = {
       id: "league-1",
       name: "Test League",
       season: 1,
@@ -940,7 +933,7 @@ describe("MatchSimulation", function (): void {
           date: "2026-08-01",
           home_team_id: "home1",
           away_team_id: "away1",
-          competition: "Playoffs",
+          match_type: "Playoffs",
           best_of: 3,
           status: "InProgress",
           result: {
@@ -988,7 +981,7 @@ describe("MatchSimulation", function (): void {
     };
 
     const gameStateWithPlayoff = makeGameState();
-    gameStateWithPlayoff.league = {
+    gameStateWithPlayoff.leagues[0] = {
       id: "league-1",
       name: "Test League",
       season: 1,
@@ -999,7 +992,7 @@ describe("MatchSimulation", function (): void {
           date: "2026-08-01",
           home_team_id: "home1",
           away_team_id: "away1",
-          competition: "Playoffs",
+          match_type: "Playoffs",
           status: "InProgress",
           result: {
             home_wins: 0,
@@ -1154,7 +1147,7 @@ describe("MatchSimulation", function (): void {
     };
 
     const gameStateWithBo1 = makeGameState();
-    gameStateWithBo1.league = {
+    gameStateWithBo1.leagues[0] = {
       id: "league-1",
       name: "Test League",
       season: 1,
@@ -1165,7 +1158,7 @@ describe("MatchSimulation", function (): void {
           date: "2026-08-01",
           home_team_id: "home1",
           away_team_id: "away1",
-          competition: "Regular Season",
+          match_type: "Regular Season",
           best_of: 1,
           status: "Scheduled",
           result: {

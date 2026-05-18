@@ -13,7 +13,7 @@ vi.mock("react-i18next", () => ({
     t: (key: string, params?: Record<string, string | number>) => {
       if (key === "tournaments.noActive") return "No active tournament";
       if (key === "schedule.standings") return "Standings";
-      if (key === "schedule.fixtures") return "Fixtures";
+      if (key === "schedule.matches") return "Matches";
       if (key === "tournaments.overview") return "Overview";
       if (key === "tournaments.leagueTable") return "League Table";
       if (key === "tournaments.nTeams") return `${params?.count} teams`;
@@ -57,8 +57,7 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     transfer_budget: 250000,
     season_income: 0,
     season_expenses: 0,
-    formation: "4-4-2",
-    play_style: "Balanced",
+    draft_strategy: "Balanced",
     training_focus: "General",
     training_intensity: "Balanced",
     training_schedule: "Balanced",
@@ -136,7 +135,7 @@ function createFixture(overrides: Partial<FixtureData> = {}): FixtureData {
     date: "2026-08-01",
     home_team_id: "team-1",
     away_team_id: "team-2",
-    competition: "League",
+    match_type: "League",
     status: "Completed",
     result: {
       home_goals: 1,
@@ -167,7 +166,6 @@ function createGameState(withLeague = true): GameStateData {
       career_stats: {
         matches_managed: 0,
         wins: 0,
-        draws: 0,
         losses: 0,
         trophies: 0,
         best_finish: null,
@@ -196,20 +194,18 @@ function createGameState(withLeague = true): GameStateData {
               team_id: "team-1",
               played: 1,
               won: 1,
-              drawn: 0,
-              lost: 0,
-              goals_for: 1,
-              goals_against: 0,
+          lost: 0,
+          maps_won: 1,
+          maps_lost: 0,
               points: 3,
             },
             {
               team_id: "team-2",
               played: 1,
               won: 0,
-              drawn: 0,
-              lost: 1,
-              goals_for: 0,
-              goals_against: 1,
+          lost: 1,
+          maps_won: 0,
+          maps_lost: 1,
               points: 0,
             },
           ],
@@ -240,10 +236,10 @@ describe("TournamentsTab", () => {
 
   it("shows playoff bracket and series score when playoffs have started", () => {
     const gameState = createGameState(true);
-    gameState.league!.fixtures = [
+    gameState.leagues[0]!.fixtures = [
       createFixture({
         id: "playoff-1",
-        competition: "Playoffs",
+        match_type: "Playoffs",
         matchday: 12,
         best_of: 3,
         result: {
@@ -261,7 +257,7 @@ describe("TournamentsTab", () => {
 
     expect(screen.getByText("schedule.playoffs · Bracket")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Fixtures/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Matches/i }));
     expect(screen.getAllByText("2 - 1").length).toBeGreaterThan(0);
   });
 
@@ -291,7 +287,7 @@ describe("TournamentsTab", () => {
       fixtures: [
         createFixture({
           id: "academy-po-1",
-          competition: "Playoffs",
+          match_type: "Playoffs",
           home_team_id: "academy-1",
           away_team_id: "academy-2",
           matchday: 10,
@@ -311,20 +307,18 @@ describe("TournamentsTab", () => {
           team_id: "academy-1",
           played: 3,
           won: 2,
-          drawn: 0,
           lost: 1,
-          goals_for: 7,
-          goals_against: 5,
+          maps_won: 7,
+          maps_lost: 5,
           points: 6,
         },
         {
           team_id: "academy-2",
           played: 3,
           won: 1,
-          drawn: 0,
           lost: 2,
-          goals_for: 5,
-          goals_against: 7,
+          maps_won: 5,
+          maps_lost: 7,
           points: 3,
         },
       ],

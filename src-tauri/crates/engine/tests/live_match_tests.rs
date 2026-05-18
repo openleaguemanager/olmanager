@@ -1,7 +1,7 @@
 use engine::ai::{AiProfile, ai_decide};
 use engine::{
-    EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase, MinuteResult,
-    PlayStyle, PlayerData, Side, TeamData,
+    DraftStrategy, EventType, LiveMatchState, LolRole, MatchCommand, MatchConfig, MatchPhase,
+    MinuteResult, PlayerData, Side, TeamData,
 };
 use rand::SeedableRng;
 use rand::rngs::StdRng;
@@ -10,8 +10,8 @@ use rand::rngs::StdRng;
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Map football Position to LoL role for test data
-fn football_position_to_lol_role(position: &str) -> LolRole {
+/// Map legacy Position to LoL role for test data
+fn position_to_lol_role(position: &str) -> LolRole {
     match position {
         "Goalkeeper" | "DefensiveMidfielder" => LolRole::Support,
         "Defender" | "RightBack" | "CenterBack" | "LeftBack" | "RightWingBack" | "LeftWingBack" => {
@@ -32,8 +32,7 @@ fn make_player(id: &str, name: &str, pos: &str, skill: u8) -> PlayerData {
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
-        profile_image_url: None,
-        role: football_position_to_lol_role(pos),
+        role: position_to_lol_role(pos),
         condition: 90,
         fitness: 75,
         // LoL-native attributes
@@ -50,7 +49,7 @@ fn make_player(id: &str, name: &str, pos: &str, skill: u8) -> PlayerData {
     }
 }
 
-fn make_team(id: &str, name: &str, skill: u8, style: PlayStyle) -> TeamData {
+fn make_team(id: &str, name: &str, skill: u8, draft_strategy: DraftStrategy) -> TeamData {
     let players = vec![
         make_player(&format!("{}_gk", id), "GK", "Goalkeeper", skill),
         make_player(&format!("{}_def1", id), "DEF1", "Defender", skill),
@@ -67,8 +66,7 @@ fn make_team(id: &str, name: &str, skill: u8, style: PlayStyle) -> TeamData {
     TeamData {
         id: id.to_string(),
         name: name.to_string(),
-        formation: "4-4-2".to_string(),
-        play_style: style,
+        draft_strategy,
         players,
     }
 }
@@ -84,8 +82,8 @@ fn make_bench(id: &str, skill: u8) -> Vec<PlayerData> {
 }
 
 fn make_live_match(allows_extra_time: bool) -> LiveMatchState {
-    let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let home_bench = make_bench("home", 65);
     let away_bench = make_bench("away", 65);
     LiveMatchState::new(
@@ -407,37 +405,20 @@ fn substitution_recorded_in_tracking() {
 // ===========================================================================
 
 #[test]
-fn change_formation_works() {
-    let mut state = make_live_match(false);
-    let mut rng = seeded_rng(42);
-    state.step_minute(&mut rng);
-
-    state
-        .apply_command(MatchCommand::ChangeFormation {
-            side: Side::Home,
-            formation: "3-5-2".to_string(),
-        })
-        .unwrap();
-
-    let snap = state.snapshot();
-    assert_eq!(snap.home_team.formation, "3-5-2");
-}
-
-#[test]
 fn change_play_style_works() {
     let mut state = make_live_match(false);
     let mut rng = seeded_rng(42);
     state.step_minute(&mut rng);
 
     state
-        .apply_command(MatchCommand::ChangePlayStyle {
+        .apply_command(MatchCommand::ChangeDraftStrategy {
             side: Side::Away,
-            play_style: PlayStyle::Attacking,
+            draft_strategy: DraftStrategy::Aggressive,
         })
         .unwrap();
 
     let snap = state.snapshot();
-    assert_eq!(snap.away_team.play_style, PlayStyle::Attacking);
+    assert_eq!(snap.away_team.draft_strategy, DraftStrategy::Aggressive);
 }
 
 #[test]
@@ -604,8 +585,8 @@ fn strong_team_has_more_kills() {
     let trials = 50;
 
     for seed in 0..trials {
-        let strong = make_team("home", "Strong FC", 85, PlayStyle::Balanced);
-        let weak = make_team("away", "Weak FC", 55, PlayStyle::Balanced);
+        let strong = make_team("home", "Strong FC", 85, DraftStrategy::Balanced);
+        let weak = make_team("away", "Weak FC", 55, DraftStrategy::Balanced);
         let home_bench = make_bench("home", 80);
         let away_bench = make_bench("away", 50);
         let mut state = LiveMatchState::new(
@@ -644,7 +625,7 @@ fn average_kills_reasonable() {
     }
 
     let avg = total_kills as f64 / trials as f64;
-    // LoL simulations may have fewer kills than football goals;
+    // LoL simulations may have varying kill counts;
     // just verify it's not NaN or negative.
     assert!(
         avg >= 0.0,
@@ -859,34 +840,6 @@ fn pre_match_swap_invalid_bench_player_fails() {
 }
 
 // ===========================================================================
-// Tests: Formation changes
-// ===========================================================================
-
-#[test]
-fn formation_invalid_falls_back_to_442() {
-    let mut state = make_live_match(false);
-    let mut rng = seeded_rng(42);
-    state.step_minute(&mut rng);
-
-    state
-        .apply_command(MatchCommand::ChangeFormation {
-            side: Side::Home,
-            formation: "invalid".to_string(),
-        })
-        .unwrap();
-
-    let snap = state.snapshot();
-    // Fallback parse → (4, 4, 2)
-    let defs = snap
-        .home_team
-        .players
-        .iter()
-        .filter(|p| p.role == LolRole::Top)
-        .count();
-    assert_eq!(defs, 4);
-}
-
-// ===========================================================================
 // Tests: Team roles (captain, shotcaller)
 // ===========================================================================
 
@@ -925,17 +878,17 @@ fn set_shotcaller_is_no_op() {
 #[test]
 fn play_style_variations_produce_results() {
     let styles = [
-        PlayStyle::Attacking,
-        PlayStyle::Defensive,
-        PlayStyle::Possession,
-        PlayStyle::Counter,
-        PlayStyle::HighPress,
-        PlayStyle::Balanced,
+        DraftStrategy::Aggressive,
+        DraftStrategy::Passive,
+        DraftStrategy::Scaling,
+        DraftStrategy::CounterPick,
+        DraftStrategy::Aggressive,
+        DraftStrategy::Balanced,
     ];
 
     for &style in &styles {
         let home = make_team("home", "Home FC", 70, style);
-        let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+        let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
         let home_bench = make_bench("home", 65);
         let away_bench = make_bench("away", 65);
         let mut state = LiveMatchState::new(
@@ -967,8 +920,7 @@ fn make_player_with_traits(
     PlayerData {
         id: id.to_string(),
         name: name.to_string(),
-        profile_image_url: None,
-        role: football_position_to_lol_role(pos),
+        role: position_to_lol_role(pos),
         condition: 90,
         fitness: 75,
         // LoL-native attributes
@@ -987,72 +939,90 @@ fn make_player_with_traits(
 
 fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> TeamData {
     let players = vec![
+        make_player_with_traits(&format!("{}_gk1", id), "GK1", "Goalkeeper", skill, vec![]),
+        make_player_with_traits(&format!("{}_def1", id), "DEF1", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_def2", id), "DEF2", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_def3", id), "DEF3", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_def4", id), "DEF4", "Defender", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid1", id), "MID1", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid2", id), "MID2", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid3", id), "MID3", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_mid4", id), "MID4", "Midfielder", skill, vec![]),
+        make_player_with_traits(&format!("{}_fwd1", id), "FWD1", "Forward", skill, vec![]),
         make_player_with_traits(
-            &format!("{}_gk", id),
-            "GK",
+            &format!("{}_gk1", id),
+            "GK1",
             "Goalkeeper",
             skill,
-            vec!["SafeHands", "CatReflexes"],
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_def1", id),
             "DEF1",
             "Defender",
             skill,
-            vec!["BallWinner", "Rock"],
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_def2", id),
             "DEF2",
             "Defender",
             skill,
-            traits.clone(),
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_def3", id),
             "DEF3",
             "Defender",
             skill,
-            traits.clone(),
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_def4", id),
             "DEF4",
             "Defender",
             skill,
-            traits.clone(),
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_mid1", id),
             "MID1",
             "Midfielder",
             skill,
-            vec!["Engine", "Playmaker"],
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_mid2", id),
             "MID2",
             "Midfielder",
             skill,
-            vec!["TeamPlayer", "Visionary"],
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_mid3", id),
             "MID3",
             "Midfielder",
             skill,
-            vec!["Tireless"],
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_mid4", id),
             "MID4",
             "Midfielder",
             skill,
-            traits.clone(),
+            vec![],
         ),
         make_player_with_traits(
             &format!("{}_fwd1", id),
             "FWD1",
+>>>>>>> origin/pr/166-171
+            "Forward",
+            skill,
+            vec![],
+        ),
+        make_player_with_traits(
+            &format!("{}_fwd2", id),
+            "FWD2",
             "Forward",
             skill,
             vec!["Sharpshooter", "CompleteForward"],
@@ -1068,8 +1038,7 @@ fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> 
     TeamData {
         id: id.to_string(),
         name: name.to_string(),
-        formation: "4-4-2".to_string(),
-        play_style: PlayStyle::Balanced,
+        draft_strategy: DraftStrategy::Balanced,
         players,
     }
 }
@@ -1077,7 +1046,7 @@ fn make_team_with_traits(id: &str, name: &str, skill: u8, traits: Vec<&str>) -> 
 #[test]
 fn traits_are_exercised_during_match() {
     let home = make_team_with_traits("home", "Trait FC", 70, vec![]);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let home_bench = make_bench("home", 65);
     let away_bench = make_bench("away", 65);
     let mut state = LiveMatchState::new(
@@ -1266,8 +1235,8 @@ fn custom_config_affects_match() {
     let mut config = MatchConfig::default();
     config.home_advantage = 1.5; // extreme home advantage
 
-    let home = make_team("home", "Home FC", 70, PlayStyle::Balanced);
-    let away = make_team("away", "Away FC", 70, PlayStyle::Balanced);
+    let home = make_team("home", "Home FC", 70, DraftStrategy::Balanced);
+    let away = make_team("away", "Away FC", 70, DraftStrategy::Balanced);
     let mut state = LiveMatchState::new(
         home,
         away,
@@ -1287,8 +1256,8 @@ fn custom_config_affects_match() {
 
 #[test]
 fn very_weak_team_still_finishes() {
-    let home = make_team("home", "Home FC", 99, PlayStyle::Attacking);
-    let away = make_team("away", "Away FC", 10, PlayStyle::Defensive);
+    let home = make_team("home", "Home FC", 99, DraftStrategy::Aggressive);
+    let away = make_team("away", "Away FC", 10, DraftStrategy::Passive);
     let mut state = LiveMatchState::new(
         home,
         away,

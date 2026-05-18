@@ -11,12 +11,14 @@ pub struct League {
     pub season: u32,
     pub fixtures: Vec<Fixture>,
     pub standings: Vec<StandingEntry>,
+    #[serde(default)]
+    pub competition_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
-pub enum FixtureCompetition {
+pub enum MatchType {
     #[default]
     League,
     Friendly,
@@ -24,7 +26,7 @@ pub enum FixtureCompetition {
     Playoffs,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
@@ -34,7 +36,8 @@ pub struct Fixture {
     pub date: String,
     pub home_team_id: String,
     pub away_team_id: String,
-    pub competition: FixtureCompetition,
+    #[serde(alias = "competition")]
+    pub match_type: MatchType,
     #[serde(default = "default_best_of")]
     pub best_of: u8,
     pub status: FixtureStatus,
@@ -64,7 +67,7 @@ pub enum MatchEndReason {
     Unknown,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
@@ -78,7 +81,7 @@ pub struct MatchResult {
     pub report: Option<CompactMatchReport>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
@@ -124,10 +127,11 @@ pub struct StandingEntry {
     pub team_id: String,
     pub played: u32,
     pub won: u32,
-    pub drawn: u32,
     pub lost: u32,
-    pub kills_for: u32,
-    pub kills_against: u32,
+    #[serde(alias = "kills_for", alias = "goals_for")]
+    pub maps_won: u32,
+    #[serde(alias = "kills_against", alias = "goals_against")]
+    pub maps_lost: u32,
     pub points: u32,
 }
 
@@ -137,27 +141,25 @@ impl StandingEntry {
             team_id,
             played: 0,
             won: 0,
-            drawn: 0,
             lost: 0,
-            kills_for: 0,
-            kills_against: 0,
+            maps_won: 0,
+            maps_lost: 0,
             points: 0,
         }
     }
 
-    pub fn goal_difference(&self) -> i32 {
-        self.kills_for as i32 - self.kills_against as i32
+    pub fn kill_difference(&self) -> i32 {
+        self.maps_won as i32 - self.maps_lost as i32
     }
 
     pub fn record_result(&mut self, kills_for: u8, kills_against: u8) {
         self.played += 1;
-        self.kills_for += kills_for as u32;
-        self.kills_against += kills_against as u32;
+        self.maps_won += kills_for as u32;
+        self.maps_lost += kills_against as u32;
         if kills_for > kills_against {
             self.won += 1;
             self.points += 3;
         } else if kills_for == kills_against {
-            self.drawn += 1;
             self.points += 1;
         } else {
             self.lost += 1;
@@ -167,12 +169,12 @@ impl StandingEntry {
 
 impl Fixture {
     pub fn counts_for_league_standings(&self) -> bool {
-        matches!(self.competition, FixtureCompetition::League)
+        matches!(self.match_type, MatchType::League)
     }
 }
 
 impl League {
-    pub fn new(id: String, name: String, season: u32, team_ids: &[String]) -> Self {
+    pub fn new(id: String, name: String, season: u32, team_ids: &[String], competition_id: Option<String>) -> Self {
         let standings = team_ids
             .iter()
             .map(|tid| StandingEntry::new(tid.clone()))
@@ -184,6 +186,7 @@ impl League {
             season,
             fixtures: Vec::new(),
             standings,
+            competition_id,
         }
     }
 
@@ -192,8 +195,8 @@ impl League {
         sorted.sort_by(|a, b| {
             b.points
                 .cmp(&a.points)
-                .then(b.goal_difference().cmp(&a.goal_difference()))
-                .then(b.kills_for.cmp(&a.kills_for))
+                .then(b.kill_difference().cmp(&a.kill_difference()))
+                .then(b.maps_won.cmp(&a.maps_won))
         });
         sorted
     }
@@ -207,10 +210,164 @@ impl Default for Fixture {
             date: String::new(),
             home_team_id: String::new(),
             away_team_id: String::new(),
-            competition: FixtureCompetition::League,
+            match_type: MatchType::League,
             best_of: default_best_of(),
             status: FixtureStatus::Scheduled,
             result: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Verify that two fixtures with the same date and matchday but different
+    /// fixture_ids are treated as distinct — no collision via fixture_id routing.
+    #[test]
+    fn test_fixture_id_uniquely_identifies() {
+        let fix_a = Fixture {
+            id: "550e8400-e29b-41d4-a716-446655440000".to_string(),
+            matchday: 5,
+            date: "2025-02-15".to_string(),
+            home_team_id: "team-a".to_string(),
+            away_team_id: "team-b".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Scheduled,
+            result: None,
+        };
+
+        let fix_b = Fixture {
+            id: "660e8400-e29b-41d4-a716-446655440000".to_string(),
+            matchday: 5,
+            date: "2025-02-15".to_string(),
+            home_team_id: "team-a".to_string(),
+            away_team_id: "team-b".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Scheduled,
+            result: None,
+        };
+
+        // Same date, same matchday, same teams — but different fixture_id
+        // They must NOT be equal
+        assert_ne!(fix_a, fix_b, "fixtures with different IDs must not be equal");
+        assert_ne!(fix_a.id, fix_b.id, "fixture IDs must be distinct");
+    }
+
+    /// Verify that applying a result to one fixture does not affect another
+    /// fixture in the same collection with the same date/index.
+    #[test]
+    fn test_result_isolation_by_fixture_id() {
+        let team_ids = vec!["team-a".to_string(), "team-b".to_string()];
+        let mut league = League::new("test-league".into(), "Test League".into(), 2026, &team_ids, None);
+
+        let fix_a = Fixture {
+            id: "fix-001".to_string(),
+            matchday: 5,
+            date: "2025-02-15".to_string(),
+            home_team_id: "team-a".to_string(),
+            away_team_id: "team-b".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Scheduled,
+            result: None,
+        };
+
+        let fix_b = Fixture {
+            id: "fix-002".to_string(),
+            matchday: 5,
+            date: "2025-02-15".to_string(),
+            home_team_id: "team-a".to_string(),
+            away_team_id: "team-b".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Scheduled,
+            result: None,
+        };
+
+        league.fixtures = vec![fix_a, fix_b];
+
+        // Apply result to fixture fix-001
+        if let Some(f) = league.fixtures.iter_mut().find(|f| f.id == "fix-001") {
+            f.status = FixtureStatus::Completed;
+            f.result = Some(MatchResult {
+                home_wins: 2,
+                away_wins: 1,
+                ended_by: MatchEndReason::NexusDestroyed,
+                game_duration_seconds: 2400,
+                report: None,
+            });
+        }
+
+        // Verify fix-002 is untouched
+        let fix_b = league.fixtures.iter().find(|f| f.id == "fix-002").unwrap();
+        assert_eq!(fix_b.status, FixtureStatus::Scheduled);
+        assert!(fix_b.result.is_none(), "result must NOT leak to other fixture");
+    }
+
+    /// Verify that looking up a fixture by wrong fixture_id returns None.
+    #[test]
+    fn test_fixture_lookup_by_id_returns_none_for_missing() {
+        let team_ids = vec!["team-a".to_string()];
+        let league = League::new("test-league".into(), "Test League".into(), 2026, &team_ids, None);
+
+        let result = league.fixtures.iter().find(|f| f.id == "nonexistent-id");
+        assert!(result.is_none(), "lookup by wrong fixture_id must return None");
+    }
+
+    /// Verify that two competitions with fixtures on the same date do not
+    /// interfere with each other when accessed via their respective leagues.
+    #[test]
+    fn test_cross_competition_fixture_isolation() {
+        let team_ids = vec!["team-a".to_string(), "team-b".to_string()];
+
+        // Competition A has a fixture on 2025-02-15 matchday 5
+        let mut league_a = League::new("comp-a".into(), "Comp A".into(), 2026, &team_ids, None);
+        league_a.fixtures = vec![Fixture {
+            id: "a-fixture-1".to_string(),
+            matchday: 5,
+            date: "2025-02-15".to_string(),
+            home_team_id: "team-a".to_string(),
+            away_team_id: "team-b".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Completed,
+            result: Some(MatchResult {
+                home_wins: 2,
+                away_wins: 0,
+                ended_by: MatchEndReason::NexusDestroyed,
+                game_duration_seconds: 1800,
+                report: None,
+            }),
+        }];
+
+        // Competition B has a fixture on the same date but different result
+        let mut league_b = League::new("comp-b".into(), "Comp B".into(), 2026, &team_ids, None);
+        league_b.fixtures = vec![Fixture {
+            id: "b-fixture-1".to_string(),
+            matchday: 5,
+            date: "2025-02-15".to_string(),
+            home_team_id: "team-a".to_string(),
+            away_team_id: "team-b".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Completed,
+            result: Some(MatchResult {
+                home_wins: 1,
+                away_wins: 2,
+                ended_by: MatchEndReason::NexusDestroyed,
+                game_duration_seconds: 2100,
+                report: None,
+            }),
+        }];
+
+        // Verify results are independent
+        let a_result = league_a.fixtures[0].result.as_ref().unwrap();
+        let b_result = league_b.fixtures[0].result.as_ref().unwrap();
+        assert_eq!(a_result.home_wins, 2);
+        assert_eq!(b_result.home_wins, 1);
+        assert_ne!(a_result, b_result, "cross-competition results must be independent");
     }
 }

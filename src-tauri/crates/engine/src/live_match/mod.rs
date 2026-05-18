@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::event::MatchEvent;
 use crate::report::MatchReport;
-use crate::types::{MatchConfig, PlayStyle, PlayerData, Side, TeamData, Zone};
+use crate::types::{DraftStrategy, MatchConfig, PlayerData, Side, TeamData, Zone};
 pub use lol_map::{
     LolDragonKind, LolDragonState, LolGrubsState, LolLaneState, LolMapState, LolObjectiveState,
     LolObjectivesState, LolRole, LolTask, LolTeamStructuresState, LolUnitState,
@@ -44,13 +44,9 @@ pub enum MatchCommand {
         player_off_id: String,
         player_on_id: String,
     },
-    ChangeFormation {
+    ChangeDraftStrategy {
         side: Side,
-        formation: String,
-    },
-    ChangePlayStyle {
-        side: Side,
-        play_style: PlayStyle,
+        draft_strategy: DraftStrategy,
     },
     SetCaptain {
         side: Side,
@@ -245,12 +241,9 @@ impl LiveMatchState {
                 player_off_id,
                 player_on_id,
             } => self.apply_substitution(side, &player_off_id, &player_on_id),
-            MatchCommand::ChangeFormation { side, formation } => {
-                self.team_mut(side).formation = formation;
-                Ok(())
-            }
-            MatchCommand::ChangePlayStyle { side, play_style } => {
-                self.team_mut(side).play_style = play_style;
+            MatchCommand::ChangeDraftStrategy { side, draft_strategy } => {
+>>>>>>> origin/pr/166-171
+                self.team_mut(side).draft_strategy = draft_strategy;
                 Ok(())
             }
             MatchCommand::SetCaptain { side, player_id } => {

@@ -91,16 +91,6 @@ const LOL_ROLE_ICON_URLS: Record<LolRole, string> = {
   SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
 };
 
-export function parseFormationNeeds(_formation: string): Record<string, number> {
-  return {
-    TOP: 1,
-    JUNGLE: 1,
-    MID: 1,
-    ADC: 1,
-    SUPPORT: 1,
-  };
-}
-
 interface PreMatchLineupProps {
   homeTeam: MatchSnapshot["home_team"];
   homeBench: EnginePlayerData[];

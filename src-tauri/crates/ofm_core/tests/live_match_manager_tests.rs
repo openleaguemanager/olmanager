@@ -1,5 +1,5 @@
 use chrono::{TimeZone, Utc};
-use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, StandingEntry};
+use domain::league::{Fixture, MatchType, FixtureStatus, League, StandingEntry};
 use domain::manager::Manager;
 use domain::player::{Player, PlayerAttributes};
 use domain::stats::LolRole;
@@ -14,25 +14,15 @@ use ofm_core::live_match_manager::{self, MatchMode};
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 65,
         mental_resilience: 65,
-        strength: 65,
         champion_pool: 65,
-        passing: 65,
         laning: 65,
-        tackling: 55,
         mechanics: 65,
-        defending: 55,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
-        handling: 20,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
@@ -65,43 +55,52 @@ fn make_team(id: &str, name: &str) -> Team {
     )
 }
 
-/// Build a full squad of 22 players for a team (4-4-2 formation ready).
+/// Build a squad of players for a LoL team (5 starters + bench).
 fn make_squad(team_id: &str) -> Vec<Player> {
     let mut players = Vec::new();
-    // 2 GK
+    // 2 Top
     for i in 0..2 {
         players.push(make_player(
-            &format!("{}_gk{}", team_id, i),
-            &format!("GK{}", i),
-            team_id,
-            LolRole::Support,
-        ));
-    }
-    // 7 DEF
-    for i in 0..7 {
-        players.push(make_player(
-            &format!("{}_def{}", team_id, i),
-            &format!("Def{}", i),
+            &format!("{}_top{}", team_id, i),
+            &format!("Top{}", i),
             team_id,
             LolRole::Top,
         ));
     }
-    // 7 MID
-    for i in 0..7 {
+    // 2 Jungle
+    for i in 0..2 {
         players.push(make_player(
-            &format!("{}_mid{}", team_id, i),
-            &format!("Mid{}", i),
+            &format!("{}_jng{}", team_id, i),
+            &format!("Jng{}", i),
             team_id,
             LolRole::Jungle,
         ));
     }
-    // 6 FWD
-    for i in 0..6 {
+    // 2 Mid
+    for i in 0..2 {
         players.push(make_player(
-            &format!("{}_fwd{}", team_id, i),
-            &format!("Fwd{}", i),
+            &format!("{}_mid{}", team_id, i),
+            &format!("Mid{}", i),
+            team_id,
+            LolRole::Mid,
+        ));
+    }
+    // 2 ADC
+    for i in 0..2 {
+        players.push(make_player(
+            &format!("{}_adc{}", team_id, i),
+            &format!("Adc{}", i),
             team_id,
             LolRole::Adc,
+        ));
+    }
+    // 2 Support
+    for i in 0..2 {
+        players.push(make_player(
+            &format!("{}_sup{}", team_id, i),
+            &format!("Sup{}", i),
+            team_id,
+            LolRole::Support,
         ));
     }
     players
@@ -131,7 +130,7 @@ fn make_game_with_fixture() -> Game {
         date: "2025-06-15".to_string(),
         home_team_id: "team1".to_string(),
         away_team_id: "team2".to_string(),
-        competition: FixtureCompetition::League,
+        match_type: MatchType::League,
         best_of: 1,
         status: FixtureStatus::Scheduled,
         result: None,
@@ -141,6 +140,7 @@ fn make_game_with_fixture() -> Game {
         id: "league1".to_string(),
         name: "Test League".to_string(),
         season: 1,
+        competition_id: None,
         fixtures: vec![fixture],
         standings: vec![
             StandingEntry::new("team1".to_string()),
@@ -149,7 +149,7 @@ fn make_game_with_fixture() -> Game {
     };
 
     let mut game = Game::new(clock, manager, vec![team1, team2], players, vec![], vec![]);
-    game.league = Some(league);
+    game.leagues = vec![league];
     game
 }
 
@@ -201,7 +201,7 @@ fn create_live_match_user_side_none_neutral() {
 #[test]
 fn create_live_match_no_league_errors() {
     let mut game = make_game_with_fixture();
-    game.league = None;
+    game.leagues.clear();
     let result = live_match_manager::create_live_match(&game, 0, MatchMode::Live, false);
     assert!(result.is_err());
 }

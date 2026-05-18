@@ -311,7 +311,6 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
             <StatBlock label={t('manager.matches')} value={stats.matches_managed} />
             <StatBlock label={t('manager.wins')} value={stats.wins} />
-            <StatBlock label={t('manager.draws')} value={stats.draws ?? 0} />
             <StatBlock label={t('manager.losses')} value={stats.losses} />
             <StatBlock label={t('manager.trophies')} value={stats.trophies} />
             <StatBlock label={t('manager.winPercent')} value={stats.matches_managed > 0 ? `${(stats.wins / stats.matches_managed * 100).toFixed(0)}%` : "—"} />

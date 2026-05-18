@@ -5,8 +5,7 @@ import { GameStateData } from "../../store/gameStore";
 import {
   MatchSnapshot,
   MatchEvent,
-  FORMATIONS,
-  PLAY_STYLES,
+  DRAFT_STRATEGIES,
   getTeamTalkOptions,
   TeamTalkTone,
 } from "./types";
@@ -91,25 +90,14 @@ export default function HalfTimeBreak({
     ].includes(e.event_type),
   );
 
-  const handleFormationChange = async (formation: string) => {
+  const handleDraftStrategyChange = async (draftStrategy: string) => {
     try {
       const snap = await invoke<MatchSnapshot>("apply_match_command", {
-        command: { ChangeFormation: { side: userSide, formation } },
+        command: { ChangeDraftStrategy: { side: userSide, draft_strategy: draftStrategy } },
       });
       onUpdateSnapshot(snap);
     } catch (err) {
-      console.error("Formation change failed:", err);
-    }
-  };
-
-  const handlePlayStyleChange = async (playStyle: string) => {
-    try {
-      const snap = await invoke<MatchSnapshot>("apply_match_command", {
-        command: { ChangePlayStyle: { side: userSide, play_style: playStyle } },
-      });
-      onUpdateSnapshot(snap);
-    } catch (err) {
-      console.error("Play style change failed:", err);
+      console.error("Draft strategy change failed:", err);
     }
   };
 
@@ -404,40 +392,18 @@ export default function HalfTimeBreak({
           <div className="flex flex-col gap-4">
             {!isSpectator && (
               <>
-                {/* Formation */}
-                <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-4 transition-colors duration-300">
-                  <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">
-                    {t("match.formation")}
-                  </h3>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {FORMATIONS.map((f) => (
-                      <button
-                        key={f}
-                        onClick={() => handleFormationChange(f)}
-                        className={`py-2 rounded-lg text-xs font-heading font-bold transition-all ${
-                          userTeam.formation === f
-                            ? "bg-primary-500/20 text-primary-400 ring-1 ring-primary-500/50"
-                            : "bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-navy-700 dark:text-gray-400 dark:hover:text-gray-300"
-                        }`}
-                      >
-                        {f}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Play Style */}
                 <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-4 transition-colors duration-300">
                   <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3">
-                    {t("match.playStyle")}
+                    {t("match.draftStrategy")}
                   </h3>
                   <div className="grid grid-cols-2 gap-1.5">
-                    {PLAY_STYLES.map((s) => (
+                    {DRAFT_STRATEGIES.map((s) => (
                       <button
                         key={s.id}
-                        onClick={() => handlePlayStyleChange(s.id)}
+                        onClick={() => handleDraftStrategyChange(s.id)}
                         className={`flex items-center gap-1.5 py-2 px-3 rounded-lg text-xs font-heading font-bold transition-all ${
-                          userTeam.play_style === s.id
+                          userTeam.draft_strategy === s.id
                             ? "bg-primary-500/20 text-primary-400 ring-1 ring-primary-500/50"
                             : "bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-navy-700 dark:text-gray-400 dark:hover:text-gray-300"
                         }`}

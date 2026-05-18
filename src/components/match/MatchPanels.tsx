@@ -188,10 +188,7 @@ export function Lineups({ snapshot }: { snapshot: MatchSnapshot }) {
         <h4
           className={`font-heading font-bold text-sm uppercase tracking-wider mb-3 ${side === "Home" ? "text-primary-400" : "text-indigo-400"}`}
         >
-          {team.name}{" "}
-            <span className="text-gray-600 dark:text-gray-500 font-normal text-xs">
-            ({team.formation})
-          </span>
+          {team.name}
         </h4>
         {positions.map((pos) => {
           const players = team.players.filter((p) => (p.role ?? "") === pos);

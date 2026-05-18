@@ -1,4 +1,4 @@
-use crate::league::FixtureCompetition;
+use crate::league::MatchType;
 use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize};
 use std::fmt;
@@ -68,97 +68,6 @@ pub enum LolRole {
     Support,
     #[default]
     Unknown,
-}
-
-/// Legacy Position enum - now maps to LolRole
-/// This provides backward compatibility for code using Position variants
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
-#[cfg_attr(feature = "typescript", derive(TS))]
-#[cfg_attr(feature = "typescript", ts(export))]
-#[serde(rename_all = "PascalCase")]
-pub enum Position {
-    #[default]
-    Goalkeeper,
-    RightBack,
-    CenterBack,
-    LeftBack,
-    RightWingBack,
-    LeftWingBack,
-    DefensiveMidfielder,
-    Midfielder,
-    CentralMidfielder,
-    AttackingMidfielder,
-    RightMidfielder,
-    LeftMidfielder,
-    Forward,
-    RightWinger,
-    LeftWinger,
-    Striker,
-    Defender,
-}
-
-impl Position {
-    /// Groups the detailed positions into simplified categories
-    pub fn to_group_position(&self) -> Self {
-        match self {
-            // Goalkeeper stays as-is
-            Position::Goalkeeper => Position::Goalkeeper,
-            // All defender variants -> Defender
-            Position::Defender
-            | Position::RightBack
-            | Position::CenterBack
-            | Position::LeftBack
-            | Position::RightWingBack
-            | Position::LeftWingBack => Position::Defender,
-            // Midfield variants -> Midfielder
-            Position::Midfielder
-            | Position::CentralMidfielder
-            | Position::DefensiveMidfielder
-            | Position::AttackingMidfielder
-            | Position::RightMidfielder
-            | Position::LeftMidfielder => Position::Midfielder,
-            // Forward variants -> Forward
-            Position::Forward
-            | Position::RightWinger
-            | Position::LeftWinger
-            | Position::Striker => Position::Forward,
-        }
-    }
-}
-
-impl From<Position> for LolRole {
-    fn from(pos: Position) -> Self {
-        match pos {
-            Position::Goalkeeper | Position::DefensiveMidfielder => LolRole::Support,
-            Position::Defender
-            | Position::RightBack
-            | Position::CenterBack
-            | Position::LeftBack
-            | Position::RightWingBack
-            | Position::LeftWingBack => LolRole::Top,
-            Position::Midfielder | Position::CentralMidfielder => LolRole::Jungle,
-            Position::AttackingMidfielder
-            | Position::RightMidfielder
-            | Position::LeftMidfielder => LolRole::Mid,
-            Position::Forward
-            | Position::RightWinger
-            | Position::LeftWinger
-            | Position::Striker => LolRole::Adc,
-        }
-    }
-}
-
-impl From<LolRole> for Position {
-    fn from(role: LolRole) -> Self {
-        match role {
-            LolRole::Support => Position::Goalkeeper,
-            LolRole::Top => Position::Defender,
-            LolRole::Jungle => Position::Midfielder,
-            LolRole::Mid => Position::AttackingMidfielder,
-            LolRole::Adc => Position::Forward,
-            LolRole::Unknown => Position::Defender,
-        }
-    }
 }
 
 /// Custom deserializer that maps legacy football positions to LoL roles:
@@ -233,7 +142,8 @@ pub struct PlayerMatchStatsRecord {
     pub season: u32,
     pub matchday: u32,
     pub date: String,
-    pub competition: FixtureCompetition,
+    #[serde(alias = "competition")]
+    pub match_type: MatchType,
     pub player_id: String,
     pub team_id: String,
     pub opponent_team_id: String,
@@ -264,7 +174,8 @@ pub struct TeamMatchStatsRecord {
     pub season: u32,
     pub matchday: u32,
     pub date: String,
-    pub competition: FixtureCompetition,
+    #[serde(alias = "competition")]
+    pub match_type: MatchType,
     pub team_id: String,
     pub opponent_team_id: String,
     pub side: TeamSide,

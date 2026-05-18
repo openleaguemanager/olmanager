@@ -54,13 +54,13 @@ function normaliseSeasonContext(context: SeasonContextData): SeasonContextData {
 }
 
 function deriveSeasonContext(gameState: GameStateData): SeasonContextData {
-  const league = gameState.league;
+  const league = gameState.leagues[0];
   if (!league) {
     return DEFAULT_SEASON_CONTEXT;
   }
 
   const competitiveFixtures = league.fixtures.filter((fixture) =>
-    !fixture.competition || fixture.competition === "League",
+    !fixture.match_type || fixture.match_type === "League",
   );
 
   const fixtureDates = competitiveFixtures
@@ -73,7 +73,7 @@ function deriveSeasonContext(gameState: GameStateData): SeasonContextData {
     fixtureDates.length > 0 ? fixtureDates[fixtureDates.length - 1] : null;
   const currentDate = parseUtcDate(gameState.clock.current_date);
   const hasStarted =
-    league.standings.some((entry) => entry.played > 0) ||
+    playerLeague.standings.some((entry) => entry.played > 0) ||
     competitiveFixtures.some((fixture) => fixture.status === "Completed");
   const isComplete =
     competitiveFixtures.length > 0 &&

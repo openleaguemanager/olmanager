@@ -26,8 +26,7 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     transfer_budget: 0,
     season_income: 0,
     season_expenses: 0,
-    formation: "4-4-2",
-    play_style: "Balanced",
+    draft_strategy: "Balanced",
     training_focus: "General",
     training_intensity: "Medium",
     training_schedule: "Balanced",
@@ -142,7 +141,6 @@ function createGameState(overrides: Partial<GameStateData> = {}): GameStateData 
       career_stats: {
         matches_managed: 0,
         wins: 0,
-        draws: 0,
         losses: 0,
         trophies: 0,
         best_finish: null,
@@ -182,7 +180,7 @@ describe("dashboardHelpers", function (): void {
       date: "2025-01-10",
       home_team_id: "team-1",
       away_team_id: "team-2",
-      competition: "League" as const,
+      match_type: "League" as const,
       status: "Scheduled" as const,
       result: null,
     };

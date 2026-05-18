@@ -45,7 +45,7 @@ import {
 } from "../lib/helpers";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../store/settingsStore";
-import { resolveExampleTeamLogo } from "../lib/teamLogos";
+import { resolveTeamLogo } from "../lib/teamLogos";
 
 const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Meta", "Scrims", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
 
@@ -221,7 +221,7 @@ export default function Dashboard(): JSX.Element {
     }
   }, [isUnemployed, profileNavigation.activeTab]);
 
-  const seasonComplete = isLeagueSeasonComplete(gameState?.league);
+  const seasonComplete = isLeagueSeasonComplete(gameState?.leagues[0]);
 
   // Advance-time hook
   const {
@@ -289,7 +289,10 @@ export default function Dashboard(): JSX.Element {
         console.error("Auto-save on close failed:", err);
       }
     }
-    await getCurrentWindow().destroy();
+    // Go to menu instead of closing the app
+    await invoke("exit_to_menu").catch(() => {});
+    clearGame();
+    navigate("/");
   };
 
   const MODE_META: Record<MatchModeType, DashboardMatchModeMeta> = {
@@ -417,13 +420,16 @@ export default function Dashboard(): JSX.Element {
     : "";
   const unreadMessagesCount = gameState ? getUnreadMessagesCount(gameState) : 0;
   const myTeamName = gameState ? getManagerTeamName(gameState) : null;
-  const liveManagerName = gameState
-    ? (gameState.manager.nickname?.trim() || `${gameState.manager.first_name} ${gameState.manager.last_name}`)
-    : managerName;
 
+  // Use the team's logo_url from backend (already mapped to /teams-icons/) instead of
+  // the hardcoded resolveTeamLogo map (which only covers LEC teams).
   const teamLogo = useMemo(() => {
-    return resolveExampleTeamLogo(myTeamName);
-  }, [myTeamName]);
+    if (!gameState || !gameState.manager.team_id) return null;
+    const myTeam = gameState.teams.find((t) => t.id === gameState.manager.team_id);
+    if (myTeam?.logo_url) return myTeam.logo_url;
+    return resolveTeamLogo(myTeamName);
+  }, [gameState, myTeamName]);
+>>>>>>> origin/pr/166-171
 
   const searchResults = gameState
     ? getDashboardSearchResults(gameState, searchQuery)
@@ -485,7 +491,7 @@ export default function Dashboard(): JSX.Element {
           setIsSidebarCollapsed((currentValue) => !currentValue);
         }}
         unreadMessagesCount={unreadMessagesCount}
-        managerName={liveManagerName}
+        managerName={managerName}
         teamName={myTeamName}
         teamLogo={teamLogo}
         onNavigateSettings={handleNavigateSettings}

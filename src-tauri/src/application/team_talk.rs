@@ -10,7 +10,7 @@ fn team_talk_action_key(tone: &str, context: &str) -> String {
 fn team_talk_personality_factor(player: &domain::player::Player) -> i32 {
     let composure = i32::from(player.attributes.discipline);
     let leadership = i32::from(player.attributes.shotcalling);
-    let aggression = i32::from(player.attributes.aggression);
+    let aggression = i32::from(player.attributes.shotcalling);
     ((composure + leadership - aggression) / 6).clamp(-20, 20)
 }
 

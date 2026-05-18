@@ -18,25 +18,15 @@ use ofm_core::training;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 65,
         mental_resilience: 65,
-        strength: 65,
         champion_pool: 65,
-        passing: 65,
         laning: 65,
-        tackling: 65,
         mechanics: 65,
-        defending: 65,
-        positioning: 65,
         macro_play: 65,
         consistency: 65,
         discipline: 65,
-        aggression: 50,
         teamfighting: 65,
         shotcalling: 50,
-        handling: 20,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
@@ -51,12 +41,12 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
         "mechanics" => avg([
             attrs.mechanics,
             attrs.champion_pool,
-            attrs.pace,
+            attrs.mechanics,
             attrs.discipline,
         ]),
         "laning" => avg([
             attrs.laning,
-            attrs.positioning,
+            attrs.consistency,
             attrs.mechanics,
             attrs.discipline,
         ]),
@@ -69,8 +59,8 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
         "macro" => avg([
             attrs.macro_play,
             attrs.consistency,
-            attrs.positioning,
-            attrs.passing,
+            attrs.consistency,
+            attrs.teamfighting,
         ]),
         "consistency" => avg([
             attrs.consistency,
@@ -88,7 +78,7 @@ fn lol_visible_stat(player: &Player, stat: &str) -> u8 {
             attrs.mechanics,
             attrs.champion_pool,
             attrs.macro_play,
-            attrs.passing,
+            attrs.teamfighting,
         ]),
         "discipline" => avg([
             attrs.consistency,
@@ -699,12 +689,12 @@ fn mental_reset_recovery_has_no_attribute_gains() {
     // Mental Reset / Recovery: no attribute gains at all
     for (i, p) in game.players.iter().enumerate() {
         assert_eq!(
-            p.attributes.pace, initial_attrs[i].pace,
-            "Mental Reset / Recovery should not change pace"
+            p.attributes.mechanics, initial_attrs[i].mechanics,
+            "Mental Reset / Recovery should not change mechanics"
         );
         assert_eq!(
             p.attributes.laning, initial_attrs[i].laning,
-            "Mental Reset / Recovery should not change shooting"
+            "Mental Reset / Recovery should not change laning"
         );
     }
 }
@@ -737,7 +727,7 @@ fn no_coaching_staff_reduces_gains() {
     let mut game = Game::new(clock, manager, vec![team1], vec![p1], vec![], vec![]);
 
     // Train many sessions
-    let initial_pace = game.players[0].attributes.pace;
+    let initial_mechanics = game.players[0].attributes.mechanics;
     for _ in 0..200 {
         game.players[0].condition = 90;
         training::process_training(&mut game, 0);
@@ -745,10 +735,10 @@ fn no_coaching_staff_reduces_gains() {
 
     // Should still gain something (just less than with staff)
     // The 0.8 penalty from no staff still allows some growth
-    let final_pace = game.players[0].attributes.pace;
+    let final_mechanics = game.players[0].attributes.mechanics;
     // After 200 intense sessions with a young player, some gain is expected
     assert!(
-        final_pace >= initial_pace,
+        final_mechanics >= initial_mechanics,
         "Should still gain attributes without staff"
     );
 }
@@ -915,20 +905,20 @@ fn young_player_gains_more_than_old() {
     game.teams[0].training_intensity = TrainingIntensity::High;
     game.teams[0].training_schedule = TrainingSchedule::Intense;
 
-    let p1_initial_pace = game
+    let p1_initial_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p1")
         .unwrap()
         .attributes
-        .pace;
-    let p3_initial_pace = game
+        .mechanics;
+    let p3_initial_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p3")
         .unwrap()
         .attributes
-        .pace;
+        .mechanics;
 
     for _ in 0..300 {
         for p in game.players.iter_mut() {
@@ -937,23 +927,23 @@ fn young_player_gains_more_than_old() {
         training::process_training(&mut game, 0);
     }
 
-    let p1_final_pace = game
+    let p1_final_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p1")
         .unwrap()
         .attributes
-        .pace;
-    let p3_final_pace = game
+        .mechanics;
+    let p3_final_mechanics = game
         .players
         .iter()
         .find(|p| p.id == "p3")
         .unwrap()
         .attributes
-        .pace;
+        .mechanics;
 
-    let p1_gain = p1_final_pace - p1_initial_pace;
-    let p3_gain = p3_final_pace - p3_initial_pace;
+    let p1_gain = p1_final_mechanics - p1_initial_mechanics;
+    let p3_gain = p3_final_mechanics - p3_initial_mechanics;
 
     assert!(
         p1_gain >= p3_gain,

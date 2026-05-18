@@ -34,8 +34,7 @@ function createTeam(overrides: Partial<TeamData> = {}): TeamData {
     transfer_budget: 0,
     season_income: 0,
     season_expenses: 0,
-    formation: "4-4-2",
-    play_style: "Balanced",
+    draft_strategy: "Balanced",
     training_focus: "Physical",
     training_intensity: "Medium",
     training_schedule: "Balanced",
@@ -56,7 +55,7 @@ function createRecentResult(): HomeRecentResult {
       date: "2025-01-10",
       home_team_id: "team-1",
       away_team_id: "team-2",
-      competition: "League",
+      match_type: "League",
       status: "Completed",
       result: {
         home_goals: 2,
