@@ -51,41 +51,11 @@ export default function TournamentsTab({
     if (loading) return <div className="text-center py-12"><Loader2 className="w-8 h-8 animate-spin text-gray-400 mx-auto" /></div>;
     const comps = allComps ?? [];
     return (
-      <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-heading font-bold uppercase tracking-wide text-gray-800 dark:text-gray-100">
-          {t("tournaments.allCompetitions", "All Competitions")}
-        </h2>
-        {comps.length === 0 ? (
-          <div className="text-center py-12"><Trophy className="w-12 h-12 text-gray-300 dark:text-navy-600 mx-auto mb-3" />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{t("tournaments.noActive", "No active tournaments.")}</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {comps.map((comp) => (
-              <button key={comp.id} onClick={() => setSelectedCompId(comp.id)}
-                className="text-left transition-all duration-200 rounded-xl hover:scale-[1.01]">
-                <Card className="h-full">
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-navy-700 flex items-center justify-center overflow-hidden">
-                        {comp.logo ? <img src={comp.logo} alt="" className="w-10 h-10 object-contain" />
-                          : <Globe className="w-6 h-6 text-gray-400" />}
-                      </div>
-                      <div>
-                        <h3 className="font-heading font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide text-sm">{comp.name}</h3>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{comp.region}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                      <Users className="w-3.5 h-3.5" /><span>{comp.team_count} {t("tournaments.teams", "teams")}</span>
-                    </div>
-                    {comp.id === userTeamPrefix && <Badge variant="success" size="sm" className="mt-2">{t("tournaments.yourLeague", "Your League")}</Badge>}
-                  </div>
-                </Card>
-              </button>
-            ))}
-          </div>
-        )}
+      <div className="w-[92%] max-w-[2000px] mx-auto text-center py-12">
+        <Trophy className="w-12 h-12 text-gray-300 dark:text-navy-600 mx-auto mb-3" />
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          {t("tournaments.noActive")}
+        </p>
       </div>
     );
   }
@@ -151,12 +121,30 @@ export default function TournamentsTab({
   const hasAcademyPlayoffsStarted = academyPlayoffFixtures.length > 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-3">
-        <button onClick={() => setSelectedCompId(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-navy-700"><ArrowLeft className="w-5 h-5" /></button>
-        <h2 className="text-lg font-heading font-bold uppercase tracking-wide text-gray-800 dark:text-gray-100">{league.name}</h2>
-        {selectedCompId === userTeamPrefix && <Badge variant="success" size="sm">{t("tournaments.yourLeague", "Your League")}</Badge>}
-      </div>
+    <div className="w-[92%] max-w-[2000px] mx-auto">
+      {isPreseason && (
+        <Card accent="accent" className="mb-5">
+          <CardBody>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="accent" size="sm">
+                  {t(`season.phases.${seasonContext.phase}`)}
+                </Badge>
+                <span className="text-sm font-heading font-bold text-gray-800 dark:text-gray-100">
+                  {seasonContext.season_start
+                    ? t("season.startsOn", {
+                        date: formatMatchDate(seasonContext.season_start),
+                      })
+                    : t("season.noOpener")}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {t("season.tournamentsPreseasonHint")}
+              </p>
+            </div>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Standings table */}
       <Card>
@@ -249,32 +237,53 @@ export default function TournamentsTab({
                   </p>
                 </div>
               ) : (
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
-                      <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 w-8">#</th>
-                      <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("common.team")}</th>
-                      <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("common.played")}</th>
-                      <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("common.won")}</th>
-                      <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("common.lost")}</th>
-                      <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("tournaments.mapScore")}</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
-                    {standings.map((entry, idx) => {
-                      const isUser = entry.team_id === userTeamId;
-                      return (
-                        <tr
-                          key={entry.team_id}
-                          onClick={() => onSelectTeam(entry.team_id)}
-                          className={`cursor-pointer transition-colors ${isUser ? "bg-primary-50 dark:bg-primary-500/10" : "hover:bg-gray-50 dark:hover:bg-navy-700/50"}`}
-                        >
-                          <td className="py-2 px-3 font-heading font-bold text-sm text-gray-400">{idx + 1}</td>
-                          <td className={`py-2 px-3 font-semibold text-sm ${isUser ? "text-primary-600 dark:text-primary-400" : "text-gray-800 dark:text-gray-200"}`}>{getTeamName(gameState.teams, entry.team_id)}</td>
-                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{entry.played}</td>
-                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{entry.won}</td>
-                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{entry.lost}</td>
-                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{getStandingKillsFor(entry)}-{getStandingKillsAgainst(entry)}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 w-8">
+                          #
+                        </th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                          {t("common.team")}
+                        </th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
+                          {t("common.played")}
+                        </th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
+                          {t("common.won")}
+                        </th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
+                          {t("common.lost")}
+                        </th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
+                          {t("tournaments.mapScore")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
+                      {standings.map((entry, idx) => {
+                        const isUser = entry.team_id === userTeamId;
+                        return (
+                          <tr
+                            key={entry.team_id}
+                            onClick={() => onSelectTeam(entry.team_id)}
+                            className={`cursor-pointer transition-colors ${isUser ? "bg-primary-50 dark:bg-primary-500/10" : "hover:bg-gray-50 dark:hover:bg-navy-700/50"}`}
+                          >
+                            {getTeamName(gameState.teams, entry.team_id)}
+                          </td>
+                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                            {entry.played}
+                          </td>
+                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                            {entry.won}
+                          </td>
+                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                            {entry.lost}
+                          </td>
+                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                            {getStandingKillsFor(entry)}-{getStandingKillsAgainst(entry)}
+                          </td>
                         </tr>
                       );
                     })}
@@ -297,8 +306,8 @@ export default function TournamentsTab({
                     const first = fixtures[0];
                     return (
                       <div key={`overview-md-${md}`} className="px-4 py-3">
-                        <p className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-heading font-bold">
-                          {first.match_type === "Playoffs"
+                        <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-heading font-bold">
+                          {first.competition === "Playoffs"
                             ? `${t("schedule.playoffs")} · ${t("schedule.round", { number: md })}`
                             : t("schedule.matchday", { number: md })}
                         </p>
@@ -337,15 +346,46 @@ export default function TournamentsTab({
               ) : null}
 
               <Card>
-                <CardBody>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="primary" size="md">
-                      #{userTeamStanding}
-                    </Badge>
-                    <div>
-                      <p className="font-heading font-bold text-sm text-gray-900 dark:text-white">{getTeamName(gameState.teams, userTeamId)}</p>
-                      <p className="text-xs text-gray-500">{t("tournaments.yourTeam")}</p>
-                    </div>
+                <CardHeader>{t("tournaments.leagueTable")}</CardHeader>
+                <CardBody className="p-0">
+                  <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 w-8">#</th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{t("common.team")}</th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("common.played")}</th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("common.won")}</th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("common.lost")}</th>
+                        <th className="py-2 px-3 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">{t("tournaments.mapScore")}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
+                      {academyStandings.map((entry, idx) => {
+                        const isUserAcademy = gameState.manager.team_id
+                          ? gameState.teams.some(
+                              (team) =>
+                                team.id === entry.team_id &&
+                                team.parent_team_id === gameState.manager.team_id,
+                            )
+                          : false;
+                        return (
+                          <tr
+                            key={`academy-${entry.team_id}`}
+                            onClick={() => onSelectTeam(entry.team_id)}
+                            className={`cursor-pointer transition-colors ${isUserAcademy ? "bg-primary-50 dark:bg-primary-500/10" : "hover:bg-gray-50 dark:hover:bg-navy-700/50"}`}
+                          >
+                            <td className="py-2 px-3 font-heading font-bold text-sm text-gray-400">{idx + 1}</td>
+                            <td className={`py-2 px-3 font-semibold text-sm ${isUserAcademy ? "text-primary-600 dark:text-primary-400" : "text-gray-800 dark:text-gray-200"}`}>{getTeamName(gameState.teams, entry.team_id)}</td>
+                            <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{entry.played}</td>
+                            <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{entry.won}</td>
+                            <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{entry.lost}</td>
+                            <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">{getStandingKillsFor(entry)}-{getStandingKillsAgainst(entry)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                   </div>
                 </CardBody>
               </Card>
