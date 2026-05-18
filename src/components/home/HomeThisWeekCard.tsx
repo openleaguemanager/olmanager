@@ -118,8 +118,8 @@ export default function HomeThisWeekCard({ gameState }: HomeThisWeekCardProps) {
                       : t("home.restShort")}
                 </p>
                 {isMatchDay ? (
-                  <p className="text-2xs text-gray-500 dark:text-gray-400 truncate mt-1">
-                    {day.fixture?.competition === "League"
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate mt-1">
+                    {day.fixture?.match_type === "League"
                       ? t("home.leagueShort")
                       : t("home.otherShort")}
                   </p>

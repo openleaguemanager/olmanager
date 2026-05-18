@@ -1,4 +1,4 @@
-use domain::league::{Fixture, FixtureStatus, League, MatchResult, MatchType, StandingEntry};
+use domain::league::{Fixture, League, StandingEntry};
 use rusqlite::{Connection, params};
 
 use super::league_repo;
@@ -240,7 +240,7 @@ fn load_standings(conn: &Connection, competition_id: &str) -> Result<Vec<Standin
 mod tests {
     use super::*;
     use crate::game_database::GameDatabase;
-    use domain::league::MatchResult;
+    use domain::league::{FixtureStatus, MatchResult, MatchType};
 
     fn test_db() -> GameDatabase {
         GameDatabase::open_in_memory().unwrap()

@@ -306,8 +306,8 @@ export default function TournamentsTab({
                     const first = fixtures[0];
                     return (
                       <div key={`overview-md-${md}`} className="px-4 py-3">
-                        <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-heading font-bold">
-                          {first.competition === "Playoffs"
+                        <p className="text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-heading font-bold">
+                          {first.match_type === "Playoffs"
                             ? `${t("schedule.playoffs")} · ${t("schedule.round", { number: md })}`
                             : t("schedule.matchday", { number: md })}
                         </p>
