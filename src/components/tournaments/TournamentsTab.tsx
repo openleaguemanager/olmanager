@@ -222,7 +222,6 @@ export default function TournamentsTab({
           ) : null}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Mini standings */}
           <Card className="lg:col-span-2">
             <CardHeader>{t("tournaments.leagueTable")}</CardHeader>
             <CardBody className="p-0">
@@ -270,8 +269,9 @@ export default function TournamentsTab({
                             onClick={() => onSelectTeam(entry.team_id)}
                             className={`cursor-pointer transition-colors ${isUser ? "bg-primary-50 dark:bg-primary-500/10" : "hover:bg-gray-50 dark:hover:bg-navy-700/50"}`}
                           >
-                            {getTeamName(gameState.teams, entry.team_id)}
-                          </td>
+                            <td className="py-2 px-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {getTeamName(gameState.teams, entry.team_id)}
+                            </td>
                           <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
                             {entry.played}
                           </td>
@@ -322,6 +322,7 @@ export default function TournamentsTab({
             </CardBody>
           </Card>
           </div>
+          )}
 
           {academyLeague ? (
             <div className="space-y-4">
