@@ -187,7 +187,7 @@ pub fn evaluate_sponsorship_bonus(
 }
 
 fn current_league_position(game: &Game, team_id: &str) -> Option<u32> {
-    let league = game.leagues.first()?;
+    let league = game.active_league()?;
 
     league
         .sorted_standings()
@@ -197,7 +197,7 @@ fn current_league_position(game: &Game, team_id: &str) -> Option<u32> {
 }
 
 fn count_recent_home_matches(game: &Game, team_id: &str) -> i64 {
-    let Some(league) = game.leagues.first() else {
+    let Some(league) = game.active_league() else {
         return 0;
     };
 

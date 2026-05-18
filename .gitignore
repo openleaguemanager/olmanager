@@ -76,3 +76,5 @@ src-tauri/gen/
 # SDD artifacts (openspec)
 # =========================
 openspec/
+
+public/player-photos/*.webp

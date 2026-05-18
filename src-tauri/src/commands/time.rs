@@ -98,7 +98,7 @@ pub fn skip_to_match_day(state: State<'_, StateManager>) -> Result<serde_json::V
 
         let today = game.clock.current_date.format("%Y-%m-%d").to_string();
 
-        let has_match = game.leagues.first().is_some_and(|league| {
+        let has_match = game.active_league().is_some_and(|league| {
             league.fixtures.iter().any(|fixture| {
                 fixture.date == today
                     && fixture.status == domain::league::FixtureStatus::Scheduled

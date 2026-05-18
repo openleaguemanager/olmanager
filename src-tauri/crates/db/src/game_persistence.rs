@@ -221,6 +221,7 @@ impl GamePersistenceReader {
             social_accounts,
             social_templates,
             leagues: all_leagues,
+            user_competition_id: None,
             academy_league: None,
             scouting_assignments,
             board_objectives,
@@ -230,6 +231,16 @@ impl GamePersistenceReader {
             champion_patch,
             competition_configs,
         };
+        // Derive user_competition_id from the manager's team
+        game.user_competition_id = game
+            .teams
+            .iter()
+            .find(|t| t.manager_id.as_deref() == Some(&game.manager.id))
+            .and_then(|t| {
+                let dash_pos = t.id.find('-')?;
+                let prefix = &t.id[..dash_pos];
+                if prefix.is_empty() { None } else { Some(prefix.to_string()) }
+            });
         ofm_core::season_context::refresh_game_context(&mut game);
 
         Ok(game)

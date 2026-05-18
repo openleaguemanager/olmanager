@@ -14,7 +14,7 @@ use crate::scouting;
 use crate::training;
 use crate::transfers;
 use chrono::Datelike;
-use domain::league::{Fixture, FixtureCompetition, FixtureStatus, League, MatchResult};
+use domain::league::{Fixture, MatchType, FixtureStatus, League, MatchResult};
 use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
 use domain::player::{LolRole as DomainLolRole, Player};
 use domain::stats::StatsState;
@@ -63,7 +63,7 @@ where
 {
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
 
-    let has_match_today = game.leagues.first().is_some_and(|league| {
+    let has_match_today = game.active_league().is_some_and(|league| {
         league
             .fixtures
             .iter()
@@ -157,7 +157,7 @@ fn build_engine_team_from(
     team_id: &str,
 ) -> engine::TeamData {
     let team = teams.iter().find(|t| t.id == team_id);
->>>>>>> origin/pr/166-171
+
     let (name, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
@@ -174,7 +174,7 @@ fn build_engine_team_from(
             "Unknown".into(),
             engine::DraftStrategy::Balanced,
         ),
->>>>>>> origin/pr/166-171
+
     };
 
     let engine_players: Vec<engine::PlayerData> = players
@@ -207,7 +207,7 @@ fn build_engine_team_from(
         name,
         draft_strategy,
         players: engine_players,
->>>>>>> origin/pr/166-171
+
     }
 }
 
@@ -762,7 +762,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                         date: date.clone(),
                         home_team_id,
                         away_team_id,
-                        competition: FixtureCompetition::League,
+                        match_type: MatchType::League,
                         best_of: 3,
                         status: FixtureStatus::Scheduled,
                         result: None,
@@ -780,20 +780,20 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
         let regular_fixtures_total = league
             .fixtures
             .iter()
-            .filter(|fixture| fixture.competition == FixtureCompetition::League)
+            .filter(|fixture| fixture.match_type == MatchType::League)
             .count();
         let regular_completed = league
             .fixtures
             .iter()
             .filter(|fixture| {
-                fixture.competition == FixtureCompetition::League
+                fixture.match_type == MatchType::League
                     && fixture.status == FixtureStatus::Completed
             })
             .count();
         let has_playoffs = league
             .fixtures
             .iter()
-            .any(|fixture| fixture.competition == FixtureCompetition::Playoffs);
+            .any(|fixture| fixture.match_type == MatchType::Playoffs);
 
         if regular_fixtures_total > 0
             && regular_completed == regular_fixtures_total
@@ -832,7 +832,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                         date: semis_date.format("%Y-%m-%d").to_string(),
                         home_team_id,
                         away_team_id,
-                        competition: FixtureCompetition::Playoffs,
+                        match_type: MatchType::Playoffs,
                         best_of: 5,
                         status: FixtureStatus::Scheduled,
                         result: None,
@@ -844,7 +844,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
                     date: final_date.format("%Y-%m-%d").to_string(),
                     home_team_id: sorted[0].team_id.clone(),
                     away_team_id: sorted[1].team_id.clone(),
-                    competition: FixtureCompetition::Playoffs,
+                    match_type: MatchType::Playoffs,
                     best_of: 5,
                     status: FixtureStatus::Scheduled,
                     result: None,
@@ -867,7 +867,7 @@ fn maybe_schedule_playoffs(game: &mut Game) {
     let playoff_fixtures_exist = league
         .fixtures
         .iter()
-        .any(|fixture| fixture.competition == FixtureCompetition::Playoffs);
+        .any(|fixture| fixture.match_type == MatchType::Playoffs);
 
     if !playoff_fixtures_exist {
         if !regular_season_complete(league) {
@@ -923,7 +923,7 @@ fn maybe_schedule_playoffs(game: &mut Game) {
     }
 
     let has_pending_playoffs = league.fixtures.iter().any(|fixture| {
-        fixture.competition == FixtureCompetition::Playoffs
+        fixture.match_type == MatchType::Playoffs
             && fixture.status != FixtureStatus::Completed
     });
     if has_pending_playoffs {
@@ -947,7 +947,7 @@ fn maybe_schedule_playoffs(game: &mut Game) {
     let next_matchday = league
         .fixtures
         .iter()
-        .filter(|fixture| fixture.competition == FixtureCompetition::Playoffs)
+        .filter(|fixture| fixture.match_type == MatchType::Playoffs)
         .map(|fixture| fixture.matchday)
         .max()
         .unwrap_or(0)
@@ -1000,7 +1000,7 @@ fn build_playoff_round_fixtures(
             date: date.clone(),
             home_team_id,
             away_team_id,
-            competition: FixtureCompetition::Playoffs,
+            match_type: MatchType::Playoffs,
             best_of,
             status: FixtureStatus::Scheduled,
             result: None,
@@ -1012,7 +1012,7 @@ fn playoff_round_fixtures(league: &League, round: u32) -> Vec<&Fixture> {
     let Some(start_matchday) = league
         .fixtures
         .iter()
-        .filter(|fixture| fixture.competition == FixtureCompetition::Playoffs)
+        .filter(|fixture| fixture.match_type == MatchType::Playoffs)
         .map(|fixture| fixture.matchday)
         .min()
     else {
@@ -1024,7 +1024,7 @@ fn playoff_round_fixtures(league: &League, round: u32) -> Vec<&Fixture> {
         .fixtures
         .iter()
         .filter(|fixture| {
-            fixture.competition == FixtureCompetition::Playoffs
+            fixture.match_type == MatchType::Playoffs
                 && fixture.matchday == target_matchday
         })
         .collect()
@@ -1209,7 +1209,7 @@ pub fn simulate_other_matches_with_capture<F>(
         "[turn] simulate_other_matches: date={}, skip={:?}",
         today, skip_fixture
     );
-    let fixture_indices: Vec<usize> = game.leagues.first().map_or(vec![], |league| {
+    let fixture_indices: Vec<usize> = game.active_league().map_or(vec![], |league| {
         league
             .fixtures
             .iter()
@@ -1233,7 +1233,7 @@ where
     F: FnMut(StatsState),
 {
     let (home_team_id, away_team_id, best_of) = {
-        let f = &game.leagues.first().unwrap().fixtures[idx];
+        let f = &game.active_league().unwrap().fixtures[idx];
         (f.home_team_id.clone(), f.away_team_id.clone(), f.best_of)
     };
 
@@ -1550,14 +1550,14 @@ mod tests {
         game.leagues = vec![league];
 
         // Create a fixture dated today
-        if let Some(league) = game.leagues.first_mut() {
+        if let Some(league) = game.active_league_mut() {
             league.fixtures.push(Fixture {
                 id: "fix-1".to_string(),
                 matchday: 1,
                 date: today.to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
@@ -1629,7 +1629,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             &today_str,
             season,
         );
@@ -1661,7 +1661,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             &today_str,
             season,
         );
@@ -1690,7 +1690,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             &today_str,
             season,
         );
@@ -1706,21 +1706,21 @@ mod tests {
         let (mut game, _) = bg_test_game(today);
 
         // Remove the fixture — no due fixtures
-        if let Some(league) = game.leagues.first_mut() {
+        if let Some(league) = game.active_league_mut() {
             league.fixtures.clear();
         }
 
         let season = 2025;
 
         // Add a future fixture instead
-        if let Some(league) = game.leagues.first_mut() {
+        if let Some(league) = game.active_league_mut() {
             league.fixtures.push(Fixture {
                 id: "fix-future".to_string(),
                 matchday: 2,
                 date: "2025-06-22".to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
@@ -1730,7 +1730,7 @@ mod tests {
         simulate_background_league(
             &mut game.teams,
             &game.players,
-            game.leagues.first_mut().unwrap(),
+            game.active_league_mut().unwrap(),
             "2025-06-15",
             season,
         );
@@ -1766,7 +1766,7 @@ mod tests {
                 date: today.to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
@@ -1831,7 +1831,7 @@ mod tests {
                 date: "2025-06-22".to_string(),
                 home_team_id: "team1".to_string(),
                 away_team_id: "team2".to_string(),
-                competition: FixtureCompetition::League,
+                match_type: MatchType::League,
                 best_of: 1,
                 status: FixtureStatus::Scheduled,
                 result: None,
