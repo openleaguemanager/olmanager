@@ -166,6 +166,12 @@ pub struct CompetitionManifest {
     pub championships_file: Option<String>,
     #[serde(default)]
     pub erls: Vec<String>,
+    /// ERL reputation (used for academy cost calculation).
+    #[serde(default)]
+    pub reputation: Option<u8>,
+    /// Nearby country codes for cross-border ERL eligibility.
+    #[serde(default)]
+    pub nearby_country_codes: Vec<String>,
 }
 
 fn default_teams_file() -> String {

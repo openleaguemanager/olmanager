@@ -1439,7 +1439,9 @@
     "playStyleBalanced": "Equilibrado",
     "playStyleCounter": "Escalado y contra",
     "playStyleDirect": "Skirmish temprano",
-    "winRateShort": "WR"
+    "winRateShort": "WR",
+    "nTeams": "{{count}} equipos",
+    "nTeamsInLeague": "{{count}} equipos en {{league}}"
   },
   "playersList": {
     "searchPlaceholder": "Buscar por nombre o nacionalidad...",
