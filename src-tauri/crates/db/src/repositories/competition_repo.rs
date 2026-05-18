@@ -6,14 +6,21 @@ use super::league_repo;
 /// Upsert a competition and its fixtures + standings.
 /// Unlike the legacy `upsert_league`, this operation is SCOPED to the
 /// competition_id — it does NOT delete data from other competitions.
-pub fn upsert_competition(conn: &Connection, league: &League) -> Result<(), String> {
+///
+/// `schedule_config_json` is an optional JSON string of the ScheduleConfig.
+/// Pass `None` to leave the existing value unchanged.
+pub fn upsert_competition(
+    conn: &Connection,
+    league: &League,
+    schedule_config_json: Option<&str>,
+) -> Result<(), String> {
     let cid = &league.id;
 
-    // Upsert competition metadata
+    // Upsert competition metadata with optional schedule_config
     conn.execute(
-        "INSERT OR REPLACE INTO competitions (id, name, region, tier)
-         VALUES (?1, ?2, '', 1)",
-        params![cid, league.name],
+        "INSERT OR REPLACE INTO competitions (id, name, region, tier, schedule_config)
+         VALUES (?1, ?2, '', 1, ?3)",
+        params![cid, league.name, schedule_config_json],
     )
     .map_err(|e| format!("Failed to upsert competition: {}", e))?;
 
@@ -84,18 +91,26 @@ pub fn upsert_competition(conn: &Connection, league: &League) -> Result<(), Stri
 }
 
 /// Load a single competition by ID.
-pub fn load_competition(conn: &Connection, competition_id: &str) -> Result<Option<League>, String> {
+/// Returns (League, Option<String>) where the String is the raw schedule_config JSON.
+pub fn load_competition(
+    conn: &Connection,
+    competition_id: &str,
+) -> Result<Option<(League, Option<String>)>, String> {
     let mut stmt = conn
-        .prepare("SELECT id, name FROM competitions WHERE id = ?1")
+        .prepare("SELECT id, name, schedule_config FROM competitions WHERE id = ?1")
         .map_err(|e| format!("Failed to prepare competition query: {}", e))?;
 
     let mut rows = stmt
         .query_map(params![competition_id], |row| {
-            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, Option<String>>(2)?,
+            ))
         })
         .map_err(|e| format!("Failed to query competition: {}", e))?;
 
-    let (id, name) = match rows.next() {
+    let (id, name, schedule_config_raw) = match rows.next() {
         Some(Ok(tuple)) => tuple,
         Some(Err(e)) => return Err(format!("Failed to read competition row: {}", e)),
         None => return Ok(None),
@@ -105,45 +120,63 @@ pub fn load_competition(conn: &Connection, competition_id: &str) -> Result<Optio
     let standings = load_standings(conn, &id)?;
 
     let cid = id.clone();
-    Ok(Some(League {
-        id,
-        name,
-        season: 0, // season is stored separately in seasons table
-        fixtures,
-        standings,
-        competition_id: Some(cid),
-    }))
-}
-
-/// Load all competitions.
-pub fn load_competitions(conn: &Connection) -> Result<Vec<League>, String> {
-    let mut stmt = conn
-        .prepare("SELECT id, name FROM competitions ORDER BY name")
-        .map_err(|e| format!("Failed to prepare competitions query: {}", e))?;
-
-    let rows = stmt
-        .query_map([], |row| {
-            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
-        })
-        .map_err(|e| format!("Failed to query competitions: {}", e))?;
-
-    let mut leagues = Vec::new();
-    for row in rows {
-        let (id, name) = row.map_err(|e| format!("Failed to read competition row: {}", e))?;
-        let cid = id.clone();
-        let fixtures = load_fixtures(conn, &cid)?;
-        let standings = load_standings(conn, &cid)?;
-        leagues.push(League {
+    Ok(Some((
+        League {
             id,
             name,
             season: 0,
             fixtures,
             standings,
             competition_id: Some(cid),
+        },
+        schedule_config_raw,
+    )))
+}
+
+/// Load all competitions.
+/// Returns (Vec<League>, HashMap<String, String>) where the HashMap maps
+/// competition_id -> schedule_config JSON.
+pub fn load_competitions(
+    conn: &Connection,
+) -> Result<(Vec<League>, std::collections::HashMap<String, String>), String> {
+    use std::collections::HashMap;
+
+    let mut stmt = conn
+        .prepare("SELECT id, name, schedule_config FROM competitions ORDER BY name")
+        .map_err(|e| format!("Failed to prepare competitions query: {}", e))?;
+
+    let rows = stmt
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, Option<String>>(2)?,
+            ))
+        })
+        .map_err(|e| format!("Failed to query competitions: {}", e))?;
+
+    let mut leagues = Vec::new();
+    let mut configs = HashMap::new();
+    for row in rows {
+        let (id, name, schedule_config_raw) =
+            row.map_err(|e| format!("Failed to read competition row: {}", e))?;
+        let cid = id.clone();
+        let fixtures = load_fixtures(conn, &cid)?;
+        let standings = load_standings(conn, &cid)?;
+        leagues.push(League {
+            id: id.clone(),
+            name,
+            season: 0,
+            fixtures,
+            standings,
+            competition_id: Some(cid),
         });
+        if let Some(json) = schedule_config_raw {
+            configs.insert(id, json);
+        }
     }
 
-    Ok(leagues)
+    Ok((leagues, configs))
 }
 
 /// Delete a competition and its fixtures + standings.
