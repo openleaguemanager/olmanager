@@ -27,17 +27,14 @@
       "transfer_budget": 50000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "Dark Passage",
-      "short_name": "DP"
+      "short_name": "DP",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     },
     {
       "id": "tcl-boostgate-esports",
@@ -66,17 +63,14 @@
       "transfer_budget": 50000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "BoostGate Esports",
-      "short_name": "BGT"
+      "short_name": "BGT",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     },
     {
       "id": "tcl-misa-esports",
@@ -103,17 +97,14 @@
       "transfer_budget": 100000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "Misa Esports",
-      "short_name": "MISA"
+      "short_name": "MISA",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     },
     {
       "id": "tcl-ozarox-esports",
@@ -139,17 +130,14 @@
       "transfer_budget": 25000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "Ozarox Esports",
-      "short_name": "OZO"
+      "short_name": "OZO",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     },
     {
       "id": "tcl-su-esports",
@@ -175,23 +163,20 @@
       "transfer_budget": 50000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "SU Esports",
-      "short_name": "SU"
+      "short_name": "SU",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     },
     {
       "id": "tcl-pcific-esports",
       "city": "Istanbul",
       "colors": {
-        "secondary": "#000000"
+        "secondary": null
       },
       "country": "TR",
       "finance": 100000,
@@ -214,17 +199,10 @@
       "transfer_budget": 25000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "PCIFIC Esports",
-      "short_name": "PCF"
+      "short_name": "PCF",
+      "arena_name": "",
+      "arena_capacity": 0
     },
     {
       "id": "tcl-bushido-wildcats",
@@ -249,17 +227,14 @@
       "data.country": "Turkey",
       "data.team_kind": "Main",
       "transfer_budget": 50000,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "Bushido Wildcats",
-      "short_name": "BW"
+      "short_name": "BW",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     },
     {
       "id": "tcl-team-phoenix",
@@ -285,17 +260,14 @@
       "transfer_budget": 25000,
       "scrim_reputation": 30,
       "scrim_weekly_slots": 5,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "season_income": 0,
-      "season_expenses": 0,
-      "arena_capacity": 0,
-      "arena_name": "",
       "name": "Team Phoenix",
-      "short_name": "PHX"
+      "short_name": "PHX",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      }
     }
   ]
 }

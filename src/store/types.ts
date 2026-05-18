@@ -684,7 +684,12 @@ export interface TeamSummary {
   short_name: string;
   logo_url: string | null;
   country: string;
+  city?: string | null;
+  finance?: number | null;
+  reputation?: number | null;
+  colors?: TeamColors | null;
   ovr: number | null;
+  player_count?: number | null;
 }
 
 export interface LeagueSelectionData {

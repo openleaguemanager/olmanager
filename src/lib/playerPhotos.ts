@@ -28,7 +28,6 @@ const EXAMPLE_PHOTO_MAP = new Map<string, string>([
 function normalizeProfileImageUrl(url?: string | null): string | null {
   const value = String(url ?? "").trim();
   if (!value) return null;
-  if (value.startsWith("/images/")) return `/data/lec${value}`;
   return value;
 }
 

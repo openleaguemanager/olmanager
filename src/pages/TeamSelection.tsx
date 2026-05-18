@@ -51,6 +51,7 @@ interface RenderTeam {
   colors?: { primary: string; secondary: string };
   logo_url?: string | null;
   competition_id?: string | null;
+  player_count?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -497,9 +498,13 @@ export default function TeamSelection() {
           name: t.name,
           short_name: t.short_name,
           country: t.country,
-          city: t.country,
+          city: t.city ?? t.country,
+          finance: t.finance ?? undefined,
+          reputation: t.reputation ?? undefined,
+          colors: t.colors ?? undefined,
           logo_url: t.logo_url,
           competition_id: selectedCompetitionId,
+          player_count: t.player_count ?? undefined,
         }))
       : null;
 
@@ -585,11 +590,8 @@ export default function TeamSelection() {
               ? getReputationLabel(team.reputation)
               : { label: "—", variant: "neutral" as const };
 
-            // Player count: only available in legacy flow
-            const playerCount =
-              legacyTeams || oldTeamData
-                ? getCompetitiveRoster(team.id).length
-                : 0;
+            // Player count: from backend for new flow, computed for legacy
+            const playerCount = team.player_count ?? (legacyTeams || oldTeamData ? getCompetitiveRoster(team.id).length : undefined);
 
             return (
               <button
@@ -666,7 +668,7 @@ export default function TeamSelection() {
                         label={t("teamSelect.squad")}
                         value={
                           <span className="font-heading font-bold text-gray-800 dark:text-gray-200">
-                            {playerCount || (legacyTeams ? "?" : "—")}
+                            {playerCount != null ? playerCount : "—"}
                           </span>
                         }
                       />

@@ -1,0 +1,27 @@
+{
+  "name": "LEC Staff",
+  "description": "LEC - 2026 Season",
+  "staff": [
+    {
+      "id": "staff-891b413e",
+      "role": "Assistant Coach",
+      "wage": null,
+      "team_id": "lec-fnatic",
+      "last_name": "Pascu",
+      "attributes": {
+        "coaching": 85,
+        "physiotherapy": 75,
+        "judging_ability": 82,
+        "judging_potential": 81
+      },
+      "first_name": "Andrei Pascu",
+      "nationality": "Romania",
+      "contract_end": "2026-12-20",
+      "birth_country": null,
+      "date_of_birth": "1990-01-01",
+      "specialization": null,
+      "profile_image_url": null,
+      "nickname": "Odoamne"
+    }
+  ]
+}

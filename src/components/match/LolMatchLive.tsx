@@ -48,11 +48,11 @@ const SPEEDS = [
 
 const DDRAGON_VERSION = "14.24.1";
 const USE_RUST_SIM_V2 = true;
-const ICON_TOWER = "/lol-map-icons/icon_ui_tower_minimap.png";
-const ICON_GOLD = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-event-hub/global/default/images/currency.png";
-const ICON_VOIDGRUB = "/lol-map-icons/grub.png";
+const ICON_TOWER = "/lol-map-icons/icon_ui_tower_minimap.webp";
+const ICON_GOLD = "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-event-hub/global/default/images/currency.webp";
+const ICON_VOIDGRUB = "/lol-map-icons/grub.webp";
 const ICON_LEC = "/lec-logo.svg";
-const DEFAULT_DRAGON_ICON = "/lol-map-icons/dragon.png";
+const DEFAULT_DRAGON_ICON = "/lol-map-icons/dragon.webp";
 
 interface TeamSeed {
   id: string;
@@ -64,27 +64,27 @@ interface TeamSeed {
 const TEAM_SEEDS: TeamSeed[] = ((teamsSeed as { data?: { teams?: TeamSeed[] } }).data?.teams ?? []) as TeamSeed[];
 
 const TEAM_BRAND_MAP: Record<string, { tricode: string; logo: string | null }> = {
-  g2esports: { tricode: "G2", logo: "/team-logos/g2-esports.png" },
-  fnatic: { tricode: "FNC", logo: "/team-logos/fnatic.png" },
-  teamvitality: { tricode: "VIT", logo: "/team-logos/team-vitality.png" },
-  teamheretics: { tricode: "HRTS", logo: "/team-logos/team-heretics-lec.png" },
-  skgaming: { tricode: "SK", logo: "/team-logos/sk-gaming.png" },
-  movistarkoi: { tricode: "MKOI", logo: "/team-logos/mad-lions.png" },
-  mkoi: { tricode: "MKOI", logo: "/team-logos/mad-lions.png" },
-  koi: { tricode: "MKOI", logo: "/team-logos/mad-lions.png" },
-  madlionskoi: { tricode: "MKOI", logo: "/team-logos/mad-lions.png" },
-  teambds: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png" },
-  shifters: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png" },
-  giantx: { tricode: "GX", logo: "/team-logos/giantx-lec.png" },
-  natusvincere: { tricode: "NAVI", logo: "/team-logos/natus-vincere.png" },
-  karminecorp: { tricode: "KC", logo: "/team-logos/karmine-corp.png" },
+  g2esports: { tricode: "G2", logo: "/teams-icons/g2-esports.webp" },
+  fnatic: { tricode: "FNC", logo: "/teams-icons/fnatic.webp" },
+  teamvitality: { tricode: "VIT", logo: "/teams-icons/team-vitality.webp" },
+  teamheretics: { tricode: "HRTS", logo: "/teams-icons/team-heretics-lec.webp" },
+  skgaming: { tricode: "SK", logo: "/teams-icons/sk-gaming.webp" },
+  movistarkoi: { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
+  mkoi: { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
+  koi: { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
+  madlionskoi: { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
+  teambds: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.webp" },
+  shifters: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.webp" },
+  giantx: { tricode: "GX", logo: "/teams-icons/giantx-lec.webp" },
+  natusvincere: { tricode: "NAVI", logo: "/teams-icons/natus-vincere.webp" },
+  karminecorp: { tricode: "KC", logo: "/teams-icons/karmine-corp.webp" },
 };
 
 function championIconUrl(championId: string): string {
   if (normalizeChampionLookupKey(championId) === "yunara") {
-    return "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/804.png";
+    return "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/804.webp";
   }
-  return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${championId}.png`;
+  return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${championId}.webp`;
 }
 
 function attackTypeFromStats(attackRange: number, tags: string[]) {
@@ -131,7 +131,7 @@ function teamBrand(name: string): { tag: string; logo: string | null } {
     const logoFileName = fromSeed.logo?.split("/").pop();
     return {
       tag: (fromSeed.shortName || teamTag(name)).toUpperCase(),
-      logo: logoFileName ? `/team-logos/${logoFileName.toLowerCase()}` : null,
+      logo: logoFileName ? `/teams-icons/${logoFileName.toLowerCase()}` : null,
     };
   }
 
@@ -207,14 +207,14 @@ function formatGoldCompact(value: number | undefined) {
 
 function dragonIconForKind(kind: string | null | undefined): string {
   const normalized = (kind ?? "").toLowerCase();
-  if (normalized.includes("mountain")) return "/lol-map-icons/dragon_mountain.png";
-  if (normalized.includes("cloud")) return "/lol-map-icons/dragon_cloud.png";
-  if (normalized.includes("ocean")) return "/lol-map-icons/dragon_ocean.png";
-  if (normalized.includes("hextech")) return "/lol-map-icons/dragon_hextech.png";
-  if (normalized.includes("chemtech")) return "/lol-map-icons/dragon_chemtech.png";
-  if (normalized.includes("elder")) return "/lol-map-icons/dragon_elder.png";
-  if (normalized.includes("infernal") || normalized.includes("fire")) return "/lol-map-icons/dragon_infernal.png";
-  return "/lol-map-icons/dragon.png";
+  if (normalized.includes("mountain")) return "/lol-map-icons/dragon_mountain.webp";
+  if (normalized.includes("cloud")) return "/lol-map-icons/dragon_cloud.webp";
+  if (normalized.includes("ocean")) return "/lol-map-icons/dragon_ocean.webp";
+  if (normalized.includes("hextech")) return "/lol-map-icons/dragon_hextech.webp";
+  if (normalized.includes("chemtech")) return "/lol-map-icons/dragon_chemtech.webp";
+  if (normalized.includes("elder")) return "/lol-map-icons/dragon_elder.webp";
+  if (normalized.includes("infernal") || normalized.includes("fire")) return "/lol-map-icons/dragon_infernal.webp";
+  return "/lol-map-icons/dragon.webp";
 }
 
 function dragonKillIconsBySide(
@@ -265,7 +265,7 @@ function dragonKillIconsBySide(
 
     const padded = [...merged];
     while (padded.length < expectedCount) {
-      padded.push("/lol-map-icons/dragon.png");
+      padded.push("/lol-map-icons/dragon.webp");
     }
     return padded;
   }
@@ -362,10 +362,10 @@ function objectiveIconForEvent(event: LolSimV1RuntimeState["events"][number]): s
     const kindMatch = text.match(/secured\s+([a-z_]+)\s+(dragon|drake)/i);
     return dragonIconForKind(kindMatch?.[1] ?? "dragon");
   }
-  if (event.type === "baron") return "/lol-map-icons/baron.png";
-  if (event.type === "tower") return "/lol-map-icons/icon_ui_tower_minimap.png";
-  if (event.type === "nexus") return "/lol-map-icons/icon_ui_nexus_minimap_v2.png";
-  return "/lol-map-icons/camp.png";
+  if (event.type === "baron") return "/lol-map-icons/baron.webp";
+  if (event.type === "tower") return "/lol-map-icons/icon_ui_tower_minimap.webp";
+  if (event.type === "nexus") return "/lol-map-icons/icon_ui_nexus_minimap_v2.webp";
+  return "/lol-map-icons/camp.webp";
 }
 
 function sideFromRuntimeText(text: string | null | undefined): "blue" | "red" | null {

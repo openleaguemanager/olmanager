@@ -171,9 +171,13 @@ export function filterTransferPlayers(
   players: PlayerData[],
   search: string,
   posFilter: string | null,
+  competitionTeamIds: Set<string> | null,
 ): PlayerData[] {
   return players.filter((player) => {
     if (posFilter && getLolRoleForPlayer(player) !== posFilter) {
+      return false;
+    }
+    if (competitionTeamIds && (!player.team_id || !competitionTeamIds.has(player.team_id))) {
       return false;
     }
 

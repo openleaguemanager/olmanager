@@ -5,26 +5,13 @@
   "region": "LES",
   "country": "ES",
   "tier": 2,
-  "logo": "/competitions-icons/les.webp",
+  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778617584007_v28ztn1vq9e.webp",
   "teams_file": "erls/teams/les_teams.json",
   "players_file": "erls/players/les_players.json",
-  "reputation": 4,
-  "nearby_country_codes": ["PT", "AD"],
   "schedule": {
-    "format": "single_round_robin",
-    "team_count": 8,
-    "preseason_friendlies": 3,
-    "splits": [
-      {
-        "name": "Spring",
-        "best_of": 1,
-        "playoffs": null,
-        "season_start": {
-          "month": 1,
-          "day": 1
-        },
-        "superweek_offsets": []
-      }
-    ]
+    "format": "unknown",
+    "team_count": 0,
+    "preseason_friendlies": 0,
+    "splits": []
   }
 }

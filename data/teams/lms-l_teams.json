@@ -1,0 +1,86 @@
+{
+  "name": "LMS-L Teams",
+  "description": "LMS-L - 2026 Season",
+  "teams": [
+    {
+      "id": "lms-l-flash-wolves",
+      "logo_url": "/teams-icons/flash-wolves.webp",
+      "data.country": "Taiwan",
+      "name": "Flash Wolves",
+      "short_name": "FW",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lms-l-psg-talon",
+      "logo_url": "/teams-icons/psg-talon.webp",
+      "data.country": "Hong Kong",
+      "name": "PSG Talon",
+      "short_name": "PSG",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lms-l-beyond-gaming",
+      "logo_url": "/teams-icons/beyond-gaming.webp",
+      "data.country": "Taiwan",
+      "name": "Beyond Gaming",
+      "short_name": "BYG",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lms-l-taipei-assassins",
+      "logo_url": "/teams-icons/taipei-assassins.webp",
+      "data.country": "TW",
+      "name": "Taipei Assassins",
+      "short_name": "TA",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    },
+    {
+      "id": "lms-l-j-team",
+      "logo_url": "/teams-icons/j-team.webp",
+      "data.country": "TW",
+      "name": "J Team",
+      "short_name": "JT",
+      "country": "",
+      "city": "",
+      "arena_name": "",
+      "arena_capacity": 0,
+      "colors": {
+        "primary": "#000000",
+        "secondary": "#ffffff"
+      },
+      "facilities": {}
+    }
+  ]
+}

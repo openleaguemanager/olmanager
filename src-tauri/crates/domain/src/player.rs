@@ -11,7 +11,9 @@ pub struct Player {
     pub id: String,
     pub match_name: String,
     pub full_name: String,
+    #[serde(default)]
     pub date_of_birth: String,
+    #[serde(default)]
     pub nationality: String,
     #[serde(default)]
     pub birth_country: Option<String>,
@@ -33,13 +35,16 @@ pub struct Player {
     pub attributes: PlayerAttributes,
 
     // Dynamic match/season values
+    #[serde(default = "default_condition")]
     pub condition: u8, // 0-100 (short-term energy; depletes during matches, recovers daily)
+    #[serde(default = "default_morale")]
     pub morale: u8,    // 0-100
     /// Long-term physical shape (0–100). Determines how fast condition depletes and
     /// recovers, and modulates injury risk. Changes slowly over weeks.
     #[serde(default = "default_fitness")]
     pub fitness: u8,
 
+    #[serde(default, deserialize_with = "deserialize_optional_injury")]
     pub injury: Option<Injury>,
     pub team_id: Option<String>,
 
@@ -49,13 +54,16 @@ pub struct Player {
 
     // Contract & value
     pub contract_end: Option<String>,
+    #[serde(default = "default_wage")]
     pub wage: u32, // weekly wage
+    #[serde(default = "default_market_value")]
     pub market_value: u64,
 
-    // Season stats
+    // Season stats (required — all players need stats)
     pub stats: PlayerSeasonStats,
 
     // Career history
+    #[serde(default)]
     pub career: Vec<CareerEntry>,
 
     // Individual training focus override (takes priority over group and team default)
@@ -147,8 +155,49 @@ fn default_fitness() -> u8 {
     75
 }
 
+fn default_condition() -> u8 {
+    100
+}
+
+fn default_morale() -> u8 {
+    70
+}
+
+fn default_wage() -> u32 {
+    50_000
+}
+
+fn default_market_value() -> u64 {
+    750_000
+}
+
 fn default_potential_base() -> u8 {
     99
+}
+
+/// Custom deserializer for `Option<Injury>` that treats `""` and `null` as `None`.
+fn deserialize_optional_injury<'de, D>(deserializer: D) -> Result<Option<Injury>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::de::Visitor;
+    struct InjuryOptVisitor;
+    impl<'de> Visitor<'de> for InjuryOptVisitor {
+        type Value = Option<Injury>;
+        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            f.write_str("an Injury object, null, or empty string")
+        }
+        fn visit_none<E: serde::de::Error>(self) -> Result<Option<Injury>, E> {
+            Ok(None)
+        }
+        fn visit_unit<E: serde::de::Error>(self) -> Result<Option<Injury>, E> {
+            Ok(None)
+        }
+        fn visit_str<E: serde::de::Error>(self, v: &str) -> Result<Option<Injury>, E> {
+            if v.is_empty() { Ok(None) } else { Err(E::custom("expected injury object or null")) }
+        }
+    }
+    deserializer.deserialize_any(InjuryOptVisitor)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
