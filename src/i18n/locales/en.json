@@ -250,7 +250,7 @@
     "delegateAssistant": "Delegate to Assistant",
     "delegateAssistantDesc": "AI handles everything instantly",
     "skipToMatchDay": "Skip to Match Day",
-    "skipToMatchDayDesc": "Fast-forward to your next fixture",
+    "skipToMatchDayDesc": "Fast-forward to your next match",
     "matchDayTitle": "Match Day",
     "delegateWarning": "Your assistant will manage the match. You won't be able to intervene."
   },
@@ -340,7 +340,7 @@
     "boardObjectives": "Board Objectives",
     "seasonComplete": "Season complete.",
     "noLeagueSchedule": "No league data.",
-    "noUpcomingOpponent": "No upcoming league fixture.",
+    "noUpcomingOpponent": "No upcoming league match.",
     "leagueDigest": "League Digest",
     "noLeagueDigest": "No league digest yet.",
     "scheduleLabel": "Schedule:",
@@ -794,8 +794,8 @@
   },
   "tactics": {
     "formationStyle": "Game Plan & Style",
-    "formation": "Game Plan",
     "playStyle": "Play Style",
+    "draftStrategy": "Draft Strategy",
     "lineupTab": "Lineup",
     "rolesTab": "Objectives & Roles",
     "teamRoles": "Team Roles",
@@ -806,7 +806,7 @@
     "noStartersForRoles": "Set your starting five to assign team roles and objectives.",
     "startingXI": "Starting Five",
     "fullSquad": "Full Squad",
-    "pitchInteractionHint": "Drag players between the Rift and bench, click one player to inspect them, click a second player to compare them, then confirm the swap in the compare panel.",
+    "riftInteractionHint": "Drag players between the Rift and bench, click one player to inspect them, click a second player to compare them, then confirm the swap in the compare panel.",
     "selectedPlayer": "Selected player",
     "comparePlayer": "Comparison player",
     "selectSecondPlayer": "Select a second player in the lineup view to compare attributes and prepare the swap.",
@@ -1047,7 +1047,7 @@
       "Light": {
         "label": "Light",
         "desc": "2 days training, 5 rest",
-        "detail": "Train Tue & Thu only. Prioritises recovery. Good after heavy fixture congestion."
+        "detail": "Train Tue & Thu only. Prioritises recovery. Good after heavy match congestion."
       }
     },
     "days": {
@@ -1138,7 +1138,8 @@
       "AssistantManager": "Assistant Manager",
       "Coach": "Coach",
       "Scout": "Scout",
-      "Physio": "Physio"
+      "Physio": "Physio",
+      "Owner": "Owner"
     },
     "attrs": {
       "coaching": "Coaching",
@@ -1394,7 +1395,7 @@
   "schedule": {
     "noSchedule": "No league schedule available.",
     "noLeague": "No league schedule available.",
-    "fixtures": "Fixtures",
+    "matches": "Matches",
     "calendar": "Calendar",
     "today": "Today",
     "previousMonth": "Previous month",
@@ -1700,7 +1701,7 @@
     "upToDate": "You're up to date"
   },
   "preMatch": {
-    "formationFit": "Strategy Fit",
+    "roleCoverage": "Strategy Fit",
     "autoSelect": "Auto-Select Best Five",
     "selecting": "Selecting...",
     "startingXI": "Starting Five",
@@ -1778,8 +1779,8 @@
     "step1Min": "Step 1 Minute",
     "teamControls": "Team Controls",
     "subs": "Subs",
-    "formation": "Formation",
     "playStyle": "Play Style",
+    "draftStrategy": "Draft Strategy",
     "keyEvents": "Key Events",
     "noEventsYet": "Match hasn't started yet.",
     "waitingKickoff": "Waiting for kick-off...",
@@ -2058,7 +2059,7 @@
     "roundSummaryUnavailable": "Round summary unavailable.",
     "otherMatches": "Other Matches",
     "otherMatchesToday": "Other Matches Today",
-    "otherMatchesUnavailable": "Other match context unavailable for this fixture yet.",
+    "otherMatchesUnavailable": "Other match context unavailable for this match yet.",
     "viewDetails": "View details",
     "matchDetails": "Match Details",
     "scorers": "Scorers",
@@ -2247,7 +2248,7 @@
     "preMatchPrep": "Pre-Match Preparation",
     "startingLineup": "Starting Lineup",
     "setPiecesCaptain": "Objectives & Captain",
-    "formationFit": "Strategy Fit",
+    "roleCoverage": "Strategy Fit",
     "selecting": "Selecting...",
     "autoSelectXI": "Auto-Select Best Five",
     "startingXI": "Starting Five",
@@ -2360,7 +2361,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",
@@ -2381,9 +2382,9 @@
       },
       "schedule": {
         "subject": "Season Schedule Released",
-        "body0": "The {{league}} schedule has been released. The season kicks off on {{start}}.\n\nReview the fixture list and ensure your squad is ready for the challenges ahead. Pre-season preparation will be crucial.",
-        "body1": "Fixture list confirmed! The {{league}} season begins on {{start}}.\n\nStudy the opening fixtures carefully — a strong start can set the tone for the whole campaign. Make sure your key players are match-fit.",
-        "actionView": "View Fixtures"
+        "body0": "The {{league}} schedule has been released. The season kicks off on {{start}}.\n\nReview the match list and ensure your squad is ready for the challenges ahead. Pre-season preparation will be crucial.",
+        "body1": "Match list confirmed! The {{league}} season begins on {{start}}.\n\nStudy the opening matches carefully — a strong start can set the tone for the whole campaign. Make sure your key players are match-fit.",
+        "actionView": "View Matches"
       },
       "preMatch": {
         "subject": "Upcoming: vs {{opponent}} ({{venue}})",

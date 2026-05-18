@@ -189,11 +189,10 @@ function createNewPlayer(index: number): PlayerData {
     full_name: "Nuevo Jugador",
     date_of_birth: "2005-01-01",
     nationality: "KR",
-    football_nation: "KR",
     birth_country: "KR",
     profile_image_url: null,
-    position: "Midfielder",
-    natural_position: "Midfielder",
+    position: "SUPPORT",
+    natural_position: "SUPPORT",
     alternate_positions: [],
     footedness: "Right",
     weak_foot: 2,
@@ -273,7 +272,7 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
       setWorld(loaded);
       setSelectedPlayerId(loaded.players[0]?.id ?? "");
       setSelectedStaffId(loaded.staff[0]?.id ?? "");
-      if (sourcePath) setPath(sourcePath === "lec-default" ? "" : sourcePath);
+      if (sourcePath) setPath(sourcePath === "default" ? "" : sourcePath);
       setStatus(`Mundo cargado: ${loaded.name}`);
     } catch (err) {
       setError(String(err));
@@ -552,7 +551,7 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
         <Card>
           <CardBody>
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto_auto_auto] lg:items-end">
-              <TextField label="Path JSON del mundo" value={path} placeholder="src-tauri/databases/lec_world.json" onChange={setPath} />
+              <TextField label="Path JSON del mundo" value={path} placeholder="src-tauri/databases/world.json" onChange={setPath} />
               <button type="button" onClick={() => loadWorld("lec-default")} disabled={isLoading} className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 dark:border-navy-600 dark:text-gray-200 dark:hover:bg-navy-700">
                 <Database className="h-4 w-4" />
                 Default
@@ -659,10 +658,9 @@ export default function WorldEditorTab({ onBack }: WorldEditorTabProps) {
                       <TextField label="Nombre completo" value={selectedPlayer.full_name} onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, full_name: value }))} />
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                         <TextField label="Fecha de nacimiento" type="date" value={selectedPlayer.date_of_birth} onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, date_of_birth: value }))} />
-                        <TextField label="Nacionalidad" value={selectedPlayer.nationality} placeholder="KR" onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, nationality: value.trim().toUpperCase(), football_nation: (player.football_nation ?? player.nationality).trim().toUpperCase() || value.trim().toUpperCase() }))} />
+                        <TextField label="Nacionalidad" value={selectedPlayer.nationality} placeholder="KR" onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, nationality: value.trim().toUpperCase() }))} />
                         <TextField label="País de nacimiento" value={selectedPlayer.birth_country ?? selectedPlayer.nationality} placeholder="KR" onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, birth_country: normalizeOptionalUrl(value.toUpperCase()) }))} />
                       </div>
-                      <TextField label="Nación competitiva" value={selectedPlayer.football_nation ?? selectedPlayer.nationality} placeholder="KR / EUN / PCS" onChange={(value) => updatePlayer(selectedPlayer.id, (player) => ({ ...player, football_nation: value.trim().toUpperCase() }))} />
                       <div className="rounded-xl border border-accent-400/25 bg-accent-500/10 px-4 py-3">
                         <p className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">OVR calculado</p>
                         <p className="mt-1 text-4xl font-heading font-black text-accent-500">{calculateLolOvr(selectedPlayer)}</p>

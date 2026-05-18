@@ -2,25 +2,6 @@ import lesExampleRaw from "../../data/erls/les.txt?raw";
 import lflExampleRaw from "../../data/erls/lfl.txt?raw";
 import primeLeagueExampleRaw from "../../data/erls/Prime League.txt?raw";
 
-const FALLBACK_TEAM_LOGOS: Record<string, string> = {
-  falkeesports:
-    "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/b/b0/Falke_Esportslogo_square.png/revision/latest/scale-to-width-down/220?cb=20250917172449",
-  barcelonaesports:
-    "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/6/68/Bar%C3%A7a_eSportslogo_square.png/revision/latest/scale-to-width-down/220?cb=20221118223547",
-  g2esports: "/team-logos/g2-esports.png",
-  fnatic: "/team-logos/fnatic.png",
-  giantx: "/team-logos/giantx-lec.png",
-  karminecorp: "/team-logos/karmine-corp.png",
-  movistarkoi: "/team-logos/mad-lions.png",
-  koi: "/team-logos/mad-lions.png",
-  madlionskoi: "/team-logos/mad-lions.png",
-  natusvincere: "/team-logos/natus-vincere.png",
-  skgaming: "/team-logos/sk-gaming.png",
-  teamheretics: "/team-logos/team-heretics-lec.png",
-  teamvitality: "/team-logos/team-vitality.png",
-  teambds: "/team-logos/team-bds.png",
-};
-
 function normalizeKey(value: string): string {
   return value
     .toLowerCase()
@@ -57,11 +38,25 @@ const EXAMPLE_TEAM_LOGO_MAP = new Map<string, string>([
   ...parseExampleTeamLogoMap(lesExampleRaw).entries(),
   ...parseExampleTeamLogoMap(lflExampleRaw).entries(),
   ...parseExampleTeamLogoMap(primeLeagueExampleRaw).entries(),
-  ...Object.entries(FALLBACK_TEAM_LOGOS),
 ]);
 
-export function resolveExampleTeamLogo(teamName?: string | null): string | null {
+const MAIN_TEAM_LOGOS: Record<string, string> = {
+  [normalizeKey("G2 Esports")]: "/teams-icons/g2-esports.webp",
+  [normalizeKey("Movistar KOI")]: "/teams-icons/movistar-koi.webp",
+  [normalizeKey("MAD Lions KOI")]: "/teams-icons/movistar-koi.webp",
+  [normalizeKey("Fnatic")]: "/teams-icons/fnatic.webp",
+  [normalizeKey("GIANTX")]: "/teams-icons/giantx-lec.webp",
+  [normalizeKey("Karmine Corp")]: "/teams-icons/karmine-corp.webp",
+  [normalizeKey("Natus Vincere")]: "/teams-icons/natus-vincere.webp",
+  [normalizeKey("SK Gaming")]: "/teams-icons/sk-gaming.webp",
+  [normalizeKey("Team Heretics")]: "/teams-icons/team-heretics-lec.webp",
+  [normalizeKey("Team Vitality")]: "/teams-icons/team-vitality.webp",
+  [normalizeKey("Shifters")]: "/teams-icons/shifters.webp",
+};
+
+export function resolveTeamLogo(teamName?: string | null, logoUrl?: string | null): string | null {
+  if (logoUrl) return logoUrl;
   const key = normalizeKey(teamName ?? "");
   if (!key) return null;
-  return EXAMPLE_TEAM_LOGO_MAP.get(key) ?? null;
+  return EXAMPLE_TEAM_LOGO_MAP.get(key) ?? MAIN_TEAM_LOGOS[key] ?? null;
 }

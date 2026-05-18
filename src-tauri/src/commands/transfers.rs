@@ -251,7 +251,8 @@ mod tests {
     };
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
-    use domain::player::{Player, PlayerAttributes, Position, TransferOffer, TransferOfferStatus};
+    use domain::player::{Player, PlayerAttributes, TransferOffer, TransferOfferStatus, LolRole};
+>>>>>>> origin/pr/166-171
     use domain::season::TransferWindowStatus;
     use domain::team::Team;
     use ofm_core::clock::GameClock;
@@ -261,25 +262,15 @@ mod tests {
 
     fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
-            mental_resilience: 60,
-            strength: 60,
-            champion_pool: 60,
-            passing: 60,
-            laning: 60,
-            tackling: 60,
             mechanics: 60,
-            defending: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
-            handling: 30,
-            reflexes: 30,
-            aerial: 60,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 
@@ -321,7 +312,7 @@ mod tests {
             "Player One".to_string(),
             "2000-01-01".to_string(),
             "England".to_string(),
-            Position::Forward,
+            LolRole::Adc,
             default_attrs(),
         );
         player.team_id = Some("team-1".to_string());
@@ -372,7 +363,7 @@ mod tests {
             "Player Two".to_string(),
             "2000-01-01".to_string(),
             "England".to_string(),
-            Position::Forward,
+            LolRole::Adc,
             default_attrs(),
         );
         player.team_id = Some("team-2".to_string());
@@ -425,7 +416,7 @@ mod tests {
             "Free Agent One".to_string(),
             "2001-02-10".to_string(),
             "England".to_string(),
-            Position::Forward,
+            LolRole::Adc,
             default_attrs(),
         );
         free_agent.team_id = None;

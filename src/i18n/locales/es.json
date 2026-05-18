@@ -793,7 +793,6 @@
   },
   "tactics": {
     "formationStyle": "Plan de Juego y Estilo",
-    "formation": "Plan de Juego",
     "playStyle": "Estilo de Juego",
     "lineupTab": "Alineación",
     "rolesTab": "Roles y objetivos",
@@ -805,7 +804,7 @@
     "noStartersForRoles": "Define tu quinteto titular para asignar roles del equipo y objetivos.",
     "startingXI": "Quinteto Titular",
     "fullSquad": "Plantilla Completa",
-    "pitchInteractionHint": "Arrastra jugadores entre la Grieta y el banquillo, haz clic en un jugador para revisarlo, haz clic en un segundo para compararlos y luego confirma el cambio en el panel de comparación.",
+    "riftInteractionHint": "Arrastra jugadores entre la Grieta y el banquillo, haz clic en un jugador para revisarlo, haz clic en un segundo para compararlos y luego confirma el cambio en el panel de comparación.",
     "selectedPlayer": "Jugador seleccionado",
     "comparePlayer": "Jugador de comparación",
     "selectSecondPlayer": "Selecciona un segundo jugador en la vista de alineación para comparar atributos y preparar el cambio.",
@@ -1137,7 +1136,8 @@
       "AssistantManager": "Segundo Entrenador",
       "Coach": "Entrenador",
       "Scout": "Ojeador",
-      "Physio": "Fisioterapeuta"
+      "Physio": "Fisioterapeuta",
+      "Owner": "Propietario"
     },
     "attrs": {
       "coaching": "Entrenamiento",
@@ -1399,7 +1399,7 @@
   "schedule": {
     "noSchedule": "No hay calendario de liga disponible.",
     "noLeague": "No hay calendario de liga disponible.",
-    "fixtures": "Partidos",
+    "matches": "Partidos",
     "calendar": "Calendario",
     "today": "Hoy",
     "previousMonth": "Mes anterior",
@@ -1705,7 +1705,7 @@
     "upToDate": "Tienes la última versión"
   },
   "preMatch": {
-    "formationFit": "Ajuste de Estrategia",
+    "roleCoverage": "Ajuste de Estrategia",
     "autoSelect": "Selección automática del quinteto",
     "selecting": "Seleccionando...",
     "startingXI": "Quinteto Titular",
@@ -1783,7 +1783,6 @@
     "step1Min": "Avanzar 1 Minuto",
     "teamControls": "Controles del Equipo",
     "subs": "Cambios",
-    "formation": "Plan de Juego",
     "playStyle": "Estilo de Juego",
     "keyEvents": "Eventos Clave",
     "noEventsYet": "El partido aún no ha comenzado.",
@@ -2252,7 +2251,7 @@
     "preMatchPrep": "Preparación Pre-Partido",
     "startingLineup": "Alineación Titular",
     "setPiecesCaptain": "Objetivos y Líder",
-    "formationFit": "Ajuste de Estrategia",
+    "roleCoverage": "Ajuste de Estrategia",
     "selecting": "Seleccionando...",
     "autoSelectXI": "Auto-seleccionar mejor quinteto",
     "startingXI": "Quinteto",
@@ -2365,7 +2364,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",

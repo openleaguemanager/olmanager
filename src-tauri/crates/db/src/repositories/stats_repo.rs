@@ -84,8 +84,8 @@ struct LegacyScoreProjection {
     away_wins: u8,
 }
 
-/// Bridge de compatibilidad legacy para columnas football-first.
-/// Se usa únicamente para import/fallback explícito, no como ruta principal.
+/// Legacy compatibility bridge for football-first columns.
+/// Used only for explicit import/fallback, not as primary path.
 fn project_legacy_scoreline(
     team_id: &str,
     opponent_team_id: &str,
@@ -228,8 +228,8 @@ fn load_stats_state_from_lol_tables(conn: &Connection) -> Result<StatsState, Str
     })
 }
 
-/// Compatibilidad legacy explícita: lectura desde tablas football-first cuando
-/// la base no tiene el esquema LoL puro (DBs antiguas sin v021).
+/// Explicit legacy compatibility: read from football-first tables when
+/// the database does not have the pure LoL schema (old DBs without v021).
 fn load_stats_state_from_legacy_tables(conn: &Connection) -> Result<StatsState, String> {
     let mut player_stmt = conn
         .prepare(

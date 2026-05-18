@@ -1,8 +1,8 @@
 import { calcAge, calcOvr } from "../../lib/helpers";
 import type { PlayerData } from "../../store/gameStore";
 import {
-  buildPitchRows,
-  buildStartingXIIds,
+  buildActiveLineupIds,
+  buildLaneRows,
   getPreferredPositions,
   isPlayerOutOfPosition,
   normalisePosition,
@@ -10,30 +10,28 @@ import {
   type SquadSection,
 } from "../squad/SquadTab.helpers";
 
-export const FORMATIONS = [
-  "4-4-2",
-  "4-3-3",
-  "3-5-2",
-  "4-5-1",
-  "4-2-3-1",
-  "3-4-3",
-  "5-3-2",
-  "4-1-4-1",
+export const DRAFT_STRATEGIES = [
+  "Balanced",
+  "Aggressive",
+  "Passive",
+  "Scaling",
+  "CounterPick",
+  "PriorityBans",
 ];
 
-export const PLAY_STYLE_DESCRIPTION_FALLBACKS: Record<string, string> = {
+export const DRAFT_STRATEGY_DESCRIPTION_FALLBACKS: Record<string, string> = {
   Balanced:
-    "Keeps your team measured in and out of possession, with a steady shape and fewer extremes.",
-  Attacking:
-    "Pushes more bodies forward, creates extra support around the box, and asks your team to take more initiative.",
-  Defensive:
-    "Makes your team protect space first, stay compact, and reduce the risk of getting exposed behind the ball.",
-  Possession:
-    "Encourages your team to circulate the ball patiently, control the tempo, and look for cleaner openings.",
-  Counter:
-    "Invites your team to break forward quickly after regaining the ball, attacking space before the opponent resets.",
-  HighPress:
-    "Asks your team to close down earlier, win the ball higher up the pitch, and keep opponents under pressure.",
+    "Keeps your team measured in draft and map play, with a steady approach and fewer extremes.",
+  Aggressive:
+    "Pushes for early advantages and proactive map pressure, forcing the opponent to react.",
+  Passive:
+    "Prioritizes safe scaling and vision control, minimizing risks in the early game.",
+  Scaling:
+    "Invests in late-game team compositions, trading early pressure for power spikes.",
+  CounterPick:
+    "Reserves draft slots for adaptive counter picks based on opponent's revealed composition.",
+  PriorityBans:
+    "Focuses ban phase on denying key opponent champions and meta threats.",
 };
 
 export type SortDirection = "asc" | "desc";
@@ -63,7 +61,6 @@ interface TacticsPlayerFilterContext {
 
 interface ResolveStartingXiIdsOptions {
   availablePlayers: PlayerData[];
-  formation: string;
   pendingStartingXiIds: string[] | null;
   playersById: Map<string, PlayerData>;
   savedStartingXiIds: string[];
@@ -87,17 +84,15 @@ export function buildTacticsRoster(
 
 export function resolveStartingXiIds({
   availablePlayers,
-  formation,
   pendingStartingXiIds,
   playersById,
   savedStartingXiIds,
 }: ResolveStartingXiIdsOptions): string[] {
-  const baseIds = buildStartingXIIds(
+  const baseIds = buildActiveLineupIds(
     availablePlayers,
     savedStartingXiIds,
-    formation,
   );
-  const slotPositions = buildPitchRows(formation).flatMap((row) => row.positions);
+  const slotPositions = buildLaneRows().flatMap((row) => row.positions);
 
   if (!pendingStartingXiIds || pendingStartingXiIds.length === 0) {
     return baseIds;
@@ -107,7 +102,7 @@ export function resolveStartingXiIds({
   const usedPlayerIds = new Set(validPendingIds);
   const fillPlayerIds: string[] = [];
 
-  while (validPendingIds.length + fillPlayerIds.length < 11) {
+  while (validPendingIds.length + fillPlayerIds.length < 5) {
     const slotPosition = slotPositions[validPendingIds.length + fillPlayerIds.length];
     const bestPlayer = availablePlayers
       .filter((player) => !usedPlayerIds.has(player.id))
@@ -121,7 +116,7 @@ export function resolveStartingXiIds({
     usedPlayerIds.add(bestPlayer.id);
   }
 
-  return [...validPendingIds, ...fillPlayerIds].slice(0, 11);
+  return [...validPendingIds, ...fillPlayerIds].slice(0, 5);
 }
 
 export function getSectionPlayerPosition(

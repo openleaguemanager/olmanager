@@ -1,5 +1,5 @@
 use crate::game::Game;
-use crate::player_rating::{effective_rating_for_assignment, formation_slots, natural_ovr};
+use crate::player_rating::{effective_rating_for_assignment, position_slots, natural_ovr};
 use domain::league::{Fixture, FixtureStatus, StandingEntry};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -76,7 +76,7 @@ pub fn build_round_summary(
     matchday: u32,
     previous_standings: &[StandingEntry],
 ) -> Option<RoundSummary> {
-    let league = game.league.as_ref()?;
+    let league = game.leagues.first()?;
     let round_fixtures: Vec<&Fixture> = league
         .fixtures
         .iter()
@@ -317,8 +317,18 @@ fn round_goal_counts(game: &Game, fixtures: &[&Fixture]) -> HashMap<String, u32>
         };
 
         let Some(report) = result.report.as_ref() else {
-            assign_result_kills_to_team_leader(game, &mut counts, &fixture.home_team_id, result.home_wins);
-            assign_result_kills_to_team_leader(game, &mut counts, &fixture.away_team_id, result.away_wins);
+            assign_result_kills_to_team_leader(
+                game,
+                &mut counts,
+                &fixture.home_team_id,
+                result.home_wins,
+            );
+            assign_result_kills_to_team_leader(
+                game,
+                &mut counts,
+                &fixture.away_team_id,
+                result.away_wins,
+            );
             continue;
         };
 
@@ -366,8 +376,8 @@ fn sort_standings(mut standings: Vec<StandingEntry>) -> Vec<StandingEntry> {
         right
             .points
             .cmp(&left.points)
-            .then(right.goal_difference().cmp(&left.goal_difference()))
-            .then(right.kills_for.cmp(&left.kills_for))
+            .then(right.kill_difference().cmp(&left.kill_difference()))
+            .then(right.maps_won.cmp(&left.maps_won))
     });
     standings
 }
@@ -376,7 +386,7 @@ fn team_strength(game: &Game, team_id: &str) -> f64 {
     let team = game.teams.iter().find(|team| team.id == team_id);
     match team {
         Some(team) if !team.active_lineup_ids.is_empty() => {
-            let slots = formation_slots(&team.formation);
+            let slots = position_slots();
             let rated_players: Vec<f64> = team
                 .active_lineup_ids
                 .iter()

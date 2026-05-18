@@ -740,7 +740,6 @@
   },
   "tactics": {
     "formationStyle": "Diziliş ve Stil",
-    "formation": "Diziliş",
     "playStyle": "Oyun Tarzı",
     "lineupTab": "Kadro",
     "rolesTab": "Duran Toplar ve Roller",
@@ -752,7 +751,7 @@
     "noStartersForRoles": "Takım rollerini ve duran topları atamak için İlk 11'inizi belirleyin.",
     "startingXI": "İlk 11 — {{formation}}",
     "fullSquad": "Tüm Kadro",
-    "pitchInteractionHint": "Oyuncuları saha ve yedek kulübesi arasında sürükleyin, bir oyuncuyu incelemek için üzerine tıklayın, onları karşılaştırmak için ikinci bir oyuncuya tıklayın ve ardından karşılaştırma panelinden değişikliği onaylayayın.",
+    "riftInteractionHint": "Oyuncuları saha ve yedek kulübesi arasında sürükleyin, bir oyuncuyu incelemek için üzerine tıklayın, onları karşılaştırmak için ikinci bir oyuncuya tıklayın ve ardından karşılaştırma panelinden değişikliği onaylayayın.",
     "selectedPlayer": "Seçilen oyuncu",
     "comparePlayer": "Karşılaştırılan oyuncu",
     "selectSecondPlayer": "Özellikleri karşılaştırmak ve değişikliği hazırlamak için kadro görünümünde ikinci bir oyuncu seçin.",
@@ -1308,7 +1307,7 @@
   "schedule": {
     "noSchedule": "Lig fikstürü bulunmuyor.",
     "noLeague": "Lig fikstürü bulunmuyor.",
-    "fixtures": "Fikstür",
+    "matches": "Maçlar",
     "calendar": "Takvim",
     "today": "Bugün",
     "previousMonth": "Önceki ay",
@@ -1607,7 +1606,7 @@
     "upToDate": "Güncel versiyonu kullanıyorsunuz"
   },
   "preMatch": {
-    "formationFit": "Diziliş Uyumu",
+    "roleCoverage": "Diziliş Uyumu",
     "autoSelect": "En İyi 5'liyi Otomatik Seç",
     "selecting": "Seçiliyor...",
     "startingXI": "İlk 5",
@@ -1685,7 +1684,6 @@
     "step1Min": "1 Dakika İleri",
     "teamControls": "Takım Kontrolleri",
     "subs": "Yedekler",
-    "formation": "Diziliş",
     "playStyle": "Oyun Tarzı",
     "keyEvents": "Önemli Olaylar",
     "noEventsYet": "Maç henüz başlamadı.",
@@ -2136,7 +2134,7 @@
     "preMatchPrep": "Maç Öncesi Hazırlık",
     "startingLineup": "İlk 5",
     "setPiecesCaptain": "Duran Toplar ve Kaptan",
-    "formationFit": "Diziliş Uyumu",
+    "roleCoverage": "Diziliş Uyumu",
     "selecting": "Seçiliyor...",
     "autoSelectXI": "En İyi 5'liyi Otomatik Seç",
     "startingXI": "İlk 5",
@@ -2244,7 +2242,7 @@
     },
     "source": {
       "sportsGazette": "Dot Esports",
-      "footballHerald": "LoL Esports",
+      "lolEsports": "LoL Esports",
       "matchDayPress": "Dexerto Esports",
       "leagueChronicle": "Sheep Esports",
       "leagueWire": "Esports Insider",

@@ -187,7 +187,7 @@ pub fn evaluate_sponsorship_bonus(
 }
 
 fn current_league_position(game: &Game, team_id: &str) -> Option<u32> {
-    let league = game.league.as_ref()?;
+    let league = game.leagues.first()?;
 
     league
         .sorted_standings()
@@ -197,7 +197,7 @@ fn current_league_position(game: &Game, team_id: &str) -> Option<u32> {
 }
 
 fn count_recent_home_matches(game: &Game, team_id: &str) -> i64 {
-    let Some(league) = &game.league else {
+    let Some(league) = game.leagues.first() else {
         return 0;
     };
 
@@ -299,7 +299,7 @@ pub fn process_weekly_finances(game: &mut Game) {
     }
 
     // --- Matchday income for home matches completed in last 7 days ---
-    if game.league.is_some() {
+    if !game.leagues.is_empty() {
         let home_match_counts: Vec<(String, i64)> = game
             .teams
             .iter()
@@ -317,8 +317,12 @@ pub fn process_weekly_finances(game: &mut Game) {
                 let mut rng = rand::rng();
                 let attendance_pct = rng.random_range(15..=30) as f64 / 100.0;
                 let avg_ticket = rng.random_range(4..=8) as f64;
-                let total_revenue =
-                    calc_matchday(team.stadium_capacity, home_count, attendance_pct, avg_ticket);
+                let total_revenue = calc_matchday(
+                    team.stadium_capacity,
+                    home_count,
+                    attendance_pct,
+                    avg_ticket,
+                );
 
                 team.finance += total_revenue;
                 team.season_income += total_revenue;

@@ -17,25 +17,15 @@ use ofm_core::transfers::{
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {
-        pace: 60,
         mental_resilience: 60,
-        strength: 60,
         champion_pool: 60,
-        passing: 60,
         laning: 60,
-        tackling: 60,
         mechanics: 60,
-        defending: 60,
-        positioning: 60,
         macro_play: 60,
         consistency: 60,
         discipline: 60,
-        aggression: 60,
         teamfighting: 60,
         shotcalling: 60,
-        handling: 30,
-        reflexes: 30,
-        aerial: 60,
     }
 }
 
@@ -291,7 +281,6 @@ fn key_player_is_harder_to_buy_than_fringe_player() {
     let mut star = make_player("player-star");
     star.attributes.laning = 88;
     star.attributes.mechanics = 86;
-    star.attributes.pace = 84;
 
     let mut star_game =
         make_game_with_player(star, vec!["player-star".to_string()], 5_000_000, 2_000_000);
