@@ -58,6 +58,7 @@ pub struct Player {
     pub market_value: u64,
 
     // Season stats (required — all players need stats)
+    #[serde(default)]
     pub stats: PlayerSeasonStats,
 
     // Career history

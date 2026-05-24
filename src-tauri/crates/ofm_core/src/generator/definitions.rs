@@ -156,6 +156,7 @@ pub struct CompetitionManifest {
     pub tier: Option<u8>,
     #[serde(default)]
     pub logo: Option<String>,
+    #[serde(default)]
     pub schedule: ScheduleConfig,
     #[serde(default = "default_teams_file")]
     pub teams_file: String,
@@ -183,7 +184,7 @@ fn default_players_file() -> String {
     "players.json".to_string()
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ScheduleConfig {
     pub format: String,
     pub team_count: u32,
@@ -196,7 +197,7 @@ fn default_preseason_friendlies() -> u32 {
     3
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct SplitConfig {
     pub name: String,
     pub season_start: SeasonStart,
@@ -212,7 +213,7 @@ fn default_best_of() -> u32 {
     1
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct SeasonStart {
     pub month: u32,
     pub day: u32,

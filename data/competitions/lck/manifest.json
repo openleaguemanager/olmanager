@@ -5,9 +5,10 @@
   "region": "LCK",
   "country": "KR",
   "tier": 1,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778445082142_hcs3cdy9h7p.webp",
+  "logo": "/competitions-icons/1778445082142_hcs3cdy9h7p.webp",
   "teams_file": "teams/lck_teams.json",
   "players_file": "players/lck_players.json",
+  "staff_file": null,
   "schedule": {
     "format": "double_round_robin",
     "splits": [

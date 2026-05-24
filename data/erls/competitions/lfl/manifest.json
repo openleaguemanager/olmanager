@@ -1,17 +1,29 @@
 {
   "id": "lfl",
   "name": "LFL",
-  "full_name": "La Ligue Française (French ERL)",
+  "full_name": "La Ligue Française de League of Legends",
   "region": "LFL",
   "country": "FR",
   "tier": 2,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778617587308_rpikj120jkd.webp",
+  "logo": "/competitions-icons/1779539811552_8xr1bzouhlx.webp",
   "teams_file": "erls/teams/lfl_teams.json",
   "players_file": "erls/players/lfl_players.json",
+  "staff_file": null,
   "schedule": {
     "format": "single_round_robin",
     "team_count": 10,
-    "preseason_friendlies": 0,
-    "splits": []
+    "preseason_friendlies": 3,
+    "splits": [
+      {
+        "name": "Season",
+        "best_of": 1,
+        "season_start": {
+          "month": 1,
+          "day": 13
+        },
+        "superweek_offsets": [],
+        "playoffs": null
+      }
+    ]
   }
 }

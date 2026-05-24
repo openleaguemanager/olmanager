@@ -12,12 +12,11 @@
         "secondary": "#818cf8"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 7150000,
       "history": [],
       "logo_url": "/teams-icons/bilibili-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "BLG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -44,7 +43,6 @@
       "wage_budget": 3575000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -56,7 +54,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "BLG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-3bd486ec",
@@ -68,12 +68,11 @@
         "secondary": "#a3e635"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 6250000,
       "history": [],
       "logo_url": "/teams-icons/anyones-legend.webp",
       "team_kind": "Main",
-      "arena_name": "AL Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -100,7 +99,6 @@
       "wage_budget": 3125000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -112,7 +110,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "AL Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-ec9ab429",
@@ -124,12 +124,11 @@
         "secondary": "#fcd34d"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 6200000,
       "history": [],
       "logo_url": "/teams-icons/lng-esports.webp",
       "team_kind": "Main",
-      "arena_name": "LE Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -156,7 +155,6 @@
       "wage_budget": 3100000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -168,7 +166,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "LE Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-5facf88e",
@@ -180,12 +180,11 @@
         "secondary": "#60a5fa"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 9150000,
       "history": [],
       "logo_url": "/teams-icons/team-we.webp",
       "team_kind": "Main",
-      "arena_name": "TW Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -212,7 +211,6 @@
       "wage_budget": 4575000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -224,7 +222,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "TW Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-d6ad5a14",
@@ -236,12 +236,11 @@
         "secondary": "#34d399"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 9500000,
       "history": [],
       "logo_url": "/teams-icons/invictus-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "IG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -268,7 +267,6 @@
       "wage_budget": 4750000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -280,7 +278,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "IG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-6481a859",
@@ -292,12 +292,11 @@
         "secondary": "#60a5fa"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 6600000,
       "history": [],
       "logo_url": "/teams-icons/jd-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "JDG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -324,7 +323,6 @@
       "wage_budget": 3300000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -336,7 +334,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "JDG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-dc1429f2",
@@ -348,12 +348,11 @@
         "secondary": "#a3e635"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 9200000,
       "history": [],
       "logo_url": "/teams-icons/lgd-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "LG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -380,7 +379,6 @@
       "wage_budget": 4600000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -392,7 +390,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "LG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-75263716",
@@ -404,12 +404,11 @@
         "secondary": "#818cf8"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 8650000,
       "history": [],
       "logo_url": "/teams-icons/oh-my-god.webp",
       "team_kind": "Main",
-      "arena_name": "OMG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -436,7 +435,6 @@
       "wage_budget": 4325000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -448,7 +446,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "OMG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-a324dc9d",
@@ -460,12 +460,11 @@
         "secondary": "#fb7185"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 5900000,
       "history": [],
       "logo_url": "/teams-icons/weibo-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "WBG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -492,7 +491,6 @@
       "wage_budget": 2950000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -504,7 +502,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "WBG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-38a818e5",
@@ -516,12 +516,11 @@
         "secondary": "#818cf8"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 4300000,
       "history": [],
       "logo_url": "/teams-icons/tt-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "TG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -548,7 +547,6 @@
       "wage_budget": 2150000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -560,7 +558,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "TG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-0a33a07d",
@@ -572,12 +572,11 @@
         "secondary": "#fb7185"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 5750000,
       "history": [],
       "logo_url": "/teams-icons/ninjas-in-pyjamas.webp",
       "team_kind": "Main",
-      "arena_name": "NIP Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -604,7 +603,6 @@
       "wage_budget": 2875000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -616,7 +614,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "NIP Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-ca28739d",
@@ -628,12 +628,11 @@
         "secondary": "#818cf8"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 7700000,
       "history": [],
       "logo_url": "/teams-icons/edward-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "EG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -660,7 +659,6 @@
       "wage_budget": 3850000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -672,7 +670,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "EG Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-b777d366",
@@ -684,12 +684,11 @@
         "secondary": "#a78bfa"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 6400000,
       "history": [],
       "logo_url": "/teams-icons/top-esports.webp",
       "team_kind": "Main",
-      "arena_name": "TES Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -716,7 +715,6 @@
       "wage_budget": 3200000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -728,7 +726,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "TES Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-a84cce06",
@@ -740,12 +740,11 @@
         "secondary": "#22d3ee"
       },
       "academy": null,
-      "country": "CN",
+      "country": "",
       "finance": 5950000,
       "history": [],
       "logo_url": "/teams-icons/ultra-prime.webp",
       "team_kind": "Main",
-      "arena_name": "UP Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -772,7 +771,6 @@
       "wage_budget": 2975000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -784,7 +782,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "UP Arena",
+      "stadium_capacity": 2500
     }
   ]
 }

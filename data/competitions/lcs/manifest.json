@@ -8,6 +8,7 @@
   "logo": "/competitions-icons/lcs.webp",
   "teams_file": "teams/lcs_teams.json",
   "players_file": "players/lcs_players.json",
+  "staff_file": null,
   "schedule": {
     "format": "double_round_robin",
     "splits": [
