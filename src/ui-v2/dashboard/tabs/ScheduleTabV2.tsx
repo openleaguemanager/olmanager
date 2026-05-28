@@ -94,8 +94,16 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
     return (
       <div className="p-6">
         <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Sin liga activa.
+          <CardContent className="space-y-3 py-12 text-center">
+            <Trophy className="mx-auto size-8 text-muted-foreground/40" />
+            <p className="font-heading text-sm font-bold uppercase tracking-wider">
+              Sin liga activa
+            </p>
+            <p className="mx-auto max-w-md text-xs text-muted-foreground">
+              Este save no tiene liga registrada. Si lo creaste con una versión
+              anterior, la migración de 0.3 no se aplicó. Inicia partida nueva
+              desde el menú principal y se generarán las ligas automáticamente.
+            </p>
           </CardContent>
         </Card>
       </div>
