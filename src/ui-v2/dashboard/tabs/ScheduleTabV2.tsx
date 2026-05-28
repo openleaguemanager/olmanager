@@ -22,7 +22,9 @@ import {
   inferBestOf,
   normalizeLolScore,
   readStoredFixtureDraftResult,
+  type StoredFixtureDraftResult,
 } from "@/components/schedule/ScheduleTab.helpers";
+import DraftResultScreen from "@/components/match/DraftResultScreen";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
@@ -39,6 +41,7 @@ type ViewMode = "fixtures" | "standings";
 export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
   const { t } = useTranslation();
   const [view, setView] = useState<ViewMode>("fixtures");
+  const [draftView, setDraftView] = useState<StoredFixtureDraftResult | null>(null);
 
   const league = gameState.leagues?.[0];
   const userTeamId = gameState.manager.team_id;
@@ -70,6 +73,22 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
     () => (league ? [...league.standings].sort(compareStandingsByLolScore) : []),
     [league],
   );
+
+  if (draftView) {
+    return (
+      <DraftResultScreen
+        snapshot={draftView.snapshot}
+        controlledSide={draftView.controlledSide}
+        result={draftView.result}
+        seriesGames={draftView.seriesGames}
+        seriesLength={draftView.seriesLength}
+        seriesGameIndex={draftView.seriesGameIndex}
+        userSeriesWins={draftView.userSeriesWins}
+        opponentSeriesWins={draftView.opponentSeriesWins}
+        onContinue={() => setDraftView(null)}
+      />
+    );
+  }
 
   if (!league) {
     return (
@@ -152,8 +171,8 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
                       teams={gameState.teams}
                       onSelectTeam={onSelectTeam}
                       onOpenDraft={() => {
-                        // TODO(v2): wire DraftResultScreen once its import chain
-                        // (LolMatchLive → championTiming.ts) is cleaned up.
+                        const stored = readStoredFixtureDraftResult(f.id);
+                        if (stored) setDraftView(stored);
                       }}
                     />
                   ))}
