@@ -3,6 +3,7 @@
   "description": "NA-LCS-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-63a9b81c",
       "name": "Immortals",
       "short_name": "INM",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "na-lcs-l-team-solomid",
       "country": "USA",
       "logo_url": "/teams-icons/team-solomid.webp",
@@ -34,6 +36,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "US",
       "id": "team-74cc8702",
       "name": "Counter Logic Gaming",
@@ -49,6 +52,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "US",
       "id": "team-f43a120f",
       "name": "100 Thieves",
@@ -64,6 +68,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "US",
       "id": "team-2c18b934",
       "name": "Evil Geniuses",
@@ -79,6 +84,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "US",
       "id": "team-13309c0c",
       "name": "Golden Guardians",
@@ -94,6 +100,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-cbe27d81",
       "name": "NRG",
       "short_name": "NRGe",

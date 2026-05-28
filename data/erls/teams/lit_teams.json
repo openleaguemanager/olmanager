@@ -3,6 +3,7 @@
   "description": "LIT - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "IT",
       "id": "team-d8e80ef5",
       "name": "HMBLE",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-763ea26a",
       "name": "Aeterna Esports",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-d6fcaa33",
       "name": "Zena Esports",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-78e0cf99",
       "name": "Colossal Gaming",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-d4e0b415",
       "name": "EKO Esports",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-dacb4a17",
       "name": "GMBLERS Esports",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-a272304b",
       "name": "StoneHenge Esports",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "IT",
       "id": "team-3ee8399a",
       "name": "TITANS",

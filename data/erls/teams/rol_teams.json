@@ -3,6 +3,7 @@
   "description": "ROL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "NL",
       "id": "team-45502488",
       "name": "Dynasty",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-a0e8ccac",
       "name": "The Bandits",
       "short_name": "THE",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "BE",
       "id": "team-3088debc",
       "name": "Frites Esports Club",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-96e42b9a",
       "name": "ZennIT",
       "short_name": "ZEN",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "NL",
       "id": "team-897210b6",
       "name": "mCon esports",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-e6e445de",
       "name": "Myth Esports",
       "short_name": "MYTH",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-3738562e",
       "name": "Once Upon A Team",
       "short_name": "OUT",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "colors": {
         "primary": "#e66100",
         "secondary": "#f8e45c"

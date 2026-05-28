@@ -3,6 +3,7 @@
   "description": "LRN - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "lrn-fuego",
       "colors": {
         "primary": "#ff6d1c",
@@ -20,6 +21,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-polar-squad-esport",
       "logo_url": "/teams-icons/polar-squad-esport.webp",
       "data.country": "MX",
@@ -36,6 +38,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-ncg-esports",
       "colors": {
         "secondary": "#ff0002"
@@ -51,6 +54,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-sdm-tigres",
       "colors": {
         "primary": "#ffb400",
@@ -67,6 +71,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-zeu5-esport",
       "country": "Colombia",
       "logo_url": "/teams-icons/zeu5-esport.webp",
@@ -83,6 +88,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-lyon-academy",
       "colors": {
         "primary": "#deac7f"
@@ -98,6 +104,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-g3v-e-sports",
       "colors": {
         "secondary": "#792ddb"
@@ -113,6 +120,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrn-icon-esports",
       "country": "MX",
       "logo_url": "/teams-icons/icon-esports.webp",

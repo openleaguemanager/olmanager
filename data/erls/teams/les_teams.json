@@ -3,6 +3,7 @@
   "description": "LES - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-8baee3fd",
       "city": "",
       "form": [],
@@ -14,10 +15,8 @@
       "academy": null,
       "country": "ES",
       "finance": 2496829,
-      "history": [],
       "logo_url": "/teams-icons/movistar-koi-f-nix.webp",
       "team_kind": "Main",
-      "arena_name": "Movistar KOI FÃ©nix Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -44,7 +43,6 @@
       "wage_budget": 1248414,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -61,6 +59,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-06974122",
       "city": "",
       "form": [],
@@ -72,10 +71,8 @@
       "academy": null,
       "country": "ES",
       "finance": 1739827,
-      "history": [],
       "logo_url": "/teams-icons/barcelona-esports.webp",
       "team_kind": "Main",
-      "arena_name": "Barcelona Esports Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -102,7 +99,6 @@
       "wage_budget": 869914,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -119,6 +115,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "logo_url": "/teams-icons/giantx-itero.webp",
       "id": "team-854f6893",
       "name": "GiantX Itero",
@@ -134,6 +131,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-129835c5",
       "city": "",
       "form": [],
@@ -145,10 +143,8 @@
       "academy": null,
       "country": "ES",
       "finance": 2729120,
-      "history": [],
       "logo_url": "/teams-icons/ucam-esports.webp",
       "team_kind": "Main",
-      "arena_name": "UCAM Esports Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -175,7 +171,6 @@
       "wage_budget": 1364560,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -192,6 +187,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-5d7b3ec4",
       "city": "",
       "form": [],
@@ -203,10 +199,8 @@
       "academy": null,
       "country": "ES",
       "finance": 2693453,
-      "history": [],
       "logo_url": "/teams-icons/falke-esports.webp",
       "team_kind": "Main",
-      "arena_name": "Falke Esports Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -233,7 +227,6 @@
       "wage_budget": 1346726,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -250,6 +243,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-d0d82673",
       "city": "",
       "form": [],
@@ -261,10 +255,8 @@
       "academy": null,
       "country": "ES",
       "finance": 3189278,
-      "history": [],
       "logo_url": "/teams-icons/lua-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "LUA Gaming Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -291,7 +283,6 @@
       "wage_budget": 1594639,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -308,6 +299,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "logo_url": "/teams-icons/ub-alma-mater.webp",
       "id": "team-ac846213",
       "name": "UB Alma Mater",
@@ -323,6 +315,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-f10b156f",
       "city": "",
       "form": [],
@@ -334,10 +327,8 @@
       "academy": null,
       "country": "ES",
       "finance": 1999037,
-      "history": [],
       "logo_url": "/teams-icons/team-heretics-academy.webp",
       "team_kind": "Main",
-      "arena_name": "Team Heretics Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -364,7 +355,6 @@
       "wage_budget": 999518,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,

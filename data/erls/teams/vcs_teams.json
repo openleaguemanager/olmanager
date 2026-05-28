@@ -3,6 +3,7 @@
   "description": "VCS - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "VN",
       "id": "team-2b60138b",
       "name": "MVK Esports Academy",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "VN",
       "id": "team-12d8ddae",
       "name": "9Gaming Esports",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "VN",
       "id": "team-cd683e2d",
       "name": "Saigon Warriors",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "VN",
       "id": "team-0b0654fe",
       "name": "Saigon Dino",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "VN",
       "id": "team-3cd254ed",
       "name": "SN CyberCore Esports",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "VN",
       "id": "team-cf666c65",
       "name": "ZEN Esports",

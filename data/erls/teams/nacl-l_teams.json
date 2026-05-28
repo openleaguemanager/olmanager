@@ -3,6 +3,7 @@
   "description": "NACL-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "US",
       "id": "team-4da13a51",
       "name": "NRG",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-039b2c89",
       "name": "Apex MI",
       "short_name": "APE",

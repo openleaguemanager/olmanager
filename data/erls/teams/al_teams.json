@@ -3,6 +3,7 @@
   "description": "AL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "TN",
       "id": "team-1f166743",
       "name": "GnG Amazigh",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "EG",
       "id": "team-e175ded9",
       "name": "3BL Esports",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "SA",
       "id": "team-c648abc2",
       "name": "BAAM Esports",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-12ea162a",
       "name": "One More Esports",
       "short_name": "OME",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "EG",
       "id": "team-90b5943e",
       "name": "Anubis Gaming",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "SA",
       "id": "team-8829d0c3",
       "name": "Dragons Esports",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "KR",
       "id": "team-47ce6033",
       "name": "FN Esports",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "TN",
       "id": "team-0f68e76a",
       "name": "JSK Esports",

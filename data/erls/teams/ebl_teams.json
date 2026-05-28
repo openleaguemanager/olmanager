@@ -3,6 +3,7 @@
   "description": "EBL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "HR",
       "id": "team-de9656fe",
       "name": "Croatian Flair",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "RS",
       "id": "team-db2b783a",
       "name": "Lupus Esports",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "BG",
       "id": "team-aa50d684",
       "name": "Magaza Esports",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "RS",
       "id": "team-dc2f50f2",
       "name": "Partizan Sangal",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "SI",
       "id": "team-cd386f74",
       "name": "SPIKE Syndicate",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "HR",
       "id": "team-b09886df",
       "name": "The Secret Club",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "HU",
       "id": "team-1103bd5e",
       "name": "Lenovo Legion Honvéd",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "BG",
       "id": "team-3359999b",
       "name": "TQ DURPA KASHLQ",
@@ -123,6 +131,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "DE",
       "id": "team-8b9502f1",
       "name": "Team Spawn Peek",
@@ -138,6 +147,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "RS",
       "id": "team-500fa635",
       "name": "Washed Gaming",

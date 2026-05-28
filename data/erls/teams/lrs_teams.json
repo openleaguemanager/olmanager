@@ -3,6 +3,7 @@
   "description": "LRS - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "lrs-9z-globant",
       "colors": {
         "primary": "#ffffff"
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-maze-gaming",
       "colors": {
         "primary": "#101211",
@@ -34,6 +36,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-seven-dark",
       "colors": {
         "primary": "#000036",
@@ -50,6 +53,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-the-new-kings",
       "country": "AR",
       "logo_url": "/teams-icons/the-new-kings.webp",
@@ -66,6 +70,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-tu-pap-esports",
       "colors": {
         "secondary": "#fc7605"
@@ -81,6 +86,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-volticons",
       "colors": {
         "primary": "#7f4fb3",
@@ -97,6 +103,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-golden-lions",
       "country": "Peru",
       "logo_url": "/teams-icons/golden-lions.webp",
@@ -113,6 +120,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lrs-malvinas-gaming",
       "colors": {
         "secondary": "#129ebf"

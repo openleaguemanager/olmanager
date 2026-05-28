@@ -3,6 +3,7 @@
   "description": "LFL-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-a255d692",
       "name": "BK ROG Esports",
       "short_name": "BKR",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-68015282",
       "name": "Lausanne-Sport Esports",
       "short_name": "LSE",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-c9435bbd",
       "name": "Lille Esport",
       "short_name": "LLE",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-cc07a0ef",
       "name": "Project Conquerors",
       "short_name": "PCQ",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-d78a4aff",
       "city": "",
       "form": [],
@@ -74,10 +79,8 @@
       "academy": null,
       "country": "FR",
       "finance": 3450921,
-      "history": [],
       "logo_url": "/teams-icons/french-flair.webp",
       "team_kind": "Main",
-      "arena_name": "French Flair Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -104,7 +107,6 @@
       "wage_budget": 1725460,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,

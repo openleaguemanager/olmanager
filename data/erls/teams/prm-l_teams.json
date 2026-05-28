@@ -3,6 +3,7 @@
   "description": "PRM-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-1cba5c67",
       "city": "",
       "form": [],
@@ -14,10 +15,8 @@
       "academy": null,
       "country": "DE",
       "finance": 2377650,
-      "history": [],
       "logo_url": "/teams-icons/a-one-man-army.webp",
       "team_kind": "Main",
-      "arena_name": "A One Man Army Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -44,7 +43,6 @@
       "wage_budget": 1188825,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,

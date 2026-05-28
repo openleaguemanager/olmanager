@@ -3,6 +3,7 @@
   "description": "LCK-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "lck-l-griffin",
       "country": "Korea",
       "logo_url": "/teams-icons/griffin.webp",
@@ -19,6 +20,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-liiv-sandbox",
       "country": "South Korea",
       "logo_url": "/teams-icons/liiv-sandbox.webp",
@@ -34,6 +36,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-samsung-white",
       "logo_url": "/teams-icons/samsung-white.webp",
       "name": "Samsung White",
@@ -49,6 +52,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-sk-telecom-t1",
       "country": "KR",
       "name": "SK Telecom T1",
@@ -64,6 +68,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-samsung-galaxy",
       "country": "KR",
       "logo_url": "/teams-icons/samsung-galaxy.webp",
@@ -80,6 +85,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-longzhu-gaming",
       "logo_url": "/teams-icons/longzhu-gaming.webp",
       "data.country": "KR",
@@ -96,6 +102,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-team-dynamics",
       "country": "KR",
       "logo_url": "/teams-icons/team-dynamics.webp",
@@ -112,6 +119,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-afreeca-freecs",
       "data.country": "South Korea",
       "name": "Afreeca Freecs",
@@ -128,6 +136,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-rox-tigers",
       "logo_url": "/teams-icons/rox-tigers.webp",
       "data.country": "South Korea",
@@ -144,6 +153,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lck-l-damwon-gaming",
       "data.country": "KR",
       "name": "DAMWON GAMING",

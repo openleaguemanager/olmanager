@@ -3,6 +3,7 @@
   "description": "HM - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "Czech Republic",
       "id": "team-da129d80",
       "name": "BRUTE",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Poland",
       "id": "team-c01f7ad8",
       "name": "Meavedron",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Czech Republic",
       "id": "team-df25d69f",
       "name": "Bohemian Guardians",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Slovakia",
       "id": "team-193151e6",
       "name": "Nightbirds",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Poland",
       "id": "team-5bf73fd8",
       "name": "Onion Team",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Czech Republic",
       "id": "team-19466153",
       "name": "CITA Kaizen",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Czech Republic",
       "id": "team-2bda20fb",
       "name": "EXILE esports",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Czech Republic",
       "id": "team-5a2933ca",
       "name": "eSuba",

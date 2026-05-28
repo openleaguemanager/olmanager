@@ -3,6 +3,7 @@
   "description": "NLC - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "FI",
       "id": "team-5ef306d4",
       "name": "Arctic Pandas",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-1cee59ca",
       "name": "Bulldog Esports",
       "short_name": "BULL",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "FI",
       "id": "team-78aca3aa",
       "name": "Deer Gaming",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "NO",
       "id": "team-ee2bd46c",
       "name": "DMG Esports",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "GB",
       "id": "team-390ad3b4",
       "name": "Verdant",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "SE",
       "id": "team-9114115f",
       "name": "Lund Esports Organization",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "SE",
       "id": "team-cc3cd5f0",
       "name": "Lundqvist Lightside",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "GB",
       "id": "team-794821d8",
       "name": "Ruddy Corporation",
@@ -123,6 +131,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "PL",
       "id": "team-34ca921d",
       "name": "4 Swines & A Bum",
@@ -138,6 +147,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "NL",
       "id": "team-e8c7e277",
       "name": "La BOMBAS",

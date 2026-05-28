@@ -3,6 +3,7 @@
   "description": "LLA-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "lla-l-movistar-r7",
       "country": "Mexico",
       "logo_url": "/teams-icons/movistar-r7.webp",
@@ -19,6 +20,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-isurus",
       "country": "Argentina",
       "logo_url": "/teams-icons/isurus.webp",
@@ -35,6 +37,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-furious-gaming",
       "country": "Argentina",
       "logo_url": "/teams-icons/furious-gaming.webp",
@@ -51,6 +54,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-team-aze",
       "country": "Mexico",
       "logo_url": "/teams-icons/team-aze.webp",
@@ -67,6 +71,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-kaos-latin-gamers",
       "country": "Chile",
       "logo_url": "/teams-icons/kaos-latin-gamers.webp",
@@ -83,6 +88,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-infinity",
       "country": "Costa Rica",
       "logo_url": "/teams-icons/infinity.webp",
@@ -99,6 +105,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-all-knights",
       "country": "Chile",
       "logo_url": "/teams-icons/all-knights.webp",
@@ -115,6 +122,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-globant-emerald",
       "colors": {
         "secondary": "#000000"
@@ -130,6 +138,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-six-karma",
       "country": "Mexico",
       "logo_url": "/teams-icons/six-karma.webp",
@@ -146,6 +155,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-xten-esports",
       "country": "Mexico",
       "logo_url": "/teams-icons/xten-esports.webp",
@@ -162,6 +172,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lla-l-the-kings",
       "country": "MX",
       "logo_url": "/teams-icons/the-kings.webp",

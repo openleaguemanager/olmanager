@@ -3,6 +3,7 @@
   "description": "HLL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "Greece",
       "id": "team-b2dec67c",
       "name": "ALMO Players",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Greece",
       "id": "team-ca24ae43",
       "name": "Gamespace Mediterranean College Esports",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Greece",
       "id": "team-92da5b60",
       "name": "GOAL",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-8aeeec01",
       "name": "Spartans EU",
       "short_name": "SEU",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Greece",
       "id": "team-34f5f8b3",
       "name": "Team Insidious",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Greece",
       "id": "team-608ecbe2",
       "name": "Team Phantasma",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Greece",
       "id": "team-2e0c08a9",
       "name": "WLGaming Esports",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "Greece",
       "id": "team-86bb25d6",
       "name": "The ParadOx",

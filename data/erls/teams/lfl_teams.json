@@ -3,6 +3,7 @@
   "description": "LFL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-92b46fef",
       "city": "",
       "form": [],
@@ -14,10 +15,8 @@
       "academy": null,
       "country": "FR",
       "finance": 2324580,
-      "history": [],
       "logo_url": "/teams-icons/skillcamp.webp",
       "team_kind": "Main",
-      "arena_name": "Skillcamp Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -44,7 +43,6 @@
       "wage_budget": 1162290,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -61,6 +59,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-012b64d1",
       "city": "",
       "form": [],
@@ -72,10 +71,8 @@
       "academy": null,
       "country": "FR",
       "finance": 2063472,
-      "history": [],
       "logo_url": "/teams-icons/solary.webp",
       "team_kind": "Main",
-      "arena_name": "Solary Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -102,7 +99,6 @@
       "wage_budget": 1031736,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -119,6 +115,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-c12fef91",
       "city": "",
       "form": [],
@@ -130,10 +127,8 @@
       "academy": null,
       "country": "FR",
       "finance": 2172174,
-      "history": [],
       "logo_url": "/teams-icons/ici-japon-corp-esport.webp",
       "team_kind": "Main",
-      "arena_name": "Ici Japon Corp. Esport Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -160,7 +155,6 @@
       "wage_budget": 1086087,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -177,6 +171,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-da97809e",
       "city": "",
       "form": [],
@@ -188,10 +183,8 @@
       "academy": null,
       "country": "FR",
       "finance": 1529117,
-      "history": [],
       "logo_url": "/teams-icons/galions.webp",
       "team_kind": "Main",
-      "arena_name": "Galions Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -218,7 +211,6 @@
       "wage_budget": 764558,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -235,6 +227,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-f8f7f78d",
       "city": "",
       "form": [],
@@ -246,10 +239,8 @@
       "academy": null,
       "country": "FR",
       "finance": 1927602,
-      "history": [],
       "logo_url": "/teams-icons/zyb-esport.webp",
       "team_kind": "Main",
-      "arena_name": "ZYB Esport Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -276,7 +267,6 @@
       "wage_budget": 963801,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -293,6 +283,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-af25d742",
       "city": "",
       "form": [],
@@ -304,10 +295,8 @@
       "academy": null,
       "country": "FR",
       "finance": 2865211,
-      "history": [],
       "logo_url": "/teams-icons/karmine-corp-blue.webp",
       "team_kind": "Main",
-      "arena_name": "Karmine Corp Blue Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -334,7 +323,6 @@
       "wage_budget": 1432606,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -351,6 +339,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-0f9010b5",
       "city": "",
       "form": [],
@@ -362,10 +351,8 @@
       "academy": null,
       "country": "FR",
       "finance": 1685291,
-      "history": [],
       "logo_url": "/teams-icons/tln-pirates.webp",
       "team_kind": "Main",
-      "arena_name": "TLN Pirates Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -392,7 +379,6 @@
       "wage_budget": 842646,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -409,6 +395,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-8f3d532a",
       "city": "",
       "form": [],
@@ -420,10 +407,8 @@
       "academy": null,
       "country": "FR",
       "finance": 3241233,
-      "history": [],
       "logo_url": "/teams-icons/vitality-academy.webp",
       "team_kind": "Main",
-      "arena_name": "Vitality Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -450,7 +435,6 @@
       "wage_budget": 1620616,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -467,6 +451,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-ed48a04c",
       "name": "Esprit Shōnen",
       "short_name": "ESN",
@@ -482,6 +467,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-ab04f649",
       "city": "",
       "form": [],
@@ -493,10 +479,8 @@
       "academy": null,
       "country": "FR",
       "finance": 1854941,
-      "history": [],
       "logo_url": "/teams-icons/joblife.webp",
       "team_kind": "Main",
-      "arena_name": "JOblife Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -523,7 +507,6 @@
       "wage_budget": 927470,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 1500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,

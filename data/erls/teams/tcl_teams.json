@@ -3,6 +3,7 @@
   "description": "TCL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "tcl-boostgate-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -39,6 +40,7 @@
       }
     },
     {
+      "history": [],
       "id": "tcl-dark-passage",
       "city": "Istanbul",
       "country": "TR",
@@ -73,6 +75,7 @@
       }
     },
     {
+      "history": [],
       "id": "tcl-misa-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -107,6 +110,7 @@
       }
     },
     {
+      "history": [],
       "id": "tcl-ozarox-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -140,6 +144,7 @@
       }
     },
     {
+      "history": [],
       "id": "tcl-su-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -173,6 +178,7 @@
       }
     },
     {
+      "history": [],
       "id": "tcl-pcific-esports",
       "city": "Istanbul",
       "colors": {
@@ -205,6 +211,7 @@
       "stadium_capacity": 0
     },
     {
+      "history": [],
       "id": "tcl-bushido-wildcats",
       "city": "Istanbul",
       "country": "TR",
@@ -237,6 +244,7 @@
       }
     },
     {
+      "history": [],
       "id": "tcl-team-phoenix",
       "city": "Istanbul",
       "country": "TR",

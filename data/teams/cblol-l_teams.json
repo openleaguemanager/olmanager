@@ -3,6 +3,7 @@
   "description": "CBLOL-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "cblol-l-rensga-esports",
       "country": "BR",
       "logo_url": "/teams-icons/rensga-esports.webp",

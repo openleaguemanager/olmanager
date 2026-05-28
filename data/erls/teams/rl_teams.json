@@ -3,6 +3,7 @@
   "description": "RL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "PL",
       "id": "team-76542a8b",
       "name": "Bomba Team",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "PL",
       "id": "team-ff1df943",
       "name": "devils.one inStreamly",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "PL",
       "id": "team-83efd7e9",
       "name": "DOCISK",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "PL",
       "id": "team-c5d360c2",
       "name": "Forsaken",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "PL",
       "id": "team-239dd021",
       "name": "Anonymo Esports",
@@ -78,6 +83,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "CZ",
       "id": "team-c3747fd1",
       "name": "GLORE",
@@ -93,6 +99,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "PL",
       "id": "team-efe1b300",
       "name": "LODIS",
@@ -108,6 +115,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "colors": {
         "primary": "#132e23",
         "secondary": "#ffffff"

@@ -3,6 +3,7 @@
   "description": "LMS-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "country": "TW",
       "id": "team-cfe07a66",
       "name": "ahq eSports Club",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lms-l-flash-wolves",
       "logo_url": "/teams-icons/flash-wolves.webp",
       "data.country": "Taiwan",
@@ -34,6 +36,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lms-l-psg-talon",
       "logo_url": "/teams-icons/psg-talon.webp",
       "data.country": "Hong Kong",
@@ -50,6 +53,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lms-l-beyond-gaming",
       "logo_url": "/teams-icons/beyond-gaming.webp",
       "data.country": "Taiwan",
@@ -66,6 +70,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lms-l-taipei-assassins",
       "logo_url": "/teams-icons/taipei-assassins.webp",
       "data.country": "TW",
@@ -82,6 +87,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "lms-l-j-team",
       "logo_url": "/teams-icons/j-team.webp",
       "data.country": "TW",

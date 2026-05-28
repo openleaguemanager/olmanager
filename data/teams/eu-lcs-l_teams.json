@@ -3,6 +3,7 @@
   "description": "EU-LCS-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "eu-lcs-l-rogue",
       "colors": {
         "secondary": "#5f91d3"
@@ -19,6 +20,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-misfits",
       "colors": {
         "primary": "#ffffff"
@@ -35,6 +37,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-fc-schalke-04",
       "logo_url": "/teams-icons/fc-schalke-04.webp",
       "data.city": "Schalke",
@@ -52,6 +55,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-astralis",
       "logo_url": "/teams-icons/astralis.webp",
       "data.city": "Copenhague",
@@ -69,6 +73,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-origen",
       "logo_url": "/teams-icons/origen.webp",
       "data.city": "Madrid",
@@ -86,6 +91,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-splyce",
       "colors": {
         "primary": "#c7b600"
@@ -102,6 +108,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-excel-espots",
       "data.city": "London",
       "data.country": "GB",
@@ -119,6 +126,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-mad-lions",
       "colors": {
         "primary": "#c3a128"
@@ -135,6 +143,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "eu-lcs-l-h2k-gaming",
       "country": "GB",
       "logo_url": "/teams-icons/h2k-gaming.webp",

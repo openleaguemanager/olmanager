@@ -3,6 +3,7 @@
   "description": "CD - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-408c21b2",
       "name": "paiN Gaming Academy",
       "short_name": "PAINA",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "colors": {
         "primary": "#f5c211"
       },
@@ -32,6 +34,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-4fec330a",
       "name": "Ei Nerd Esports",
       "short_name": "ENE",
@@ -47,6 +50,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "BR",
       "id": "team-31ca2c75",
       "name": "INTZ",
@@ -62,6 +66,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "MX",
       "id": "team-2ec1b6c9",
       "name": "Estral Esports",
@@ -77,6 +82,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-53c6789c",
       "name": "KaBuM! Ilha das Lendas",
       "short_name": "KIDL",
@@ -92,6 +98,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "BR",
       "id": "team-467d253d",
       "name": "RED Academy",
@@ -107,6 +114,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "BR",
       "id": "team-0dcb5849",
       "name": "RMD Gaming",
@@ -122,6 +130,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-a49fd9c6",
       "name": "Team Solid",
       "short_name": "TS",
@@ -137,6 +146,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-369e4620",
       "name": "Vivo Keyd Stars Academy",
       "short_name": "VKSA",

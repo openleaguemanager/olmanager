@@ -3,6 +3,7 @@
   "description": "LDL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-13997011",
       "name": "Oh My God Academy",
       "short_name": "OMG.A",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-8d56ae81",
       "name": "Weibo Gaming Youth Team",
       "short_name": "WBG.Y",
@@ -33,6 +35,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-f97df98e",
       "name": "Anyone's Legend.Young",
       "short_name": "AL.Y",
@@ -48,6 +51,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-0c76150c",
       "name": "Royal Club",
       "short_name": "ROY",
@@ -63,6 +67,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "colors": {
         "primary": "#fb0e0e"
       },
@@ -77,6 +82,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-bf6805f5",
       "name": "Bilibili Gaming Junior",
       "short_name": "BLG.J",
@@ -92,6 +98,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-edb9580a",
       "name": "Top Esports Challenger",
       "short_name": "TES.C",
@@ -107,6 +114,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-37ced0d1",
       "name": "LGD Gaming Young Team",
       "short_name": "LGD.Y",
@@ -122,6 +130,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "colors": {
         "primary": "#505fce",
         "secondary": "#b15cb2"
@@ -137,6 +146,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "id": "team-c6cb03ca",
       "name": "ThunderTalk Gaming Young",
       "short_name": "TT.Y",

@@ -3,6 +3,7 @@
   "description": "LCP - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-cbc2ec83",
       "city": "Tokyo",
       "form": [],
@@ -14,7 +15,6 @@
       "academy": null,
       "country": "JP",
       "finance": 6500000,
-      "history": [],
       "logo_url": "/teams-icons/detonation-focusme.webp",
       "team_kind": "Main",
       "facilities": {
@@ -59,6 +59,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-709031e2",
       "city": "Taipei",
       "form": [],
@@ -70,7 +71,6 @@
       "academy": null,
       "country": "VN",
       "finance": 2800000,
-      "history": [],
       "logo_url": "/teams-icons/mvk-esports.webp",
       "team_kind": "Main",
       "facilities": {
@@ -115,6 +115,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-494fc51a",
       "city": "Ho Chi Minh City",
       "form": [],
@@ -126,7 +127,6 @@
       "academy": null,
       "country": "VN",
       "finance": 5650000,
-      "history": [],
       "logo_url": "/teams-icons/gam-esports.webp",
       "team_kind": "Main",
       "facilities": {
@@ -171,6 +171,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-83d3342f",
       "city": "Taipei",
       "form": [],
@@ -182,7 +183,6 @@
       "academy": null,
       "country": "TW",
       "finance": 5100000,
-      "history": [],
       "logo_url": "/teams-icons/ctbc-flying-oyster.webp",
       "team_kind": "Main",
       "facilities": {
@@ -227,6 +227,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-f4306bce",
       "city": "Fukuoka",
       "form": [],
@@ -238,7 +239,6 @@
       "academy": null,
       "country": "JP",
       "finance": 5500000,
-      "history": [],
       "logo_url": "/teams-icons/softbank-hawks-gaming.webp",
       "team_kind": "Main",
       "facilities": {
@@ -283,6 +283,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-gzg2025",
       "city": "",
       "form": [],
@@ -293,7 +294,6 @@
       },
       "academy": null,
       "country": "??",
-      "history": [],
       "logo_url": "/teams-icons/ground-zero-gaming.webp",
       "team_kind": "Main",
       "facilities": {
@@ -333,6 +333,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-d13da18a",
       "city": "Singapore",
       "form": [],
@@ -344,7 +345,6 @@
       "academy": null,
       "country": "SG",
       "finance": 4000000,
-      "history": [],
       "logo_url": "/teams-icons/team-secret-whales.webp",
       "team_kind": "Main",
       "facilities": {
@@ -389,6 +389,7 @@
       "stadium_capacity": 2500
     },
     {
+      "history": [],
       "id": "team-dcg2025",
       "city": "Taipei",
       "form": [],
@@ -399,7 +400,6 @@
       },
       "academy": null,
       "country": "Taiwan",
-      "history": [],
       "logo_url": "/teams-icons/deep-cross-gaming.webp",
       "team_kind": "Main",
       "facilities": {

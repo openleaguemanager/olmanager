@@ -3,6 +3,7 @@
   "description": "LJL-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-f711240c",
       "name": "NOVEX",
       "short_name": "NOV",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "colors": {
         "primary": "#c01c28"
       },

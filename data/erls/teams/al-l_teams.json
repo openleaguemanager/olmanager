@@ -3,6 +3,7 @@
   "description": "AL-L - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-4b8187c4",
       "name": "Super Stars",
       "short_name": "SS",
@@ -18,6 +19,7 @@
       "facilities": {}
     },
     {
+      "history": [],
       "country": "EG",
       "id": "team-6019b0e7",
       "name": "NextGeneration Esports",
