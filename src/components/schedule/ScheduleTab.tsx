@@ -60,8 +60,6 @@ export default function ScheduleTab({
   const league = gameState.leagues[0];
   const userTeamId = gameState.manager.team_id;
 
-  // All fixtures from all leagues for the calendar view
-  const allFixtures: FixtureData[] = (gameState.leagues ?? []).flatMap((l) => l.fixtures);
   const seasonContext = resolveSeasonContext(gameState);
   const isPreseason = seasonContext.phase === "Preseason";
 

@@ -121,6 +121,7 @@ pub struct Team {
     pub form: Vec<String>,
 
     // History
+    #[serde(default)]
     pub history: Vec<TeamSeasonRecord>,
 }
 
@@ -768,8 +769,11 @@ pub struct Facilities {
         skip_serializing_if = "is_default_main_hub_level"
     )]
     pub main_hub_level: u8,
+    #[serde(default)]
     pub training: u8,
+    #[serde(default)]
     pub medical: u8,
+    #[serde(default)]
     pub scouting: u8,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scrims_room_level: Option<u8>,

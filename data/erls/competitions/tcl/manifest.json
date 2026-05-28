@@ -5,9 +5,10 @@
   "region": "TCL",
   "country": "TR",
   "tier": 2,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778497362083_axsqk6y8p1j.webp",
+  "logo": "/competition-icons/1778497362083_axsqk6y8p1j.webp",
   "teams_file": "erls/teams/tcl_teams.json",
   "players_file": "erls/players/tcl_players.json",
+  "staff_file": null,
   "schedule": {
     "format": "single_round_robin",
     "team_count": 8,

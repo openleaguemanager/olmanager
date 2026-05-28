@@ -1,13 +1,14 @@
 {
   "id": "les",
   "name": "LES",
-  "full_name": "Liga de Esports de España (Spanish ERL)",
+  "full_name": "Liga Española de League of Legends",
   "region": "LES",
   "country": "ES",
   "tier": 2,
-  "logo": "https://gfllmaxmiuyqnlbabwsx.supabase.co/storage/v1/object/public/entity-images/uploads/1778617584007_v28ztn1vq9e.webp",
+  "logo": "/competition-icons/1778617584007_v28ztn1vq9e.webp",
   "teams_file": "erls/teams/les_teams.json",
   "players_file": "erls/players/les_players.json",
+  "staff_file": null,
   "schedule": {
     "format": "unknown",
     "team_count": 0,

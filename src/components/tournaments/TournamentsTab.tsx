@@ -270,10 +270,14 @@ export default function TournamentsTab({
                             onClick={() => onSelectTeam(entry.team_id)}
                             className={`cursor-pointer transition-colors ${isUser ? "bg-primary-50 dark:bg-primary-500/10" : "hover:bg-gray-50 dark:hover:bg-navy-700/50"}`}
                           >
-                            {getTeamName(gameState.teams, entry.team_id)}
-                          </td>
-                          <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
-                            {entry.played}
+                            <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                              {idx + 1}
+                            </td>
+                            <td className="py-2 px-3 text-sm text-gray-900 dark:text-gray-100 font-medium">
+                              {getTeamName(gameState.teams, entry.team_id)}
+                            </td>
+                            <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                              {entry.played}
                           </td>
                           <td className="py-2 px-3 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
                             {entry.won}
@@ -289,6 +293,7 @@ export default function TournamentsTab({
                     })}
                   </tbody>
                 </table>
+              </div>
               )}
             </CardBody>
           </Card>
@@ -389,8 +394,8 @@ export default function TournamentsTab({
                   </div>
                 </CardBody>
               </Card>
-            </div>
-          </div>
+              </div>
+            ) : null}
         </div>
       )}
 

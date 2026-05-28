@@ -12,11 +12,19 @@ use tauri::Manager as TauriManager;
 // ---------------------------------------------------------------------------
 
 /// Resolve the base `data/competitions/` directory with multi-tier fallback.
-/// Order: resource_dir → cwd/../data/competitions/ (project root) → cwd/data/competitions/
+/// Order: resource_dir/../data/competitions → resource_dir/data/competitions → cwd/../data/competitions → cwd/data/competitions
 fn resolve_competitions_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     let cwd = std::env::current_dir().ok()?;
+    info!("[competitions] cwd: {:?}", cwd);
 
     let candidates: Vec<Option<PathBuf>> = vec![
+        // resource_dir() suele ser src-tauri/ en dev; probamos primero /../data/competitions
+        app_handle
+            .path()
+            .resource_dir()
+            .ok()
+            .and_then(|dir| dir.parent().map(|p| p.join("data").join("competitions"))),
+        // resource_dir/data/competitions (producción)
         app_handle
             .path()
             .resource_dir()
@@ -28,12 +36,16 @@ fn resolve_competitions_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
         Some(cwd.join("data").join("competitions")),
     ];
 
+    let candidate_count = candidates.len();
     for candidate in candidates.into_iter().flatten() {
+        info!("[competitions] checking candidate: {:?}", candidate);
         if candidate.is_dir() {
+            info!("[competitions] resolved to: {:?}", candidate);
             return Some(candidate);
         }
     }
 
+    info!("[competitions] no competitions directory found among {} candidates", candidate_count);
     None
 }
 
@@ -116,11 +128,18 @@ pub fn load_competition_manifest(
 // ---------------------------------------------------------------------------
 
 /// Resolve the base `data/` directory for runtime file reads.
-/// Order: resource_dir → cwd/../data/ (project root) → cwd/data/ → cwd/src-tauri/data/
+/// Order: resource_dir parent → resource_dir → cwd/../data/ (project root) → cwd/data/ → cwd/src-tauri/data/
 fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     let cwd = std::env::current_dir().ok()?;
 
     let candidates: Vec<Option<PathBuf>> = vec![
+        // resource_dir() suele ser src-tauri/ en dev; probamos /../data primero
+        app_handle
+            .path()
+            .resource_dir()
+            .ok()
+            .and_then(|dir| dir.parent().map(|p| p.join("data"))),
+        // resource_dir/data (producción)
         app_handle
             .path()
             .resource_dir()
