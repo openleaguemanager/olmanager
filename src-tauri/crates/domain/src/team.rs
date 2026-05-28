@@ -121,6 +121,7 @@ pub struct Team {
     pub form: Vec<String>,
 
     // History
+    #[serde(default)]
     pub history: Vec<TeamSeasonRecord>,
 }
 

@@ -18,7 +18,6 @@
       "history": [],
       "logo_url": "/teams-icons/shifters.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -45,7 +44,6 @@
       "wage_budget": 1500000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -57,7 +55,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-team-heretics-lec",
@@ -75,7 +75,6 @@
       "history": [],
       "logo_url": "/teams-icons/team-heretics-lec.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -102,7 +101,6 @@
       "wage_budget": 1750000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -114,7 +112,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-team-vitality",
@@ -132,7 +132,6 @@
       "history": [],
       "logo_url": "/teams-icons/team-vitality.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -159,7 +158,6 @@
       "wage_budget": 2250000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -171,7 +169,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-g2-esports",
@@ -189,7 +189,6 @@
       "history": [],
       "logo_url": "/teams-icons/g2-esports.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -216,7 +215,6 @@
       "wage_budget": 2250000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -228,7 +226,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-sk-gaming",
@@ -246,7 +246,6 @@
       "history": [],
       "logo_url": "/teams-icons/sk-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -273,7 +272,6 @@
       "wage_budget": 1500000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -285,7 +283,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-natus-vincere",
@@ -303,7 +303,6 @@
       "history": [],
       "logo_url": "/teams-icons/natus-vincere.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -330,7 +329,6 @@
       "wage_budget": 1750000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -342,7 +340,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-karmine-corp",
@@ -360,7 +360,6 @@
       "history": [],
       "logo_url": "/teams-icons/karmine-corp.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -387,7 +386,6 @@
       "wage_budget": 2250000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -399,7 +397,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-giantx-lec",
@@ -417,7 +417,6 @@
       "history": [],
       "logo_url": "/teams-icons/giantx-lec.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -444,7 +443,6 @@
       "wage_budget": 1750000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -456,7 +454,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-fnatic",
@@ -474,7 +474,6 @@
       "history": [],
       "logo_url": "/teams-icons/fnatic.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -501,7 +500,6 @@
       "wage_budget": 1750000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -513,7 +511,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     },
     {
       "id": "lec-movistar-koi",
@@ -531,7 +531,6 @@
       "history": [],
       "logo_url": "/teams-icons/movistar-koi.webp",
       "team_kind": "Main",
-      "arena_name": "",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -558,7 +557,6 @@
       "wage_budget": 2250000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -570,7 +568,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "",
+      "stadium_capacity": 2500
     }
   ]
 }

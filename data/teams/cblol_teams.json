@@ -17,7 +17,6 @@
       "history": [],
       "logo_url": "/teams-icons/red-canids.webp",
       "team_kind": "Main",
-      "arena_name": "RC Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -44,7 +43,6 @@
       "wage_budget": 3500000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -56,7 +54,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "RC Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-loud2025",
@@ -73,7 +73,6 @@
       "history": [],
       "logo_url": "/teams-icons/loud.webp",
       "team_kind": "Main",
-      "arena_name": "LOUD Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -112,7 +111,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
-      "arena_capacity": 0
+      "stadium_name": "LOUD Arena",
+      "stadium_capacity": 0
     },
     {
       "id": "team-0e114265",
@@ -129,7 +129,6 @@
       "history": [],
       "logo_url": "/teams-icons/vivo-keyd-stars.webp",
       "team_kind": "Main",
-      "arena_name": "VKS Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -156,7 +155,6 @@
       "wage_budget": 2700000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -168,7 +166,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "VKS Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-b3da089b",
@@ -185,7 +185,6 @@
       "history": [],
       "logo_url": "/teams-icons/los.webp",
       "team_kind": "Main",
-      "arena_name": "LOS Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -224,7 +223,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
-      "arena_capacity": 0
+      "stadium_name": "LOS Arena",
+      "stadium_capacity": 0
     },
     {
       "id": "team-fur2025",
@@ -241,7 +241,6 @@
       "history": [],
       "logo_url": "/teams-icons/furia.webp",
       "team_kind": "Main",
-      "arena_name": "FURIA Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -280,7 +279,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "High",
-      "arena_capacity": 0
+      "stadium_name": "FURIA Arena",
+      "stadium_capacity": 0
     },
     {
       "id": "team-0c8be917",
@@ -297,7 +297,6 @@
       "history": [],
       "logo_url": "/teams-icons/leviat-n.webp",
       "team_kind": "Main",
-      "arena_name": "LEV Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -324,7 +323,6 @@
       "wage_budget": 2575000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -336,7 +334,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "LEV Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-20461098",
@@ -353,7 +353,6 @@
       "history": [],
       "logo_url": "/teams-icons/fluxo.webp",
       "team_kind": "Main",
-      "arena_name": "Fluxo Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -380,7 +379,6 @@
       "wage_budget": 2400000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -392,7 +390,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "Fluxo Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-a72bf9ea",
@@ -409,7 +409,6 @@
       "history": [],
       "logo_url": "/teams-icons/pain-gaming.webp",
       "team_kind": "Main",
-      "arena_name": "PG Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -436,7 +435,6 @@
       "wage_budget": 4500000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -448,7 +446,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "PG Arena",
+      "stadium_capacity": 2500
     }
   ]
 }

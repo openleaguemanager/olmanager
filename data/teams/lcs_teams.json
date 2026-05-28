@@ -17,7 +17,6 @@
       "history": [],
       "logo_url": "/teams-icons/cloud9.webp",
       "team_kind": "Main",
-      "arena_name": "C9 Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -44,7 +43,6 @@
       "wage_budget": 3500000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -56,7 +54,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "C9 Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-dig2025",
@@ -73,7 +73,6 @@
       "history": [],
       "logo_url": "/teams-icons/dignitas.webp",
       "team_kind": "Main",
-      "arena_name": "Dignitas Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -112,7 +111,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
-      "arena_capacity": 0
+      "stadium_name": "Dignitas Arena",
+      "stadium_capacity": 0
     },
     {
       "id": "team-tl2025",
@@ -129,7 +129,6 @@
       "history": [],
       "logo_url": "/teams-icons/team-liquid.webp",
       "team_kind": "Main",
-      "arena_name": "TL Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -168,7 +167,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
-      "arena_capacity": 0
+      "stadium_name": "TL Arena",
+      "stadium_capacity": 0
     },
     {
       "id": "team-d740ef00",
@@ -185,7 +185,6 @@
       "history": [],
       "logo_url": "/teams-icons/shopify-rebellion.webp",
       "team_kind": "Main",
-      "arena_name": "SR Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -212,7 +211,6 @@
       "wage_budget": 2200000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -224,7 +222,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "SR Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-cb9503c1",
@@ -241,7 +241,6 @@
       "history": [],
       "logo_url": "/teams-icons/lyon.webp",
       "team_kind": "Main",
-      "arena_name": "LYO Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -268,7 +267,6 @@
       "wage_budget": 2000000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -280,7 +278,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "LYO Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-fly2025",
@@ -297,7 +297,6 @@
       "history": [],
       "logo_url": "/teams-icons/flyquest.webp",
       "team_kind": "Main",
-      "arena_name": "FlyQuest Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -336,7 +335,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
-      "arena_capacity": 0
+      "stadium_name": "FlyQuest Arena",
+      "stadium_capacity": 0
     },
     {
       "id": "team-75904cb7",
@@ -353,7 +353,6 @@
       "history": [],
       "logo_url": "/teams-icons/disguised.webp",
       "team_kind": "Main",
-      "arena_name": "DIS Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -380,7 +379,6 @@
       "wage_budget": 2650000,
       "scrim_results": [],
       "season_income": 0,
-      "arena_capacity": 2500,
       "parent_team_id": null,
       "training_focus": "Scrims",
       "academy_team_id": null,
@@ -392,7 +390,9 @@
       "academy_lifecycle": null,
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
-      "training_intensity": "Medium"
+      "training_intensity": "Medium",
+      "stadium_name": "DIS Arena",
+      "stadium_capacity": 2500
     },
     {
       "id": "team-sen2025",
@@ -409,7 +409,6 @@
       "history": [],
       "logo_url": "/teams-icons/sentinels.webp",
       "team_kind": "Main",
-      "arena_name": "Sentinels Arena",
       "facilities": {
         "medical": 1,
         "scouting": 1,
@@ -448,7 +447,8 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "High",
-      "arena_capacity": 0
+      "stadium_name": "Sentinels Arena",
+      "stadium_capacity": 0
     }
   ]
 }
