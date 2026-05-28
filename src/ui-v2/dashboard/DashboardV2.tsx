@@ -88,14 +88,11 @@ export default function DashboardV2() {
   }, [settingsLoaded, loadSettings]);
 
   useEffect(() => {
-    if (!hasActiveGame) {
-      navigate("/v2");
-      return;
-    }
+    if (!hasActiveGame) return;
     invoke<GameStateData>("get_active_game")
       .then(setGameState)
       .catch((err) => console.error("Failed to fetch game state:", err));
-  }, [hasActiveGame, navigate, setGameState]);
+  }, [hasActiveGame, setGameState]);
 
   const isUnemployed = gameState?.manager.team_id === null;
   const todayMatchFixture = gameState ? getTodayMatchFixture(gameState) : null;
@@ -249,6 +246,17 @@ export default function DashboardV2() {
         },
       })
     : null;
+
+  if (!hasActiveGame) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background text-foreground">
+        <div className="text-lg font-medium">No active game</div>
+        <p className="text-sm text-muted-foreground">
+          Start a game from the legacy UI (set VITE_UI_V2=false), then come back.
+        </p>
+      </div>
+    );
+  }
 
   if (!gameState || !dashboardTabContentModel) {
     return (
