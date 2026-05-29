@@ -67,6 +67,15 @@ export function HomeTabV2({ gameState, onNavigate }: Props) {
 
   const next = useMemo(() => getNextOpponentWidgetData(gameState), [gameState]);
   const overview = useMemo(() => getHomeRosterOverview(roster), [roster]);
+  // Injury system was removed in 0.3; surface low-condition players instead.
+  const tiredPlayers = useMemo(
+    () =>
+      [...roster]
+        .filter((p) => p.condition < 60)
+        .sort((a, b) => a.condition - b.condition)
+        .slice(0, 5),
+    [roster],
+  );
   const results = useMemo(
     () => (myTeamId ? getRecentResultsForTeam(gameState, myTeamId, 5) : []),
     [gameState, myTeamId],
@@ -149,8 +158,8 @@ export function HomeTabV2({ gameState, onNavigate }: Props) {
         <RecentResultsCard results={results} teams={gameState.teams} />
       </div>
       <div className="lg:col-span-2">
-        <UnavailableCard
-          players={overview.unavailablePlayers}
+        <LowConditionCard
+          players={tiredPlayers}
           onNavigate={onNavigate}
         />
       </div>
@@ -429,9 +438,9 @@ function KpiGroup({
         <Kpi icon={<Heart className="size-4" />} label="Condición" value={`${overview.avgCondition}%`} />
         <Kpi
           icon={<ShieldAlert className="size-4" />}
-          label="Lesionados"
-          value={overview.unavailablePlayers.length}
-          danger={overview.unavailablePlayers.length > 0}
+          label="Cansados"
+          value={overview.exhaustedCount}
+          danger={overview.exhaustedCount > 0}
         />
         <Kpi icon={<Activity className="size-4" />} label="Plantilla" value={squadSize} />
       </CardContent>
@@ -968,7 +977,7 @@ function NewsCard({
 
 // ──────────────────────────────────────────────────────────────────────
 
-function UnavailableCard({
+function LowConditionCard({
   players,
   onNavigate,
 }: {
@@ -980,26 +989,34 @@ function UnavailableCard({
       <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
           <ShieldAlert className="mr-1 inline size-4" />
-          Bajas
+          Baja forma física
         </CardTitle>
         <button
           type="button"
-          onClick={() => onNavigate?.("Squad")}
+          onClick={() => onNavigate?.("Training")}
           className="text-xs text-primary hover:underline"
         >
-          Plantilla
+          Entrenamiento
         </button>
       </CardHeader>
       <CardContent>
         {players.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Sin bajas.</p>
+          <p className="text-sm text-muted-foreground">Toda la plantilla en forma.</p>
         ) : (
           <ul className="space-y-2">
-            {players.slice(0, 5).map((p) => (
+            {players.map((p) => (
               <li key={p.id} className="flex items-center justify-between gap-2 text-sm">
                 <span className="min-w-0 truncate">{p.full_name}</span>
-                <Badge variant="outline" className="shrink-0 border-destructive/40 text-destructive">
-                  {p.injury?.days_remaining ?? "?"}d
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "shrink-0 tabular-nums",
+                    p.condition < 40
+                      ? "border-destructive/40 text-destructive"
+                      : "border-amber-500/40 text-amber-400",
+                  )}
+                >
+                  {p.condition}%
                 </Badge>
               </li>
             ))}
