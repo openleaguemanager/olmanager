@@ -96,6 +96,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/health", get(health))
+        .route("/api/me", get(me))
         .route("/api/saves", post(create_save).get(list_saves))
         .route("/api/saves/{id}", get(load_save).delete(delete_save))
         .route("/api/saves/{id}/select-team", post(select_team))
@@ -111,6 +112,12 @@ async fn main() {
 
 async fn health() -> impl IntoResponse {
     Json(json!({ "status": "ok" }))
+}
+
+/// GET /api/me — echo the authenticated user id. Auth-only (no store);
+/// useful to verify the JWT pipeline independently of the database.
+async fn me(user: AuthUser) -> impl IntoResponse {
+    Json(json!({ "user_id": user.user_id }))
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────
