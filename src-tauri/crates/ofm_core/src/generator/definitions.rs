@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+use domain::team::TeamColors;
 use super::data::{NATIONALITY_POOLS, TEAM_TEMPLATES};
 
 // ---------------------------------------------------------------------------
@@ -166,6 +167,12 @@ pub struct CompetitionManifest {
     pub championships_file: Option<String>,
     #[serde(default)]
     pub erls: Vec<String>,
+    /// ERL reputation (used for academy cost calculation).
+    #[serde(default)]
+    pub reputation: Option<u8>,
+    /// Nearby country codes for cross-border ERL eligibility.
+    #[serde(default)]
+    pub nearby_country_codes: Vec<String>,
 }
 
 fn default_teams_file() -> String {
@@ -287,7 +294,17 @@ pub struct TeamSummary {
     pub logo_url: Option<String>,
     pub country: String,
     #[serde(default)]
+    pub city: Option<String>,
+    #[serde(default)]
+    pub finance: Option<i64>,
+    #[serde(default)]
+    pub reputation: Option<u32>,
+    #[serde(default)]
+    pub colors: Option<TeamColors>,
+    #[serde(default)]
     pub ovr: Option<u8>,
+    #[serde(default)]
+    pub player_count: Option<usize>,
 }
 
 // ---------------------------------------------------------------------------

@@ -1,22 +1,45 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import playersSeed from "../../../../data/draft/players.json";
 
 import type { ChampionMasteryEntryData, PlayerData } from "@/store/gameStore";
 import { fallbackChampionForRole, resolvePlayerLolRole } from "@/lib/lolIdentity";
 import { resolvePlayerPhoto } from "@/lib/playerPhotos";
 import { calculateLolOvr } from "@/lib/lolPlayerStats";
-import {
-  TOP_CHAMPION_BY_IGN,
-  championIdFromName,
-  championSplashUrl,
-  normalizeKey,
-} from "@/components/home/HomeRosterLineupCard";
+import { resolveChampionSplash } from "@/lib/championImages";
+import { normalizeChampionKey } from "@/lib/championIds";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { cn } from "@/ui-v2/lib/utils";
 
 type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 const ROLE_ORDER: DraftRole[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
+
+interface PlayerSeed {
+  ign: string;
+  role: string;
+  champions: Array<Array<string | number>>;
+}
+
+const PLAYER_SEEDS: PlayerSeed[] = [
+  ...(((playersSeed as { data?: { rostered_seeds?: PlayerSeed[] } }).data?.rostered_seeds ?? []) as PlayerSeed[]),
+  ...(((playersSeed as { data?: { free_agent_seeds?: PlayerSeed[] } }).data?.free_agent_seeds ?? []) as PlayerSeed[]),
+];
+
+function normalizeKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+const TOP_CHAMPION_BY_IGN = new Map(
+  PLAYER_SEEDS.map((player) => {
+    const best = [...(player.champions ?? [])]
+      .map((entry) => ({ name: String(entry[0] ?? ""), mastery: Number(entry[1] ?? 0) }))
+      .filter((entry) => entry.name.length > 0)
+      .sort((a, b) => b.mastery - a.mastery)[0];
+
+    return [normalizeKey(player.ign), best?.name ?? ""] as const;
+  }),
+);
 
 interface Props {
   roster: PlayerData[];
@@ -77,7 +100,9 @@ export function RosterLineupV2({ roster, championMasteries = [], onNavigate }: P
                 fallbackChampionForRole(player.id, role) ??
                 ""
               : "";
-            const splash = championSplashUrl(championIdFromName(topChampion));
+            const splash = topChampion
+              ? resolveChampionSplash(normalizeChampionKey(topChampion))
+              : null;
 
             return (
               <div

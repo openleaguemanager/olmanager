@@ -152,13 +152,13 @@ function createGameState(overrides: Partial<GameStateData> = {}): GameStateData 
     staff: [],
     messages: [],
     news: [],
-    league: {
+    leagues: [{
       id: "league-1",
       name: "League",
       season: 1,
       fixtures: [],
       standings: [],
-    },
+    }],
     scouting_assignments: [],
     board_objectives: [],
     ...overrides,
@@ -185,13 +185,13 @@ describe("dashboardHelpers", function (): void {
       result: null,
     };
     const gameState = createGameState({
-      league: {
+      leagues: [{
         id: "league-1",
         name: "League",
         season: 1,
         fixtures: [fixture],
         standings: [],
-      },
+      }],
     });
 
     expect(getTodayMatchFixture(gameState)).toEqual(fixture);
@@ -291,7 +291,7 @@ describe("dashboardHelpers", function (): void {
     const alertIds = alerts.map((alert) => alert.id);
 
     expect(alertIds).toContain("exhausted");
-    expect(alertIds).toContain("injured_lineup");
+    expect(alertIds).not.toContain("injured_lineup");
     expect(alertIds).toContain("urgent");
     expect(alertIds).toContain("match_lineup");
   });

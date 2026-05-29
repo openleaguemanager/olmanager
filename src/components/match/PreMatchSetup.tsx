@@ -19,20 +19,20 @@ function normalizeKey(value: string): string {
 }
 
 const TEAM_LOGO_BY_NAME: Record<string, string> = {
-  g2esports: "/team-logos/g2-esports.png",
-  fnatic: "/team-logos/fnatic.png",
-  giantx: "/team-logos/giantx-lec.png",
-  karminecorp: "/team-logos/karmine-corp.png",
-  movistarkoi: "/team-logos/mad-lions.png",
-  mkoi: "/team-logos/mad-lions.png",
-  koi: "/team-logos/mad-lions.png",
-  madlionskoi: "/team-logos/mad-lions.png",
-  natusvincere: "/team-logos/natus-vincere.png",
-  skgaming: "/team-logos/sk-gaming.png",
-  teamheretics: "/team-logos/team-heretics-lec.png",
-  teamvitality: "/team-logos/team-vitality.png",
-  teambds: "/team-logos/team-bds.png",
-  shifters: "/team-logos/team-bds.png",
+  g2esports: "/teams-icons/g2-esports.webp",
+  fnatic: "/teams-icons/fnatic.webp",
+  giantx: "/teams-icons/giantx-lec.webp",
+  karminecorp: "/teams-icons/karmine-corp.webp",
+  movistarkoi: "/teams-icons/mad-lions.webp",
+  mkoi: "/teams-icons/mad-lions.webp",
+  koi: "/teams-icons/mad-lions.webp",
+  madlionskoi: "/teams-icons/mad-lions.webp",
+  natusvincere: "/teams-icons/natus-vincere.webp",
+  skgaming: "/teams-icons/sk-gaming.webp",
+  teamheretics: "/teams-icons/team-heretics-lec.webp",
+  teamvitality: "/teams-icons/team-vitality.webp",
+  teambds: "/teams-icons/team-bds.webp",
+  shifters: "/teams-icons/team-bds.webp",
 };
 
 function resolveTeamLogo(teamName: string): string | null {
@@ -272,7 +272,7 @@ export default function PreMatchSetup({
         </>
       }
     >
-      <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col gap-6">
+      <div className="w-[92%] max-w-[2000px] mx-auto px-6 py-6 flex flex-col gap-6">
         <PreMatchLineup
           homeTeam={snapshot.home_team}
           homeBench={snapshot.home_bench || []}

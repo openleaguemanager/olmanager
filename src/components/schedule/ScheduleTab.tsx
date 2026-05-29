@@ -59,6 +59,7 @@ export default function ScheduleTab({
   const [fixtureResultView, setFixtureResultView] = useState<StoredFixtureDraftResult | null>(null);
   const league = gameState.leagues[0];
   const userTeamId = gameState.manager.team_id;
+
   const seasonContext = resolveSeasonContext(gameState);
   const isPreseason = seasonContext.phase === "Preseason";
 
@@ -97,7 +98,7 @@ export default function ScheduleTab({
     return `${t("season.friendly")} — ${formatMatchDate(fixture.date)}`;
   };
 
-  if (!league) {
+  if (!playerLeague) {
     return (
       <p className="text-gray-500 dark:text-gray-400 text-center py-8">
         {t("schedule.noLeague")}
@@ -126,8 +127,6 @@ export default function ScheduleTab({
   const playoffFixtures = fixturesForDisplay.filter((fixture) => fixture.match_type === "Playoffs");
   const bestOfContext = buildBestOfContext(fixturesForDisplay);
 
-  // All fixtures from ALL competitions (calendar view)
-  const allFixtures = gameState.leagues.flatMap((l) => l.fixtures);
   // Map fixture_id -> competition name for display
   const competitionLabelMap = new Map<string, string>();
   gameState.leagues.forEach((l) => {
@@ -152,10 +151,10 @@ export default function ScheduleTab({
   });
 
   // Sorted standings
-  const standings = [...league.standings].sort(compareStandingsByLolScore);
+  const standings = [...playerLeague.standings].sort(compareStandingsByLolScore);
 
   return (
-    <div className={view === "calendar" ? "w-full" : "max-w-6xl mx-auto"}>
+    <div className={view === "calendar" ? "w-full" : "w-[92%] max-w-[2000px] mx-auto"}>
       {isPreseason && (
         <Card accent="accent" className="mb-5">
           <CardBody>
@@ -230,7 +229,7 @@ export default function ScheduleTab({
         <div className="flex flex-col gap-4">
           {playoffFixtures.length > 0 ? (
             <PlayoffBracketBoard
-              league={league}
+              league={playerLeague}
               teams={gameState.teams}
               onSelectTeam={onSelectTeam}
               title={`${t("schedule.playoffs")} · Bracket`}

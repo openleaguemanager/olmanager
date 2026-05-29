@@ -1,6 +1,7 @@
 use crate::game::Game;
 use chrono::{Datelike, NaiveDate};
 use domain::player::Player;
+use domain::stats::LolRole;
 use serde::{Deserialize, Serialize};
 
 /// A single award entry (player + stat value).
@@ -165,7 +166,7 @@ mod tests {
     use chrono::{TimeZone, Utc};
     use domain::manager::Manager;
     use domain::player::{Player, PlayerAttributes, PlayerSeasonStats};
-    use domain::stats::LolRole;
+
     use domain::team::Team;
 
     use crate::clock::GameClock;
@@ -424,4 +425,6 @@ mod tests {
             .collect();
         assert_eq!(young_player_ids, vec!["young-four-apps", "young-eligible"]);
     }
+
+
 }

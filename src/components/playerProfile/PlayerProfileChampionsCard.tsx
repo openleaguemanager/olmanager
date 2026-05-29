@@ -1,6 +1,7 @@
 import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody, CardHeader } from "../ui";
+import { resolveChampionTile } from "../../lib/championImages";
 
 interface ChampionMasteryItem {
   championId: string;
@@ -14,10 +15,6 @@ interface ChampionMasteryItem {
 interface PlayerProfileChampionsCardProps {
   champions: ChampionMasteryItem[];
   onViewChampion?: (championKey: string) => void;
-}
-
-function championPortraitUrl(championId: string): string {
-  return `https://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${championId}_0.jpg`;
 }
 
 export default function PlayerProfileChampionsCard({ champions, onViewChampion }: PlayerProfileChampionsCardProps) {
@@ -41,18 +38,18 @@ export default function PlayerProfileChampionsCard({ champions, onViewChampion }
             >
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${championPortraitUrl(item.championId)})` }}
+                style={{ backgroundImage: `url(${resolveChampionTile(item.championId) ?? ""})` }}
               />
               <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/45 to-black/75" />
 
               <div className="relative z-10 p-2.5 h-full flex flex-col">
                 <div className="flex items-start justify-between">
                   {item.rank === "insignia" ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-heading font-bold uppercase tracking-wide bg-amber-500/20 text-amber-300 border border-amber-300/35">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-heading font-bold uppercase tracking-wide bg-amber-500/20 text-amber-300 border border-amber-300/35">
                       <Crown className="w-3 h-3" /> {t("playerProfile.championInsignia")}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-heading font-bold uppercase tracking-wide bg-white/20 text-white border border-white/35">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-2xs font-heading font-bold uppercase tracking-wide bg-white/20 text-white border border-white/35">
                       #{item.rank}
                     </span>
                   )}

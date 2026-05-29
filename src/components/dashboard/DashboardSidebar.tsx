@@ -24,6 +24,7 @@ import {
   Gamepad2,
   Globe,
   Swords,
+  Store
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -84,7 +85,7 @@ function NavItem({
         <span
           className={
             collapsed
-              ? "absolute right-1.5 top-1.5 min-w-[1.1rem] rounded-full bg-primary-500 px-1.5 py-0.5 text-center text-[10px] font-bold text-white"
+              ? "absolute right-1.5 top-1.5 min-w-[1.1rem] rounded-full bg-primary-500 px-1.5 py-0.5 text-center text-2xs font-bold text-white"
               : "min-w-5 rounded-full bg-primary-500 px-2 py-0.5 text-center text-xs font-bold text-white"
           }
         >
@@ -140,6 +141,7 @@ export default function DashboardSidebar({
       tab: "Competitions",
     },
     { icon: <Gamepad2 />, label: t("dashboard.champions_world"), tab: "ChampionsWorld" },
+    { icon: <Store />, label: t("dashboard.market"), tab: "Market" },
   ];
   const toggleSidebarLabel = collapsed
     ? t("dashboard.expandSidebar")
@@ -285,7 +287,7 @@ export default function DashboardSidebar({
         {!isUnemployed && (
           <>
             {collapsed ? null : (
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-heading px-3 pt-3 pb-1">
+              <p className="text-2xs text-gray-500 uppercase tracking-widest font-heading px-3 pt-3 pb-1">
                 {t("dashboard.sectionClub")}
               </p>
             )}
@@ -303,7 +305,7 @@ export default function DashboardSidebar({
         )}
 
         {collapsed ? null : (
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-heading px-3 pt-3 pb-1">
+          <p className="text-2xs text-gray-500 uppercase tracking-widest font-heading px-3 pt-3 pb-1">
             {t("dashboard.sectionWorld")}
           </p>
         )}

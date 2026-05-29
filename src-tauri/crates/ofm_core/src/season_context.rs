@@ -9,7 +9,7 @@ pub fn refresh_game_context(game: &mut Game) {
 }
 
 pub fn derive_season_context(game: &Game) -> SeasonContext {
-    let Some(league) = game.leagues.first() else {
+    let Some(league) = game.active_league() else {
         return SeasonContext::default();
     };
 

@@ -6,14 +6,21 @@ use super::league_repo;
 /// Upsert a competition and its fixtures + standings.
 /// Unlike the legacy `upsert_league`, this operation is SCOPED to the
 /// competition_id — it does NOT delete data from other competitions.
-pub fn upsert_competition(conn: &Connection, league: &League) -> Result<(), String> {
+///
+/// `schedule_config_json` is an optional JSON string of the ScheduleConfig.
+/// Pass `None` to leave the existing value unchanged.
+pub fn upsert_competition(
+    conn: &Connection,
+    league: &League,
+    schedule_config_json: Option<&str>,
+) -> Result<(), String> {
     let cid = &league.id;
 
-    // Upsert competition metadata
+    // Upsert competition metadata with optional schedule_config
     conn.execute(
-        "INSERT OR REPLACE INTO competitions (id, name, region, tier)
-         VALUES (?1, ?2, '', 1)",
-        params![cid, league.name],
+        "INSERT OR REPLACE INTO competitions (id, name, region, tier, schedule_config)
+         VALUES (?1, ?2, '', 1, ?3)",
+        params![cid, league.name, schedule_config_json],
     )
     .map_err(|e| format!("Failed to upsert competition: {}", e))?;
 
@@ -59,6 +66,14 @@ pub fn upsert_competition(conn: &Connection, league: &League) -> Result<(), Stri
         .map_err(|e| format!("Failed to insert fixture: {}", e))?;
     }
 
+    // Upsert season entry
+    conn.execute(
+        "INSERT OR REPLACE INTO seasons (id, competition_id, season_number, phase)
+         VALUES (?1, ?2, ?3, 'Regular')",
+        params![format!("{}-{}", cid, league.season), cid, league.season],
+    )
+    .map_err(|e| format!("Failed to upsert season: {}", e))?;
+
     // Insert standings
     for s in &league.standings {
         conn.execute(
@@ -84,18 +99,27 @@ pub fn upsert_competition(conn: &Connection, league: &League) -> Result<(), Stri
 }
 
 /// Load a single competition by ID.
-pub fn load_competition(conn: &Connection, competition_id: &str) -> Result<Option<League>, String> {
+/// Returns (League, Option<String>) where the String is the raw schedule_config JSON.
+pub fn load_competition(
+    conn: &Connection,
+    competition_id: &str,
+) -> Result<Option<(League, Option<String>)>, String> {
     let mut stmt = conn
-        .prepare("SELECT id, name FROM competitions WHERE id = ?1")
+        .prepare("SELECT c.id, c.name, c.schedule_config, COALESCE((SELECT MAX(s.season_number) FROM seasons s WHERE s.competition_id = c.id), 0) FROM competitions c WHERE c.id = ?1")
         .map_err(|e| format!("Failed to prepare competition query: {}", e))?;
 
     let mut rows = stmt
         .query_map(params![competition_id], |row| {
-            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, Option<String>>(2)?,
+                row.get::<_, u32>(3)?,
+            ))
         })
         .map_err(|e| format!("Failed to query competition: {}", e))?;
 
-    let (id, name) = match rows.next() {
+    let (id, name, schedule_config_raw, season_number) = match rows.next() {
         Some(Ok(tuple)) => tuple,
         Some(Err(e)) => return Err(format!("Failed to read competition row: {}", e)),
         None => return Ok(None),
@@ -105,45 +129,66 @@ pub fn load_competition(conn: &Connection, competition_id: &str) -> Result<Optio
     let standings = load_standings(conn, &id)?;
 
     let cid = id.clone();
-    Ok(Some(League {
-        id,
-        name,
-        season: 0, // season is stored separately in seasons table
-        fixtures,
-        standings,
-        competition_id: Some(cid),
-    }))
+    Ok(Some((
+        League {
+            id,
+            name,
+            season: season_number,
+            fixtures,
+            standings,
+            competition_id: Some(cid),
+            league_kind: domain::league::LeagueKind::Main,
+        },
+        schedule_config_raw,
+    )))
 }
 
 /// Load all competitions.
-pub fn load_competitions(conn: &Connection) -> Result<Vec<League>, String> {
+/// Returns (Vec<League>, HashMap<String, String>) where the HashMap maps
+/// competition_id -> schedule_config JSON.
+pub fn load_competitions(
+    conn: &Connection,
+) -> Result<(Vec<League>, std::collections::HashMap<String, String>), String> {
+    use std::collections::HashMap;
+
     let mut stmt = conn
-        .prepare("SELECT id, name FROM competitions ORDER BY name")
+        .prepare("SELECT c.id, c.name, c.schedule_config, COALESCE((SELECT MAX(s.season_number) FROM seasons s WHERE s.competition_id = c.id), 0) FROM competitions c ORDER BY c.name")
         .map_err(|e| format!("Failed to prepare competitions query: {}", e))?;
 
     let rows = stmt
         .query_map([], |row| {
-            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, Option<String>>(2)?,
+                row.get::<_, u32>(3)?,
+            ))
         })
         .map_err(|e| format!("Failed to query competitions: {}", e))?;
 
     let mut leagues = Vec::new();
+    let mut configs = HashMap::new();
     for row in rows {
-        let (id, name) = row.map_err(|e| format!("Failed to read competition row: {}", e))?;
+        let (id, name, schedule_config_raw, season_number) =
+            row.map_err(|e| format!("Failed to read competition row: {}", e))?;
         let cid = id.clone();
         let fixtures = load_fixtures(conn, &cid)?;
         let standings = load_standings(conn, &cid)?;
         leagues.push(League {
-            id,
+            id: id.clone(),
             name,
-            season: 0,
+            season: season_number,
             fixtures,
             standings,
             competition_id: Some(cid),
+            league_kind: domain::league::LeagueKind::Main,
         });
+        if let Some(json) = schedule_config_raw {
+            configs.insert(id, json);
+        }
     }
 
-    Ok(leagues)
+    Ok((leagues, configs))
 }
 
 /// Delete a competition and its fixtures + standings.
@@ -287,15 +332,15 @@ mod tests {
         let db = test_db();
         let league = sample_league("lec", "LEC");
 
-        upsert_competition(db.conn(), &league).unwrap();
-        let loaded = load_competition(db.conn(), "lec")
+        upsert_competition(db.conn(), &league, None).unwrap();
+        let (loaded_league, _schedule_config) = load_competition(db.conn(), "lec")
             .unwrap()
             .expect("should find competition");
 
-        assert_eq!(loaded.id, "lec");
-        assert_eq!(loaded.name, "LEC");
-        assert_eq!(loaded.fixtures.len(), 2);
-        assert_eq!(loaded.standings.len(), 2);
+        assert_eq!(loaded_league.id, "lec");
+        assert_eq!(loaded_league.name, "LEC");
+        assert_eq!(loaded_league.fixtures.len(), 2);
+        assert_eq!(loaded_league.standings.len(), 2);
     }
 
     #[test]
@@ -304,11 +349,11 @@ mod tests {
         let lec = sample_league("lec", "LEC");
         let lcs = sample_league("lcs", "LCS");
 
-        upsert_competition(db.conn(), &lec).unwrap();
-        upsert_competition(db.conn(), &lcs).unwrap();
+        upsert_competition(db.conn(), &lec, None).unwrap();
+        upsert_competition(db.conn(), &lcs, None).unwrap();
 
-        let all = load_competitions(db.conn()).unwrap();
-        assert_eq!(all.len(), 2);
+        let (all_leagues, _all_configs) = load_competitions(db.conn()).unwrap();
+        assert_eq!(all_leagues.len(), 2);
 
         // Verify isolation: updating one does not affect the other
         let mut updated_lec = lec.clone();
@@ -323,14 +368,14 @@ mod tests {
             result: None,
             best_of: 3,
         });
-        upsert_competition(db.conn(), &updated_lec).unwrap();
+        upsert_competition(db.conn(), &updated_lec, None).unwrap();
 
-        let loaded_lec = load_competition(db.conn(), "lec")
+        let (loaded_lec, _) = load_competition(db.conn(), "lec")
             .unwrap()
             .expect("LEC should exist");
         assert_eq!(loaded_lec.fixtures.len(), 3, "LEC should have 3 fixtures");
 
-        let loaded_lcs = load_competition(db.conn(), "lcs")
+        let (loaded_lcs, _) = load_competition(db.conn(), "lcs")
             .unwrap()
             .expect("LCS should exist");
         assert_eq!(
@@ -352,14 +397,14 @@ mod tests {
         let db = test_db();
         let league = sample_league("lec", "LEC");
 
-        upsert_competition(db.conn(), &league).unwrap();
-        assert!(load_competition(db.conn(), "lec")
-            .unwrap()
+        upsert_competition(db.conn(), &league, None).unwrap();
+        assert!((load_competition(db.conn(), "lec")
+            .unwrap())
             .is_some());
 
         delete_competition(db.conn(), "lec").unwrap();
-        assert!(load_competition(db.conn(), "lec")
-            .unwrap()
+        assert!((load_competition(db.conn(), "lec")
+            .unwrap())
             .is_none());
 
         // Verify no orphan fixtures
@@ -379,19 +424,19 @@ mod tests {
         let db = test_db();
         let league = sample_league("lec", "LEC");
 
-        upsert_competition(db.conn(), &league).unwrap();
-        let loaded = load_competition(db.conn(), "lec")
+        upsert_competition(db.conn(), &league, None).unwrap();
+        let (loaded_league, _) = load_competition(db.conn(), "lec")
             .unwrap()
             .expect("should find competition");
 
-        assert_eq!(loaded.fixtures[0].status, FixtureStatus::Scheduled);
-        assert!(loaded.fixtures[0].result.is_none());
-        assert_eq!(loaded.fixtures[1].status, FixtureStatus::Completed);
+        assert_eq!(loaded_league.fixtures[0].status, FixtureStatus::Scheduled);
+        assert!(loaded_league.fixtures[0].result.is_none());
+        assert_eq!(loaded_league.fixtures[1].status, FixtureStatus::Completed);
         assert_eq!(
-            loaded.fixtures[1].match_type,
+            loaded_league.fixtures[1].match_type,
             MatchType::Friendly
         );
-        let result = loaded.fixtures[1].result.as_ref().unwrap();
+        let result = loaded_league.fixtures[1].result.as_ref().unwrap();
         assert_eq!(result.home_wins, 1);
         assert_eq!(result.away_wins, 0);
     }
@@ -430,13 +475,13 @@ mod tests {
         });
         lcs.fixtures[0].status = FixtureStatus::Completed;
 
-        upsert_competition(db.conn(), &lec).unwrap();
-        upsert_competition(db.conn(), &lcs).unwrap();
+        upsert_competition(db.conn(), &lec, None).unwrap();
+        upsert_competition(db.conn(), &lcs, None).unwrap();
 
-        let loaded_lec = load_competition(db.conn(), "lec")
+        let (loaded_lec, _) = load_competition(db.conn(), "lec")
             .unwrap()
             .expect("LEC should exist");
-        let loaded_lcs = load_competition(db.conn(), "lcs")
+        let (loaded_lcs, _) = load_competition(db.conn(), "lcs")
             .unwrap()
             .expect("LCS should exist");
 
@@ -465,23 +510,16 @@ mod tests {
         let lec = sample_league("lec", "LEC");
         let lcs = sample_league("lcs", "LCS");
 
-        upsert_competition(db.conn(), &lec).unwrap();
-        upsert_competition(db.conn(), &lcs).unwrap();
+        upsert_competition(db.conn(), &lec, None).unwrap();
+        upsert_competition(db.conn(), &lcs, None).unwrap();
 
-        // Update only LEC's first fixture
+        // Update only LEC's standings
         let mut updated_lec = lec.clone();
-        updated_lec.fixtures[0].status = FixtureStatus::Completed;
-        updated_lec.fixtures[0].result = Some(MatchResult {
-            home_wins: 3,
-            away_wins: 1,
-            ended_by: MatchEndReason::NexusDestroyed,
-            game_duration_seconds: 3600,
-            report: None,
-        });
-        upsert_competition(db.conn(), &updated_lec).unwrap();
+        updated_lec.standings[0].points = 42;
+        upsert_competition(db.conn(), &updated_lec, None).unwrap();
 
         // Verify LCS fixture is untouched (still Scheduled, no result)
-        let loaded_lcs = load_competition(db.conn(), "lcs")
+        let (loaded_lcs, _) = load_competition(db.conn(), "lcs")
             .unwrap()
             .expect("LCS should exist");
         assert_eq!(

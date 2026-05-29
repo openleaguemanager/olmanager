@@ -3,7 +3,6 @@
   "description": "PRM-L - 2026 Season",
   "teams": [
     {
-      "history": [],
       "id": "team-1cba5c67",
       "city": "",
       "form": [],
@@ -15,6 +14,7 @@
       "academy": null,
       "country": "DE",
       "finance": 2377650,
+      "history": [],
       "logo_url": "/teams-icons/a-one-man-army.webp",
       "team_kind": "Main",
       "facilities": {

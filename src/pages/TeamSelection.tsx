@@ -51,6 +51,7 @@ interface RenderTeam {
   colors?: { primary: string; secondary: string };
   logo_url?: string | null;
   competition_id?: string | null;
+  player_count?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -404,86 +405,95 @@ export default function TeamSelection() {
     !!legacyTeams,
   );
 
-  if (leagueData && leagueData.competitions.length > 0 && !selectedCompetitionId) {
-    return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
-        <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 px-6 py-4 flex justify-between items-center shadow-sm">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate("/")}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-800 dark:text-gray-100">
-                {t("teamSelect.selectLeague", "Select League")}
-              </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                {t("teamSelect.selectLeagueSubtitle", "Choose a competition to get started")}
-              </p>
+  if (leagueData && !selectedCompetitionId) {
+    // Si hay competencias, mostramos el league picker
+    if (leagueData.competitions.length > 0) {
+      return (
+        <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
+          <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 px-6 py-4 flex justify-between items-center shadow-sm">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate("/")}
+                className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div>
+                <h1 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-800 dark:text-gray-100">
+                  {t("teamSelect.selectLeague", "Select League")}
+                </h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  {t("teamSelect.selectLeagueSubtitle", "Choose a competition to get started")}
+                </p>
+              </div>
+            </div>
+            <ThemeToggle />
+          </header>
+
+          <div className="max-w-4xl mx-auto p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {leagueData.competitions.map((comp) => (
+                <button
+                  key={comp.id}
+                  onClick={() => setSelectedCompetitionId(comp.id)}
+                  className="text-left transition-all duration-200 rounded-xl hover:scale-[1.01]"
+                >
+                  <Card className="h-full">
+                    <div className="p-5 rounded-xl">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-navy-700 flex items-center justify-center overflow-hidden">
+                          {comp.logo ? (
+                            <img
+                              src={comp.logo}
+                              alt={`${comp.name} logo`}
+                              className="w-10 h-10 object-contain"
+                            />
+                          ) : (
+                            <Globe className="w-6 h-6 text-gray-400" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-heading font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide text-sm">
+                            {comp.name}
+                          </h3>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            {comp.region}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <Users className="w-3.5 h-3.5" />
+                        <span>
+                          {comp.team_count} {t("teamSelect.teams", "teams")}
+                        </span>
+                      </div>
+                    </div>
+                  </Card>
+                </button>
+              ))}
             </div>
           </div>
-          <ThemeToggle />
-        </header>
+        </div>
+      );
+    }
 
-        <div className="max-w-4xl mx-auto p-6">
-          {([1, 2] as const).map((tier) => {
-            const tierComps = leagueData.competitions.filter((c) => c.tier === tier);
-            if (tierComps.length === 0) return null;
-            return (
-              <div key={tier} className="mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-1 h-px bg-gray-200 dark:bg-navy-600" />
-                  <span className="text-xs font-heading font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                    {tier === 1 ? "Tier 1" : "Tier 2"}
-                  </span>
-                  <div className="flex-1 h-px bg-gray-200 dark:bg-navy-600" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {tierComps.map((comp) => (
-                    <button
-                      key={comp.id}
-                      onClick={() => setSelectedCompetitionId(comp.id)}
-                      className="text-left transition-all duration-200 rounded-xl hover:scale-[1.01]"
-                    >
-                      <Card className="h-full">
-                        <div className="p-5 rounded-xl">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-navy-700 flex items-center justify-center overflow-hidden">
-                              {comp.logo ? (
-                                <img
-                                  src={comp.logo}
-                                  alt={`${comp.name} logo`}
-                                  className="w-10 h-10 object-contain"
-                                />
-                              ) : (
-                                <Globe className="w-6 h-6 text-gray-400" />
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="font-heading font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide text-sm">
-                                {comp.name}
-                              </h3>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                {comp.region}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                            <Users className="w-3.5 h-3.5" />
-                            <span>
-                              {comp.team_count} {t("teamSelect.teams", "teams")}
-                            </span>
-                          </div>
-                        </div>
-                      </Card>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+    // leagueData existe pero competitions está vacío: mostramos error
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <Trophy className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+          <h2 className="text-xl font-heading font-bold text-gray-800 dark:text-gray-100 mb-2">
+            {t("teamSelect.noLeaguesTitle", "No leagues available")}
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            {t("teamSelect.noLeaguesDesc", "Could not find any competition data. Please check that the data files are in the correct location.")}
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+          >
+            {t("common.backToMenu", "Back to menu")}
+          </button>
         </div>
       </div>
     );
@@ -512,9 +522,13 @@ export default function TeamSelection() {
           name: t.name,
           short_name: t.short_name,
           country: t.country,
-          city: t.country,
+          city: t.city ?? t.country,
+          finance: t.finance ?? undefined,
+          reputation: t.reputation ?? undefined,
+          colors: t.colors ?? undefined,
           logo_url: t.logo_url,
           competition_id: selectedCompetitionId,
+          player_count: t.player_count ?? undefined,
         }))
       : null;
 
@@ -585,6 +599,14 @@ export default function TeamSelection() {
       </header>
 
       <div className="max-w-7xl mx-auto p-6">
+        {teamsToRender && teamsToRender.length === 0 ? (
+          <div className="text-center py-20">
+            <Users className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              {t("teamSelect.noTeams", "No teams available to select.")}
+            </p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {teamsToRender?.map((team) => {
             const isSelected = selectedTeamId === team.id;
@@ -600,11 +622,8 @@ export default function TeamSelection() {
               ? getReputationLabel(team.reputation)
               : { label: "—", variant: "neutral" as const };
 
-            // Player count: only available in legacy flow
-            const playerCount =
-              legacyTeams || oldTeamData
-                ? getCompetitiveRoster(team.id).length
-                : 0;
+            // Player count: from backend for new flow, computed for legacy
+            const playerCount = team.player_count ?? (legacyTeams || oldTeamData ? getCompetitiveRoster(team.id).length : undefined);
 
             return (
               <button
@@ -681,7 +700,7 @@ export default function TeamSelection() {
                         label={t("teamSelect.squad")}
                         value={
                           <span className="font-heading font-bold text-gray-800 dark:text-gray-200">
-                            {playerCount || (legacyTeams ? "?" : "—")}
+                            {playerCount != null ? playerCount : "—"}
                           </span>
                         }
                       />
@@ -722,6 +741,7 @@ export default function TeamSelection() {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );

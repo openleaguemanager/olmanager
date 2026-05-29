@@ -21,6 +21,8 @@ import {
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/lolIdentity";
+import { normalizeChampionKey } from "../../lib/championIds";
+import { resolveChampionTile } from "../../lib/championImages";
 
 type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 type SortKey = "pos" | "ovr" | "condition" | "morale" | "age";
@@ -82,40 +84,6 @@ function resolveRole(player: PlayerData): LolRole {
   return resolvePlayerLolRole(player);
 }
 
-function championIdFromName(name: string): string | null {
-  const normalized = normalizeKey(name);
-  if (!normalized) return null;
-
-  const overrides: Record<string, string> = {
-    aurelionsol: "AurelionSol",
-    belveth: "Belveth",
-    chogath: "Chogath",
-    drmundo: "DrMundo",
-    jarvaniv: "JarvanIV",
-    ksante: "KSante",
-    kaisa: "Kaisa",
-    khazix: "Khazix",
-    kogmaw: "KogMaw",
-    leblanc: "Leblanc",
-    leesin: "LeeSin",
-    monkeyking: "MonkeyKing",
-    nunuandwillump: "Nunu",
-    reksai: "RekSai",
-    tahmkench: "TahmKench",
-    twistedfate: "TwistedFate",
-    velkoz: "Velkoz",
-  };
-
-  if (overrides[normalized]) return overrides[normalized];
-  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-}
-
-function championPortraitUrl(championId: string | null): string | null {
-  if (!championId) return null;
-  // Tile art se parece más al "rostro" que el splash completo.
-  return `https://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${championId}_0.jpg`;
-}
-
 function clampBar(value: number): number {
   return Math.max(0, Math.min(100, value));
 }
@@ -152,8 +120,7 @@ export default function SquadRosterView({
   }
 
   const roster = gameState.players.filter((player) => player.team_id === myTeam.id);
-  const available = roster.filter((player) => !player.injury);
-  const activeLineupIds = buildActiveLineupIds(available, myTeam.active_lineup_ids ?? myTeam.starting_xi_ids ?? []);
+  const activeLineupIds = buildActiveLineupIds(roster, myTeam.active_lineup_ids ?? myTeam.starting_xi_ids ?? []);
   const activeIds = new Set(activeLineupIds);
   const playersById = useMemo(
     () => new Map(roster.map((player) => [player.id, player])),
@@ -216,7 +183,7 @@ export default function SquadRosterView({
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-4">
+    <div className="w-[92%] max-w-[2000px] mx-auto flex flex-col gap-4">
       <Card>
         <div className="p-4 border-b border-[#22345d] bg-[#08132a] rounded-t-xl">
           <h3 className="text-sm font-heading font-bold text-blue-100 uppercase tracking-wide">
@@ -261,7 +228,7 @@ export default function SquadRosterView({
                     )}
                     <div className="min-w-0">
                       <p className="text-lg leading-none font-heading font-bold text-white truncate">{player.match_name}</p>
-                      <p className="mt-1 text-[11px] text-blue-200/70">{t("common.ovr", { defaultValue: "OVR" })} {ovr}</p>
+                      <p className="mt-1 text-xs text-blue-200/70">{t("common.ovr", { defaultValue: "OVR" })} {ovr}</p>
                     </div>
                   </div>
                 ) : (
@@ -269,7 +236,7 @@ export default function SquadRosterView({
                     <p className="text-xs font-heading font-bold uppercase tracking-wide text-amber-300">
                       {t("squad.missingRoleCoverage", { defaultValue: "Missing role coverage" })}
                     </p>
-                    <p className="mt-1 text-[11px] text-amber-100/80">
+                    <p className="mt-1 text-xs text-amber-100/80">
                       {t("squad.noRoleAvailable", { defaultValue: `No ${roleLabel} available` })}
                     </p>
                   </div>
@@ -383,10 +350,10 @@ export default function SquadRosterView({
 
                     <div className="min-w-0 flex items-center gap-2">
                       <div className="min-w-0">
-                        <p className="text-[28px] leading-none font-heading font-black text-amber-300 xl:hidden">{ovr}</p>
+                        <p className="text-3xl leading-none font-heading font-black text-amber-300 xl:hidden">{ovr}</p>
                         <p className="text-xl leading-none font-heading font-bold text-white truncate">{player.match_name}</p>
-                        <p className="text-[12px] text-blue-200/70 truncate">{player.full_name}</p>
-                        <p className="text-[11px] uppercase tracking-wide text-blue-200/70 xl:hidden">{ROLE_LABEL[role]}</p>
+                        <p className="text-xs text-blue-200/70 truncate">{player.full_name}</p>
+                        <p className="text-xs uppercase tracking-wide text-blue-200/70 xl:hidden">{ROLE_LABEL[role]}</p>
                       </div>
                       {wrongPos ? (
                         <span className="text-amber-400 shrink-0" title={t("squad.outOfPositionTooltip", { defaultValue: "Fuera de rol" })}>
@@ -396,13 +363,16 @@ export default function SquadRosterView({
                     </div>
 
                     <div className="hidden xl:block text-center">
-                      <p className="text-[30px] leading-none font-heading font-black text-amber-300">{ovr}</p>
-                      <p className="text-[11px] uppercase tracking-wide text-blue-200/65">{t("common.ovr")}</p>
+                      <p className="text-3xl leading-none font-heading font-black text-amber-300">{ovr}</p>
+                      <p className="text-xs uppercase tracking-wide text-blue-200/65">{t("common.ovr")}</p>
                     </div>
 
                     <div className="hidden xl:flex items-center gap-1.5 justify-start">
                       {championNames.map((name) => {
-                        const portrait = championPortraitUrl(championIdFromName(name));
+                        const canonicalKey = normalizeChampionKey(name);
+                        const portrait = canonicalKey
+                          ? resolveChampionTile(canonicalKey)
+                          : null;
                         return (
                           <div key={name} className="w-6 h-6 rounded-sm bg-[#0d1d39] overflow-hidden border border-white/10" title={name}>
                             {portrait ? (
@@ -413,7 +383,7 @@ export default function SquadRosterView({
                       })}
                     </div>
 
-                    <div className="hidden xl:block min-w-[150px]">
+                    <div className="hidden xl:block min-w-36">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.morale")}</p>
                         <p className="text-[11px] font-heading font-bold text-emerald-300">{player.morale}</p>
@@ -423,7 +393,7 @@ export default function SquadRosterView({
                       </div>
                     </div>
 
-                    <div className="hidden xl:block min-w-[150px]">
+                    <div className="hidden xl:block min-w-36">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.condition")}</p>
                         <p className="text-[11px] font-heading font-bold text-amber-300">{player.condition}</p>
@@ -433,12 +403,12 @@ export default function SquadRosterView({
                       </div>
                     </div>
 
-                    <div className="hidden xl:block text-right min-w-[88px]">
+                    <div className="hidden xl:block text-right min-w-24">
                       <p className="text-sm font-heading font-bold text-white">{formatVal(annualWage)}</p>
                       <p className="text-[11px] text-blue-200/60">{t("common.per_year_with_slash")}</p>
                     </div>
 
-                    <div className="hidden xl:flex items-center justify-end gap-2 min-w-[100px] text-blue-200/70">
+                    <div className="hidden xl:flex items-center justify-end gap-2 min-w-24 text-blue-200/70">
                       <span className="text-sm">{formatContractMonth(player.contract_end)}</span>
                       <ChevronRight className="w-4 h-4" />
                     </div>
@@ -446,8 +416,8 @@ export default function SquadRosterView({
                     <div className="xl:hidden mt-2 grid grid-cols-2 gap-3">
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.morale")}</p>
-                          <p className="text-[11px] font-heading font-bold text-emerald-300">{player.morale}</p>
+                          <p className="text-2xs uppercase tracking-wide text-blue-200/60">{t("common.morale")}</p>
+                          <p className="text-xs font-heading font-bold text-emerald-300">{player.morale}</p>
                         </div>
                         <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
                           <div className="h-full bg-emerald-400" style={{ width: `${clampBar(player.morale)}%` }} />
@@ -455,8 +425,8 @@ export default function SquadRosterView({
                       </div>
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.condition")}</p>
-                          <p className="text-[11px] font-heading font-bold text-amber-300">{player.condition}</p>
+                          <p className="text-2xs uppercase tracking-wide text-blue-200/60">{t("common.condition")}</p>
+                          <p className="text-xs font-heading font-bold text-amber-300">{player.condition}</p>
                         </div>
                         <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
                           <div className="h-full bg-amber-400" style={{ width: `${clampBar(player.condition)}%` }} />

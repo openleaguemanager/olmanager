@@ -9,6 +9,7 @@ use domain::season::SeasonContext;
 use domain::social::{SocialAccount, SocialPost, SocialTemplate};
 use domain::staff::Staff;
 use domain::team::Team;
+use domain::transfer_history::TransferHistory;
 #[cfg(feature = "typescript")]
 use ts_rs::TS;
 
@@ -113,8 +114,9 @@ pub struct Game {
     /// Multi-league storage. The first element is the player's active league.
     #[serde(default)]
     pub leagues: Vec<League>,
+    /// The competition_id of the player's active league.
     #[serde(default)]
-    pub academy_league: Option<League>,
+    pub user_competition_id: Option<String>,
     #[serde(default)]
     pub scouting_assignments: Vec<ScoutingAssignment>,
     #[serde(default)]
@@ -129,6 +131,8 @@ pub struct Game {
     pub champion_patch: ChampionPatchState,
     #[serde(default)]
     pub competition_configs: HashMap<String, ScheduleConfig>,
+    #[serde(default)]
+    pub transfer_history: TransferHistory,
 }
 
 // Custom Deserialize for backward compatibility with old saves that have `league` field.
@@ -161,8 +165,6 @@ impl<'de> Deserialize<'de> for Game {
             #[serde(default)]
             pub league: Option<League>,
             #[serde(default)]
-            pub academy_league: Option<League>,
-            #[serde(default)]
             pub scouting_assignments: Vec<ScoutingAssignment>,
             #[serde(default)]
             pub board_objectives: Vec<BoardObjective>,
@@ -176,6 +178,10 @@ impl<'de> Deserialize<'de> for Game {
             pub champion_patch: ChampionPatchState,
             #[serde(default)]
             pub competition_configs: HashMap<String, ScheduleConfig>,
+            #[serde(default)]
+            pub user_competition_id: Option<String>,
+            #[serde(default)]
+            pub transfer_history: TransferHistory,
         }
 
         let legacy = GameLegacy::deserialize(deserializer)?;
@@ -199,7 +205,7 @@ impl<'de> Deserialize<'de> for Game {
             social_accounts: legacy.social_accounts,
             social_templates: legacy.social_templates,
             leagues,
-            academy_league: legacy.academy_league,
+            user_competition_id: legacy.user_competition_id,
             scouting_assignments: legacy.scouting_assignments,
             board_objectives: legacy.board_objectives,
             season_context: legacy.season_context,
@@ -207,6 +213,7 @@ impl<'de> Deserialize<'de> for Game {
             champion_masteries: legacy.champion_masteries,
             champion_patch: legacy.champion_patch,
             competition_configs: legacy.competition_configs,
+            transfer_history: legacy.transfer_history,
         })
     }
 }
@@ -233,7 +240,7 @@ impl Game {
             social_accounts: vec![],
             social_templates: vec![],
             leagues: vec![],
-            academy_league: None,
+            user_competition_id: None,
             scouting_assignments: vec![],
             board_objectives: vec![],
             season_context: SeasonContext::default(),
@@ -241,10 +248,38 @@ impl Game {
             champion_masteries: vec![],
             champion_patch: ChampionPatchState::default(),
             competition_configs: HashMap::new(),
+            transfer_history: TransferHistory::default(),
         };
         crate::identity_upgrade::upgrade_game_football_identities(&mut game);
         crate::season_context::refresh_game_context(&mut game);
         game
     }
 
+    /// Returns a reference to the player's active league, identified by
+    /// `user_competition_id`. Falls back to `leagues.first()` if not set.
+    pub fn active_league(&self) -> Option<&League> {
+        self.user_competition_id
+            .as_ref()
+            .and_then(|cid| self.leagues.iter().find(|l| l.competition_id.as_deref() == Some(cid)))
+            .or_else(|| self.leagues.first())
+    }
+
+    /// Returns a mutable reference to the player's active league.
+    pub fn active_league_mut(&mut self) -> Option<&mut League> {
+        let cid = self.user_competition_id.clone();
+        if let Some(ref cid) = cid {
+            if let Some(pos) = self.leagues.iter().position(|l| l.competition_id.as_deref() == Some(cid)) {
+                return self.leagues.get_mut(pos);
+            }
+        }
+        self.leagues.first_mut()
+    }
+
+    /// Returns the index of the player's active league.
+    pub fn active_league_index(&self) -> usize {
+        self.user_competition_id
+            .as_ref()
+            .and_then(|cid| self.leagues.iter().position(|l| l.competition_id.as_deref() == Some(cid)))
+            .unwrap_or(0)
+    }
 }
