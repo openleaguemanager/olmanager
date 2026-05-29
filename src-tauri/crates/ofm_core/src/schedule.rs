@@ -288,6 +288,19 @@ pub fn generate_schedule_from_config(
     config: &crate::generator::definitions::ScheduleConfig,
     split_index: usize,
 ) -> League {
+    // Defensive: a manifest with no schedule splits cannot produce a calendar.
+    // Return an empty league (id + teams, no fixtures) instead of panicking on
+    // an out-of-bounds index. Callers that need a real schedule should skip
+    // such competitions beforehand.
+    if config.splits.get(split_index).is_none() {
+        return League::new(
+            competition_id.to_string(),
+            competition_name.to_string(),
+            year,
+            team_ids,
+            None,
+        );
+    }
     let split = &config.splits[split_index];
     let season_start = Utc
         .with_ymd_and_hms(
