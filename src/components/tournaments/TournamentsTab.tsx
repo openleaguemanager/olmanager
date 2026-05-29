@@ -169,7 +169,7 @@ export default function TournamentsTab({
 
   return (
     <div className="w-[92%] max-w-[2000px] mx-auto">
-      {isPreseason && (
+      {isPreseason &&
         <Card accent="accent" className="mb-5">
           <CardBody>
             <div className="flex flex-col gap-1.5">
@@ -191,7 +191,7 @@ export default function TournamentsTab({
             </div>
           </CardBody>
         </Card>
-      )}
+      }
 
       {/* Standings table */}
       <Card>
@@ -257,7 +257,7 @@ export default function TournamentsTab({
       </div>
 
       {/* Overview */}
-      {view === "overview" && (
+      {view === "overview" &&
         <div className="space-y-5">
           {hasPlayoffsStarted ? (
             <PlayoffBracketBoard
@@ -269,7 +269,6 @@ export default function TournamentsTab({
           ) : null}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Mini standings */}
           <Card className="lg:col-span-2">
             <CardHeader>{t("tournaments.leagueTable")}</CardHeader>
             <CardBody className="p-0">
@@ -306,6 +305,8 @@ export default function TournamentsTab({
             </CardBody>
           </Card>
           </div>
+        </div>
+        }
 
           {academyLeague ? (
             <div className="space-y-4">
@@ -378,7 +379,7 @@ export default function TournamentsTab({
         </div>
       )}
 
-      {/* Standings */}
+       {/* Standings */}
       {view === "standings" && (
         <Card>
           <CardHeader>{t("tournaments.leagueTable")}</CardHeader>

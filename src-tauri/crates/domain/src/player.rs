@@ -40,12 +40,10 @@ pub struct Player {
     #[serde(default = "default_morale")]
     pub morale: u8,    // 0-100
     /// Long-term physical shape (0–100). Determines how fast condition depletes and
-    /// recovers, and modulates injury risk. Changes slowly over weeks.
+    /// recovers. Changes slowly over weeks.
     #[serde(default = "default_fitness")]
     pub fitness: u8,
 
-    #[serde(default, deserialize_with = "deserialize_optional_injury")]
-    pub injury: Option<Injury>,
     pub team_id: Option<String>,
 
     // Traits / flairs derived from attributes
@@ -55,7 +53,7 @@ pub struct Player {
     // Contract & value
     pub contract_end: Option<String>,
     #[serde(default = "default_wage")]
-    pub wage: u32, // weekly wage
+    pub wage: u32, // annual wage
     #[serde(default = "default_market_value")]
     pub market_value: u64,
 
@@ -89,6 +87,8 @@ pub struct Player {
     pub potential_research_eta_days: Option<u8>,
     #[serde(default)]
     pub champion_training_targets: Vec<String>,
+    #[serde(default)]
+    pub can_be_transferred_until: Option<String>,
 }
 
 /// Footedness is deprecated - LoL roles are lane-agnostic
@@ -147,6 +147,21 @@ pub struct PlayerAttributes {
     pub mental_resilience: u8,
 }
 
+impl PlayerAttributes {
+    pub fn overall(&self) -> u8 {
+        ((u32::from(self.mechanics)
+            + u32::from(self.laning)
+            + u32::from(self.teamfighting)
+            + u32::from(self.macro_play)
+            + u32::from(self.consistency)
+            + u32::from(self.shotcalling)
+            + u32::from(self.champion_pool)
+            + u32::from(self.discipline)
+            + u32::from(self.mental_resilience))
+            / 9) as u8
+    }
+}
+
 fn default_attr() -> u8 {
     50
 }
@@ -173,39 +188,6 @@ fn default_market_value() -> u64 {
 
 fn default_potential_base() -> u8 {
     99
-}
-
-/// Custom deserializer for `Option<Injury>` that treats `""` and `null` as `None`.
-fn deserialize_optional_injury<'de, D>(deserializer: D) -> Result<Option<Injury>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    use serde::de::Visitor;
-    struct InjuryOptVisitor;
-    impl<'de> Visitor<'de> for InjuryOptVisitor {
-        type Value = Option<Injury>;
-        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            f.write_str("an Injury object, null, or empty string")
-        }
-        fn visit_none<E: serde::de::Error>(self) -> Result<Option<Injury>, E> {
-            Ok(None)
-        }
-        fn visit_unit<E: serde::de::Error>(self) -> Result<Option<Injury>, E> {
-            Ok(None)
-        }
-        fn visit_str<E: serde::de::Error>(self, v: &str) -> Result<Option<Injury>, E> {
-            if v.is_empty() { Ok(None) } else { Err(E::custom("expected injury object or null")) }
-        }
-    }
-    deserializer.deserialize_any(InjuryOptVisitor)
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[cfg_attr(feature = "typescript", derive(TS))]
-#[cfg_attr(feature = "typescript", ts(export))]
-pub struct Injury {
-    pub name: String,
-    pub days_remaining: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -416,10 +398,52 @@ pub struct TransferOffer {
     pub negotiation_round: u8,
     #[serde(default)]
     pub suggested_counter_fee: Option<u64>,
+    #[serde(default)]
+    pub players_included: Vec<PlayerOfferItem>,
     #[serde(default = "default_transfer_offer_status")]
     pub status: TransferOfferStatus,
     #[serde(default = "default_transfer_offer_date")]
     pub date: String,
+    #[serde(default = "default_wage_neg_status")]
+    pub wage_negotiation_status: WageNegotiationStatus,
+    #[serde(default)]
+    pub contract_years_offered: u8,
+    #[serde(default)]
+    pub suggested_counter_wage: Option<u32>,
+    #[serde(default)]
+    pub suggested_counter_years: Option<u8>,
+    #[serde(default = "default_wage_neg_round")]
+    pub wage_negotiation_round: u8,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+pub struct PlayerOfferItem {
+    pub player_id: String,
+    pub player_name: String,
+    pub valuation: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "typescript", derive(TS))]
+#[cfg_attr(feature = "typescript", ts(export))]
+#[serde(rename_all = "PascalCase")]
+pub enum WageNegotiationStatus {
+    NotStarted,
+    Pending,
+    Agreed,
+    Rejected,
+}
+
+fn default_wage_neg_status() -> WageNegotiationStatus {
+    WageNegotiationStatus::NotStarted
+}
+fn default_wage_years() -> u8 {
+    0
+}
+fn default_wage_neg_round() -> u8 {
+    0
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -573,7 +597,6 @@ impl Player {
             condition: 100,
             morale: 100,
             fitness: 75,
-            injury: None,
             team_id: None,
             traits,
             contract_end: None,
@@ -591,6 +614,7 @@ impl Player {
             potential_research_started_on: None,
             potential_research_eta_days: None,
             champion_training_targets: Vec::new(),
+            can_be_transferred_until: None,
         }
     }
 }
@@ -629,7 +653,6 @@ mod tests {
             "attributes": sample_attributes(),
             "condition": 100,
             "morale": 100,
-            "injury": null,
             "team_id": null,
             "traits": [],
             "contract_end": null,
@@ -665,7 +688,6 @@ mod tests {
             "attributes": sample_attributes(),
             "condition": 100,
             "morale": 100,
-            "injury": null,
             "team_id": null,
             "traits": [],
             "contract_end": null,
