@@ -136,7 +136,7 @@ export default function SquadRosterView({
   return (
     <div className="w-[92%] max-w-[2000px] mx-auto flex flex-col gap-4">
       <Card>
-        <div className="p-4 border-b border-[#22345d] bg-[#08132a] rounded-t-xl">
+        <div className="p-4 border-b border-navy-600 bg-navy-900 rounded-t-xl">
           <h3 className="text-sm font-heading font-bold text-blue-100 uppercase tracking-wide">
             {t("squad.activeLineup", { defaultValue: "Active Lineup" })}
           </h3>
@@ -146,7 +146,7 @@ export default function SquadRosterView({
         </div>
 
         <div
-          className="grid grid-cols-1 md:grid-cols-5 gap-3 p-3 md:p-4 bg-[#061027] rounded-b-xl"
+          className="grid grid-cols-1 md:grid-cols-5 gap-3 p-3 md:p-4 bg-navy-950 rounded-b-xl"
           data-testid="active-lineup"
         >
           {activeLineupSlots.map((slot) => {
@@ -158,7 +158,7 @@ export default function SquadRosterView({
             return (
               <button
                 key={slot.role}
-                className="min-h-32 rounded-xl border border-[#21365f] bg-[#13274a] px-3 py-3 text-left hover:bg-[#17305a] transition-colors disabled:cursor-default disabled:hover:bg-[#13274a]"
+                className="min-h-32 rounded-xl border border-navy-600 bg-navy-800 px-3 py-3 text-left hover:bg-navy-750 transition-colors disabled:cursor-default disabled:hover:bg-navy-800"
                 data-testid={`active-lineup-role-${slot.role}`}
                 disabled={!player}
                 onClick={() => {
@@ -175,7 +175,7 @@ export default function SquadRosterView({
                     {photo ? (
                       <img src={photo} alt={player.match_name} className="w-10 h-10 object-cover rounded-full shrink-0" loading="lazy" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#0f213f] border border-white/10 shrink-0" />
+                      <div className="w-10 h-10 rounded-full bg-navy-850 border border-white/10 shrink-0" />
                     )}
                     <div className="min-w-0">
                       <p className="text-lg leading-none font-heading font-bold text-white truncate">{player.match_name}</p>
@@ -199,7 +199,7 @@ export default function SquadRosterView({
       </Card>
 
       <Card>
-        <div className="p-4 border-b border-[#22345d] bg-[#08132a] rounded-t-xl">
+        <div className="p-4 border-b border-navy-600 bg-navy-900 rounded-t-xl">
           <h3 className="text-sm font-heading font-bold text-blue-100 uppercase tracking-wide">
             {t("squad.benchSubstitutes", { defaultValue: "Bench / Substitutes" })}
           </h3>
@@ -217,7 +217,7 @@ export default function SquadRosterView({
                 className={`px-2.5 py-1 rounded-md text-xs font-heading font-bold uppercase tracking-wide border transition-colors ${
                   sortKey === key
                     ? "bg-primary-500/15 border-primary-400 text-primary-300"
-                    : "bg-[#0f1e3c] border-[#2a3f6f] text-blue-200/80 hover:border-primary-400"
+                    : "bg-navy-850 border-navy-500 text-blue-200/80 hover:border-primary-400"
                 }`}
                 onClick={() => toggleSort(key)}
               >
@@ -227,7 +227,7 @@ export default function SquadRosterView({
           </div>
         </div>
 
-        <div className="p-3 md:p-4 space-y-2 bg-[#061027] rounded-b-xl">
+        <div className="p-3 md:p-4 space-y-2 bg-navy-950 rounded-b-xl">
           {sortedRoster.map((player) => {
             const role = resolveRole(player);
             const ovr = calculateLolOvr(player);
@@ -282,18 +282,18 @@ export default function SquadRosterView({
             return (
               <ContextMenu items={contextItems} key={player.id}>
                 <button
-                  className="w-full text-left rounded-xl border border-[#21365f] bg-[#13274a] hover:bg-[#17305a] transition-colors px-3 py-2.5"
+                  className="w-full text-left rounded-xl border border-navy-600 bg-navy-800 hover:bg-navy-750 transition-colors px-3 py-2.5"
                   onClick={() => onSelectPlayer(player.id)}
                 >
                   <div className="grid grid-cols-1 xl:grid-cols-[34px_44px_minmax(220px,1fr)_72px_72px_170px_170px_170px_110px_90px] items-center gap-3">
-                    <div className="w-8 h-8 rounded-md bg-[#0f213f] border border-white/10 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-md bg-navy-850 border border-white/10 flex items-center justify-center">
                       <img src={ROLE_ICON_URLS[role]} alt={ROLE_LABEL[role]} className="w-4 h-4 object-contain opacity-90" />
                     </div>
 
                     {photo ? (
                       <img src={photo} alt={player.match_name} className="w-10 h-10 object-cover rounded-full shrink-0" loading="lazy" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#0f213f] border border-white/10 shrink-0" />
+                      <div className="w-10 h-10 rounded-full bg-navy-850 border border-white/10 shrink-0" />
                     )}
 
                     <div className="min-w-0 flex items-center gap-2">
@@ -328,7 +328,7 @@ export default function SquadRosterView({
                         <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.morale")}</p>
                         <p className="text-[11px] font-heading font-bold text-emerald-300">{player.morale}</p>
                       </div>
-                      <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
+                      <div className="w-full h-1.5 rounded-full bg-navy-950 overflow-hidden">
                         <div className="h-full bg-emerald-400" style={{ width: `${clampBar(player.morale)}%` }} />
                       </div>
                     </div>
@@ -338,7 +338,7 @@ export default function SquadRosterView({
                         <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.condition")}</p>
                         <p className="text-[11px] font-heading font-bold text-amber-300">{player.condition}</p>
                       </div>
-                      <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
+                      <div className="w-full h-1.5 rounded-full bg-navy-950 overflow-hidden">
                         <div className="h-full bg-amber-400" style={{ width: `${clampBar(player.condition)}%` }} />
                       </div>
                     </div>
@@ -348,7 +348,7 @@ export default function SquadRosterView({
                         <p className="text-[10px] uppercase tracking-wide text-blue-200/60">{t("common.fitness")}</p>
                         <p className="text-[11px] font-heading font-bold text-green-300">{player.fitness ?? 75}</p>
                       </div>
-                      <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
+                      <div className="w-full h-1.5 rounded-full bg-navy-950 overflow-hidden">
                         <div className="h-full bg-green-400" style={{ width: `${clampBar(player.fitness ?? 75)}%` }} />
                       </div>
                     </div>
@@ -369,7 +369,7 @@ export default function SquadRosterView({
                           <p className="text-2xs uppercase tracking-wide text-blue-200/60">{t("common.morale")}</p>
                           <p className="text-xs font-heading font-bold text-emerald-300">{player.morale}</p>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-navy-950 overflow-hidden">
                           <div className="h-full bg-emerald-400" style={{ width: `${clampBar(player.morale)}%` }} />
                         </div>
                       </div>
@@ -378,7 +378,7 @@ export default function SquadRosterView({
                           <p className="text-2xs uppercase tracking-wide text-blue-200/60">{t("common.condition")}</p>
                           <p className="text-xs font-heading font-bold text-amber-300">{player.condition}</p>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-navy-950 overflow-hidden">
                           <div className="h-full bg-amber-400" style={{ width: `${clampBar(player.condition)}%` }} />
                         </div>
                       </div>
@@ -387,7 +387,7 @@ export default function SquadRosterView({
                           <p className="text-2xs uppercase tracking-wide text-blue-200/60">{t("common.fitness")}</p>
                           <p className="text-xs font-heading font-bold text-green-300">{player.fitness ?? 75}</p>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#0a1b37] overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-navy-950 overflow-hidden">
                           <div className="h-full bg-green-400" style={{ width: `${clampBar(player.fitness ?? 75)}%` }} />
                         </div>
                       </div>

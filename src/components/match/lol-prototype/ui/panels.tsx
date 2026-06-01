@@ -335,7 +335,7 @@ export function LecLowerThirdPanel({ champions, championByPlayerId, timeSec = 0 
         const toBlue = blueGold >= redGold;
 
         return (
-          <div key={role} className="player-row flex h-[42px] bg-[#0a0a0a] border border-white/[0.05]">
+          <div key={role} className="player-row flex h-[42px] bg-navy-950 border border-white/[0.05]">
             <SidePane champion={blue} team="blue" championByPlayerId={championByPlayerId} timeSec={timeSec} />
 
             <div className="gold-indicator flex w-[80px] items-center justify-center border-x border-white/[0.05] bg-[#080808]">

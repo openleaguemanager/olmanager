@@ -991,7 +991,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
                 animation: lolFeedSlideIn 260ms ease-out both;
               }
             `}</style>
-            <div className="relative flex h-[54px] items-center overflow-hidden border-t border-white/10 bg-gradient-to-r from-[#001a1a] via-black to-[#1a0a00] shadow-[0_10px_30px_rgba(0,0,0,0.5)] sm:h-[62px]">
+            <div className="relative flex h-[54px] items-center overflow-hidden border-t border-white/10 bg-gradient-to-r from-navy-950 via-black to-navy-950 shadow-[0_10px_30px_rgba(0,0,0,0.5)] sm:h-[62px]">
               <div className="absolute left-0 h-full w-1 bg-[#00fcdb] shadow-[2px_0_10px_rgba(0,252,219,0.3)]" />
               <div className="absolute right-0 h-full w-1 bg-[#ff4e00] shadow-[-2px_0_10px_rgba(255,78,0,0.3)]" />
 
@@ -1000,7 +1000,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
                   {blueBrand.logo ? <img src={blueBrand.logo} className="h-9 w-9 object-contain" alt={`${snapshot.home_team.name} logo`} loading="lazy" /> : null}
                 </div>
                 <div className="flex flex-col leading-[0.9]">
-                  <span className="text-xl font-black tracking-[-1px] text-[#00fcdb] sm:text-4xl">{blueBrand.tag || blueTag}</span>
+                  <span className="text-xl font-black tracking-[-1px] text-primary-400 sm:text-4xl">{blueBrand.tag || blueTag}</span>
                   <span className="text-sm font-bold text-white/55">{t("match.live")}</span>
                 </div>
                 <div className="ml-4 flex items-center gap-2 text-base font-bold italic text-white sm:ml-7 sm:text-2xl">
@@ -1025,7 +1025,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
                   <img src={ICON_TOWER} className="h-5 w-5 object-contain opacity-90" alt={t("match.liveA11y.towerIcon")} loading="lazy" />
                 </div>
                 <div className="flex flex-col leading-[0.9]">
-                  <span className="text-xl font-black tracking-[-1px] text-[#ff4e00] sm:text-4xl">{redBrand.tag || redTag}</span>
+                  <span className="text-xl font-black tracking-[-1px] text-accent-600 sm:text-4xl">{redBrand.tag || redTag}</span>
                   <span className="text-sm font-bold text-white/55">{t("match.live")}</span>
                 </div>
                 <div className="ml-3 flex h-[42px] w-[42px] items-center justify-center border border-white/20 bg-white/5">
@@ -1035,7 +1035,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
             </div>
 
             <div
-              className="absolute left-1/2 top-[54px] flex h-[34px] -translate-x-1/2 items-center justify-between border-t border-[#222] bg-black px-[26px] sm:top-[62px] sm:h-[38px] sm:px-[60px]"
+              className="absolute left-1/2 top-[54px] flex h-[34px] -translate-x-1/2 items-center justify-between border-t border-navy-700 bg-black px-[26px] sm:top-[62px] sm:h-[38px] sm:px-[60px]"
               style={{ clipPath: "polygon(0 0, 100% 0, 93% 100%, 7% 100%)", width: "min(92%, 900px)" }}
             >
               <div className="flex items-center gap-2">
