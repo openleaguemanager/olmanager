@@ -2,7 +2,8 @@ import lesPlayersData from "../../data/erls/players/les_players.json";
 import lflPlayersData from "../../data/erls/players/lfl_players.json";
 import primeLeaguePlayersData from "../../data/erls/players/prm_players.json";
 
-const FALLBACK_PLAYER_PHOTO = "/player-photos/107455908655055017.webp";
+const FALLBACK_PLAYER_PHOTO = "/default/defaultplayer.webp";
+const FALLBACK_STAFF_PHOTO = "/manager-icons/0.webp";
 
 function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -44,5 +45,5 @@ export function resolvePlayerPhoto(playerId: string, matchName?: string, profile
 }
 
 export function resolveStaffPhoto(profileImageUrl?: string | null): string | null {
-  return normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_PLAYER_PHOTO;
+  return normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_STAFF_PHOTO;
 }

@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import type { JSX, ReactNode } from "react";
 import {
@@ -35,6 +36,7 @@ interface DashboardSidebarProps {
   managerName: string | null;
   teamName: string | null;
   teamLogo: string | null;
+  managerAvatar: string | null;
   onNavigateSettings: () => void;
   onExitClick: () => void;
   isUnemployed: boolean;
@@ -104,11 +106,13 @@ export default function DashboardSidebar({
   managerName,
   teamName,
   teamLogo,
+  managerAvatar,
   onNavigateSettings,
   onExitClick,
   isUnemployed,
 }: DashboardSidebarProps): JSX.Element {
   const { t } = useTranslation();
+  invoke("debug_log", { message: `[sidebar] teamName=${teamName} | teamLogo=${teamLogo} | collapsed=${collapsed}` });
 
   const clubItems: Array<{ icon: JSX.Element; label: string; tab: string }> = [
     { icon: <Users />, label: t("dashboard.squad"), tab: "Squad" },
@@ -220,7 +224,15 @@ export default function DashboardSidebar({
             collapsed ? "text-gray-300" : "text-left"
           }`}
         >
-          <User className="h-5 w-5 shrink-0" />
+          {managerAvatar ? (
+            <img
+              src={managerAvatar}
+              alt=""
+              className="w-5 h-5 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <User className="h-5 w-5 shrink-0" />
+          )}
           <div
             className={`min-w-0 min-h-0 overflow-hidden transition-all duration-200 ${
               collapsed

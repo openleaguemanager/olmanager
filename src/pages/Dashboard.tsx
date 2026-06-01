@@ -46,6 +46,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../store/settingsStore";
 import { resolveTeamLogo } from "../lib/teamLogos";
+import { resolveStaffPhoto } from "../lib/playerPhotos";
 
 const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Meta", "Scrims", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
 
@@ -424,11 +425,23 @@ export default function Dashboard(): JSX.Element {
   // Use the team's logo_url from backend (already mapped to /teams-icons/) instead of
   // the hardcoded resolveTeamLogo map (which only covers LEC teams).
   const teamLogo = useMemo(() => {
-    if (!gameState || !gameState.manager.team_id) return null;
+    if (!gameState || !gameState.manager.team_id) {
+      invoke("debug_log", { message: `[dash] teamLogo: null (no gameState or team_id)` });
+      return null;
+    }
     const myTeam = gameState.teams.find((t) => t.id === gameState.manager.team_id);
-    if (myTeam?.logo_url) return myTeam.logo_url;
-    return resolveTeamLogo(myTeamName);
+    if (myTeam?.logo_url) {
+      invoke("debug_log", { message: `[dash] teamLogo: using myTeam.logo_url=${myTeam.logo_url} for ${myTeam.name}` });
+      return myTeam.logo_url;
+    }
+    const fallback = resolveTeamLogo(myTeamName);
+    invoke("debug_log", { message: `[dash] teamLogo: myTeam.logo_url missing for ${myTeam?.name}, resolveTeamLogo(${myTeamName}) => ${fallback}` });
+    return fallback;
   }, [gameState, myTeamName]);
+
+  const managerAvatar = useMemo(() => {
+    return resolveStaffPhoto(gameState?.manager?.avatar_path);
+  }, [gameState?.manager?.avatar_path]);
 
   const searchResults = gameState
     ? getDashboardSearchResults(gameState, searchQuery)
@@ -493,6 +506,7 @@ export default function Dashboard(): JSX.Element {
         managerName={managerName}
         teamName={myTeamName}
         teamLogo={teamLogo}
+        managerAvatar={managerAvatar}
         onNavigateSettings={handleNavigateSettings}
         isUnemployed={isUnemployed ?? false}
         onExitClick={() => {

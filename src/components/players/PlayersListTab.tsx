@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { GameStateData, PlayerSelectionOptions } from "../../store/gameStore";
 import { Card, CardBody, Badge, Select, CountryFlag, RoleBadge } from "../ui";
 import {
@@ -46,6 +47,7 @@ export default function PlayersListTab({
   onSelectTeam,
 }: PlayersListTabProps) {
   const { t } = useTranslation();
+  invoke("debug_log", { message: "PlayersListTab render" });
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState<LolRole | null>(null);
   const [teamFilter, setTeamFilter] = useState<string | null>(null);
@@ -348,6 +350,12 @@ export default function PlayersListTab({
                     const ovr = calculateLolOvr(player);
                     const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const photoSrc = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
+                    // debug: log photoSrc for first 3 visible players
+                    try {
+                      if (player.match_name === "Gabriel Dzelme" || player.match_name === "Jeong Seong-hoon" || player.match_name === "Brian Alejo Distefano") {
+                        invoke("debug_log", { message: `[${player.match_name}] photoSrc: ${photoSrc} | clock: ${gameState.clock.current_date}` });
+                      }
+                    } catch (_e) { /* ignore */ }
                     return (
                       <tr
                         key={player.id}
@@ -356,11 +364,24 @@ export default function PlayersListTab({
                       >
                         <td className="py-2.5 px-4">
                           <img
-                            src={photoSrc ?? "/player-photos/107455908655055017.webp"}
+                            src={photoSrc ?? "/default/defaultplayer.webp"}
                             alt={player.match_name}
+                            data-debug-player={player.match_name}
                             className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/player-photos/107455908655055017.webp";
+                              const target = e.target as HTMLImageElement;
+                              const FALLBACK = "/default/defaultplayer.webp";
+                              if (target.src.endsWith("defaultplayer.webp")) {
+                                return;
+                              }
+                              invoke("debug_log", { message: `IMG ERROR: ${player.match_name} | src: ${target.src}` });
+                              target.src = FALLBACK;
+                            }}
+                            ref={(el) => {
+                              if (el && el.getAttribute("data-first-mount") !== "true") {
+                                invoke("debug_log", { message: `IMG MOUNTED: ${player.match_name}` });
+                                el.setAttribute("data-first-mount", "true");
+                              }
                             }}
                           />
                         </td>

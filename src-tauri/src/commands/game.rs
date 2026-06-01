@@ -1917,16 +1917,21 @@ fn assemble_world_from_modular_data(
             all_teams.extend(comp_teams);
         }
         let player_count_before = all_players.len();
-        if let Ok(comp_players) = crate::commands::competitions::load_competition_players(app_handle, manifest) {
-            for mut player in comp_players {
-                if let Some(ref tid) = player.team_id.clone() {
-                    if tid != "fa" && tid != "freeagent" && !tid.starts_with(&prefix) {
-                        player.team_id = Some(format!("{}-{}", cid, tid));
+        match crate::commands::competitions::load_competition_players(app_handle, manifest) {
+            Ok(comp_players) => {
+                for mut player in comp_players {
+                    if let Some(ref tid) = player.team_id.clone() {
+                        if tid != "fa" && tid != "freeagent" && !tid.starts_with(&prefix) {
+                            player.team_id = Some(format!("{}-{}", cid, tid));
+                        }
                     }
+                    if player.morale == 0 { player.morale = 68; }
+                    if player.condition == 0 { player.condition = 100; }
+                    all_players.push(player);
                 }
-                if player.morale == 0 { player.morale = 68; }
-                if player.condition == 0 { player.condition = 100; }
-                all_players.push(player);
+            }
+            Err(err) => {
+                info!("[game] FAILED to load players for '{}': {}", cid, err);
             }
         }
         let loaded = all_players.len() - player_count_before;

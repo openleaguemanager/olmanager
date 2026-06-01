@@ -720,11 +720,13 @@ export default function TransfersTab({
                       >
                         <td className="py-2.5 px-4">
                           <img
-                            src={photoSrc ?? "/player-photos/107455908655055017.webp"}
+                            src={photoSrc ?? "/default/defaultplayer.webp"}
                             alt={player.match_name}
                             className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/player-photos/107455908655055017.webp";
+                              const target = e.target as HTMLImageElement;
+                              if (target.src.endsWith("defaultplayer.webp")) return;
+                              target.src = "/default/defaultplayer.webp";
                             }}
                           />
                         </td>

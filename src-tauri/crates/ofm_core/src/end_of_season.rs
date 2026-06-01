@@ -373,7 +373,7 @@ fn process_end_of_season_inner(
                 .and_then(|tid| game.teams.iter().find(|t| &t.id == tid))
                 .map(|t| t.name.clone())
                 .unwrap_or_else(|| "Free Agent".to_string());
-            let team_id = player.team_id.clone().unwrap_or_default();
+            let team_id = player.team_id.clone();
 
             player.career.push(domain::player::CareerEntry {
                 season,
