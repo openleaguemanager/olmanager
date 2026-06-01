@@ -173,6 +173,7 @@ pub fn load_competition_teams(
     let data_base = resolve_data_base(app_handle)
         .ok_or_else(|| "Data directory not found.".to_string())?;
     let teams_path = data_base.join(&manifest.teams_file);
+    info!("[competitions] loading teams for '{}' from {:?}", manifest.id, teams_path);
     let json = std::fs::read_to_string(&teams_path).map_err(|e| {
         format!(
             "Failed to read teams file '{}' for '{}': {}",
@@ -204,6 +205,7 @@ pub fn load_competition_players(
     let data_base = resolve_data_base(app_handle)
         .ok_or_else(|| "Data directory not found.".to_string())?;
     let players_path = data_base.join(&manifest.players_file);
+    info!("[competitions] loading players for '{}' from {:?}", manifest.id, players_path);
     let json = std::fs::read_to_string(&players_path).map_err(|e| {
         format!(
             "Failed to read players file '{}' for '{}': {}",

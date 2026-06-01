@@ -127,15 +127,7 @@ export default function DashboardWorkspaceContent({
               "Manager",
               "News",
               "Social",
-            ].includes(dashboardTabContentModel.activeTab) ? (
-              <Card>
-                <CardBody>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    View unavailable
-                  </p>
-                </CardBody>
-              </Card>
-            ) : null}
+            ].includes(dashboardTabContentModel.activeTab) && <></>}
           </div>
         </>
       )}

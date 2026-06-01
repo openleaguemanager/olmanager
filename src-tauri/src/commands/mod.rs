@@ -40,3 +40,8 @@ pub use stats::*;
 pub use time::*;
 pub use transfers::*;
 pub use world::*;
+
+#[tauri::command]
+pub fn debug_log(message: String) {
+    println!("[JS DEBUG] {}", message);
+}

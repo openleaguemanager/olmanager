@@ -368,7 +368,7 @@ pub struct PlayerSeasonStats {
 #[cfg_attr(feature = "typescript", ts(export))]
 pub struct CareerEntry {
     pub season: u32,
-    pub team_id: String,
+    pub team_id: Option<String>,
     pub team_name: String,
     #[serde(default)]
     pub appearances: u32,

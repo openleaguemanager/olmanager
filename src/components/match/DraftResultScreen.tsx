@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import teamsSeed from "../../../data/draft/teams.json";
 import { buildLolScrimPrepInsight } from "../../lib/lolScrimPrep";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { resolveTeamLogo } from "../../lib/teamLogos";
 import type { MatchSnapshot } from "./types";
 import type { DraftMatchResult, DraftTimelineEvent } from "./draftResultSimulator";
@@ -204,7 +203,7 @@ export default function DraftResultScreen({
     ? `M ${chartPoints[0].x},${GOLD_CHART_CENTER_Y} L ${chartPoints.map((point) => `${point.x},${point.y}`).join(" L ")} L ${chartPoints[chartPoints.length - 1].x},${GOLD_CHART_CENTER_Y} Z`
     : "";
 
-  const mvpPhoto = resolvePlayerPhoto(selectedResult.mvp.playerId, selectedResult.mvp.playerName);
+  const mvpPhoto = "/default/defaultplayer.webp";
   const playedSeriesGames = Math.max(latestSeriesGame?.gameIndex ?? 1, seriesGamesForTabs.length);
   const nextGameLabel = `${Math.min(seriesLength, playedSeriesGames + 1)}/${seriesLength}`;
   const targetSeriesWins = seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
@@ -309,7 +308,7 @@ export default function DraftResultScreen({
   };
 
   return (
-    <div className="min-h-screen overflow-y-auto overflow-x-hidden bg-[#050608] text-white p-4 md:p-6">
+    <div className="min-h-screen overflow-y-auto overflow-x-hidden bg-navy-950 text-white p-4 md:p-6">
       <div className="max-w-[1600px] mx-auto space-y-4">
         <header className="rounded-xl border border-cyan-400/25 bg-[#0a1433] p-5 text-center shadow-[0_0_24px_rgba(0,242,255,0.1)]">
           <p className="text-xs uppercase tracking-[0.3em] text-gray-400">{t("match.matchOver")}</p>
@@ -573,7 +572,7 @@ export default function DraftResultScreen({
                 <p className="text-xs uppercase tracking-[0.2em] text-cyan-200 mb-3">{blueTri}</p>
                 <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-3 gap-y-1 items-center">
                   {blueRows.map((row) => {
-                    const icon = resolvePlayerPhoto(row.playerId, row.playerName);
+                    const icon = "/default/defaultplayer.webp";
                     const isMvp = row.playerId === selectedResult.mvp.playerId;
                     return (
                       <div
@@ -596,7 +595,7 @@ export default function DraftResultScreen({
                 <p className="text-xs uppercase tracking-[0.2em] text-cyan-200 mb-3">{redTri}</p>
                 <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-3 gap-y-1 items-center">
                   {redRows.map((row) => {
-                    const icon = resolvePlayerPhoto(row.playerId, row.playerName);
+                    const icon = "/default/defaultplayer.webp";
                     const isMvp = row.playerId === selectedResult.mvp.playerId;
                     return (
                       <div

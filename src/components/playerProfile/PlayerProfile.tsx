@@ -1029,6 +1029,7 @@ export default function PlayerProfile({
           contractEnd={player.contract_end}
           currentDate={gameState.clock.current_date}
           condition={player.condition}
+          fitness={player.fitness ?? 75}
           morale={player.morale}
           marketValue={player.market_value}
           wage={player.wage}

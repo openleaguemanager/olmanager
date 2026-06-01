@@ -30,6 +30,7 @@ coverage/
 # =========================
 target/
 src-tauri/target/
+src-tauri/data/
 **/*.rs.bk
 
 # =========================
@@ -72,5 +73,3 @@ Thumbs.db
 # =========================
 openspec/
 
-# Generated player photos
-public/player-photos/*.webp

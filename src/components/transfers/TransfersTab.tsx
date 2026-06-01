@@ -678,7 +678,7 @@ export default function TransfersTab({
             className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${!posFilter ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
             title="All roles"
           >
-            <img src="/role-icons/allroles.png" alt="All roles" className="h-3.5 w-3.5" />
+            <img src="/role-icons/allroles.webp" alt="All roles" className="h-3.5 w-3.5" />
           </button>
           {positions.map((pos) => (
             <button
@@ -854,11 +854,13 @@ export default function TransfersTab({
                       >
                         <td className="py-2.5 px-4">
                           <img
-                            src={photoSrc ?? "/player-photos/107455908655055017.webp"}
+                            src={photoSrc ?? "/default/defaultplayer.webp"}
                             alt={player.match_name}
                             className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/player-photos/107455908655055017.webp";
+                              const target = e.target as HTMLImageElement;
+                              if (target.src.endsWith("defaultplayer.webp")) return;
+                              target.src = "/default/defaultplayer.webp";
                             }}
                           />
                         </td>
