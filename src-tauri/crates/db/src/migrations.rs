@@ -458,6 +458,10 @@ pub fn all_migrations() -> Migrations<'static> {
         M::up(include_str!("sql/v054_rename_play_style_to_draft_strategy.sql")),
         // V55: Add logo_url and competition_id to teams table
         M::up_with_hook("SELECT 1;", migrate_team_logo_url),
+        // V55: Drop injury column from players table (football remnant)
+        M::up(include_str!("sql/v055_remove_injury_column.sql")),
+        // V44: Persist transfer history entries
+        M::up(include_str!("sql/v044_transfer_history.sql")),
     ])
 }
 

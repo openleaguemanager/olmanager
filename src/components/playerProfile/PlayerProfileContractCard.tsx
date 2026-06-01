@@ -28,7 +28,7 @@ interface PlayerProfileContractCardProps {
     morale: number;
     marketValue: number;
     wage: number;
-    weeklySuffix: string;
+    annualSuffix: string;
     language: string;
     contractRiskLevel: "critical" | "warning" | "stable";
     contractRiskLabel: string;
@@ -50,7 +50,7 @@ export default function PlayerProfileContractCard({
     morale,
     marketValue,
     wage,
-    weeklySuffix,
+    annualSuffix,
     language,
     contractRiskLevel,
     contractRiskLabel,
@@ -102,8 +102,8 @@ export default function PlayerProfileContractCard({
                     />
                     <InfoRow
                         icon={<TrendingUp className="w-4 h-4" />}
-                        label={t("playerProfile.weeklyWage")}
-                        value={formatPlayerWage(wage, weeklySuffix)}
+                        label={t("playerProfile.annualWage")}
+                        value={formatPlayerWage(wage, annualSuffix)}
                     />
                     <InfoRow
                         icon={<Heart className="w-4 h-4" />}

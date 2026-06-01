@@ -179,7 +179,7 @@ mod tests {
     use domain::league::{Fixture, FixtureStatus, MatchType};
     use domain::manager::Manager;
     use domain::message::{InboxMessage, MessagePriority};
-    use domain::player::{Injury, Player, PlayerAttributes, LolRole};
+    use domain::player::{LolRole, Player, PlayerAttributes};
     use domain::stats::StatsState;
     use domain::team::Team;
     use ofm_core::clock::GameClock;
@@ -370,65 +370,6 @@ mod tests {
     }
 
     #[test]
-    fn injured_starters_trigger_injury_and_incomplete_lineup_blockers() {
-        let mut game = make_game(11);
-        for player_id in ["p2", "p5"] {
-            let player = game
-                .players
-                .iter_mut()
-                .find(|player| player.id == player_id)
-                .unwrap();
-            player.injury = Some(Injury {
-                name: "Hamstring".to_string(),
-                days_remaining: 7,
-            });
-        }
-
-        let blockers = compute_blocking_actions(&game);
-
-        let injured = blocker_by_id(&blockers, "injured_lineup").unwrap();
-        assert_eq!(
-            injured.get("severity").and_then(Value::as_str),
-            Some("warn")
-        );
-        assert_eq!(injured.get("tab").and_then(Value::as_str), Some("Squad"));
-        let injured_text = injured.get("text").and_then(Value::as_str).unwrap();
-        assert!(injured_text.contains("2 injured player(s)"));
-        assert!(injured_text.contains("Player 2"));
-        assert!(injured_text.contains("Player 5"));
-
-        let incomplete = blocker_by_id(&blockers, "incomplete_lineup").unwrap();
-        assert_eq!(
-            incomplete.get("severity").and_then(Value::as_str),
-            Some("warn")
-        );
-        assert_eq!(incomplete.get("tab").and_then(Value::as_str), Some("Squad"));
-        assert_eq!(
-            incomplete.get("text").and_then(Value::as_str),
-            Some("Active lineup has only 9 healthy players — set your lineup")
-        );
-    }
-
-    #[test]
-    fn incomplete_lineup_is_not_reported_when_roster_has_fewer_than_eleven_players() {
-        let mut game = make_game(10);
-        let player = game
-            .players
-            .iter_mut()
-            .find(|player| player.id == "p3")
-            .unwrap();
-        player.injury = Some(Injury {
-            name: "Knee".to_string(),
-            days_remaining: 14,
-        });
-
-        let blockers = compute_blocking_actions(&game);
-
-        assert!(blocker_by_id(&blockers, "injured_lineup").is_some());
-        assert!(blocker_by_id(&blockers, "incomplete_lineup").is_none());
-    }
-
-    #[test]
     fn missing_lol_roles_trigger_main_role_coverage_blocker() {
         let mut game = make_game(5);
         game.players.truncate(5);
@@ -473,7 +414,6 @@ mod tests {
 
         let blockers = compute_blocking_actions(&game);
 
-        assert!(blocker_by_id(&blockers, "injured_lineup").is_none());
         assert!(blocker_by_id(&blockers, "incomplete_lineup").is_none());
     }
 

@@ -25,6 +25,7 @@ import {
   Gamepad2,
   Globe,
   Swords,
+  Store
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -144,6 +145,7 @@ export default function DashboardSidebar({
       tab: "Competitions",
     },
     { icon: <Gamepad2 />, label: t("dashboard.champions_world"), tab: "ChampionsWorld" },
+    { icon: <Store />, label: t("dashboard.market"), tab: "Market" },
   ];
   const toggleSidebarLabel = collapsed
     ? t("dashboard.expandSidebar")
