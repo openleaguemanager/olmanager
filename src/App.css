@@ -7,11 +7,10 @@
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 @import "@fontsource/inter/800.css";
-@import "@fontsource/barlow-condensed/400.css";
-@import "@fontsource/barlow-condensed/500.css";
-@import "@fontsource/barlow-condensed/600.css";
-@import "@fontsource/barlow-condensed/700.css";
-@import "@fontsource/barlow-condensed/800.css";
+@import "@fontsource/oswald/400.css";
+@import "@fontsource/oswald/500.css";
+@import "@fontsource/oswald/600.css";
+@import "@fontsource/oswald/700.css";
 
 /* Custom fonts */
 @font-face {
@@ -27,7 +26,7 @@
 @theme {
   /* Typography */
   --font-sans: "Inter", "Avenir", "Helvetica", "Arial", sans-serif;
-  --font-heading: "Barlow Condensed", "Inter", "Arial Narrow", sans-serif;
+  --font-heading: "Oswald", "Impact", "Arial Narrow", sans-serif;
   --text-2xs: 0.625rem;
 
   /* Primary: Emerald Green */
