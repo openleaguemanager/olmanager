@@ -47,7 +47,7 @@ export default function DashboardTabContent({
   } = viewModel;
 
   return (
-    <>
+    <div key={activeTab} className="animate-fade-in-up">
       {/* End-of-season screen when all fixtures are complete */}
       {seasonComplete && activeTab === "Home" && (
         <EndOfSeasonScreen gameState={gameState} onGameUpdate={onGameUpdate} />
@@ -208,6 +208,6 @@ export default function DashboardTabContent({
           </CardBody>
         </Card>
       )}
-    </>
+    </div>
   );
 }

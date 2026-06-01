@@ -104,7 +104,7 @@ export default function HomeRosterLineupCard({
       </CardHeader>
       <CardBody>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
-          {lineup.map(({ role, player }) => {
+          {lineup.map(({ role, player }, index) => {
             const photo = player ? player.profile_image_url ?? "/default/defaultplayer.webp" : null;
             const ovr = player ? calculateLolOvr(player) : null;
             const condition = player?.condition ?? null;
@@ -124,7 +124,7 @@ export default function HomeRosterLineupCard({
             return (
               <div
                 key={role}
-                className="relative overflow-hidden rounded-md border border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800/40 p-2"
+                className={`relative overflow-hidden rounded-md border border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800/40 p-2 animate-fade-in-up delay-${(index % 5) * 100 + 100}`}
               >
                 {championSplash ? (
                   <>
