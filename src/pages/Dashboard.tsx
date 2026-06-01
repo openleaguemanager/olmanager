@@ -494,7 +494,7 @@ export default function Dashboard(): JSX.Element {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-gray-100 dark:bg-navy-900 flex transition-colors duration-300">
+    <div className="h-screen overflow-hidden bg-gray-100 dark:bg-navy-900 dark:bg-navy-mesh flex transition-colors duration-300">
       <DashboardSidebar
         activeTab={profileNavigation.activeTab}
         collapsed={isSidebarCollapsed}
@@ -538,7 +538,7 @@ export default function Dashboard(): JSX.Element {
       <FiredModal />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-navy-noise">
         <DashboardHeader
           activeTabLabel={activeTabLabel}
           currentDate={currentDate}
