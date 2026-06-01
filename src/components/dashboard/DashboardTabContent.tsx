@@ -20,7 +20,6 @@ import ChampionsWorldTab from "../world/ChampionsWorldTab";
 import ScrimsTab from "../scrims/ScrimsTab";
 import CompetitionsTab from "../competitions/CompetitionsTab";
 import EndOfSeasonScreen from "../EndOfSeasonScreen";
-import { Card, CardBody } from "../ui";
 import type { DashboardTabContentModel } from "./dashboardTabContentModel";
 
 interface DashboardTabContentProps {
@@ -199,15 +198,7 @@ export default function DashboardTabContent({
         "Manager",
         "News",
         "Social",
-      ].includes(activeTab) && (
-        <Card>
-          <CardBody>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              View unavailable
-            </p>
-          </CardBody>
-        </Card>
-      )}
+      ].includes(activeTab) && <></>}
     </div>
   );
 }
