@@ -20,6 +20,7 @@ import {
 } from "./SquadTab.helpers";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { PlayerAvatar } from "../ui/PlayerAvatar";
 import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/lolIdentity";
 import { normalizeChampionKey } from "../../lib/championIds";
 import { resolveChampionTile } from "../../lib/championImages";
@@ -221,11 +222,7 @@ export default function SquadRosterView({
 
                 {player ? (
                   <div className="mt-3 flex items-center gap-3">
-                    {photo ? (
-                      <img src={photo} alt={player.match_name} className="w-10 h-10 object-cover rounded-full shrink-0" loading="lazy" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#0f213f] border border-white/10 shrink-0" />
-                    )}
+                    <PlayerAvatar src={photo} alt={player.match_name} className="w-10 h-10" />
                     <div className="min-w-0">
                       <p className="text-lg leading-none font-heading font-bold text-white truncate">{player.match_name}</p>
                       <p className="mt-1 text-xs text-blue-200/70">{t("common.ovr", { defaultValue: "OVR" })} {ovr}</p>
@@ -342,11 +339,7 @@ export default function SquadRosterView({
                       <img src={ROLE_ICON_URLS[role]} alt={ROLE_LABEL[role]} className="w-4 h-4 object-contain opacity-90" />
                     </div>
 
-                    {photo ? (
-                      <img src={photo} alt={player.match_name} className="w-10 h-10 object-cover rounded-full shrink-0" loading="lazy" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#0f213f] border border-white/10 shrink-0" />
-                    )}
+                    <PlayerAvatar src={photo} alt={player.match_name} className="w-10 h-10" />
 
                     <div className="min-w-0 flex items-center gap-2">
                       <div className="min-w-0">
