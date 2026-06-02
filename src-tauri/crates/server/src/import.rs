@@ -188,6 +188,17 @@ fn add_entity_counts(summary: &mut ImportSummary, rel_name: &str, bytes: &[u8]) 
     summary.staff_count += staff;
 }
 
+/// Replace the per-shard entity sums with the counts the game actually loads
+/// (manifest-scoped, de-duplicated, staff included). The raw shard sums double
+/// count players/teams that appear in several files and ignore that the world
+/// only assembles competitions with a manifest, so they vastly over-report.
+fn apply_world_counts(summary: &mut ImportSummary) {
+    let (teams, players, staff) = crate::data::world_summary();
+    summary.player_count = players;
+    summary.team_count = teams;
+    summary.staff_count = staff;
+}
+
 /// Reject path traversal: only allow normal, in-tree relative components.
 fn safe_relative(path: &str) -> Option<PathBuf> {
     let p = Path::new(path);
@@ -283,6 +294,7 @@ fn import_zip_unchecked(bytes: &[u8]) -> Result<ImportSummary, String> {
         }
     }
 
+    apply_world_counts(&mut summary);
     Ok(summary)
 }
 
@@ -396,6 +408,7 @@ pub fn import_dir(root: &Path) -> Result<ImportSummary, String> {
         ));
     }
 
+    apply_world_counts(&mut summary);
     Ok(summary)
 }
 
@@ -456,22 +469,8 @@ pub async fn import_configured_source() -> Result<ImportSummary, String> {
 }
 
 pub fn current_catalog_summary() -> ImportSummary {
-    let base = data_dir();
-    let mut files = Vec::new();
-    if walk_files(&base, &mut files).is_err() {
-        return ImportSummary::default();
-    }
-
     let mut summary = ImportSummary::default();
-    for file in files {
-        let Ok(rel) = file.strip_prefix(&base) else {
-            continue;
-        };
-        let rel_name = format!("data/{}", rel.to_string_lossy().replace('\\', "/"));
-        if let Ok(bytes) = std::fs::read(&file) {
-            add_entity_counts(&mut summary, &rel_name, &bytes);
-        }
-    }
+    apply_world_counts(&mut summary);
     summary
 }
 

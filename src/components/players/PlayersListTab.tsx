@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { getAllCountryNames } from "../../lib/countries";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { PlayerAvatar } from "../ui/PlayerAvatar";
 import {
   getLolRoleForPlayer,
   LolRole,
@@ -354,13 +355,10 @@ export default function PlayersListTab({
                         className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer group"
                       >
                         <td className="py-2.5 px-4">
-                          <img
-                            src={photoSrc ?? "/player-photos/107455908655055017.webp"}
+                          <PlayerAvatar
+                            src={photoSrc}
                             alt={player.match_name}
-                            className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/player-photos/107455908655055017.webp";
-                            }}
+                            className="w-8 h-8 bg-gray-200 dark:bg-navy-600"
                           />
                         </td>
                         <td className="py-2.5 px-4">

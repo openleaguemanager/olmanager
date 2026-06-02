@@ -267,7 +267,13 @@ function ImageWithFallback({ playerId, playerName, gameState }: { playerId: stri
       src={playerPhotoUrl(playerId) ?? photo ?? ""}
       alt={playerName}
       className="h-10 w-10 shrink-0 rounded object-cover"
-      onError={(e) => { (e.target as HTMLImageElement).src = photo ?? ""; }}
+      onError={(e) => {
+        // Clear the handler before swapping so a missing fallback can't retrigger
+        // onError and spin in an infinite reload loop.
+        const img = e.currentTarget;
+        img.onerror = null;
+        img.src = "/player-photos/107455908655055017.webp";
+      }}
       loading="lazy"
     />
   );

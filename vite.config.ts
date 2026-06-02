@@ -90,8 +90,19 @@ export default defineConfig(async ({ mode }) => {
           }
         : undefined,
       watch: {
-        // 3. tell Vite to ignore watching `src-tauri`
-        ignored: ["**/src-tauri/**"],
+        // 3. tell Vite to ignore watching `src-tauri`, and the data/photo dirs
+        //    the importer writes into — otherwise a bulk import (~1800 photos)
+        //    streaming into publicDir triggers a full-reload storm that blanks
+        //    the page. These are server-owned assets, not part of the module
+        //    graph, so there's nothing to hot-reload anyway.
+        ignored: [
+          "**/src-tauri/**",
+          "**/public/player-photos/**",
+          "**/public/teams-icons/**",
+          "**/public/competitions-icons/**",
+          "**/public/staff-photos/**",
+          "**/data/**",
+        ],
       },
       proxy: isWeb
         ? {
