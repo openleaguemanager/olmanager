@@ -9,6 +9,7 @@ import {
   skipToMatchDay,
 } from "../services/advanceTimeService";
 import { autoConfigureWeeklyScrimSetup, delegateScrimDecision } from "../services/trainingService";
+import { effectiveWeeklyScrimSlots, scrimSlotWeekdays, weekdayMondayBased } from "../lib/scrimContext";
 
 export type MatchModeType = "live" | "spectator" | "delegate";
 
@@ -47,12 +48,10 @@ export function useAdvanceTime(
     if (!teamId) return false;
     const team = game.teams.find((candidate) => candidate.id === teamId);
     if (!team) return false;
-    const date = new Date(game.clock.current_date);
-    const weekday = (date.getUTCDay() + 6) % 7;
-    const weeklySlots = team.scrim_weekly_slots ?? 2;
-    const slots = weeklySlots <= 2 ? 2 : weeklySlots <= 4 ? 4 : 6;
-    const slotDays = slots <= 2 ? [2, 2] : slots <= 4 ? [2, 2, 3, 3] : [2, 2, 3, 3, 4, 4];
-    return slotDays.some((d) => d === weekday);
+    const slots = effectiveWeeklyScrimSlots(team);
+    const weekdays = scrimSlotWeekdays(slots);
+    const todayWeekday = weekdayMondayBased(game.clock.current_date);
+    return weekdays.some((d) => d === todayWeekday);
   }
 
   function shouldFastForwardDay(game: GameStateData): boolean {

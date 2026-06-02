@@ -197,7 +197,7 @@ export type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT" | LegacyFootb
 
 export type MatchEndReason = "NexusDestroyed" | "Surrender";
 
-type LegacyCompatibilityValue = any;
+type LegacyCompatibilityValue = unknown;
 
 export interface PlayerSeasonStats {
   games_played?: number;
