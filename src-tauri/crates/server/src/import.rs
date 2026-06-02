@@ -16,6 +16,8 @@
 use std::io::Read;
 use std::path::{Component, Path, PathBuf};
 
+use serde_json::Value;
+
 #[derive(Debug, Default, serde::Serialize)]
 pub struct ImportSummary {
     pub data_files: usize,
@@ -24,6 +26,45 @@ pub struct ImportSummary {
     pub team_count: usize,
     pub staff_count: usize,
     pub skipped: usize,
+}
+
+#[derive(Debug, Default, serde::Serialize)]
+pub struct CatalogResponse {
+    pub summary: ImportSummary,
+    pub players: Vec<CatalogPlayer>,
+    pub teams: Vec<CatalogTeam>,
+    pub staff: Vec<CatalogStaff>,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct CatalogPlayer {
+    pub id: String,
+    pub name: String,
+    pub full_name: String,
+    pub team_id: Option<String>,
+    pub nationality: Option<String>,
+    pub role: Option<String>,
+    pub image_url: Option<String>,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct CatalogTeam {
+    pub id: String,
+    pub name: String,
+    pub short_name: Option<String>,
+    pub country: Option<String>,
+    pub competition_id: Option<String>,
+    pub logo_url: Option<String>,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct CatalogStaff {
+    pub id: String,
+    pub name: String,
+    pub role: Option<String>,
+    pub team_id: Option<String>,
+    pub nationality: Option<String>,
+    pub image_url: Option<String>,
 }
 
 const PUBLIC_PHOTO_DIRS: [&str; 4] = [
@@ -61,7 +102,8 @@ fn count_entities(rel_name: &str, bytes: &[u8]) -> (usize, usize, usize) {
         "players"
     } else if lower.contains("/teams/") || lower.ends_with("_teams.json") {
         "teams"
-    } else if lower.contains("/staffs/") || lower.contains("/staff/")
+    } else if lower.contains("/staffs/")
+        || lower.contains("/staff/")
         || lower.ends_with("_staffs.json")
         || lower.ends_with("_staff.json")
     {
@@ -96,6 +138,47 @@ fn entity_array_len(value: &serde_json::Value, keys: &[&str]) -> usize {
     keys.iter()
         .find_map(|key| value.get(*key)?.as_array().map(Vec::len))
         .unwrap_or(0)
+}
+
+fn entity_items<'a>(value: &'a Value, keys: &[&str]) -> Vec<&'a Value> {
+    if let Some(items) = value.as_array() {
+        return items.iter().collect();
+    }
+    keys.iter()
+        .find_map(|key| value.get(*key)?.as_array())
+        .map(|items| items.iter().collect())
+        .unwrap_or_default()
+}
+
+fn json_string(value: &Value, keys: &[&str]) -> Option<String> {
+    keys.iter().find_map(|key| {
+        value
+            .get(*key)
+            .and_then(Value::as_str)
+            .map(str::trim)
+            .filter(|text| !text.is_empty())
+            .map(ToOwned::to_owned)
+    })
+}
+
+fn rel_category(rel_name: &str) -> Option<&'static str> {
+    let lower = rel_name.to_ascii_lowercase();
+    if !lower.starts_with("data/") || lower.starts_with("data/draft/") {
+        return None;
+    }
+    if lower.contains("/players/") || lower.ends_with("_players.json") {
+        Some("players")
+    } else if lower.contains("/teams/") || lower.ends_with("_teams.json") {
+        Some("teams")
+    } else if lower.contains("/staffs/")
+        || lower.contains("/staff/")
+        || lower.ends_with("_staffs.json")
+        || lower.ends_with("_staff.json")
+    {
+        Some("staff")
+    } else {
+        None
+    }
 }
 
 fn add_entity_counts(summary: &mut ImportSummary, rel_name: &str, bytes: &[u8]) {
@@ -238,7 +321,11 @@ fn import_tree(source_root: &Path, synthetic_prefix: &str) -> Result<ImportSumma
         let rel = file
             .strip_prefix(source_root)
             .map_err(|e| format!("strip_prefix {file:?}: {e}"))?;
-        let rel_name = format!("{}/{}", synthetic_prefix, rel.to_string_lossy().replace('\\', "/"));
+        let rel_name = format!(
+            "{}/{}",
+            synthetic_prefix,
+            rel.to_string_lossy().replace('\\', "/")
+        );
         let Some(dest) = destination_for(&rel_name) else {
             summary.skipped += 1;
             continue;
@@ -292,7 +379,10 @@ pub fn import_dir(root: &Path) -> Result<ImportSummary, String> {
         }
     }
 
-    for public_root in [root.join("public"), root.join("export_output").join("public")] {
+    for public_root in [
+        root.join("public"),
+        root.join("export_output").join("public"),
+    ] {
         if public_root.is_dir() {
             merge_summary(&mut summary, import_tree(&public_root, "public")?);
             found = true;
@@ -383,6 +473,99 @@ pub fn current_catalog_summary() -> ImportSummary {
         }
     }
     summary
+}
+
+pub fn current_catalog() -> CatalogResponse {
+    let base = data_dir();
+    let mut files = Vec::new();
+    if walk_files(&base, &mut files).is_err() {
+        return CatalogResponse::default();
+    }
+
+    let mut catalog = CatalogResponse::default();
+    for file in files {
+        let Ok(rel) = file.strip_prefix(&base) else {
+            continue;
+        };
+        let rel_name = format!("data/{}", rel.to_string_lossy().replace('\\', "/"));
+        let Some(category) = rel_category(&rel_name) else {
+            continue;
+        };
+        let Ok(bytes) = std::fs::read(&file) else {
+            continue;
+        };
+        add_entity_counts(&mut catalog.summary, &rel_name, &bytes);
+        let Ok(value) = serde_json::from_slice::<Value>(&bytes) else {
+            continue;
+        };
+
+        match category {
+            "players" => {
+                for item in entity_items(&value, &["players"]) {
+                    let Some(id) = json_string(item, &["id"]) else {
+                        continue;
+                    };
+                    let full_name =
+                        json_string(item, &["full_name", "name"]).unwrap_or_else(|| id.clone());
+                    let name = json_string(item, &["match_name", "nickname", "full_name", "name"])
+                        .unwrap_or_else(|| full_name.clone());
+                    catalog.players.push(CatalogPlayer {
+                        id,
+                        name,
+                        full_name,
+                        team_id: json_string(item, &["team_id"]),
+                        nationality: json_string(item, &["nationality", "country"]),
+                        role: json_string(item, &["role", "position", "lol_role"]),
+                        image_url: json_string(item, &["profile_image_url", "image_url"]),
+                    });
+                }
+            }
+            "teams" => {
+                for item in entity_items(&value, &["teams"]) {
+                    let Some(id) = json_string(item, &["id"]) else {
+                        continue;
+                    };
+                    catalog.teams.push(CatalogTeam {
+                        name: json_string(item, &["name"]).unwrap_or_else(|| id.clone()),
+                        short_name: json_string(item, &["short_name", "abbreviation"]),
+                        country: json_string(item, &["country", "region"]),
+                        competition_id: json_string(item, &["competition_id"]),
+                        logo_url: json_string(item, &["logo_url"]),
+                        id,
+                    });
+                }
+            }
+            "staff" => {
+                for item in entity_items(&value, &["staff", "staffs"]) {
+                    let Some(id) = json_string(item, &["id"]) else {
+                        continue;
+                    };
+                    let first = json_string(item, &["first_name"]).unwrap_or_default();
+                    let last = json_string(item, &["last_name"]).unwrap_or_default();
+                    let full_name = format!("{first} {last}").trim().to_string();
+                    let name = if full_name.is_empty() {
+                        json_string(item, &["nickname", "name"]).unwrap_or_else(|| id.clone())
+                    } else {
+                        full_name
+                    };
+                    catalog.staff.push(CatalogStaff {
+                        id,
+                        name,
+                        role: json_string(item, &["role"]),
+                        team_id: json_string(item, &["team_id"]),
+                        nationality: json_string(item, &["nationality", "country"]),
+                        image_url: json_string(item, &["profile_image_url", "image_url"]),
+                    });
+                }
+            }
+            _ => {}
+        }
+    }
+
+    catalog.players.sort_by(|a, b| a.name.cmp(&b.name));
+    catalog.teams.sort_by(|a, b| a.name.cmp(&b.name));
+    catalog.staff.sort_by(|a, b| a.name.cmp(&b.name));
+    catalog
 }
 
 /// Run startup import if configured. Missing OLM_IMPORT_SOURCE is a no-op.

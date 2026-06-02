@@ -114,6 +114,7 @@ async fn main() {
         )
         .route("/api/admin/auto-import", post(auto_import))
         .route("/api/admin/catalog-summary", get(catalog_summary))
+        .route("/api/admin/catalog", get(catalog))
         .layer(CorsLayer::permissive())
         .with_state(state);
 
@@ -199,6 +200,12 @@ async fn auto_import(_user: AuthUser) -> impl IntoResponse {
 async fn catalog_summary(_user: AuthUser) -> impl IntoResponse {
     let summary = import::current_catalog_summary();
     (StatusCode::OK, Json(json!({ "summary": summary }))).into_response()
+}
+
+/// GET /api/admin/catalog — list the current imported world data.
+async fn catalog(_user: AuthUser) -> impl IntoResponse {
+    let catalog = import::current_catalog();
+    (StatusCode::OK, Json(catalog)).into_response()
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────

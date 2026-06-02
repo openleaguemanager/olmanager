@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
@@ -26,11 +26,17 @@ import {
   CheckCircle2,
   Database,
   Upload,
+  Search,
+  UsersRound,
+  Building2,
+  UserCog,
 } from "lucide-react";
 import {
   autoImportDatabase,
+  getCatalog,
   getCatalogSummary,
   importExportZip,
+  type CatalogResponse,
   type ImportSummary,
 } from "../web/importData";
 import { useUpdater } from "../hooks/useUpdater";
@@ -577,16 +583,43 @@ function ImportDataSection() {
   const [autoBusy, setAutoBusy] = useState(false);
   const [result, setResult] = useState<ImportSummary | null>(null);
   const [catalog, setCatalog] = useState<ImportSummary | null>(null);
+  const [catalogData, setCatalogData] = useState<CatalogResponse | null>(null);
+  const [catalogBusy, setCatalogBusy] = useState(false);
+  const [catalogTab, setCatalogTab] = useState<"players" | "teams" | "staff">("players");
+  const [catalogSearch, setCatalogSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "running" | "success" | "error">("idle");
+
+  async function refreshCatalog() {
+    setCatalogBusy(true);
+    try {
+      const nextCatalog = await getCatalog();
+      setCatalogData(nextCatalog);
+      setCatalog(nextCatalog.summary);
+    } finally {
+      setCatalogBusy(false);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
-    getCatalogSummary()
-      .then((summary) => {
-        if (!cancelled) setCatalog(summary);
+    getCatalog()
+      .then((nextCatalog) => {
+        if (!cancelled) {
+          setCatalogData(nextCatalog);
+          setCatalog(nextCatalog.summary);
+        }
       })
       .catch(() => {
-        if (!cancelled) setCatalog(null);
+        if (!cancelled) {
+          getCatalogSummary()
+            .then((summary) => {
+              if (!cancelled) setCatalog(summary);
+            })
+            .catch(() => {
+              if (!cancelled) setCatalog(null);
+            });
+        }
       });
     return () => {
       cancelled = true;
@@ -597,12 +630,16 @@ function ImportDataSection() {
     setAutoBusy(true);
     setError(null);
     setResult(null);
+    setStatus("running");
     try {
       const summary = await autoImportDatabase();
       setResult(summary);
       setCatalog(summary);
+      await refreshCatalog();
+      setStatus("success");
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
+      setStatus("error");
     } finally {
       setAutoBusy(false);
     }
@@ -613,11 +650,16 @@ function ImportDataSection() {
     setBusy(true);
     setError(null);
     setResult(null);
+    setStatus("running");
     try {
       const summary = await importExportZip(file);
       setResult(summary);
+      setCatalog(summary);
+      await refreshCatalog();
+      setStatus("success");
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
+      setStatus("error");
     } finally {
       setBusy(false);
     }
@@ -643,6 +685,15 @@ function ImportDataSection() {
           {autoBusy ? "Autoimportando..." : "Autoimportar"}
         </button>
       </SettingRow>
+
+      {(autoBusy || busy || status !== "idle") && (
+        <ImportStatusPanel
+          status={status}
+          busy={autoBusy || busy}
+          result={result}
+          error={error}
+        />
+      )}
 
       {catalog && (
         <div className="grid grid-cols-3 gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-navy-600 dark:bg-navy-900/40">
@@ -682,23 +733,203 @@ function ImportDataSection() {
         </div>
       </SettingRow>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
-      {result && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-xs text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-300">
-          <p className="font-heading text-sm font-bold uppercase tracking-wider">
-            Importación completada
-          </p>
-          <p className="mt-1">
-            {result.player_count} jugadores, {result.team_count} equipos y{" "}
-            {result.staff_count} staff importados. También se copiaron{" "}
-            {result.photo_files} imágenes.
-            {result.skipped > 0 ? ` Ignorados: ${result.skipped}.` : ""}
-          </p>
-          <p className="mt-1 text-green-600/80 dark:text-green-300/80">
-            Crea una partida nueva para ver el mundo actualizado en carrera.
-          </p>
-        </div>
+      {catalogData && (
+        <CatalogPreview
+          catalog={catalogData}
+          busy={catalogBusy}
+          tab={catalogTab}
+          search={catalogSearch}
+          onTabChange={setCatalogTab}
+          onSearchChange={setCatalogSearch}
+        />
       )}
+    </div>
+  );
+}
+
+function ImportStatusPanel({
+  status,
+  busy,
+  result,
+  error,
+}: {
+  status: "idle" | "running" | "success" | "error";
+  busy: boolean;
+  result: ImportSummary | null;
+  error: string | null;
+}) {
+  const isError = status === "error";
+  const isSuccess = status === "success";
+  return (
+    <div
+      className={`overflow-hidden rounded-lg border p-3 text-xs ${
+        isError
+          ? "border-red-200 bg-red-50 text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300"
+          : isSuccess
+            ? "border-green-200 bg-green-50 text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-300"
+            : "border-primary-200 bg-primary-50 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-heading text-sm font-bold uppercase tracking-wider">
+          {isError ? "Importación fallida" : isSuccess ? "Importación completada" : "Importando BD"}
+        </p>
+        {isSuccess && <CheckCircle2 className="h-4 w-4" />}
+        {busy && <RefreshCw className="h-4 w-4 animate-spin" />}
+      </div>
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+        {busy && (
+          <style>
+            {`@keyframes olm-import-progress { 0% { transform: translateX(-130%); } 100% { transform: translateX(330%); } }`}
+          </style>
+        )}
+        <div
+          className={`h-full rounded-full ${
+            busy ? "w-1/3 bg-primary-500" : "w-full"
+          } ${isError ? "bg-red-500" : isSuccess ? "bg-green-500" : ""}`}
+          style={busy ? { animation: "olm-import-progress 1.15s ease-in-out infinite" } : undefined}
+        />
+      </div>
+      {busy && <p className="mt-2">Descargando y descomprimiendo datos desde OLMDBManager...</p>}
+      {error && <p className="mt-2">{error}</p>}
+      {result && isSuccess && (
+        <p className="mt-2">
+          {result.player_count} jugadores, {result.team_count} equipos y{" "}
+          {result.staff_count} staff importados. Imágenes copiadas: {result.photo_files}.
+          {result.skipped > 0 ? ` Ignorados: ${result.skipped}.` : ""}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function CatalogPreview({
+  catalog,
+  busy,
+  tab,
+  search,
+  onTabChange,
+  onSearchChange,
+}: {
+  catalog: CatalogResponse;
+  busy: boolean;
+  tab: "players" | "teams" | "staff";
+  search: string;
+  onTabChange: (tab: "players" | "teams" | "staff") => void;
+  onSearchChange: (search: string) => void;
+}) {
+  const teamNames = useMemo(() => {
+    return new Map(catalog.teams.map((team) => [team.id, team.name]));
+  }, [catalog.teams]);
+  const query = search.trim().toLowerCase();
+  const entries = useMemo(() => {
+    const source = catalog[tab];
+    if (!query) return source;
+    return source.filter((item) =>
+      Object.values(item).some((value) =>
+        String(value ?? "").toLowerCase().includes(query),
+      ),
+    );
+  }, [catalog, query, tab]);
+  const visible = entries.slice(0, 80);
+
+  const tabs = [
+    { id: "players" as const, label: "Jugadores", count: catalog.players.length, icon: UsersRound },
+    { id: "teams" as const, label: "Equipos", count: catalog.teams.length, icon: Building2 },
+    { id: "staff" as const, label: "Staff", count: catalog.staff.length, icon: UserCog },
+  ];
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white dark:border-navy-600 dark:bg-navy-900/30">
+      <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 p-3 dark:border-navy-700">
+        {tabs.map((item) => {
+          const Icon = item.icon;
+          const active = tab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onTabChange(item.id)}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-heading text-xs font-bold uppercase tracking-wider transition-colors ${
+                active
+                  ? "bg-primary-500 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-navy-700 dark:text-gray-300 dark:hover:bg-navy-600"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {item.label}
+              <span className="tabular-nums">{item.count}</span>
+            </button>
+          );
+        })}
+        <div className="relative ml-auto min-w-48 flex-1 sm:max-w-xs">
+          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+          <input
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Buscar en catálogo"
+            className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-8 pr-3 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-navy-600 dark:bg-navy-800 dark:text-gray-100"
+          />
+        </div>
+      </div>
+      <div className="max-h-80 overflow-y-auto p-3">
+        {busy ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400">Cargando catálogo...</p>
+        ) : visible.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400">No hay resultados.</p>
+        ) : (
+          <div className="space-y-1.5">
+            {visible.map((item, index) => (
+              <CatalogRow
+                key={`${tab}-${item.id}-${index}`}
+                item={item}
+                tab={tab}
+                teamName={"team_id" in item && item.team_id ? teamNames.get(item.team_id) : null}
+              />
+            ))}
+          </div>
+        )}
+        {entries.length > visible.length && (
+          <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+            Mostrando {visible.length} de {entries.length}. Usa la búsqueda para afinar.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CatalogRow({
+  item,
+  tab,
+  teamName,
+}: {
+  item: CatalogResponse["players"][number] | CatalogResponse["teams"][number] | CatalogResponse["staff"][number];
+  tab: "players" | "teams" | "staff";
+  teamName: string | null | undefined;
+}) {
+  const imageUrl = "image_url" in item ? item.image_url : item.logo_url;
+  const subtitle = (() => {
+    if (tab === "teams") {
+      const team = item as CatalogResponse["teams"][number];
+      return [team.short_name, team.country, team.competition_id].filter(Boolean).join(" · ");
+    }
+    const person = item as CatalogResponse["players"][number] | CatalogResponse["staff"][number];
+    return [person.role, person.nationality, teamName].filter(Boolean).join(" · ");
+  })();
+  return (
+    <div className="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 dark:bg-navy-800">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-200 dark:bg-navy-700">
+        {imageUrl ? (
+          <img src={imageUrl} alt={item.name} className="h-full w-full object-cover" loading="lazy" />
+        ) : (
+          <Database className="h-4 w-4 text-gray-400" />
+        )}
+      </div>
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium text-gray-800 dark:text-gray-100">{item.name}</p>
+        <p className="truncate text-xs text-gray-500 dark:text-gray-400">{subtitle || item.id}</p>
+      </div>
     </div>
   );
 }
