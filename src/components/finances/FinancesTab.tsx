@@ -9,6 +9,7 @@ import {
 import { Card, CardHeader, CardBody, Badge, ProgressBar, Button, RoleBadge } from "../ui";
 import { User, ArrowUpDown, ArrowUp, ArrowDown, Check, Lock, AlertTriangle } from "lucide-react";
 import {
+  currencySymbol,
   formatVal,
   formatWeeklyAmount,
   getContractRiskBadgeVariant,
@@ -43,7 +44,7 @@ function formatSignedAmount(value: number): string {
 }
 
 function formatCurrencyAmountParam(value: number): string {
-  return formatVal(value).replace(/^€/, "");
+  return `${currencySymbol("EUR")}${value.toLocaleString()}`;
 }
 
 interface ResolveMessageActionResult {

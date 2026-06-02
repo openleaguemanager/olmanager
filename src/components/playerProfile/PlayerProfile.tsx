@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { getContractRiskLevel, calcAge, formatVal, positionBadgeVariant } from "../../lib/helpers";
+import { parseUtcDate } from "../../lib/dateFormatting";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { PlayerData, GameStateData, PlayerMatchHistoryEntryData, ScoutReportData, ChampionMasteryEntryData } from "../../store/gameStore";
 import { ArrowLeft } from "lucide-react";
@@ -392,9 +393,9 @@ export default function PlayerProfile({
       return 0;
     }
 
-    const currentDate = new Date(gameState.clock.current_date);
-    const contractEndDate = new Date(`${player.contract_end}T00:00:00Z`);
-    if (Number.isNaN(currentDate.getTime()) || Number.isNaN(contractEndDate.getTime())) {
+    const currentDate = parseUtcDate(gameState.clock.current_date);
+    const contractEndDate = parseUtcDate(player.contract_end);
+    if (!currentDate || !contractEndDate) {
       return 0;
     }
 

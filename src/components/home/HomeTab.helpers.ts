@@ -1,6 +1,7 @@
 import { findNextFixture } from "../../lib/helpers";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { hasCompetitiveStandings } from "../../lib/seasonContext";
+import { parseUtcDate } from "../../lib/dateFormatting";
 import type {
   FixtureData,
   GameStateData,
@@ -292,8 +293,10 @@ export function getOnboardingCompletionState(
   gameState: GameStateData,
   visitedTabs: ReadonlySet<string> = new Set<string>(),
 ): OnboardingCompletionState {
-  const currentDate = new Date(gameState.clock.current_date);
-  const startDate = new Date(gameState.clock.start_date);
+  const currentDate = parseUtcDate(gameState.clock.current_date);
+  const startDate = parseUtcDate(gameState.clock.start_date);
+  if (!currentDate || !startDate) return { showOnboarding: false, completedSteps: 0, hasReadInbox: false, hasVisitedSquadPage: false, hasVisitedStaffPage: false, hasVisitedTacticsPage: false, hasVisitedTrainingPage: false };
+
   const daysSinceStart = Math.floor(
     (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
