@@ -9,9 +9,9 @@
 //! `data/**` is written under OLM_DATA_DIR; the `public/<dir>/**` photo folders
 //! are written under OLM_PUBLIC_DIR. Everything else in the zip/folder is ignored.
 //!
-//! This replaces global game content, so it's gated behind auth AND the
-//! OLM_ALLOW_IMPORT=1 env flag for manual uploads (off by default). Startup
-//! sync is separately gated behind OLM_AUTO_IMPORT=1.
+//! This replaces global game content, so manual uploads are gated behind
+//! OLM_ALLOW_IMPORT=1 (off by default). Startup sync is separately gated behind
+//! OLM_AUTO_IMPORT=1.
 
 use std::io::Read;
 use std::path::{Component, Path, PathBuf};
@@ -244,23 +244,8 @@ pub fn import_dir(root: &Path) -> Result<ImportSummary, String> {
 }
 
 async fn download_export(url: &str) -> Result<Vec<u8>, String> {
-    let mut request = reqwest::Client::new().get(url);
-    if let Ok(auth) = std::env::var("OLM_IMPORT_AUTHORIZATION") {
-        if !auth.trim().is_empty() {
-            request = request.header(reqwest::header::AUTHORIZATION, auth);
-        }
-    } else if let Ok(token) = std::env::var("OLM_IMPORT_TOKEN") {
-        if !token.trim().is_empty() {
-            request = request.bearer_auth(token);
-        }
-    }
-    if let Ok(cookie) = std::env::var("OLM_IMPORT_COOKIE") {
-        if !cookie.trim().is_empty() {
-            request = request.header(reqwest::header::COOKIE, cookie);
-        }
-    }
-
-    let response = request
+    let response = reqwest::Client::new()
+        .get(url)
         .send()
         .await
         .map_err(|e| format!("download {url}: {e}"))?;
@@ -278,7 +263,7 @@ async fn download_export(url: &str) -> Result<Vec<u8>, String> {
 /// Import from OLM_IMPORT_SOURCE. Supported sources:
 /// - directory containing `data/` and optionally `public/`
 /// - `.zip` file
-/// - `http(s)://...` zip URL, with optional OLM_IMPORT_AUTHORIZATION/COOKIE
+/// - public `http(s)://...` zip URL
 pub async fn import_source(source: &str) -> Result<ImportSummary, String> {
     if !env_truthy("OLM_AUTO_IMPORT") {
         return Err("auto import disabled — set OLM_AUTO_IMPORT=1 to enable".into());
