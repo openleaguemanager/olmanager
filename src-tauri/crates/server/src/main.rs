@@ -13,6 +13,7 @@
 //!   POST   /api/saves/{id}/advance     advance one day              [auth]
 //!   POST   /api/saves/{id}/cmd/{cmd}    dispatch a Tauri command     [auth]
 //!   DELETE /api/saves/{id}             delete a save                [auth]
+//!   POST   /api/admin/auto-import       sync OLMDBManager export     [auth]
 
 use axum::{
     extract::{DefaultBodyLimit, Multipart, Path, State},
@@ -111,6 +112,8 @@ async fn main() {
             "/api/admin/import-export",
             post(import_export).layer(DefaultBodyLimit::max(512 * 1024 * 1024)),
         )
+        .route("/api/admin/auto-import", post(auto_import))
+        .route("/api/admin/catalog-summary", get(catalog_summary))
         .layer(CorsLayer::permissive())
         .with_state(state);
 
@@ -170,6 +173,32 @@ async fn import_export(_user: AuthUser, mut multipart: Multipart) -> impl IntoRe
         }
         Err(e) => (StatusCode::BAD_REQUEST, Json(json!({ "error": e }))).into_response(),
     }
+}
+
+/// POST /api/admin/auto-import — download the configured public OLMDBManager
+/// export URL (OLM_IMPORT_SOURCE) and extract it into data/public.
+async fn auto_import(_user: AuthUser) -> impl IntoResponse {
+    match import::import_configured_source().await {
+        Ok(summary) => {
+            tracing::info!(
+                "auto import: {} data files, {} photos, {} players, {} teams, {} staff, {} skipped",
+                summary.data_files,
+                summary.photo_files,
+                summary.player_count,
+                summary.team_count,
+                summary.staff_count,
+                summary.skipped
+            );
+            (StatusCode::OK, Json(json!({ "summary": summary }))).into_response()
+        }
+        Err(e) => (StatusCode::BAD_REQUEST, Json(json!({ "error": e }))).into_response(),
+    }
+}
+
+/// GET /api/admin/catalog-summary — count the current imported world data.
+async fn catalog_summary(_user: AuthUser) -> impl IntoResponse {
+    let summary = import::current_catalog_summary();
+    (StatusCode::OK, Json(json!({ "summary": summary }))).into_response()
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────

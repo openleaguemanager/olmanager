@@ -54,6 +54,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Transfers: "dashboard.transfers",
   Players: "dashboard.players",
   Teams: "dashboard.teams",
+  WorldStaff: "dashboard.worldStaff",
   Tournaments: "dashboard.tournaments",
   ChampionsWorld: "dashboard.champions_world",
   Schedule: "dashboard.schedule",
@@ -296,6 +297,9 @@ export default function DashboardV2() {
         teamName={myTeamName}
         teamLogo={teamLogo}
         isUnemployed={isUnemployed ?? false}
+        playerCount={gameState.players.length}
+        teamCount={gameState.teams.length}
+        staffCount={gameState.staff.length}
         onNavigateSettings={() => navigate("/settings", { state: { from: "/dashboard" } })}
         onExitClick={() => !isExitingToMenu && setShowExitConfirm(true)}
       />

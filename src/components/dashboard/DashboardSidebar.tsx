@@ -39,6 +39,9 @@ interface DashboardSidebarProps {
   onNavigateSettings: () => void;
   onExitClick: () => void;
   isUnemployed: boolean;
+  playerCount?: number;
+  teamCount?: number;
+  staffCount?: number;
 }
 
 interface NavItemProps {
@@ -81,7 +84,7 @@ function NavItem({
       >
         {label}
       </span>
-      {badge !== undefined && badge > 0 && (
+      {badge !== undefined && (
         <span
           className={
             collapsed
@@ -108,6 +111,9 @@ export default function DashboardSidebar({
   onNavigateSettings,
   onExitClick,
   isUnemployed,
+  playerCount = 0,
+  teamCount = 0,
+  staffCount = 0,
 }: DashboardSidebarProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -127,9 +133,10 @@ export default function DashboardSidebar({
     { icon: <DollarSign />, label: t("dashboard.finances"), tab: "Finances" },
     { icon: <TrendingUp />, label: t("dashboard.transfers"), tab: "Transfers" },
   ];
-  const worldItems: Array<{ icon: JSX.Element; label: string; tab: string }> = [
-    { icon: <UsersRound />, label: t("dashboard.players"), tab: "Players" },
-    { icon: <Building2 />, label: t("dashboard.teams"), tab: "Teams" },
+  const worldItems: Array<{ icon: JSX.Element; label: string; tab: string; badge?: number }> = [
+    { icon: <UsersRound />, label: t("dashboard.players"), tab: "Players", badge: playerCount },
+    { icon: <Building2 />, label: t("dashboard.teams"), tab: "Teams", badge: teamCount },
+    { icon: <UserCog />, label: t("dashboard.worldStaff", { defaultValue: "Staff BD" }), tab: "WorldStaff", badge: staffCount },
     {
       icon: <Trophy />,
       label: t("dashboard.tournaments"),
@@ -314,6 +321,7 @@ export default function DashboardSidebar({
             key={item.tab}
             icon={item.icon}
             label={item.label}
+            badge={item.badge}
             active={activeTab === item.tab}
             collapsed={collapsed}
             onClick={() => onNavClick(item.tab)}

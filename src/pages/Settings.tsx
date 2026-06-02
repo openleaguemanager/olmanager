@@ -27,7 +27,12 @@ import {
   Database,
   Upload,
 } from "lucide-react";
-import { importExportZip, type ImportSummary } from "../web/importData";
+import {
+  autoImportDatabase,
+  getCatalogSummary,
+  importExportZip,
+  type ImportSummary,
+} from "../web/importData";
 import { useUpdater } from "../hooks/useUpdater";
 import { APP_VERSION } from "../lib/appInfo";
 import { APP_NAME } from "../lib/appInfo";
@@ -569,8 +574,39 @@ export default function Settings() {
 function ImportDataSection() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [autoBusy, setAutoBusy] = useState(false);
   const [result, setResult] = useState<ImportSummary | null>(null);
+  const [catalog, setCatalog] = useState<ImportSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getCatalogSummary()
+      .then((summary) => {
+        if (!cancelled) setCatalog(summary);
+      })
+      .catch(() => {
+        if (!cancelled) setCatalog(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function handleAutoImport() {
+    setAutoBusy(true);
+    setError(null);
+    setResult(null);
+    try {
+      const summary = await autoImportDatabase();
+      setResult(summary);
+      setCatalog(summary);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setAutoBusy(false);
+    }
+  }
 
   async function handleImport() {
     if (!file) return;
@@ -590,8 +626,35 @@ function ImportDataSection() {
   return (
     <div className="flex flex-col gap-3">
       <SettingRow
+        label="Autoimportar BD"
+        description="Descarga la exportación pública de OLMDBManager configurada en OLM_IMPORT_SOURCE y actualiza datos e imágenes."
+      >
+        <button
+          type="button"
+          disabled={autoBusy}
+          onClick={handleAutoImport}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+        >
+          {autoBusy ? (
+            <RefreshCw className="w-4 h-4 animate-spin" />
+          ) : (
+            <Database className="w-4 h-4" />
+          )}
+          {autoBusy ? "Autoimportando..." : "Autoimportar"}
+        </button>
+      </SettingRow>
+
+      {catalog && (
+        <div className="grid grid-cols-3 gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-navy-600 dark:bg-navy-900/40">
+          <ImportStat label="Jugadores" value={catalog.player_count} />
+          <ImportStat label="Equipos" value={catalog.team_count} />
+          <ImportStat label="Staff" value={catalog.staff_count} />
+        </div>
+      )}
+
+      <SettingRow
         label="Import manual de respaldo (.zip)"
-        description="El servidor web sincroniza OLMDBManager al arrancar. Usa este zip solo si necesitas forzar una importación puntual."
+        description="Usa este zip solo si necesitas forzar una importación puntual sin descargar desde OLMDBManager."
       >
         <div className="flex items-center gap-2">
           <label className="cursor-pointer rounded-lg border border-gray-200 dark:border-navy-600 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-navy-700 transition-colors">
@@ -621,12 +684,34 @@ function ImportDataSection() {
 
       {error && <p className="text-xs text-red-500">{error}</p>}
       {result && (
-        <p className="text-xs text-green-600 dark:text-green-400">
-          Importado: {result.data_files} ficheros de datos, {result.photo_files} fotos
-          {result.skipped > 0 ? ` (${result.skipped} ignorados)` : ""}. Crea una partida
-          nueva para ver los cambios.
-        </p>
+        <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-xs text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-300">
+          <p className="font-heading text-sm font-bold uppercase tracking-wider">
+            Importación completada
+          </p>
+          <p className="mt-1">
+            {result.player_count} jugadores, {result.team_count} equipos y{" "}
+            {result.staff_count} staff importados. También se copiaron{" "}
+            {result.photo_files} imágenes.
+            {result.skipped > 0 ? ` Ignorados: ${result.skipped}.` : ""}
+          </p>
+          <p className="mt-1 text-green-600/80 dark:text-green-300/80">
+            Crea una partida nueva para ver el mundo actualizado en carrera.
+          </p>
+        </div>
       )}
+    </div>
+  );
+}
+
+function ImportStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div>
+      <p className="font-heading text-lg font-bold tabular-nums text-gray-900 dark:text-white">
+        {value.toLocaleString("es-ES")}
+      </p>
+      <p className="text-2xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        {label}
+      </p>
     </div>
   );
 }

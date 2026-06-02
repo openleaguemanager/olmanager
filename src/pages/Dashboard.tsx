@@ -63,6 +63,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Transfers: "dashboard.transfers",
   Players: "dashboard.players",
   Teams: "dashboard.teams",
+  WorldStaff: "dashboard.worldStaff",
   Tournaments: "dashboard.tournaments",
   ChampionsWorld: "dashboard.champions_world",
   Schedule: "dashboard.schedule",
@@ -496,6 +497,9 @@ export default function Dashboard(): JSX.Element {
         teamLogo={teamLogo}
         onNavigateSettings={handleNavigateSettings}
         isUnemployed={isUnemployed ?? false}
+        playerCount={gameState.players.length}
+        teamCount={gameState.teams.length}
+        staffCount={gameState.staff.length}
         onExitClick={() => {
           if (!isExitingToMenu) {
             setShowExitConfirm(true);

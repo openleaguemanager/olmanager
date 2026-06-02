@@ -125,6 +125,10 @@ export default function DashboardTabContent({
         <TeamsListTab gameState={gameState} onSelectTeam={onSelectTeam} />
       )}
 
+      {activeTab === "WorldStaff" && (
+        <StaffTab gameState={gameState} mode="world" />
+      )}
+
       {activeTab === "Tournaments" && (
         <TournamentsTab gameState={gameState} onSelectTeam={onSelectTeam} />
       )}
@@ -192,6 +196,7 @@ export default function DashboardTabContent({
         "Transfers",
         "Players",
         "Teams",
+        "WorldStaff",
         "Tournaments",
         "ChampionsWorld",
         "Competitions",

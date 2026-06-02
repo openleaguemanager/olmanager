@@ -20,6 +20,9 @@ use std::path::{Component, Path, PathBuf};
 pub struct ImportSummary {
     pub data_files: usize,
     pub photo_files: usize,
+    pub player_count: usize,
+    pub team_count: usize,
+    pub staff_count: usize,
     pub skipped: usize,
 }
 
@@ -46,6 +49,60 @@ fn env_truthy(name: &str) -> bool {
     std::env::var(name)
         .map(|v| matches!(v.as_str(), "1" | "true" | "TRUE" | "yes" | "YES"))
         .unwrap_or(false)
+}
+
+fn count_entities(rel_name: &str, bytes: &[u8]) -> (usize, usize, usize) {
+    let lower = rel_name.to_ascii_lowercase();
+    if !lower.starts_with("data/") || lower.starts_with("data/draft/") {
+        return (0, 0, 0);
+    }
+
+    let category = if lower.contains("/players/") || lower.ends_with("_players.json") {
+        "players"
+    } else if lower.contains("/teams/") || lower.ends_with("_teams.json") {
+        "teams"
+    } else if lower.contains("/staffs/") || lower.contains("/staff/")
+        || lower.ends_with("_staffs.json")
+        || lower.ends_with("_staff.json")
+    {
+        "staff"
+    } else {
+        return (0, 0, 0);
+    };
+
+    let Ok(value) = serde_json::from_slice::<serde_json::Value>(bytes) else {
+        return (0, 0, 0);
+    };
+
+    let count = match category {
+        "players" => entity_array_len(&value, &["players"]),
+        "teams" => entity_array_len(&value, &["teams"]),
+        "staff" => entity_array_len(&value, &["staff", "staffs"]),
+        _ => 0,
+    };
+
+    match category {
+        "players" => (count, 0, 0),
+        "teams" => (0, count, 0),
+        "staff" => (0, 0, count),
+        _ => (0, 0, 0),
+    }
+}
+
+fn entity_array_len(value: &serde_json::Value, keys: &[&str]) -> usize {
+    if let Some(items) = value.as_array() {
+        return items.len();
+    }
+    keys.iter()
+        .find_map(|key| value.get(*key)?.as_array().map(Vec::len))
+        .unwrap_or(0)
+}
+
+fn add_entity_counts(summary: &mut ImportSummary, rel_name: &str, bytes: &[u8]) {
+    let (players, teams, staff) = count_entities(rel_name, bytes);
+    summary.player_count += players;
+    summary.team_count += teams;
+    summary.staff_count += staff;
 }
 
 /// Reject path traversal: only allow normal, in-tree relative components.
@@ -135,6 +192,9 @@ fn import_zip_unchecked(bytes: &[u8]) -> Result<ImportSummary, String> {
 
         if name.starts_with("data/") {
             summary.data_files += 1;
+            if let Ok(bytes) = std::fs::read(&dest) {
+                add_entity_counts(&mut summary, &name, &bytes);
+            }
         } else {
             summary.photo_files += 1;
         }
@@ -193,6 +253,9 @@ fn import_tree(source_root: &Path, synthetic_prefix: &str) -> Result<ImportSumma
 
         if rel_name.starts_with("data/") {
             summary.data_files += 1;
+            if let Ok(bytes) = std::fs::read(&dest) {
+                add_entity_counts(&mut summary, &rel_name, &bytes);
+            }
         } else {
             summary.photo_files += 1;
         }
@@ -204,6 +267,9 @@ fn import_tree(source_root: &Path, synthetic_prefix: &str) -> Result<ImportSumma
 fn merge_summary(into: &mut ImportSummary, next: ImportSummary) {
     into.data_files += next.data_files;
     into.photo_files += next.photo_files;
+    into.player_count += next.player_count;
+    into.team_count += next.team_count;
+    into.staff_count += next.staff_count;
     into.skipped += next.skipped;
 }
 
@@ -269,6 +335,10 @@ pub async fn import_source(source: &str) -> Result<ImportSummary, String> {
         return Err("auto import disabled — set OLM_AUTO_IMPORT=1 to enable".into());
     }
 
+    import_source_unchecked(source).await
+}
+
+async fn import_source_unchecked(source: &str) -> Result<ImportSummary, String> {
     if source.starts_with("http://") || source.starts_with("https://") {
         let bytes = download_export(source).await?;
         return import_zip_unchecked(&bytes);
@@ -286,6 +356,35 @@ pub async fn import_source(source: &str) -> Result<ImportSummary, String> {
     Err(format!("import source not found: {source}"))
 }
 
+pub async fn import_configured_source() -> Result<ImportSummary, String> {
+    let source = std::env::var("OLM_IMPORT_SOURCE")
+        .map_err(|_| "OLM_IMPORT_SOURCE is not configured".to_string())?;
+    if source.trim().is_empty() {
+        return Err("OLM_IMPORT_SOURCE is empty".into());
+    }
+    import_source_unchecked(&source).await
+}
+
+pub fn current_catalog_summary() -> ImportSummary {
+    let base = data_dir();
+    let mut files = Vec::new();
+    if walk_files(&base, &mut files).is_err() {
+        return ImportSummary::default();
+    }
+
+    let mut summary = ImportSummary::default();
+    for file in files {
+        let Ok(rel) = file.strip_prefix(&base) else {
+            continue;
+        };
+        let rel_name = format!("data/{}", rel.to_string_lossy().replace('\\', "/"));
+        if let Ok(bytes) = std::fs::read(&file) {
+            add_entity_counts(&mut summary, &rel_name, &bytes);
+        }
+    }
+    summary
+}
+
 /// Run startup import if configured. Missing OLM_IMPORT_SOURCE is a no-op.
 pub async fn run_startup_import() {
     let Ok(source) = std::env::var("OLM_IMPORT_SOURCE") else {
@@ -299,10 +398,13 @@ pub async fn run_startup_import() {
 
     match import_source(&source).await {
         Ok(summary) => tracing::info!(
-            "startup data import completed from {}: {} data files, {} photos, {} skipped",
+            "startup data import completed from {}: {} data files, {} photos, {} players, {} teams, {} staff, {} skipped",
             source,
             summary.data_files,
             summary.photo_files,
+            summary.player_count,
+            summary.team_count,
+            summary.staff_count,
             summary.skipped
         ),
         Err(e) => tracing::warn!("startup data import failed from {source}: {e}"),

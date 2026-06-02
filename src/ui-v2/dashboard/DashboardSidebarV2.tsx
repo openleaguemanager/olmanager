@@ -37,6 +37,9 @@ interface Props {
   isUnemployed: boolean;
   onNavigateSettings: () => void;
   onExitClick: () => void;
+  playerCount?: number;
+  teamCount?: number;
+  staffCount?: number;
 }
 
 export function DashboardSidebarV2({
@@ -49,6 +52,9 @@ export function DashboardSidebarV2({
   isUnemployed,
   onNavigateSettings,
   onExitClick,
+  playerCount = 0,
+  teamCount = 0,
+  staffCount = 0,
 }: Props) {
   const { t } = useTranslation();
 
@@ -74,8 +80,9 @@ export function DashboardSidebarV2({
   ];
 
   const world: Item[] = [
-    { tab: "Players", label: t("dashboard.players"), icon: UsersRound },
-    { tab: "Teams", label: t("dashboard.teams"), icon: Building2 },
+    { tab: "Players", label: t("dashboard.players"), icon: UsersRound, badge: playerCount },
+    { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
+    { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staff BD" }), icon: UserCog, badge: staffCount },
     { tab: "Tournaments", label: t("dashboard.tournaments"), icon: Trophy },
     { tab: "ChampionsWorld", label: t("dashboard.champions_world"), icon: Gamepad2 },
   ];
@@ -172,7 +179,7 @@ function Group({
             <span className="flex-1 truncate font-heading text-xs font-semibold uppercase tracking-wider">
               {it.label}
             </span>
-            {it.badge !== undefined && it.badge > 0 && (
+            {it.badge !== undefined && (
               <Badge className="h-5 px-1.5 text-[10px]">{it.badge}</Badge>
             )}
           </button>
