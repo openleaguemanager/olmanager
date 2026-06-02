@@ -8,105 +8,14 @@
       "stats": {
         "appearances": 0
       },
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "KT Rolster Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "team-932ee946",
-          "team_name": "KT Rolster",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "team-2166882d",
-          "team_name": "DN SOOPers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-dn-soopers-challengers",
       "position": "Support",
       "condition": 100,
-      "full_name": "Peter",
+      "full_name": "Jeong Yoon-su",
       "attributes": {
         "laning": 66,
         "mechanics": 76,
@@ -118,7 +27,7 @@
         "champion_pool": 70,
         "mental_resilience": 79
       },
-      "match_name": "Jeong Yoon-su",
+      "match_name": "Peter",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -132,99 +41,24 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "natural_position": "Support",
-      "profile_image_url": null,
+      "profile_image_url": "/player-photos/34da141b2fcced57.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
-      "potential_research_started_on": null,
-      "traits": [],
-      "can_be_transferred_until": null
+      "potential_research_started_on": null
     },
     {
       "id": "player-0676970a",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Spear Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-hanjin-brion-challengers",
       "condition": 100,
-      "full_name": "Tempester",
+      "full_name": "Oh Yeong-woong",
       "attributes": {
         "laning": 74,
         "mechanics": 75,
@@ -236,7 +70,7 @@
         "champion_pool": 72,
         "mental_resilience": 71
       },
-      "match_name": "Oh Yeong-woong",
+      "match_name": "Tempester",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -246,21 +80,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-07-06",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779785420635_nzoh17zd25h.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-07-06",
+      "stats": {},
+      "profile_image_url": "/player-photos/52952cb95de5aa59.webp"
     },
     {
       "id": "player-1867a3bb",
@@ -284,29 +108,15 @@
       "loan_listed": false,
       "potential_base": 89,
       "transfer_listed": false,
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779559335802_bmw0mymm25b.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-dn-soopers-challengers",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "KR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "contract_end": "",
+      "stats": {},
+      "profile_image_url": "/player-photos/83d22a39b10c50e4.webp"
     },
     {
       "id": "player-79717137",
@@ -314,60 +124,14 @@
       "stats": {
         "appearances": 0
       },
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-bc4c40ec",
-          "team_name": "Kiwoom DRX",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "team-bc4c40ec",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-kiwoon-drx-challengers",
       "position": "Top",
       "condition": 100,
-      "full_name": "Frog",
+      "full_name": "Lee Min-hoi",
       "attributes": {
         "laning": 66,
         "mechanics": 69,
@@ -379,7 +143,7 @@
         "champion_pool": 72,
         "mental_resilience": 69
       },
-      "match_name": "Lee Min-hoi",
+      "match_name": "Frog",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -393,108 +157,24 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "natural_position": "Top",
-      "profile_image_url": null,
+      "profile_image_url": "/player-photos/5cc0d74328230c14.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
-      "potential_research_started_on": null,
-      "traits": [],
-      "can_be_transferred_until": null
+      "potential_research_started_on": null
     },
     {
       "id": "player-217fd253",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Griffin",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "Nongshim RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "Nongshim RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TT Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TT Young",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-dplus-kia-challengers",
       "condition": 100,
-      "full_name": "Wayne ",
+      "full_name": "Hwang Seo-hyeon",
       "attributes": {
         "laning": 73,
         "mechanics": 75,
@@ -506,7 +186,7 @@
         "champion_pool": 72,
         "mental_resilience": 72
       },
-      "match_name": "Hwang Seo-hyeon",
+      "match_name": "Wayne ",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -516,21 +196,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-05-27",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779775159934_dd3g713rrrm.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2003-05-27",
+      "stats": {},
+      "profile_image_url": "/player-photos/89d28eeab92ad6d4.webp"
     },
     {
       "id": "player-f9ead664",
@@ -538,60 +208,14 @@
       "stats": {
         "appearances": 0
       },
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "team-bc4c40ec",
-          "team_name": "Kiwoom DRX",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-kiwoon-drx-challengers",
       "position": "ADC",
       "condition": 100,
-      "full_name": "Jiwoo",
+      "full_name": "Jung Ji-woo",
       "attributes": {
         "laning": 77,
         "mechanics": 75,
@@ -603,7 +227,7 @@
         "champion_pool": 79,
         "mental_resilience": 74
       },
-      "match_name": "Jung Ji-woo",
+      "match_name": "Jiwoo",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -616,16 +240,14 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "natural_position": "ADC",
+      "natural_position": "Adc",
       "profile_image_url": "/player-photos/0123667e.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
-      "potential_research_started_on": null,
-      "traits": [],
-      "can_be_transferred_until": null
+      "potential_research_started_on": null
     },
     {
       "id": "player-722557b3",
@@ -639,7 +261,7 @@
       "team_id": "lck-cl-hle-challengers",
       "position": "Support",
       "condition": 100,
-      "full_name": "Bluffing",
+      "full_name": "Park Gyu-yong",
       "attributes": {
         "laning": 64,
         "mechanics": 59,
@@ -651,7 +273,7 @@
         "champion_pool": 61,
         "mental_resilience": 70
       },
-      "match_name": "Park Gyu-yong",
+      "match_name": "Bluffing",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South korea",
@@ -672,108 +294,15 @@
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-29be9689",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BRO Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BRO Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "OK BRION Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "OK BRION Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "OK BRION",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "OK BRION Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Rolster",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "OK BRION",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Rolster",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Pollu",
+      "full_name": "Oh Dong-gyu",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -785,108 +314,28 @@
         "champion_pool": 73,
         "mental_resilience": 75
       },
-      "match_name": "Oh Dong-gyu",
+      "match_name": "Pollu",
       "contract_end": "2026-11-16",
-      "date_of_birth": "2006-01-07",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826541850_Pollu.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-kt-rolster-challengers",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2006-01-07",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/77f2916a06265b46.webp"
     },
     {
       "id": "player-2e567bef",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LSB Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LSB Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "Nongshim Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-hanjin-brion-challengers",
       "condition": 100,
-      "full_name": "DDahyuk",
+      "full_name": "An Min-hyuk",
       "attributes": {
         "laning": 73,
         "mechanics": 72,
@@ -898,7 +347,7 @@
         "champion_pool": 72,
         "mental_resilience": 72
       },
-      "match_name": "An Min-hyuk",
+      "match_name": "DDahyuk",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -908,21 +357,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-09-04",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779784133517_u4acpgrcosc.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2004-09-04",
+      "stats": {},
+      "profile_image_url": "/player-photos/c38a30f715e9baf8.webp"
     },
     {
       "id": "player-2f023229",
@@ -933,7 +372,7 @@
       "fitness": 100,
       "team_id": "lck-cl-dplus-kia-challengers",
       "condition": 100,
-      "full_name": "Jaehyuk",
+      "full_name": "Kwon Jae-hyuk",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -945,7 +384,7 @@
         "champion_pool": 73,
         "mental_resilience": 74
       },
-      "match_name": "Kwon Jae-hyuk",
+      "match_name": "Jaehyuk",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2027-11-15",
@@ -955,21 +394,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-09-28",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779710600254_aegxlzhxhq5.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-09-28",
+      "stats": {},
+      "profile_image_url": "/player-photos/fcc38b68afcd88ec.webp"
     },
     {
       "id": "player-3c60962d",
@@ -1002,141 +431,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-3ea37d37",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dynamics Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nongshim Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nongshim Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-kt-rolster-challengers",
       "condition": 100,
-      "full_name": "Sylvie",
+      "full_name": "Lee Seung-bok",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -1148,7 +458,7 @@
         "champion_pool": 73,
         "mental_resilience": 74
       },
-      "match_name": "Lee Seung-bok",
+      "match_name": "Sylvie",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -1158,176 +468,29 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-12-04",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826527428_Sylvie.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2002-12-04",
+      "stats": {},
+      "profile_image_url": "/player-photos/d6582198a6510b8e.webp"
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KDF Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KDF Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BNK FEARX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow ELG",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BNK FEARX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Scholars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Flash",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
       "id": "player-44d6cbd6",
-      "match_name": "Seong Tae-hyo",
-      "full_name": "Guardian",
-      "date_of_birth": "2004-07-16",
-      "nationality": "",
-      "profile_image_url": "/player-photos/1779826672081_Guardian__Seong_Tae-hyo_.webp",
+      "match_name": "Guardian",
+      "full_name": "Seong Tae-hyo",
       "position": "Top",
-      "natural_position": "Top",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "lck-cl-t1-esports-academy",
-      "traits": [],
+      "nationality": "",
+      "date_of_birth": "2004-07-16",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/27271c86ae0d3f06.webp"
     },
     {
       "id": "player-f28913fb",
@@ -1335,33 +498,14 @@
       "stats": {
         "appearances": 0
       },
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-bc4c40ec",
-          "team_name": "Kiwoom DRX",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "team-38a818e5",
-          "team_name": "TT Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-ns-esports-academy",
       "position": "Mid",
       "condition": 100,
-      "full_name": "SeTab",
+      "full_name": "Song Kyeong-jin",
       "attributes": {
         "laning": 80,
         "mechanics": 75,
@@ -1373,7 +517,7 @@
         "champion_pool": 78,
         "mental_resilience": 75
       },
-      "match_name": "Song Kyeong-jin",
+      "match_name": "SeTab",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -1393,9 +537,7 @@
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
-      "potential_research_started_on": null,
-      "traits": [],
-      "can_be_transferred_until": null
+      "potential_research_started_on": null
     },
     {
       "id": "player-e9962c33",
@@ -1403,87 +545,14 @@
       "stats": {
         "appearances": 0
       },
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "team-bc4c40ec",
-          "team_name": "Kiwoom DRX",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-bc4c40ec",
-          "team_name": "Kiwoom DRX",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "team-61bd92d5",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-ns-esports-academy",
       "position": "Support",
       "condition": 100,
-      "full_name": "Pleata",
+      "full_name": "Son Min-woo",
       "attributes": {
         "laning": 72,
         "mechanics": 77,
@@ -1495,7 +564,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Son Min-woo",
+      "match_name": "Pleata",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -1509,87 +578,21 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "natural_position": "Support",
-      "profile_image_url": null,
+      "profile_image_url": "/player-photos/97a133ddc746bd4d.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
-      "potential_research_started_on": null,
-      "traits": [],
-      "can_be_transferred_until": null
+      "potential_research_started_on": null
     },
     {
       "id": "player-524d7dae",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Spear Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-kiwoon-drx-challengers",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Scholars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "SIRIUSS",
+      "full_name": "Go Gun",
       "attributes": {
         "laning": 71,
         "mechanics": 70,
@@ -1601,33 +604,19 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Go Gun",
+      "match_name": "SIRIUSS",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "2006-06-27",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779783659848_26ebbmwt18a.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-gen-g-global-academy",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2006-06-27",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/15ffac04f6fd2eef.webp"
     },
     {
       "id": "player-b78c5ed2",
@@ -1641,7 +630,7 @@
       "team_id": "lck-cl-ns-esports-academy",
       "position": "Jungle",
       "condition": 100,
-      "full_name": "Mihawk",
+      "full_name": "Kim Joon-hyeong",
       "attributes": {
         "laning": 75,
         "mechanics": 73,
@@ -1653,7 +642,7 @@
         "champion_pool": 64,
         "mental_resilience": 64
       },
-      "match_name": "Kim Joon-hyeong",
+      "match_name": "Mihawk",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -1666,128 +655,26 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "natural_position": "Jungle",
-      "profile_image_url": null,
+      "natural_position": "Adc",
+      "profile_image_url": "/player-photos/18afab7dc5233a33.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-57129936",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "lck-cl-gen-g-global-academy",
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow Anyche",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow Dawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow Dawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PSG Talon Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-hanjin-brion-challengers",
       "condition": 100,
-      "full_name": "Dinai",
+      "full_name": "Hwang Chi-hyeon",
       "attributes": {
         "laning": 73,
         "mechanics": 72,
@@ -1799,7 +686,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Hwang Chi-hyeon",
+      "match_name": "Dinai",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -1809,165 +696,19 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-09-22",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779785309359_25yiywapak2.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-09-22",
+      "stats": {},
+      "profile_image_url": "/player-photos/f3237b2ff22537f8.webp"
     },
     {
       "id": "player-61aae261",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "team-bd98ddef",
-          "team_name": "HANJIN BRION",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Isurus",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SK Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SK Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Loopy",
+      "full_name": "Kim Dong-hyeon",
       "attributes": {
         "laning": 70,
         "mechanics": 76,
@@ -1979,33 +720,19 @@
         "champion_pool": 72,
         "mental_resilience": 70
       },
-      "match_name": "Kim Dong-hyeon",
+      "match_name": "Loopy",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "2004-06-09",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779775620398_ltnwajh0kve.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-dplus-kia-challengers",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2004-06-09",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/e14989f98e1b7c0e.webp"
     },
     {
       "id": "player-62fd57d5",
@@ -2013,7 +740,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Luon",
+      "full_name": "Lee Hyun-ho",
       "attributes": {
         "laning": 66,
         "mechanics": 67,
@@ -2025,33 +752,19 @@
         "champion_pool": 73,
         "mental_resilience": 70
       },
-      "match_name": "Lee Hyun-ho",
+      "match_name": "Luon",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "2003-01-27",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779708900368_jcafyua2g9m.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-bnk-fearx-youth",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2003-01-27",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/fa5ab8c5f4c196a4.webp"
     },
     {
       "id": "player-5171726f",
@@ -2059,60 +772,14 @@
       "stats": {
         "appearances": 0
       },
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "team-2166882d",
-          "team_name": "DN SOOPers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-dn-soopers-challengers",
       "position": "Support",
       "condition": 100,
-      "full_name": "Quantum",
+      "full_name": "Son Jeong-hwan",
       "attributes": {
         "laning": 67,
         "mechanics": 74,
@@ -2124,7 +791,7 @@
         "champion_pool": 72,
         "mental_resilience": 74
       },
-      "match_name": "Son Jeong-hwan",
+      "match_name": "Quantum",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -2138,81 +805,24 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "natural_position": "Support",
-      "profile_image_url": null,
+      "profile_image_url": "/player-photos/e17444236f1726f6.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
-      "potential_research_started_on": null,
-      "traits": [],
-      "can_be_transferred_until": null
+      "potential_research_started_on": null
     },
     {
       "id": "player-6571f5ba",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-kt-rolster-challengers",
       "condition": 100,
-      "full_name": "Sero",
+      "full_name": "An Hyo-chan",
       "attributes": {
         "laning": 75,
         "mechanics": 75,
@@ -2224,7 +834,7 @@
         "champion_pool": 73,
         "mental_resilience": 75
       },
-      "match_name": "An Hyo-chan",
+      "match_name": "Sero",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2027-11-15",
@@ -2234,96 +844,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-11-21",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826523048_Sero.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-11-21",
+      "stats": {},
+      "profile_image_url": "/player-photos/7738db1ac6c4f21e.webp"
     },
     {
       "id": "player-6e134f47",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nongshim Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nongshim Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-kt-rolster-challengers",
       "condition": 100,
-      "full_name": "Hwichan",
+      "full_name": "Jeong Hwi-chan",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -2335,7 +871,7 @@
         "champion_pool": 73,
         "mental_resilience": 74
       },
-      "match_name": "Jeong Hwi-chan",
+      "match_name": "Hwichan",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2027-11-15",
@@ -2345,96 +881,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-01-30",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826531441_Hwichan.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2006-01-30",
+      "stats": {},
+      "profile_image_url": "/player-photos/7c6aee74beec67c0.webp"
     },
     {
       "id": "player-7255573d",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KDF Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-t1-esports-academy",
       "condition": 100,
-      "full_name": "Haetae",
+      "full_name": "Sim Su-hyeon",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -2446,7 +908,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Sim Su-hyeon",
+      "match_name": "Haetae",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -2456,21 +918,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-02-11",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826652606_Haetae.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2006-02-11",
+      "stats": {},
+      "profile_image_url": "/player-photos/16d4ae472ea29970.webp"
     },
     {
       "id": "player-ad3d0214",
@@ -2484,7 +936,7 @@
       "team_id": "lck-cl-kiwoon-drx-challengers",
       "position": "Mid",
       "condition": 100,
-      "full_name": "AkaJe",
+      "full_name": "Choi Soo-hyuk",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -2496,7 +948,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Choi Soo-hyuk",
+      "match_name": "AkaJe",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -2517,66 +969,18 @@
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-7687488c",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-dplus-kia-challengers",
       "condition": 100,
-      "full_name": "Garden",
+      "full_name": "Seol Jeong-won",
       "attributes": {
         "laning": 74,
         "mechanics": 75,
@@ -2588,7 +992,7 @@
         "champion_pool": 71,
         "mental_resilience": 74
       },
-      "match_name": "Seol Jeong-won",
+      "match_name": "Garden",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -2598,21 +1002,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-11-15",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779774915850_Garden__Seol_Jeong-won_.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-11-15",
+      "stats": {},
+      "profile_image_url": "/player-photos/c77e0a0c183da64b.webp"
     },
     {
       "id": "player-78eff27e",
@@ -2623,7 +1017,7 @@
       "fitness": 100,
       "team_id": "lck-cl-dn-soopers-challengers",
       "condition": 100,
-      "full_name": "Enosh",
+      "full_name": "Kwak Kyu-jun",
       "attributes": {
         "laning": 78,
         "mechanics": 78,
@@ -2635,7 +1029,7 @@
         "champion_pool": 79,
         "mental_resilience": 82
       },
-      "match_name": "Kwak Kyu-jun",
+      "match_name": "Enosh",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -2645,84 +1039,19 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-10-01",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779710401264_nqc3ekmr1wk.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2004-10-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/52a19dfefd534973.webp"
     },
     {
       "id": "player-7ff93278",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LSB Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LSB Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "PlanB",
+      "full_name": "Hong Jun-seok",
       "attributes": {
         "laning": 73,
         "mechanics": 72,
@@ -2734,33 +1063,19 @@
         "champion_pool": 72,
         "mental_resilience": 72
       },
-      "match_name": "Hong Jun-seok",
+      "match_name": "PlanB",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "2006-01-19",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779786028361_9541hxnr4ab.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-hanjin-brion-challengers",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2006-01-19",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/3786059efde4ba99.webp"
     },
     {
       "id": "player-82330e76",
@@ -2771,7 +1086,7 @@
       "fitness": 100,
       "team_id": "lck-cl-bnk-fearx-youth",
       "condition": 100,
-      "full_name": "Zephyr",
+      "full_name": "Hwang Hyeok-su",
       "attributes": {
         "laning": 68,
         "mechanics": 71,
@@ -2783,7 +1098,7 @@
         "champion_pool": 69,
         "mental_resilience": 72
       },
-      "match_name": "Hwang Hyeok-su",
+      "match_name": "Zephyr",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -2793,87 +1108,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-12-08",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779707396462_uznw9q881e.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-12-08",
+      "stats": {},
+      "profile_image_url": "/player-photos/c7ffbd0325f356e6.webp"
     },
     {
       "id": "player-8631f0de",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-dplus-kia-challengers",
       "condition": 100,
-      "full_name": "Sharvel",
+      "full_name": "Kim Dan-woo",
       "attributes": {
         "laning": 76,
         "mechanics": 75,
@@ -2885,7 +1135,7 @@
         "champion_pool": 73,
         "mental_resilience": 72
       },
-      "match_name": "Kim Dan-woo",
+      "match_name": "Sharvel",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -2895,105 +1145,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-08-26",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779774706403_Sharvel.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-08-26",
+      "stats": {},
+      "profile_image_url": "/player-photos/fdb56f3a7fbc9fdc.webp"
     },
     {
       "id": "player-8c91032f",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LSB Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LSB Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "OK BRION Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-t1-esports-academy",
       "condition": 100,
-      "full_name": "Guti",
+      "full_name": "Moon Jeong-hwan",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -3005,7 +1172,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Moon Jeong-hwan",
+      "match_name": "Guti",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -3015,21 +1182,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-04-09",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826660175_Guti__Moon_Jeong-hwan_.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2004-04-09",
+      "stats": {},
+      "profile_image_url": "/player-photos/a2bb0716df4eb982.webp"
     },
     {
       "id": "player-8e298458",
@@ -3062,21 +1219,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-9010ea3a",
@@ -3087,7 +1234,7 @@
       "fitness": 100,
       "team_id": "lck-cl-bnk-fearx-youth",
       "condition": 100,
-      "full_name": "FIESTA",
+      "full_name": "An Hyeon-seo",
       "attributes": {
         "laning": 72,
         "mechanics": 70,
@@ -3099,7 +1246,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "An Hyeon-seo",
+      "match_name": "FIESTA",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -3109,21 +1256,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-05-04",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779707480149_6adnri0bwwi.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2003-05-04",
+      "stats": {},
+      "profile_image_url": "/player-photos/902d28da687f712c.webp"
     },
     {
       "id": "player-90cbabea",
@@ -3134,7 +1271,7 @@
       "fitness": 100,
       "team_id": "lck-cl-dn-soopers-challengers",
       "condition": 100,
-      "full_name": "Lancer",
+      "full_name": "Han Jeong-heum",
       "attributes": {
         "laning": 72,
         "mechanics": 74,
@@ -3146,7 +1283,7 @@
         "champion_pool": 73,
         "mental_resilience": 74
       },
-      "match_name": "Han Jeong-heum",
+      "match_name": "Lancer",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -3156,21 +1293,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-08-11",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779709036334_qur8oznb88.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2004-08-11",
+      "stats": {},
+      "profile_image_url": "/player-photos/04f11865f1a678bc.webp"
     },
     {
       "id": "player-9276105b",
@@ -3203,21 +1330,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779560478991_n7jjhe6cb1n.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/e98612715eecbf3c.webp"
     },
     {
       "id": "player-65ab088f",
@@ -3231,7 +1348,7 @@
       "team_id": "lck-cl-ns-esports-academy",
       "position": "Top",
       "condition": 100,
-      "full_name": "Janus",
+      "full_name": "Eom Ye-jun",
       "attributes": {
         "laning": 65,
         "mechanics": 72,
@@ -3243,7 +1360,7 @@
         "champion_pool": 65,
         "mental_resilience": 75
       },
-      "match_name": "Eom Ye-jun",
+      "match_name": "Janus",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "Korea",
@@ -3257,16 +1374,14 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "natural_position": "Top",
-      "profile_image_url": null,
+      "profile_image_url": "/player-photos/71afb6f1273a3b23.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-c46f4677",
@@ -3280,7 +1395,7 @@
       "team_id": "lck-cl-kiwoon-drx-challengers",
       "position": "Jungle",
       "condition": 100,
-      "full_name": "Winner ",
+      "full_name": "Kang Hyeon-wook",
       "attributes": {
         "laning": 63,
         "mechanics": 62,
@@ -3292,7 +1407,7 @@
         "champion_pool": 64,
         "mental_resilience": 56
       },
-      "match_name": "Kang Hyeon-wook",
+      "match_name": "Winner ",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -3305,17 +1420,15 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "natural_position": "Jungle",
-      "profile_image_url": null,
+      "natural_position": "Mid",
+      "profile_image_url": "/player-photos/2e8364111bacea6d.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-9a95ae46",
@@ -3339,29 +1452,15 @@
       "loan_listed": false,
       "potential_base": 86,
       "transfer_listed": false,
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779559311494_vteaaz2qrjh.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-dn-soopers-challengers",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "KR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "contract_end": "",
+      "stats": {},
+      "profile_image_url": "/player-photos/5e1929117d2e7e84.webp"
     },
     {
       "id": "player-e7f2c02a",
@@ -3375,7 +1474,7 @@
       "team_id": "lck-cl-ns-esports-academy",
       "position": "ADC",
       "condition": 100,
-      "full_name": "Lucy",
+      "full_name": "Hyun Soo-hoon",
       "attributes": {
         "laning": 67,
         "mechanics": 65,
@@ -3387,7 +1486,7 @@
         "champion_pool": 74,
         "mental_resilience": 66
       },
-      "match_name": "Hyun Soo-hoon",
+      "match_name": "Lucy",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -3400,89 +1499,23 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "natural_position": "ADC",
-      "profile_image_url": null,
+      "natural_position": "Adc",
+      "profile_image_url": "/player-photos/a0ed30f392c97045.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-9f9cbe53",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-kiwoon-drx-challengers",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-kiwoon-drx-challengers",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Scholars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Lumos",
+      "full_name": "Kim Jae-min",
       "attributes": {
         "laning": 73,
         "mechanics": 68,
@@ -3494,33 +1527,19 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Kim Jae-min",
+      "match_name": "Lumos",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "2007-04-06",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779783517089_Lumos.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-gen-g-global-academy",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2007-04-06",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/efaf52dac8dbbba1.webp"
     },
     {
       "id": "player-a0f1de3f",
@@ -3531,7 +1550,7 @@
       "fitness": 100,
       "team_id": "lck-cl-dn-soopers-challengers",
       "condition": 100,
-      "full_name": "Flip",
+      "full_name": "Kim Sang-wook",
       "attributes": {
         "laning": 72,
         "mechanics": 74,
@@ -3543,7 +1562,7 @@
         "champion_pool": 71,
         "mental_resilience": 73
       },
-      "match_name": "Kim Sang-wook",
+      "match_name": "Flip",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-05-11",
@@ -3553,21 +1572,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2008-05-24",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779709268381_wy61b0tuht.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2008-05-24",
+      "stats": {},
+      "profile_image_url": "/player-photos/9852ef3bbe90f563.webp"
     },
     {
       "id": "player-a2d61244",
@@ -3600,21 +1609,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779560484145_u1jh10w5hlo.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/22a902f18b5766b7.webp"
     },
     {
       "id": "player-a947fb1e",
@@ -3647,78 +1646,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779560486218_h42pl7krrf.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/b9724e7e1f374bd6.webp"
     },
     {
       "id": "player-acd86dd5",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-hle-challengers",
       "condition": 100,
-      "full_name": "Jackal",
+      "full_name": "Lee Su-min",
       "attributes": {
         "laning": 76,
         "mechanics": 74,
@@ -3730,7 +1673,7 @@
         "champion_pool": 72,
         "mental_resilience": 74
       },
-      "match_name": "Lee Su-min",
+      "match_name": "Jackal",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -3740,87 +1683,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-02-05",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779786283516_a0t04i57pr.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-02-05",
+      "stats": {},
+      "profile_image_url": "/player-photos/cf894e8099416290.webp"
     },
     {
       "id": "player-ae1a2b6d",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-kiwoon-drx-challengers",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-bnk-fearx-youth",
-          "team_name": "BNK FEARX Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-bnk-fearx-youth",
-          "team_name": "BNK FEARX Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Scholars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "",
-          "team_name": "Memo",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-gen-g-global-academy",
       "condition": 100,
-      "full_name": "MUDAI",
+      "full_name": "Lee Seon-gyu",
       "attributes": {
         "laning": 68,
         "mechanics": 68,
@@ -3832,7 +1710,7 @@
         "champion_pool": 72,
         "mental_resilience": 72
       },
-      "match_name": "Lee Seon-gyu",
+      "match_name": "MUDAI",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -3842,141 +1720,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-05-21",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779783412617_MUDAI.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-05-21",
+      "stats": {},
+      "profile_image_url": "/player-photos/1f0cce7e232124f1.webp"
     },
     {
       "id": "player-6f4ad3dc",
       "wage": 32000,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SGA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow ELG",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow fOu",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow IBJ",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow Corp",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Shadow IBJ",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-gen-g-global-academy",
       "condition": 100,
-      "full_name": "Kemish",
+      "full_name": "Kim Si-hun",
       "attributes": {
         "laning": 74,
         "mechanics": 73,
@@ -3988,7 +1747,7 @@
         "champion_pool": 73,
         "mental_resilience": 71
       },
-      "match_name": "Kim Si-hun",
+      "match_name": "Kemish",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -3998,78 +1757,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-04-01",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779783823721_56cvnpo4r9s.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-04-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/806e1675df910b37.webp"
     },
     {
       "id": "player-b398a5ac",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "HLE Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-hle-challengers",
       "condition": 100,
-      "full_name": "Panther",
+      "full_name": "Park Ji-ho",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -4081,7 +1784,7 @@
         "champion_pool": 73,
         "mental_resilience": 74
       },
-      "match_name": "Park Ji-ho",
+      "match_name": "Panther",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4091,69 +1794,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2008-02-05",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779786121841_Panther__Park_Ji-ho_.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2008-02-05",
+      "stats": {},
+      "profile_image_url": "/player-photos/822eecb47caf8b5f.webp"
     },
     {
       "id": "player-b7172b29",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-kiwoon-drx-challengers",
-          "team_name": "Kiwoon DRX Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-kt-rolster-challengers",
-          "team_name": "KT Rolster Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-gen-g-global-academy",
       "condition": 100,
-      "full_name": "Ripple",
+      "full_name": "Byeon Jong-min",
       "attributes": {
         "laning": 73,
         "mechanics": 72,
@@ -4165,7 +1821,7 @@
         "champion_pool": 73,
         "mental_resilience": 72
       },
-      "match_name": "Byeon Jong-min",
+      "match_name": "Ripple",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4175,114 +1831,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-10-05",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779783001086_Ripple.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2006-10-05",
+      "stats": {},
+      "profile_image_url": "/player-photos/a4ebb08b5f7bb0cd.webp"
     },
     {
       "id": "player-b942cab5",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": "lck-cl-dplus-kia-challengers",
-          "team_name": "Dplus KIA Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ROX COOL",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "lck-cl-ns-esports-academy",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-ns-esports-academy",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-ns-esports-academy",
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lck-cl-hanjin-brion-challengers",
-          "team_name": "HANJIN BRION CHALLENGERS",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-hanjin-brion-challengers",
       "condition": 100,
-      "full_name": "OddEye",
+      "full_name": "Cho Hyung-jin",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -4294,7 +1858,7 @@
         "champion_pool": 73,
         "mental_resilience": 71
       },
-      "match_name": "Cho Hyung-jin",
+      "match_name": "OddEye",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4304,78 +1868,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-01-01",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779785867128_2zx6aplm3b1.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/d4d01f03e6eefc61.webp"
     },
     {
       "id": "player-c24b484e",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DRX Shinhan Bank",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DRX Shinhan Bank",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-t1-esports-academy",
       "condition": 100,
-      "full_name": "Painter",
+      "full_name": "Kim Eun-hoo",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -4387,7 +1895,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Kim Eun-hoo",
+      "match_name": "Painter",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4397,21 +1905,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-09-16",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826656241_Painter.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-09-16",
+      "stats": {},
+      "profile_image_url": "/player-photos/17a33290e2781cef.webp"
     },
     {
       "id": "player-fe7218c5",
@@ -4425,7 +1923,7 @@
       "team_id": "lck-cl-kiwoon-drx-challengers",
       "position": "Support",
       "condition": 100,
-      "full_name": "Minous",
+      "full_name": "Kang Min-woo",
       "attributes": {
         "laning": 45,
         "mechanics": 48,
@@ -4437,7 +1935,7 @@
         "champion_pool": 49,
         "mental_resilience": 52
       },
-      "match_name": "Kang Min-woo",
+      "match_name": "Minous",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -4458,93 +1956,18 @@
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-ca0e5ce6",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "lck-cl-dn-soopers-challengers",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": "lck-cl-dn-soopers-challengers",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": "lck-cl-dn-soopers-challengers",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lck-cl-dn-soopers-challengers",
-          "team_name": "DN SOOpers Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SoftBank HAWKS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SoftBank HAWKS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gen.G Global Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-gen-g-global-academy",
       "condition": 100,
-      "full_name": "Courage",
+      "full_name": "Jeon Hyun-min",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -4556,7 +1979,7 @@
         "champion_pool": 73,
         "mental_resilience": 72
       },
-      "match_name": "Jeon Hyun-min",
+      "match_name": "Courage",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4566,21 +1989,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-03-09",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779783345562_kyj3xx4iqh.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2005-03-09",
+      "stats": {},
+      "profile_image_url": "/player-photos/ec7d8afaca9ab848.webp"
     },
     {
       "id": "player-d3e92fc3",
@@ -4591,7 +2004,7 @@
       "fitness": 100,
       "team_id": "lck-cl-dn-soopers-challengers",
       "condition": 100,
-      "full_name": "DDoiV",
+      "full_name": "Bang Moon-yeong",
       "attributes": {
         "laning": 73,
         "mechanics": 72,
@@ -4603,7 +2016,7 @@
         "champion_pool": 73,
         "mental_resilience": 73
       },
-      "match_name": "Bang Moon-yeong",
+      "match_name": "DDoiV",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4613,75 +2026,19 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2023-10-21",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779709125947_6lbchq4s92.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2023-10-21",
+      "stats": {},
+      "profile_image_url": "/player-photos/bc3241dbcf769033.webp"
     },
     {
       "id": "player-dd29cf26",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Cloud",
+      "full_name": "Moon Hyeon-ho",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -4693,33 +2050,19 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Moon Hyeon-ho",
+      "match_name": "Cloud",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "2007-04-25",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826668212_Cloud__Moon_Hyeon-ho_.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-t1-esports-academy",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "2007-04-25",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/c31efad0304fdda4.webp"
     },
     {
       "id": "player-e254c8aa",
@@ -4730,7 +2073,7 @@
       "fitness": 100,
       "team_id": "lck-cl-bnk-fearx-youth",
       "condition": 100,
-      "full_name": "Kangin",
+      "full_name": "Choi Gang-in",
       "attributes": {
         "laning": 76,
         "mechanics": 70,
@@ -4742,7 +2085,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Choi Gang-in",
+      "match_name": "Kangin",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4752,21 +2095,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-03-14",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779707289176_qwji1n7jv3.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2003-03-14",
+      "stats": {},
+      "profile_image_url": "/player-photos/e8d8f285443e4647.webp"
     },
     {
       "id": "player-e55f8ef5",
@@ -4777,7 +2110,7 @@
       "fitness": 100,
       "team_id": "lck-cl-bnk-fearx-youth",
       "condition": 100,
-      "full_name": "Slayer",
+      "full_name": "Kim Jin-young",
       "attributes": {
         "laning": 70,
         "mechanics": 66,
@@ -4789,7 +2122,7 @@
         "champion_pool": 73,
         "mental_resilience": 71
       },
-      "match_name": "Kim Jin-young",
+      "match_name": "Slayer",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -4799,21 +2132,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-04-15",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779708740484_c7vvg1y37c6.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2003-04-15",
+      "stats": {},
+      "profile_image_url": "/player-photos/118ee091ebd6fa34.webp"
     },
     {
       "id": "player-eddde7b7",
@@ -4846,21 +2169,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779560481998_4jcqstgr5lo.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/4d388ec0f9e3926a.webp"
     },
     {
       "id": "player-7b51fd6f",
@@ -4874,7 +2187,7 @@
       "team_id": "lck-cl-hle-challengers",
       "position": "Top",
       "condition": 100,
-      "full_name": "Panther",
+      "full_name": "Park-Ji-ho",
       "attributes": {
         "laning": 55,
         "mechanics": 63,
@@ -4886,7 +2199,7 @@
         "champion_pool": 61,
         "mental_resilience": 62
       },
-      "match_name": "Park-Ji-ho",
+      "match_name": "Panther",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "South Korea",
@@ -4900,187 +2213,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "natural_position": "Top",
-      "profile_image_url": null,
+      "profile_image_url": "/player-photos/1d5c92b0.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "champion_training_target": null,
       "champion_training_targets": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "traits": [],
-      "career": [],
-      "can_be_transferred_until": null
+      "career": []
     },
     {
       "id": "player-f396d407",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2016,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "CJ Entus",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2016,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ESC Ever",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2017,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "bbq Olivers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2017,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ESC Ever",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "bbq Olivers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SANDBOX Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team BattleComics",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SANDBOX Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DWG KIA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DWG KIA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NS RedForce",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dplus Kia",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dplus Kia",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Estral Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Rolster",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Rolster",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Ghost",
+      "full_name": "Jang Yong-jun",
       "attributes": {
         "laning": 73,
         "mechanics": 73,
@@ -5092,81 +2240,30 @@
         "champion_pool": 71,
         "mental_resilience": 76
       },
-      "match_name": "Jang Yong-jun",
+      "match_name": "Ghost",
       "loan_listed": false,
       "contract_end": "2026-11-16",
       "transfer_listed": false,
-      "date_of_birth": "1999-03-18",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826540406_Ghost__Jang_Yong-jun_.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "lck-cl-kt-rolster-challengers",
-      "traits": [],
+      "nationality": "KR",
+      "date_of_birth": "1999-03-18",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/a17affbd0086d9f5.webp"
     },
     {
       "id": "player-f64e6d86",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "KT Challengers",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-kt-rolster-challengers",
       "condition": 100,
-      "full_name": "FenRir",
+      "full_name": "Park Kang-jun",
       "attributes": {
         "laning": 72,
         "mechanics": 73,
@@ -5178,7 +2275,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Park Kang-jun",
+      "match_name": "FenRir",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2027-11-15",
@@ -5188,105 +2285,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-06-24",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826535309_FenRir__Park_Kang-jun_.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2006-06-24",
+      "stats": {},
+      "profile_image_url": "/player-photos/44b24582f8cd63b3.webp"
     },
     {
       "id": "player-fd58ecc3",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Challengers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DK Youth",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-t1-esports-academy",
       "condition": 100,
-      "full_name": "Jinbeom",
+      "full_name": "Cheon Jin-beom",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -5298,7 +2312,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Cheon Jin-beom",
+      "match_name": "Jinbeom",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -5308,114 +2322,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-07-03",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826675851_Jinbeom.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2007-07-03",
+      "stats": {},
+      "profile_image_url": "/player-photos/95231d7f437a7532.webp"
     },
     {
       "id": "player-fdec4f38",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Liiv SANDBOX Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 E.A. Rookies",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "T1 Esports Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "lck-cl-t1-esports-academy",
       "condition": 100,
-      "full_name": "Cypher",
+      "full_name": "Kim Yu-jun",
       "attributes": {
         "laning": 76,
         "mechanics": 76,
@@ -5427,7 +2349,7 @@
         "champion_pool": 73,
         "mental_resilience": 76
       },
-      "match_name": "Kim Yu-jun",
+      "match_name": "Cypher",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2026-11-16",
@@ -5437,21 +2359,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-01-20",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779826663961_Cypher.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2006-01-20",
+      "stats": {},
+      "profile_image_url": "/player-photos/363c6a90dfbc38b4.webp"
     }
   ]
 }

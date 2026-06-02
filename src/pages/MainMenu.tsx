@@ -23,6 +23,7 @@ import { countryName, allNationalities } from "../lib/countries";
 
 const canUseTauriInvoke = () => {
   if (import.meta.env.MODE === "test") return true;
+  if (import.meta.env.MODE === "web") return true;
   if (typeof window === "undefined") return false;
   const internals = (window as unknown as { __TAURI_INTERNALS__?: { invoke?: unknown } })
     .__TAURI_INTERNALS__;

@@ -33,105 +33,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-03618db6",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Galatasaray Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "AURORA Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DP Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Axolotl",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BoostGate Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Papara SuperMassive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BoostGate Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-81f175c5",
       "condition": 100,
-      "full_name": "Cimpo",
+      "full_name": "Okan Öztopaç",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -143,7 +60,7 @@
         "champion_pool": 60,
         "mental_resilience": 62
       },
-      "match_name": "Okan Öztopaç",
+      "match_name": "Cimpo",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -153,21 +70,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2001-06-08",
-      "nationality": "TR",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": "2001-06-08",
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-05ad55a7",
@@ -200,51 +107,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RU",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RU",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-068b70d0",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hurricane of Feathers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-6b8fef2d",
       "condition": 100,
-      "full_name": "Zezin",
+      "full_name": "José Dinis",
       "attributes": {
         "laning": 60,
         "mechanics": 61,
@@ -256,7 +134,7 @@
         "champion_pool": 61,
         "mental_resilience": 61
       },
-      "match_name": "José Dinis",
+      "match_name": "Zezin",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -266,51 +144,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1234b5b5",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-273eca26",
       "condition": 100,
-      "full_name": "Salgueir0",
+      "full_name": "Vítor Salgueiro",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -322,7 +171,7 @@
         "champion_pool": 61,
         "mental_resilience": 64
       },
-      "match_name": "Vítor Salgueiro",
+      "match_name": "Salgueir0",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -332,57 +181,19 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-08-19",
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": "2004-08-19",
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-12711e0f",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GeekCase eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GeekCase eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crusaders",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Lostboy",
+      "full_name": "André Tavares",
       "attributes": {
         "laning": 62,
         "mechanics": 63,
@@ -394,33 +205,17 @@
         "champion_pool": 61,
         "mental_resilience": 59
       },
-      "match_name": "André Tavares",
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779870094827_Lostboy.webp",
+      "match_name": "Lostboy",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-cd7def0c",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "PT",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/5d709a731c997482.webp"
     },
     {
       "id": "player-1ab50307",
@@ -453,60 +248,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RO",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RO",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1b9e60c1",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BeFive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BeFive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-273eca26",
       "condition": 100,
-      "full_name": "Bakisa",
+      "full_name": "Branko Simeonovski",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -518,7 +275,7 @@
         "champion_pool": 61,
         "mental_resilience": 64
       },
-      "match_name": "Branko Simeonovski",
+      "match_name": "Bakisa",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -528,21 +285,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-05-03",
-      "nationality": "RS",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RS",
+      "date_of_birth": "2004-05-03",
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1c7cd5e7",
@@ -575,21 +322,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RU",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RU",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1d93099a",
@@ -622,60 +359,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "US",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "US",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1e7ca668",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Aurora",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WeSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-273eca26",
       "condition": 100,
-      "full_name": "Lumity",
+      "full_name": "Filip Peřina",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -687,7 +386,7 @@
         "champion_pool": 61,
         "mental_resilience": 64
       },
-      "match_name": "Filip Peřina",
+      "match_name": "Lumity",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -697,21 +396,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-10-10",
-      "nationality": "CZ",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "CZ",
+      "date_of_birth": "2002-10-10",
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1f4b581d",
@@ -744,21 +433,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-1fa751e4",
@@ -779,32 +458,16 @@
         "mental_resilience": 58
       },
       "match_name": "CrabLord",
-      "date_of_birth": null,
-      "nationality": "RU",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-8baac22a",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "RU",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-20d7dc63",
@@ -815,7 +478,7 @@
       "fitness": 100,
       "team_id": "team-8baac22a",
       "condition": 100,
-      "full_name": "BBK Sankaizer",
+      "full_name": "Sankaizer",
       "attributes": {
         "laning": 55,
         "mechanics": 63,
@@ -827,7 +490,7 @@
         "champion_pool": 60,
         "mental_resilience": 60
       },
-      "match_name": "Sankaizer",
+      "match_name": "BBK Sankaizer",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -837,141 +500,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RU",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RU",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-3d98d8d2",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "AURORA Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Galatasaray Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "RY Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Galatasaray Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Galatasaray Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SUP Blaze Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Chasing Haze 07",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Galakticos",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Galakticos",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Axolotl",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Forbidden Five",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-81f175c5",
       "condition": 100,
-      "full_name": "Camana",
+      "full_name": "Burak Erdem Uçar",
       "attributes": {
         "laning": 61,
         "mechanics": 64,
@@ -983,7 +527,7 @@
         "champion_pool": 60,
         "mental_resilience": 62
       },
-      "match_name": "Burak Erdem Uçar",
+      "match_name": "Camana",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -993,249 +537,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-10-02",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779870079907_Camana.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": "2002-10-02",
+      "stats": {},
+      "profile_image_url": "/player-photos/4ed288ade8eff4fc.webp"
     },
     {
       "id": "player-4b249844",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2017,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "AeQ E-Sports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Penguins",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PENTA Sports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Enclave",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Morning Stars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Östersunds FK",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PENTA Sports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "mCon LG UltraGear",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vanir",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ERN ROAR",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Morning Stars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vanir",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crvena zvezda",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NORD Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team 7AM",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Anorthosis Famagusta",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NORD Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SPIKE Syndicate",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Verdant",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "One More Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Verdant",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Bulldog Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crusaders",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-cd7def0c",
       "condition": 100,
-      "full_name": "Noodle",
+      "full_name": "Kim Kroon",
       "attributes": {
         "laning": 60,
         "mechanics": 61,
@@ -1247,7 +564,7 @@
         "champion_pool": 59,
         "mental_resilience": 58
       },
-      "match_name": "Kim Kroon",
+      "match_name": "Noodle",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1257,95 +574,29 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "1998-08-13",
-      "nationality": "SE",
-      "profile_image_url": "/player-photos/1779870083235_Noodle__Kim_Kroon_.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "SE",
+      "date_of_birth": "1998-08-13",
+      "stats": {},
+      "profile_image_url": "/player-photos/732bd891fd29d22d.webp"
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Senshi Esports Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "loan_listed": false,
       "transfer_listed": false,
       "id": "player-4b5f7a96",
-      "match_name": "Diogo Pacheco",
-      "full_name": "DIGA",
-      "date_of_birth": "2001-08-06",
-      "nationality": "",
-      "profile_image_url": null,
+      "match_name": "DIGA",
+      "full_name": "Diogo Pacheco",
       "position": "Mid",
-      "natural_position": "Mid",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-6b8fef2d",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "",
+      "date_of_birth": "2001-08-06",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-5791e779",
@@ -1378,149 +629,37 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "US",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "US",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "loan_listed": false,
       "transfer_listed": false,
       "id": "player-6073045c",
-      "match_name": "Erwin Daubenfeldt",
-      "full_name": "LONVEY",
-      "date_of_birth": "2005-08-05",
-      "nationality": "",
-      "profile_image_url": null,
+      "match_name": "LONVEY",
+      "full_name": "Erwin Daubenfeldt",
       "position": "Mid",
-      "natural_position": "Mid",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-273eca26",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "",
+      "date_of_birth": "2005-08-05",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-6749a972",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Phoenix Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Paradox",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ukrainian Glory Team",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Once Upon A Team",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Paradox",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Kkero",
+      "full_name": "Kaan Soyuner",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -1532,33 +671,17 @@
         "champion_pool": 59,
         "mental_resilience": 62
       },
-      "match_name": "Kaan Soyuner",
-      "date_of_birth": "2004-09-30",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779870086070_Kkero.webp",
+      "match_name": "Kkero",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-81f175c5",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "TR",
+      "date_of_birth": "2004-09-30",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/45620cc9160e196d.webp"
     },
     {
       "id": "player-6900078a",
@@ -1591,168 +714,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "TR",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-6955c32b",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hexagone Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SAMCLAN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "x6tence Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Bulldog Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EGN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ERN ROAR",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NYYRIKKI",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EGN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GRP Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "eSuba",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GRP Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Bulldog Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DMG Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DMG Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-81f175c5",
       "condition": 100,
-      "full_name": "Lulas",
+      "full_name": "Luís&#160;Miguel da Silva Azevedo",
       "attributes": {
         "laning": 60,
         "mechanics": 61,
@@ -1764,7 +741,7 @@
         "champion_pool": 61,
         "mental_resilience": 60
       },
-      "match_name": "Luís&#160;Miguel da Silva Azevedo",
+      "match_name": "Lulas",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1774,114 +751,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779870076156_Lulas.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/1d385d0b509325ed.webp"
     },
     {
       "id": "player-6d0f2553",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Boavista FC",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EFIVE Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Boavista FC",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BWE Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BWE Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SAMCLAN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Odivelas Sports Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SAMCLAN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-6b8fef2d",
       "condition": 100,
-      "full_name": "Semide",
+      "full_name": "Tiago Semide",
       "attributes": {
         "laning": 60,
         "mechanics": 63,
@@ -1893,7 +778,7 @@
         "champion_pool": 61,
         "mental_resilience": 62
       },
-      "match_name": "Tiago Semide",
+      "match_name": "Semide",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1903,232 +788,47 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2001-02-07",
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779870087332_Semide.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": "2001-02-07",
+      "stats": {},
+      "profile_image_url": "/player-photos/37ad06e668f039e0.webp"
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Black Panthers eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BWE Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BWE Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SAMCLAN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Senshi Esports Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Grow uP eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Grow uP eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "loan_listed": false,
       "transfer_listed": false,
       "id": "player-6f192835",
-      "match_name": "João Martins",
-      "full_name": "Oceann",
-      "date_of_birth": "2002-03-09",
-      "nationality": "",
-      "profile_image_url": null,
+      "match_name": "Oceann",
+      "full_name": "João Martins",
       "position": "ADC",
-      "natural_position": "ADC",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-81f175c5",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "",
+      "date_of_birth": "2002-03-09",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Grow uP eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "loan_listed": false,
       "transfer_listed": false,
       "id": "player-7605d8aa",
-      "match_name": "Leonardo Guerreiro",
-      "full_name": "Ffernandes",
-      "date_of_birth": "2004-02-12",
-      "nationality": "",
-      "profile_image_url": null,
+      "match_name": "Ffernandes",
+      "full_name": "Leonardo Guerreiro",
       "position": "Top",
-      "natural_position": "Top",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-273eca26",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "",
+      "date_of_birth": "2004-02-12",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-804c96b8",
@@ -2161,21 +861,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RO",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RO",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-93f5785f",
@@ -2208,21 +898,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "TR",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-a5a39ae4",
@@ -2255,21 +935,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "LV",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "LV",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-ab5e9b00",
@@ -2290,32 +960,16 @@
         "mental_resilience": 58
       },
       "match_name": "Varin",
-      "date_of_birth": null,
-      "nationality": "TR",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-527a1974",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "TR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-aec44ba6",
@@ -2336,89 +990,27 @@
         "mental_resilience": 63
       },
       "match_name": "RDT raisu",
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-a0a25c12",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "PT",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-af19f0b8",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Odivelas Sports Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SAMCLAN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Senshi Esports Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Grow uP eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-6b8fef2d",
       "condition": 100,
-      "full_name": "Skypper",
+      "full_name": "Diogo Reis",
       "attributes": {
         "laning": 60,
         "mechanics": 62,
@@ -2430,7 +1022,7 @@
         "champion_pool": 60,
         "mental_resilience": 62
       },
-      "match_name": "Diogo Reis",
+      "match_name": "Skypper",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -2440,78 +1032,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-afd789e2",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SAMCLAN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Keypulse Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-6b8fef2d",
       "condition": 100,
-      "full_name": "RealR",
+      "full_name": "Rafael Vilas Boas",
       "attributes": {
         "laning": 62,
         "mechanics": 60,
@@ -2523,7 +1059,7 @@
         "champion_pool": 61,
         "mental_resilience": 62
       },
-      "match_name": "Rafael Vilas Boas",
+      "match_name": "RealR",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -2533,113 +1069,27 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hurricane of Feathers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Leões Porto Salvo",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Otter Side",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vantex Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "id": "player-c38f09d6",
-      "match_name": "Alexandre Brito Freitas",
-      "full_name": "TheGreatGary",
-      "date_of_birth": "2007-11-11",
-      "nationality": "",
-      "profile_image_url": "/player-photos/1779870074620_TheGreatGary.webp",
+      "match_name": "TheGreatGary",
+      "full_name": "Alexandre Brito Freitas",
       "position": "Top",
-      "natural_position": "Top",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-81f175c5",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "",
+      "date_of_birth": "2007-11-11",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/df119c89068d3db6.webp"
     },
     {
       "id": "player-c4b75309",
@@ -2672,66 +1122,19 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RU",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RU",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-cb1a794d",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BeFive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team GMask",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BeFive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Coli",
+      "full_name": "David Starovlas",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -2743,189 +1146,30 @@
         "champion_pool": 61,
         "mental_resilience": 64
       },
-      "match_name": "David Starovlas",
+      "match_name": "Coli",
       "loan_listed": false,
       "transfer_listed": false,
-      "date_of_birth": "2003-08-14",
-      "nationality": "RS",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-273eca26",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "RS",
+      "date_of_birth": "2003-08-14",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-cefcf9f2",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Granit Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Absolved",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Granit Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vanir",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Cryptova",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vanir",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Lionscreed",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team 7AM",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Valiance",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "3BL Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Lionscreed",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SPIKE Syndicate",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "3BL Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LEO",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "One More Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crusaders",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-cd7def0c",
       "condition": 100,
-      "full_name": "Sahira",
+      "full_name": "Enes Apelqvist",
       "attributes": {
         "laning": 61,
         "mechanics": 60,
@@ -2937,7 +1181,7 @@
         "champion_pool": 59,
         "mental_resilience": 61
       },
-      "match_name": "Enes Apelqvist",
+      "match_name": "Sahira",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -2947,21 +1191,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "SE",
-      "profile_image_url": "/player-photos/1779870087469_Sahira.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "SE",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/6daa95d74abadc88.webp"
     },
     {
       "id": "player-d1bc624f",
@@ -2982,62 +1216,27 @@
         "mental_resilience": 60
       },
       "match_name": "Ze Luis",
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-258078d0",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "PT",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-e2d6caa5",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-273eca26",
       "condition": 100,
-      "full_name": "JoKozz",
+      "full_name": "Joël Sequeira",
       "attributes": {
         "laning": 64,
         "mechanics": 64,
@@ -3049,7 +1248,7 @@
         "champion_pool": 61,
         "mental_resilience": 64
       },
-      "match_name": "Joël Sequeira",
+      "match_name": "JoKozz",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3059,21 +1258,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-01-04",
-      "nationality": "CH",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "CH",
+      "date_of_birth": "2003-01-04",
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-eb1d6305",
@@ -3106,114 +1295,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RU",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RU",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-eb3e4855",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "E-nsane Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "MFSK Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "IMProve Team",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Packmiko E-Sports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "A One Man Army",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Bulldog Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "IMProve Team",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crusaders",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "MVE ANO Master Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-cd7def0c",
       "condition": 100,
-      "full_name": "Kaplica",
+      "full_name": "Filip Lefik",
       "attributes": {
         "laning": 61,
         "mechanics": 64,
@@ -3225,7 +1322,7 @@
         "champion_pool": 61,
         "mental_resilience": 60
       },
-      "match_name": "Filip Lefik",
+      "match_name": "Kaplica",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3235,98 +1332,40 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-08-23",
-      "nationality": "PL",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": "2005-08-23",
+      "stats": {},
+      "profile_image_url": null
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "loan_listed": false,
       "transfer_listed": false,
       "id": "player-eee8c630",
-      "match_name": "Rafael Amaral",
-      "full_name": "Chambel",
-      "date_of_birth": null,
-      "nationality": "",
-      "profile_image_url": null,
+      "match_name": "Chambel",
+      "full_name": "Rafael Amaral",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
-      "attributes": {
-        "laning": 75,
-        "mechanics": 75,
-        "discipline": 75,
-        "macro_play": 75,
-        "consistency": 75,
-        "shotcalling": 75,
-        "teamfighting": 75,
-        "champion_pool": 75,
-        "mental_resilience": 75
-      },
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-6b8fef2d",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-f3c601c4",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crusaders",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-cd7def0c",
       "condition": 100,
-      "full_name": "Glimpse",
+      "full_name": "José Gonçalves",
       "attributes": {
         "laning": 62,
         "mechanics": 62,
@@ -3338,7 +1377,7 @@
         "champion_pool": 60,
         "mental_resilience": 59
       },
-      "match_name": "José Gonçalves",
+      "match_name": "Glimpse",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3348,21 +1387,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-fe44cee1",
@@ -3395,21 +1424,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PT",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     }
   ]
 }

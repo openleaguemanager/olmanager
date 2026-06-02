@@ -11,6 +11,27 @@
       "profile_image_url": "/staff-photos/c21cddd53424802a.webp"
     },
     {
+      "id": "staff-66afe1f7",
+      "role": "HeadCoach",
+      "wage": 30000,
+      "team_id": "team-d78a4aff",
+      "last_name": "Ramanana",
+      "attributes": {
+        "coaching": 66,
+        "physiotherapy": 57,
+        "judging_ability": 63,
+        "judging_potential": 65
+      },
+      "first_name": "Rehareha Ramanana",
+      "nationality": "France",
+      "contract_end": "2026-12-20",
+      "birth_country": null,
+      "date_of_birth": "1990-01-01",
+      "specialization": null,
+      "profile_image_url": "/staff-photos/7c3b6ebc.webp",
+      "nickname": "Reha"
+    },
+    {
       "id": "staff-c3e1b8e5",
       "role": "Assistant",
       "wage": 30000,
@@ -38,27 +59,6 @@
       "role": "Analyst",
       "team_id": "team-d78a4aff",
       "profile_image_url": "/staff-photos/3a3f5a927ab4409e.jpg"
-    },
-    {
-      "id": "staff-66afe1f7",
-      "role": "HeadCoach",
-      "wage": 30000,
-      "team_id": "team-d78a4aff",
-      "last_name": "Ramanana",
-      "attributes": {
-        "coaching": 66,
-        "physiotherapy": 57,
-        "judging_ability": 63,
-        "judging_potential": 65
-      },
-      "first_name": "Rehareha Ramanana",
-      "nationality": "France",
-      "contract_end": "2026-12-20",
-      "birth_country": null,
-      "date_of_birth": "1990-01-01",
-      "specialization": null,
-      "profile_image_url": "/staff-photos/7c3b6ebc.webp",
-      "nickname": "Reha"
     }
   ]
 }

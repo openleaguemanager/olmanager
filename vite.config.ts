@@ -39,49 +39,68 @@ function manualChunks(id: string): string | undefined {
 }
 
 // https://vite.dev/config/
-export default defineConfig(async () => ({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  test: {
-    environment: "jsdom",
-    globals: true,
-    include: ["src/**/*.test.{ts,tsx}"],
-    setupFiles: ["src/test-setup.ts"],
-    coverage: {
-      exclude: ["src/i18n/locales/**", "src/**/*.test.{ts,tsx}", "src/test-setup.ts"],
-    },
-  },
+export default defineConfig(async ({ mode }) => {
+  const isWeb = mode === "web";
 
-  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-  //
-  // 1. prevent Vite from obscuring rust errors
-  clearScreen: false,
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks,
+  return {
+    plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+        ...(isWeb
+          ? {
+              "@tauri-apps/api/core": path.resolve(__dirname, "./src/web/tauriCoreShim.ts"),
+              "@tauri-apps/api/window": path.resolve(__dirname, "./src/web/tauriWindowShim.ts"),
+              "@tauri-apps/plugin-updater": path.resolve(__dirname, "./src/web/tauriUpdaterShim.ts"),
+            }
+          : {}),
       },
     },
-  },
-  // 2. tauri expects a fixed port, fail if that port is not available
-  server: {
-    port: 1420,
-    strictPort: true,
-    host: host || false,
-    hmr: host
-      ? {
-          protocol: "ws",
-          host,
-          port: 1421,
-        }
-      : undefined,
-    watch: {
-      // 3. tell Vite to ignore watching `src-tauri`
-      ignored: ["**/src-tauri/**"],
+    test: {
+      environment: "jsdom",
+      globals: true,
+      include: ["src/**/*.test.{ts,tsx}"],
+      setupFiles: ["src/test-setup.ts"],
+      coverage: {
+        exclude: ["src/i18n/locales/**", "src/**/*.test.{ts,tsx}", "src/test-setup.ts"],
+      },
     },
-  },
-}));
+
+    // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
+    //
+    // 1. prevent Vite from obscuring rust errors
+    clearScreen: false,
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks,
+        },
+      },
+    },
+    // 2. tauri expects a fixed port, fail if that port is not available
+    server: {
+      port: isWeb ? 5173 : 1420,
+      strictPort: !isWeb,
+      host: host || false,
+      hmr: host
+        ? {
+            protocol: "ws",
+            host,
+            port: 1421,
+          }
+        : undefined,
+      watch: {
+        // 3. tell Vite to ignore watching `src-tauri`
+        ignored: ["**/src-tauri/**"],
+      },
+      proxy: isWeb
+        ? {
+            "/api": {
+              target: "http://localhost:3001",
+              changeOrigin: true,
+            },
+          }
+        : undefined,
+    },
+  };
+});

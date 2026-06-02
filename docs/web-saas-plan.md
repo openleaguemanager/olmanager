@@ -1,7 +1,42 @@
 # OLManager → Web SaaS — Plan de arquitectura
 
-> Estado: **propuesta** (no implementado). Documento de decisión para revisar
-> antes de invertir tiempo. Última actualización: 2026-05-29.
+> Estado: **en implementación**. El servidor axum, Supabase Auth/JWKS y
+> persistencia de saves en Postgres ya tienen un primer flujo E2E. Última
+> actualización: 2026-05-29.
+
+## Avance 2026-05-29 — reutilización de la UI Tauri en web
+
+- Añadido endpoint genérico `POST /api/saves/{id}/cmd/{command}` en el server.
+  Carga el save del usuario, ejecuta el comando sobre el `Game`, persiste si el
+  comando muta estado y devuelve la misma shape que espera `invoke`.
+- Primer set de comandos del bucle principal:
+  `get_active_game`, `advance_time`, `advance_time_with_mode`, `select_team`,
+  `set_active_lineup`, `set_starting_xi`, `set_lol_tactics`,
+  `set_draft_strategy`, `set_training`, `save_game`.
+- Añadidos también `get_league_selection_data` y `get_team_selection_data`
+  porque bloquean el flujo MainMenu → TeamSelection en la UI existente.
+- Añadido build web de la app `src/` con `npm run build:web` y aliases Vite
+  solo en `--mode web` para sustituir `@tauri-apps/api/core`,
+  `@tauri-apps/api/window` y `@tauri-apps/plugin-updater`.
+- Añadido `src/web/tauriCoreShim.ts`: mapea comandos globales (`get_saves`,
+  `start_new_game_lightweight`, `load_game`, `delete_save`, settings,
+  `exit_to_menu`) a HTTP/localStorage, y el resto al dispatch genérico usando
+  el save activo.
+- Añadido gate de login Supabase en `src/main.tsx` solo para `--mode web`.
+- Verificación: `cargo build -p olmanager-server` OK, `npm run build:web` OK,
+  y smoke E2E con token real OK:
+  crear save temporal → `cmd/get_league_selection_data` → `cmd/select_team` →
+  `cmd/advance_time_with_mode` → borrar save temporal.
+
+Notas pendientes inmediatas:
+
+- `npx tsc --noEmit` aún falla por errores legacy preexistentes de la rama
+  (campos `injury` eliminados, tabs legacy incompletas, duplicados en
+  `countries.ts`, etc.). No son del shim web.
+- `advance_time_with_mode` en server MVP avanza por `process_day`; todavía no
+  replica las ramas live/spectator/delegate completas de la app Tauri.
+- Algunas competiciones emiten warnings de parseo de datos con `null` en campos
+  estrictos; el smoke usó una competición que sí carga correctamente.
 
 ---
 

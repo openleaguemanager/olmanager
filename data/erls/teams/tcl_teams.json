@@ -3,6 +3,7 @@
   "description": "TCL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "tcl-dark-passage",
       "city": "Istanbul",
       "country": "TR",
@@ -34,30 +35,15 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     },
     {
+      "history": [],
       "id": "tcl-boostgate-esports",
       "city": "Istanbul",
       "country": "TR",
       "finance": 150000,
-      "logo_url": "/teams-icons/1779823097965_BoostGate_Esports.webp",
+      "logo_url": "/teams-icons/boostgate-esports.webp",
       "data.city": "Istanbul",
       "team_kind": "Main",
       "facilities": {
@@ -86,25 +72,10 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     },
     {
+      "history": [],
       "id": "tcl-ozarox-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -135,25 +106,10 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     },
     {
+      "history": [],
       "id": "tcl-pcific-esports",
       "city": "Istanbul",
       "colors": {
@@ -183,25 +139,10 @@
       "name": "PCIFIC Esports",
       "short_name": "PCF",
       "stadium_name": "",
-      "stadium_capacity": 0,
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      "stadium_capacity": 0
     },
     {
+      "history": [],
       "id": "tcl-su-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -232,25 +173,10 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     },
     {
+      "history": [],
       "id": "tcl-bushido-wildcats",
       "city": "Istanbul",
       "country": "TR",
@@ -280,27 +206,10 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "scrim_weekly_slots": 0,
-      "scrim_reputation": 0,
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     },
     {
+      "history": [],
       "id": "tcl-misa-esports",
       "city": "Istanbul",
       "country": "TR",
@@ -332,25 +241,10 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     },
     {
+      "history": [],
       "id": "tcl-team-phoenix",
       "city": "Istanbul",
       "country": "TR",
@@ -381,23 +275,7 @@
       "colors": {
         "primary": "#000000",
         "secondary": "#ffffff"
-      },
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      }
     }
   ]
 }

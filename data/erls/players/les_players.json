@@ -8,7 +8,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Myrtus",
+      "full_name": "Mohamed Rahli",
       "attributes": {
         "laning": 70,
         "mechanics": 72,
@@ -20,33 +20,19 @@
         "champion_pool": 69,
         "mental_resilience": 72
       },
-      "match_name": "Mohamed Rahli",
+      "match_name": "Myrtus",
       "loan_listed": false,
       "contract_end": "2006-10-01",
       "transfer_listed": false,
-      "date_of_birth": null,
-      "nationality": "FR",
-      "profile_image_url": "/player-photos/1779639623510_crxqwrw8gcu.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-8baee3fd",
-      "traits": [],
+      "nationality": "FR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/d454e47718c3a465.webp"
     },
     {
       "id": "player-01097f36",
@@ -54,7 +40,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "iLevi",
+      "full_name": "Besmir Jakupi",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -66,33 +52,19 @@
         "champion_pool": 71,
         "mental_resilience": 74
       },
-      "match_name": "Besmir Jakupi",
+      "match_name": "iLevi",
       "loan_listed": false,
       "transfer_listed": false,
-      "date_of_birth": null,
-      "nationality": "AL",
-      "profile_image_url": "/player-photos/1779641893762_gydx7iwctj5.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-129835c5",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "AL",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/a57473bc30b3fef6.webp"
     },
     {
       "id": "player-0356e082",
@@ -100,7 +72,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Batuuu",
+      "full_name": "Batu Kaygusuz",
       "attributes": {
         "laning": 73,
         "mechanics": 74,
@@ -112,33 +84,19 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Batu Kaygusuz",
+      "match_name": "Batuuu",
       "loan_listed": false,
       "transfer_listed": false,
-      "date_of_birth": "2006-10-01",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779639699733_wytaylfgb1.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-f10b156f",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "TR",
+      "date_of_birth": "2006-10-01",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/dd76de473232277a.webp"
     },
     {
       "id": "player-05bf3172",
@@ -149,7 +107,7 @@
       "fitness": 100,
       "team_id": "team-5d7b3ec4",
       "condition": 100,
-      "full_name": "Marcv1",
+      "full_name": "Marc Villalba de la Arada",
       "attributes": {
         "laning": 66,
         "mechanics": 66,
@@ -161,7 +119,7 @@
         "champion_pool": 67,
         "mental_resilience": 70
       },
-      "match_name": "Marc Villalba de la Arada",
+      "match_name": "Marcv1",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -171,21 +129,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779630485943_7grx3g0b39b.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2002-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/d3a3c6122b3c6786.webp"
     },
     {
       "id": "player-067b9a1f",
@@ -196,7 +144,7 @@
       "fitness": 100,
       "team_id": "team-d0d82673",
       "condition": 100,
-      "full_name": "Jorge Saiz Hoyos",
+      "full_name": "Kaii",
       "attributes": {
         "laning": 70,
         "mechanics": 70,
@@ -208,7 +156,7 @@
         "champion_pool": 71,
         "mental_resilience": 70
       },
-      "match_name": "Kaii",
+      "match_name": "Jorge Saiz Hoyos",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -218,21 +166,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779637411003_xvjq3tkbva.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2005-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/08832f94df713de5.webp"
     },
     {
       "id": "player-0db426ec",
@@ -240,7 +178,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "TIMR",
+      "full_name": "Tomáš Buštík",
       "attributes": {
         "laning": 70,
         "mechanics": 70,
@@ -252,33 +190,19 @@
         "champion_pool": 71,
         "mental_resilience": 71
       },
-      "match_name": "Tomáš Buštík",
+      "match_name": "TIMR",
       "loan_listed": false,
       "contract_end": "2004-01-01",
       "transfer_listed": false,
-      "date_of_birth": null,
-      "nationality": "CZ",
-      "profile_image_url": "/player-photos/1779637422266_dhudnnjlb0k.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-d0d82673",
-      "traits": [],
+      "nationality": "CZ",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/ce7020dd7d08e7d1.webp"
     },
     {
       "id": "player-0ffbaa57",
@@ -289,7 +213,7 @@
       "fitness": 100,
       "team_id": "team-5d7b3ec4",
       "condition": 100,
-      "full_name": "Clicker",
+      "full_name": "Alejandro Botella Santos",
       "attributes": {
         "laning": 64,
         "mechanics": 66,
@@ -301,7 +225,7 @@
         "champion_pool": 67,
         "mental_resilience": 69
       },
-      "match_name": "Alejandro Botella Santos",
+      "match_name": "Clicker",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -311,21 +235,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2001-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779630638831_110esi3y823.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2001-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/09b703c013c9a084.webp"
     },
     {
       "id": "player-13ab177c",
@@ -336,7 +250,7 @@
       "fitness": 100,
       "team_id": "team-ac846213",
       "condition": 100,
-      "full_name": "Ivama",
+      "full_name": "Iván Torn Cubero",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -348,7 +262,7 @@
         "champion_pool": 71,
         "mental_resilience": 73
       },
-      "match_name": "Iván Torn Cubero",
+      "match_name": "Ivama",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -358,21 +272,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779640944397_gvb9ifdr0hi.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2003-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/689c080b00d86fba.webp"
     },
     {
       "id": "player-1c6a23ab",
@@ -383,7 +287,7 @@
       "fitness": 100,
       "team_id": "team-d0d82673",
       "condition": 100,
-      "full_name": "Hydra",
+      "full_name": "Raúl Moreno Valero",
       "attributes": {
         "laning": 70,
         "mechanics": 70,
@@ -395,7 +299,7 @@
         "champion_pool": 69,
         "mental_resilience": 71
       },
-      "match_name": "Raúl Moreno Valero",
+      "match_name": "Hydra",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -405,21 +309,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779637413645_59iexfkcq4c.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2002-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/05700fe1d19b57ab.webp"
     },
     {
       "id": "player-8130e9c4",
@@ -432,7 +326,7 @@
       "team_id": "team-06974122",
       "position": "Mid",
       "condition": 100,
-      "full_name": "Macaquinho",
+      "full_name": "Sergio Bouzende Rodrigues",
       "attributes": {
         "laning": 67,
         "mechanics": 70,
@@ -444,7 +338,7 @@
         "champion_pool": 66,
         "mental_resilience": 68
       },
-      "match_name": "Sergio Bouzende Rodrigues",
+      "match_name": "Macaquinho",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "Portugal",
@@ -456,17 +350,12 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/1778852951546_fg90wy66ejc.webp",
+      "profile_image_url": "/player-photos/aa43a739.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "natural_position": "Mid",
-      "stats": {
-        "appearances": 0
-      },
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {}
     },
     {
       "id": "player-3f82c25b",
@@ -474,7 +363,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Attila",
+      "full_name": "Amadeu Dias de Carvalho",
       "attributes": {
         "laning": 70,
         "mechanics": 70,
@@ -486,33 +375,19 @@
         "champion_pool": 71,
         "mental_resilience": 68
       },
-      "match_name": "Amadeu Dias de Carvalho",
+      "match_name": "Attila",
       "loan_listed": false,
       "transfer_listed": false,
-      "date_of_birth": "1996-02-26",
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779634177034_f4dc6x82rn.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-854f6893",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "PT",
+      "date_of_birth": "1996-02-26",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/088b93e2cc14760f.webp"
     },
     {
       "id": "player-4a2757e8",
@@ -520,7 +395,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Deleted",
+      "full_name": "Unai San Juan Fajardo",
       "attributes": {
         "laning": 68,
         "mechanics": 66,
@@ -532,33 +407,19 @@
         "champion_pool": 71,
         "mental_resilience": 69
       },
-      "match_name": "Unai San Juan Fajardo",
+      "match_name": "Deleted",
       "loan_listed": false,
       "transfer_listed": false,
-      "date_of_birth": "2002-01-01",
-      "nationality": "ES",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-5d7b3ec4",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "ES",
+      "date_of_birth": "2002-01-01",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-4a5d7fe9",
@@ -569,7 +430,7 @@
       "fitness": 100,
       "team_id": "team-8baee3fd",
       "condition": 100,
-      "full_name": "Time",
+      "full_name": "Tiago Almeida",
       "attributes": {
         "laning": 70,
         "mechanics": 71,
@@ -581,7 +442,7 @@
         "champion_pool": 69,
         "mental_resilience": 72
       },
-      "match_name": "Tiago Almeida",
+      "match_name": "Time",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -591,21 +452,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-12-06",
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779639596533_i914uxefnfs.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": "2002-12-06",
+      "stats": {},
+      "profile_image_url": "/player-photos/390e8b80f1a17053.webp"
     },
     {
       "id": "player-4bc8debd",
@@ -616,7 +467,7 @@
       "fitness": 100,
       "team_id": "team-f10b156f",
       "condition": 100,
-      "full_name": "Daglas",
+      "full_name": "Kacper Karol Dagiel",
       "attributes": {
         "laning": 73,
         "mechanics": 74,
@@ -628,7 +479,7 @@
         "champion_pool": 70,
         "mental_resilience": 72
       },
-      "match_name": "Kacper Karol Dagiel",
+      "match_name": "Daglas",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -638,21 +489,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-10-23",
-      "nationality": "PL",
-      "profile_image_url": "/player-photos/1779639713266_nziuc4l88tc.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": "2005-10-23",
+      "stats": {},
+      "profile_image_url": "/player-photos/8a37fe952042959b.webp"
     },
     {
       "id": "player-5a324e7c",
@@ -663,7 +504,7 @@
       "fitness": 100,
       "team_id": "team-129835c5",
       "condition": 100,
-      "full_name": "ESCIK",
+      "full_name": "Tomasz Skwarczynski",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -675,7 +516,7 @@
         "champion_pool": 71,
         "mental_resilience": 74
       },
-      "match_name": "Tomasz Skwarczynski",
+      "match_name": "ESCIK",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -685,21 +526,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-04-11",
-      "nationality": "PL",
-      "profile_image_url": "/player-photos/1779641844321_jzk51v7fdph.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": "2002-04-11",
+      "stats": {},
+      "profile_image_url": "/player-photos/0f4451ac29baad61.webp"
     },
     {
       "id": "player-6285401f",
@@ -707,7 +538,7 @@
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Joel Rodríguez Pérez",
+      "full_name": "Kellie",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -719,33 +550,19 @@
         "champion_pool": 71,
         "mental_resilience": 73
       },
-      "match_name": "Kellie",
+      "match_name": "Joel Rodríguez Pérez",
       "loan_listed": false,
       "transfer_listed": false,
-      "date_of_birth": "2002-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779641691754_y0npujc10bd.webp",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-ac846213",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "ES",
+      "date_of_birth": "2002-01-01",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/b6675f5a15f95481.webp"
     },
     {
       "id": "player-62c86d6e",
@@ -756,7 +573,7 @@
       "fitness": 100,
       "team_id": "team-f10b156f",
       "condition": 100,
-      "full_name": "Mercy9",
+      "full_name": "Cengizhan Teker",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -768,7 +585,7 @@
         "champion_pool": 71,
         "mental_resilience": 73
       },
-      "match_name": "Cengizhan Teker",
+      "match_name": "Mercy9",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -778,21 +595,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-06-05",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779639794500_bw1vauzpdef.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": "2005-06-05",
+      "stats": {},
+      "profile_image_url": "/player-photos/a85f622ad8fdab23.webp"
     },
     {
       "id": "player-64040f64",
@@ -803,7 +610,7 @@
       "fitness": 100,
       "team_id": "team-f10b156f",
       "condition": 100,
-      "full_name": "Lure",
+      "full_name": "Shin Jae-yoon",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -815,7 +622,7 @@
         "champion_pool": 69,
         "mental_resilience": 72
       },
-      "match_name": "Shin Jae-yoon",
+      "match_name": "Lure",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -825,21 +632,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-05-16",
-      "nationality": "KR",
-      "profile_image_url": "/player-photos/1779639798840_qn0kioi4jor.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "KR",
+      "date_of_birth": "2003-05-16",
+      "stats": {},
+      "profile_image_url": "/player-photos/52c6161cdb1af328.webp"
     },
     {
       "id": "player-668b7148",
@@ -850,7 +647,7 @@
       "fitness": 100,
       "team_id": "team-129835c5",
       "condition": 100,
-      "full_name": "Kozi",
+      "full_name": "Jarosław Marchewka",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -862,7 +659,7 @@
         "champion_pool": 71,
         "mental_resilience": 74
       },
-      "match_name": "Jarosław Marchewka",
+      "match_name": "Kozi",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -872,21 +669,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-04-06",
-      "nationality": "PL",
-      "profile_image_url": "/player-photos/1779641861020_yt5ercu4d3.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": "2005-04-06",
+      "stats": {},
+      "profile_image_url": "/player-photos/d0df2fcaac2bc9c7.webp"
     },
     {
       "id": "player-7f89d2c9",
@@ -899,7 +686,7 @@
       "team_id": "team-06974122",
       "position": "ADC",
       "condition": 100,
-      "full_name": "Legolas",
+      "full_name": "Sergio Vicente Gisbert",
       "attributes": {
         "laning": 74,
         "mechanics": 73,
@@ -911,7 +698,7 @@
         "champion_pool": 71,
         "mental_resilience": 68
       },
-      "match_name": "Sergio Vicente Gisbert",
+      "match_name": "Legolas",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "Spain",
@@ -923,17 +710,12 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/1778852958296_aq07o93rkh5.webp",
+      "profile_image_url": "/player-photos/87167f6f.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "natural_position": "ADC",
-      "stats": {
-        "appearances": 0
-      },
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {}
     },
     {
       "id": "player-74525cde",
@@ -944,7 +726,7 @@
       "fitness": 100,
       "team_id": "team-854f6893",
       "condition": 100,
-      "full_name": "Th3Antonio",
+      "full_name": "Antonio Espinosa Bejarano",
       "attributes": {
         "laning": 70,
         "mechanics": 70,
@@ -956,7 +738,7 @@
         "champion_pool": 71,
         "mental_resilience": 70
       },
-      "match_name": "Antonio Espinosa Bejarano",
+      "match_name": "Th3Antonio",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -966,21 +748,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "1999-04-12",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779632846569_4hva78nunuh.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "1999-04-12",
+      "stats": {},
+      "profile_image_url": "/player-photos/3e79f6d6a8a10140.webp"
     },
     {
       "id": "player-04bfa395",
@@ -993,7 +765,7 @@
       "team_id": "team-06974122",
       "position": "Top",
       "condition": 100,
-      "full_name": "selenex",
+      "full_name": "Eric Lozano Gutiérrez",
       "attributes": {
         "laning": 66,
         "mechanics": 70,
@@ -1005,7 +777,7 @@
         "champion_pool": 67,
         "mental_resilience": 68
       },
-      "match_name": "Eric Lozano Gutiérrez",
+      "match_name": "selenex",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "Spain",
@@ -1017,17 +789,12 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/1778852938974_065r5roai17.webp",
+      "profile_image_url": "/player-photos/3d26f35c.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "natural_position": "Top",
-      "stats": {
-        "appearances": 0
-      },
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {}
     },
     {
       "id": "player-35e757a5",
@@ -1038,7 +805,7 @@
       "fitness": 100,
       "team_id": "team-ac846213",
       "condition": 100,
-      "full_name": "Pau Vintró Nogué",
+      "full_name": "Pauporter",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -1050,7 +817,7 @@
         "champion_pool": 70,
         "mental_resilience": 73
       },
-      "match_name": "Pauporter",
+      "match_name": "Pau Vintró Nogué",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1060,21 +827,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "September 22, 2004",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1778845985567_k07emroqby.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "September 22, 2004",
+      "stats": {},
+      "profile_image_url": "/player-photos/21f521d258260614.webp"
     },
     {
       "id": "player-7e57a5f1",
@@ -1085,7 +842,7 @@
       "fitness": 100,
       "team_id": "team-ac846213",
       "condition": 100,
-      "full_name": "adrianlaneitor",
+      "full_name": "Adrián Tejero Gomez",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -1097,7 +854,7 @@
         "champion_pool": 71,
         "mental_resilience": 73
       },
-      "match_name": "Adrián Tejero Gomez",
+      "match_name": "adrianlaneitor",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1107,21 +864,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779641644007_w41xbz45j7a.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2003-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/20be45fce119e131.webp"
     },
     {
       "id": "player-800ae09b",
@@ -1132,7 +879,7 @@
       "fitness": 100,
       "team_id": "team-8baee3fd",
       "condition": 100,
-      "full_name": "Fresskowy",
+      "full_name": "Bartłomiej Tomasz Przewoźnik",
       "attributes": {
         "laning": 73,
         "mechanics": 72,
@@ -1144,7 +891,7 @@
         "champion_pool": 69,
         "mental_resilience": 72
       },
-      "match_name": "Bartłomiej Tomasz Przewoźnik",
+      "match_name": "Fresskowy",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1154,21 +901,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "1999-11-26",
-      "nationality": "PL",
-      "profile_image_url": "/player-photos/1779639562913_k77r6jwiahe.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": "1999-11-26",
+      "stats": {},
+      "profile_image_url": "/player-photos/854f5b54c08a84c5.webp"
     },
     {
       "id": "player-84b65132",
@@ -1179,7 +916,7 @@
       "fitness": 100,
       "team_id": "team-5d7b3ec4",
       "condition": 100,
-      "full_name": "Ethe",
+      "full_name": "Raúl Campos Vico",
       "attributes": {
         "laning": 72,
         "mechanics": 66,
@@ -1191,7 +928,7 @@
         "champion_pool": 70,
         "mental_resilience": 70
       },
-      "match_name": "Raúl Campos Vico",
+      "match_name": "Ethe",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1201,21 +938,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779630645700_2u9ojjbllbi.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2002-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/6ea4c8fa353c905c.webp"
     },
     {
       "id": "player-87e53592",
@@ -1226,7 +953,7 @@
       "fitness": 100,
       "team_id": "team-8baee3fd",
       "condition": 100,
-      "full_name": "13",
+      "full_name": "Zayan Taeau",
       "attributes": {
         "laning": 71,
         "mechanics": 71,
@@ -1238,7 +965,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Zayan Taeau",
+      "match_name": "13",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1248,21 +975,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-06-20",
-      "nationality": "FR",
-      "profile_image_url": "/player-photos/1779639585610_jb97z4qifdh.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "FR",
+      "date_of_birth": "2003-06-20",
+      "stats": {},
+      "profile_image_url": "/player-photos/8b1c3821de55072d.webp"
     },
     {
       "id": "player-99cc0f13",
@@ -1273,7 +990,7 @@
       "fitness": 100,
       "team_id": "team-ac846213",
       "condition": 100,
-      "full_name": "Pasameelcelo",
+      "full_name": "Jordi Franco Carreras",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -1285,7 +1002,7 @@
         "champion_pool": 70,
         "mental_resilience": 73
       },
-      "match_name": "Jordi Franco Carreras",
+      "match_name": "Pasameelcelo",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1295,21 +1012,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2000-01-01",
-      "nationality": "AD",
-      "profile_image_url": "/player-photos/1779641675797_mxeucz1bn4.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "AD",
+      "date_of_birth": "2000-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/ffebe21f116c2c3d.webp"
     },
     {
       "id": "player-130f6999",
@@ -1320,7 +1027,7 @@
       "fitness": 100,
       "team_id": "team-d0d82673",
       "condition": 100,
-      "full_name": "Dani",
+      "full_name": "Daniel Gómez Martínez",
       "attributes": {
         "laning": 68,
         "mechanics": 70,
@@ -1332,7 +1039,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Daniel Gómez Martínez",
+      "match_name": "Dani",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1342,21 +1049,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779637419242_xfg5j4hz4y8.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2006-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/e0e1ea718c57aa00.webp"
     },
     {
       "id": "player-a1e8bb06",
@@ -1367,7 +1064,7 @@
       "fitness": 100,
       "team_id": "team-5d7b3ec4",
       "condition": 100,
-      "full_name": "Midnight",
+      "full_name": "Víctor Caro Rodríguez",
       "attributes": {
         "laning": 66,
         "mechanics": 68,
@@ -1379,7 +1076,7 @@
         "champion_pool": 69,
         "mental_resilience": 70
       },
-      "match_name": "Víctor Caro Rodríguez",
+      "match_name": "Midnight",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1389,21 +1086,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2000-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779630419206_yjwtma7n0a.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2000-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/00d66714a9e9b76a.webp"
     },
     {
       "id": "player-a3298211",
@@ -1414,7 +1101,7 @@
       "fitness": 100,
       "team_id": "team-f10b156f",
       "condition": 100,
-      "full_name": "Antero Trindade Baldaia",
+      "full_name": "Papiteero",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -1426,7 +1113,7 @@
         "champion_pool": 71,
         "mental_resilience": 72
       },
-      "match_name": "Papiteero",
+      "match_name": "Antero Trindade Baldaia",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1436,42 +1123,22 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2000-01-01",
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779639702646_0ajym2qn56sh.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": "2000-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/4a6ec278d499d7e9.webp"
     },
     {
       "id": "player-ae7ddfdc",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "team-f10b156f",
-          "team_name": "Team Heretics Academy",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-f10b156f",
       "condition": 100,
-      "full_name": "Lukas Thoma",
+      "full_name": "Lurox",
       "attributes": {
         "laning": 73,
         "mechanics": 71,
@@ -1483,7 +1150,7 @@
         "champion_pool": 69,
         "mental_resilience": 72
       },
-      "match_name": "Lurox",
+      "match_name": "Lukas Thoma",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "2000-01-01",
@@ -1493,21 +1160,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "DE",
-      "profile_image_url": "/player-photos/1779639770528_unc82ogqag.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "DE",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/e85ec6b735a049c7.webp"
     },
     {
       "id": "player-d421b0b0",
@@ -1518,7 +1175,7 @@
       "fitness": 100,
       "team_id": "team-854f6893",
       "condition": 100,
-      "full_name": "ManoloGap",
+      "full_name": "Manuel García Azcúnaga",
       "attributes": {
         "laning": 66,
         "mechanics": 71,
@@ -1530,7 +1187,7 @@
         "champion_pool": 71,
         "mental_resilience": 70
       },
-      "match_name": "Manuel García Azcúnaga",
+      "match_name": "ManoloGap",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1540,21 +1197,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-01-09",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779632776480_ga5o7gkx7dd.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2002-01-09",
+      "stats": {},
+      "profile_image_url": "/player-photos/c08978ed69b61d2b.webp"
     },
     {
       "id": "player-da0e2d68",
@@ -1565,7 +1212,7 @@
       "fitness": 100,
       "team_id": "team-129835c5",
       "condition": 100,
-      "full_name": "ANDARIEL",
+      "full_name": "Mert Kılıç",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -1577,7 +1224,7 @@
         "champion_pool": 71,
         "mental_resilience": 74
       },
-      "match_name": "Mert Kılıç",
+      "match_name": "ANDARIEL",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1587,21 +1234,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-11-14",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779641836283_cce5d61tjsd.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": "2003-11-14",
+      "stats": {},
+      "profile_image_url": "/player-photos/6f26700e0cbc20bb.webp"
     },
     {
       "id": "player-dd59bec5",
@@ -1612,7 +1249,7 @@
       "fitness": 100,
       "team_id": "team-d0d82673",
       "condition": 100,
-      "full_name": "Pegaso",
+      "full_name": "Edison Giovanny Rivera Menéndez",
       "attributes": {
         "laning": 68,
         "mechanics": 70,
@@ -1624,7 +1261,7 @@
         "champion_pool": 70,
         "mental_resilience": 71
       },
-      "match_name": "Edison Giovanny Rivera Menéndez",
+      "match_name": "Pegaso",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1634,21 +1271,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779637416461_judnb5qn28f.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2005-01-01",
+      "stats": {},
+      "profile_image_url": "/player-photos/af82e53170e15d55.webp"
     },
     {
       "id": "player-de7b9a68",
@@ -1659,7 +1286,7 @@
       "fitness": 100,
       "team_id": "team-854f6893",
       "condition": 100,
-      "full_name": "Flakked",
+      "full_name": "Víctor Lirola",
       "attributes": {
         "laning": 71,
         "mechanics": 70,
@@ -1671,7 +1298,7 @@
         "champion_pool": 71,
         "mental_resilience": 70
       },
-      "match_name": "Víctor Lirola",
+      "match_name": "Flakked",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1681,21 +1308,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2001-04-25",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779633470098_icbf439yyfq.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "2001-04-25",
+      "stats": {},
+      "profile_image_url": "/player-photos/e709c7a1bc3d0378.webp"
     },
     {
       "id": "player-dfd47326",
@@ -1706,7 +1323,7 @@
       "fitness": 100,
       "team_id": "team-854f6893",
       "condition": 100,
-      "full_name": "Miniduke",
+      "full_name": "Ismael Martínez Cortés",
       "attributes": {
         "laning": 66,
         "mechanics": 68,
@@ -1718,7 +1335,7 @@
         "champion_pool": 69,
         "mental_resilience": 71
       },
-      "match_name": "Ismael Martínez Cortés",
+      "match_name": "Miniduke",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1728,21 +1345,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "1997-11-03",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779633190939_g4szb8x3v4o.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": "1997-11-03",
+      "stats": {},
+      "profile_image_url": "/player-photos/6466b77323e4a4ca.webp"
     },
     {
       "id": "player-e0564ecf",
@@ -1753,7 +1360,7 @@
       "fitness": 100,
       "team_id": "team-8baee3fd",
       "condition": 100,
-      "full_name": "NightSlayer",
+      "full_name": "Ivan Oleksandrovich Bilous",
       "attributes": {
         "laning": 72,
         "mechanics": 73,
@@ -1765,7 +1372,7 @@
         "champion_pool": 69,
         "mental_resilience": 71
       },
-      "match_name": "Ivan Oleksandrovich Bilous",
+      "match_name": "NightSlayer",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1775,21 +1382,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2008-01-18",
-      "nationality": "UA",
-      "profile_image_url": "/player-photos/1779639610477_ttj80awnxf.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "UA",
+      "date_of_birth": "2008-01-18",
+      "stats": {},
+      "profile_image_url": "/player-photos/baf2477bb521aa61.webp"
     },
     {
       "id": "player-e301a123",
@@ -1800,7 +1397,7 @@
       "fitness": 100,
       "team_id": "team-129835c5",
       "condition": 100,
-      "full_name": "bluerzor",
+      "full_name": "Dániel Subicz",
       "attributes": {
         "laning": 74,
         "mechanics": 74,
@@ -1812,7 +1409,7 @@
         "champion_pool": 71,
         "mental_resilience": 74
       },
-      "match_name": "Dániel Subicz",
+      "match_name": "bluerzor",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1822,21 +1419,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "1999-05-04",
-      "nationality": "HU",
-      "profile_image_url": "/player-photos/1779641853622_3il4l825o79.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "HU",
+      "date_of_birth": "1999-05-04",
+      "stats": {},
+      "profile_image_url": "/player-photos/1394f9bb62d07109.webp"
     },
     {
       "id": "player-b7bba21b",
@@ -1849,7 +1436,7 @@
       "team_id": "team-06974122",
       "position": "Jungle",
       "condition": 100,
-      "full_name": "Koldo",
+      "full_name": "Luis Pérez García",
       "attributes": {
         "laning": 72,
         "mechanics": 72,
@@ -1861,7 +1448,7 @@
         "champion_pool": 69,
         "mental_resilience": 68
       },
-      "match_name": "Luis Pérez García",
+      "match_name": "Koldo",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "Spain",
@@ -1873,17 +1460,12 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/1778852945092_ueo69gr5qy.webp",
+      "profile_image_url": "/player-photos/f905a4a8.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "natural_position": "Jungle",
-      "stats": {
-        "appearances": 0
-      },
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {}
     },
     {
       "id": "player-2970f50f",
@@ -1896,7 +1478,7 @@
       "team_id": "team-06974122",
       "position": "Support",
       "condition": 100,
-      "full_name": "Oscure",
+      "full_name": "Victor Guzmán Fernández",
       "attributes": {
         "laning": 72,
         "mechanics": 73,
@@ -1908,7 +1490,7 @@
         "champion_pool": 70,
         "mental_resilience": 70
       },
-      "match_name": "Victor Guzmán Fernández",
+      "match_name": "Oscure",
       "loan_listed": false,
       "morale_core": {},
       "nationality": "Spain",
@@ -1920,17 +1502,12 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/1778852929874_17r7gdy44o5.webp",
+      "profile_image_url": "/player-photos/dbc51ade.webp",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
       "potential_research_started_on": null,
-      "natural_position": "Support",
-      "stats": {
-        "appearances": 0
-      },
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {}
     }
   ]
 }

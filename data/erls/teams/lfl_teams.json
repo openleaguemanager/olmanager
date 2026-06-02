@@ -3,6 +3,7 @@
   "description": "LFL - 2026 Season",
   "teams": [
     {
+      "history": [],
       "id": "team-af25d742",
       "city": "",
       "form": [],
@@ -14,7 +15,6 @@
       "academy": null,
       "country": "FR",
       "finance": 2865211,
-      "history": [],
       "logo_url": "/teams-icons/karmine-corp-blue.webp",
       "team_kind": "Main",
       "facilities": {
@@ -59,6 +59,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-c12fef91",
       "city": "",
       "form": [],
@@ -70,7 +71,6 @@
       "academy": null,
       "country": "FR",
       "finance": 2172174,
-      "history": [],
       "logo_url": "/teams-icons/ici-japon-corp-esport.webp",
       "team_kind": "Main",
       "facilities": {
@@ -115,6 +115,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-8f3d532a",
       "city": "",
       "form": [],
@@ -126,7 +127,6 @@
       "academy": null,
       "country": "FR",
       "finance": 3241233,
-      "history": [],
       "logo_url": "/teams-icons/vitality-academy.webp",
       "team_kind": "Main",
       "facilities": {
@@ -171,6 +171,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-0f9010b5",
       "city": "",
       "form": [],
@@ -182,7 +183,6 @@
       "academy": null,
       "country": "FR",
       "finance": 1685291,
-      "history": [],
       "logo_url": "/teams-icons/tln-pirates.webp",
       "team_kind": "Main",
       "facilities": {
@@ -227,6 +227,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-da97809e",
       "city": "",
       "form": [],
@@ -238,8 +239,7 @@
       "academy": null,
       "country": "FR",
       "finance": 1529117,
-      "history": [],
-      "logo_url": "/teams-icons/1778855456311_5vpbeeo6yvg.png",
+      "logo_url": "/teams-icons/galions.webp",
       "team_kind": "Main",
       "facilities": {
         "medical": 1,
@@ -283,6 +283,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-012b64d1",
       "city": "",
       "form": [],
@@ -294,8 +295,7 @@
       "academy": null,
       "country": "FR",
       "finance": 2063472,
-      "history": [],
-      "logo_url": "/teams-icons/1779566088053_vazx3ts10m.webp",
+      "logo_url": "/teams-icons/solary.webp",
       "team_kind": "Main",
       "facilities": {
         "medical": 1,
@@ -339,6 +339,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-ab04f649",
       "city": "",
       "form": [],
@@ -350,8 +351,7 @@
       "academy": null,
       "country": "FR",
       "finance": 1854941,
-      "history": [],
-      "logo_url": "/teams-icons/1779566068407_356qsp6o91g.webp",
+      "logo_url": "/teams-icons/joblife.webp",
       "team_kind": "Main",
       "facilities": {
         "medical": 1,
@@ -395,6 +395,7 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-f8f7f78d",
       "city": "",
       "form": [],
@@ -406,8 +407,7 @@
       "academy": null,
       "country": "FR",
       "finance": 1927602,
-      "history": [],
-      "logo_url": "/teams-icons/1779566074431_gub0cwybsfw.webp",
+      "logo_url": "/teams-icons/zyb-esport.webp",
       "team_kind": "Main",
       "facilities": {
         "medical": 1,
@@ -451,11 +451,12 @@
       "stadium_capacity": 1500
     },
     {
+      "history": [],
       "id": "team-ed48a04c",
       "name": "Esprit Shōnen",
       "short_name": "ESN",
       "country": "",
-      "logo_url": "/teams-icons/1779565729267_ddqd3zkt4sh.webp",
+      "logo_url": "/teams-icons/93c488cfb423b790.webp",
       "city": "",
       "stadium_name": "",
       "stadium_capacity": 0,
@@ -463,31 +464,10 @@
         "primary": "#000000",
         "secondary": "#ffffff"
       },
-      "facilities": {},
-      "finance": 0,
-      "reputation": 0,
-      "wage_budget": 0,
-      "transfer_budget": 0,
-      "season_income": 0,
-      "season_expenses": 0,
-      "form": [],
-      "history": [],
-      "scrim_results": [],
-      "training_groups": [],
-      "financial_ledger": [],
-      "sponsorship": null,
-      "training_focus": "Scrims",
-      "training_schedule": "Balanced",
-      "training_intensity": "Medium",
-      "scrim_weekly_slots": 0,
-      "scrim_reputation": 0,
-      "manager_id": null,
-      "academy": null,
-      "academy_team_id": null,
-      "parent_team_id": null,
-      "academy_lifecycle": null
+      "facilities": {}
     },
     {
+      "history": [],
       "id": "team-92b46fef",
       "city": "",
       "form": [],
@@ -499,8 +479,7 @@
       "academy": null,
       "country": "FR",
       "finance": 2324580,
-      "history": [],
-      "logo_url": "/teams-icons/1778855865564_sjtolq8ewb.webp",
+      "logo_url": "/teams-icons/skillcamp.webp",
       "team_kind": "Main",
       "facilities": {
         "medical": 1,
