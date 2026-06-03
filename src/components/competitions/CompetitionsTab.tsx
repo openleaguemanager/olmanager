@@ -3,12 +3,10 @@ import { useTranslation } from "react-i18next";
 import {
   Users,
   Globe,
-  Search,
-  Loader2,
   Building2,
   Calendar,
   TrendingUp,
-
+  Trophy,
   ListOrdered,
 } from "lucide-react";
 import type { GameStateData, LeagueData } from "../../store/gameStore";
@@ -46,7 +44,7 @@ export default function CompetitionsTab({ gameState, onSelectTeam }: Competition
   const [selectedCid, setSelectedCid] = useState<string | null>(null);
   const [detailView, setDetailView] = useState<DetailView>("calendar");
 
-  const leagues = gameState.leagues;
+  const leagues = Array.isArray(gameState.leagues) ? gameState.leagues : [];
   const selectedLeague = selectedCid
     ? leagues.find((l) => l.competition_id === selectedCid) ?? null
     : null;
@@ -67,18 +65,18 @@ export default function CompetitionsTab({ gameState, onSelectTeam }: Competition
 
   // Standings sorted
   const sortedStandings = selectedLeague
-    ? [...selectedLeague.standings].sort(compareStandingsByLolScore)
+    ? [...(selectedLeague.standings ?? [])].sort(compareStandingsByLolScore)
     : [];
 
   // Build competition label map for calendar
   const competitionLabelMap = new Map<string, string>();
   leagues.forEach((l) => {
-    l.fixtures.forEach((f) => competitionLabelMap.set(f.id, l.name));
+    (l.fixtures ?? []).forEach((f) => competitionLabelMap.set(f.id, l.name));
   });
 
   const calendarFixtures = selectedLeague
-    ? selectedLeague.fixtures
-    : leagues.flatMap((l) => l.fixtures);
+    ? selectedLeague.fixtures ?? []
+    : leagues.flatMap((l) => l.fixtures ?? []);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -96,10 +94,10 @@ export default function CompetitionsTab({ gameState, onSelectTeam }: Competition
           <CompetitionCard
             key={league.id}
             league={league}
-            selected={selectedCid === league.id}
-            colorClass={getCompetitionColor(league.id)}
+            selected={selectedCid === (league.competition_id ?? league.id)}
+            colorClass={getCompetitionColor(league.competition_id ?? league.id)}
             teamsCount={
-              gameState.teams.filter((t) => t.competition_id === league.id)
+              gameState.teams.filter((t) => t.competition_id === (league.competition_id ?? league.id))
                 .length
             }
             onSelect={() => {
@@ -235,11 +233,12 @@ function CompetitionCard({
 }: CompetitionCardProps) {
   const { t } = useTranslation();
 
-  const totalMatches = league.fixtures.length;
-  const playedMatches = league.fixtures.filter(
+  const fixtures = league.fixtures ?? [];
+  const totalMatches = fixtures.length;
+  const playedMatches = fixtures.filter(
     (f) => f.status === "Completed",
   ).length;
-  const playoffFixtures = league.fixtures.filter(
+  const playoffFixtures = fixtures.filter(
     (f) => f.match_type === "Playoffs",
   ).length;
 

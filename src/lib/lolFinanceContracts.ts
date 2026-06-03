@@ -184,13 +184,13 @@ export function getSponsorshipContractView(
   }
 
   return {
-    sponsorName: sponsorship.sponsor_name,
-    baseValue: sponsorship.base_value,
-    remainingMonths: sponsorship.remaining_months,
-    bonusCount: sponsorship.bonus_criteria.length,
-    theme: getSponsorTheme(sponsorship.sponsor_name),
+    sponsorName: sponsorship.sponsor_name ?? "Sponsor",
+    baseValue: typeof sponsorship.base_value === "number" && Number.isFinite(sponsorship.base_value) ? sponsorship.base_value : 0,
+    remainingMonths: typeof sponsorship.remaining_months === "number" && Number.isFinite(sponsorship.remaining_months) ? sponsorship.remaining_months : 0,
+    bonusCount: Array.isArray(sponsorship.bonus_criteria) ? sponsorship.bonus_criteria.length : 0,
+    theme: getSponsorTheme(sponsorship.sponsor_name ?? ""),
     themeLabel:
-      getSponsorTheme(sponsorship.sponsor_name) === "esports"
+      getSponsorTheme(sponsorship.sponsor_name ?? "") === "esports"
         ? "Esports sponsor"
         : "Standard sponsor",
   };

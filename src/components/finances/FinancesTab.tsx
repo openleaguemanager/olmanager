@@ -25,6 +25,7 @@ import {
   getClubInstallationContract,
   getSponsorshipContractView,
 } from "../../lib/lolFinanceContracts";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { useTranslation } from "react-i18next";
 import ContextMenu from "../ContextMenu";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
