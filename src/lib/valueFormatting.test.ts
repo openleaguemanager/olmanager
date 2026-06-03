@@ -12,4 +12,9 @@ describe("calcAge", () => {
     expect(calcAge("2000-01-01", "2025-01-01T00:00:00Z")).toBe(25);
     expect(calcAge("2000-01-01", "2027-01-01T00:00:00Z")).toBe(27);
   });
+
+  it("does not leak NaN for missing or invalid dates", () => {
+    expect(calcAge("", "2026-07-01T00:00:00Z")).toBe(0);
+    expect(calcAge("2000-01-01", "")).toBe(0);
+  });
 });

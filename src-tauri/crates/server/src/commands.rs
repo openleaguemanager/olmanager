@@ -133,6 +133,7 @@ pub fn dispatch(
             let data = league_selection_data().map_err(CommandError::bad_request)?;
             ok(json!(data), false)
         }
+        "get_player_match_history" | "get_team_match_history" => ok(json!([]), false),
         _ => Err(CommandError::not_found(format!(
             "unsupported command: {command}"
         ))),

@@ -40,13 +40,15 @@ export function resolvePlayerPhoto(playerId: string, matchName?: string, profile
   const legacy = playerId.match(/^lec-player-(.+)$/);
   if (legacy) return `/player-photos/${legacy[1]}.webp`;
 
-  // 3. Try playerId as direct photo filename (player-XXXX.webp)
-  const byId = `/player-photos/${playerId}.webp`;
-  if (playerId.startsWith("player-") || playerId.startsWith("team-")) return byId;
-
-  // 4. Match name lookup in example data
+  // 3. Match name lookup in imported league data. This must run before the
+  // generated player-id guess because OLMDB exports players with ids like
+  // `player-xxxxxxxx` while their actual photos are content hashes.
   const key = normalizeKey(matchName ?? "");
   if (key && EXAMPLE_PHOTO_MAP.has(key)) return EXAMPLE_PHOTO_MAP.get(key)!;
+
+  // 4. Try playerId as direct photo filename for legacy/local seed records.
+  const byId = `/player-photos/${playerId}.webp`;
+  if (playerId.startsWith("player-") || playerId.startsWith("team-")) return byId;
 
   // 5. Fallback
   return FALLBACK_PLAYER_PHOTO;
