@@ -15,3 +15,29 @@ where
 {
     Ok(Option::<T>::deserialize(deserializer)?.unwrap_or_default())
 }
+
+/// Deserialize an integer field that may arrive as a float or `null`.
+///
+/// Exported data sometimes stores money fields like `wage`/`market_value` as
+/// floats (`41.4`); strict `u32`/`u64` parsing rejects them and drops the whole
+/// record. This rounds floats and treats `null`/missing as `0`.
+pub fn lenient_u32<'de, D>(deserializer: D) -> Result<u32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = Option::<f64>::deserialize(deserializer)?;
+    Ok(value
+        .map(|n| n.round().clamp(0.0, u32::MAX as f64) as u32)
+        .unwrap_or(0))
+}
+
+/// Like [`lenient_u32`] but for `u64` fields (e.g. `market_value`).
+pub fn lenient_u64<'de, D>(deserializer: D) -> Result<u64, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = Option::<f64>::deserialize(deserializer)?;
+    Ok(value
+        .map(|n| n.round().clamp(0.0, u64::MAX as f64) as u64)
+        .unwrap_or(0))
+}
