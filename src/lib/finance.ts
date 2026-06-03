@@ -22,12 +22,16 @@ const HEALTH_PRIORITY: Record<FinanceHealthLevel, number> = {
   critical: 3,
 };
 
+export function safeFinanceNumber(value: unknown, fallback = 0): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
 export function getAnnualWageBill(
   players: PlayerData[],
   staff: StaffData[] = [],
 ): number {
   return [...players, ...staff].reduce((sum, person) => {
-    return sum + Math.max(0, person.wage);
+    return sum + Math.max(0, safeFinanceNumber(person.wage));
   }, 0);
 }
 export function annualAmountToMonthlyCommitment(amount: number): number {
@@ -37,12 +41,13 @@ export function getCashRunwayMonths(
   balance: number,
   projectedAnnualNet: number,
 ): number | null {
-  const projectedWeeklyNet = projectedAnnualNet / 52;
+  const safeBalance = safeFinanceNumber(balance);
+  const projectedWeeklyNet = safeFinanceNumber(projectedAnnualNet) / 52;
   if (projectedWeeklyNet >= 0) {
     return null;
   }
 
-  return Math.max(0, Math.floor(balance / Math.abs(projectedWeeklyNet)));
+  return Math.max(0, Math.floor(safeBalance / Math.abs(projectedWeeklyNet)));
 }
 
 function getWageBudgetStatus(usagePercent: number): FinanceHealthLevel {
@@ -106,7 +111,7 @@ export function getTeamFinanceSnapshot(
   const projectedAnnualNet = annualSponsorIncome - annualWageBill;
   const cashRunwayMonths = getCashRunwayMonths(team.finance, projectedAnnualNet);
   const wageBudgetUsagePercent = Math.round(
-    (annualWageBill / Math.max(1, team.wage_budget)) * 100,
+    (annualWageBill / Math.max(1, annualWageBudget)) * 100,
   );
   const wageBudgetStatus = getWageBudgetStatus(wageBudgetUsagePercent);
   const runwayStatus = getRunwayStatus(team.finance, cashRunwayMonths);
