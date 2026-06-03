@@ -99,10 +99,6 @@ export default function FinancesTab({
   const myTeam = gameState.teams.find(
     (tm) => tm.id === gameState.manager.team_id,
   );
-  if (!myTeam)
-    return (
-      <p className="text-gray-500 dark:text-gray-400">{t("common.noTeam")}</p>
-    );
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [delegatedRenewalsSummary, setDelegatedRenewalsSummary] = useState<
     string | null
@@ -110,50 +106,16 @@ export default function FinancesTab({
   const [selectedRiskPlayerIds, setSelectedRiskPlayerIds] = useState<string[]>(
     [],
   );
-
-  const roster = gameState.players.filter((p) => p.team_id === myTeam.id);
   type SortKey = "name" | "position" | "wage" | "value" | "contract";
   const [sortKey, setSortKey] = useState<SortKey>("wage");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortDir(key === "wage" || key === "value" ? "desc" : "asc");
-    }
-  };
-
-  const teamStaff = gameState.staff.filter(
-    (staffMember) => staffMember.team_id === myTeam.id,
-  );
-  const financeSnapshot = getTeamFinanceSnapshot(myTeam, roster, teamStaff);
-  const totalWages = financeSnapshot.annualWageBill;
-  const totalValue = roster.reduce((s, p) => s + p.market_value, 0);
-  const installationContract = getClubInstallationContract(myTeam);
-  const mainHubLevel = installationContract.reduce(
-    (maxLevel, module) => Math.max(maxLevel, module.level),
-    1,
-  );
-  const nextHubExpansionCost = getMainHubExpansionCost(mainHubLevel);
-  const canExpandMainHub = myTeam.finance >= nextHubExpansionCost;
-  const activeSponsorship = getSponsorshipContractView(myTeam.sponsorship);
-  const annualSponsorIncome = financeSnapshot.annualSponsorIncome;
-  const projectedAnnualNet = financeSnapshot.projectedAnnualNet;
-  const cashRunwayMonths = financeSnapshot.cashRunwayMonths;
-  const wageBudgetUsagePercent = financeSnapshot.wageBudgetUsagePercent;
-  const weeklyWageBudget = financeSnapshot.weeklyWageBudget;
-  const playerWeeklyWages = roster.reduce(
-    (sum, p) => sum + annualAmountToMonthlyCommitment(p.wage),
-    0,
-  );
-  const staffWeeklyWages = teamStaff.reduce(
-    (sum, s) => sum + annualAmountToMonthlyCommitment(s.wage),
-    0,
-  );
-  const unusedWeeklyBudget = Math.max(0, weeklyWageBudget - playerWeeklyWages - staffWeeklyWages);
-  const annualWageBudget = financeSnapshot.annualWageBudget;
+  const roster = myTeam
+    ? gameState.players.filter((p) => p.team_id === myTeam.id)
+    : [];
+  const teamStaff = myTeam
+    ? gameState.staff.filter((staffMember) => staffMember.team_id === myTeam.id)
+    : [];
   const sponsorOffers = gameState.messages
     .filter(isPendingSponsorOffer)
     .map(resolveMessage);
@@ -201,6 +163,46 @@ export default function FinancesTab({
     });
   }, [allRiskPlayerIds.join("|")]);
 
+  if (!myTeam)
+    return (
+      <p className="text-gray-500 dark:text-gray-400">{t("common.noTeam")}</p>
+    );
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir(key === "wage" || key === "value" ? "desc" : "asc");
+    }
+  };
+
+  const financeSnapshot = getTeamFinanceSnapshot(myTeam, roster, teamStaff);
+  const totalWages = financeSnapshot.annualWageBill;
+  const totalValue = roster.reduce((s, p) => s + p.market_value, 0);
+  const installationContract = getClubInstallationContract(myTeam);
+  const mainHubLevel = installationContract.reduce(
+    (maxLevel, module) => Math.max(maxLevel, module.level),
+    1,
+  );
+  const nextHubExpansionCost = getMainHubExpansionCost(mainHubLevel);
+  const canExpandMainHub = myTeam.finance >= nextHubExpansionCost;
+  const activeSponsorship = getSponsorshipContractView(myTeam.sponsorship);
+  const annualSponsorIncome = financeSnapshot.annualSponsorIncome;
+  const projectedAnnualNet = financeSnapshot.projectedAnnualNet;
+  const cashRunwayMonths = financeSnapshot.cashRunwayMonths;
+  const wageBudgetUsagePercent = financeSnapshot.wageBudgetUsagePercent;
+  const weeklyWageBudget = financeSnapshot.weeklyWageBudget;
+  const playerWeeklyWages = roster.reduce(
+    (sum, p) => sum + annualAmountToMonthlyCommitment(p.wage),
+    0,
+  );
+  const staffWeeklyWages = teamStaff.reduce(
+    (sum, s) => sum + annualAmountToMonthlyCommitment(s.wage),
+    0,
+  );
+  const unusedWeeklyBudget = Math.max(0, weeklyWageBudget - playerWeeklyWages - staffWeeklyWages);
+  const annualWageBudget = financeSnapshot.annualWageBudget;
   function handleToggleRiskPlayer(playerId: string): void {
     setSelectedRiskPlayerIds((currentIds) => {
       if (currentIds.includes(playerId)) {

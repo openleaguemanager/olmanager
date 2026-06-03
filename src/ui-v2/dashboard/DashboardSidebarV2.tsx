@@ -18,6 +18,7 @@ import {
   UsersRound,
   Building2,
   Trophy,
+  Globe,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -84,6 +85,7 @@ export function DashboardSidebarV2({
     { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
     { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staff BD" }), icon: UserCog, badge: staffCount },
     { tab: "Tournaments", label: t("dashboard.tournaments"), icon: Trophy },
+    { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
     { tab: "ChampionsWorld", label: t("dashboard.champions_world"), icon: Gamepad2 },
   ];
 

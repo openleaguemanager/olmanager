@@ -478,6 +478,37 @@ pub fn world_summary() -> (usize, usize, usize) {
     (teams.len(), players.len(), staff.len())
 }
 
+/// Keep legacy/UI assumptions in sync: the chosen competition is both recorded
+/// in `user_competition_id` and placed first in `game.leagues`.
+pub fn repair_active_competition(game: &mut Game) -> bool {
+    let Some(team_id) = game.manager.team_id.as_deref() else {
+        return false;
+    };
+    let Some(cid) = competition_id_from_team_id(team_id) else {
+        return false;
+    };
+
+    let mut changed = false;
+    if game.user_competition_id.as_deref() != Some(cid) {
+        game.user_competition_id = Some(cid.to_string());
+        changed = true;
+    }
+
+    if let Some(index) = game
+        .leagues
+        .iter()
+        .position(|league| league.competition_id.as_deref() == Some(cid))
+    {
+        if index != 0 {
+            let league = game.leagues.remove(index);
+            game.leagues.insert(0, league);
+            changed = true;
+        }
+    }
+
+    changed
+}
+
 /// Assemble the full world (all loadable competitions), assign the manager to
 /// the chosen team, generate schedules, and bootstrap derived state.
 ///
@@ -568,9 +599,22 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
         league.competition_id = Some(manifest.id.clone());
         leagues.push(league);
     }
+    if let Some(cid) = user_cid {
+        leagues.sort_by_key(|league| {
+            if league.competition_id.as_deref() == Some(cid) {
+                0
+            } else {
+                1
+            }
+        });
+        game.user_competition_id = Some(cid.to_string());
+    } else {
+        game.user_competition_id = None;
+    }
     game.leagues = leagues;
 
     ofm_core::champions::bootstrap_champion_state(game);
+    repair_active_competition(game);
     ofm_core::season_context::refresh_game_context(game);
 
     Ok(())
@@ -579,8 +623,11 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use domain::league::League;
+    use domain::manager::Manager;
     use domain::player::PlayerAttributes;
     use domain::stats::LolRole;
+    use ofm_core::clock::GameClock;
 
     fn imported_player_without_financials() -> Player {
         let attributes = PlayerAttributes {
@@ -606,6 +653,40 @@ mod tests {
         player.team_id = Some("team-hle".to_string());
         player.potential_base = 95;
         player
+    }
+
+    #[test]
+    fn repair_active_competition_sets_user_competition_and_moves_league_first() {
+        let clock = GameClock::new(Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap());
+        let mut manager = Manager::new(
+            "manager-1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "ES".to_string(),
+        );
+        manager.hire("lec-g2".to_string());
+        let mut game = Game::new(clock, manager, vec![], vec![], vec![], vec![]);
+        game.leagues = vec![
+            League::new(
+                "cblol".to_string(),
+                "CBLOL".to_string(),
+                2025,
+                &["cblol-loud".to_string(), "cblol-pain".to_string()],
+                Some("cblol".to_string()),
+            ),
+            League::new(
+                "lec".to_string(),
+                "LEC".to_string(),
+                2025,
+                &["lec-g2".to_string(), "lec-fnc".to_string()],
+                Some("lec".to_string()),
+            ),
+        ];
+
+        assert!(repair_active_competition(&mut game));
+        assert_eq!(game.user_competition_id.as_deref(), Some("lec"));
+        assert_eq!(game.leagues[0].competition_id.as_deref(), Some("lec"));
     }
 
     #[test]

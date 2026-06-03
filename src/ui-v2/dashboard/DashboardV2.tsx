@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { Eye, Gamepad2 } from "lucide-react";
@@ -51,6 +51,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Meta: "dashboard.meta",
   Staff: "dashboard.staff",
   Finances: "dashboard.finances",
+  Competitions: "dashboard.competitions",
   Transfers: "dashboard.transfers",
   Players: "dashboard.players",
   Teams: "dashboard.teams",
@@ -64,8 +65,16 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Youth: "dashboard.youthAcademy",
 };
 
+const PATH_TAB_MAP: Record<string, string> = {
+  "/finanzas": "Finances",
+  "/finances": "Finances",
+  "/competiciones": "Competitions",
+  "/competitions": "Competitions",
+};
+
 export default function DashboardV2() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const {
     hasActiveGame,
@@ -82,7 +91,7 @@ export default function DashboardV2() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveFlash, setSaveFlash] = useState(false);
   const [profileNavigation, setProfileNavigation] = useState(() =>
-    createDashboardProfileNavigationState("Home"),
+    createDashboardProfileNavigationState(PATH_TAB_MAP[location.pathname] ?? "Home"),
   );
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [isExitingToMenu, setIsExitingToMenu] = useState(false);
@@ -92,6 +101,16 @@ export default function DashboardV2() {
   useEffect(() => {
     if (!settingsLoaded) loadSettings();
   }, [settingsLoaded, loadSettings]);
+
+  useEffect(() => {
+    const tab = PATH_TAB_MAP[location.pathname];
+    if (!tab) {
+      return;
+    }
+    setProfileNavigation((s) =>
+      s.activeTab === tab ? s : navigateDashboardProfiles(s, tab),
+    );
+  }, [location.pathname]);
 
   useEffect(() => {
     if (hasActiveGame) {
@@ -118,7 +137,12 @@ export default function DashboardV2() {
   const isUnemployed = gameState?.manager.team_id === null;
   const todayMatchFixture = gameState ? getTodayMatchFixture(gameState) : null;
   const hasMatchToday = todayMatchFixture !== null;
-  const seasonComplete = isLeagueSeasonComplete(gameState?.leagues?.[0]);
+  const activeLeague = gameState?.user_competition_id
+    ? gameState.leagues.find(
+        (league) => league.competition_id === gameState.user_competition_id,
+      ) ?? gameState.leagues[0]
+    : gameState?.leagues[0];
+  const seasonComplete = isLeagueSeasonComplete(activeLeague);
 
   const {
     isAdvancing,

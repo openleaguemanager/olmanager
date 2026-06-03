@@ -52,8 +52,9 @@ pub fn dispatch(
         }
         "get_active_game" => {
             let repaired_financials = data::repair_player_financials(game);
+            let repaired_active_competition = data::repair_active_competition(game);
             ofm_core::champions::bootstrap_champion_state(game);
-            ok(json!(game), repaired_financials)
+            ok(json!(game), repaired_financials || repaired_active_competition)
         }
         "save_game" => ok(Value::Null, true),
         "advance_time" => {
