@@ -1,4 +1,5 @@
 pub mod academy;
+pub mod bug_report;
 pub mod champion;
 pub mod champion_stats;
 pub mod club;
@@ -21,6 +22,7 @@ pub mod transfers;
 pub mod world;
 
 pub use academy::*;
+pub use bug_report::*;
 pub use champion::*;
 pub use champion_stats::*;
 pub use club::*;
