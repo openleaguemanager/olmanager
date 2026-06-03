@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import type { JSX, ReactNode } from "react";
 import {
@@ -36,6 +37,7 @@ interface DashboardSidebarProps {
   managerName: string | null;
   teamName: string | null;
   teamLogo: string | null;
+  managerAvatar: string | null;
   onNavigateSettings: () => void;
   onExitClick: () => void;
   isUnemployed: boolean;
@@ -61,7 +63,7 @@ function NavItem({
   label,
   onClick,
 }: NavItemProps): JSX.Element {
-  const buttonClassName = `relative flex w-full items-center justify-start rounded-lg p-3 transition-all duration-200 gap-3 ${
+  const buttonClassName = `relative flex w-full items-center justify-start rounded-lg p-3 gap-3 ${
     active
       ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/20"
       : "text-gray-400 hover:bg-white/5 hover:text-white"
@@ -76,10 +78,10 @@ function NavItem({
     >
       <div className="[&>svg]:w-5 [&>svg]:h-5 shrink-0">{icon}</div>
       <span
-        className={`min-w-0 min-h-0 overflow-hidden whitespace-nowrap transition-all duration-200 ${
+        className={`min-w-0 min-h-0 overflow-hidden whitespace-nowrap ${
           collapsed
             ? "max-w-0 max-h-0 opacity-0"
-            : "max-w-40 max-h-6 opacity-100 delay-150"
+            : "max-w-40 max-h-6 opacity-100"
         } font-heading font-semibold text-sm uppercase tracking-wider`}
       >
         {label}
@@ -108,6 +110,7 @@ export default function DashboardSidebar({
   managerName,
   teamName,
   teamLogo,
+  managerAvatar,
   onNavigateSettings,
   onExitClick,
   isUnemployed,
@@ -116,6 +119,7 @@ export default function DashboardSidebar({
   staffCount = 0,
 }: DashboardSidebarProps): JSX.Element {
   const { t } = useTranslation();
+  invoke("debug_log", { message: `[sidebar] teamName=${teamName} | teamLogo=${teamLogo} | collapsed=${collapsed}` });
 
   const clubItems: Array<{ icon: JSX.Element; label: string; tab: string }> = [
     { icon: <Users />, label: t("dashboard.squad"), tab: "Squad" },
@@ -156,7 +160,7 @@ export default function DashboardSidebar({
 
   return (
     <aside
-      className={`bg-navy-800 dark:bg-navy-800 border-r border-navy-700 text-white flex h-screen sticky top-0 shrink-0 flex-col transition-[width] duration-200 ${
+      className={`bg-navy-800 dark:bg-navy-800 bg-panel-dark border-r border-navy-700 text-white flex h-screen sticky top-0 shrink-0 flex-col transition-[width] duration-200 ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
@@ -229,7 +233,15 @@ export default function DashboardSidebar({
             collapsed ? "text-gray-300" : "text-left"
           }`}
         >
-          <User className="h-5 w-5 shrink-0" />
+          {managerAvatar ? (
+            <img
+              src={managerAvatar}
+              alt=""
+              className="w-5 h-5 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <User className="h-5 w-5 shrink-0" />
+          )}
           <div
             className={`min-w-0 min-h-0 overflow-hidden transition-all duration-200 ${
               collapsed

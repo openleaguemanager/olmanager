@@ -4,6 +4,7 @@ import playersSeed from "../../data/draft/players.json";
 
 import { GameStateData } from "../store/gameStore";
 import { Badge } from "./ui";
+import { parseUtcDate } from "../lib/dateFormatting";
 import {
   findNextFixture,
   formatMatchDate,
@@ -64,8 +65,10 @@ export function playerPhotoUrl(playerId: string): string | null {
 
 export function daysUntil(dateIso: string): number {
   const now = new Date();
-  const target = new Date(dateIso);
-  const diffMs = target.getTime() - now.getTime();
+  const nowUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const target = parseUtcDate(dateIso);
+  if (!target) return 0;
+  const diffMs = target.getTime() - nowUtc.getTime();
   return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 }
 

@@ -34,7 +34,7 @@ export default function PlayerProfileChampionsCard({ champions, onViewChampion }
               type="button"
               key={`${item.rank}-${item.championId}`}
               onClick={() => handleChampionClick(item.championId)}
-              className="relative rounded-xl overflow-hidden border border-[#22345d] min-h-[192px] bg-[#111f3d] text-left cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,191,36,0.2)] hover:border-yellow-400"
+              className="relative rounded-xl overflow-hidden border border-navy-600 min-h-[192px] bg-navy-850 text-left cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(251,191,36,0.2)] hover:border-yellow-400"
             >
               <div
                 className="absolute inset-0 bg-cover bg-center"

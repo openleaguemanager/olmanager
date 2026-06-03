@@ -6,6 +6,7 @@ import type {
   TransferWindowStatus,
 } from "../store/gameStore";
 import { TRANSFER_WINDOW_DAYS } from "./domainConstants";
+import { parseUtcDate } from "./dateFormatting";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -127,26 +128,6 @@ function deriveTransferWindowContext(
     days_until_opens: daysUntilOpens,
     days_remaining: daysRemaining,
   };
-}
-
-function parseUtcDate(input: string | null | undefined): Date | null {
-  if (!input) {
-    return null;
-  }
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
-    const parsed = new Date(`${input}T00:00:00Z`);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
-
-  const parsed = new Date(input);
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return new Date(
-    Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), parsed.getUTCDate()),
-  );
 }
 
 function formatUtcDate(date: Date | null): string | null {

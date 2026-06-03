@@ -6,8 +6,14 @@ import { formatDate } from "../../lib/helpers";
 import { useTranslation } from "react-i18next";
 import { countryName, allNationalities } from "../../lib/countries";
 import DashboardModalFrame from "../dashboard/DashboardModalFrame";
-import { Settings, X, ChevronDown, Check } from "lucide-react";
+import { Settings, X, ChevronDown, Check, ImagePlus } from "lucide-react";
 import { resolveStaffPhoto } from "../../lib/playerPhotos";
+
+const MANAGER_ICONS = Array.from({ length: 29 }, (_, i) => {
+  // icons 0-28, skip 2 (doesn't exist)
+  if (i === 2) return null;
+  return `/manager-icons/${i}.webp`;
+}).filter(Boolean) as string[];
 
 interface ManagerTabProps {
   gameState: GameStateData;
@@ -21,6 +27,30 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
   const stats = mgr.career_stats;
   const fullName = `${mgr.first_name} ${mgr.last_name}`;
   const displayName = mgr.nickname?.trim() || fullName;
+
+  // Avatar picker state
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+
+  const handleSelectAvatar = async (avatarPath: string) => {
+    setIsSavingAvatar(true);
+    try {
+      await invoke("update_manager_profile", {
+        nickname: null, firstName: null, lastName: null,
+        dob: null, nationality: null,
+        avatarPath,
+      });
+      setGameState({
+        ...gameState,
+        manager: { ...mgr, avatar_path: avatarPath },
+      });
+      setShowAvatarPicker(false);
+    } catch (error) {
+      console.error("Failed to update avatar:", error);
+    } finally {
+      setIsSavingAvatar(false);
+    }
+  };
 
   // Settings modal state
   const [showSettings, setShowSettings] = useState(false);
@@ -111,13 +141,20 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
       {/* Profile card */}
       <Card accent="primary" className="md:col-span-3">
         <div className="bg-gradient-to-r from-navy-700 to-navy-800 p-6 rounded-t-xl flex items-center gap-6 relative">
-          <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-primary-500/40 shadow-lg shadow-primary-500/10 shrink-0 bg-gray-200 dark:bg-navy-600">
+          <div
+            className="w-20 h-20 rounded-xl overflow-hidden border-2 border-primary-500/40 shadow-lg shadow-primary-500/10 shrink-0 bg-gray-200 dark:bg-navy-600 cursor-pointer group relative"
+            onClick={() => setShowAvatarPicker(true)}
+            title={t("manager.changeAvatar", "Cambiar avatar")}
+          >
             <img
               src={resolveStaffPhoto(mgr.avatar_path) ?? ""}
               alt={displayName}
               className="w-full h-full object-cover"
               loading="lazy"
             />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+              <ImagePlus className="w-6 h-6 text-white" />
+            </div>
           </div>
           <div>
             <h2 className="text-2xl font-heading font-bold text-white uppercase tracking-wide">{displayName}</h2>
@@ -148,6 +185,50 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
           </div>
         </div>
       </Card>
+
+      {/* Avatar Picker Modal */}
+      {showAvatarPicker && (
+        <DashboardModalFrame maxWidthClassName="max-w-xl">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-heading font-bold text-gray-800 dark:text-gray-100">
+                {t("manager.changeAvatar", "Seleccionar avatar")}
+              </h3>
+              <button
+                onClick={() => setShowAvatarPicker(false)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-navy-700 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {isSavingAvatar ? (
+              <div className="text-center py-8 text-gray-500">
+                {t("common.saving", "Guardando...")}
+              </div>
+            ) : (
+              <div className="grid grid-cols-6 gap-3 max-h-80 overflow-y-auto p-1">
+                {MANAGER_ICONS.map((path) => (
+                  <button
+                    key={path}
+                    onClick={() => handleSelectAvatar(path)}
+                    className={`w-full aspect-square rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${
+                      mgr.avatar_path === path
+                        ? "border-primary-500 ring-2 ring-primary-500/30"
+                        : "border-gray-200 dark:border-navy-600 hover:border-primary-400"
+                    }`}
+                  >
+                    <img
+                      src={path}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </DashboardModalFrame>
+      )}
 
       {/* Settings Modal */}
       {showSettings && (

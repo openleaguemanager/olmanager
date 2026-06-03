@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { GameStateData, PlayerSelectionOptions } from "../../store/gameStore";
 import { Card, CardBody, Badge, Select, CountryFlag, RoleBadge } from "../ui";
 import {
@@ -47,6 +48,7 @@ export default function PlayersListTab({
   onSelectTeam,
 }: PlayersListTabProps) {
   const { t } = useTranslation();
+  invoke("debug_log", { message: "PlayersListTab render" });
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState<LolRole | null>(null);
   const [teamFilter, setTeamFilter] = useState<string | null>(null);
@@ -204,7 +206,7 @@ export default function PlayersListTab({
             }`}
             title="All roles"
           >
-            <img src="/role-icons/allroles.png" alt="All roles" className="h-3.5 w-3.5" />
+            <img src="/role-icons/allroles.webp" alt="All roles" className="h-3.5 w-3.5" />
           </button>
           {positions.map((pos) => (
             <button
@@ -348,11 +350,17 @@ export default function PlayersListTab({
                     const ovr = calculateLolOvr(player);
                     const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const photoSrc = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
+                    // debug: log photoSrc for first 3 visible players
+                    try {
+                      if (player.match_name === "Gabriel Dzelme" || player.match_name === "Jeong Seong-hoon" || player.match_name === "Brian Alejo Distefano") {
+                        invoke("debug_log", { message: `[${player.match_name}] photoSrc: ${photoSrc} | clock: ${gameState.clock.current_date}` });
+                      }
+                    } catch (_e) { /* ignore */ }
                     return (
                       <tr
                         key={player.id}
                         onClick={() => onSelectPlayer(player.id)}
-                        className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer group"
+                        className="cursor-pointer"
                       >
                         <td className="py-2.5 px-4">
                           <PlayerAvatar
@@ -366,7 +374,7 @@ export default function PlayersListTab({
                         </td>
                         <td className="py-2.5 px-4">
                           <div className="min-w-0">
-                            <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+                            <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 truncate">
                               {player.match_name}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">

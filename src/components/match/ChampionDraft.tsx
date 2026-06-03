@@ -5,8 +5,8 @@ import type { GameStateData, ScrimReportData } from "../../store/gameStore";
 import { useSettingsStore } from "../../store/settingsStore";
 import { getChampionTiming } from "../../lib/championTiming";
 import { getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { resolvePlayerLolRole } from "../../lib/lolIdentity";
+import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
 import teamsSeed from "../../../data/draft/teams.json";
 import playersSeed from "../../../data/draft/players.json";
 import championsSeed from "../../../data/draft/champions.json";
@@ -285,15 +285,7 @@ const ROLE_ORDER: Role[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 const ASSISTANT_COACH_PLACEHOLDER = "/player-photos/103935359525547325.webp";
 const LEC_LOGO_URL = "/lec-logo.svg";
 const EMPTY_LOCKED_CHAMPION_IDS: string[] = [];
-const ROLE_ICON_URLS: Record<Role, string> = {
-  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.webp",
-  JUNGLE:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.webp",
-  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.webp",
-  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.webp",
-  SUPPORT:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.webp",
-};
+const ROLE_ICON_URLS: Record<Role, string> = ROLE_ICON_PATHS;
 
 const DRAFT_SEQUENCE: DraftAction[] = [
   { type: "ban", side: "blue", label: "B1" },
@@ -706,12 +698,17 @@ function teamTriCode(name: string): string {
   return cleaned.slice(0, 4).toUpperCase();
 }
 
-function teamLogo(name: string): string | null {
+function teamLogo(name: string, teams?: import("../../store/types").TeamData[]): string | null {
+  const normalizedName = normalizeKey(name);
+  if (teams) {
+    const fromTeams = teams.find((t) => normalizeKey(t.name) === normalizedName);
+    if (fromTeams?.logo_url) return fromTeams.logo_url;
+  }
+
   const key = name.trim().toLowerCase();
   const known = TEAM_BRAND_MAP[key]?.logo;
   if (known) return known;
 
-  const normalizedName = normalizeKey(name);
   const fromSeed = TEAM_SEEDS.find((team) => normalizeKey(team.name) === normalizedName);
   if (fromSeed?.logo) {
     const logoFileName = fromSeed.logo.split("/").pop();
@@ -2243,11 +2240,32 @@ export default function ChampionDraft({
         }
       }
 
-      if (!masteryMap) return;
+      if (!masteryMap) {
+        const runtimeMap = runtimeMasteryByPlayerId.get(player.id);
+        if (runtimeMap && runtimeMap.size > 0) {
+          masteryMap = runtimeMap;
+          matchedSeedPlayer = undefined;
+        } else {
+          const flexibleRole = mapSeedRoleToDraftRole(String(matchedSeedPlayer?.role ?? "")) ?? ROLE_ORDER[index];
+          const flexibleImage =
+            player.profile_image_url ??
+            playerSeedPhotoUrl(matchedSeedPlayer?.photo) ??
+            `/player-photos/${player.id}.webp`;
+          tips.push({
+            sourceType: "player",
+            sourceName: player.name,
+            sourceRole: flexibleRole,
+            sourceImage: flexibleImage,
+            type: "pick",
+            text: t("match.draft.phrases.playerFlexible", "No tengo prioridades para el pick. Me puedo adaptar al equipo."),
+          });
+          return;
+        }
+      }
 
       const sourceRole = mapSeedRoleToDraftRole(String(matchedSeedPlayer?.role ?? "")) ?? ROLE_ORDER[index];
       const sourceImage =
-        resolvePlayerPhoto(player.id, player.name) ??
+        player.profile_image_url ??
         playerSeedPhotoUrl(matchedSeedPlayer?.photo) ??
         `/player-photos/${player.id}.webp`;
 
@@ -2279,6 +2297,7 @@ export default function ChampionDraft({
 
       for (const { champion, mastery } of masteredChampions) {
         if (usedChampionIds.has(champion.id)) continue;
+        if (sourceRole && !champion.roleHints.includes(sourceRole)) continue;
         if (mastery > bestMastery) {
           bestMastery = mastery;
           resolvedBestChampion = champion;
@@ -2375,26 +2394,21 @@ export default function ChampionDraft({
       });
       const fallbackPlayer =
         fallbackPlayerIndex >= 0 ? ownPlayers[fallbackPlayerIndex] : ownPlayers[0];
-      const fallbackChampion = availableChampions[0];
       const fallbackSeedPlayer =
         fallbackPlayerIndex >= 0 ? ownTeamSeedPlayers[fallbackPlayerIndex] : ownTeamSeedPlayers[0];
-      if (fallbackPlayer && fallbackChampion) {
+      const fallbackPlayerRole =
+        mapSeedRoleToDraftRole(String(fallbackSeedPlayer?.role ?? "")) ?? ROLE_ORDER[Math.max(0, fallbackPlayerIndex)] ?? null;
+      if (fallbackPlayer) {
         tips.push({
           sourceType: "player",
           sourceName: fallbackPlayer.name,
-          sourceRole: mapSeedRoleToDraftRole(String(fallbackSeedPlayer?.role ?? "")) ?? ROLE_ORDER[0],
+          sourceRole: fallbackPlayerRole ?? ROLE_ORDER[0],
           sourceImage:
-            resolvePlayerPhoto(fallbackPlayer.id, fallbackPlayer.name) ??
+            fallbackPlayer.profile_image_url ??
             playerSeedPhotoUrl(fallbackSeedPlayer?.photo) ??
             `/player-photos/${fallbackPlayer.id}.webp`,
           type: "pick",
-          text: uniquePhrase(
-            "match.draft.phrases.playerComfortPick",
-            PLAYER_COMFORT_PICK_PHRASES,
-            `player-fallback-pick-${fallbackPlayer.id}-${fallbackChampion.id}-${stepIndex}`,
-            { champion: fallbackChampion.name, mastery: 60 },
-          ),
-          champion: fallbackChampion,
+          text: t("match.draft.phrases.playerFlexible", "Sin información de draft. Sugerencia: podemos priorizar picks seguros o adaptarnos al draft enemigo."),
         });
       }
     }
@@ -2515,8 +2529,8 @@ export default function ChampionDraft({
   const blueTriCode = teamTriCode(snapshot.home_team.name);
   const redTriCode = teamTriCode(snapshot.away_team.name);
   const controlledTriCode = controlledSide === "blue" ? blueTriCode : redTriCode;
-  const blueLogo = teamLogo(snapshot.home_team.name);
-  const redLogo = teamLogo(snapshot.away_team.name);
+  const blueLogo = teamLogo(snapshot.home_team.name, gameState?.teams);
+  const redLogo = teamLogo(snapshot.away_team.name, gameState?.teams);
   const seriesSquares = seriesLength === 5 ? 3 : seriesLength === 3 ? 2 : 0;
   const scoreDelta = controlledScore.total - rivalScore.total;
   const blueWinProb = Math.max(5, Math.min(95, Math.round(50 + scoreDelta * 4)));
@@ -2548,11 +2562,11 @@ export default function ChampionDraft({
   const topSectionHeightClass = seriesBansRequiresTwoRows ? "h-28" : "h-20";
 
   return (
-    <div className={`h-dvh bg-[#0a0a0a] text-white p-2 md:p-4 ${isCompactLayout ? "overflow-y-auto" : "overflow-hidden"}`}>
+    <div className={`h-dvh bg-navy-950 text-white p-2 md:p-4 ${isCompactLayout ? "overflow-y-auto" : "overflow-hidden"}`}>
       <div className={`w-full max-w-[2000px] 2xl:max-w-[90vw] mx-auto flex flex-col gap-2 md:gap-3 ${isCompactLayout ? "min-h-full overflow-visible pb-3" : "h-full overflow-hidden"}`}>
-        <section className="order-2 shrink-0 rounded-md overflow-hidden border border-[#222]">
+        <section className="order-2 shrink-0 rounded-md overflow-hidden border border-navy-700">
           <div
-            className={`relative flex items-stretch bg-linear-to-b from-[#032e35] via-[#021720] to-[#000] border-b-4 border-cyan-400 shadow-[0_0_16px_rgba(0,242,255,0.35)] ${topSectionHeightClass}`}
+            className={`relative flex items-stretch bg-linear-to-b from-navy-850 via-navy-900 to-[#000] border-b-4 border-cyan-400 shadow-[0_0_16px_rgba(0,242,255,0.35)] ${topSectionHeightClass}`}
           >
             <div
               className="absolute inset-0"
@@ -2670,7 +2684,7 @@ export default function ChampionDraft({
               />
             ))}
 
-            <div className={`bg-linear-to-b from-[#032e35] via-[#021720] to-[#000] border-t-4 border-white flex flex-col items-center justify-between ${isCompactLayout ? "py-1 px-0.5" : "py-2 px-1"}`}>
+            <div className={`bg-linear-to-b from-navy-850 via-navy-900 to-[#000] border-t-4 border-white flex flex-col items-center justify-between ${isCompactLayout ? "py-1 px-0.5" : "py-2 px-1"}`}>
               <div className={`flex items-center justify-between min-h-2 ${isCompactLayout ? "w-full mt-0" : "w-[88%] mt-1"}`}>
                 {seriesSquares > 0 ? (
                   <div className="flex gap-1">
@@ -2768,11 +2782,11 @@ export default function ChampionDraft({
           </div>
         </section>
 
-        <section className={`order-1 rounded-md border border-cyan-400/25 bg-[#050608] p-2 md:p-3 shadow-[0_0_28px_rgba(18,215,255,0.06)] ${isCompactLayout ? "shrink-0 overflow-visible" : "flex-1 min-h-0 overflow-hidden"}`}>
+        <section className={`order-1 rounded-md border border-cyan-400/25 bg-navy-950 p-2 md:p-3 shadow-[0_0_28px_rgba(18,215,255,0.06)] ${isCompactLayout ? "shrink-0 overflow-visible" : "flex-1 min-h-0 overflow-hidden"}`}>
           <div className={`grid gap-2 md:gap-3 items-stretch ${isCompactLayout ? compactPanelsColsClass : "grid-cols-1 xl:grid-cols-[270px_minmax(0,1fr)_270px] 2xl:grid-cols-[320px_minmax(0,1fr)_320px]"} ${isCompactLayout ? "h-auto min-h-0" : "h-full min-h-0"}`}>
             <aside className={`${isCompactLayout ? "flex" : "hidden xl:flex"} lg:w-[280px] xl:w-[300px] h-full flex-col gap-2 min-h-0 overflow-y-auto scrollbar-draft pr-1`}>
               {assistantCoachTips.length > 0 ? (
-                <div className="rounded-md border border-cyan-400/25 bg-[#0a0b0f] p-3 text-xs text-gray-200">
+                <div className="rounded-md border border-cyan-400/25 bg-navy-950 p-3 text-xs text-gray-200">
                   <p className="font-heading uppercase tracking-wide text-xs text-white mb-2">
                     {t("match.draft.tipsTitle")}
                   </p>
@@ -2841,7 +2855,7 @@ export default function ChampionDraft({
                   })()}
                 </div>
               ) : (
-                <div className="rounded-md border border-cyan-400/25 bg-[#0a0b0f] p-3 text-xs text-gray-200">
+                <div className="rounded-md border border-cyan-400/25 bg-navy-950 p-3 text-xs text-gray-200">
                   <p className="font-heading uppercase tracking-wide text-xs text-white mb-2">
                     {t("match.draft.tipsTitle")}
                   </p>
@@ -2851,7 +2865,7 @@ export default function ChampionDraft({
                 </div>
               )}
 
-              <div className="rounded-md border border-orange-400/30 bg-[#0a0b0f] p-3 text-xs text-gray-200">
+              <div className="rounded-md border border-orange-400/30 bg-navy-950 p-3 text-xs text-gray-200">
                 <p className="font-heading uppercase tracking-wide text-xs text-white mb-2">
                   {t("match.draft.scoreTitle")}
                 </p>
@@ -2897,7 +2911,7 @@ export default function ChampionDraft({
               </div>
             </aside>
 
-            <div className={`rounded-md border border-cyan-400/25 bg-[#0a0b0f]/95 p-3 space-y-2 relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)] flex flex-col ${isCompactLayout ? "h-auto min-h-[60dvh] overflow-visible" : "h-full min-h-0 overflow-hidden"}`}>
+            <div className={`rounded-md border border-cyan-400/25 bg-navy-950/95 p-3 space-y-2 relative shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)] flex flex-col ${isCompactLayout ? "h-auto min-h-[60dvh] overflow-visible" : "h-full min-h-0 overflow-hidden"}`}>
               <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_35%_45%,rgba(0,209,255,0.12),transparent_40%),radial-gradient(circle_at_70%_45%,rgba(255,146,56,0.1),transparent_45%)]" />
 
               <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_auto_auto] gap-2 items-center">
@@ -2946,7 +2960,7 @@ export default function ChampionDraft({
                 <input
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
-                  className="rounded-md bg-[#111318] border border-white/15 px-2 py-1 text-xs md:py-1.5 md:text-xs w-36 md:w-44"
+                  className="rounded-md bg-navy-850 border border-white/15 px-2 py-1 text-xs md:py-1.5 md:text-xs w-36 md:w-44"
                   placeholder={t("match.draft.searchPlaceholder")}
                 />
 
@@ -2981,7 +2995,7 @@ export default function ChampionDraft({
                 </div>
               ) : null}
 
-              <div className="relative w-full h-1.5 rounded-full bg-[#121624] overflow-hidden">
+              <div className="relative w-full h-1.5 rounded-full bg-navy-900 overflow-hidden">
                 <div
                   className={`h-full transition-[width] duration-100 ease-linear ${currentStep?.side === "blue" ? "bg-cyan-400" : "bg-orange-500"}`}
                   style={{ width: `${Math.max(0, Math.min(100, (turnRemainingMs / Math.max(1, turnDurationMs)) * 100))}%` }}
@@ -2989,7 +3003,7 @@ export default function ChampionDraft({
               </div>
 
               {!finished && isUserTurn ? (
-                <div className="relative flex items-center justify-between gap-2 rounded-md border border-white/12 bg-[#0c1018] px-2 py-1.5">
+                <div className="relative flex items-center justify-between gap-2 rounded-md border border-white/12 bg-navy-900 px-2 py-1.5">
                   <p className="text-xs text-gray-300 truncate">
                     {pendingChampionId
                       ? `${t("match.draft.selected")}: ${championById.get(pendingChampionId)?.name ?? pendingChampionId}`
@@ -3034,7 +3048,7 @@ export default function ChampionDraft({
                           key={champion.id}
                           onClick={() => handleChampionTileClick(champion)}
                           disabled={finished || !isUserTurn || isUsed}
-                          className={`rounded-sm border transition-colors p-0.5 text-left overflow-hidden ${isUsed ? "border-white/10 bg-[#0d0f13]" : pendingChampionId === champion.id ? "border-orange-400 bg-orange-500/10" : "border-white/15 bg-[#111318] hover:border-orange-400"}`}
+                          className={`rounded-sm border transition-colors p-0.5 text-left overflow-hidden ${isUsed ? "border-white/10 bg-navy-950" : pendingChampionId === champion.id ? "border-orange-400 bg-orange-500/10" : "border-white/15 bg-navy-850 hover:border-orange-400"}`}
                         >
                           <img
                             src={champion.image}
@@ -3043,7 +3057,7 @@ export default function ChampionDraft({
                             loading="lazy"
                           />
                           <p
-                            className={`px-1 py-0.5 text-2xs font-semibold truncate border-t ${isUsed ? "bg-[#090a0d] border-white/5 text-gray-500" : "bg-[#0a0b0f] border-white/10"}`}
+                            className={`px-1 py-0.5 text-2xs font-semibold truncate border-t ${isUsed ? "bg-navy-950 border-white/5 text-gray-500" : "bg-navy-950 border-white/10"}`}
                           >
                             {champion.name}
                           </p>
@@ -3069,7 +3083,7 @@ export default function ChampionDraft({
               </div>
             </div>
 
-            <aside className={`${isCompactLayout ? "flex" : "hidden xl:flex"} lg:w-[280px] xl:w-[300px] h-full flex-col rounded-md border border-cyan-400/25 bg-[#0a0b0f] p-2 min-h-0 overflow-y-auto scrollbar-draft pr-1`}>
+            <aside className={`${isCompactLayout ? "flex" : "hidden xl:flex"} lg:w-[280px] xl:w-[300px] h-full flex-col rounded-md border border-cyan-400/25 bg-navy-950 p-2 min-h-0 overflow-y-auto scrollbar-draft pr-1`}>
               {selectedChampionCounterIntel ? (
                 <>
                   <p className="text-xs font-heading uppercase tracking-wide text-gray-200 mb-2 text-right">
@@ -3109,14 +3123,14 @@ export default function ChampionDraft({
                       {t("match.draft.counterIntelPros", { defaultValue: "In your favor" })}
                     </p>
                     {selectedChampionCounterIntel.favorable.length === 0 ? (
-                      <div className="rounded-sm border border-white/10 bg-[#111318] p-2 text-2xs text-gray-500 text-center">
+                      <div className="rounded-sm border border-white/10 bg-navy-850 p-2 text-2xs text-gray-500 text-center">
                         {t("match.draft.counterIntelNoPros", { defaultValue: "No clear favorable counters detected." })}
                       </div>
                     ) : null}
                     {selectedChampionCounterIntel.favorable.map((row) => (
                       <div
                         key={`counter-pro-${row.champion.id}`}
-                        className={`rounded-sm border p-1 ${row.isPicked ? "border-cyan-300/70 bg-cyan-500/10" : "border-white/10 bg-[#111318]"}`}
+                        className={`rounded-sm border p-1 ${row.isPicked ? "border-cyan-300/70 bg-cyan-500/10" : "border-white/10 bg-navy-850"}`}
                       >
                         <div className="flex items-center gap-2">
                           <img src={row.champion.image} alt={row.champion.name} className="w-9 h-9 object-cover rounded-sm" loading="lazy" />
@@ -3137,14 +3151,14 @@ export default function ChampionDraft({
                       {t("match.draft.counterIntelCons", { defaultValue: "Against your pick" })}
                     </p>
                     {selectedChampionCounterIntel.risky.length === 0 ? (
-                      <div className="rounded-sm border border-white/10 bg-[#111318] p-2 text-2xs text-gray-500 text-center">
+                      <div className="rounded-sm border border-white/10 bg-navy-850 p-2 text-2xs text-gray-500 text-center">
                         {t("match.draft.counterIntelNoCons", { defaultValue: "No immediate hard counters found." })}
                       </div>
                     ) : null}
                     {selectedChampionCounterIntel.risky.map((row) => (
                       <div
                         key={`counter-con-${row.champion.id}`}
-                        className={`rounded-sm border p-1 ${row.isPicked ? "border-orange-300/75 bg-orange-500/10" : "border-white/10 bg-[#111318]"}`}
+                        className={`rounded-sm border p-1 ${row.isPicked ? "border-orange-300/75 bg-orange-500/10" : "border-white/10 bg-navy-850"}`}
                       >
                         <div className="flex items-center gap-2">
                           <img src={row.champion.image} alt={row.champion.name} className="w-9 h-9 object-cover rounded-sm" loading="lazy" />
@@ -3169,12 +3183,12 @@ export default function ChampionDraft({
                   </p>
                   <div className="space-y-1">
                     {rivalMasteryDisplay.length === 0 ? (
-                      <div className="rounded-sm border border-white/10 bg-[#111318] p-2 text-2xs text-gray-500 text-center">
+                      <div className="rounded-sm border border-white/10 bg-navy-850 p-2 text-2xs text-gray-500 text-center">
                         {t("match.draft.enemyComfortUnknown")}
                       </div>
                     ) : null}
                     {rivalMasteryDisplay.map(({ champion, mastery, playerName, source }) => (
-                      <div key={`rival-row-${champion.id}-${playerName}-${source}`} className="rounded-sm border border-white/10 bg-[#111318] p-1">
+                      <div key={`rival-row-${champion.id}-${playerName}-${source}`} className="rounded-sm border border-white/10 bg-navy-850 p-1">
                         <div className="flex items-center gap-2">
                           <img
                             src={champion.image}

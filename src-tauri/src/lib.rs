@@ -13,6 +13,7 @@ pub struct SaveManagerState(pub Mutex<SaveManager>);
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    eprintln!("[OLManager] BUILD: staff-fix-v2");
     // Workaround for WebKitGTK DMABuf rendering issues on Wayland (Linux)
     #[cfg(target_os = "linux")]
     {
@@ -175,6 +176,7 @@ pub fn run() {
             delete_save,
             skip_to_match_day,
             check_blocking_actions,
+            export_bug_report,
             apply_team_talk,
             submit_press_conference,
             exit_to_menu,
@@ -203,7 +205,8 @@ pub fn run() {
             get_champion_by_id,
             seed_champions_from_json,
             get_champion_stats,
-            get_top_champions
+            get_top_champions,
+            debug_log
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

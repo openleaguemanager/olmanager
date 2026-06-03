@@ -1,21 +1,10 @@
-import { useEffect, useState, useMemo } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { useState } from "react";
 import { compareStandingsByLolScore, GameStateData, FixtureData, getStandingKillDiff, getStandingKillsAgainst, getStandingKillsFor } from "../../store/gameStore";
-import { Card, CardBody, Badge } from "../ui";
-import { Trophy, Users, Globe, ArrowLeft, Loader2 } from "lucide-react";
+import { Card, CardBody, CardHeader, Badge } from "../ui";
+import { Trophy, TableProperties, Calendar } from "lucide-react";
 import { getTeamName, formatMatchDate } from "../../lib/helpers";
 import { resolveSeasonContext } from "../../lib/seasonContext";
 import { useTranslation } from "react-i18next";
-
-interface TeamSummary {
-  id: string; name: string; short_name: string;
-  logo_url?: string | null; country: string;
-}
-interface CompetitionSummary {
-  id: string; name: string; region: string;
-  logo?: string | null; team_count: number; teams: TeamSummary[];
-}
-interface LeagueSelectionData { competitions: CompetitionSummary[]; }
 
 interface TournamentsTabProps {
   gameState: GameStateData;
@@ -27,7 +16,9 @@ export default function TournamentsTab({
   onSelectTeam,
 }: TournamentsTabProps) {
   const { t } = useTranslation();
-  const league = gameState.leagues[0];
+  const league = gameState.user_competition_id
+    ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)
+    : gameState.leagues[0];
   const academyLeague = gameState.academy_league ?? null;
   const userTeamId = gameState.manager.team_id;
   const seasonContext = resolveSeasonContext(gameState);
@@ -36,52 +27,13 @@ export default function TournamentsTab({
     "overview",
   );
 
-  // Find league data from gameState.leagues[] by matching competition ID
-  const userTeamPrefix = gameState.manager.team_id?.split("-")[0] ?? null;
-  const selectedLeague = useMemo(() => {
-    if (!selectedCompId || !gameState.leagues) return null;
-    // Match by checking team IDs — the league whose teams match the competition prefix
-    return gameState.leagues.find((l) =>
-      l.fixtures.some((f) => f.home_team_id.startsWith(selectedCompId + "-"))
-    ) ?? null;
-  }, [selectedCompId, gameState.leagues]);
-
-  // League grid (no competition selected yet)
-  if (!selectedCompId) {
-    if (loading) return <div className="text-center py-12"><Loader2 className="w-8 h-8 animate-spin text-gray-400 mx-auto" /></div>;
-    const comps = allComps ?? [];
+  if (!league) {
     return (
       <div className="w-[92%] max-w-[2000px] mx-auto text-center py-12">
         <Trophy className="w-12 h-12 text-gray-300 dark:text-navy-600 mx-auto mb-3" />
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           {t("tournaments.noActive")}
         </p>
-      </div>
-    );
-  }
-
-  // Competition selected — find its data in gameState.leagues
-  const playerLeague = selectedLeague;
-  if (!playerLeague) {
-    // Fallback: show teams from get_league_selection_data
-    const comp = allComps?.find((c) => c.id === selectedCompId);
-    if (!comp) return <div className="text-center py-12"><p className="text-gray-500">{t("tournaments.notFound", "Competition not found.")}</p></div>;
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setSelectedCompId(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-navy-700"><ArrowLeft className="w-5 h-5" /></button>
-          <h2 className="text-lg font-heading font-bold uppercase tracking-wide text-gray-800 dark:text-gray-100">{comp.name}</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {comp.teams.map((team) => (
-            <Card key={team.id}><div className="p-4 flex items-center gap-3">
-              {team.logo_url ? <img src={team.logo_url} alt="" className="w-10 h-10 object-contain rounded-lg" />
-                : <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-navy-700 flex items-center justify-center"><Users className="w-5 h-5 text-gray-400" /></div>}
-              <div><p className="font-heading font-bold text-sm text-gray-800 dark:text-gray-100 truncate">{team.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{team.short_name} · {team.country}</p></div>
-            </div></Card>
-          ))}
-        </div>
       </div>
     );
   }
@@ -445,7 +397,7 @@ export default function TournamentsTab({
       {/* Fixtures */}
       {view === "fixtures" && (
         <div className="space-y-4">
-          {filteredMatchdays.map(([md, fixtures]) => (
+          {sortedMatchdays.map(([md, fixtures]) => (
             <Card key={md}>
               <div className="px-5 py-3 border-b border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800 rounded-t-xl">
                 <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-gray-600 dark:text-gray-300">

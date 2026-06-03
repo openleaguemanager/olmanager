@@ -8,9 +8,14 @@ use domain::team::{
 use log::{info, warn};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+use std::path::PathBuf;
 use std::sync::OnceLock;
 use tauri::Manager as TauriManager;
 use tauri::State;
+
+/// Set during `assemble_world_from_modular_data` to the app's resource data directory.
+/// Used by static/fn functions that can't receive `app_handle` directly.
+pub(crate) static RESOURCE_DATA_DIR: OnceLock<PathBuf> = OnceLock::new();
 
 use db::save_index::SaveEntry;
 use domain::manager::Manager;
@@ -117,8 +122,7 @@ fn seed_role_to_canonical(role: &str) -> String {
 pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamSeed> {
     static CATALOG: OnceLock<Vec<ExampleAcademyTeamSeed>> = OnceLock::new();
     CATALOG.get_or_init(|| {
-        // Read ERL teams from JSON data files at runtime to power the academy candidate catalog.
-        // The runtime academy bootstrapping uses bootstrap_academy_pool_from_erl_json() instead.
+        // Read ERL teams and players from JSON data files at runtime.
         let data_base = resolve_data_dir_for_seed_catalog();
         let Some(data_base) = data_base else { return vec![] };
 
@@ -157,31 +161,61 @@ pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamS
                 Ok(s) => s,
                 Err(_) => continue,
             };
-            if let Ok(data) = serde_json::from_str::<serde_json::Value>(&json_str) {
-                if let Some(entries) = data["teams"].as_array() {
-                    let academy_league_id = if file_name == "les" { "liga-espanola" } else { &file_name };
-                    for entry in entries {
-                        let team_name = entry["name"].as_str().unwrap_or("Unknown").to_string();
-                        let short_name = entry["short_name"].as_str().unwrap_or("ACD").to_string();
-                        let logo_url = entry["logo_url"].as_str().map(|s| s.to_string());
-                        teams.push(ExampleAcademyTeamSeed {
-                            league_id: academy_league_id.to_string(),
-                            league_name: league_name.clone(),
-                            country_code: country_code.clone(),
-                            team_name,
-                            short_name,
-                            logo_url,
-                            players: Vec::new(),
-                        });
+            let Some(teams_data) = serde_json::from_str::<serde_json::Value>(&json_str).ok() else { continue; };
+            let Some(team_entries) = teams_data["teams"].as_array() else { continue; };
+
+            // Load players and group by team_id
+            let players_path = data_base.join("erls").join("players").join(format!("{}_players.json", file_name));
+            let mut players_by_team_id: HashMap<String, Vec<ExampleAcademyPlayerSeed>> = HashMap::new();
+            if let Ok(players_json) = std::fs::read_to_string(&players_path) {
+                if let Ok(players_data) = serde_json::from_str::<serde_json::Value>(&players_json) {
+                    if let Some(all_players) = players_data["players"].as_array() {
+                        for player in all_players {
+                            if let Some(tid) = player["team_id"].as_str() {
+                                let seed = ExampleAcademyPlayerSeed {
+                                    role: player["position"].as_str().unwrap_or("Mid").to_string(),
+                                    nickname: player["match_name"].as_str().unwrap_or("Unknown").to_string(),
+                                    full_name: player["full_name"].as_str().unwrap_or("Unknown").to_string(),
+                                    nationality: player["nationality"].as_str().unwrap_or("Unknown").to_string(),
+                                    dob: player["date_of_birth"].as_str().map(|s| s.to_string()),
+                                    image_url: player["profile_image_url"].as_str().unwrap_or("").to_string(),
+                                };
+                                players_by_team_id.entry(tid.to_string()).or_default().push(seed);
+                            }
+                        }
                     }
                 }
+            }
+
+            let academy_league_id = if file_name == "les" { "liga-espanola" } else { &file_name };
+            for entry in team_entries {
+                let team_id = entry["id"].as_str().unwrap_or("").to_string();
+                let team_name = entry["name"].as_str().unwrap_or("Unknown").to_string();
+                let short_name = entry["short_name"].as_str().unwrap_or("ACD").to_string();
+                let logo_url = entry["logo_url"].as_str().map(|s| s.to_string());
+
+                let seed_players = players_by_team_id.remove(&team_id).unwrap_or_default();
+                teams.push(ExampleAcademyTeamSeed {
+                    league_id: academy_league_id.to_string(),
+                    league_name: league_name.clone(),
+                    country_code: country_code.clone(),
+                    team_name,
+                    short_name,
+                    logo_url,
+                    players: seed_players,
+                });
             }
         }
         teams
     })
 }
 
-fn resolve_data_dir_for_seed_catalog() -> Option<std::path::PathBuf> {
+fn resolve_data_dir_for_seed_catalog() -> Option<PathBuf> {
+    if let Some(dir) = RESOURCE_DATA_DIR.get() {
+        if dir.is_dir() {
+            return Some(dir.clone());
+        }
+    }
     let cwd = std::env::current_dir().ok()?;
     for candidate in [
         cwd.join("..").join("data"),
@@ -608,32 +642,33 @@ fn seed_profile_image_url(photo: Option<&str>) -> Option<String> {
 fn load_draft_seed_root() -> DraftSeedRoot {
     // Runtime read from draft/players.json for world editor compatibility.
     // Returns empty if file doesn't exist — Flow C provides players from modular data.
-    let content = match std::fs::read_to_string(
-        std::env::current_dir().ok().map_or_else(
-            || std::path::PathBuf::from("data/draft/players.json"),
-            |cwd| {
+    let Some(content) = RESOURCE_DATA_DIR.get()
+        .map(|dir| dir.join("draft").join("players.json"))
+        .filter(|p| p.exists())
+        .or_else(|| {
+            std::env::current_dir().ok().and_then(|cwd| {
                 let mut path = cwd.clone();
                 path.push("data");
                 path.push("draft");
                 path.push("players.json");
-                if path.exists() { return path; }
-                // tauri dev: cwd is src-tauri/
+                if path.exists() { return Some(path); }
                 path = cwd;
                 path.push("..");
                 path.push("data");
                 path.push("draft");
                 path.push("players.json");
-                path
-            },
-        ),
-    ) {
-        Ok(c) => c,
-        Err(_) => return DraftSeedRoot {
+                if path.exists() { return Some(path); }
+                None
+            })
+        })
+        .and_then(|p| std::fs::read_to_string(p).ok())
+    else {
+        return DraftSeedRoot {
             data: DraftSeedData {
                 rostered_seeds: vec![],
                 free_agent_seeds: vec![],
             },
-        },
+        };
     };
 
     let mut merged = serde_json::from_str::<DraftSeedRoot>(&content).unwrap_or(DraftSeedRoot {
@@ -711,8 +746,11 @@ fn load_external_more_fa_seed() -> Option<DraftSeedRoot> {
 fn load_free_agent_players() -> &'static Vec<Player> {
     static FREE_AGENTS: OnceLock<Vec<Player>> = OnceLock::new();
     FREE_AGENTS.get_or_init(|| {
+        let resource = RESOURCE_DATA_DIR.get()
+            .map(|p| p.join("players").join("free_agents.json"));
         let cwd = std::env::current_dir().ok();
         let candidates = [
+            resource,
             cwd.as_ref().map(|p| p.join("data").join("players").join("free_agents.json")),
             cwd.as_ref().map(|p| p.join("..").join("data").join("players").join("free_agents.json")),
             cwd.as_ref().map(|p| p.join("src-tauri").join("data").join("players").join("free_agents.json")),
@@ -1434,7 +1472,7 @@ pub(crate) fn apply_default_initial_contract_end(players: &mut [Player]) {
     let default_initial_contract_end = default_initial_contract_end_for_start_year(2025);
 
     for player in players.iter_mut() {
-        if player.contract_end.is_none() {
+        if player.contract_end.as_deref().map(|s| s.trim()).unwrap_or("").is_empty() {
             player.contract_end = Some(default_initial_contract_end.clone());
         }
     }
@@ -1898,10 +1936,19 @@ fn assemble_world_from_modular_data(
         competition_id, team_id
     );
 
-    // 1. Scan ALL competitions and load every team + player
+    // Initialize shared resource directory for static functions
+    RESOURCE_DATA_DIR.get_or_init(|| {
+        app_handle.path().resource_dir()
+            .ok()
+            .map(|d| d.join("data"))
+            .unwrap_or_else(|| PathBuf::from("data"))
+    });
+
+    // 1. Scan ALL competitions and load every team + player + staff
     let manifests = crate::commands::competitions::scan_competitions(app_handle);
     let mut all_teams: Vec<Team> = Vec::new();
     let mut all_players: Vec<Player> = Vec::new();
+    let mut staff = crate::commands::competitions::load_staff_free_agents(app_handle)?;
 
     for manifest in &manifests {
         let cid = &manifest.id;
@@ -1917,26 +1964,48 @@ fn assemble_world_from_modular_data(
             all_teams.extend(comp_teams);
         }
         let player_count_before = all_players.len();
-        if let Ok(comp_players) = crate::commands::competitions::load_competition_players(app_handle, manifest) {
-            for mut player in comp_players {
-                if let Some(ref tid) = player.team_id.clone() {
-                    if tid != "fa" && tid != "freeagent" && !tid.starts_with(&prefix) {
-                        player.team_id = Some(format!("{}-{}", cid, tid));
+        match crate::commands::competitions::load_competition_players(app_handle, manifest) {
+            Ok(comp_players) => {
+                for mut player in comp_players {
+                    if let Some(ref tid) = player.team_id.clone() {
+                        if tid != "fa" && tid != "freeagent" && !tid.starts_with(&prefix) {
+                            player.team_id = Some(format!("{}-{}", cid, tid));
+                        }
                     }
+                    if player.morale == 0 { player.morale = 68; }
+                    if player.condition == 0 { player.condition = 100; }
+                    all_players.push(player);
                 }
-                if player.morale == 0 { player.morale = 68; }
-                if player.condition == 0 { player.condition = 100; }
-                all_players.push(player);
+            }
+            Err(err) => {
+                info!("[game] FAILED to load players for '{}': {}", cid, err);
             }
         }
         let loaded = all_players.len() - player_count_before;
         info!("[game] loaded {} players for '{}'", loaded, cid);
+
+        // Load competition staff
+        let staff_count_before = staff.len();
+        match crate::commands::competitions::load_competition_staff(app_handle, manifest) {
+            Ok(comp_staff) => {
+                for mut s in comp_staff {
+                    if let Some(ref tid) = s.team_id.clone() {
+                        if !tid.starts_with(&prefix) {
+                            s.team_id = Some(format!("{}-{}", cid, tid));
+                        }
+                    }
+                    staff.push(s);
+                }
+            }
+            Err(err) => {
+                info!("[game] FAILED to load staff for '{}': {}", cid, err);
+            }
+        }
+        let loaded_staff = staff.len() - staff_count_before;
+        info!("[game] loaded {} staff for '{}'", loaded_staff, cid);
     }
 
-    // 2. Load staff free agents
-    let staff = crate::commands::competitions::load_staff_free_agents(app_handle)?;
-
-    // 3. Bootstrap academy seeds from ERL catalog (JSON or legacy .txt fallback)
+    // 2. Bootstrap academy seeds from ERL catalog (JSON or legacy .txt fallback)
     let academy_bootstrap_date = "2025-01-01".to_string();
     let pre_count = all_teams.len();
     bootstrap_example_academy_pool_from_example(&mut all_teams, &mut all_players, &academy_bootstrap_date);
@@ -1952,10 +2021,27 @@ fn assemble_world_from_modular_data(
     // 5. Apply default contract ends
     apply_default_initial_contract_end(&mut all_players);
 
+    // DEBUG: count staff by team_id
+    {
+        use std::collections::HashMap;
+        let mut by_team: HashMap<&str, usize> = HashMap::new();
+        for s in &staff {
+            match s.team_id.as_deref() {
+                None => { *by_team.entry("(free agent)").or_insert(0) += 1; }
+                Some(tid) => { *by_team.entry(tid).or_insert(0) += 1; }
+            }
+        }
+        info!("[game] STAFF BREAKDOWN:");
+        for (tid, count) in &by_team {
+            info!("[game]   {}: {}", tid, count);
+        }
+    }
+
     info!(
-        "[game] assemble_world_from_modular_data: {} teams, {} players",
+        "[game] assemble_world_from_modular_data: {} teams, {} players, {} staff",
         all_teams.len(),
-        all_players.len()
+        all_players.len(),
+        staff.len()
     );
 
     Ok((all_teams, all_players, staff))
@@ -1976,6 +2062,7 @@ pub async fn select_team(
         .ok_or("No active game session".to_string())?;
 
     // Detect flow: if game has no teams, this is Flow C (modular assembly)
+    eprintln!("[select_team] teams.is_empty={}, staff.len={}", game.teams.is_empty(), game.staff.len());
     if game.teams.is_empty() {
         info!("[cmd] select_team: empty game state — assembling from modular data");
 
@@ -1990,6 +2077,7 @@ pub async fn select_team(
         game.teams = assembled_teams;
         game.players = assembled_players;
         game.staff = assembled_staff;
+        eprintln!("[select_team] AFTER assembly: staff.len={}", game.staff.len());
     }
 
     // Validate team exists
@@ -2075,6 +2163,7 @@ pub async fn select_team(
         }
 
         league.competition_id = Some(cid.clone());
+        league.logo = manifest.logo.clone();
         all_leagues.push(league);
     }
 
@@ -2170,6 +2259,7 @@ pub async fn select_team(
     let save_id = sm.create_save(&game, &save_name)?;
     state.set_save_id(save_id);
 
+    eprintln!("[select_team] BEFORE return: staff.len={}", game.staff.len());
     state.set_game(game.clone());
     state.set_stats_state(StatsState::default());
     Ok(game)

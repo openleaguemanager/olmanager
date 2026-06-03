@@ -57,7 +57,9 @@ export default function ScheduleTab({
     }
   }, [isDesktop, view]);
   const [fixtureResultView, setFixtureResultView] = useState<StoredFixtureDraftResult | null>(null);
-  const league = gameState.leagues[0];
+  const league = gameState.user_competition_id
+    ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)
+    : gameState.leagues[0];
   const userTeamId = gameState.manager.team_id;
 
   const seasonContext = resolveSeasonContext(gameState);
@@ -98,7 +100,7 @@ export default function ScheduleTab({
     return `${t("season.friendly")} — ${formatMatchDate(fixture.date)}`;
   };
 
-  if (!playerLeague) {
+  if (!league) {
     return (
       <p className="text-gray-500 dark:text-gray-400 text-center py-8">
         {t("schedule.noLeague")}
@@ -118,6 +120,7 @@ export default function ScheduleTab({
         userSeriesWins={fixtureResultView.userSeriesWins}
         opponentSeriesWins={fixtureResultView.opponentSeriesWins}
         onContinue={() => setFixtureResultView(null)}
+        teams={gameState.teams}
       />
     );
   }
@@ -151,7 +154,7 @@ export default function ScheduleTab({
   });
 
   // Sorted standings
-  const standings = [...playerLeague.standings].sort(compareStandingsByLolScore);
+  const standings = [...league.standings].sort(compareStandingsByLolScore);
 
   return (
     <div className={view === "calendar" ? "w-full" : "w-[92%] max-w-[2000px] mx-auto"}>
@@ -229,7 +232,7 @@ export default function ScheduleTab({
         <div className="flex flex-col gap-4">
           {playoffFixtures.length > 0 ? (
             <PlayoffBracketBoard
-              league={playerLeague}
+               league={league}
               teams={gameState.teams}
               onSelectTeam={onSelectTeam}
               title={`${t("schedule.playoffs")} · Bracket`}

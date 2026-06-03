@@ -2,24 +2,26 @@ import lesPlayersData from "../../data/erls/players/les_players.json";
 import lflPlayersData from "../../data/erls/players/lfl_players.json";
 import primeLeaguePlayersData from "../../data/erls/players/prm_players.json";
 
-const FALLBACK_PLAYER_PHOTO = "/player-photos/107455908655055017.webp";
+const FALLBACK_PLAYER_PHOTO = "/default/defaultplayer.webp";
+const FALLBACK_STAFF_PHOTO = "/manager-icons/0.webp";
 
 function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function buildPhotoMapFromJson(data: { players: { match_name: string; profile_image_url?: string | null }[] }): Map<string, string> {
+function buildPhotoMapFromJson(data: {
+  players: { match_name: string; profile_image_url?: string | null }[];
+}): Map<string, string> {
   const map = new Map<string, string>();
   for (const player of data.players) {
     const key = normalizeKey(player.match_name);
-    if (!key) continue;
-    if (!player.profile_image_url) continue;
+    if (!key || !player.profile_image_url) continue;
     map.set(key, player.profile_image_url);
   }
   return map;
 }
 
-const EXAMPLE_PHOTO_MAP = new Map<string, string>([
+const IMPORTED_PHOTO_MAP = new Map<string, string>([
   ...buildPhotoMapFromJson(lesPlayersData).entries(),
   ...buildPhotoMapFromJson(lflPlayersData).entries(),
   ...buildPhotoMapFromJson(primeLeaguePlayersData).entries(),
@@ -27,33 +29,30 @@ const EXAMPLE_PHOTO_MAP = new Map<string, string>([
 
 function normalizeProfileImageUrl(url?: string | null): string | null {
   const value = String(url ?? "").trim();
-  if (!value) return null;
-  return value;
+  return value || null;
 }
 
-export function resolvePlayerPhoto(playerId: string, matchName?: string, profileImageUrl?: string | null): string | null {
-  // 1. Explicit profile_image_url from data (highest priority)
+export function resolvePlayerPhoto(
+  playerId: string,
+  matchName?: string,
+  profileImageUrl?: string | null,
+): string | null {
   const explicit = normalizeProfileImageUrl(profileImageUrl);
   if (explicit) return explicit;
 
-  // 2. Legacy lec-player-XXXX pattern
   const legacy = playerId.match(/^lec-player-(.+)$/);
   if (legacy) return `/player-photos/${legacy[1]}.webp`;
 
-  // 3. Match name lookup in imported league data. This must run before the
-  // generated player-id guess because OLMDB exports players with ids like
-  // `player-xxxxxxxx` while their actual photos are content hashes.
   const key = normalizeKey(matchName ?? "");
-  if (key && EXAMPLE_PHOTO_MAP.has(key)) return EXAMPLE_PHOTO_MAP.get(key)!;
+  if (key && IMPORTED_PHOTO_MAP.has(key)) return IMPORTED_PHOTO_MAP.get(key)!;
 
-  // 4. Try playerId as direct photo filename for legacy/local seed records.
-  const byId = `/player-photos/${playerId}.webp`;
-  if (playerId.startsWith("player-") || playerId.startsWith("team-")) return byId;
+  if (playerId.startsWith("player-") || playerId.startsWith("team-")) {
+    return `/player-photos/${playerId}.webp`;
+  }
 
-  // 5. Fallback
   return FALLBACK_PLAYER_PHOTO;
 }
 
 export function resolveStaffPhoto(profileImageUrl?: string | null): string | null {
-  return normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_PLAYER_PHOTO;
+  return normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_STAFF_PHOTO;
 }

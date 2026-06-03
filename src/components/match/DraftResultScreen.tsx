@@ -27,6 +27,7 @@ interface DraftResultScreenProps {
   canUserChooseSide?: boolean;
   onPressConference?: () => void;
   onContinue: (nextUserSide?: Side) => void;
+  teams?: import("../../store/types").TeamData[];
 }
 
 export interface DraftResultSeriesGame {
@@ -79,8 +80,14 @@ function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function teamTriCode(name: string): string {
+function teamTriCode(name: string, teams?: import("../../store/types").TeamData[]): string {
   const normalizedName = normalizeKey(name);
+
+  if (teams) {
+    const fromTeams = teams.find((t) => normalizeKey(t.name) === normalizedName);
+    if (fromTeams?.short_name) return fromTeams.short_name;
+  }
+
   const fromSeed = TEAM_SEEDS.find((team) => normalizeKey(team.name) === normalizedName);
   if (fromSeed?.shortName) return fromSeed.shortName.toUpperCase();
 
@@ -138,8 +145,17 @@ export default function DraftResultScreen({
   canUserChooseSide = false,
   onPressConference,
   onContinue,
+  teams,
 }: DraftResultScreenProps) {
   const { t } = useTranslation();
+
+  const playerById = useMemo(() => {
+    const map = new Map<string, { name: string; profileImageUrl?: string | null }>();
+    [...(snapshot.home_team?.players ?? []), ...(snapshot.away_team?.players ?? [])].forEach((p) => {
+      map.set(p.id, { name: p.name, profileImageUrl: p.profile_image_url });
+    });
+    return map;
+  }, [snapshot.home_team?.players, snapshot.away_team?.players]);
 
   const seriesGamesForTabs = useMemo<DraftResultSeriesGame[]>(() => {
     if (!Array.isArray(seriesGames) || seriesGames.length === 0) {
@@ -167,8 +183,8 @@ export default function DraftResultScreen({
 
   const blueTeam = sideTeam(snapshot, "blue");
   const redTeam = sideTeam(snapshot, "red");
-  const blueTri = teamTriCode(blueTeam.name);
-  const redTri = teamTriCode(redTeam.name);
+  const blueTri = teamTriCode(blueTeam.name, teams);
+  const redTri = teamTriCode(redTeam.name, teams);
   const blueLogo = resolveTeamLogo(blueTeam.name);
   const redLogo = resolveTeamLogo(redTeam.name);
 
@@ -204,7 +220,8 @@ export default function DraftResultScreen({
     ? `M ${chartPoints[0].x},${GOLD_CHART_CENTER_Y} L ${chartPoints.map((point) => `${point.x},${point.y}`).join(" L ")} L ${chartPoints[chartPoints.length - 1].x},${GOLD_CHART_CENTER_Y} Z`
     : "";
 
-  const mvpPhoto = resolvePlayerPhoto(selectedResult.mvp.playerId, selectedResult.mvp.playerName);
+  const mvpPlayer = playerById.get(selectedResult.mvp.playerId);
+  const mvpPhoto = resolvePlayerPhoto(selectedResult.mvp.playerId, selectedResult.mvp.playerName, mvpPlayer?.profileImageUrl);
   const playedSeriesGames = Math.max(latestSeriesGame?.gameIndex ?? 1, seriesGamesForTabs.length);
   const nextGameLabel = `${Math.min(seriesLength, playedSeriesGames + 1)}/${seriesLength}`;
   const targetSeriesWins = seriesLength === 1 ? 1 : seriesLength === 3 ? 2 : 3;
@@ -309,7 +326,7 @@ export default function DraftResultScreen({
   };
 
   return (
-    <div className="min-h-screen overflow-y-auto overflow-x-hidden bg-[#050608] text-white p-4 md:p-6">
+    <div className="min-h-screen overflow-y-auto overflow-x-hidden bg-navy-950 text-white p-4 md:p-6">
       <div className="max-w-[1600px] mx-auto space-y-4">
         <header className="rounded-xl border border-cyan-400/25 bg-[#0a1433] p-5 text-center shadow-[0_0_24px_rgba(0,242,255,0.1)]">
           <p className="text-xs uppercase tracking-[0.3em] text-gray-400">{t("match.matchOver")}</p>
@@ -573,7 +590,8 @@ export default function DraftResultScreen({
                 <p className="text-xs uppercase tracking-[0.2em] text-cyan-200 mb-3">{blueTri}</p>
                 <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-3 gap-y-1 items-center">
                   {blueRows.map((row) => {
-                    const icon = resolvePlayerPhoto(row.playerId, row.playerName);
+                    const playerData = playerById.get(row.playerId);
+                    const icon = resolvePlayerPhoto(row.playerId, row.playerName, playerData?.profileImageUrl);
                     const isMvp = row.playerId === selectedResult.mvp.playerId;
                     return (
                       <div
@@ -596,7 +614,8 @@ export default function DraftResultScreen({
                 <p className="text-xs uppercase tracking-[0.2em] text-cyan-200 mb-3">{redTri}</p>
                 <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-3 gap-y-1 items-center">
                   {redRows.map((row) => {
-                    const icon = resolvePlayerPhoto(row.playerId, row.playerName);
+                    const playerData = playerById.get(row.playerId);
+                    const icon = resolvePlayerPhoto(row.playerId, row.playerName, playerData?.profileImageUrl);
                     const isMvp = row.playerId === selectedResult.mvp.playerId;
                     return (
                       <div

@@ -253,18 +253,12 @@ function positionToRole(position: string): DraftRole | null {
   return null;
 }
 
-function playerPhotoUrl(playerId: string): string | null {
-  const match = playerId.match(/^lec-player-(.+)$/);
-  if (match) return `/player-photos/${match[1]}.webp`;
-  return null;
-}
-
 function ImageWithFallback({ playerId, playerName, gameState }: { playerId: string; playerName: string; gameState: GameStateData }) {
   const player = gameState.players.find(p => p.id === playerId || p.match_name === playerName);
-  const photo = player?.profile_image_url ?? resolvePlayerPhoto(playerId, playerName);
+  const photo = resolvePlayerPhoto(playerId, playerName, player?.profile_image_url);
   return (
     <img
-      src={playerPhotoUrl(playerId) ?? photo ?? ""}
+      src={photo ?? "/default/defaultplayer.webp"}
       alt={playerName}
       className="h-10 w-10 shrink-0 rounded object-cover"
       onError={(e) => {
@@ -272,13 +266,12 @@ function ImageWithFallback({ playerId, playerName, gameState }: { playerId: stri
         // onError and spin in an infinite reload loop.
         const img = e.currentTarget;
         img.onerror = null;
-        img.src = "/player-photos/107455908655055017.webp";
+        img.src = "/default/defaultplayer.webp";
       }}
       loading="lazy"
     />
   );
 }
-
 function Section<T extends string>({
   title,
   options,
@@ -412,6 +405,7 @@ export default function TacticsTab({
         role,
         playerId: player?.id ?? null,
         playerName: player?.match_name ?? t("tactics.lol.noStarter"),
+        profileImageUrl: player?.profile_image_url ?? null,
         base,
         modifier,
         variance,

@@ -5,7 +5,7 @@ import playersSeed from "../../../data/draft/players.json";
 import type { ChampionMasteryEntryData, PlayerData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
 import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/lolIdentity";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { normalizeChampionKey } from "../../lib/championIds";
 import { resolveChampionSplash } from "../../lib/championImages";
@@ -104,10 +104,11 @@ export default function HomeRosterLineupCard({
       </CardHeader>
       <CardBody>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
-          {lineup.map(({ role, player }) => {
-            const photo = player ? resolvePlayerPhoto(player.id, player.match_name) : null;
+          {lineup.map(({ role, player }, index) => {
+            const photo = player ? player.profile_image_url ?? "/default/defaultplayer.webp" : null;
             const ovr = player ? calculateLolOvr(player) : null;
             const condition = player?.condition ?? null;
+            const fitness = player?.fitness ?? null;
             const morale = player?.morale ?? null;
             const topChampion = player
               ? topMasteryChampionByPlayerId.get(player.id)
@@ -123,7 +124,7 @@ export default function HomeRosterLineupCard({
             return (
               <div
                 key={role}
-                className="relative overflow-hidden rounded-md border border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800/40 p-2"
+                className={`relative overflow-hidden rounded-md border border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800/40 p-2 animate-fade-in-up delay-${(index % 5) * 100 + 100}`}
               >
                 {championSplash ? (
                   <>
@@ -164,11 +165,17 @@ export default function HomeRosterLineupCard({
                   </div>
                 </div>
 
-                <div className="mt-2 grid grid-cols-2 gap-1 text-2xs">
+                <div className="mt-2 grid grid-cols-3 gap-1 text-2xs">
                   <div className="rounded bg-navy-900/60 px-1.5 py-1 text-center">
                     <p className="text-gray-400">{t("common.condition")}</p>
                     <p className="font-heading font-bold text-primary-400">
                       {condition !== null ? `${condition}%` : "—"}
+                    </p>
+                  </div>
+                  <div className="rounded bg-navy-900/60 px-1.5 py-1 text-center">
+                    <p className="text-gray-400">{t("common.fitness")}</p>
+                    <p className="font-heading font-bold text-green-400">
+                      {fitness !== null ? `${fitness}%` : "—"}
                     </p>
                   </div>
                   <div className="rounded bg-navy-900/60 px-1.5 py-1 text-center">

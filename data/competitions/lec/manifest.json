@@ -8,7 +8,7 @@
   "logo": "/competitions-icons/lec.webp",
   "teams_file": "teams/lec_teams.json",
   "players_file": "players/lec_players.json",
-  "staff_file": null,
+  "staff_file": "staffs/lec_staffs.json",
   "schedule": {
     "format": "single_round_robin",
     "splits": [

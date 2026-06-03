@@ -5,7 +5,7 @@ import { resolvePlayerPhoto } from "./playerPhotos";
 describe("resolvePlayerPhoto", () => {
   it("prefers imported match-name photos over generated player-id guesses", () => {
     expect(resolvePlayerPhoto("player-randomid", "Selenex", null)).toBe(
-      "/player-photos/de885f0e0db2d2cc.png",
+      "/player-photos/3d26f35c.webp",
     );
   });
 

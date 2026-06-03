@@ -257,17 +257,24 @@ function CompetitionCard({
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div
-            className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClass} border`}
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClass} border overflow-hidden`}
           >
             {(() => {
-              const iconId = (league.competition_id ?? league.id).replace(/\s+/g, '_');
+              const iconId = (league.competition_id ?? league.id).replace(/\s+/g, "_");
+              const src = league.logo ?? `/competitions-icons/${iconId}.webp`;
               return (
-                <img
-                  src={`/competitions-icons/${iconId}.webp`}
-                  alt={league.name}
-                  className="w-10 h-10 object-contain"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
+                <>
+                  <img
+                    src={src}
+                    alt={league.name}
+                    className="w-10 h-10 object-contain"
+                    onError={(event) => {
+                      event.currentTarget.style.display = "none";
+                      event.currentTarget.nextElementSibling?.classList.remove("hidden");
+                    }}
+                  />
+                  <Trophy className="hidden w-5 h-5" />
+                </>
               );
             })()}
           </div>

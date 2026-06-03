@@ -8,7 +8,7 @@
   "logo": "/competitions-icons/e143fd7de34abe1d.webp",
   "teams_file": "teams/cblol_teams.json",
   "players_file": "players/cblol_players.json",
-  "staff_file": null,
+  "staff_file": "staffs/cblol_staffs.json",
   "schedule": {
     "format": "double_round_robin",
     "splits": [

@@ -2511,7 +2511,7 @@ fn reconcile_lol_active_lineup(team: &mut domain::team::Team, players: &[domain:
         }
     }
 
-    team.active_lineup_ids = next_ids;
+    team.active_lineup_ids = next_ids.into_iter().filter(|id| !id.is_empty()).collect();
 }
 
 fn current_team_player_by_id<'a>(

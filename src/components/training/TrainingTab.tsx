@@ -22,7 +22,7 @@ import {
 } from "../../lib/trainingFocus";
 import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
 import { resolvePlayerCurrentLolRole } from "../../lib/lolIdentity";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+
 import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
 import type { GameStateData } from "../../store/gameStore";
 import { setTraining, setTrainingSchedule } from "../../services/trainingService";
@@ -376,7 +376,12 @@ export default function TrainingTab({
             <div className="space-y-2">
               {roster
                 .slice()
-                .sort((a, b) => a.match_name.localeCompare(b.match_name))
+                .sort((a, b) => {
+                  const ROLE_SORT_ORDER: Record<string, number> = { TOP: 0, JUNGLE: 1, MID: 2, ADC: 3, SUPPORT: 4 };
+                  const roleA = resolvePlayerCurrentLolRole(a, myTeam);
+                  const roleB = resolvePlayerCurrentLolRole(b, myTeam);
+                  return (ROLE_SORT_ORDER[roleA] ?? 99) - (ROLE_SORT_ORDER[roleB] ?? 99);
+                })
                 .map((player) => {
                   const playerFocus = normalizeTrainingFocus(player.training_focus ?? currentFocus);
                   const soloQ = computeSoloQ(

@@ -8,7 +8,7 @@
   "logo": "/competitions-icons/b5b07392ac1b4633.webp",
   "teams_file": "teams/lck_teams.json",
   "players_file": "players/lck_players.json",
-  "staff_file": null,
+  "staff_file": "staffs/lck_staffs.json",
   "schedule": {
     "format": "double_round_robin",
     "splits": [
