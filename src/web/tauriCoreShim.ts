@@ -77,6 +77,12 @@ function toLegacySaveEntry(save: SaveSummary) {
 
 export async function invoke<T = unknown>(command: string, args?: InvokeArgs): Promise<T> {
   switch (command) {
+    case "debug_log": {
+      if (import.meta.env.DEV) {
+        console.debug(String(args?.message ?? ""));
+      }
+      return undefined as T;
+    }
     case "get_saves": {
       const result = await request<{ saves: SaveSummary[] }>("/api/saves");
       return result.saves.map(toLegacySaveEntry) as T;

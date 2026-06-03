@@ -44,6 +44,12 @@ pub fn dispatch(
     game: &mut Game,
 ) -> Result<CommandResult, CommandError> {
     match command {
+        "debug_log" => {
+            if let Some(message) = args.get("message").and_then(|value| value.as_str()) {
+                tracing::debug!("{message}");
+            }
+            ok(Value::Null, false)
+        }
         "get_active_game" => {
             let repaired_financials = data::repair_player_financials(game);
             ofm_core::champions::bootstrap_champion_state(game);
