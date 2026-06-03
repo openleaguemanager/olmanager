@@ -182,7 +182,11 @@ export default function Dashboard(): JSX.Element {
       try {
         console.log("[Dashboard] Loading champions for world tab...");
         const champions = await invoke<import("../store/types").ChampionData[]>("get_champions");
-        setGameState({ ...gameState, champions });
+        // Merge into the freshest state from the store, not the gameState captured
+        // in this effect's closure — otherwise a concurrent update (e.g. marking an
+        // inbox message read) made while this request was in flight gets clobbered.
+        const latest = useGameStore.getState().gameState;
+        setGameState({ ...(latest ?? gameState), champions });
         console.log(`[Dashboard] Loaded ${champions.length} champions`);
       } catch (err) {
         console.error("Failed to load champions:", err);
