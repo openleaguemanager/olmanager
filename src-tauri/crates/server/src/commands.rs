@@ -45,8 +45,9 @@ pub fn dispatch(
 ) -> Result<CommandResult, CommandError> {
     match command {
         "get_active_game" => {
+            let repaired_financials = data::repair_player_financials(game);
             ofm_core::champions::bootstrap_champion_state(game);
-            ok(json!(game), false)
+            ok(json!(game), repaired_financials)
         }
         "save_game" => ok(Value::Null, true),
         "advance_time" => {

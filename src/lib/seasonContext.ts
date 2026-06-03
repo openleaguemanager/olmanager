@@ -73,7 +73,7 @@ function deriveSeasonContext(gameState: GameStateData): SeasonContextData {
     fixtureDates.length > 0 ? fixtureDates[fixtureDates.length - 1] : null;
   const currentDate = parseUtcDate(gameState.clock.current_date);
   const hasStarted =
-    playerLeague.standings.some((entry) => entry.played > 0) ||
+    league.standings.some((entry) => entry.played > 0) ||
     competitiveFixtures.some((fixture) => fixture.status === "Completed");
   const isComplete =
     competitiveFixtures.length > 0 &&

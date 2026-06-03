@@ -230,6 +230,80 @@ fn add_teams(
     }
 }
 
+fn round_money(value: u64, step: u64) -> u64 {
+    value.max(step).div_ceil(step) * step
+}
+
+fn estimated_market_value(player: &Player) -> u64 {
+    let ovr = player.attributes.overall();
+    let potential = player.potential_base.max(ovr).min(100);
+    let skill_gap = u64::from(ovr.saturating_sub(60));
+    let potential_gap = u64::from(potential.saturating_sub(ovr));
+    let raw_value = 75_000 + skill_gap * skill_gap * 2_250 + potential_gap * 70_000;
+
+    round_money(raw_value, 10_000)
+}
+
+fn estimated_annual_wage(player: &Player, market_value: u64, team_wage_budget: Option<i64>) -> u32 {
+    let ovr = u64::from(player.attributes.overall());
+    let market_based = market_value / 8;
+    let rating_based = 18_000 + ovr.saturating_sub(50) * 7_500;
+    let budget_ceiling = team_wage_budget
+        .and_then(|budget| (budget > 0).then_some((budget as u64 / 4).max(40_000)))
+        .unwrap_or(1_250_000);
+    let raw_wage = market_based
+        .max(rating_based)
+        .min(budget_ceiling)
+        .max(12_000);
+
+    round_money(raw_wage, 1_000).min(u64::from(u32::MAX)) as u32
+}
+
+fn missing_contract_end(contract_end: Option<&str>) -> bool {
+    contract_end.map(str::trim).unwrap_or("").is_empty()
+}
+
+fn repair_player_financials_with_budget(
+    player: &mut Player,
+    team_wage_budget: Option<i64>,
+) -> bool {
+    let mut changed = false;
+    if player.market_value == 0 {
+        player.market_value = estimated_market_value(player);
+        changed = true;
+    }
+    if player.wage == 0 {
+        player.wage = estimated_annual_wage(player, player.market_value, team_wage_budget);
+        changed = true;
+    }
+    if missing_contract_end(player.contract_end.as_deref()) {
+        player.contract_end = Some("2028-11-30".to_string());
+        changed = true;
+    }
+    changed
+}
+
+/// Imported public data can legitimately omit contract and finance fields.
+/// Repair those holes both for newly assembled worlds and for already-created
+/// web saves that were loaded before the importer had these defaults.
+pub fn repair_player_financials(game: &mut Game) -> bool {
+    let wage_budget_by_team: HashMap<String, i64> = game
+        .teams
+        .iter()
+        .map(|team| (team.id.clone(), team.wage_budget))
+        .collect();
+
+    let mut changed = false;
+    for player in &mut game.players {
+        let team_wage_budget = player
+            .team_id
+            .as_ref()
+            .and_then(|team_id| wage_budget_by_team.get(team_id).copied());
+        changed |= repair_player_financials_with_budget(player, team_wage_budget);
+    }
+    changed
+}
+
 /// Coerce the `null`/missing fields that OLMDBManager staff exports routinely
 /// carry into the shapes `domain::Staff` requires, so a single bad record (or
 /// `"wage": null`, `"attributes": null`) doesn't drop the whole file.
@@ -382,6 +456,13 @@ pub fn assemble_world(base: &Path) -> (Vec<Team>, Vec<Player>, Vec<Staff>) {
             if player.condition == 0 {
                 player.condition = 100;
             }
+            let team_wage_budget = player.team_id.as_ref().and_then(|team_id| {
+                all_teams
+                    .iter()
+                    .find(|team| &team.id == team_id)
+                    .map(|team| team.wage_budget)
+            });
+            repair_player_financials_with_budget(&mut player, team_wage_budget);
             all_players.push(player);
         }
     }
@@ -456,8 +537,11 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
         // Preseason friendlies for the user's competition only.
         if user_cid == Some(manifest.id.as_str()) {
             let split = &manifest.schedule.splits[0];
-            let opponents: Vec<String> =
-                team_ids.iter().filter(|t| t.as_str() != team_id).cloned().collect();
+            let opponents: Vec<String> = team_ids
+                .iter()
+                .filter(|t| t.as_str() != team_id)
+                .cloned()
+                .collect();
             if !opponents.is_empty() {
                 let season_start = Utc
                     .with_ymd_and_hms(
@@ -492,10 +576,37 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
     Ok(())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use domain::player::PlayerAttributes;
+    use domain::stats::LolRole;
+
+    fn imported_player_without_financials() -> Player {
+        let attributes = PlayerAttributes {
+            mechanics: 90,
+            laning: 91,
+            teamfighting: 90,
+            macro_play: 92,
+            consistency: 92,
+            shotcalling: 89,
+            champion_pool: 89,
+            discipline: 91,
+            mental_resilience: 91,
+        };
+        let mut player = Player::new(
+            "player-1".to_string(),
+            "Gumayusi".to_string(),
+            "Lee Min-hyeong".to_string(),
+            "2002-02-06".to_string(),
+            "KR".to_string(),
+            LolRole::Adc,
+            attributes,
+        );
+        player.team_id = Some("team-hle".to_string());
+        player.potential_base = 95;
+        player
+    }
 
     #[test]
     fn sanitize_staff_value_recovers_null_required_fields() {
@@ -577,6 +688,31 @@ mod tests {
         let staff = load_all_staff(&dir, &HashMap::new());
         std::fs::remove_dir_all(&dir).ok();
         assert_eq!(staff.len(), 1);
-        assert_eq!(staff[0].team_id, None, "staff for unloaded team become free agents");
+        assert_eq!(
+            staff[0].team_id, None,
+            "staff for unloaded team become free agents"
+        );
+    }
+
+    #[test]
+    fn repair_player_financials_fills_imported_zeroes_once() {
+        let mut player = imported_player_without_financials();
+
+        assert!(repair_player_financials_with_budget(
+            &mut player,
+            Some(2_875_000),
+        ));
+        assert!(player.market_value > 0);
+        assert!(player.wage > 0);
+        assert_eq!(player.contract_end.as_deref(), Some("2028-11-30"));
+
+        let market_value = player.market_value;
+        let wage = player.wage;
+        assert!(!repair_player_financials_with_budget(
+            &mut player,
+            Some(2_875_000),
+        ));
+        assert_eq!(player.market_value, market_value);
+        assert_eq!(player.wage, wage);
     }
 }

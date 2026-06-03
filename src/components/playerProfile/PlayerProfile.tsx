@@ -452,14 +452,8 @@ export default function PlayerProfile({
     scoutStatus,
   });
   const latestScoutReport = getLatestScoutReportForPlayer(gameState, player.id);
-  const attrGroups = buildPlayerAttributeGroups(
-    player,
-    t,
-    actualIsOwnClub ? undefined : latestScoutReport,
-  );
-  const canViewAttributes = actualIsOwnClub || attrGroups.some((group) =>
-    group.attrs.some((attribute) => attribute.value !== null),
-  );
+  const attrGroups = buildPlayerAttributeGroups(player, t);
+  const canViewAttributes = true;
   const championPerformance = buildChampionPerformanceMap(playerHistory);
   const visibleChampionMasteryCount = actualIsOwnClub ? 4 : latestScoutReport ? 2 : 1;
   const topChampions = buildTopChampionMasteries(

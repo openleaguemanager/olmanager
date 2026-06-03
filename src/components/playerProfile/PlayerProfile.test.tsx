@@ -350,8 +350,17 @@ describe("PlayerProfile contract surfaces", () => {
     expect(screen.getByText("Mastery 74")).toBeInTheDocument();
   });
 
-  it("shows discovered scouting attributes for players outside your club", () => {
-    const player = createPlayer({ team_id: "team-2" });
+  it("shows imported attributes for players outside your club", () => {
+    const player = createPlayer({
+      team_id: "team-2",
+      attributes: {
+        ...createPlayer().attributes,
+        mechanics: 81,
+        teamfighting: 77,
+        macro_play: 73,
+        discipline: 69,
+      },
+    });
     const gameState = {
       ...createGameState(player),
       teams: [createTeam(), createTeam({ id: "team-2", name: "Beta FC", manager_id: "manager-2" })],
@@ -419,7 +428,7 @@ describe("PlayerProfile contract surfaces", () => {
     expect(screen.getAllByText("69").length).toBeGreaterThan(0);
   });
 
-  it("hides outside-player attributes without a scout report even if the caller marks them as own club", () => {
+  it("shows imported attributes for outside players without requiring a scout report", () => {
     const player = createPlayer({
       team_id: "team-2",
       attributes: {
@@ -445,9 +454,8 @@ describe("PlayerProfile contract surfaces", () => {
       />,
     );
 
-    expect(screen.getByText("playerProfile.attributesHidden")).toBeInTheDocument();
-    expect(screen.getAllByText("??").length).toBeGreaterThanOrEqual(9);
-    expect(screen.queryByText("97")).not.toBeInTheDocument();
+    expect(screen.queryByText("playerProfile.attributesHidden")).not.toBeInTheDocument();
+    expect(screen.getByText("97")).toBeInTheDocument();
   });
 
   it("allows selecting the player's team from the hero header", () => {
