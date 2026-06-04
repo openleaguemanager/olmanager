@@ -368,10 +368,11 @@ export default function MainMenu() {
       {/* Theme Toggle */}
       <ThemeToggle className="absolute top-6 right-6 z-20" />
 
-      {/* Main Menu — left-aligned game layout over the splash slideshow */}
-      {menuState === "main" && (
-        <div className="relative z-10 min-h-screen flex flex-col justify-center px-8 sm:px-14 lg:px-24">
-          <div className="w-full max-w-lg animate-fade-in-up">
+      {/* Two-column layout: persistent nav on the left, active panel on the right */}
+      <div className="relative z-10 min-h-screen flex">
+        {/* Left column — logo + nav (always visible) */}
+        <div className="flex flex-col justify-center px-8 sm:px-14 lg:px-20 w-full max-w-md shrink-0">
+          <div className="w-full animate-fade-in-up">
             <img
               src="/olmanager-logo.svg"
               alt="Open League Manager"
@@ -379,109 +380,69 @@ export default function MainMenu() {
             />
 
             <nav className="flex flex-col gap-1">
-              <button
+              <MenuItem
+                icon={<PlusCircle />}
+                label={t("menu.newGame")}
+                active={menuState === "create"}
                 onClick={() => setMenuState("create")}
-                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
-              >
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
-                <PlusCircle className="w-6 h-6 text-accent-400 transition-transform group-hover:scale-110" />
-                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
-                  {t("menu.newGame")}
-                </span>
-              </button>
-
-              <button
+              />
+              <MenuItem
+                icon={<FolderOpen />}
+                label={t("menu.loadGame")}
+                active={menuState === "load"}
                 onClick={handleOpenLoadMenu}
-                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
-              >
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
-                <FolderOpen className="w-6 h-6 text-accent-400 transition-transform group-hover:scale-110" />
-                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
-                  {t("menu.loadGame")}
-                </span>
-              </button>
-
-              <button
-                onClick={() => navigate("/settings", { state: { from: "/", menuStyle: true } })}
-                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
-              >
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
-                <Settings className="w-6 h-6 text-gray-300 transition-transform group-hover:scale-110" />
-                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
-                  {t("menu.settings")}
-                </span>
-              </button>
-
-              <button
+              />
+              <MenuItem
+                icon={<Settings />}
+                tone="muted"
+                label={t("menu.settings")}
+                onClick={() =>
+                  navigate("/settings", { state: { from: "/", menuStyle: true } })
+                }
+              />
+              <MenuItem
+                icon={<Users />}
+                label={t("menu.community", "Comunidad")}
+                active={menuState === "community"}
                 onClick={() => setMenuState("community")}
-                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
-              >
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
-                <Users className="w-6 h-6 text-accent-400 transition-transform group-hover:scale-110" />
-                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
-                  {t("menu.community", "Comunidad")}
-                </span>
-              </button>
-
-              <button
+              />
+              <MenuItem
+                icon={<Newspaper />}
+                tone="muted"
+                label={t("menu.patchNotes", "Novedades")}
+                active={menuState === "patchnotes"}
                 onClick={() => setMenuState("patchnotes")}
-                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
-              >
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
-                <Newspaper className="w-6 h-6 text-gray-300 transition-transform group-hover:scale-110" />
-                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
-                  {t("menu.patchNotes", "Novedades")}
-                </span>
-              </button>
-
+              />
               {debugToolsEnabled && (
-                <button
-                  onClick={() => navigate("/world-editor")}
+                <MenuItem
+                  icon={<Database />}
+                  tone="primary"
+                  label="World Editor"
                   title="World Editor"
-                  className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
-                >
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-primary-500 transition-all duration-200 group-hover:h-3/5" />
-                  <Database className="w-6 h-6 text-primary-400 transition-transform group-hover:scale-110" />
-                  <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
-                    World Editor
-                  </span>
-                </button>
+                  onClick={() => navigate("/world-editor")}
+                />
               )}
-
-              <button
+              <MenuItem
+                icon={<Power />}
+                tone="danger"
+                label={t("menu.exitGame")}
                 onClick={() => {
                   void handleExitApp();
                 }}
-                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-red-500/10 transition-colors duration-200"
-              >
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-red-500 transition-all duration-200 group-hover:h-3/5" />
-                <Power className="w-6 h-6 text-red-400 transition-transform group-hover:scale-110" />
-                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-300 transition-all group-hover:text-white group-hover:translate-x-1">
-                  {t("menu.exitGame")}
-                </span>
-              </button>
+              />
             </nav>
           </div>
         </div>
-      )}
 
-      {/* Create / Load / Community / Patch notes — glass card over the slideshow */}
-      {(menuState === "create" ||
-        menuState === "load" ||
-        menuState === "community" ||
-        menuState === "patchnotes") && (
-        <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
-          <div className="w-full max-w-md animate-scale-in">
-            <div className="h-1.5 bg-gradient-to-r from-primary-500 via-accent-400 to-primary-500 rounded-t-2xl" />
-            <div className="bg-navy-900/85 backdrop-blur-xl p-8 rounded-b-2xl shadow-2xl border border-white/10 border-t-0">
-              <div className="text-center mb-6">
-                <img
-                  src="/olmanager-logo.svg"
-                  alt="Open League Manager"
-                  className="h-16 mx-auto"
-                />
-              </div>
-              <div className="border-t border-white/10 mb-6" />
+        {/* Right column — active panel opens beside the nav */}
+        {menuState !== "main" && (
+          <div className="dark flex-1 min-w-0 flex flex-col overflow-y-auto p-6 lg:p-10">
+            <div
+              key={menuState}
+              className="w-full max-w-lg mx-auto my-auto animate-fade-in-up rounded-2xl border border-white/10 shadow-2xl bg-navy-900/85 backdrop-blur-xl"
+            >
+              <div className="h-1.5 rounded-t-2xl bg-gradient-to-r from-primary-500 via-accent-400 to-primary-500" />
+              <div className="p-6 sm:p-8">
 
           {/* Step 1: Create Manager Form */}
           {menuState === "create" && (
@@ -818,15 +779,80 @@ export default function MainMenu() {
           {menuState === "patchnotes" && (
             <PatchNotesPanel onClose={() => setMenuState("main")} />
           )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Version */}
       <div className="absolute bottom-4 right-4 text-gray-300/70 text-xs font-heading uppercase tracking-widest drop-shadow z-20">
         {t("app.version")} {__APP_VERSION__}
       </div>
     </div>
+  );
+}
+
+type MenuItemTone = "accent" | "muted" | "primary" | "danger";
+
+function MenuItem({
+  icon,
+  label,
+  onClick,
+  active = false,
+  tone = "accent",
+  title,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  active?: boolean;
+  tone?: MenuItemTone;
+  title?: string;
+}) {
+  const bar =
+    tone === "danger"
+      ? "bg-red-500"
+      : tone === "primary"
+        ? "bg-primary-500"
+        : "bg-accent-400";
+  const iconColor =
+    tone === "danger"
+      ? "text-red-400"
+      : tone === "primary"
+        ? "text-primary-400"
+        : tone === "muted"
+          ? "text-gray-300"
+          : "text-accent-400";
+  const hoverBg = tone === "danger" ? "hover:bg-red-500/10" : "hover:bg-white/5";
+
+  return (
+    <button
+      onClick={onClick}
+      title={title}
+      className={`group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg transition-colors duration-200 ${
+        active ? "bg-white/10" : hoverBg
+      }`}
+    >
+      <span
+        className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-full transition-all duration-200 ${bar} ${
+          active ? "h-3/5" : "h-0 group-hover:h-3/5"
+        }`}
+      />
+      <span
+        className={`${iconColor} transition-transform group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6`}
+      >
+        {icon}
+      </span>
+      <span
+        className={`font-heading font-bold text-2xl uppercase tracking-wider transition-all ${
+          active
+            ? "text-white translate-x-1"
+            : "text-gray-100 group-hover:text-white group-hover:translate-x-1"
+        }`}
+      >
+        {label}
+      </span>
+    </button>
   );
 }
