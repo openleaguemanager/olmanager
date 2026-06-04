@@ -12,8 +12,10 @@ RUN for d in ofm_core domain engine db server; do \
     done
 RUN cargo build --release -p olmanager-server --manifest-path src-tauri/Cargo.toml 2>/dev/null || true
 
-# Real build
+# Real build — copy ALL needed files (include_str! refs)
 COPY src-tauri src-tauri/
+COPY assets /app/assets
+COPY src /app/src
 RUN cargo build --release -p olmanager-server --manifest-path src-tauri/Cargo.toml && \
     cp src-tauri/target/release/olmanager-server /app/server
 
