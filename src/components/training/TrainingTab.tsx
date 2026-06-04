@@ -29,6 +29,7 @@ import { setTraining, setTrainingSchedule } from "../../services/trainingService
 import { Card, CardBody, CardHeader, ProgressBar } from "../ui";
 import TrainingSettingsPanel from "./TrainingSettingsPanel";
 import { getTrainingStaffAdvice } from "./trainingAdvice";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 type SoloQTier = "Challenger" | "Grandmaster" | "Master";
 

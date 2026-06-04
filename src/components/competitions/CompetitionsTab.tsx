@@ -8,7 +8,7 @@ import {
   Building2,
   Calendar,
   TrendingUp,
-
+  Trophy,
   ListOrdered,
 } from "lucide-react";
 import type { GameStateData, LeagueData } from "../../store/gameStore";

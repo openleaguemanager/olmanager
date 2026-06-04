@@ -29,6 +29,13 @@ const SCALE_MAP: Record<string, string> = {
   xlarge: "20px",
 };
 
+const DASHBOARD_TAB_ROUTES = [
+  "/finanzas",
+  "/finances",
+  "/competiciones",
+  "/competitions",
+];
+
 const AUTO_CHECK_UPDATES = import.meta.env.PROD;
 
 function App() {
@@ -191,7 +198,7 @@ function AppContent({
   dismiss: () => void;
 }) {
   const location = useLocation();
-  const showBugButton = ["/dashboard", "/match", "/select-team"].includes(location.pathname);
+  const showBugButton = ["/dashboard", "/match", "/select-team", ...DASHBOARD_TAB_ROUTES].includes(location.pathname);
 
   return (
     <>
@@ -200,6 +207,10 @@ function AppContent({
           <Route path="/" element={<MainMenu />} />
           <Route path="/select-team" element={<TeamSelection />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/finanzas" element={<Dashboard />} />
+          <Route path="/finances" element={<Dashboard />} />
+          <Route path="/competiciones" element={<Dashboard />} />
+          <Route path="/competitions" element={<Dashboard />} />
           <Route path="/match" element={<MatchSimulation />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

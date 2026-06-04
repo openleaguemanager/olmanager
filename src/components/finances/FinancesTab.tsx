@@ -9,7 +9,6 @@ import {
 import { Card, CardHeader, CardBody, Badge, ProgressBar, Button, RoleBadge } from "../ui";
 import { User, ArrowUpDown, ArrowUp, ArrowDown, Check, Lock, AlertTriangle } from "lucide-react";
 import {
-  currencySymbol,
   formatVal,
   formatWeeklyAmount,
   getContractRiskBadgeVariant,
@@ -29,6 +28,7 @@ import {
 import { useTranslation } from "react-i18next";
 import ContextMenu from "../ContextMenu";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { resolveMessage } from "../../utils/backendI18n";
 
 function getFacilityUpgradeCost(level: number): number {
@@ -45,7 +45,7 @@ function formatSignedAmount(value: number): string {
 }
 
 function formatCurrencyAmountParam(value: number): string {
-  return `${currencySymbol("EUR")}${value.toLocaleString()}`;
+  return value.toLocaleString();
 }
 
 interface ResolveMessageActionResult {
@@ -140,7 +140,7 @@ export default function FinancesTab({
         annualSponsorIncome: 0,
         weeklyWageBudget: 0,
         projectedAnnualNet: 0,
-        cashRunwayWeeks: null,
+        cashRunwayMonths: null,
         wageBudgetUsagePercent: 0,
         wageBudgetStatus: "stable" as const,
         runwayStatus: "stable" as const,

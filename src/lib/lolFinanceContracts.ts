@@ -188,6 +188,11 @@ export function getSponsorshipContractView(
     typeof sponsorship.base_value === "number" && Number.isFinite(sponsorship.base_value)
       ? sponsorship.base_value
       : 0;
+  const remainingMonths =
+    typeof sponsorship.remaining_months === "number" &&
+    Number.isFinite(sponsorship.remaining_months)
+      ? sponsorship.remaining_months
+      : 0;
   const bonusCriteria = Array.isArray(sponsorship.bonus_criteria)
     ? sponsorship.bonus_criteria
     : [];
@@ -196,7 +201,7 @@ export function getSponsorshipContractView(
   return {
     sponsorName,
     baseValue,
-    remainingMonths: sponsorship.remaining_months,
+    remainingMonths,
     bonusCount: bonusCriteria.length,
     theme,
     themeLabel:

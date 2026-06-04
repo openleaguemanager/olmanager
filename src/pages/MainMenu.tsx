@@ -7,6 +7,7 @@ import { useGameStore } from "../store/gameStore";
 import { useSettingsStore } from "../store/settingsStore";
 import { Button, ThemeToggle, DatePicker, CountryFlag } from "../components/ui";
 import SavesList from "../components/menu/SavesList";
+import MenuBackground from "../components/menu/MenuBackground";
 import {
   FolderOpen,
   Settings,
@@ -357,116 +358,101 @@ export default function MainMenu() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-navy-900 transition-colors duration-500 relative overflow-x-hidden">
-      {/* Background gradient accents */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-500/10 dark:bg-primary-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-accent-400/10 dark:bg-accent-400/5 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen relative overflow-hidden font-sans text-white">
+      <MenuBackground />
 
       {/* Theme Toggle */}
       <ThemeToggle className="absolute top-6 right-6 z-20" />
 
-      {/* Main Card */}
-      <div className="relative z-10 w-full max-w-md">
-        {/* Top accent bar */}
-        <div className="h-1.5 bg-gradient-to-r from-primary-500 via-accent-400 to-primary-500 rounded-t-2xl" />
-
-        <div className="bg-white dark:bg-navy-800 p-8 rounded-b-2xl shadow-xl dark:shadow-2xl border border-gray-200 dark:border-navy-600 border-t-0 transition-all duration-500">
-          {/* Logo */}
-          <div className="text-center mb-6">
+      {/* Main Menu — left-aligned game layout over the splash slideshow */}
+      {menuState === "main" && (
+        <div className="relative z-10 min-h-screen flex flex-col justify-center px-8 sm:px-14 lg:px-24">
+          <div className="w-full max-w-lg animate-fade-in-up">
             <img
               src="/olmanager-logo.svg"
               alt="Open League Manager"
-              className="h-20 mx-auto"
+              className="h-24 mb-10 drop-shadow-[0_4px_24px_rgba(0,0,0,0.65)]"
             />
-          </div>
 
-          <div className="border-t border-gray-200 dark:border-navy-600 my-8 transition-colors duration-500" />
-
-          {/* Main Menu */}
-          {menuState === "main" && (
-            <div className="flex flex-col gap-3">
+            <nav className="flex flex-col gap-1">
               <button
                 onClick={() => setMenuState("create")}
-                className="group flex items-center justify-between w-full p-4 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-primary-500/20"
+                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <PlusCircle className="w-6 h-6" />
-                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
-                    {t("menu.newGame")}
-                  </span>
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
+                <PlusCircle className="w-6 h-6 text-accent-400 transition-transform group-hover:scale-110" />
+                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
+                  {t("menu.newGame")}
+                </span>
               </button>
 
               <button
                 onClick={handleOpenLoadMenu}
-                className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-accent-400 dark:hover:border-accent-400 shadow-sm"
+                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <FolderOpen className="w-6 h-6 text-accent-500 dark:text-accent-400" />
-                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
-                    {t("menu.loadGame")}
-                  </span>
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-accent-500" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
+                <FolderOpen className="w-6 h-6 text-accent-400 transition-transform group-hover:scale-110" />
+                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
+                  {t("menu.loadGame")}
+                </span>
               </button>
 
               <button
                 onClick={() => navigate("/settings", { state: { from: "/" } })}
-                className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-gray-300 dark:hover:border-navy-600 shadow-sm"
+                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <Settings className="w-6 h-6 text-gray-400 dark:text-gray-500" />
-                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
-                    {t("menu.settings")}
-                  </span>
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 transition-all text-gray-400" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />
+                <Settings className="w-6 h-6 text-gray-300 transition-transform group-hover:scale-110" />
+                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
+                  {t("menu.settings")}
+                </span>
               </button>
 
-              <button
-                onClick={() => {
-                  if (debugToolsEnabled) navigate("/world-editor");
-                }}
-                disabled={!debugToolsEnabled}
-                aria-disabled={!debugToolsEnabled}
-                title={
-                  debugToolsEnabled
-                    ? "World Editor"
-                    : "Enable debug tools in Settings to access World Editor"
-                }
-                className={`group flex items-center justify-between w-full p-4 rounded-xl transition-all duration-300 border shadow-sm ${
-                  debugToolsEnabled
-                    ? "bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-navy-600 hover:border-primary-400 dark:hover:border-primary-400"
-                    : "bg-gray-100 dark:bg-navy-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-navy-700 opacity-60 cursor-not-allowed"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Database className={`w-6 h-6 ${debugToolsEnabled ? "text-primary-500 dark:text-primary-400" : "text-gray-400 dark:text-gray-600"}`} />
-                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
+              {debugToolsEnabled && (
+                <button
+                  onClick={() => navigate("/world-editor")}
+                  title="World Editor"
+                  className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
+                >
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-primary-500 transition-all duration-200 group-hover:h-3/5" />
+                  <Database className="w-6 h-6 text-primary-400 transition-transform group-hover:scale-110" />
+                  <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-100 transition-all group-hover:text-white group-hover:translate-x-1">
                     World Editor
                   </span>
-                </div>
-                <ChevronRight className={`w-5 h-5 transition-all ${debugToolsEnabled ? "opacity-0 group-hover:opacity-70 group-hover:translate-x-0.5 text-primary-500" : "opacity-30 text-gray-400"}`} />
-              </button>
+                </button>
+              )}
 
               <button
                 onClick={() => {
                   void handleExitApp();
                 }}
-                className="group flex items-center justify-between w-full p-4 bg-white dark:bg-navy-700 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-800 dark:text-gray-200 rounded-xl transition-all duration-300 border border-gray-200 dark:border-navy-600 hover:border-red-200 dark:hover:border-red-500/30 shadow-sm"
+                className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-red-500/10 transition-colors duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <Power className="w-6 h-6 text-red-500 dark:text-red-400" />
-                  <span className="font-heading font-bold text-lg uppercase tracking-wide">
-                    {t("menu.exitGame")}
-                  </span>
-                </div>
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-red-500 transition-all duration-200 group-hover:h-3/5" />
+                <Power className="w-6 h-6 text-red-400 transition-transform group-hover:scale-110" />
+                <span className="font-heading font-bold text-2xl uppercase tracking-wider text-gray-300 transition-all group-hover:text-white group-hover:translate-x-1">
+                  {t("menu.exitGame")}
+                </span>
               </button>
-            </div>
-          )}
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Create / Load — glass card over the slideshow */}
+      {(menuState === "create" || menuState === "load") && (
+        <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+          <div className="w-full max-w-md animate-scale-in">
+            <div className="h-1.5 bg-gradient-to-r from-primary-500 via-accent-400 to-primary-500 rounded-t-2xl" />
+            <div className="bg-navy-900/85 backdrop-blur-xl p-8 rounded-b-2xl shadow-2xl border border-white/10 border-t-0">
+              <div className="text-center mb-6">
+                <img
+                  src="/olmanager-logo.svg"
+                  alt="Open League Manager"
+                  className="h-16 mx-auto"
+                />
+              </div>
+              <div className="border-t border-white/10 mb-6" />
 
           {/* Step 1: Create Manager Form */}
           {menuState === "create" && (
@@ -793,12 +779,14 @@ export default function MainMenu() {
               onClose={() => setMenuState("main")}
             />
           )}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Version */}
-      <div className="absolute bottom-4 right-4 text-gray-400 dark:text-gray-600 text-xs font-heading uppercase tracking-widest transition-colors">
-        {t("app.version")}
+      <div className="absolute bottom-4 right-4 text-gray-300/70 text-xs font-heading uppercase tracking-widest drop-shadow z-20">
+        {t("app.version")} {__APP_VERSION__}
       </div>
     </div>
   );

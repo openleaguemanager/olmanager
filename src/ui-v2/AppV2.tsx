@@ -24,6 +24,10 @@ export default function AppV2() {
             <Route path="/" element={<MainMenu />} />
             <Route path="/select-team" element={<TeamSelection />} />
             <Route path="/dashboard" element={<DashboardV2 />} />
+            <Route path="/finanzas" element={<DashboardV2 />} />
+            <Route path="/finances" element={<DashboardV2 />} />
+            <Route path="/competiciones" element={<DashboardV2 />} />
+            <Route path="/competitions" element={<DashboardV2 />} />
             <Route path="/match" element={<MatchSimulation />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

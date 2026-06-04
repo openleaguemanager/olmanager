@@ -432,3 +432,25 @@
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
+
+/* Main menu Ken Burns slideshow */
+@keyframes menu-ken-burns {
+  from {
+    transform: scale(1.08) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.18) translate3d(-1.5%, -2%, 0);
+  }
+}
+
+.menu-bg-kenburns {
+  transform: scale(1.08);
+  animation: menu-ken-burns 18s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-bg-kenburns {
+    animation: none;
+    transform: none;
+  }
+}
