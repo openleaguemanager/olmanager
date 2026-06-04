@@ -619,18 +619,16 @@ export default function MainMenu() {
                         document.getElementById("create-manager-submit")?.focus();
                       }
                     }}
-                    className={`w-full flex items-center justify-between bg-gray-50 dark:bg-navy-900 border text-left rounded-lg p-3 outline-none transition-all ${formErrors.nationality
+                    className={`w-full flex items-center justify-between bg-white/5 border text-left rounded-lg p-3 outline-none transition-all ${formErrors.nationality
                         ? "border-red-400 dark:border-red-500"
                         : nationalityOpen
-                          ? "border-primary-500 ring-2 ring-primary-500/20"
-                          : "border-gray-300 dark:border-navy-600"
+                          ? "border-accent-400 ring-2 ring-accent-400/20"
+                          : "border-white/15"
                       }`}
                   >
                     <span
                       className={
-                        formData.nationality
-                          ? "text-gray-900 dark:text-white"
-                          : "text-gray-400 dark:text-gray-500"
+                        formData.nationality ? "text-white" : "text-gray-400"
                       }
                     >
                       {formData.nationality ? (
@@ -659,7 +657,7 @@ export default function MainMenu() {
 
                   {nationalityOpen && (
                     <div
-                      className="absolute z-50 bottom-full mb-1 left-0 right-0 bg-white dark:bg-navy-700 rounded-lg shadow-xl border border-gray-200 dark:border-navy-600 overflow-hidden"
+                      className="absolute z-50 bottom-full mb-1 left-0 right-0 bg-navy-800 rounded-lg shadow-xl border border-white/10 overflow-hidden"
                       onMouseDown={(event) => {
                         event.stopPropagation();
                         logNationalityDebug("dropdown panel mousedown");
@@ -673,19 +671,19 @@ export default function MainMenu() {
                         }
                       }}
                     >
-                      <div className="p-2 border-b border-gray-100 dark:border-navy-600">
+                      <div className="p-2 border-b border-white/10">
                         <input
                           type="text"
                           autoFocus
                           placeholder={t("createManager.searchNationalities")}
                           value={nationalitySearch}
                           onChange={(e) => setNationalitySearch(e.target.value)}
-                          className="w-full bg-gray-50 dark:bg-navy-800 border border-gray-200 dark:border-navy-600 text-gray-900 dark:text-white rounded-md px-3 py-2 text-sm outline-none focus:border-primary-500 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                          className="w-full bg-white/5 border border-white/10 text-white rounded-md px-3 py-2 text-sm outline-none focus:border-accent-400 transition-colors placeholder:text-gray-500"
                         />
                       </div>
                       <div className="max-h-[min(20rem,calc(100vh-9rem))] overflow-y-auto overscroll-contain">
                         {filteredNationalities.length === 0 ? (
-                          <p className="px-3 py-2 text-xs text-gray-400 dark:text-gray-500">
+                          <p className="px-3 py-2 text-xs text-gray-400">
                             {t("menu.noResults")}
                           </p>
                         ) : (
@@ -712,8 +710,8 @@ export default function MainMenu() {
                                 }));
                               }}
                               className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${formData.nationality === nat.code
-                                  ? "bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400"
-                                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-navy-600"
+                                  ? "bg-accent-400/10 text-accent-400"
+                                  : "text-gray-200 hover:bg-white/10"
                                 }`}
                             >
                               <div className="flex items-center gap-2">
@@ -725,7 +723,7 @@ export default function MainMenu() {
                                 <span>{nat.name}</span>
                               </div>
                               {formData.nationality === nat.code && (
-                                <Check className="w-4 h-4 text-primary-500" />
+                                <Check className="w-4 h-4 text-accent-400" />
                               )}
                             </button>
                           ))
