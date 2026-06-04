@@ -15,6 +15,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/c235cc11be9c5194.png"
     },
@@ -33,6 +44,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/140305add4bfa8ec.webp"
     },
@@ -49,6 +71,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/9a2a0b5f0a7da786.png"
     },
@@ -65,6 +98,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/227d64b243e5ef2e.png"
     },
@@ -83,14 +127,14 @@
       "condition": 100,
       "full_name": "Guo Yi-Hang",
       "attributes": {
-        "laning": 78,
         "mechanics": 80,
-        "discipline": 81,
+        "laning": 78,
+        "teamfighting": 73,
         "macro_play": 74,
         "consistency": 72,
         "shotcalling": 69,
-        "teamfighting": 73,
         "champion_pool": 81,
+        "discipline": 81,
         "mental_resilience": 73
       },
       "match_name": "Stay",
@@ -130,6 +174,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/f298463371a4dae7.webp"
     },
@@ -148,6 +203,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/2cdab0c0a3cd0ee0.webp"
     },
@@ -164,6 +230,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/0881c486ad6c7bfb.png"
     },
@@ -180,6 +257,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/748e0da4bcf424d6.png"
     },
@@ -196,6 +284,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/5b0a403e1f92e46e.png"
     },
@@ -212,6 +311,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/b2c3144bee4b0b17.png"
     },
@@ -230,14 +340,14 @@
       "condition": 100,
       "full_name": "Qin Jia-Hao",
       "attributes": {
-        "laning": 79,
         "mechanics": 76,
-        "discipline": 78,
+        "laning": 79,
+        "teamfighting": 74,
         "macro_play": 81,
         "consistency": 82,
         "shotcalling": 77,
-        "teamfighting": 74,
         "champion_pool": 78,
+        "discipline": 78,
         "mental_resilience": 73
       },
       "match_name": "Linfeng",
@@ -275,6 +385,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/0a0b3c3dbe4a345b.png"
     },
@@ -293,6 +414,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/0d5aec9bbe59296d.webp"
     },
@@ -309,6 +441,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/2cf81efb8b00354e.png"
     },
@@ -325,6 +468,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/48272a562fa69d42.png"
     },
@@ -341,6 +495,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/b310e53d2eb200c4.png"
     },
@@ -357,6 +522,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/7afb4e9196e84cbe.png"
     },
@@ -373,6 +549,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/f55e403cdc840a07.png"
     },
@@ -389,6 +576,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/b81c82221b75e43d.png"
     },
@@ -405,6 +603,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/d27ff43adc4ea1c7.png"
     },
@@ -421,6 +630,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/da0387c421e8f374.png"
     },
@@ -439,6 +659,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/9ba5fe705160ddba.webp"
     },
@@ -455,6 +686,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/1757a37a8114d159.png"
     },
@@ -471,6 +713,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/fd7c03402dcead7c.png"
     },
@@ -487,6 +740,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/dcd8204b7498d72c.png"
     },
@@ -503,6 +767,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/62bf3890d7d3cfa6.png"
     },
@@ -519,6 +794,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/9d5d5f925cd06068.png"
     },
@@ -535,6 +821,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/1f1ac09d6b706119.png"
     },
@@ -553,6 +850,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/fcaaade9ebb5ac94.webp"
     },
@@ -569,6 +877,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/db53d2aeb1f27a14.png"
     },
@@ -585,6 +904,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/66d55547a9b37cf6.png"
     },
@@ -601,6 +931,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/c29c96540b8d4b8c.png"
     },
@@ -617,6 +958,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/8a2b53cf3a0de142.png"
     },
@@ -635,6 +987,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/adef84e40f02f607.webp"
     },
@@ -651,6 +1014,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/663c1224d0928b05.png"
     },
@@ -667,6 +1041,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/73786d640fc7dd73.png"
     },
@@ -683,6 +1068,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/f044133e54021037.png"
     },
@@ -699,6 +1095,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/239735c0f32b2570.png"
     },
@@ -717,14 +1124,14 @@
       "condition": 100,
       "full_name": "Zou Jia-Le",
       "attributes": {
-        "laning": 85,
         "mechanics": 80,
-        "discipline": 76,
+        "laning": 85,
+        "teamfighting": 74,
         "macro_play": 77,
         "consistency": 77,
         "shotcalling": 69,
-        "teamfighting": 74,
         "champion_pool": 79,
+        "discipline": 76,
         "mental_resilience": 81
       },
       "match_name": "Kepler",
@@ -764,6 +1171,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/f8f44f552e3351e8.webp"
     },
@@ -780,6 +1198,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/d73ab88940403f09.png"
     },
@@ -796,6 +1225,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": null
     },
@@ -812,6 +1252,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/4eccc8fd293a7c4f.png"
     },
@@ -828,6 +1279,17 @@
       "career": [],
       "contract_end": "",
       "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
       "stats": {},
       "profile_image_url": "/player-photos/52bea21f1fc15f61.png"
     }

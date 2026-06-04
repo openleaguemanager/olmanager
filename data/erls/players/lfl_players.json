@@ -4,14 +4,14 @@
   "players": [
     {
       "attributes": {
-        "laning": 70,
         "mechanics": 71,
-        "discipline": 70,
+        "laning": 70,
+        "teamfighting": 69,
         "macro_play": 69,
         "consistency": 69,
         "shotcalling": 72,
-        "teamfighting": 69,
         "champion_pool": 69,
+        "discipline": 70,
         "mental_resilience": 67
       },
       "loan_listed": false,
@@ -33,14 +33,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 74,
-        "discipline": 69,
+        "laning": 74,
+        "teamfighting": 69,
         "macro_play": 71,
         "consistency": 71,
         "shotcalling": 73,
-        "teamfighting": 69,
         "champion_pool": 71,
+        "discipline": 69,
         "mental_resilience": 72
       },
       "loan_listed": false,
@@ -62,14 +62,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 72,
-        "discipline": 68,
+        "laning": 72,
+        "teamfighting": 74,
         "macro_play": 71,
         "consistency": 70,
         "shotcalling": 68,
-        "teamfighting": 74,
         "champion_pool": 71,
+        "discipline": 68,
         "mental_resilience": 67
       },
       "loan_listed": false,
@@ -91,14 +91,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 73,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -120,14 +120,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 72,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -149,14 +149,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 73,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -178,14 +178,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 74,
-        "discipline": 75,
+        "laning": 74,
+        "teamfighting": 75,
         "macro_play": 75,
         "consistency": 74,
         "shotcalling": 68,
-        "teamfighting": 75,
         "champion_pool": 71,
+        "discipline": 75,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -207,14 +207,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 76,
-        "discipline": 75,
+        "laning": 74,
+        "teamfighting": 74,
         "macro_play": 76,
         "consistency": 75,
         "shotcalling": 68,
-        "teamfighting": 74,
         "champion_pool": 72,
+        "discipline": 75,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -236,14 +236,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -265,14 +265,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 73,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -294,14 +294,14 @@
     },
     {
       "attributes": {
-        "laning": 67,
         "mechanics": 67,
-        "discipline": 70,
+        "laning": 67,
+        "teamfighting": 67,
         "macro_play": 66,
         "consistency": 71,
         "shotcalling": 73,
-        "teamfighting": 67,
         "champion_pool": 69,
+        "discipline": 70,
         "mental_resilience": 71
       },
       "loan_listed": false,
@@ -323,14 +323,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 73,
-        "discipline": 74,
+        "laning": 72,
+        "teamfighting": 73,
         "macro_play": 74,
         "consistency": 72,
         "shotcalling": 68,
-        "teamfighting": 73,
         "champion_pool": 72,
+        "discipline": 74,
         "mental_resilience": 73
       },
       "loan_listed": false,
@@ -352,14 +352,14 @@
     },
     {
       "attributes": {
-        "laning": 68,
         "mechanics": 68,
-        "discipline": 75,
+        "laning": 68,
+        "teamfighting": 70,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 68,
-        "teamfighting": 70,
         "champion_pool": 71,
+        "discipline": 75,
         "mental_resilience": 74
       },
       "loan_listed": false,
@@ -392,14 +392,14 @@
       "condition": 100,
       "full_name": "Alexandru Kolozsvari",
       "attributes": {
-        "laning": 70,
         "mechanics": 64,
-        "discipline": 75,
+        "laning": 70,
+        "teamfighting": 67,
         "macro_play": 74,
         "consistency": 68,
         "shotcalling": 72,
-        "teamfighting": 67,
         "champion_pool": 72,
+        "discipline": 75,
         "mental_resilience": 73
       },
       "match_name": "Whiteinn",
@@ -414,7 +414,7 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/86493a0a.webp",
+      "profile_image_url": "/player-photos/767a773db24fd345.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
@@ -423,14 +423,14 @@
     },
     {
       "attributes": {
-        "laning": 80,
         "mechanics": 82,
-        "discipline": 77,
+        "laning": 80,
+        "teamfighting": 81,
         "macro_play": 82,
         "consistency": 80,
         "shotcalling": 73,
-        "teamfighting": 81,
         "champion_pool": 78,
+        "discipline": 77,
         "mental_resilience": 79
       },
       "loan_listed": false,
@@ -452,14 +452,14 @@
     },
     {
       "attributes": {
-        "laning": 75,
         "mechanics": 74,
-        "discipline": 69,
+        "laning": 75,
+        "teamfighting": 71,
         "macro_play": 71,
         "consistency": 75,
         "shotcalling": 68,
-        "teamfighting": 71,
         "champion_pool": 73,
+        "discipline": 69,
         "mental_resilience": 70
       },
       "loan_listed": false,
@@ -481,14 +481,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 71,
-        "discipline": 73,
+        "laning": 74,
+        "teamfighting": 71,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 71,
         "champion_pool": 72,
+        "discipline": 73,
         "mental_resilience": 73
       },
       "loan_listed": false,
@@ -510,14 +510,14 @@
     },
     {
       "attributes": {
-        "laning": 70,
         "mechanics": 67,
-        "discipline": 76,
+        "laning": 70,
+        "teamfighting": 64,
         "macro_play": 70,
         "consistency": 70,
         "shotcalling": 73,
-        "teamfighting": 64,
         "champion_pool": 67,
+        "discipline": 76,
         "mental_resilience": 73
       },
       "loan_listed": false,
@@ -539,14 +539,14 @@
     },
     {
       "attributes": {
-        "laning": 66,
         "mechanics": 70,
-        "discipline": 70,
+        "laning": 66,
+        "teamfighting": 72,
         "macro_play": 67,
         "consistency": 67,
         "shotcalling": 68,
-        "teamfighting": 72,
         "champion_pool": 71,
+        "discipline": 70,
         "mental_resilience": 72
       },
       "loan_listed": false,
@@ -568,14 +568,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 74,
-        "discipline": 66,
+        "laning": 72,
+        "teamfighting": 72,
         "macro_play": 75,
         "consistency": 73,
         "shotcalling": 72,
-        "teamfighting": 72,
         "champion_pool": 73,
+        "discipline": 66,
         "mental_resilience": 70
       },
       "loan_listed": false,
@@ -597,14 +597,14 @@
     },
     {
       "attributes": {
-        "laning": 73,
         "mechanics": 69,
-        "discipline": 76,
+        "laning": 73,
+        "teamfighting": 70,
         "macro_play": 72,
         "consistency": 72,
         "shotcalling": 73,
-        "teamfighting": 70,
         "champion_pool": 70,
+        "discipline": 76,
         "mental_resilience": 71
       },
       "loan_listed": false,
@@ -626,14 +626,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 76,
-        "discipline": 64,
+        "laning": 72,
+        "teamfighting": 70,
         "macro_play": 71,
         "consistency": 72,
         "shotcalling": 68,
-        "teamfighting": 70,
         "champion_pool": 67,
+        "discipline": 64,
         "mental_resilience": 70
       },
       "loan_listed": false,
@@ -655,14 +655,14 @@
     },
     {
       "attributes": {
-        "laning": 70,
         "mechanics": 74,
-        "discipline": 75,
+        "laning": 70,
+        "teamfighting": 72,
         "macro_play": 74,
         "consistency": 73,
         "shotcalling": 73,
-        "teamfighting": 72,
         "champion_pool": 78,
+        "discipline": 75,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -684,14 +684,14 @@
     },
     {
       "attributes": {
-        "laning": 77,
         "mechanics": 78,
-        "discipline": 75,
+        "laning": 77,
+        "teamfighting": 80,
         "macro_play": 76,
         "consistency": 78,
         "shotcalling": 73,
-        "teamfighting": 80,
         "champion_pool": 79,
+        "discipline": 75,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -713,14 +713,14 @@
     },
     {
       "attributes": {
-        "laning": 75,
         "mechanics": 76,
-        "discipline": 68,
+        "laning": 75,
+        "teamfighting": 74,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 74,
         "champion_pool": 71,
+        "discipline": 68,
         "mental_resilience": 72
       },
       "loan_listed": false,
@@ -742,14 +742,14 @@
     },
     {
       "attributes": {
-        "laning": 71,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 71,
+        "teamfighting": 76,
         "macro_play": 70,
         "consistency": 76,
         "shotcalling": 73,
-        "teamfighting": 76,
         "champion_pool": 70,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -771,14 +771,14 @@
     },
     {
       "attributes": {
-        "laning": 69,
         "mechanics": 68,
-        "discipline": 69,
+        "laning": 69,
+        "teamfighting": 71,
         "macro_play": 64,
         "consistency": 67,
         "shotcalling": 68,
-        "teamfighting": 71,
         "champion_pool": 69,
+        "discipline": 69,
         "mental_resilience": 69
       },
       "loan_listed": false,
@@ -800,14 +800,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 75,
-        "discipline": 75,
+        "laning": 76,
+        "teamfighting": 75,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 73,
-        "teamfighting": 75,
         "champion_pool": 73,
+        "discipline": 75,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -829,14 +829,14 @@
     },
     {
       "attributes": {
-        "laning": 68,
         "mechanics": 67,
-        "discipline": 66,
+        "laning": 68,
+        "teamfighting": 72,
         "macro_play": 69,
         "consistency": 69,
         "shotcalling": 68,
-        "teamfighting": 72,
         "champion_pool": 71,
+        "discipline": 66,
         "mental_resilience": 67
       },
       "loan_listed": false,
@@ -858,14 +858,14 @@
     },
     {
       "attributes": {
-        "laning": 71,
         "mechanics": 68,
-        "discipline": 76,
+        "laning": 71,
+        "teamfighting": 70,
         "macro_play": 67,
         "consistency": 67,
         "shotcalling": 67,
-        "teamfighting": 70,
         "champion_pool": 69,
+        "discipline": 76,
         "mental_resilience": 71
       },
       "loan_listed": false,
@@ -896,14 +896,14 @@
       "condition": 100,
       "full_name": "Alexandre El Hodebey",
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 74,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "match_name": "Hiro",
@@ -924,14 +924,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 75,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 75,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -953,14 +953,14 @@
     },
     {
       "attributes": {
-        "laning": 64,
         "mechanics": 68,
-        "discipline": 73,
+        "laning": 64,
+        "teamfighting": 74,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 68,
-        "teamfighting": 74,
         "champion_pool": 68,
+        "discipline": 73,
         "mental_resilience": 69
       },
       "loan_listed": false,
@@ -982,14 +982,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 71,
-        "discipline": 74,
+        "laning": 72,
+        "teamfighting": 74,
         "macro_play": 70,
         "consistency": 72,
         "shotcalling": 68,
-        "teamfighting": 74,
         "champion_pool": 73,
+        "discipline": 74,
         "mental_resilience": 73
       },
       "loan_listed": false,
@@ -1011,14 +1011,14 @@
     },
     {
       "attributes": {
-        "laning": 68,
         "mechanics": 72,
-        "discipline": 75,
+        "laning": 68,
+        "teamfighting": 70,
         "macro_play": 71,
         "consistency": 71,
         "shotcalling": 68,
-        "teamfighting": 70,
         "champion_pool": 73,
+        "discipline": 75,
         "mental_resilience": 74
       },
       "loan_listed": false,
@@ -1051,14 +1051,14 @@
       "condition": 100,
       "full_name": "Miroslav Gochev",
       "attributes": {
-        "laning": 76,
         "mechanics": 73,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 75,
         "macro_play": 74,
         "consistency": 75,
         "shotcalling": 68,
-        "teamfighting": 75,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 75
       },
       "match_name": "Spooky",
@@ -1073,7 +1073,7 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/9ce88bdc.webp",
+      "profile_image_url": "/player-photos/856b35aeb235962b.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
@@ -1082,14 +1082,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 75,
-        "discipline": 74,
+        "laning": 72,
+        "teamfighting": 72,
         "macro_play": 75,
         "consistency": 75,
         "shotcalling": 73,
-        "teamfighting": 72,
         "champion_pool": 71,
+        "discipline": 74,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -1111,14 +1111,14 @@
     },
     {
       "attributes": {
-        "laning": 65,
         "mechanics": 65,
-        "discipline": 68,
+        "laning": 65,
+        "teamfighting": 72,
         "macro_play": 66,
         "consistency": 66,
         "shotcalling": 73,
-        "teamfighting": 72,
         "champion_pool": 68,
+        "discipline": 68,
         "mental_resilience": 70
       },
       "loan_listed": false,
@@ -1140,14 +1140,14 @@
     },
     {
       "attributes": {
-        "laning": 65,
         "mechanics": 71,
-        "discipline": 71,
+        "laning": 65,
+        "teamfighting": 69,
         "macro_play": 65,
         "consistency": 65,
         "shotcalling": 67,
-        "teamfighting": 69,
         "champion_pool": 72,
+        "discipline": 71,
         "mental_resilience": 70
       },
       "loan_listed": false,
@@ -1169,14 +1169,14 @@
     },
     {
       "attributes": {
-        "laning": 75,
         "mechanics": 74,
-        "discipline": 68,
+        "laning": 75,
+        "teamfighting": 69,
         "macro_play": 70,
         "consistency": 74,
         "shotcalling": 68,
-        "teamfighting": 69,
         "champion_pool": 73,
+        "discipline": 68,
         "mental_resilience": 69
       },
       "loan_listed": false,
@@ -1209,14 +1209,14 @@
       "condition": 100,
       "full_name": "Omon",
       "attributes": {
-        "laning": 68,
         "mechanics": 72,
-        "discipline": 75,
+        "laning": 68,
+        "teamfighting": 70,
         "macro_play": 71,
         "consistency": 71,
         "shotcalling": 68,
-        "teamfighting": 70,
         "champion_pool": 73,
+        "discipline": 75,
         "mental_resilience": 74
       },
       "match_name": "Omon",
@@ -1231,7 +1231,7 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/ea8173c0.webp",
+      "profile_image_url": "/player-photos/e01e970b640559a6.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
@@ -1240,14 +1240,14 @@
     },
     {
       "attributes": {
-        "laning": 70,
         "mechanics": 70,
-        "discipline": 67,
+        "laning": 70,
+        "teamfighting": 67,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 67,
-        "teamfighting": 67,
         "champion_pool": 70,
+        "discipline": 67,
         "mental_resilience": 65
       },
       "loan_listed": false,
@@ -1269,14 +1269,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "loan_listed": false,
@@ -1298,14 +1298,14 @@
     },
     {
       "attributes": {
-        "laning": 66,
         "mechanics": 65,
-        "discipline": 72,
+        "laning": 66,
+        "teamfighting": 69,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 73,
-        "teamfighting": 69,
         "champion_pool": 68,
+        "discipline": 72,
         "mental_resilience": 72
       },
       "loan_listed": false,
@@ -1327,14 +1327,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 73,
+        "laning": 76,
+        "teamfighting": 75,
         "macro_play": 75,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 75,
         "champion_pool": 72,
+        "discipline": 73,
         "mental_resilience": 74
       },
       "loan_listed": false,
@@ -1356,14 +1356,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 73,
-        "discipline": 73,
+        "laning": 74,
+        "teamfighting": 73,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 73,
         "champion_pool": 72,
+        "discipline": 73,
         "mental_resilience": 73
       },
       "loan_listed": false,
@@ -1385,14 +1385,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 74,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 73,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 74,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -1414,14 +1414,14 @@
     },
     {
       "attributes": {
-        "laning": 72,
         "mechanics": 67,
-        "discipline": 70,
+        "laning": 72,
+        "teamfighting": 75,
         "macro_play": 66,
         "consistency": 71,
         "shotcalling": 73,
-        "teamfighting": 75,
         "champion_pool": 69,
+        "discipline": 70,
         "mental_resilience": 68
       },
       "loan_listed": false,
@@ -1443,14 +1443,14 @@
     },
     {
       "attributes": {
-        "laning": 68,
         "mechanics": 70,
-        "discipline": 72,
+        "laning": 68,
+        "teamfighting": 71,
         "macro_play": 75,
         "consistency": 75,
         "shotcalling": 68,
-        "teamfighting": 71,
         "champion_pool": 73,
+        "discipline": 72,
         "mental_resilience": 72
       },
       "loan_listed": false,
@@ -1472,14 +1472,14 @@
     },
     {
       "attributes": {
-        "laning": 75,
         "mechanics": 75,
-        "discipline": 80,
+        "laning": 75,
+        "teamfighting": 75,
         "macro_play": 77,
         "consistency": 75,
         "shotcalling": 73,
-        "teamfighting": 75,
         "champion_pool": 75,
+        "discipline": 80,
         "mental_resilience": 77
       },
       "loan_listed": false,
@@ -1512,14 +1512,14 @@
       "condition": 100,
       "full_name": "Tautvydas Gegeckas",
       "attributes": {
-        "laning": 76,
         "mechanics": 76,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 76,
         "macro_play": 76,
         "consistency": 76,
         "shotcalling": 68,
-        "teamfighting": 76,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 76
       },
       "match_name": "Toffe",
@@ -1534,7 +1534,7 @@
       "transfer_listed": false,
       "transfer_offers": [],
       "champion_mastery": [],
-      "profile_image_url": "/player-photos/b4ff0ae7.webp",
+      "profile_image_url": "/player-photos/e52abbfe7cb277ff.png",
       "potential_revealed": null,
       "alternate_positions": [],
       "potential_research_eta_days": null,
@@ -1543,14 +1543,14 @@
     },
     {
       "attributes": {
-        "laning": 76,
         "mechanics": 73,
-        "discipline": 76,
+        "laning": 76,
+        "teamfighting": 75,
         "macro_play": 74,
         "consistency": 75,
         "shotcalling": 68,
-        "teamfighting": 75,
         "champion_pool": 73,
+        "discipline": 76,
         "mental_resilience": 75
       },
       "loan_listed": false,
@@ -1572,14 +1572,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 70,
-        "discipline": 68,
+        "laning": 74,
+        "teamfighting": 68,
         "macro_play": 68,
         "consistency": 72,
         "shotcalling": 73,
-        "teamfighting": 68,
         "champion_pool": 71,
+        "discipline": 68,
         "mental_resilience": 67
       },
       "loan_listed": false,
@@ -1601,14 +1601,14 @@
     },
     {
       "attributes": {
-        "laning": 74,
         "mechanics": 74,
-        "discipline": 74,
+        "laning": 74,
+        "teamfighting": 74,
         "macro_play": 74,
         "consistency": 75,
         "shotcalling": 68,
-        "teamfighting": 74,
         "champion_pool": 73,
+        "discipline": 74,
         "mental_resilience": 74
       },
       "loan_listed": false,
@@ -1630,14 +1630,14 @@
     },
     {
       "attributes": {
-        "laning": 73,
         "mechanics": 76,
-        "discipline": 70,
+        "laning": 73,
+        "teamfighting": 70,
         "macro_play": 74,
         "consistency": 74,
         "shotcalling": 72,
-        "teamfighting": 70,
         "champion_pool": 71,
+        "discipline": 70,
         "mental_resilience": 72
       },
       "loan_listed": false,
@@ -1668,14 +1668,14 @@
       "condition": 100,
       "full_name": "Matthew Luke Smith",
       "attributes": {
-        "laning": 68,
         "mechanics": 71,
-        "discipline": 75,
+        "laning": 68,
+        "teamfighting": 70,
         "macro_play": 72,
         "consistency": 72,
         "shotcalling": 69,
-        "teamfighting": 70,
         "champion_pool": 71,
+        "discipline": 75,
         "mental_resilience": 71
       },
       "match_name": "Deadly",
