@@ -1,10 +1,13 @@
 import { useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useSettingsStore } from "./store/settingsStore";
+import { preloadAudio } from "./lib/audioManager";
 import { useUpdater } from "./hooks/useUpdater";
 import UpdateModal from "./components/updater/UpdateModal";
 import i18n from "./i18n";
 import "./App.css";
+import GlobalNotificationSound from "./components/GlobalNotificationSound";
+import GlobalClickSound from "./components/GlobalClickSound";
 
 const MainMenu = lazy(() => import("./pages/MainMenu"));
 const TeamSelection = lazy(() => import("./pages/TeamSelection"));
@@ -46,6 +49,12 @@ function App() {
   useEffect(() => {
     if (!loaded) loadSettings();
   }, [loaded, loadSettings]);
+
+  // Pre-load critical UI sounds so playback is instant (no load latency)
+  useEffect(() => {
+    preloadAudio("/sounds/click.ogg");
+    preloadAudio("/sounds/notification.ogg");
+  }, []);
 
   useEffect(() => {
     const size = SCALE_MAP[settings.ui_scale] || "16px";
@@ -156,6 +165,8 @@ function App() {
 
   return (
     <BrowserRouter>
+      <GlobalNotificationSound />
+      <GlobalClickSound />
       <Suspense fallback={<LazyFallback />}>
         <Routes>
           <Route path="/" element={<MainMenu />} />
