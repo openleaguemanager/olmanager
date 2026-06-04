@@ -449,7 +449,7 @@ export default function Settings() {
               </GameButton>
             </GameRow>
             {exportPath && (
-              <p className="text-xs text-accent-400 -mt-2 ml-1">
+              <p className="text-xs text-accent-400 py-2 ml-1">
                 {t("settings.exportedTo", { path: exportPath })}
               </p>
             )}
@@ -558,7 +558,7 @@ export default function Settings() {
         title: t("settings.about"),
         icon: <Zap className="w-5 h-5" />,
         content: (
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center py-4">
             <div>
               <p className="text-sm font-medium text-white">{APP_NAME}</p>
               <p className="text-xs text-gray-400 mt-0.5">{APP_VERSION}</p>
@@ -605,11 +605,11 @@ export default function Settings() {
             ))}
           </nav>
 
-          {/* Active section panel */}
+          {/* Active section — no container box; rows separated by hairlines */}
           <div className="flex-1 overflow-y-auto">
             <div
               key={active.id}
-              className="animate-fade-in-up max-w-3xl bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5"
+              className="animate-fade-in-up max-w-3xl border-t border-white/10"
             >
               {active.content}
             </div>
@@ -1584,14 +1584,16 @@ function GameRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4 py-4 border-b border-white/10 last:border-b-0">
       <div className="flex-1 min-w-0">
         <p
-          className={`text-sm font-bold ${danger ? "text-red-400" : "text-white"}`}
+          className={`text-sm font-heading font-bold uppercase tracking-wider ${
+            danger ? "text-red-400" : "text-white"
+          }`}
         >
           {label}
         </p>
-        <p className="text-xs text-gray-400 mt-0.5">{description}</p>
+        <p className="text-xs text-gray-400 mt-1 normal-case">{description}</p>
       </div>
       <div className="shrink-0">{children}</div>
     </div>
@@ -1608,15 +1610,15 @@ function GameSegmented({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex rounded-lg bg-white/5 p-0.5 border border-white/10">
+    <div className="flex gap-1.5">
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-heading font-bold uppercase tracking-wider transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-heading font-bold uppercase tracking-wider transition-all ${
             value === opt.value
-              ? "bg-accent-400 text-navy-950 shadow-sm"
-              : "text-gray-300 hover:text-white"
+              ? "border-accent-400 text-accent-400 bg-accent-400/10"
+              : "border-white/15 text-gray-300 hover:border-white/35 hover:text-white"
           }`}
         >
           {opt.icon}
@@ -1639,13 +1641,15 @@ function GameToggle({
       onClick={() => onChange(!checked)}
       className={`relative w-11 h-6 rounded-full border transition-colors duration-200 ${
         checked
-          ? "bg-accent-400 border-accent-400"
-          : "bg-white/10 border-white/20"
+          ? "bg-accent-400/20 border-accent-400"
+          : "bg-white/5 border-white/20"
       }`}
     >
       <div
         className={`absolute top-0.5 w-5 h-5 rounded-full shadow-sm transition-transform duration-200 ${
-          checked ? "translate-x-[22px] bg-navy-950" : "translate-x-0.5 bg-white"
+          checked
+            ? "translate-x-[22px] bg-accent-400"
+            : "translate-x-0.5 bg-gray-300"
         }`}
       />
     </button>
@@ -1664,17 +1668,18 @@ function GameButton({
   disabled?: boolean;
 }) {
   const tones = {
-    neutral: "bg-white/10 text-white hover:bg-white/20 border border-white/10",
+    neutral:
+      "border-white/20 text-white hover:border-white/40 hover:bg-white/5",
     primary:
-      "bg-accent-400/15 text-accent-400 hover:bg-accent-400/25 border border-accent-400/30",
+      "border-accent-400/50 text-accent-400 hover:border-accent-400 hover:bg-accent-400/10",
     danger:
-      "bg-red-500/15 text-red-400 hover:bg-red-500/25 border border-red-500/30",
+      "border-red-500/50 text-red-400 hover:border-red-500 hover:bg-red-500/10",
   };
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50 ${tones[tone]}`}
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg border bg-transparent text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50 ${tones[tone]}`}
     >
       {children}
     </button>

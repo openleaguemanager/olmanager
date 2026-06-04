@@ -242,7 +242,7 @@ export function Select({
     placeholder:
       "bg-gray-50 dark:bg-navy-700 border-gray-200 dark:border-navy-600 text-gray-400 dark:text-gray-500",
     glass:
-      "bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25",
+      "bg-white/5 border-accent-400/40 text-white hover:bg-white/10 hover:border-accent-400/70",
   };
 
   const sizes = {
