@@ -178,6 +178,447 @@ export default function Settings() {
   const isFromMenu =
     (location.state as { menuStyle?: boolean } | null)?.menuStyle === true;
 
+  // ── Game-style tabbed settings (entered from the start menu) ──
+  // Purpose-built components below; deliberately does NOT reuse the classic
+  // Section/SettingRow/Toggle/SegmentedControl widgets.
+  if (isFromMenu) {
+    const gameSections: Array<{
+      id: string;
+      title: string;
+      icon: React.ReactNode;
+      content: React.ReactNode;
+    }> = [
+      {
+        id: "display",
+        title: t("settings.display"),
+        icon: <Monitor className="w-5 h-5" />,
+        content: (
+          <>
+            <GameRow
+              label={t("settings.theme")}
+              description={t("settings.themeDesc")}
+            >
+              <GameSegmented
+                options={[
+                  { value: "light", icon: <Sun className="w-4 h-4" /> },
+                  { value: "dark", icon: <Moon className="w-4 h-4" /> },
+                  { value: "system", icon: <Monitor className="w-4 h-4" /> },
+                ]}
+                value={settings.theme}
+                onChange={(v) =>
+                  handleUpdate({ theme: v as AppSettings["theme"] })
+                }
+              />
+            </GameRow>
+
+            <GameRow
+              label={t("settings.uiVersion", {
+                defaultValue: "Versión de la interfaz",
+              })}
+              description={t("settings.uiVersionDesc", {
+                defaultValue:
+                  "Cambia entre la UI clásica (v1) y la nueva (v2). La aplicación se recarga automáticamente.",
+              })}
+            >
+              <Select
+                value={uiVersion}
+                variant="glass"
+                onChange={(e) => setUIVersion(e.target.value as UIVersion)}
+                className="min-w-40"
+              >
+                <option value="v1">Clásica (v1)</option>
+                <option value="v2">Nueva (v2)</option>
+              </Select>
+            </GameRow>
+
+            <GameRow
+              label={t("settings.language")}
+              description={t("settings.languageDesc")}
+            >
+              <Select
+                value={selectedLanguage}
+                variant="glass"
+                onChange={(e) => handleUpdate({ language: e.target.value })}
+                icon={<Globe className="w-4 h-4" />}
+                className="min-w-48"
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.label}
+                  </option>
+                ))}
+              </Select>
+            </GameRow>
+
+            <GameRow
+              label={t("settings.currency")}
+              description={t("settings.currencyDesc")}
+            >
+              <Select
+                value={settings.currency}
+                variant="glass"
+                onChange={(e) =>
+                  handleUpdate({
+                    currency: e.target.value as AppSettings["currency"],
+                  })
+                }
+                className="min-w-48"
+              >
+                {CURRENCY_OPTIONS.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.symbol} {c.label}
+                  </option>
+                ))}
+              </Select>
+            </GameRow>
+
+            <GameRow
+              label={t("settings.uiScale", "UI Scale")}
+              description={t(
+                "settings.uiScaleDesc",
+                "Adjust font size and spacing for readability",
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <Type className="w-4 h-4 text-gray-400" />
+                <GameSegmented
+                  options={[
+                    { value: "xsmall", label: "XS" },
+                    { value: "small", label: "S" },
+                    { value: "normal", label: "M" },
+                    { value: "large", label: "L" },
+                    { value: "xlarge", label: "XL" },
+                  ]}
+                  value={settings.ui_scale}
+                  onChange={(v) => {
+                    if (isAndroid) return;
+                    handleUpdate({ ui_scale: v as AppSettings["ui_scale"] });
+                  }}
+                />
+                {isAndroid ? (
+                  <span className="text-2xs font-heading uppercase tracking-wide text-gray-400">
+                    {t(
+                      "settings.uiScaleAndroidLocked",
+                      "Bloqueado en XS en Android",
+                    )}
+                  </span>
+                ) : null}
+              </div>
+            </GameRow>
+
+            <GameRow
+              label={t("settings.highContrast", "High Contrast")}
+              description={t(
+                "settings.highContrastDesc",
+                "Boost text contrast in dark mode for improved readability",
+              )}
+            >
+              <GameToggle
+                checked={settings.high_contrast}
+                onChange={(v) => handleUpdate({ high_contrast: v })}
+              />
+            </GameRow>
+
+            <GameRow
+              label={t("settings.fullscreen", "Fullscreen")}
+              description={t(
+                "settings.fullscreenDesc",
+                "Toggle fullscreen mode for an immersive experience",
+              )}
+            >
+              <GameButton onClick={toggleFullscreen}>
+                {isFullscreen ? (
+                  <Minimize className="w-4 h-4" />
+                ) : (
+                  <Maximize className="w-4 h-4" />
+                )}
+                {isFullscreen
+                  ? t("settings.exitFullscreen", "Exit")
+                  : t("settings.enterFullscreen", "Enter")}
+              </GameButton>
+            </GameRow>
+          </>
+        ),
+      },
+      {
+        id: "gameplay",
+        title: t("settings.gameplay"),
+        icon: <Gamepad2 className="w-5 h-5" />,
+        content: (
+          <>
+            <GameRow
+              label={t("settings.defaultMatchMode")}
+              description={t("settings.defaultMatchModeDesc")}
+            >
+              <Select
+                value={settings.default_match_mode}
+                variant="glass"
+                onChange={(e) =>
+                  handleUpdate({
+                    default_match_mode: e.target
+                      .value as AppSettings["default_match_mode"],
+                  })
+                }
+                className="min-w-48"
+              >
+                {MATCH_MODE_KEYS.map((k) => (
+                  <option key={k} value={k}>
+                    {t(`settings.matchModes.${k}`)}
+                  </option>
+                ))}
+              </Select>
+            </GameRow>
+
+            <GameRow
+              label={t("settings.matchSpeed")}
+              description={t("settings.matchSpeedDesc")}
+            >
+              <GameSegmented
+                options={MATCH_SPEED_KEYS.map((k) => ({
+                  value: k,
+                  label: t(`settings.speeds.${k}`),
+                }))}
+                value={settings.match_speed}
+                onChange={(v) =>
+                  handleUpdate({ match_speed: v as AppSettings["match_speed"] })
+                }
+              />
+            </GameRow>
+
+            <GameRow
+              label={t("settings.matchCommentary")}
+              description={t("settings.matchCommentaryDesc")}
+            >
+              <GameToggle
+                checked={settings.show_match_commentary}
+                onChange={(v) => handleUpdate({ show_match_commentary: v })}
+              />
+            </GameRow>
+
+            <GameRow
+              label={t("settings.confirmAdvance")}
+              description={t("settings.confirmAdvanceDesc")}
+            >
+              <GameToggle
+                checked={settings.confirm_advance}
+                onChange={(v) => handleUpdate({ confirm_advance: v })}
+              />
+            </GameRow>
+
+            <GameRow
+              label={t("settings.debugTools", "Debug tools")}
+              description={t(
+                "settings.debugToolsDesc",
+                "Enable internal tools like draft skip and World Editor",
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <Bug className="w-4 h-4 text-gray-400" />
+                <GameToggle
+                  checked={settings.debug_tools_enabled}
+                  onChange={(v) => handleUpdate({ debug_tools_enabled: v })}
+                />
+              </div>
+            </GameRow>
+          </>
+        ),
+      },
+      {
+        id: "saves",
+        title: t("settings.savesData"),
+        icon: <Save className="w-5 h-5" />,
+        content: (
+          <>
+            <GameRow
+              label={t("settings.autoSave")}
+              description={t("settings.autoSaveDesc")}
+            >
+              <GameToggle
+                checked={settings.auto_save}
+                onChange={(v) => handleUpdate({ auto_save: v })}
+              />
+            </GameRow>
+
+            <GameRow
+              label={t("settings.exportWorld")}
+              description={t("settings.exportWorldDesc")}
+            >
+              <GameButton tone="primary" onClick={handleExportWorld}>
+                <Download className="w-4 h-4" />
+                {t("settings.export")}
+              </GameButton>
+            </GameRow>
+            {exportPath && (
+              <p className="text-xs text-accent-400 -mt-2 ml-1">
+                {t("settings.exportedTo", { path: exportPath })}
+              </p>
+            )}
+
+            <div className="border-t border-white/10 pt-4 mt-2">
+              <GameRow
+                label={t("settings.clearSaves")}
+                description={t("settings.clearSavesDesc")}
+                danger
+              >
+                {confirmClear ? (
+                  <div className="flex items-center gap-2">
+                    <GameButton tone="danger" onClick={handleClearSaves}>
+                      {t("common.confirm")}
+                    </GameButton>
+                    <GameButton onClick={() => setConfirmClear(false)}>
+                      {t("common.cancel")}
+                    </GameButton>
+                  </div>
+                ) : clearSuccess ? (
+                  <span className="text-sm text-accent-400 font-heading font-bold uppercase tracking-wider">
+                    {t("settings.savesCleared")}
+                  </span>
+                ) : (
+                  <GameButton tone="danger" onClick={() => setConfirmClear(true)}>
+                    <Trash2 className="w-4 h-4" />
+                    {t("settings.clear")}
+                  </GameButton>
+                )}
+              </GameRow>
+            </div>
+          </>
+        ),
+      },
+      {
+        id: "updates",
+        title: t("settings.updates"),
+        icon: <RefreshCw className="w-5 h-5" />,
+        content: (
+          <>
+            <GameRow
+              label={t("settings.currentVersion")}
+              description={t("settings.currentVersionDesc")}
+            >
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-300">
+                {updateInfo?.version ?? APP_VERSION}
+              </span>
+            </GameRow>
+
+            <GameRow
+              label={t("settings.checkForUpdates")}
+              description={t("settings.checkForUpdatesDesc")}
+            >
+              <GameButton
+                tone="primary"
+                disabled={checkingUpdate}
+                onClick={checkUpdate}
+              >
+                {checkingUpdate ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : updateAvailable ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : (
+                  <RefreshCw className="w-4 h-4" />
+                )}
+                {checkingUpdate
+                  ? t("settings.checking")
+                  : updateAvailable
+                    ? t("settings.updateAvailable")
+                    : t("settings.checkNow")}
+              </GameButton>
+            </GameRow>
+
+            {updateAvailable && updateInfo && (
+              <div className="rounded-lg bg-accent-400/10 border border-accent-400/30 p-3">
+                <p className="text-xs text-accent-400 font-medium">
+                  {t("settings.updateAvailableDetail", {
+                    version: updateInfo.version,
+                  })}
+                </p>
+              </div>
+            )}
+
+            {showUpToDate && (
+              <div className="rounded-lg bg-green-500/10 border border-green-500/30 p-3">
+                <p className="text-xs text-green-400 font-medium">
+                  {t("settings.upToDate")}
+                </p>
+              </div>
+            )}
+          </>
+        ),
+      },
+      ...(import.meta.env.MODE === "web"
+        ? [
+            {
+              id: "data",
+              title: t("settings.data", { defaultValue: "Datos" }),
+              icon: <Database className="w-5 h-5" />,
+              content: <ImportDataSection />,
+            },
+          ]
+        : []),
+      {
+        id: "about",
+        title: t("settings.about"),
+        icon: <Zap className="w-5 h-5" />,
+        content: (
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-sm font-medium text-white">{APP_NAME}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{APP_VERSION}</p>
+            </div>
+            <span className="text-2xs font-heading uppercase tracking-widest text-gray-500">
+              Open League Manager Community
+            </span>
+          </div>
+        ),
+      },
+    ];
+
+    const active =
+      gameSections.find((s) => s.id === activeSettingsTab) ?? gameSections[0];
+
+    return (
+      <div className="dark min-h-screen relative overflow-hidden font-sans text-white">
+        <MenuBackground />
+
+        <div className="relative z-10 min-h-screen flex flex-col px-6 sm:px-10 lg:px-16 py-8">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-8">
+            <button
+              onClick={() => navigate(returnTo)}
+              className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-white drop-shadow">
+              {t("settings.title")}
+            </h1>
+          </div>
+
+          {/* Section tabs */}
+          <nav className="flex flex-wrap gap-1 border-b border-white/10 mb-6">
+            {gameSections.map((s) => (
+              <GameTab
+                key={s.id}
+                icon={s.icon}
+                label={s.title}
+                active={s.id === active.id}
+                onClick={() => setActiveSettingsTab(s.id)}
+              />
+            ))}
+          </nav>
+
+          {/* Active section panel */}
+          <div className="flex-1 overflow-y-auto">
+            <div
+              key={active.id}
+              className="animate-fade-in-up max-w-3xl bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5"
+            >
+              {active.content}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const sections: Array<{
     id: string;
     title: string;
@@ -201,7 +642,6 @@ export default function Settings() {
                 { value: "system", icon: <Monitor className="w-4 h-4" /> },
               ]}
               value={settings.theme}
-              gameStyle={isFromMenu}
               onChange={(v) =>
                 handleUpdate({ theme: v as AppSettings["theme"] })
               }
@@ -216,7 +656,6 @@ export default function Settings() {
           >
             <Select
               value={uiVersion}
-              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) => setUIVersion(e.target.value as UIVersion)}
               className="min-w-40"
             >
@@ -231,7 +670,6 @@ export default function Settings() {
           >
             <Select
               value={selectedLanguage}
-              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) => handleUpdate({ language: e.target.value })}
               icon={<Globe className="w-4 h-4" />}
               className="min-w-48"
@@ -250,7 +688,6 @@ export default function Settings() {
           >
             <Select
               value={settings.currency}
-              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) =>
                 handleUpdate({
                   currency: e.target.value as AppSettings["currency"],
@@ -284,7 +721,6 @@ export default function Settings() {
                   { value: "xlarge", label: "XL" },
                 ]}
                 value={settings.ui_scale}
-                gameStyle={isFromMenu}
                 onChange={(v) => {
                   if (isAndroid) return;
                   handleUpdate({ ui_scale: v as AppSettings["ui_scale"] });
@@ -307,7 +743,6 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.high_contrast}
-              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ high_contrast: v })}
             />
           </SettingRow>
@@ -321,11 +756,7 @@ export default function Settings() {
           >
             <button
               onClick={toggleFullscreen}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-heading font-bold uppercase tracking-wider transition-colors ${
-                isFromMenu
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-navy-600"
-              }`}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-navy-600 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
             >
               {isFullscreen ? (
                 <Minimize className="w-4 h-4" />
@@ -352,7 +783,6 @@ export default function Settings() {
           >
             <Select
               value={settings.default_match_mode}
-              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) =>
                 handleUpdate({
                   default_match_mode: e.target
@@ -379,7 +809,6 @@ export default function Settings() {
                 label: t(`settings.speeds.${k}`),
               }))}
               value={settings.match_speed}
-              gameStyle={isFromMenu}
               onChange={(v) =>
                 handleUpdate({ match_speed: v as AppSettings["match_speed"] })
               }
@@ -392,7 +821,6 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.show_match_commentary}
-              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ show_match_commentary: v })}
             />
           </SettingRow>
@@ -403,7 +831,6 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.confirm_advance}
-              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ confirm_advance: v })}
             />
           </SettingRow>
@@ -419,7 +846,6 @@ export default function Settings() {
               <Bug className="w-4 h-4 text-gray-400" />
               <Toggle
                 checked={settings.debug_tools_enabled}
-                gameStyle={isFromMenu}
                 onChange={(v) => handleUpdate({ debug_tools_enabled: v })}
               />
             </div>
@@ -439,7 +865,6 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.auto_save}
-              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ auto_save: v })}
             />
           </SettingRow>
@@ -591,75 +1016,6 @@ export default function Settings() {
       ),
     },
   ];
-
-  // ── Game-style tabbed settings (entered from the start menu) ──
-  if (isFromMenu) {
-    const active =
-      sections.find((s) => s.id === activeSettingsTab) ?? sections[0];
-
-    return (
-      <div className="dark min-h-screen relative overflow-hidden font-sans text-white">
-        <MenuBackground />
-
-        <div className="relative z-10 min-h-screen flex flex-col px-6 sm:px-10 lg:px-16 py-8">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <button
-              onClick={() => navigate(returnTo)}
-              className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-white drop-shadow">
-              {t("settings.title")}
-            </h1>
-          </div>
-
-          {/* Section tabs */}
-          <nav className="flex flex-wrap gap-1 border-b border-white/10 mb-6">
-            {sections.map((s) => {
-              const isActive = s.id === active.id;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setActiveSettingsTab(s.id)}
-                  className={`group relative flex items-center gap-2 px-4 py-3 font-heading font-bold text-sm uppercase tracking-wider transition-colors ${
-                    isActive
-                      ? "text-white"
-                      : "text-gray-400 hover:text-gray-200"
-                  }`}
-                >
-                  <span
-                    className={
-                      isActive ? "text-accent-400" : "text-gray-500 group-hover:text-gray-300"
-                    }
-                  >
-                    {s.icon}
-                  </span>
-                  {s.title}
-                  <span
-                    className={`absolute left-0 -bottom-px h-0.5 w-full rounded-full bg-accent-400 transition-opacity ${
-                      isActive ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Active section panel */}
-          <div className="flex-1 overflow-y-auto">
-            <div
-              key={active.id}
-              className="animate-fade-in-up max-w-3xl bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5"
-            >
-              {active.content}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // ── Classic scrolling settings (entered from inside a game) ──
   return (
@@ -1128,19 +1484,15 @@ function SettingRow({
 function Toggle({
   checked,
   onChange,
-  gameStyle,
 }: {
   checked: boolean;
   onChange: (v: boolean) => void;
-  gameStyle?: boolean;
 }) {
-  const offClasses = gameStyle ? "bg-white/15" : "bg-gray-300 dark:bg-navy-600";
-  const onClasses = gameStyle ? "bg-accent-400" : "bg-primary-500";
   return (
     <button
       onClick={() => onChange(!checked)}
       className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-        checked ? onClasses : offClasses
+        checked ? "bg-primary-500" : "bg-gray-300 dark:bg-navy-600"
       }`}
     >
       <div
@@ -1156,30 +1508,21 @@ function SegmentedControl({
   options,
   value,
   onChange,
-  gameStyle,
 }: {
   options: Array<{ value: string; label?: string; icon?: React.ReactNode }>;
   value: string;
   onChange: (v: string) => void;
-  gameStyle?: boolean;
 }) {
-  const container = gameStyle
-    ? "flex rounded-lg bg-white/5 p-0.5 border border-white/10"
-    : "flex rounded-lg bg-gray-100 dark:bg-navy-700 p-0.5 border border-gray-200 dark:border-navy-600";
-  const activeItem = gameStyle
-    ? "bg-accent-400 text-navy-950 shadow-sm"
-    : "bg-white dark:bg-navy-500 text-primary-600 dark:text-primary-400 shadow-sm";
-  const inactiveItem = gameStyle
-    ? "text-gray-300 hover:text-white"
-    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300";
   return (
-    <div className={container}>
+    <div className="flex rounded-lg bg-gray-100 dark:bg-navy-700 p-0.5 border border-gray-200 dark:border-navy-600">
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-heading font-bold uppercase tracking-wider transition-all ${
-            value === opt.value ? activeItem : inactiveItem
+            value === opt.value
+              ? "bg-white dark:bg-navy-500 text-primary-600 dark:text-primary-400 shadow-sm"
+              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
           {opt.icon}
@@ -1187,5 +1530,153 @@ function SegmentedControl({
         </button>
       ))}
     </div>
+  );
+}
+
+// ── Game-style components (start-menu settings only) ──
+
+function GameTab({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group relative flex items-center gap-2 px-4 py-3 font-heading font-bold text-sm uppercase tracking-wider transition-colors ${
+        active ? "text-white" : "text-gray-400 hover:text-gray-200"
+      }`}
+    >
+      <span
+        className={
+          active
+            ? "text-accent-400"
+            : "text-gray-500 group-hover:text-gray-300"
+        }
+      >
+        {icon}
+      </span>
+      {label}
+      <span
+        className={`absolute left-0 -bottom-px h-0.5 w-full rounded-full bg-accent-400 transition-opacity ${
+          active ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </button>
+  );
+}
+
+function GameRow({
+  label,
+  description,
+  danger,
+  children,
+}: {
+  label: string;
+  description: string;
+  danger?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex-1 min-w-0">
+        <p
+          className={`text-sm font-bold ${danger ? "text-red-400" : "text-white"}`}
+        >
+          {label}
+        </p>
+        <p className="text-xs text-gray-400 mt-0.5">{description}</p>
+      </div>
+      <div className="shrink-0">{children}</div>
+    </div>
+  );
+}
+
+function GameSegmented({
+  options,
+  value,
+  onChange,
+}: {
+  options: Array<{ value: string; label?: string; icon?: React.ReactNode }>;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex rounded-lg bg-white/5 p-0.5 border border-white/10">
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          onClick={() => onChange(opt.value)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-heading font-bold uppercase tracking-wider transition-all ${
+            value === opt.value
+              ? "bg-accent-400 text-navy-950 shadow-sm"
+              : "text-gray-300 hover:text-white"
+          }`}
+        >
+          {opt.icon}
+          {opt.label || opt.value}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function GameToggle({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      onClick={() => onChange(!checked)}
+      className={`relative w-11 h-6 rounded-full border transition-colors duration-200 ${
+        checked
+          ? "bg-accent-400 border-accent-400"
+          : "bg-white/10 border-white/20"
+      }`}
+    >
+      <div
+        className={`absolute top-0.5 w-5 h-5 rounded-full shadow-sm transition-transform duration-200 ${
+          checked ? "translate-x-[22px] bg-navy-950" : "translate-x-0.5 bg-white"
+        }`}
+      />
+    </button>
+  );
+}
+
+function GameButton({
+  onClick,
+  children,
+  tone = "neutral",
+  disabled,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  tone?: "neutral" | "primary" | "danger";
+  disabled?: boolean;
+}) {
+  const tones = {
+    neutral: "bg-white/10 text-white hover:bg-white/20 border border-white/10",
+    primary:
+      "bg-accent-400/15 text-accent-400 hover:bg-accent-400/25 border border-accent-400/30",
+    danger:
+      "bg-red-500/15 text-red-400 hover:bg-red-500/25 border border-red-500/30",
+  };
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50 ${tones[tone]}`}
+    >
+      {children}
+    </button>
   );
 }
