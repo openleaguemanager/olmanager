@@ -176,6 +176,7 @@ pub fn run() {
             delete_save,
             skip_to_match_day,
             check_blocking_actions,
+            export_bug_report,
             apply_team_talk,
             submit_press_conference,
             exit_to_menu,

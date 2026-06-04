@@ -1,8 +1,9 @@
 import { useEffect, lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useSettingsStore } from "./store/settingsStore";
 import { useUpdater } from "./hooks/useUpdater";
 import UpdateModal from "./components/updater/UpdateModal";
+import FloatingBugButton from "./components/dashboard/FloatingBugButton";
 import i18n from "./i18n";
 import "./App.css";
 
@@ -156,6 +157,44 @@ function App() {
 
   return (
     <BrowserRouter>
+      <AppContent
+        updateAvailable={updateAvailable}
+        dismissed={dismissed}
+        updateInfo={updateInfo}
+        downloading={downloading}
+        progress={progress}
+        error={error}
+        install={install}
+        dismiss={dismiss}
+      />
+    </BrowserRouter>
+  );
+}
+
+function AppContent({
+  updateAvailable,
+  dismissed,
+  updateInfo,
+  downloading,
+  progress,
+  error,
+  install,
+  dismiss,
+}: {
+  updateAvailable: boolean;
+  dismissed: boolean;
+  updateInfo: object | null;
+  downloading: boolean;
+  progress: number;
+  error: string | null;
+  install: () => void;
+  dismiss: () => void;
+}) {
+  const location = useLocation();
+  const showBugButton = ["/dashboard", "/match", "/select-team"].includes(location.pathname);
+
+  return (
+    <>
       <Suspense fallback={<LazyFallback />}>
         <Routes>
           <Route path="/" element={<MainMenu />} />
@@ -165,6 +204,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </Suspense>
+      {showBugButton && <FloatingBugButton />}
       {updateAvailable && !dismissed && updateInfo && (
         <UpdateModal
           updateInfo={updateInfo}
@@ -175,7 +215,7 @@ function App() {
           onDismiss={dismiss}
         />
       )}
-    </BrowserRouter>
+    </>
   );
 }
 
