@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import {
   Users,
   Globe,
+  Search,
+  Loader2,
   Building2,
   Calendar,
   TrendingUp,
@@ -46,7 +48,7 @@ export default function CompetitionsTab({ gameState, onSelectTeam }: Competition
 
   const leagues = Array.isArray(gameState.leagues) ? gameState.leagues : [];
   const selectedLeague = selectedCid
-    ? leagues.find((l) => l.competition_id === selectedCid) ?? null
+    ? leagues.find((l) => (l.competition_id ?? l.id) === selectedCid) ?? null
     : null;
 
   // Teams in selected competition (competition_id = manifest id like "lec", not UUID)
@@ -90,22 +92,25 @@ export default function CompetitionsTab({ gameState, onSelectTeam }: Competition
 
       {/* Competitions grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {leagues.map((league) => (
-          <CompetitionCard
-            key={league.id}
-            league={league}
-            selected={selectedCid === (league.competition_id ?? league.id)}
-            colorClass={getCompetitionColor(league.competition_id ?? league.id)}
-            teamsCount={
-              gameState.teams.filter((t) => t.competition_id === (league.competition_id ?? league.id))
-                .length
-            }
-            onSelect={() => {
-              const cid = league.competition_id ?? league.id;
-              setSelectedCid(selectedCid === cid ? null : cid);
-            }}
-          />
-        ))}
+        {leagues.map((league) => {
+          const cid = league.competition_id ?? league.id;
+
+          return (
+            <CompetitionCard
+              key={league.id}
+              league={league}
+              selected={selectedCid === cid}
+              colorClass={getCompetitionColor(cid)}
+              teamsCount={
+                gameState.teams.filter((t) => t.competition_id === cid)
+                  .length
+              }
+              onSelect={() => {
+                setSelectedCid(selectedCid === cid ? null : cid);
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Selected competition detail */}

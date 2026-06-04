@@ -26,7 +26,7 @@ vi.mock("react-i18next", () => ({
       if (key === "finances.noActiveSponsor") return "No active sponsor";
       if (key === "finances.esportsSponsor") return "Esports sponsor";
       if (key === "finances.sponsorWeeklyValue")
-        return `Weekly value: €${params?.amount}`;
+        return `Monthly value: €${params?.amount}`;
       if (key === "finances.sponsorRemainingMonths")
         return `${params?.count} months remaining`;
       if (key === "finances.pendingSponsorOffers") return "Pending Offers";
@@ -39,7 +39,7 @@ vi.mock("react-i18next", () => ({
       if (key === "finances.projectedAnnualNet") return "Projected Annual Net";
       if (key === "finances.cashRunway") return "Cash Runway";
       if (key === "finances.runwayMonths")
-        return `${params?.count} weeks at current pace`;
+        return `${params?.count} months at current pace`;
       if (key === "finances.runwayStable") return "Stable at current pace";
       if (key === "finances.wagePressure") return "Wage Pressure";
       if (key === "finances.wageBudgetUsed")
@@ -385,8 +385,8 @@ describe("FinancesTab facilities", () => {
     expect(screen.getByText("Sponsors")).toBeInTheDocument();
     expect(screen.getByText("Active Sponsor")).toBeInTheDocument();
     expect(screen.getByText("Acme eSports")).toBeInTheDocument();
-    expect(screen.getByText("Weekly value: €2404")).toBeInTheDocument();
-    expect(screen.getByText("8 weeks remaining")).toBeInTheDocument();
+    expect(screen.getByText("Monthly value: €10417")).toBeInTheDocument();
+    expect(screen.getByText("8 months remaining")).toBeInTheDocument();
     expect(screen.getByText("Esports sponsor")).toBeInTheDocument();
     expect(screen.getByText("Pending Offers")).toBeInTheDocument();
     expect(
@@ -401,6 +401,39 @@ describe("FinancesTab facilities", () => {
     expect(
       screen.getByRole("button", { name: "Decline politely" }),
     ).toBeInTheDocument();
+  });
+
+  it("renders imported teams with incomplete finance and sponsorship fields", () => {
+    const gameState = createGameState(
+      {
+        finance: undefined as unknown as number,
+        wage_budget: undefined as unknown as number,
+        transfer_budget: undefined as unknown as number,
+        season_income: undefined as unknown as number,
+        season_expenses: undefined as unknown as number,
+        sponsorship: {
+          sponsor_name: undefined as unknown as string,
+          base_value: undefined as unknown as number,
+          remaining_months: undefined as unknown as number,
+          bonus_criteria: undefined as unknown as [],
+        },
+      },
+      [],
+      [
+        createPlayer({
+          wage: undefined as unknown as number,
+          market_value: undefined as unknown as number,
+        }),
+      ],
+    );
+
+    render(<FinancesTab gameState={gameState} />);
+
+    expect(screen.getByText("Overview")).toBeInTheDocument();
+    expect(screen.getByText("Active Sponsor")).toBeInTheDocument();
+    expect(screen.getByText("Sponsor")).toBeInTheDocument();
+    expect(screen.getByText("Monthly value: €0")).toBeInTheDocument();
+    expect(screen.getByText("0 months remaining")).toBeInTheDocument();
   });
 
   it("accepts a sponsor offer through resolve_message_action and publishes the updated state", async () => {
@@ -462,7 +495,7 @@ describe("FinancesTab facilities", () => {
     expect(screen.getByText("Annual Sponsor Income")).toBeInTheDocument();
     expect(screen.getByText("Projected Annual Net")).toBeInTheDocument();
     expect(screen.getByText("Cash Runway")).toBeInTheDocument();
-    expect(screen.getByText("7 weeks at current pace")).toBeInTheDocument();
+    expect(screen.getByText("1 months at current pace")).toBeInTheDocument();
   });
 
   it("shows monthly upkeep on the installation cards", () => {
@@ -476,9 +509,9 @@ describe("FinancesTab facilities", () => {
 
     render(<FinancesTab gameState={gameState} />);
 
-    expect(screen.getAllByText("Monthly upkeep: €40K")).toHaveLength(1);
+    expect(screen.getAllByText("Monthly upkeep: €40,000")).toHaveLength(1);
     expect(screen.getAllByText("Monthly upkeep: €0")).toHaveLength(4);
-    expect(screen.getAllByText("Monthly upkeep: €10K")).toHaveLength(1);
+    expect(screen.getAllByText("Monthly upkeep: €10,000")).toHaveLength(1);
     expect(screen.getAllByText("Next upgrade: €750,000").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Next upgrade: €250,000").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Next upgrade: €500,000").length).toBeGreaterThan(0);
@@ -494,12 +527,14 @@ describe("FinancesTab facilities", () => {
       [
         createPlayer({
           id: "player-critical",
+          match_name: "Alex Critical",
           full_name: "Alex Critical",
           wage: 35000,
           contract_end: "2025-04-30",
         }),
         createPlayer({
           id: "player-warning",
+          match_name: "Ben Warning",
           full_name: "Ben Warning",
           wage: 25000,
           contract_end: "2025-10-15",
@@ -544,12 +579,14 @@ describe("FinancesTab facilities", () => {
     const riskyPlayers = [
       createPlayer({
         id: "player-critical",
+        match_name: "Alex Critical",
         full_name: "Alex Critical",
         wage: 35000,
         contract_end: "2025-04-30",
       }),
       createPlayer({
         id: "player-warning",
+        match_name: "Ben Warning",
         full_name: "Ben Warning",
         wage: 25000,
         contract_end: "2025-10-15",
@@ -566,12 +603,14 @@ describe("FinancesTab facilities", () => {
       [
         createPlayer({
           id: "player-critical",
+          match_name: "Alex Critical",
           full_name: "Alex Critical",
           wage: 36000,
           contract_end: "2028-01-20",
         }),
         createPlayer({
           id: "player-warning",
+          match_name: "Ben Warning",
           full_name: "Ben Warning",
           wage: 25000,
           contract_end: "2025-10-15",
