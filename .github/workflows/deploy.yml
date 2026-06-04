@@ -10,8 +10,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_BACKEND: ${{ github.repository }}/backend
-  IMAGE_FRONTEND: ${{ github.repository }}/frontend
+  OWNER: ${{ github.repository_owner }}
+  IMAGE_BACKEND: nicoruedaa/olmanager/backend
+  IMAGE_FRONTEND: nicoruedaa/olmanager/frontend
 
 jobs:
   build-and-deploy:
