@@ -398,7 +398,7 @@ export default function MainMenu() {
               </button>
 
               <button
-                onClick={() => navigate("/settings", { state: { from: "/" } })}
+                onClick={() => navigate("/settings", { state: { from: "/", menuStyle: true } })}
                 className="group relative flex items-center gap-4 w-full py-3 pl-5 pr-6 text-left rounded-lg hover:bg-white/5 transition-colors duration-200"
               >
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-1 rounded-full bg-accent-400 transition-all duration-200 group-hover:h-3/5" />

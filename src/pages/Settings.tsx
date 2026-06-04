@@ -173,7 +173,10 @@ export default function Settings() {
     );
   }
 
-  const isFromMenu = returnTo === "/";
+  // Only the start-menu Settings button opts into the game-style tabbed view;
+  // in-game, direct URL and refresh keep the classic scrolling layout.
+  const isFromMenu =
+    (location.state as { menuStyle?: boolean } | null)?.menuStyle === true;
 
   const sections: Array<{
     id: string;
