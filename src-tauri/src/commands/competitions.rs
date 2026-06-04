@@ -272,7 +272,8 @@ pub fn get_league_selection_data(
     let manifests = scan_competitions(&app_handle);
 
     let mut competitions = Vec::new();
-    for manifest in manifests {
+    // Only show non-legacy tier 1 competitions as selectable leagues
+    for manifest in manifests.iter().filter(|m| !m.legacy && m.tier.unwrap_or(1) == 1) {
         let teams = match load_competition_teams(&app_handle, &manifest) {
             Ok(t) => t,
             Err(err) => {

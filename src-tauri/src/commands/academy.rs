@@ -13,7 +13,6 @@ use tauri::State;
 
 use crate::commands::game::{
     academy_seed_team_id, ensure_example_academy_pool, example_academy_seed_catalog,
-    RESOURCE_DATA_DIR,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -529,46 +528,35 @@ fn format_academy_error(error: ofm_core::academy::AcademyError) -> String {
 fn academy_erl_catalog() -> &'static [ErlLeagueDefinition] {
     static CATALOG: std::sync::OnceLock<Vec<ErlLeagueDefinition>> = std::sync::OnceLock::new();
     CATALOG.get_or_init(|| {
-        catalogs_from_erl_manifests(|path| {
-            std::fs::read_to_string(path).ok()
-        })
+        catalogs_from_tier2_manifests()
     })
 }
 
-/// Try to find the `data/` directory from common locations (same logic as `resolve_data_base`).
-fn resolve_data_dir_for_catalog() -> Option<std::path::PathBuf> {
-    if let Some(dir) = RESOURCE_DATA_DIR.get() {
-        if dir.is_dir() {
-            return Some(dir.clone());
-        }
-    }
-    let cwd = std::env::current_dir().ok()?;
-    for candidate in [
-        cwd.join("..").join("data"),
-        cwd.join("data"),
-        cwd.join("src-tauri").join("data"),
-    ] {
-        if candidate.is_dir() {
-            return Some(candidate);
-        }
-    }
-    None
-}
-
-/// Scan `data/erls/competitions/` for manifests and build ErlLeagueDefinition entries.
-fn catalogs_from_erl_manifests(
-    reader: impl Fn(&std::path::Path) -> Option<String>,
-) -> Vec<ErlLeagueDefinition> {
+/// Scan `data/competitions/` for tier 2+ manifests and build ErlLeagueDefinition entries.
+/// Uses the same path resolution as scan_competitions in competitions.rs.
+fn catalogs_from_tier2_manifests() -> Vec<ErlLeagueDefinition> {
     use ofm_core::generator::definitions::CompetitionManifest;
 
-    let data_base = match resolve_data_dir_for_catalog() {
-        Some(b) => b,
+    let cwd = match std::env::current_dir().ok() {
+        Some(d) => d,
         None => return vec![],
     };
-    let erls_dir = data_base.join("erls").join("competitions");
+    let comps_dir = {
+        let mut d = cwd.clone();
+        d.push("data");
+        d.push("competitions");
+        if d.is_dir() { d }
+        else {
+            d = cwd;
+            d.push("..");
+            d.push("data");
+            d.push("competitions");
+            if d.is_dir() { d } else { return vec![] }
+        }
+    };
 
     let mut catalogs = Vec::new();
-    let entries = match std::fs::read_dir(&erls_dir) {
+    let entries = match std::fs::read_dir(&comps_dir) {
         Ok(e) => e,
         Err(_) => return catalogs,
     };
@@ -578,26 +566,28 @@ fn catalogs_from_erl_manifests(
         if !dir_path.is_dir() { continue; }
         let manifest_path = dir_path.join("manifest.json");
         if !manifest_path.exists() { continue; }
-        let file_name = dir_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-        if file_name.is_empty() { continue; }
-
-        let json_str = match reader(&manifest_path) {
-            Some(s) => s,
+        let league_id = match dir_path.file_name().and_then(|n| n.to_str()) {
+            Some(n) => n.to_string(),
             None => continue,
         };
+
+        let json_str = match std::fs::read_to_string(&manifest_path) {
+            Ok(s) => s,
+            Err(_) => continue,
+        };
         if let Ok(manifest) = serde_json::from_str::<CompetitionManifest>(&json_str) {
+            // Skip legacy competitions
+            if manifest.legacy { continue; }
+            // Only tier 2+ competitions are ERL / academy sources
+            if manifest.tier.unwrap_or(1) <= 1 { continue; }
+
             let country_code = manifest.country.clone().unwrap_or_default();
             let region = manifest.region.clone();
-            let reputation = manifest.reputation.unwrap_or(3); // default for tier 2
+            let reputation = manifest.reputation.unwrap_or(3);
             let nearby = manifest.nearby_country_codes.clone();
 
-            let academy_id = match file_name {
-                "les" => "liga-espanola".to_string(),
-                other => other.to_string(),
-            };
-
             catalogs.push(ErlLeagueDefinition {
-                id: academy_id,
+                id: league_id,
                 name: manifest.name,
                 country_code,
                 region,
@@ -723,7 +713,7 @@ mod tests {
             .find(|option| option.name == "Movistar KOI Fénix")
             .expect("koi academy candidate in open pool");
         assert_eq!(koi_fenix.name, "Movistar KOI Fénix");
-        assert_eq!(koi_fenix.erl_league_id, "liga-espanola");
+        assert_eq!(koi_fenix.erl_league_id, "les");
         assert_eq!(koi_fenix.assignment_rule, ErlAssignmentRule::Domestic);
         assert_eq!(koi_fenix.fallback_reason, None);
         assert!(koi_fenix.acquisition_cost > 0);
@@ -769,7 +759,7 @@ mod tests {
         taken_academy.academy = Some(AcademyMetadata {
             lifecycle: AcademyLifecycle::Active,
             erl_assignment: ErlAssignment {
-                erl_league_id: "liga-espanola".to_string(),
+                erl_league_id: "les".to_string(),
                 country_rule: ErlAssignmentRule::Domestic,
                 fallback_reason: None,
                 reputation: 4,
@@ -778,7 +768,7 @@ mod tests {
                 creation_cost: 0,
                 created_at: String::new(),
             },
-            source_team_id: "academy-liga-espanola-team-heretics".to_string(),
+            source_team_id: "academy-les-team-heretics".to_string(),
             original_name: "Team Heretics".to_string(),
             original_short_name: "TH".to_string(),
             original_logo_url: None,
@@ -808,7 +798,7 @@ mod tests {
             response.blocked_reason.as_deref(),
             Some("Insufficient funds for all eligible academy acquisition options")
         );
-        assert_eq!(response.options[0].erl_league_id, "liga-espanola");
+        assert_eq!(response.options[0].erl_league_id, "les");
         assert!(response.options[0].acquisition_cost > 1);
     }
 
@@ -945,7 +935,7 @@ mod tests {
         );
         assert_eq!(metadata.acquisition_cost, 300_000);
         assert_eq!(metadata.acquired_at, "2026-01-01T12:00:00+00:00");
-        assert_eq!(metadata.erl_assignment.erl_league_id, "liga-espanola");
+        assert_eq!(metadata.erl_assignment.erl_league_id, "les");
         assert_eq!(
             metadata.erl_assignment.country_rule,
             ErlAssignmentRule::Domestic

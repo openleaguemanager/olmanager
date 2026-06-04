@@ -1,6 +1,6 @@
-import lesTeamsData from "../../data/erls/teams/les_teams.json";
-import lflTeamsData from "../../data/erls/teams/lfl_teams.json";
-import primeLeagueTeamsData from "../../data/erls/teams/prm_teams.json";
+import lesTeamsData from "../../data/teams/les_teams.json";
+import lflTeamsData from "../../data/teams/lfl_teams.json";
+import primeLeagueTeamsData from "../../data/teams/prm_teams.json";
 
 function normalizeKey(value: string): string {
   return value

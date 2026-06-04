@@ -14,5 +14,6 @@
     "team_count": 10,
     "preseason_friendlies": 0,
     "splits": []
-  }
+  },
+  "legacy": true
 }

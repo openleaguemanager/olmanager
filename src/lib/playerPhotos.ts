@@ -1,6 +1,6 @@
-import lesPlayersData from "../../data/erls/players/les_players.json";
-import lflPlayersData from "../../data/erls/players/lfl_players.json";
-import primeLeaguePlayersData from "../../data/erls/players/prm_players.json";
+import lesPlayersData from "../../data/players/les_players.json";
+import lflPlayersData from "../../data/players/lfl_players.json";
+import primeLeaguePlayersData from "../../data/players/prm_players.json";
 
 const FALLBACK_PLAYER_PHOTO = "/default/defaultplayer.webp";
 const FALLBACK_STAFF_PHOTO = "/manager-icons/0.webp";

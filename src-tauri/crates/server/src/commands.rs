@@ -325,6 +325,8 @@ fn league_selection_data() -> Result<LeagueSelectionData, String> {
     manifests.sort_by(|a, b| a.id.cmp(&b.id));
     let competitions = manifests
         .into_iter()
+        // Only show non-legacy tier 1 competitions
+        .filter(|m| !m.legacy && m.tier.unwrap_or(1) == 1)
         .filter_map(|manifest| competition_summary(&base, manifest))
         .collect();
 
@@ -431,7 +433,7 @@ fn split_camel_case(key: &str) -> String {
 fn champions_catalog() -> &'static Vec<Value> {
     static CATALOG: std::sync::OnceLock<Vec<Value>> = std::sync::OnceLock::new();
     CATALOG.get_or_init(|| {
-        let raw = include_str!("../../../../data/draft/champions.json");
+        let raw = include_str!("../../../../assets/simulation/champions.json");
         let json: Value = match serde_json::from_str(raw) {
             Ok(value) => value,
             Err(_) => return Vec::new(),

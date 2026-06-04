@@ -89,7 +89,32 @@ impl<'de> Deserialize<'de> for LolRole {
             type Value = LolRole;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("a LoL role variant (Top, Jungle, Mid, Adc, Support, Unknown) or legacy position string")
+                formatter.write_str("a LoL role variant (Top, Jungle, Mid, Adc, Support, Unknown) or legacy position string or variant index")
+            }
+
+            fn visit_u32<E>(self, value: u32) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match value {
+                    0 => Ok(LolRole::Top),
+                    1 => Ok(LolRole::Jungle),
+                    2 => Ok(LolRole::Mid),
+                    3 => Ok(LolRole::Adc),
+                    4 => Ok(LolRole::Support),
+                    5 => Ok(LolRole::Unknown),
+                    _ => Err(serde::de::Error::invalid_value(
+                        serde::de::Unexpected::Unsigned(value as u64),
+                        &"a LolRole variant index 0-5",
+                    )),
+                }
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                self.visit_u32(value as u32)
             }
 
             fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
@@ -129,7 +154,7 @@ impl<'de> Deserialize<'de> for LolRole {
             }
         }
 
-        deserializer.deserialize_str(LolRoleVisitor)
+        deserializer.deserialize_any(LolRoleVisitor)
     }
 }
 

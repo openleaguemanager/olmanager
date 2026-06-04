@@ -154,7 +154,7 @@ describe("MainMenu", () => {
         return [];
       }
 
-      if (command === "start_new_game") {
+      if (command === "start_new_game_lightweight") {
         return "ok";
       }
 
@@ -200,13 +200,12 @@ describe("MainMenu", () => {
 
       await waitFor(() => {
         expect(mockedInvoke).toHaveBeenCalledWith(
-          "start_new_game",
+          "start_new_game_lightweight",
           expect.objectContaining({
             firstName: "Ada",
             lastName: "Lovelace",
             dob: "1980-01-01",
             nationality: "ES",
-            worldSource: "default",
           }),
         );
       });
@@ -298,7 +297,7 @@ describe("MainMenu", () => {
 
     await waitFor(() => {
       expect(mockedInvoke).toHaveBeenCalledWith(
-        "start_new_game",
+        "start_new_game_lightweight",
         expect.objectContaining({
           nationality: "AT",
         }),
@@ -319,7 +318,7 @@ describe("MainMenu", () => {
         screen.getByPlaceholderText("createManager.placeholderFirst"),
       ).toHaveFocus();
     });
-    expect(mockedInvoke).not.toHaveBeenCalledWith("start_new_game");
+    expect(mockedInvoke).not.toHaveBeenCalledWith("start_new_game_lightweight");
   });
 
   it("focuses the next invalid field in order when earlier fields are valid", async () => {
@@ -363,13 +362,12 @@ describe("MainMenu", () => {
     );
 
     await waitFor(() => {
-      expect(mockedInvoke).toHaveBeenCalledWith(
-        "start_new_game",
-        expect.objectContaining({
-          dob: "2010-06-15",
-          worldSource: "default",
-        }),
-      );
+        expect(mockedInvoke).toHaveBeenCalledWith(
+          "start_new_game_lightweight",
+          expect.objectContaining({
+            dob: "2010-06-15",
+          }),
+        );
     });
   });
 

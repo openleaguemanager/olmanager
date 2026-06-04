@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import teamsSeed from "../../../data/draft/teams.json";
+
 import { buildLolScrimPrepInsight } from "../../lib/lolScrimPrep";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 import { resolveTeamLogo } from "../../lib/teamLogos";
@@ -36,7 +36,7 @@ export interface DraftResultSeriesGame {
   winnerSide?: Side;
 }
 
-const TEAM_SEEDS: TeamSeed[] = ((teamsSeed as { data?: { teams?: TeamSeed[] } }).data?.teams ?? []) as TeamSeed[];
+const TEAM_SEEDS: TeamSeed[] = [];
 const GOLD_CHART_CENTER_Y = 36;
 const GOLD_CHART_HALF_HEIGHT = 28;
 

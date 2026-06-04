@@ -122,12 +122,37 @@ fn seed_role_to_canonical(role: &str) -> String {
 pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamSeed> {
     static CATALOG: OnceLock<Vec<ExampleAcademyTeamSeed>> = OnceLock::new();
     CATALOG.get_or_init(|| {
-        // Read ERL teams and players from JSON data files at runtime.
-        let data_base = resolve_data_dir_for_seed_catalog();
-        let Some(data_base) = data_base else { return vec![] };
+        // Read ERL teams and players from competition manifests (tier 2+).
+        // Uses the same path resolution as scan_competitions.
+        let cwd = match std::env::current_dir().ok() {
+            Some(d) => d,
+            None => return vec![],
+        };
+        let comps_dir = {
+            let mut d = cwd.clone();
+            d.push("data");
+            d.push("competitions");
+            if d.is_dir() { d }
+            else {
+                d = cwd;
+                d.push("..");
+                d.push("data");
+                d.push("competitions");
+                if d.is_dir() { d } else { return vec![] }
+            }
+        };
 
-        let erls_dir = data_base.join("erls").join("competitions");
-        let entries = match std::fs::read_dir(&erls_dir) {
+        let data_base = comps_dir.parent().and_then(|p| {
+            let d = p.to_path_buf();
+            if d.join("teams").is_dir() { Some(d) } else { None }
+        }).unwrap_or_else(|| {
+            // Fallback: assume data/ is sibling of competitions/
+            let mut d = comps_dir.clone();
+            d.pop();
+            d
+        });
+
+        let entries = match std::fs::read_dir(&comps_dir) {
             Ok(e) => e,
             Err(_) => return vec![],
         };
@@ -136,27 +161,33 @@ pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamS
         for entry in entries.flatten() {
             let dir_path = entry.path();
             if !dir_path.is_dir() { continue; }
-            let file_name = match dir_path.file_name().and_then(|n| n.to_str()) {
+            let league_id = match dir_path.file_name().and_then(|n| n.to_str()) {
                 Some(n) => n.to_string(),
                 None => continue,
             };
 
-            // Read manifest to get country code
+            // Read manifest — skip tier 1 competitions (they are main leagues, not academy sources)
             let manifest_path = dir_path.join("manifest.json");
-            let league_meta = match std::fs::read_to_string(&manifest_path)
-                .ok()
-                .and_then(|json| serde_json::from_str::<serde_json::Value>(&json).ok())
-            {
-                Some(m) => (
-                    m["name"].as_str().unwrap_or(&file_name).to_string(),
-                    m["country"].as_str().unwrap_or("EU").to_string(),
-                ),
-                None => (file_name.clone(), "EU".to_string()),
+            let manifest_json = match std::fs::read_to_string(&manifest_path) {
+                Ok(s) => s,
+                Err(_) => continue,
             };
-            let (league_name, country_code) = league_meta;
+            let manifest: serde_json::Value = match serde_json::from_str(&manifest_json) {
+                Ok(v) => v,
+                Err(_) => continue,
+            };
 
-            // Read teams from data/erls/teams/{file_name}_teams.json
-            let teams_path = data_base.join("erls").join("teams").join(format!("{}_teams.json", file_name));
+            // Skip legacy competitions
+            if manifest["legacy"].as_bool().unwrap_or(false) { continue; }
+            // Only tier 2+ competitions are academy sources
+            let tier = manifest["tier"].as_u64().unwrap_or(1);
+            if tier <= 1 { continue; }
+
+            let league_name = manifest["name"].as_str().unwrap_or(&league_id).to_string();
+            let country_code = manifest["country"].as_str().unwrap_or("EU").to_string();
+
+            // Read teams from data/teams/{league_id}_teams.json
+            let teams_path = data_base.join("teams").join(format!("{}_teams.json", league_id));
             let json_str = match std::fs::read_to_string(&teams_path) {
                 Ok(s) => s,
                 Err(_) => continue,
@@ -165,7 +196,7 @@ pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamS
             let Some(team_entries) = teams_data["teams"].as_array() else { continue; };
 
             // Load players and group by team_id
-            let players_path = data_base.join("erls").join("players").join(format!("{}_players.json", file_name));
+            let players_path = data_base.join("players").join(format!("{}_players.json", league_id));
             let mut players_by_team_id: HashMap<String, Vec<ExampleAcademyPlayerSeed>> = HashMap::new();
             if let Ok(players_json) = std::fs::read_to_string(&players_path) {
                 if let Ok(players_data) = serde_json::from_str::<serde_json::Value>(&players_json) {
@@ -187,7 +218,6 @@ pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamS
                 }
             }
 
-            let academy_league_id = if file_name == "les" { "liga-espanola" } else { &file_name };
             for entry in team_entries {
                 let team_id = entry["id"].as_str().unwrap_or("").to_string();
                 let team_name = entry["name"].as_str().unwrap_or("Unknown").to_string();
@@ -196,7 +226,7 @@ pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamS
 
                 let seed_players = players_by_team_id.remove(&team_id).unwrap_or_default();
                 teams.push(ExampleAcademyTeamSeed {
-                    league_id: academy_league_id.to_string(),
+                    league_id: league_id.clone(),
                     league_name: league_name.clone(),
                     country_code: country_code.clone(),
                     team_name,
@@ -208,25 +238,6 @@ pub(crate) fn example_academy_seed_catalog() -> &'static Vec<ExampleAcademyTeamS
         }
         teams
     })
-}
-
-fn resolve_data_dir_for_seed_catalog() -> Option<PathBuf> {
-    if let Some(dir) = RESOURCE_DATA_DIR.get() {
-        if dir.is_dir() {
-            return Some(dir.clone());
-        }
-    }
-    let cwd = std::env::current_dir().ok()?;
-    for candidate in [
-        cwd.join("..").join("data"),
-        cwd.join("data"),
-        cwd.join("src-tauri").join("data"),
-    ] {
-        if candidate.is_dir() {
-            return Some(candidate);
-        }
-    }
-    None
 }
 
 fn academy_team_alias_for_parent(parent_name: &str) -> Option<&'static str> {
@@ -508,77 +519,6 @@ pub(crate) fn ensure_example_academy_pool(game: &mut Game) {
     remove_free_agents_shadowed_by_academy(&mut game.players, &game.teams);
 }
 
-fn resolve_default_world_path(app_handle: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
-    let cwd = std::env::current_dir().map_err(|e| format!("Failed to read current dir: {}", e))?;
-    let mut candidates = vec![
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("databases").join("world.json")),
-        cwd.join("src-tauri")
-            .join("databases")
-            .join("world.json")
-            .into(),
-        cwd.join("databases").join("world.json").into(),
-    ];
-
-    if let Ok(exe_path) = std::env::current_exe() {
-        if let Some(exe_dir) = exe_path.parent() {
-            candidates.push(Some(exe_dir.join("databases").join("world.json")));
-            candidates.push(Some(
-                exe_dir
-                    .join("resources")
-                    .join("databases")
-                    .join("world.json"),
-            ));
-        }
-    }
-
-    for candidate in candidates.into_iter().flatten() {
-        if candidate.exists() {
-            return Ok(candidate);
-        }
-    }
-
-    let embedded_world_json = include_str!("../../databases/world.json");
-    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| {
-        format!(
-            "Default world database not found and app data dir is unavailable: {}",
-            e
-        )
-    })?;
-    let db_dir = app_data_dir.join("databases");
-    std::fs::create_dir_all(&db_dir)
-        .map_err(|e| format!("Failed to create fallback databases directory: {}", e))?;
-
-    let fallback_path = db_dir.join("world.json");
-    if !fallback_path.exists() {
-        std::fs::write(&fallback_path, embedded_world_json)
-            .map_err(|e| format!("Failed to write fallback world database: {}", e))?;
-    }
-
-    if fallback_path.exists() {
-        return Ok(fallback_path);
-    }
-
-    Err("Default world database not found (world.json).".to_string())
-}
-
-#[allow(dead_code)]
-#[derive(Clone, Copy)]
-struct LolSeedRatings {
-    mechanics: u8,
-    laning: u8,
-    teamfighting: u8,
-    macro_play: u8,
-    consistency: u8,
-    shotcalling: u8,
-    champion_pool: u8,
-    discipline: u8,
-    mental_resilience: u8,
-}
-
 #[derive(Debug, Deserialize)]
 struct DraftSeedRoot {
     data: DraftSeedData,
@@ -716,12 +656,6 @@ fn load_external_more_fa_seed() -> Option<DraftSeedRoot> {
 
     if let Ok(cwd) = std::env::current_dir() {
         candidates.push(cwd.join("MoreFA_Players.json"));
-        candidates.push(
-            cwd.join("data")
-                .join("lec")
-                .join("draft")
-                .join("MoreFA_Players.json"),
-        );
     }
 
     for path in candidates {
@@ -835,35 +769,6 @@ pub(crate) fn apply_seed_potential_defaults(players: &mut [Player]) {
     }
 }
 
-#[allow(dead_code)]
-fn draft_photo_map() -> &'static HashMap<String, String> {
-    static PHOTOS: OnceLock<HashMap<String, String>> = OnceLock::new();
-    PHOTOS.get_or_init(|| {
-        let parsed = draft_seed_root();
-
-        let mut all_seeds = parsed.data.rostered_seeds.clone();
-        all_seeds.extend(parsed.data.free_agent_seeds.clone());
-
-        all_seeds
-            .into_iter()
-            .filter_map(|seed| {
-                let key = normalize_seed_name(&seed.ign);
-                let photo = seed_profile_image_url(seed.photo.as_deref())?;
-                if key.is_empty() {
-                    return None;
-                }
-                Some((key, photo))
-            })
-            .collect()
-    })
-}
-
-#[allow(dead_code)]
-fn photo_seed_for_player(match_name: &str) -> Option<String> {
-    let key = normalize_seed_name(match_name);
-    draft_photo_map().get(&key).cloned()
-}
-
 fn normalize_seed_name(value: &str) -> String {
     value
         .trim()
@@ -873,596 +778,6 @@ fn normalize_seed_name(value: &str) -> String {
         .collect()
 }
 
-#[allow(dead_code)]
-fn lol_ratings_seed_for_player(match_name: &str) -> Option<LolSeedRatings> {
-    let key = normalize_seed_name(match_name);
-    let ratings = match key.as_str() {
-        "myrwn" => LolSeedRatings {
-            mechanics: 86,
-            laning: 85,
-            teamfighting: 85,
-            macro_play: 80,
-            consistency: 75,
-            shotcalling: 75,
-            champion_pool: 90,
-            discipline: 78,
-            mental_resilience: 85,
-        },
-        "elyoya" => LolSeedRatings {
-            mechanics: 87,
-            laning: 90,
-            teamfighting: 85,
-            macro_play: 87,
-            consistency: 85,
-            shotcalling: 90,
-            champion_pool: 84,
-            discipline: 88,
-            mental_resilience: 90,
-        },
-        "jojopyun" => LolSeedRatings {
-            mechanics: 91,
-            laning: 93,
-            teamfighting: 88,
-            macro_play: 87,
-            consistency: 82,
-            shotcalling: 86,
-            champion_pool: 82,
-            discipline: 80,
-            mental_resilience: 82,
-        },
-        "supa" => LolSeedRatings {
-            mechanics: 84,
-            laning: 82,
-            teamfighting: 82,
-            macro_play: 80,
-            consistency: 82,
-            shotcalling: 74,
-            champion_pool: 79,
-            discipline: 82,
-            mental_resilience: 83,
-        },
-        "alvaro" => LolSeedRatings {
-            mechanics: 85,
-            laning: 84,
-            teamfighting: 88,
-            macro_play: 85,
-            consistency: 80,
-            shotcalling: 84,
-            champion_pool: 80,
-            discipline: 84,
-            mental_resilience: 83,
-        },
-        "brokenblade" => LolSeedRatings {
-            mechanics: 84,
-            laning: 86,
-            teamfighting: 84,
-            macro_play: 86,
-            consistency: 80,
-            shotcalling: 84,
-            champion_pool: 88,
-            discipline: 83,
-            mental_resilience: 85,
-        },
-        "skewmond" => LolSeedRatings {
-            mechanics: 87,
-            laning: 88,
-            teamfighting: 86,
-            macro_play: 84,
-            consistency: 86,
-            shotcalling: 82,
-            champion_pool: 83,
-            discipline: 86,
-            mental_resilience: 88,
-        },
-        "caps" => LolSeedRatings {
-            mechanics: 85,
-            laning: 85,
-            teamfighting: 88,
-            macro_play: 93,
-            consistency: 90,
-            shotcalling: 93,
-            champion_pool: 86,
-            discipline: 90,
-            mental_resilience: 90,
-        },
-        "hanssama" => LolSeedRatings {
-            mechanics: 84,
-            laning: 83,
-            teamfighting: 84,
-            macro_play: 84,
-            consistency: 83,
-            shotcalling: 82,
-            champion_pool: 78,
-            discipline: 82,
-            mental_resilience: 82,
-        },
-        "labrov" => LolSeedRatings {
-            mechanics: 83,
-            laning: 84,
-            teamfighting: 83,
-            macro_play: 78,
-            consistency: 78,
-            shotcalling: 75,
-            champion_pool: 80,
-            discipline: 82,
-            mental_resilience: 82,
-        },
-        "canna" => LolSeedRatings {
-            mechanics: 84,
-            laning: 88,
-            teamfighting: 86,
-            macro_play: 88,
-            consistency: 88,
-            shotcalling: 82,
-            champion_pool: 85,
-            discipline: 88,
-            mental_resilience: 86,
-        },
-        "yike" => LolSeedRatings {
-            mechanics: 89,
-            laning: 86,
-            teamfighting: 87,
-            macro_play: 83,
-            consistency: 84,
-            shotcalling: 84,
-            champion_pool: 85,
-            discipline: 84,
-            mental_resilience: 86,
-        },
-        "kyeahoo" => LolSeedRatings {
-            mechanics: 84,
-            laning: 83,
-            teamfighting: 82,
-            macro_play: 80,
-            consistency: 81,
-            shotcalling: 79,
-            champion_pool: 84,
-            discipline: 80,
-            mental_resilience: 81,
-        },
-        "caliste" => LolSeedRatings {
-            mechanics: 87,
-            laning: 85,
-            teamfighting: 84,
-            macro_play: 80,
-            consistency: 84,
-            shotcalling: 76,
-            champion_pool: 80,
-            discipline: 84,
-            mental_resilience: 86,
-        },
-        "busio" => LolSeedRatings {
-            mechanics: 88,
-            laning: 89,
-            teamfighting: 85,
-            macro_play: 84,
-            consistency: 84,
-            shotcalling: 85,
-            champion_pool: 84,
-            discipline: 83,
-            mental_resilience: 84,
-        },
-        "naaknako" => LolSeedRatings {
-            mechanics: 90,
-            laning: 88,
-            teamfighting: 86,
-            macro_play: 85,
-            consistency: 84,
-            shotcalling: 82,
-            champion_pool: 86,
-            discipline: 84,
-            mental_resilience: 85,
-        },
-        "lyncas" => LolSeedRatings {
-            mechanics: 84,
-            laning: 82,
-            teamfighting: 84,
-            macro_play: 82,
-            consistency: 80,
-            shotcalling: 84,
-            champion_pool: 78,
-            discipline: 82,
-            mental_resilience: 83,
-        },
-        "humanoid" => LolSeedRatings {
-            mechanics: 88,
-            laning: 86,
-            teamfighting: 86,
-            macro_play: 85,
-            consistency: 75,
-            shotcalling: 85,
-            champion_pool: 85,
-            discipline: 80,
-            mental_resilience: 79,
-        },
-        "carzzy" => LolSeedRatings {
-            mechanics: 83,
-            laning: 84,
-            teamfighting: 83,
-            macro_play: 81,
-            consistency: 76,
-            shotcalling: 80,
-            champion_pool: 81,
-            discipline: 77,
-            mental_resilience: 76,
-        },
-        "fleshy" => LolSeedRatings {
-            mechanics: 84,
-            laning: 83,
-            teamfighting: 82,
-            macro_play: 78,
-            consistency: 78,
-            shotcalling: 80,
-            champion_pool: 80,
-            discipline: 80,
-            mental_resilience: 77,
-        },
-        "lot" => LolSeedRatings {
-            mechanics: 82,
-            laning: 80,
-            teamfighting: 79,
-            macro_play: 76,
-            consistency: 75,
-            shotcalling: 78,
-            champion_pool: 76,
-            discipline: 78,
-            mental_resilience: 75,
-        },
-        "isma" => LolSeedRatings {
-            mechanics: 79,
-            laning: 77,
-            teamfighting: 78,
-            macro_play: 79,
-            consistency: 78,
-            shotcalling: 80,
-            champion_pool: 76,
-            discipline: 82,
-            mental_resilience: 80,
-        },
-        "jackies" => LolSeedRatings {
-            mechanics: 84,
-            laning: 82,
-            teamfighting: 83,
-            macro_play: 76,
-            consistency: 75,
-            shotcalling: 79,
-            champion_pool: 77,
-            discipline: 78,
-            mental_resilience: 80,
-        },
-        "noah" => LolSeedRatings {
-            mechanics: 85,
-            laning: 85,
-            teamfighting: 83,
-            macro_play: 81,
-            consistency: 80,
-            shotcalling: 77,
-            champion_pool: 80,
-            discipline: 83,
-            mental_resilience: 76,
-        },
-        "jun" => LolSeedRatings {
-            mechanics: 85,
-            laning: 86,
-            teamfighting: 85,
-            macro_play: 84,
-            consistency: 82,
-            shotcalling: 80,
-            champion_pool: 80,
-            discipline: 82,
-            mental_resilience: 82,
-        },
-        "maynter" => LolSeedRatings {
-            mechanics: 76,
-            laning: 81,
-            teamfighting: 78,
-            macro_play: 77,
-            consistency: 82,
-            shotcalling: 76,
-            champion_pool: 75,
-            discipline: 82,
-            mental_resilience: 78,
-        },
-        "rhilech" => LolSeedRatings {
-            mechanics: 85,
-            laning: 81,
-            teamfighting: 84,
-            macro_play: 80,
-            consistency: 80,
-            shotcalling: 82,
-            champion_pool: 79,
-            discipline: 80,
-            mental_resilience: 84,
-        },
-        "poby" => LolSeedRatings {
-            mechanics: 80,
-            laning: 81,
-            teamfighting: 80,
-            macro_play: 82,
-            consistency: 84,
-            shotcalling: 78,
-            champion_pool: 80,
-            discipline: 80,
-            mental_resilience: 77,
-        },
-        "samd" => LolSeedRatings {
-            mechanics: 81,
-            laning: 78,
-            teamfighting: 82,
-            macro_play: 76,
-            consistency: 80,
-            shotcalling: 78,
-            champion_pool: 80,
-            discipline: 81,
-            mental_resilience: 76,
-        },
-        "parus" => LolSeedRatings {
-            mechanics: 82,
-            laning: 84,
-            teamfighting: 82,
-            macro_play: 85,
-            consistency: 81,
-            shotcalling: 84,
-            champion_pool: 82,
-            discipline: 81,
-            mental_resilience: 82,
-        },
-        "empyros" => LolSeedRatings {
-            mechanics: 74,
-            laning: 73,
-            teamfighting: 77,
-            macro_play: 75,
-            consistency: 78,
-            shotcalling: 74,
-            champion_pool: 78,
-            discipline: 79,
-            mental_resilience: 76,
-        },
-        "razork" => LolSeedRatings {
-            mechanics: 88,
-            laning: 83,
-            teamfighting: 82,
-            macro_play: 80,
-            consistency: 78,
-            shotcalling: 82,
-            champion_pool: 83,
-            discipline: 82,
-            mental_resilience: 84,
-        },
-        "vladi" => LolSeedRatings {
-            mechanics: 82,
-            laning: 79,
-            teamfighting: 80,
-            macro_play: 79,
-            consistency: 76,
-            shotcalling: 80,
-            champion_pool: 77,
-            discipline: 75,
-            mental_resilience: 76,
-        },
-        "upset" => LolSeedRatings {
-            mechanics: 85,
-            laning: 84,
-            teamfighting: 80,
-            macro_play: 81,
-            consistency: 82,
-            shotcalling: 79,
-            champion_pool: 76,
-            discipline: 82,
-            mental_resilience: 80,
-        },
-        "lospa" => LolSeedRatings {
-            mechanics: 83,
-            laning: 84,
-            teamfighting: 80,
-            macro_play: 82,
-            consistency: 78,
-            shotcalling: 75,
-            champion_pool: 77,
-            discipline: 78,
-            mental_resilience: 80,
-        },
-        "wunder" => LolSeedRatings {
-            mechanics: 75,
-            laning: 76,
-            teamfighting: 78,
-            macro_play: 76,
-            consistency: 74,
-            shotcalling: 80,
-            champion_pool: 83,
-            discipline: 72,
-            mental_resilience: 73,
-        },
-        "skeanz" => LolSeedRatings {
-            mechanics: 74,
-            laning: 72,
-            teamfighting: 72,
-            macro_play: 73,
-            consistency: 76,
-            shotcalling: 75,
-            champion_pool: 76,
-            discipline: 78,
-            mental_resilience: 75,
-        },
-        "lider" => LolSeedRatings {
-            mechanics: 80,
-            laning: 78,
-            teamfighting: 78,
-            macro_play: 72,
-            consistency: 69,
-            shotcalling: 74,
-            champion_pool: 68,
-            discipline: 70,
-            mental_resilience: 72,
-        },
-        "jopa" => LolSeedRatings {
-            mechanics: 82,
-            laning: 80,
-            teamfighting: 82,
-            macro_play: 76,
-            consistency: 80,
-            shotcalling: 77,
-            champion_pool: 78,
-            discipline: 80,
-            mental_resilience: 82,
-        },
-        "mikyx" => LolSeedRatings {
-            mechanics: 78,
-            laning: 79,
-            teamfighting: 78,
-            macro_play: 83,
-            consistency: 77,
-            shotcalling: 84,
-            champion_pool: 82,
-            discipline: 78,
-            mental_resilience: 77,
-        },
-        "rooster" => LolSeedRatings {
-            mechanics: 80,
-            laning: 82,
-            teamfighting: 76,
-            macro_play: 72,
-            consistency: 75,
-            shotcalling: 67,
-            champion_pool: 72,
-            discipline: 78,
-            mental_resilience: 78,
-        },
-        "boukada" => LolSeedRatings {
-            mechanics: 72,
-            laning: 69,
-            teamfighting: 72,
-            macro_play: 67,
-            consistency: 71,
-            shotcalling: 70,
-            champion_pool: 68,
-            discipline: 70,
-            mental_resilience: 71,
-        },
-        "nuc" => LolSeedRatings {
-            mechanics: 79,
-            laning: 80,
-            teamfighting: 80,
-            macro_play: 81,
-            consistency: 80,
-            shotcalling: 80,
-            champion_pool: 76,
-            discipline: 78,
-            mental_resilience: 77,
-        },
-        "paduck" => LolSeedRatings {
-            mechanics: 80,
-            laning: 78,
-            teamfighting: 78,
-            macro_play: 73,
-            consistency: 76,
-            shotcalling: 68,
-            champion_pool: 70,
-            discipline: 78,
-            mental_resilience: 77,
-        },
-        "trymbi" => LolSeedRatings {
-            mechanics: 72,
-            laning: 72,
-            teamfighting: 76,
-            macro_play: 74,
-            consistency: 75,
-            shotcalling: 77,
-            champion_pool: 78,
-            discipline: 75,
-            mental_resilience: 73,
-        },
-        "tracyn" => LolSeedRatings {
-            mechanics: 80,
-            laning: 76,
-            teamfighting: 74,
-            macro_play: 74,
-            consistency: 76,
-            shotcalling: 77,
-            champion_pool: 72,
-            discipline: 80,
-            mental_resilience: 80,
-        },
-        "daglas" => LolSeedRatings {
-            mechanics: 76,
-            laning: 71,
-            teamfighting: 73,
-            macro_play: 70,
-            consistency: 73,
-            shotcalling: 72,
-            champion_pool: 73,
-            discipline: 78,
-            mental_resilience: 76,
-        },
-        "serin" => LolSeedRatings {
-            mechanics: 77,
-            laning: 80,
-            teamfighting: 76,
-            macro_play: 75,
-            consistency: 78,
-            shotcalling: 75,
-            champion_pool: 75,
-            discipline: 78,
-            mental_resilience: 75,
-        },
-        "ice" => LolSeedRatings {
-            mechanics: 84,
-            laning: 80,
-            teamfighting: 80,
-            macro_play: 80,
-            consistency: 82,
-            shotcalling: 72,
-            champion_pool: 78,
-            discipline: 80,
-            mental_resilience: 80,
-        },
-        "way" => LolSeedRatings {
-            mechanics: 70,
-            laning: 72,
-            teamfighting: 73,
-            macro_play: 78,
-            consistency: 74,
-            shotcalling: 68,
-            champion_pool: 74,
-            discipline: 75,
-            mental_resilience: 78,
-        },
-        _ => return None,
-    };
-
-    Some(ratings)
-}
-
-#[allow(dead_code)]
-pub(crate) fn apply_lol_seed_ratings(players: &mut [Player]) {
-    for player in players.iter_mut() {
-        let Some(seed) = lol_ratings_seed_for_player(&player.match_name) else {
-            continue;
-        };
-
-        // Keep legacy schema compatibility but use a strict 1:1 mapping to LoL stats.
-        // These are now treated as the source for LoL profile/training progression.
-        player.attributes.mechanics = seed.mechanics;
-        player.attributes.laning = seed.laning;
-        player.attributes.teamfighting = seed.teamfighting;
-        player.attributes.macro_play = seed.macro_play;
-        player.attributes.consistency = seed.consistency;
-        player.attributes.shotcalling = seed.shotcalling;
-        player.attributes.champion_pool = seed.champion_pool;
-        player.attributes.discipline = seed.discipline;
-        player.attributes.mental_resilience = seed.mental_resilience;
-
-        if let Some(potential_base) = potential_seed_for_player(&player.match_name) {
-            player.potential_base = potential_base.min(99);
-        }
-        if player.profile_image_url.is_none() {
-            player.profile_image_url = photo_seed_for_player(&player.match_name);
-        }
-        player.potential_revealed = None;
-        player.potential_research_started_on = None;
-        player.potential_research_eta_days = None;
-    }
-}
 
 fn default_initial_contract_end_for_start_year(start_year: i32) -> String {
     format!("{}-11-30", start_year + 1)
@@ -1804,114 +1119,6 @@ pub async fn start_new_game_lightweight(
     Ok("ok".to_string())
 }
 
-/// Step 1: Create manager + generate world. No team assigned yet.
-/// Returns the Game object so the frontend can show team selection.
-/// world_source: "random" (default) or a file path to a JSON world database.
-#[tauri::command]
-pub async fn start_new_game(
-    app_handle: tauri::AppHandle,
-    state: State<'_, StateManager>,
-    nickname: Option<String>,
-    first_name: String,
-    last_name: String,
-    dob: String,
-    nationality: String,
-    world_source: Option<String>,
-    avatar_path: Option<String>,
-) -> Result<String, String> {
-    info!(
-        "[cmd] start_new_game: {} {} (nickname={:?}, nationality={}, world_source={:?})",
-        first_name, last_name, nickname, nationality, world_source
-    );
-    // Validate inputs
-    let first_name = first_name.trim().to_string();
-    let last_name = last_name.trim().to_string();
-    let nickname = nickname.unwrap_or_default().trim().to_string();
-    if first_name.is_empty() || last_name.is_empty() {
-        return Err("First name and last name are required.".to_string());
-    }
-    if first_name.len() > 30 || last_name.len() > 30 {
-        return Err("First name and last name must not exceed 30 characters.".to_string());
-    }
-    if nickname.len() > 20 {
-        return Err("Nickname must not exceed 20 characters.".to_string());
-    }
-    let nationality = nationality.trim().to_string();
-    if nationality.is_empty() {
-        return Err("Nationality is required.".to_string());
-    }
-
-    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
-
-    // Validate DOB: must be a valid date and within a sensible range for the game start date.
-    let birth_date = chrono::NaiveDate::parse_from_str(&dob, "%Y-%m-%d")
-        .map_err(|_| "Invalid date of birth. Use YYYY-MM-DD format.".to_string())?;
-    let age = calculate_age_on_date(birth_date, start_date.date_naive());
-    if age > 99 {
-        return Err("Invalid date of birth.".to_string());
-    }
-
-    let mut manager = Manager::new(
-        "mgr_user".to_string(),
-        first_name,
-        last_name,
-        dob,
-        nationality,
-    );
-    manager.nickname = nickname;
-    manager.avatar_path = avatar_path;
-
-    let clock = GameClock::new(start_date);
-
-    // Load world based on source
-    let world_source = world_source.unwrap_or_else(|| "default".to_string());
-    let (teams, mut players, staff) = if world_source == "random" {
-        ofm_core::generator::generate_world(None)
-    } else if world_source == "default" {
-        let path = resolve_default_world_path(&app_handle)?;
-        let json = std::fs::read_to_string(&path)
-            .map_err(|e| format!("Failed to read world database: {}", e))?;
-        let has_explicit_potential_base = json.contains("\"potential_base\"");
-        let mut world = ofm_core::generator::load_world_from_json(&json)?;
-        if !has_explicit_potential_base {
-            apply_seed_potential_defaults(&mut world.players);
-        }
-        (world.teams, world.players, world.staff)
-    } else {
-        // Try to load from file path (strip "file:" prefix if present)
-        let path = world_source.strip_prefix("file:").unwrap_or(&world_source);
-        let json = std::fs::read_to_string(path)
-            .map_err(|e| format!("Failed to read world database: {}", e))?;
-        let has_explicit_potential_base = json.contains("\"potential_base\"");
-        let mut world = ofm_core::generator::load_world_from_json(&json)?;
-        if !has_explicit_potential_base {
-            apply_seed_potential_defaults(&mut world.players);
-        }
-        (world.teams, world.players, world.staff)
-    };
-
-    let academy_bootstrap_date = clock.current_date.format("%Y-%m-%d").to_string();
-    let mut teams = teams;
-    bootstrap_example_academy_pool_from_example(&mut teams, &mut players, &academy_bootstrap_date);
-    remove_free_agents_shadowed_by_academy(&mut players, &teams);
-    inject_seed_free_agents(&mut players);
-    inject_json_free_agents(&mut players);
-    apply_default_initial_contract_end(&mut players);
-
-    let new_game = Game::new(clock, manager, teams, players, staff, vec![]);
-
-    info!(
-        "[cmd] start_new_game: world generated with {} teams, {} players, {} staff",
-        new_game.teams.len(),
-        new_game.players.len(),
-        new_game.staff.len()
-    );
-    info!("[cmd] start_new_game: storing game in state");
-    state.set_game(new_game);
-    state.set_stats_state(StatsState::default());
-    info!("[cmd] start_new_game: completed");
-    Ok("ok".to_string())
-}
 
 /// Extract competition ID from a scoped team ID like "lec-g2" → "lec".
 fn competition_id_from_team_id(team_id: &str) -> Option<&str> {
@@ -1950,7 +1157,7 @@ fn assemble_world_from_modular_data(
     let mut all_players: Vec<Player> = Vec::new();
     let mut staff = crate::commands::competitions::load_staff_free_agents(app_handle)?;
 
-    for manifest in &manifests {
+    for manifest in manifests.iter().filter(|m| !m.legacy) {
         let cid = &manifest.id;
         let prefix = format!("{}-", cid);
 
@@ -2103,7 +1310,7 @@ pub async fn select_team(
     let all_manifests = crate::commands::competitions::scan_competitions(&app_handle);
     let mut all_leagues: Vec<domain::league::League> = Vec::new();
 
-    for manifest in &all_manifests {
+    for manifest in all_manifests.iter().filter(|m| !m.legacy) {
         let cid = &manifest.id;
         let prefix = format!("{}-", cid);
         let team_ids: Vec<String> = game.teams.iter()
@@ -2168,7 +1375,7 @@ pub async fn select_team(
     }
 
     // Populate competition_configs from all manifests for bg season cycling
-    for manifest in &all_manifests {
+    for manifest in all_manifests.iter().filter(|m| !m.legacy) {
         game.competition_configs
             .insert(manifest.id.clone(), manifest.schedule.clone());
     }
@@ -2302,26 +1509,15 @@ pub async fn load_game(
         .map_err(|e| format!("Lock error: {}", e))?;
 
     info!("[cmd] load_game: loading game data from save");
-    let mut game = sm.load_game(&save_id)?;
+    let game = sm.load_game(&save_id)?;
     info!(
         "[cmd] load_game: game loaded, players={}, teams={}",
         game.players.len(),
         game.teams.len()
     );
 
-    // Legacy migration is handled by Game's custom Deserialize
-
-    remove_free_agents_shadowed_by_academy(&mut game.players, &game.teams);
-    inject_seed_free_agents(&mut game.players);
-    inject_json_free_agents(&mut game.players);
-    ofm_core::champions::bootstrap_champion_state(&mut game);
-
-    info!("[cmd] load_game: loading stats state");
-    let stats_state = sm.load_stats_state(&save_id)?;
-    info!("[cmd] load_game: stats state loaded");
-
-    ofm_core::season_context::refresh_game_context(&mut game);
-    info!("[cmd] load_game: context refreshed");
+    // Extract stats_state from the game (now embedded) into the session
+    let stats_state = game.stats_state.clone();
 
     let mgr_name = game.manager.display_name();
     info!("[cmd] load_game: manager={}", mgr_name);
@@ -2376,7 +1572,7 @@ pub async fn save_game(
     sm_state: State<'_, SaveManagerState>,
 ) -> Result<(), String> {
     info!("[cmd] save_game");
-    let game = state
+    let mut game = state
         .get_game(|g: &Game| g.clone())
         .ok_or("No active game session".to_string())?;
 
@@ -2384,15 +1580,17 @@ pub async fn save_game(
         .get_save_id()
         .ok_or("No active save session".to_string())?;
 
+    // Sync stats_state from session back into game before saving
+    let stats_state = state
+        .get_stats_state(|stats| stats.clone())
+        .unwrap_or_default();
+    game.stats_state = stats_state;
+
     let mut sm = sm_state
         .0
         .lock()
         .map_err(|e| format!("Lock error: {}", e))?;
-    sm.save_game(&game, &save_id)?;
-    let stats_state = state
-        .get_stats_state(|stats| stats.clone())
-        .unwrap_or_default();
-    sm.save_stats_state(&stats_state, &save_id)
+    sm.save_game(&game, &save_id)
 }
 
 /// Save the current game and clear the active session so the player returns to the main menu.
@@ -2408,15 +1606,17 @@ pub async fn exit_to_menu(
 
     // Auto-save
     if let Some(save_id) = state.get_save_id() {
+        let mut game = game;
+        let stats_state = state
+            .get_stats_state(|stats| stats.clone())
+            .unwrap_or_default();
+        game.stats_state = stats_state;
+
         let mut sm = sm_state
             .0
             .lock()
             .map_err(|e| format!("Lock error: {}", e))?;
         sm.save_game(&game, &save_id)?;
-        let stats_state = state
-            .get_stats_state(|stats| stats.clone())
-            .unwrap_or_default();
-        sm.save_stats_state(&stats_state, &save_id)?;
     }
 
     // Clear the in-memory game state
