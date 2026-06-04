@@ -201,6 +201,7 @@ export default function Settings() {
                 { value: "system", icon: <Monitor className="w-4 h-4" /> },
               ]}
               value={settings.theme}
+              gameStyle={isFromMenu}
               onChange={(v) =>
                 handleUpdate({ theme: v as AppSettings["theme"] })
               }
@@ -215,6 +216,7 @@ export default function Settings() {
           >
             <Select
               value={uiVersion}
+              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) => setUIVersion(e.target.value as UIVersion)}
               className="min-w-40"
             >
@@ -229,6 +231,7 @@ export default function Settings() {
           >
             <Select
               value={selectedLanguage}
+              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) => handleUpdate({ language: e.target.value })}
               icon={<Globe className="w-4 h-4" />}
               className="min-w-48"
@@ -247,6 +250,7 @@ export default function Settings() {
           >
             <Select
               value={settings.currency}
+              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) =>
                 handleUpdate({
                   currency: e.target.value as AppSettings["currency"],
@@ -280,6 +284,7 @@ export default function Settings() {
                   { value: "xlarge", label: "XL" },
                 ]}
                 value={settings.ui_scale}
+                gameStyle={isFromMenu}
                 onChange={(v) => {
                   if (isAndroid) return;
                   handleUpdate({ ui_scale: v as AppSettings["ui_scale"] });
@@ -302,6 +307,7 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.high_contrast}
+              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ high_contrast: v })}
             />
           </SettingRow>
@@ -315,7 +321,11 @@ export default function Settings() {
           >
             <button
               onClick={toggleFullscreen}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-navy-600 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-heading font-bold uppercase tracking-wider transition-colors ${
+                isFromMenu
+                  ? "bg-white/10 text-white hover:bg-white/20"
+                  : "bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-navy-600"
+              }`}
             >
               {isFullscreen ? (
                 <Minimize className="w-4 h-4" />
@@ -342,6 +352,7 @@ export default function Settings() {
           >
             <Select
               value={settings.default_match_mode}
+              variant={isFromMenu ? "glass" : "default"}
               onChange={(e) =>
                 handleUpdate({
                   default_match_mode: e.target
@@ -368,6 +379,7 @@ export default function Settings() {
                 label: t(`settings.speeds.${k}`),
               }))}
               value={settings.match_speed}
+              gameStyle={isFromMenu}
               onChange={(v) =>
                 handleUpdate({ match_speed: v as AppSettings["match_speed"] })
               }
@@ -380,6 +392,7 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.show_match_commentary}
+              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ show_match_commentary: v })}
             />
           </SettingRow>
@@ -390,6 +403,7 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.confirm_advance}
+              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ confirm_advance: v })}
             />
           </SettingRow>
@@ -405,6 +419,7 @@ export default function Settings() {
               <Bug className="w-4 h-4 text-gray-400" />
               <Toggle
                 checked={settings.debug_tools_enabled}
+                gameStyle={isFromMenu}
                 onChange={(v) => handleUpdate({ debug_tools_enabled: v })}
               />
             </div>
@@ -424,6 +439,7 @@ export default function Settings() {
           >
             <Toggle
               checked={settings.auto_save}
+              gameStyle={isFromMenu}
               onChange={(v) => handleUpdate({ auto_save: v })}
             />
           </SettingRow>
@@ -1112,15 +1128,19 @@ function SettingRow({
 function Toggle({
   checked,
   onChange,
+  gameStyle,
 }: {
   checked: boolean;
   onChange: (v: boolean) => void;
+  gameStyle?: boolean;
 }) {
+  const offClasses = gameStyle ? "bg-white/15" : "bg-gray-300 dark:bg-navy-600";
+  const onClasses = gameStyle ? "bg-accent-400" : "bg-primary-500";
   return (
     <button
       onClick={() => onChange(!checked)}
       className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-        checked ? "bg-primary-500" : "bg-gray-300 dark:bg-navy-600"
+        checked ? onClasses : offClasses
       }`}
     >
       <div
@@ -1136,21 +1156,30 @@ function SegmentedControl({
   options,
   value,
   onChange,
+  gameStyle,
 }: {
   options: Array<{ value: string; label?: string; icon?: React.ReactNode }>;
   value: string;
   onChange: (v: string) => void;
+  gameStyle?: boolean;
 }) {
+  const container = gameStyle
+    ? "flex rounded-lg bg-white/5 p-0.5 border border-white/10"
+    : "flex rounded-lg bg-gray-100 dark:bg-navy-700 p-0.5 border border-gray-200 dark:border-navy-600";
+  const activeItem = gameStyle
+    ? "bg-accent-400 text-navy-950 shadow-sm"
+    : "bg-white dark:bg-navy-500 text-primary-600 dark:text-primary-400 shadow-sm";
+  const inactiveItem = gameStyle
+    ? "text-gray-300 hover:text-white"
+    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300";
   return (
-    <div className="flex rounded-lg bg-gray-100 dark:bg-navy-700 p-0.5 border border-gray-200 dark:border-navy-600">
+    <div className={container}>
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-heading font-bold uppercase tracking-wider transition-all ${
-            value === opt.value
-              ? "bg-white dark:bg-navy-500 text-primary-600 dark:text-primary-400 shadow-sm"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            value === opt.value ? activeItem : inactiveItem
           }`}
         >
           {opt.icon}
