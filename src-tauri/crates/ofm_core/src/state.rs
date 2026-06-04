@@ -1,7 +1,13 @@
 use crate::game::Game;
 use crate::live_match_manager::LiveMatchSession;
 use domain::stats::StatsState;
+use std::path::PathBuf;
 use std::sync::Mutex;
+use std::sync::OnceLock;
+
+/// Set during `assemble_world_from_modular_data` to the app's resource data directory.
+/// Used by static/fn functions in `game_setup` that can't receive `app_handle` directly.
+pub static RESOURCE_DATA_DIR: OnceLock<PathBuf> = OnceLock::new();
 
 /// Holds all mutable session state under a single lock to prevent deadlocks
 /// and race conditions between independent mutexes.

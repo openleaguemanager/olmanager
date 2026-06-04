@@ -3,17 +3,15 @@ use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePrio
 use domain::team::{AcademyLifecycle, AcademyMetadata, ErlAssignment, Team, TeamKind};
 use log::info;
 use ofm_core::academy::{
-    eligible_academy_acquisition_options, validate_academy_acquisition, AcademyAcquisitionOption,
-    ErlAcademyCandidate, ErlLeagueDefinition,
+    academy_candidate_catalog, academy_erl_catalog, eligible_academy_acquisition_options,
+    validate_academy_acquisition, AcademyAcquisitionOption,
 };
 use ofm_core::game::Game;
 use ofm_core::state::StateManager;
 use serde::{Deserialize, Serialize};
 use tauri::State;
 
-use crate::commands::game::{
-    academy_seed_team_id, ensure_example_academy_pool, example_academy_seed_catalog,
-};
+use ofm_core::game_setup::ensure_example_academy_pool;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AcademyAcquisitionOptionsResponse {
@@ -525,119 +523,8 @@ fn format_academy_error(error: ofm_core::academy::AcademyError) -> String {
     }
 }
 
-fn academy_erl_catalog() -> &'static [ErlLeagueDefinition] {
-    static CATALOG: std::sync::OnceLock<Vec<ErlLeagueDefinition>> = std::sync::OnceLock::new();
-    CATALOG.get_or_init(|| {
-        catalogs_from_tier2_manifests()
-    })
-}
-
-/// Scan `data/competitions/` for tier 2+ manifests and build ErlLeagueDefinition entries.
-/// Uses the same path resolution as scan_competitions in competitions.rs.
-fn catalogs_from_tier2_manifests() -> Vec<ErlLeagueDefinition> {
-    use ofm_core::generator::definitions::CompetitionManifest;
-
-    let cwd = match std::env::current_dir().ok() {
-        Some(d) => d,
-        None => return vec![],
-    };
-    let comps_dir = {
-        let mut d = cwd.clone();
-        d.push("data");
-        d.push("competitions");
-        if d.is_dir() { d }
-        else {
-            d = cwd;
-            d.push("..");
-            d.push("data");
-            d.push("competitions");
-            if d.is_dir() { d } else { return vec![] }
-        }
-    };
-
-    let mut catalogs = Vec::new();
-    let entries = match std::fs::read_dir(&comps_dir) {
-        Ok(e) => e,
-        Err(_) => return catalogs,
-    };
-
-    for entry in entries.flatten() {
-        let dir_path = entry.path();
-        if !dir_path.is_dir() { continue; }
-        let manifest_path = dir_path.join("manifest.json");
-        if !manifest_path.exists() { continue; }
-        let league_id = match dir_path.file_name().and_then(|n| n.to_str()) {
-            Some(n) => n.to_string(),
-            None => continue,
-        };
-
-        let json_str = match std::fs::read_to_string(&manifest_path) {
-            Ok(s) => s,
-            Err(_) => continue,
-        };
-        if let Ok(manifest) = serde_json::from_str::<CompetitionManifest>(&json_str) {
-            // Skip legacy competitions
-            if manifest.legacy { continue; }
-            // Only tier 2+ competitions are ERL / academy sources
-            if manifest.tier.unwrap_or(1) <= 1 { continue; }
-
-            let country_code = manifest.country.clone().unwrap_or_default();
-            let region = manifest.region.clone();
-            let reputation = manifest.reputation.unwrap_or(3);
-            let nearby = manifest.nearby_country_codes.clone();
-
-            catalogs.push(ErlLeagueDefinition {
-                id: league_id,
-                name: manifest.name,
-                country_code,
-                region,
-                reputation,
-                nearby_country_codes: nearby,
-            });
-        }
-    }
-    catalogs
-}
-
-fn academy_candidate_catalog() -> &'static [ErlAcademyCandidate] {
-    static CATALOG: std::sync::OnceLock<Vec<ErlAcademyCandidate>> = std::sync::OnceLock::new();
-    CATALOG.get_or_init(|| {
-        // Build a lookup: erl_league_id → (reputation, development_level) from manifests
-        let erl_reputations: std::collections::HashMap<String, (u8, u8)> = academy_erl_catalog()
-            .iter()
-            .map(|erl| {
-                let dev_level = match erl.reputation {
-                    5 => 4,
-                    4 => 3,
-                    3 => 2,
-                    _ => 1,
-                };
-                (erl.id.clone(), (erl.reputation, dev_level))
-            })
-            .collect();
-
-        example_academy_seed_catalog()
-            .iter()
-            .map(|seed| {
-                let (reputation, development_level) = erl_reputations
-                    .get(&seed.league_id)
-                    .copied()
-                    .unwrap_or((3, 2));
-
-                ErlAcademyCandidate {
-                    source_team_id: academy_seed_team_id(&seed.league_id, &seed.team_name),
-                    name: seed.team_name.clone(),
-                    short_name: seed.short_name.clone(),
-                    logo_url: seed.logo_url.clone(),
-                    erl_league_id: seed.league_id.clone(),
-                    country_code: seed.country_code.clone(),
-                    reputation,
-                    development_level,
-                }
-            })
-            .collect()
-    })
-}
+// academy_erl_catalog, catalogs_from_tier2_manifests, and
+// academy_candidate_catalog moved to ofm_core::academy.
 
 #[cfg(test)]
 mod tests {

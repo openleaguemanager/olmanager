@@ -15,7 +15,7 @@ use tauri::State;
 
 use ofm_core::state::StateManager;
 
-use crate::commands::game::{
+use ofm_core::game_setup::{
     apply_seed_potential_defaults, bootstrap_example_academy_pool_from_example,
     inject_seed_free_agents, remove_free_agents_shadowed_by_academy,
 };

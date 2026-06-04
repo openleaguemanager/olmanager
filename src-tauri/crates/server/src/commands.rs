@@ -1,13 +1,9 @@
 use std::collections::HashMap;
-use std::path::Path;
 
 use axum::http::StatusCode;
 use domain::team::{DraftStrategy, TeamKind, TrainingFocus, TrainingIntensity};
 use ofm_core::game::Game;
-use ofm_core::generator::definitions::{
-    CompetitionManifest, CompetitionSummary, LeagueSelectionData, PlayerDataFile, TeamDataFile,
-    TeamSummary,
-};
+use ofm_core::generator::definitions::LeagueSelectionData;
 use serde_json::{json, Value};
 
 use crate::data;
@@ -300,118 +296,7 @@ fn managed_team_mut<'a>(
 
 fn league_selection_data() -> Result<LeagueSelectionData, String> {
     let base = data::data_dir();
-    let competition_dir = base.join("competitions");
-    let entries = std::fs::read_dir(&competition_dir).map_err(|e| {
-        format!(
-            "failed to read competitions directory {:?}: {e}",
-            competition_dir
-        )
-    })?;
-
-    let mut manifests = Vec::new();
-    for entry in entries.flatten() {
-        let manifest_path = entry.path().join("manifest.json");
-        if !manifest_path.is_file() {
-            continue;
-        }
-        let json = std::fs::read_to_string(&manifest_path)
-            .map_err(|e| format!("failed to read {:?}: {e}", manifest_path))?;
-        match serde_json::from_str::<CompetitionManifest>(&json) {
-            Ok(manifest) => manifests.push(manifest),
-            Err(e) => tracing::warn!("skipping malformed manifest {:?}: {e}", manifest_path),
-        }
-    }
-
-    manifests.sort_by(|a, b| a.id.cmp(&b.id));
-    let competitions = manifests
-        .into_iter()
-        // Only show non-legacy tier 1 competitions
-        .filter(|m| !m.legacy && m.tier.unwrap_or(1) == 1)
-        .filter_map(|manifest| competition_summary(&base, manifest))
-        .collect();
-
-    Ok(LeagueSelectionData { competitions })
-}
-
-fn competition_summary(base: &Path, manifest: CompetitionManifest) -> Option<CompetitionSummary> {
-    let teams = load_teams(base, &manifest).ok()?;
-    let player_count_by_team = load_player_count_by_team(base, &manifest).unwrap_or_default();
-    let prefix = format!("{}-", manifest.id);
-
-    let team_summaries = teams
-        .into_iter()
-        .map(|mut team| {
-            if let Some(url) = &mut team.logo_url {
-                if url.starts_with("/team-logos/") {
-                    *url = url.replacen("/team-logos/", "/teams-icons/", 1);
-                }
-            }
-
-            let id = if team.id.starts_with(&prefix) {
-                team.id.clone()
-            } else {
-                format!("{}-{}", manifest.id, team.id)
-            };
-            let player_count = player_count_by_team.get(&team.id).copied();
-            TeamSummary {
-                id,
-                name: team.name,
-                short_name: team.short_name,
-                logo_url: team.logo_url,
-                country: team.country,
-                city: Some(team.city),
-                finance: Some(team.finance),
-                reputation: Some(team.reputation),
-                colors: Some(team.colors),
-                ovr: None,
-                player_count,
-            }
-        })
-        .collect();
-
-    Some(CompetitionSummary {
-        id: manifest.id,
-        name: manifest.name,
-        region: manifest.region,
-        logo: manifest.logo,
-        tier: manifest.tier.unwrap_or(0),
-        team_count: manifest.schedule.team_count,
-        teams: team_summaries,
-    })
-}
-
-fn load_teams(
-    base: &Path,
-    manifest: &CompetitionManifest,
-) -> Result<Vec<domain::team::Team>, String> {
-    // Prefer the ERL-complete shard so the picker's team ids match the world
-    // `assemble_world` builds (otherwise selecting an ERL team would 404).
-    let path = data::preferred_shard_path(base, "teams", &manifest.id)
-        .unwrap_or_else(|| base.join(&manifest.teams_file));
-    let json = std::fs::read_to_string(&path)
-        .map_err(|e| format!("failed to read teams file {:?}: {e}", path))?;
-    let data: TeamDataFile =
-        serde_json::from_str(&json).map_err(|e| format!("failed to parse teams file: {e}"))?;
-    Ok(data.teams)
-}
-
-fn load_player_count_by_team(
-    base: &Path,
-    manifest: &CompetitionManifest,
-) -> Result<HashMap<String, usize>, String> {
-    let path = data::preferred_shard_path(base, "players", &manifest.id)
-        .unwrap_or_else(|| base.join(&manifest.players_file));
-    let json = std::fs::read_to_string(&path)
-        .map_err(|e| format!("failed to read players file {:?}: {e}", path))?;
-    let data: PlayerDataFile =
-        serde_json::from_str(&json).map_err(|e| format!("failed to parse players file: {e}"))?;
-    let mut counts = HashMap::new();
-    for player in data.players {
-        if let Some(team_id) = player.team_id {
-            *counts.entry(team_id).or_default() += 1;
-        }
-    }
-    Ok(counts)
+    Ok(ofm_core::competitions::build_league_selection(&base))
 }
 
 /// Splits a camel/Pascal-case champion key into a display name, e.g.
