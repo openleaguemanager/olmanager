@@ -42,6 +42,7 @@ import {
 import { useUpdater } from "../hooks/useUpdater";
 import { APP_VERSION } from "../lib/appInfo";
 import { APP_NAME } from "../lib/appInfo";
+import MenuBackground from "../components/menu/MenuBackground";
 
 const CURRENCY_OPTIONS = [
   { value: "EUR", label: "Euro (€)", symbol: "€" },
@@ -65,6 +66,7 @@ export default function Settings() {
     checking: checkingUpdate,
     check: checkUpdate,
   } = useUpdater(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState("display");
   const [confirmClear, setConfirmClear] = useState(false);
   const [clearSuccess, setClearSuccess] = useState(false);
   const [exportPath, setExportPath] = useState<string | null>(null);
@@ -171,33 +173,20 @@ export default function Settings() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
-      {/* Header */}
-      <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 shadow-sm">
-        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(returnTo)}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white">
-              {t("settings.title")}
-            </h1>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
+  const isFromMenu = returnTo === "/";
 
-      {/* Content */}
-      <div className="max-w-3xl mx-auto px-6 py-8 flex flex-col gap-8">
-        {/* ─── Display ─── */}
-        <Section
-          title={t("settings.display")}
-          icon={<Monitor className="w-5 h-5" />}
-        >
+  const sections: Array<{
+    id: string;
+    title: string;
+    icon: React.ReactNode;
+    content: React.ReactNode;
+  }> = [
+    {
+      id: "display",
+      title: t("settings.display"),
+      icon: <Monitor className="w-5 h-5" />,
+      content: (
+        <>
           <SettingRow
             label={t("settings.theme")}
             description={t("settings.themeDesc")}
@@ -335,13 +324,15 @@ export default function Settings() {
                 : t("settings.enterFullscreen", "Enter")}
             </button>
           </SettingRow>
-        </Section>
-
-        {/* ─── Gameplay ─── */}
-        <Section
-          title={t("settings.gameplay")}
-          icon={<Gamepad2 className="w-5 h-5" />}
-        >
+        </>
+      ),
+    },
+    {
+      id: "gameplay",
+      title: t("settings.gameplay"),
+      icon: <Gamepad2 className="w-5 h-5" />,
+      content: (
+        <>
           <SettingRow
             label={t("settings.defaultMatchMode")}
             description={t("settings.defaultMatchModeDesc")}
@@ -415,13 +406,15 @@ export default function Settings() {
               />
             </div>
           </SettingRow>
-        </Section>
-
-        {/* ─── Saves & Data ─── */}
-        <Section
-          title={t("settings.savesData")}
-          icon={<Save className="w-5 h-5" />}
-        >
+        </>
+      ),
+    },
+    {
+      id: "saves",
+      title: t("settings.savesData"),
+      icon: <Save className="w-5 h-5" />,
+      content: (
+        <>
           <SettingRow
             label={t("settings.autoSave")}
             description={t("settings.autoSaveDesc")}
@@ -486,13 +479,15 @@ export default function Settings() {
               )}
             </SettingRow>
           </div>
-        </Section>
-
-        {/* ─── Updates ─── */}
-        <Section
-          title={t("settings.updates")}
-          icon={<RefreshCw className="w-5 h-5" />}
-        >
+        </>
+      ),
+    },
+    {
+      id: "updates",
+      title: t("settings.updates"),
+      icon: <RefreshCw className="w-5 h-5" />,
+      content: (
+        <>
           <SettingRow
             label={t("settings.currentVersion")}
             description={t("settings.currentVersionDesc")}
@@ -543,33 +538,138 @@ export default function Settings() {
               </p>
             </div>
           )}
-        </Section>
-
-        {/* ─── About ─── */}
-        {import.meta.env.MODE === "web" && (
-          <Section
-            title={t("settings.data", { defaultValue: "Datos" })}
-            icon={<Database className="w-5 h-5" />}
-          >
-            <ImportDataSection />
-          </Section>
-        )}
-
-        <Section title={t("settings.about")} icon={<Zap className="w-5 h-5" />}>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                {APP_NAME}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                {APP_VERSION}
-              </p>
-            </div>
-            <span className="text-2xs font-heading uppercase tracking-widest text-gray-400 dark:text-gray-600">
-              Open League Manager Community
-            </span>
+        </>
+      ),
+    },
+    ...(import.meta.env.MODE === "web"
+      ? [
+          {
+            id: "data",
+            title: t("settings.data", { defaultValue: "Datos" }),
+            icon: <Database className="w-5 h-5" />,
+            content: <ImportDataSection />,
+          },
+        ]
+      : []),
+    {
+      id: "about",
+      title: t("settings.about"),
+      icon: <Zap className="w-5 h-5" />,
+      content: (
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+              {APP_NAME}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {APP_VERSION}
+            </p>
           </div>
-        </Section>
+          <span className="text-2xs font-heading uppercase tracking-widest text-gray-400 dark:text-gray-600">
+            Open League Manager Community
+          </span>
+        </div>
+      ),
+    },
+  ];
+
+  // ── Game-style tabbed settings (entered from the start menu) ──
+  if (isFromMenu) {
+    const active =
+      sections.find((s) => s.id === activeSettingsTab) ?? sections[0];
+
+    return (
+      <div className="dark min-h-screen relative overflow-hidden font-sans text-white">
+        <MenuBackground />
+
+        <div className="relative z-10 min-h-screen flex flex-col px-6 sm:px-10 lg:px-16 py-8">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-8">
+            <button
+              onClick={() => navigate(returnTo)}
+              className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-white drop-shadow">
+              {t("settings.title")}
+            </h1>
+          </div>
+
+          {/* Section tabs */}
+          <nav className="flex flex-wrap gap-1 border-b border-white/10 mb-6">
+            {sections.map((s) => {
+              const isActive = s.id === active.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => setActiveSettingsTab(s.id)}
+                  className={`group relative flex items-center gap-2 px-4 py-3 font-heading font-bold text-sm uppercase tracking-wider transition-colors ${
+                    isActive
+                      ? "text-white"
+                      : "text-gray-400 hover:text-gray-200"
+                  }`}
+                >
+                  <span
+                    className={
+                      isActive ? "text-accent-400" : "text-gray-500 group-hover:text-gray-300"
+                    }
+                  >
+                    {s.icon}
+                  </span>
+                  {s.title}
+                  <span
+                    className={`absolute left-0 -bottom-px h-0.5 w-full rounded-full bg-accent-400 transition-opacity ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Active section panel */}
+          <div className="flex-1 overflow-y-auto">
+            <div
+              key={active.id}
+              className="animate-fade-in-up max-w-3xl bg-navy-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5"
+            >
+              {active.content}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Classic scrolling settings (entered from inside a game) ──
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
+      {/* Header */}
+      <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 shadow-sm">
+        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(returnTo)}
+              className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white">
+              {t("settings.title")}
+            </h1>
+          </div>
+          <ThemeToggle />
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className="max-w-3xl mx-auto px-6 py-8 flex flex-col gap-8">
+        {sections.map((s) => (
+          <Section key={s.id} title={s.title} icon={s.icon}>
+            {s.content}
+          </Section>
+        ))}
       </div>
     </div>
   );
