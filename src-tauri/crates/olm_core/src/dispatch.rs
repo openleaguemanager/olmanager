@@ -7,6 +7,7 @@
 //! Platform-specific concerns (file I/O, auth, StateManager) live in the
 //! caller — not here.
 
+use chrono::Datelike;
 use serde_json::{json, Value};
 use std::collections::HashSet;
 
@@ -85,7 +86,7 @@ pub fn dispatch(command: &str, args: &Value, game: &mut Game) -> Result<Dispatch
         }
 
         // ── World data ──────────────────────────────────────
-        "get_team_selection_data" => Ok(DispatchResult::Query(json!({
+        "get_team_selection_data" => Ok(DispatchResult::GameModified(json!({
             "manager": game.manager,
             "teams": game.teams.iter().filter(|t| t.team_kind != TeamKind::Academy).cloned().collect::<Vec<_>>(),
             "players": game.players,
@@ -150,7 +151,7 @@ pub fn dispatch(command: &str, args: &Value, game: &mut Game) -> Result<Dispatch
 
         // ── Scrims ──────────────────────────────────────────
         "set_weekly_scrims" => {
-            let ids = string_vec_arg(args, &["opponentIds", "opponent_ids"])?;
+            let ids = string_vec_arg(args, &["opponentTeamIds", "opponentIds", "opponent_ids"])?;
             commands::set_weekly_scrims(game, &manager_team_id(game)?, ids);
             Ok(DispatchResult::GameModified(json!(game)))
         }
@@ -180,6 +181,91 @@ pub fn dispatch(command: &str, args: &Value, game: &mut Game) -> Result<Dispatch
                 }
             });
             commands::set_weekly_scrim_objective(game, &manager_team_id(game)?, scrim_focus);
+            Ok(DispatchResult::GameModified(json!(game)))
+        }
+        "finalize_weekly_scrim_setup" => {
+            let tid = manager_team_id(game)?;
+            let week_key = format!("{}-W{}", game.clock.current_date.iso_week().year(), game.clock.current_date.iso_week().week());
+            if let Some(team) = game.teams.iter_mut().find(|t| t.id == tid) {
+                team.scrim_setup_locked_week_key = Some(week_key);
+            }
+            Ok(DispatchResult::GameModified(json!(game)))
+        }
+        "auto_configure_weekly_scrim_setup" => {
+            let tid = manager_team_id(game)?;
+            let week_key = format!("{}-W{}", game.clock.current_date.iso_week().year(), game.clock.current_date.iso_week().week());
+            let current_weekday = game.clock.current_date.weekday().num_days_from_monday() as u8;
+            if let Some(team) = game.teams.iter_mut().find(|t| t.id == tid) {
+                if team.scrim_setup_locked_week_key.as_deref() == Some(&week_key) {
+                    return Ok(DispatchResult::GameModified(json!(game)));
+                }
+                let slots = team.scrim_weekly_slots.max(1);
+                team.scrim_weekly_slots = slots;
+                team.scrim_setup_locked_week_key = Some(week_key);
+            }
+            Ok(DispatchResult::GameModified(json!(game)))
+        }
+        "cancel_todays_scrims" => {
+            let tid = manager_team_id(game)?;
+            let current_weekday = game.clock.current_date.weekday().num_days_from_monday() as u8;
+            let week_key = format!("{}-W{}", game.clock.current_date.iso_week().year(), game.clock.current_date.iso_week().week());
+            if let Some(team) = game.teams.iter_mut().find(|t| t.id == tid) {
+                for (idx, opp) in team.weekly_scrim_opponent_ids.iter_mut().enumerate() {
+                    *opp = String::new();
+                    if let Some(plan) = team.weekly_scrim_plan_team_ids.get_mut(idx) {
+                        plan.clear();
+                    }
+                }
+                team.scrim_weekly_cancellations = team.scrim_weekly_cancellations.saturating_add(1);
+                team.scrim_reputation = team.scrim_reputation.saturating_sub(5);
+            }
+            Ok(DispatchResult::GameModified(json!(game)))
+        }
+        "choose_post_scrim_decision" => {
+            let slot_index = args.get("slotIndex").and_then(|v| v.as_u64()).unwrap_or(0) as u8;
+            let decision = string_arg(args, &["decision"])?;
+            let tid = manager_team_id(game)?;
+            if let Some(report) = game.teams.iter_mut().filter_map(|t| t.scrim_reports.iter_mut().find(|r| r.slot_index == slot_index && r.post_decision.is_none())).next() {
+                report.post_decision = Some(match decision.as_str() {
+                    "ContinuePlan" | "PushThrough" => crate::domain::team::PostScrimDecision::ContinuePlan,
+                    "DayOff" => crate::domain::team::PostScrimDecision::DayOff,
+                    "VodReview" => crate::domain::team::PostScrimDecision::VodReview,
+                    "MentalReset" => crate::domain::team::PostScrimDecision::MentalReset,
+                    "TargetedDrills" => crate::domain::team::PostScrimDecision::TargetedDrills,
+                    _ => crate::domain::team::PostScrimDecision::ContinuePlan,
+                });
+            }
+            Ok(DispatchResult::GameModified(json!(game)))
+        }
+        "choose_daily_scrim_action" => {
+            let slot_index = args.get("slotIndex").and_then(|v| v.as_u64()).unwrap_or(0) as u8;
+            let action = string_arg(args, &["action"])?;
+            let tid = manager_team_id(game)?;
+            if let Some(team) = game.teams.iter_mut().find(|t| t.id == tid) {
+                if action == "CancelScrims" {
+                    for (idx, opp) in team.weekly_scrim_opponent_ids.iter_mut().enumerate() {
+                        *opp = String::new();
+                        if let Some(plan) = team.weekly_scrim_plan_team_ids.get_mut(idx) {
+                            plan.clear();
+                        }
+                    }
+                }
+            }
+            Ok(DispatchResult::GameModified(json!(game)))
+        }
+        "delegate_scrim_decision" => {
+            if game.day_phase != crate::game::DayPhase::ScrimBlock && game.day_phase != crate::game::DayPhase::ReviewBlock {
+                return Err("Delegation is only available during ScrimBlock/ReviewBlock".to_string());
+            }
+            let tid = manager_team_id(game)?;
+            if let Some(team) = game.teams.iter_mut().find(|t| t.id == tid) {
+                for (idx, opp) in team.weekly_scrim_opponent_ids.iter_mut().enumerate() {
+                    if opp.is_empty() { continue; }
+                    if let Some(report) = team.scrim_reports.iter_mut().find(|r| r.slot_index == idx as u8 && r.post_decision.is_none()) {
+                        report.post_decision = Some(crate::domain::team::PostScrimDecision::ContinuePlan);
+                    }
+                }
+            }
             Ok(DispatchResult::GameModified(json!(game)))
         }
 
@@ -261,7 +347,7 @@ pub fn dispatch(command: &str, args: &Value, game: &mut Game) -> Result<Dispatch
             let ptid = string_arg(args, &["parentTeamId", "parent_team_id"])?;
             commands::bootstrap_academy_pool(game);
             let (options, blocked) = crate::academy::get_acquisition_options(game, &ptid);
-            Ok(DispatchResult::Query(json!({
+            Ok(DispatchResult::GameModified(json!({
                 "parent_team_id": ptid,
                 "acquisition_allowed": blocked.is_none(),
                 "blocked_reason": blocked,
@@ -334,3 +420,4 @@ pub fn dispatch(command: &str, args: &Value, game: &mut Game) -> Result<Dispatch
         _ => Err(format!("Unknown command: {command}")),
     }
 }
+
