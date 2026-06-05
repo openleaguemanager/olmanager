@@ -1,17 +1,17 @@
 use chrono::Utc;
-use domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use domain::team::{AcademyLifecycle, AcademyMetadata, ErlAssignment, Team, TeamKind};
+use olm_core::domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
+use olm_core::domain::team::{AcademyLifecycle, AcademyMetadata, ErlAssignment, Team, TeamKind};
 use log::info;
-use ofm_core::academy::{
+use olm_core::academy::{
     academy_candidate_catalog, academy_erl_catalog, eligible_academy_acquisition_options,
     validate_academy_acquisition, AcademyAcquisitionOption,
 };
-use ofm_core::game::Game;
-use ofm_core::state::StateManager;
+use olm_core::game::Game;
+use olm_core::state::StateManager;
 use serde::{Deserialize, Serialize};
 use tauri::State;
 
-use ofm_core::game_setup::ensure_example_academy_pool;
+use olm_core::game_setup::ensure_example_academy_pool;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AcademyAcquisitionOptionsResponse {
@@ -494,26 +494,26 @@ fn academy_metadata(
     }
 }
 
-fn format_academy_error(error: ofm_core::academy::AcademyError) -> String {
+fn format_academy_error(error: olm_core::academy::AcademyError) -> String {
     match error {
-        ofm_core::academy::AcademyError::ParentMustBeMainTeam { team_id } => {
+        olm_core::academy::AcademyError::ParentMustBeMainTeam { team_id } => {
             format!("Team '{}' is not a main team", team_id)
         }
-        ofm_core::academy::AcademyError::AcademyAlreadyExists {
+        olm_core::academy::AcademyError::AcademyAlreadyExists {
             parent_team_id,
             academy_team_id,
         } => format!(
             "Parent team '{}' already has academy '{}'",
             parent_team_id, academy_team_id
         ),
-        ofm_core::academy::AcademyError::InsufficientFunds {
+        olm_core::academy::AcademyError::InsufficientFunds {
             available,
             required,
         } => format!(
             "Insufficient funds for academy acquisition: available {}, required {}",
             available, required
         ),
-        ofm_core::academy::AcademyError::UnrelatedAcademy {
+        olm_core::academy::AcademyError::UnrelatedAcademy {
             parent_team_id,
             academy_team_id,
         } => format!(
@@ -524,7 +524,7 @@ fn format_academy_error(error: ofm_core::academy::AcademyError) -> String {
 }
 
 // academy_erl_catalog, catalogs_from_tier2_manifests, and
-// academy_candidate_catalog moved to ofm_core::academy.
+// academy_candidate_catalog moved to olm_core::academy.
 
 #[cfg(test)]
 mod tests {
@@ -533,12 +533,12 @@ mod tests {
         AcquireAcademyTeamRequest,
     };
     use chrono::{TimeZone, Utc};
-    use domain::manager::Manager;
-    use domain::team::{
+    use olm_core::domain::manager::Manager;
+    use olm_core::domain::team::{
         AcademyLifecycle, AcademyMetadata, ErlAssignment, ErlAssignmentRule, Team, TeamKind,
     };
-    use ofm_core::clock::GameClock;
-    use ofm_core::game::Game;
+    use olm_core::clock::GameClock;
+    use olm_core::game::Game;
 
     fn source_id_by_name(game: &Game, parent_team_id: &str, team_name: &str) -> String {
         get_academy_acquisition_options_for_game(game, parent_team_id)
@@ -843,3 +843,5 @@ mod tests {
         );
     }
 }
+
+

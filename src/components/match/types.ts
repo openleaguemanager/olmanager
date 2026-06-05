@@ -2,8 +2,8 @@
 
 import type { TFunction } from "i18next";
 import type { LolRole } from "../../store/gameStore";
-import type { LolStaffEffectsData } from "../../lib/lolStaffEffects";
-import type { LolScrimPrepPayload } from "../../lib/lolScrimPrep";
+import type { LolStaffEffectsData } from "../../lib/teams/lolStaffEffects";
+import type { LolScrimPrepPayload } from "../../lib/scrims/lolScrimPrep";
 
 export interface MatchEvent {
   minute: number;
@@ -326,3 +326,6 @@ export const DRAFT_STRATEGIES = [
   { id: "CounterPick", label: "Counter Pick" },
   { id: "PriorityBans", label: "Priority Bans" },
 ];
+
+
+

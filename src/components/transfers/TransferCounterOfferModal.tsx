@@ -5,7 +5,7 @@ import type {
   PlayerData,
   TeamData,
 } from "../../store/gameStore";
-import { formatVal, getTeamName, positionBadgeVariant, calcAge } from "../../lib/helpers";
+import { formatVal, getTeamName, positionBadgeVariant, calcAge } from "../../lib/common/helpers";
 import type { TransferNegotiationResponseData } from "../../services/transfersService";
 import NegotiationFeedbackPanel, {
   type NegotiationFeedbackPanelData,
@@ -210,3 +210,4 @@ export default function TransferCounterOfferModal({
     </div>
   );
 }
+

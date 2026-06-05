@@ -3,10 +3,10 @@ import type {
   ScoutingAssignment,
   TeamData,
 } from "../../store/gameStore";
-import { getTeamName } from "../../lib/helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { getTeamName } from "../../lib/common/helpers";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
-import { getAllCountryNames } from "../../lib/countries";
+import { getAllCountryNames } from "../../lib/common/countries";
 
 interface FilterScoutablePlayersParams {
   players: PlayerData[];
@@ -72,3 +72,4 @@ export function paginateScoutablePlayers(
 export function buildAlreadyScoutingIds(assignments: ScoutingAssignment[]) {
   return new Set(assignments.map((assignment) => assignment.player_id));
 }
+

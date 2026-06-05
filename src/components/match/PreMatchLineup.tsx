@@ -3,8 +3,8 @@ import type { JSX } from "react";
 import { MatchSnapshot, EnginePlayerData } from "./types";
 import { Badge } from "../ui";
 import { ArrowUpDown, AlertTriangle, Wand2 } from "lucide-react";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { calcOvr } from "../../lib/lolPlayerStats";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { calcOvr } from "../../lib/players/lolPlayerStats";
 
 export type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
@@ -416,3 +416,4 @@ export default function PreMatchLineup({
     </div>
   );
 }
+

@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 
 
 import type { ChampionMasteryEntryData, PlayerData } from "@/store/gameStore";
-import { fallbackChampionForRole, resolvePlayerLolRole } from "@/lib/lolIdentity";
-import { resolvePlayerPhoto } from "@/lib/playerPhotos";
-import { calculateLolOvr } from "@/lib/lolPlayerStats";
-import { resolveChampionSplash } from "@/lib/championImages";
-import { normalizeChampionKey } from "@/lib/championIds";
+import { fallbackChampionForRole, resolvePlayerLolRole } from "@/lib/players/lolIdentity";
+import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
+import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
+import { resolveChampionSplash } from "@/lib/champions/championImages";
+import { normalizeChampionKey } from "@/lib/champions/championIds";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { cn } from "@/ui-v2/lib/utils";
@@ -181,3 +181,5 @@ function StatBox({
     </div>
   );
 }
+
+

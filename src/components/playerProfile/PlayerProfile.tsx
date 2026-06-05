@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { getContractRiskLevel, calcAge, formatVal, positionBadgeVariant } from "../../lib/helpers";
-import { parseUtcDate } from "../../lib/dateFormatting";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { getContractRiskLevel, calcAge, formatVal, positionBadgeVariant } from "../../lib/common/helpers";
+import { parseUtcDate } from "../../lib/formatting/dateFormatting";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { PlayerData, GameStateData, PlayerMatchHistoryEntryData, ScoutReportData, ChampionMasteryEntryData } from "../../store/gameStore";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { resolveBackendText } from "../../utils/backendI18n";
-import { resolveSeasonContext } from "../../lib/seasonContext";
+import { resolveBackendText } from "../../lib/i18n/backendI18n";
+import { resolveSeasonContext } from "../../lib/season/seasonContext";
 import DashboardModalFrame from "../dashboard/DashboardModalFrame";
 import { Button } from "../ui";
 import {
@@ -42,7 +42,7 @@ import WageNegotiationModal from "../transfers/WageNegotiationModal";
 import { startPotentialResearch } from "../../services/playerService";
 import { demoteMainPlayerToAcademy, promoteAcademyPlayer } from "../../services/academyService";
 import { findAcademyTeamForParent } from "../../store/academySelectors";
-import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/lolIdentity";
+import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/players/lolIdentity";
 import {
   makeTransferBid,
   releasePlayerContract,
@@ -1315,3 +1315,4 @@ export default function PlayerProfile({
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { getTeamName } from "../../lib/helpers";
+import { getTeamName } from "../../lib/common/helpers";
 import type { TeamData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
 import type { HomeRecentResult } from "./HomeTab.helpers";

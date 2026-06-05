@@ -6,7 +6,7 @@ import type { TeamProfileTranslate } from "./TeamProfile.types";
 import { QuickStat } from "./TeamProfile.primitives";
 import type { TeamProfileViewModel } from "./TeamProfile.types";
 import type { TeamData } from "../../store/gameStore";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 
 function defaultTeamLogoSrc(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
@@ -218,3 +218,5 @@ function QuickHeroStat({
     </div>
   );
 }
+
+

@@ -17,7 +17,7 @@ import {
   markMessageRead,
   resolveMessageAction,
 } from "@/services/inboxService";
-import { resolveBackendText, resolveMessage } from "@/utils/backendI18n";
+import { resolveBackendText, resolveMessage } from "@/lib/i18n/backendI18n";
 import {
   getFilteredMessages,
   getNavigationTarget,
@@ -26,7 +26,7 @@ import {
   UNREAD_FILTER,
   type MessageSortOrder,
 } from "@/components/inbox/inboxHelpers";
-import { formatDateShort } from "@/lib/helpers";
+import { formatDateShort } from "@/lib/common/helpers";
 
 import { Card, CardContent } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
@@ -529,3 +529,5 @@ function ActionButton({
     </Button>
   );
 }
+
+

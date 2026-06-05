@@ -5,9 +5,9 @@ import type {
   TeamData,
   ChampionData,
 } from "../../store/gameStore";
-import { formatVal } from "../../lib/helpers";
-import { getTeamFinanceSnapshot } from "../../lib/finance";
-import { getSponsorshipContractView } from "../../lib/lolFinanceContracts";
+import { formatVal } from "../../lib/common/helpers";
+import { getTeamFinanceSnapshot } from "../../lib/finances/finance";
+import { getSponsorshipContractView } from "../../lib/finances/lolFinanceContracts";
 import {
   buildActiveLineupIds,
   LOL_ACTIVE_ROLES,
@@ -253,3 +253,6 @@ export function getDashboardAlerts(
 
   return alerts;
 }
+
+
+

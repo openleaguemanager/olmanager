@@ -1,6 +1,6 @@
 import type { PlayerData } from "../../store/gameStore";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { resolvePlayerLolRole } from "../../lib/lolIdentity";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { resolvePlayerLolRole } from "../../lib/players/lolIdentity";
 
 export type SquadSection = "xi" | "bench";
 export type DragState = {
@@ -322,3 +322,4 @@ export function applyLineupSwap(
 
   return null;
 }
+

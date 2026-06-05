@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 import type { GameStateData, ScrimReportData, TeamData } from "../../store/gameStore";
-import type { ScrimContextResponse } from "../../lib/scrimContext";
+import type { ScrimContextResponse } from "../../lib/scrims/scrimContext";
 import ScrimsTab from "./ScrimsTab";
 
 const chooseDailyScrimActionMock = vi.fn();
@@ -259,3 +259,4 @@ describe("ScrimsTab interactions", () => {
     expect(screen.queryByText("Cancel scrims")).not.toBeInTheDocument();
   });
 });
+

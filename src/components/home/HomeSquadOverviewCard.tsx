@@ -1,7 +1,7 @@
 import { AlertTriangle, Dumbbell } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { normalizeTrainingFocus } from "../../lib/trainingFocus";
+import { normalizeTrainingFocus } from "../../lib/teams/trainingFocus";
 import { Card, CardBody, CardHeader, ProgressBar } from "../ui";
 
 interface HomeSquadOverviewCardProps {
@@ -89,3 +89,5 @@ export default function HomeSquadOverviewCard({
     </Card>
   );
 }
+
+

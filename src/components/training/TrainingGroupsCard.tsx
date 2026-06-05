@@ -7,7 +7,7 @@ import {
   DEFAULT_TRAINING_FOCUS,
   normalizeOptionalTrainingFocus,
   normalizeTrainingFocus,
-} from "../../lib/trainingFocus";
+} from "../../lib/teams/trainingFocus";
 import {
   setPlayerTrainingFocus,
   setTrainingGroups,
@@ -318,3 +318,5 @@ export default function TrainingGroupsCard({
     </Card>
   );
 }
+
+

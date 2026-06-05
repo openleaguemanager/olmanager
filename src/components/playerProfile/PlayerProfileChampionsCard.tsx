@@ -1,7 +1,7 @@
 import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody, CardHeader } from "../ui";
-import { resolveChampionTile } from "../../lib/championImages";
+import { resolveChampionTile } from "../../lib/champions/championImages";
 
 interface ChampionMasteryItem {
   championId: string;
@@ -84,3 +84,4 @@ export default function PlayerProfileChampionsCard({ champions, onViewChampion }
     </Card>
   );
 }
+

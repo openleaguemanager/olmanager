@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { formatDateShort } from "../../lib/helpers";
+import { formatDateShort } from "../../lib/common/helpers";
 import { Badge, Card, CardBody, CardHeader } from "../ui";
 import type { NextOpponentWidgetData } from "./HomeTab.helpers";
 

@@ -1,4 +1,4 @@
-import { getRoleIconPath, getRoleBadgeVariant, getRoleAbbreviation } from "../../lib/roleIcons";
+import { getRoleIconPath, getRoleBadgeVariant, getRoleAbbreviation } from "../../lib/players/roleIcons";
 
 interface RoleBadgeProps {
   role: string;
@@ -84,3 +84,4 @@ export function RoleBadge({
     </span>
   );
 }
+

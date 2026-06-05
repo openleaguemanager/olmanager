@@ -1,7 +1,7 @@
 import type { GameStateData, PlayerData } from "../../store/gameStore";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
-import { calcAge } from "../../lib/helpers";
+import { calcAge } from "../../lib/common/helpers";
 
 function normalizePlayerKey(player: PlayerData): string {
   const normalizeToken = (value: string): string =>
@@ -251,3 +251,4 @@ export function sortTransferPlayers(
 
   return sorted;
 }
+

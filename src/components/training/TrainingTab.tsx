@@ -19,17 +19,17 @@ import {
   TRAINING_FOCUS_ATTRS,
   TRAINING_FOCUS_IDS,
   normalizeTrainingFocus,
-} from "../../lib/trainingFocus";
-import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
-import { resolvePlayerCurrentLolRole } from "../../lib/lolIdentity";
+} from "../../lib/teams/trainingFocus";
+import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/teams/lolStaffEffects";
+import { resolvePlayerCurrentLolRole } from "../../lib/players/lolIdentity";
 
-import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
+import { ROLE_ICON_PATHS } from "../../lib/players/roleIcons";
 import type { GameStateData } from "../../store/gameStore";
 import { setTraining, setTrainingSchedule } from "../../services/trainingService";
 import { Card, CardBody, CardHeader, ProgressBar } from "../ui";
 import TrainingSettingsPanel from "./TrainingSettingsPanel";
 import { getTrainingStaffAdvice } from "./trainingAdvice";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 
 type SoloQTier = "Challenger" | "Grandmaster" | "Master";
 
@@ -510,3 +510,5 @@ export default function TrainingTab({
     </div>
   );
 }
+
+

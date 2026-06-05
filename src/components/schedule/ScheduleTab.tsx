@@ -8,8 +8,8 @@ import {
   TableProperties,
   Trophy,
 } from "lucide-react";
-import { getTeamName, formatMatchDate } from "../../lib/helpers";
-import { resolveSeasonContext } from "../../lib/seasonContext";
+import { getTeamName, formatMatchDate } from "../../lib/common/helpers";
+import { resolveSeasonContext } from "../../lib/season/seasonContext";
 import { useTranslation } from "react-i18next";
 import DraftResultScreen from "../match/DraftResultScreen";
 import PlayoffBracketBoard from "../playoffs/PlayoffBracketBoard";
@@ -447,3 +447,4 @@ export default function ScheduleTab({
     </div>
   );
 }
+

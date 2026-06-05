@@ -9,7 +9,7 @@ import {
   NEUTRAL_OBJECTIVE_ICON_PATH,
   STRUCTURE_ICON_PATH,
   STRUCTURES_LAYOUT,
-} from "../../../../lib/lolMapLayout";
+} from "../../../../lib/match/lolMapLayout";
 
 let cachedImage: HTMLImageElement | null = null;
 const iconCache = new Map<string, HTMLImageElement>();
@@ -438,3 +438,4 @@ export function renderSimulation(
     ctx.fillRect(px - 6, py - 9, 12 * (m.hp / m.maxHp), 2);
   });
 }
+

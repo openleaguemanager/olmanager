@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use axum::http::StatusCode;
-use domain::team::TeamKind;
-use ofm_core::game::Game;
-use ofm_core::generator::definitions::LeagueSelectionData;
+use olm_core::domain::team::TeamKind;
+use olm_core::game::Game;
+use olm_core::generator::definitions::LeagueSelectionData;
 use serde_json::{json, Value};
 
 use crate::data;
@@ -25,12 +25,12 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "get_active_game" => {
             let rf = data::repair_player_financials(game);
             let rc = data::repair_active_competition(game);
-            ofm_core::champions::bootstrap_champion_state(game);
+            olm_core::champions::bootstrap_champion_state(game);
             ok(json!(game), rf || rc)
         }
         "save_game" => ok(Value::Null, true),
-        "advance_time" => { ofm_core::turn::process_day(game); ok(json!(game), true) }
-        "advance_time_with_mode" => { ofm_core::turn::process_day(game); ok(json!({"action":"advanced","game":game}), true) }
+        "advance_time" => { olm_core::turn::process_day(game); ok(json!(game), true) }
+        "advance_time_with_mode" => { olm_core::turn::process_day(game); ok(json!({"action":"advanced","game":game}), true) }
         "select_team" => {
             let team_id = string_arg(&args, &["teamId","team_id"])?;
             data::select_team(game, &team_id).map_err(CommandError::bad_request)?;
@@ -45,7 +45,7 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "check_blocking_actions" => ok(json!(crate::time_blockers::compute_blocking_actions(game)), false),
         "relocalize_social_feed" => {
             let lang = optional_string_arg(&args, &["language","locale"]).unwrap_or_else(||"en".to_string());
-            ofm_core::social::relocalize_social_posts(game, &lang);
+            olm_core::social::relocalize_social_posts(game, &lang);
             ok(json!(game), true)
         }
         "get_champions" => ok(json!(champions_catalog()), false),
@@ -54,46 +54,46 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "set_training" => {
             let focus = string_arg(&args, &["focus"])?;
             let intensity = string_arg(&args, &["intensity"])?;
-            ofm_core::commands::set_training(game, &manager_team_id(game)?, &focus, &intensity);
+            olm_core::commands::set_training(game, &manager_team_id(game)?, &focus, &intensity);
             ok(json!(game), true)
         }
         "set_training_schedule" => { ok(json!(game), true) }
         "set_training_groups" => { ok(json!(game), true) }
         "set_player_training_focus" => {
             let pid = string_arg(&args, &["playerId","player_id"]).unwrap_or_default();
-            ofm_core::commands::set_player_training_focus(game, &pid, optional_string_arg(&args, &["focus"]).as_deref());
+            olm_core::commands::set_player_training_focus(game, &pid, optional_string_arg(&args, &["focus"]).as_deref());
             ok(json!(game), true)
         }
 
         // ── Lineup ──────────────────────────────────────
         "set_active_lineup"|"set_starting_xi" => {
             let ids = string_vec_arg(&args, &["playerIds","player_ids"])?;
-            ofm_core::commands::set_active_lineup(game, &manager_team_id(game)?, ids);
+            olm_core::commands::set_active_lineup(game, &manager_team_id(game)?, ids);
             ok(json!(game), true)
         }
 
         // ── Draft Strategy ──────────────────────────────
         "set_draft_strategy" => {
             let v = string_arg(&args, &["draftStrategy","draft_strategy"])?;
-            ofm_core::commands::set_draft_strategy(game, &manager_team_id(game)?, &v);
+            olm_core::commands::set_draft_strategy(game, &manager_team_id(game)?, &v);
             ok(json!(game), true)
         }
 
         // ── Tactics ─────────────────────────────────────
         "set_lol_tactics" => {
-            let tactics: domain::team::LolTactics = serde_json::from_value(
+            let tactics: olm_core::domain::team::LolTactics = serde_json::from_value(
                 get_arg(&args, &["lolTactics","lol_tactics"])?.clone()
             ).map_err(|e| CommandError::bad_request(format!("invalid lol_tactics: {e}")))?;
-            ofm_core::commands::set_lol_tactics(game, &manager_team_id(game)?, tactics);
+            olm_core::commands::set_lol_tactics(game, &manager_team_id(game)?, tactics);
             ok(json!(game), true)
         }
 
         // ── Team Roles ──────────────────────────────────
         "set_team_roles" => {
-            let roles: domain::team::TeamRoles = serde_json::from_value(
+            let roles: olm_core::domain::team::TeamRoles = serde_json::from_value(
                 get_arg(&args, &["teamRoles","team_roles"])?.clone()
             ).map_err(|e| CommandError::bad_request(format!("invalid team_roles: {e}")))?;
-            ofm_core::commands::set_team_roles(game, &manager_team_id(game)?, roles);
+            olm_core::commands::set_team_roles(game, &manager_team_id(game)?, roles);
             ok(json!(game), true)
         }
 
@@ -101,24 +101,24 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "set_weekly_scrims" => {
             let ids = args.get("opponentTeamIds").and_then(|v|v.as_array())
                 .map(|a| a.iter().filter_map(|v|v.as_str().map(String::from)).collect()).unwrap_or_default();
-            ofm_core::commands::set_weekly_scrims(game, &manager_team_id(game)?, ids);
+            olm_core::commands::set_weekly_scrims(game, &manager_team_id(game)?, ids);
             ok(json!(game), true)
         }
         "set_weekly_scrim_plans" => {
             let plans = args.get("plans").and_then(|v|v.as_array())
                 .map(|a| a.iter().map(|slot|slot.as_array().map(|s|s.iter().filter_map(|v|v.as_str().map(String::from)).collect()).unwrap_or_default()).collect()).unwrap_or_default();
-            ofm_core::commands::set_weekly_scrim_plans(game, &manager_team_id(game)?, plans);
+            olm_core::commands::set_weekly_scrim_plans(game, &manager_team_id(game)?, plans);
             ok(json!(game), true)
         }
         "set_weekly_scrim_slots" => {
             let slots = args.get("slots").and_then(|v|v.as_u64()).unwrap_or(0) as u8;
-            ofm_core::commands::set_weekly_scrim_slots(game, &manager_team_id(game)?, slots);
+            olm_core::commands::set_weekly_scrim_slots(game, &manager_team_id(game)?, slots);
             ok(json!(game), true)
         }
         "set_weekly_scrim_objective" => {
             let obj = optional_string_arg(&args, &["objective"]);
             let focus = obj.and_then(|o| serde_json::from_str(&format!("\"{o}\"")).ok());
-            ofm_core::commands::set_weekly_scrim_objective(game, &manager_team_id(game)?, focus);
+            olm_core::commands::set_weekly_scrim_objective(game, &manager_team_id(game)?, focus);
             ok(json!(game), true)
         }
         "finalize_weekly_scrim_setup"|"auto_configure_weekly_scrim_setup"|"cancel_todays_scrims"
@@ -134,32 +134,32 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         // ── Staff ────────────────────────────────────────
         "hire_staff" => {
             let sid = string_arg(&args, &["staffId","staff_id"])?;
-            ofm_core::commands::hire_staff(game, &sid, &manager_team_id(game)?);
+            olm_core::commands::hire_staff(game, &sid, &manager_team_id(game)?);
             ok(json!(game), true)
         }
         "release_staff" => {
             let sid = string_arg(&args, &["staffId","staff_id"])?;
-            ofm_core::commands::release_staff(game, &sid, &manager_team_id(game)?);
+            olm_core::commands::release_staff(game, &sid, &manager_team_id(game)?);
             ok(json!(game), true)
         }
 
         // ── Inbox ────────────────────────────────────────
         "mark_message_read" => {
             let mid = string_arg(&args, &["messageId","message_id"])?;
-            ofm_core::commands::mark_message_read(game, &mid);
+            olm_core::commands::mark_message_read(game, &mid);
             ok(json!(game), true)
         }
-        "mark_all_messages_read" => { ofm_core::commands::mark_all_messages_read(game); ok(json!(game), true) }
-        "clear_old_messages" => { ofm_core::commands::clear_old_messages(game); ok(json!(game), true) }
+        "mark_all_messages_read" => { olm_core::commands::mark_all_messages_read(game); ok(json!(game), true) }
+        "clear_old_messages" => { olm_core::commands::clear_old_messages(game); ok(json!(game), true) }
         "delete_message" => {
             let mid = string_arg(&args, &["messageId","message_id"])?;
-            ofm_core::commands::delete_message(game, &mid);
+            olm_core::commands::delete_message(game, &mid);
             ok(json!(game), true)
         }
         "delete_messages" => {
             if let Some(ids) = args.get("messageIds").and_then(|v|v.as_array()) {
                 let set: std::collections::HashSet<String> = ids.iter().filter_map(|v|v.as_str().map(String::from)).collect();
-                ofm_core::commands::delete_messages(game, &set);
+                olm_core::commands::delete_messages(game, &set);
             }
             ok(json!(game), true)
         }
@@ -169,7 +169,7 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "get_social_feed" => ok(json!(game.social_posts), false),
         "create_manager_social_post" => {
             if let Some(text) = args.get("text").and_then(|v|v.as_str()) {
-                ofm_core::commands::create_social_post(game, text);
+                olm_core::commands::create_social_post(game, text);
             }
             ok(json!(game), true)
         }
@@ -188,12 +188,12 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "send_scout" => {
             let pid = string_arg(&args, &["playerId","player_id"]).unwrap_or_default();
             let sid = string_arg(&args, &["scoutId","scout_id"]).unwrap_or_default();
-            ofm_core::commands::send_scout(game, &sid, &pid);
+            olm_core::commands::send_scout(game, &sid, &pid);
             ok(json!(game), true)
         }
         "start_potential_research" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
-            ofm_core::commands::start_potential_research(game, &pid);
+            olm_core::commands::start_potential_research(game, &pid);
             ok(json!(game), true)
         }
 
@@ -201,15 +201,15 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "set_player_champion_training_target" => {
             let pid = string_arg(&args, &["playerId","player_id"]).unwrap_or_default();
             let ck = string_arg(&args, &["championKey","champion_key"]).unwrap_or_default();
-            ofm_core::commands::set_player_champion_training_target(game, &pid, &ck);
+            olm_core::commands::set_player_champion_training_target(game, &pid, &ck);
             ok(json!(game), true)
         }
-        "delegate_champion_training" => { ofm_core::commands::delegate_champion_training(game); ok(json!(game), true) }
+        "delegate_champion_training" => { olm_core::commands::delegate_champion_training(game); ok(json!(game), true) }
 
         // ── Academies ─────────────────────────────────────
         "get_academy_acquisition_options" => {
             let ptid = string_arg(&args, &["parentTeamId","parent_team_id"])?;
-            ofm_core::commands::bootstrap_academy_pool(game);
+            olm_core::commands::bootstrap_academy_pool(game);
             let parent = game.teams.iter().find(|t|t.id==ptid).cloned()
                 .ok_or_else(|| CommandError::bad_request(format!("Team '{ptid}' not found")))?;
             let occupied: std::collections::HashSet<String> = game.teams.iter()
@@ -218,9 +218,9 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
             let taken: std::collections::HashSet<String> = game.teams.iter()
                 .filter(|t|t.team_kind==TeamKind::Academy&&t.parent_team_id.is_some())
                 .filter_map(|t|t.academy.as_ref().map(|m|norm(&m.original_name))).collect();
-            let options: Vec<ofm_core::academy::AcademyAcquisitionOption> =
-                ofm_core::academy::eligible_academy_acquisition_options(&parent.country,
-                    ofm_core::academy::academy_erl_catalog(), ofm_core::academy::academy_candidate_catalog())
+            let options: Vec<olm_core::academy::AcademyAcquisitionOption> =
+                olm_core::academy::eligible_academy_acquisition_options(&parent.country,
+                    olm_core::academy::academy_erl_catalog(), olm_core::academy::academy_candidate_catalog())
                 .into_iter().filter(|o|!occupied.contains(&o.source_team_id)&&!taken.contains(&norm(&o.name))).collect();
             let blocked = if!parent.is_main(){Some("Academy can only be acquired for a main team".to_string())}
                 else if parent.academy_team_id.is_some(){Some("Parent team already has academy".to_string())}
@@ -236,9 +236,9 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
             let cn = optional_string_arg(&req, &["customName","custom_name"]);
             let cs = optional_string_arg(&req, &["customShortName","custom_short_name"]);
             let pidx = game.teams.iter().position(|t|t.id==pid).ok_or_else(||CommandError::bad_request("Parent team not found"))?;
-            ofm_core::commands::bootstrap_academy_pool(game);
-            let a = ofm_core::academy::eligible_academy_acquisition_options(&game.teams[pidx].country,
-                    ofm_core::academy::academy_erl_catalog(), ofm_core::academy::academy_candidate_catalog())
+            olm_core::commands::bootstrap_academy_pool(game);
+            let a = olm_core::academy::eligible_academy_acquisition_options(&game.teams[pidx].country,
+                    olm_core::academy::academy_erl_catalog(), olm_core::academy::academy_candidate_catalog())
                 .into_iter().find(|o|o.source_team_id==sid);
             if let Some(opt) = a {
                 game.teams[pidx].finance -= opt.acquisition_cost;
@@ -248,10 +248,10 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
                     game.teams[idx].name = cn.unwrap_or_else(||opt.name.clone());
                     game.teams[idx].short_name = cs.unwrap_or_else(||opt.short_name.clone());
                     game.teams[idx].parent_team_id = Some(pid.clone());
-                    game.teams[idx].academy = Some(domain::team::AcademyMetadata {
-                        lifecycle: domain::team::AcademyLifecycle::Active,
-                        erl_assignment: domain::team::ErlAssignment {
-                            erl_league_id: opt.erl_league_id.clone(), country_rule: domain::team::ErlAssignmentRule::Domestic,
+                    game.teams[idx].academy = Some(olm_core::domain::team::AcademyMetadata {
+                        lifecycle: olm_core::domain::team::AcademyLifecycle::Active,
+                        erl_assignment: olm_core::domain::team::ErlAssignment {
+                            erl_league_id: opt.erl_league_id.clone(), country_rule: olm_core::domain::team::ErlAssignmentRule::Domestic,
                             fallback_reason: Some("Acquired by user".to_string()), reputation: opt.reputation,
                             acquisition_cost: opt.acquisition_cost, acquired_at: game.clock.current_date.to_rfc3339(),
                             creation_cost: 0, created_at: game.clock.current_date.to_rfc3339(),
@@ -266,14 +266,14 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         }
         "promote_academy_player" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
-            ofm_core::commands::promote_academy_player(game, &pid, &manager_team_id(game)?);
+            olm_core::commands::promote_academy_player(game, &pid, &manager_team_id(game)?);
             ok(json!(game), true)
         }
         "demote_main_player_to_academy" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
             let tid = manager_team_id(game)?;
             let aid = game.teams.iter().find(|t|t.parent_team_id.as_deref()==Some(&tid)&&t.team_kind==TeamKind::Academy).map(|t|t.id.clone()).unwrap_or_default();
-            ofm_core::commands::demote_academy_player(game, &pid, &aid);
+            olm_core::commands::demote_academy_player(game, &pid, &aid);
             ok(json!(game), true)
         }
         "get_academy_creation_options" => dispatch("get_academy_acquisition_options", args, game),
@@ -282,25 +282,25 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "make_transfer_bid"|"respond_to_offer"|"counter_offer"|"negotiate_player_wage" => ok(json!(game), true),
         "release_player_contract" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
-            ofm_core::commands::release_player_contract(game, &pid);
+            olm_core::commands::release_player_contract(game, &pid);
             ok(json!(game), true)
         }
         "toggle_transfer_list" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
-            ofm_core::commands::toggle_transfer_list(game, &pid);
+            olm_core::commands::toggle_transfer_list(game, &pid);
             ok(json!(game), true)
         }
         "toggle_loan_list" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
-            ofm_core::commands::toggle_loan_list(game, &pid);
+            olm_core::commands::toggle_loan_list(game, &pid);
             ok(json!(game), true)
         }
-        "get_transfer_history_cmd" => ok(json!(ofm_core::commands::get_transfer_history(game)), false),
+        "get_transfer_history_cmd" => ok(json!(olm_core::commands::get_transfer_history(game)), false),
         "preview_transfer_bid_financial_impact" => ok(json!({"bid":{},"can_afford":false}), false),
 
         // ── Manager ───────────────────────────────────────
         "update_manager_profile" => {
-            ofm_core::commands::update_manager_profile(game,
+            olm_core::commands::update_manager_profile(game,
                 optional_string_arg(&args, &["firstName","first_name"]).as_deref(),
                 optional_string_arg(&args, &["lastName","last_name"]).as_deref(),
                 optional_string_arg(&args, &["nickname"]).as_deref(),
@@ -309,7 +309,7 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         }
         "reroll_player_lol_role" => {
             let pid = string_arg(&args, &["playerId","player_id"])?;
-            ofm_core::commands::reroll_player_role(game, &pid);
+            olm_core::commands::reroll_player_role(game, &pid);
             ok(json!(game), true)
         }
 
@@ -371,7 +371,7 @@ fn string_vec_arg(args: &Value, names: &[&str]) -> Result<Vec<String>, CommandEr
 fn manager_team_id(game: &Game) -> Result<String, CommandError> {
     game.manager.team_id.clone().ok_or_else(||CommandError::bad_request("No team assigned"))
 }
-fn league_selection_data() -> Result<LeagueSelectionData, String> { Ok(ofm_core::competitions::build_league_selection(&data::data_dir())) }
+fn league_selection_data() -> Result<LeagueSelectionData, String> { Ok(olm_core::competitions::build_league_selection(&data::data_dir())) }
 
 fn champions_catalog() -> &'static Vec<Value> {
     static CATALOG: std::sync::OnceLock<Vec<Value>> = std::sync::OnceLock::new();
@@ -402,3 +402,5 @@ fn champions_catalog() -> &'static Vec<Value> {
         }).collect()
     })
 }
+
+

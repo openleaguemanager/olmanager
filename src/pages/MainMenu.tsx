@@ -32,11 +32,11 @@ import {
   Clock,
   Globe2,
 } from "lucide-react";
-import { countryName, allNationalities } from "../lib/countries";
+import { countryName, allNationalities } from "../lib/common/countries";
 import {
   DEFAULT_MANAGER_ICON_PATH,
   MANAGER_ICON_PATHS,
-} from "../lib/managerAvatars";
+} from "../lib/common/managerAvatars";
 
 const canUseTauriInvoke = () => {
   if (import.meta.env.MODE === "test") return true;
@@ -1219,3 +1219,4 @@ function MenuItem({
     </button>
   );
 }
+

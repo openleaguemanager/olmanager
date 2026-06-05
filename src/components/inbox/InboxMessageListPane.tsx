@@ -2,7 +2,7 @@ import { Mail, MailOpen } from "lucide-react";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import { formatDateShort } from "../../lib/helpers";
+import { formatDateShort } from "../../lib/common/helpers";
 import type { MessageData } from "../../store/gameStore";
 import {
   getCategoryColor,
@@ -121,3 +121,4 @@ export default function InboxMessageListPane({
     </div>
   );
 }
+

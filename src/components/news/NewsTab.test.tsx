@@ -22,7 +22,7 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("../../utils/backendI18n", () => ({
+vi.mock("../../lib/i18n/backendI18n", () => ({
   resolveNewsArticle: (article: unknown) => article,
 }));
 

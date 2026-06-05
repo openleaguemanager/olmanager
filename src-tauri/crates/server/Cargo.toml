@@ -8,10 +8,7 @@ name = "olmanager-server"
 path = "src/main.rs"
 
 [dependencies]
-domain = { path = "../domain" }
-ofm_core = { path = "../ofm_core" }
-engine = { path = "../engine" }
-db = { path = "../db" }
+olm_core = { path = "../olm_core" }
 
 axum = { version = "0.8", features = ["multipart"] }
 tokio = { version = "1", features = ["full"] }
@@ -39,3 +36,4 @@ dotenvy = "0.15"
 
 # Import: unzip OLMDBManager export bundles
 zip = { version = "2", default-features = false, features = ["deflate"] }
+

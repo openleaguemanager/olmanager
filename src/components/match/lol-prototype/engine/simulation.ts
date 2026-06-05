@@ -1,6 +1,6 @@
 import { BASE_POSITION, JUNGLE_ROUTE, LANE_PATH_BLUE, OBJECTIVES, ROLE_OFFSET, getStructures } from "../assets/map";
 import type { MatchSnapshot } from "../../types";
-import { JUNGLE_CAMPS_LAYOUT } from "../../../../lib/lolMapLayout";
+import { JUNGLE_CAMPS_LAYOUT } from "../../../../lib/match/lolMapLayout";
 import { NavGrid } from "./navigation";
 import type {
   AttackType,
@@ -2780,3 +2780,4 @@ export class PrototypeSimulation {
     this.tickObjectives();
   }
 }
+

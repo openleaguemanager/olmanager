@@ -42,11 +42,11 @@ import { Eye, Gamepad2 } from "lucide-react";
 import {
   formatDateFull,
   isSeasonComplete as isLeagueSeasonComplete,
-} from "../lib/helpers";
+} from "../lib/common/helpers";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "../store/settingsStore";
-import { resolveTeamLogo } from "../lib/teamLogos";
-import { resolveStaffPhoto } from "../lib/playerPhotos";
+import { resolveTeamLogo } from "../lib/teams/teamLogos";
+import { resolveStaffPhoto } from "../lib/players/playerPhotos";
 
 const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Meta", "Scrims", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
 const PATH_TAB_MAP: Record<string, string> = {
@@ -651,3 +651,5 @@ export default function Dashboard(): JSX.Element {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { compareStandingsByLolScore } from "../../store/gameStore";
 import type { GameStateData, PlayerData, TeamData } from "../../store/gameStore";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
@@ -65,3 +65,4 @@ export function buildTeamProfileViewModel(
       gameState.leagues?.[0]?.standings.find((entry) => entry.team_id === team.id) ?? null,
   };
 }
+

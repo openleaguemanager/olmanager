@@ -1,13 +1,13 @@
 import { compareStandingsByLolScore, type GameStateData } from "../../store/gameStore";
-import { normalizeTrainingFocus } from "../../lib/trainingFocus";
+import { normalizeTrainingFocus } from "../../lib/teams/trainingFocus";
 import { Card, CardHeader, CardBody } from "../ui";
-import { formatDateShort } from "../../lib/helpers";
-import { resolveSeasonContext } from "../../lib/seasonContext";
+import { formatDateShort } from "../../lib/common/helpers";
+import { resolveSeasonContext } from "../../lib/season/seasonContext";
 import NextMatchDisplay from "../NextMatchDisplay";
 import {
   resolveMessage,
   resolveNewsArticle,
-} from "../../utils/backendI18n";
+} from "../../lib/i18n/backendI18n";
 import {
   getHomeRosterOverview,
   getLeagueDigestArticles,
@@ -336,3 +336,5 @@ export default function HomeTab({
     </div>
   );
 }
+
+

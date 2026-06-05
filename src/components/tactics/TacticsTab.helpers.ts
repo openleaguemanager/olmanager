@@ -1,4 +1,4 @@
-import { calcAge, calcOvr } from "../../lib/helpers";
+import { calcAge, calcOvr } from "../../lib/common/helpers";
 import type { PlayerData } from "../../store/gameStore";
 import {
   buildActiveLineupIds,
@@ -263,3 +263,4 @@ export function getOverallRatingClassName(overallRating: number): string {
 
   return "text-gray-500 dark:text-gray-400";
 }
+

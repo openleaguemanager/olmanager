@@ -22,21 +22,21 @@ import {
 } from "lucide-react";
 
 import { compareStandingsByLolScore, type GameStateData } from "@/store/gameStore";
-import { resolveTeamLogo } from "@/lib/teamLogos";
+import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import {
   getHomeRosterOverview,
   getLeagueDigestArticles,
   getNextOpponentWidgetData,
   getRecentResultsForTeam,
 } from "@/components/home/HomeTab.helpers";
-import { resolveMessage, resolveNewsArticle } from "@/utils/backendI18n";
+import { resolveMessage, resolveNewsArticle } from "@/lib/i18n/backendI18n";
 import {
   findNextFixture,
   formatDateShort,
   formatMatchDate,
   getTeamShort,
-} from "@/lib/helpers";
-import { calculateLolOvr } from "@/lib/lolPlayerStats";
+} from "@/lib/common/helpers";
+import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import {
   daysUntil,
   getLineupByRole,
@@ -1174,3 +1174,7 @@ function TodayPhaseCard({
     </Card>
   );
 }
+
+
+
+

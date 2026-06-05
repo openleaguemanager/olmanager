@@ -1,4 +1,4 @@
-import { isRecoveryTrainingFocus } from "../../lib/trainingFocus";
+import { isRecoveryTrainingFocus } from "../../lib/teams/trainingFocus";
 
 type Translate = (
   key: string,
@@ -76,3 +76,6 @@ export function getTrainingStaffAdvice(
 
   return null;
 }
+
+
+

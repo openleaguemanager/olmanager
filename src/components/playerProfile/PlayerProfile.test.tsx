@@ -111,7 +111,7 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("../../utils/backendI18n", () => ({
+vi.mock("../../lib/i18n/backendI18n", () => ({
   resolveBackendText: (
     _key?: string,
     fallback?: string,
@@ -119,7 +119,7 @@ vi.mock("../../utils/backendI18n", () => ({
   ) => fallback ?? "",
 }));
 
-vi.mock("../../lib/countries", () => ({
+vi.mock("../../lib/common/countries", () => ({
   countryName: () => "England",
   isValidCountryCode: () => true,
   normaliseNationality: (value: string) => value,
@@ -798,3 +798,4 @@ describe("PlayerProfile contract surfaces", () => {
     });
   });
 });
+

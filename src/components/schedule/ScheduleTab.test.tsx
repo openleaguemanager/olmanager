@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { FixtureData, GameStateData, TeamData } from "../../store/gameStore";
 import ScheduleTab from "./ScheduleTab";
 
-vi.mock("../../lib/seasonContext", () => ({
+vi.mock("../../lib/season/seasonContext", () => ({
   resolveSeasonContext: () => ({
     phase: "RegularSeason",
     season_start: "2026-08-01",
@@ -353,3 +353,4 @@ describe("ScheduleTab", () => {
     expect(screen.getByTestId("draft-result-series-games")).toHaveTextContent("2");
   });
 });
+

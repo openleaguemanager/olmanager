@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import ScrimPlanningCard from "./ScrimPlanningCard";
 import type { GameStateData, TeamData } from "../../store/gameStore";
-import { deriveWeeklyScrimContext } from "../../lib/scrimContext";
+import { deriveWeeklyScrimContext } from "../../lib/scrims/scrimContext";
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -80,3 +80,4 @@ describe("ScrimPlanningCard", () => {
     expect(screen.getByText(/Extremely Long Opponent Name/)).toBeInTheDocument();
   });
 });
+

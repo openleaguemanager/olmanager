@@ -2,15 +2,15 @@ import type { GameStateData } from "../../store/gameStore";
 import type { ChampionDraftResultPayload } from "./ChampionDraft";
 import type { MatchSnapshot } from "./types";
 import type { LolTacticsData } from "../../store/types";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import {
   DEFAULT_LOL_TACTICS,
   ROLE_ORDER,
   computeCoherenceBreakdown,
   computeRoleModifiers,
   type DraftRole,
-} from "../../lib/lolTactics";
-import { computeTeamTimingFit, getChampionTiming } from "../../lib/championTiming";
+} from "../../lib/teams/lolTactics";
+import { computeTeamTimingFit, getChampionTiming } from "../../lib/champions/championTiming";
 
 type Side = "blue" | "red";
 type Role = DraftRole;
@@ -972,3 +972,6 @@ export function simulateDraftMatchResult(params: {
     },
   };
 }
+
+
+

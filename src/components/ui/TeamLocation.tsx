@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import { countryName } from "../../lib/countries";
+import { countryName } from "../../lib/common/countries";
 import { CountryFlag } from "./CountryFlag";
 
 interface TeamLocationProps {

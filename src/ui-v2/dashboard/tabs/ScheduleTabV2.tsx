@@ -14,9 +14,9 @@ import {
   type FixtureData,
   type GameStateData,
 } from "@/store/gameStore";
-import { formatMatchDate, getTeamName } from "@/lib/helpers";
-import { resolveSeasonContext } from "@/lib/seasonContext";
-import { resolveTeamLogo } from "@/lib/teamLogos";
+import { formatMatchDate, getTeamName } from "@/lib/common/helpers";
+import { resolveSeasonContext } from "@/lib/season/seasonContext";
+import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import {
   buildBestOfContext,
   inferBestOf,
@@ -445,3 +445,7 @@ function StandingsTable({
     </Card>
   );
 }
+
+
+
+

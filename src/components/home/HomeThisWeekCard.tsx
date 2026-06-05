@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import type { GameStateData } from "../../store/gameStore";
-import { dateKey as scrimDateKey, deriveWeeklyScrimContext, effectiveWeeklyScrimSlots, scrimSlotWeekdays } from "../../lib/scrimContext";
+import { dateKey as scrimDateKey, deriveWeeklyScrimContext, effectiveWeeklyScrimSlots, scrimSlotWeekdays } from "../../lib/scrims/scrimContext";
 import { Card, CardBody, CardHeader } from "../ui";
 
 interface HomeThisWeekCardProps {
@@ -136,3 +136,4 @@ export default function HomeThisWeekCard({ gameState }: HomeThisWeekCardProps) {
     </Card>
   );
 }
+

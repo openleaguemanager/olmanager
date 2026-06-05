@@ -2,8 +2,8 @@ import { useState, useMemo } from "react";
 import { compareStandingsByLolScore, type GameStateData } from "../../store/gameStore";
 import { Card, CardBody, Badge, TeamLocation, Select } from "../ui";
 import { Building2, Trophy } from "lucide-react";
-import { formatVal } from "../../lib/helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+import { formatVal } from "../../lib/common/helpers";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { useTranslation } from "react-i18next";
 import { getMainTeams } from "../../store/academySelectors";
 
@@ -181,3 +181,4 @@ function StatCell({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

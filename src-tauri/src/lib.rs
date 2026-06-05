@@ -3,9 +3,9 @@ mod commands;
 pub mod error;
 use commands::*;
 
-use application::lol_sim_v2::LolSimV2StoreState;
-use db::save_manager::SaveManager;
-use ofm_core::state::StateManager;
+use application::sim_live::SimLiveStoreState;
+use olm_core::db::save_manager::SaveManager;
+use olm_core::state::StateManager;
 use std::sync::Mutex;
 
 /// Tauri-managed wrapper around SaveManager.
@@ -29,7 +29,7 @@ pub fn run() {
             tauri_plugin_log::Builder::new()
                 .level(log::LevelFilter::Info)
                 .level_for("olmanager_lib", log::LevelFilter::Debug)
-                .level_for("ofm_core", log::LevelFilter::Debug)
+                .level_for("olm_core", log::LevelFilter::Debug)
                 .level_for("engine", log::LevelFilter::Debug)
                 .level_for("db", log::LevelFilter::Debug)
                 .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
@@ -37,7 +37,7 @@ pub fn run() {
                 .build(),
         )
         .manage(StateManager::new())
-        .manage(LolSimV2StoreState::default())
+        .manage(SimLiveStoreState::default())
         .setup(|app| {
             use tauri::Manager as TauriManager;
             let app_data_dir = app
@@ -51,16 +51,16 @@ pub fn run() {
                 SaveManager::init(&saves_dir).expect("Failed to initialize SaveManager");
 
             // Run legacy migration if old saves.db exists
-            if db::legacy_migration::has_legacy_db(&app_data_dir) {
+            if olm_core::db::legacy_migration::has_legacy_db(&app_data_dir) {
                 log::info!("[setup] Legacy saves.db detected, migrating...");
-                match db::legacy_migration::migrate_legacy_saves(&app_data_dir, &mut save_manager) {
+                match olm_core::db::legacy_migration::migrate_legacy_saves(&app_data_dir, &mut save_manager) {
                     Ok(results) => {
                         let success = results
                             .iter()
                             .filter(|r| {
                                 matches!(
                                     r,
-                                    db::legacy_migration::LegacyMigrationResult::Success { .. }
+                                    olm_core::db::legacy_migration::LegacyMigrationResult::Success { .. }
                                 )
                             })
                             .count();
@@ -69,7 +69,7 @@ pub fn run() {
                             .filter(|r| {
                                 matches!(
                                     r,
-                                    db::legacy_migration::LegacyMigrationResult::Failed { .. }
+                                    olm_core::db::legacy_migration::LegacyMigrationResult::Failed { .. }
                                 )
                             })
                             .count();
@@ -191,12 +191,12 @@ pub fn run() {
             clear_all_saves,
             get_available_jobs,
             apply_for_job,
-            lol_sim_v2_init,
-            lol_sim_v2_tick,
-            lol_sim_v2_reset,
-            lol_sim_v2_dispose,
-            lol_sim_v2_run_to_completion,
-            lol_sim_v2_skip_to_end,
+            sim_live_init,
+            sim_live_tick,
+            sim_live_reset,
+            sim_live_dispose,
+            sim_live_run_to_completion,
+            sim_live_skip_to_end,
             save_manager_avatar,
             load_manager_avatar,
             update_manager_profile,
@@ -205,3 +205,6 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
+
+

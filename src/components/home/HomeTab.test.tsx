@@ -14,7 +14,7 @@ vi.mock("../NextMatchDisplay", () => ({
   default: () => <div data-testid="next-match-display" />,
 }));
 
-vi.mock("../../utils/backendI18n", () => ({
+vi.mock("../../lib/i18n/backendI18n", () => ({
   resolveBoardObjective: (value: unknown) => value,
   resolveMessage: (value: unknown) => value,
   resolveNewsArticle: (value: unknown) => value,
@@ -284,3 +284,4 @@ describe("HomeTab", function (): void {
     expect(screen.getByText("No league digest yet.")).toBeInTheDocument();
   });
 });
+

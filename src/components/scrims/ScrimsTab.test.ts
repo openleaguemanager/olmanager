@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { GameStateData, PlayerData, TeamData } from "../../store/gameStore";
-import { buildScrimPlanSignals, buildStaffSuggestions, deriveWeeklyScrimContext } from "../../lib/scrimContext";
+import { buildScrimPlanSignals, buildStaffSuggestions, deriveWeeklyScrimContext } from "../../lib/scrims/scrimContext";
 
 const t = ((_: string, fallback?: string) => fallback ?? "") as any;
 
@@ -140,3 +140,4 @@ describe("ScrimsTab staff advice", () => {
     expect(suggestions.join(" ")).toContain("Plan B/C");
   });
 });
+

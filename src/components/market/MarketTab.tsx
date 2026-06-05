@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
 
 import type { GameStateData } from "../../store/gameStore";
-import { formatVal, getTeamName } from "../../lib/helpers";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { formatVal, getTeamName } from "../../lib/common/helpers";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 
 function teamLogoFromId(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
@@ -313,3 +313,5 @@ export default function MarketTab({ gameState }: MarketTabProps) {
     </div>
   );
 }
+
+

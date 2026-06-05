@@ -1,5 +1,5 @@
-use ofm_core::game::Game;
-use ofm_core::player_events::{pick_response_band, ResponseBandWeights, ResponseOutcomeBand};
+use olm_core::game::Game;
+use olm_core::player_events::{pick_response_band, ResponseBandWeights, ResponseOutcomeBand};
 use rand::rngs::StdRng;
 use rand::{RngExt, SeedableRng};
 
@@ -7,7 +7,7 @@ fn team_talk_action_key(tone: &str, context: &str) -> String {
     format!("team_talk:{}:{}", tone, context)
 }
 
-fn team_talk_personality_factor(player: &domain::player::Player) -> i32 {
+fn team_talk_personality_factor(player: &olm_core::domain::player::Player) -> i32 {
     let composure = i32::from(player.attributes.discipline);
     let leadership = i32::from(player.attributes.shotcalling);
     let aggression = i32::from(player.attributes.shotcalling);
@@ -27,7 +27,7 @@ fn team_talk_weight_total(weights: &ResponseBandWeights) -> u32 {
 }
 
 fn build_team_talk_weights(
-    player: &domain::player::Player,
+    player: &olm_core::domain::player::Player,
     tone: &str,
     context: &str,
 ) -> ResponseBandWeights {
@@ -258,7 +258,7 @@ fn team_talk_delta_for_band(tone: &str, band: ResponseOutcomeBand) -> i16 {
 
 fn reduce_by_recent_team_talk(
     delta: i16,
-    player: &domain::player::Player,
+    player: &olm_core::domain::player::Player,
     action_key: &str,
 ) -> i16 {
     let Some(memory) = player.morale_core.recent_treatment.as_ref() else {
@@ -272,7 +272,7 @@ fn reduce_by_recent_team_talk(
     delta - i16::from(memory.times_recently_used) * 3
 }
 
-fn cap_team_talk_delta(delta: i16, player: &domain::player::Player) -> i16 {
+fn cap_team_talk_delta(delta: i16, player: &olm_core::domain::player::Player) -> i16 {
     let Some(issue) = player.morale_core.unresolved_issue.as_ref() else {
         return delta;
     };
@@ -292,7 +292,7 @@ fn cap_team_talk_delta(delta: i16, player: &domain::player::Player) -> i16 {
     delta
 }
 
-fn update_recent_team_talk(player: &mut domain::player::Player, action_key: &str) {
+fn update_recent_team_talk(player: &mut olm_core::domain::player::Player, action_key: &str) {
     match player.morale_core.recent_treatment.as_mut() {
         Some(memory) if memory.action_key == action_key => {
             memory.times_recently_used = memory.times_recently_used.saturating_add(1);
@@ -302,7 +302,7 @@ fn update_recent_team_talk(player: &mut domain::player::Player, action_key: &str
             memory.times_recently_used = 1;
         }
         None => {
-            player.morale_core.recent_treatment = Some(domain::player::RecentTreatmentMemory {
+            player.morale_core.recent_treatment = Some(olm_core::domain::player::RecentTreatmentMemory {
                 action_key: action_key.to_string(),
                 times_recently_used: 1,
             });
@@ -352,3 +352,5 @@ pub fn apply_team_talk(
 
     Ok(results)
 }
+
+

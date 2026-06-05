@@ -1,7 +1,7 @@
-import { findNextFixture } from "../../lib/helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { hasCompetitiveStandings } from "../../lib/seasonContext";
-import { parseUtcDate } from "../../lib/dateFormatting";
+import { findNextFixture } from "../../lib/common/helpers";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { hasCompetitiveStandings } from "../../lib/season/seasonContext";
+import { parseUtcDate } from "../../lib/formatting/dateFormatting";
 import type {
   FixtureData,
   GameStateData,
@@ -324,3 +324,4 @@ export function getOnboardingCompletionState(
     showOnboarding,
   };
 }
+

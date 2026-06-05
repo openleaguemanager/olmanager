@@ -7,7 +7,7 @@ import type {
 } from "../../store/gameStore";
 import { Card } from "../ui";
 import { AlertTriangle, ChevronRight, Repeat, ShoppingCart, User } from "lucide-react";
-import { calcAge, formatVal } from "../../lib/helpers";
+import { calcAge, formatVal } from "../../lib/common/helpers";
 import { useTranslation } from "react-i18next";
 import ContextMenu from "../ContextMenu";
 import {
@@ -17,12 +17,12 @@ import {
   LOL_ACTIVE_ROLES,
   LOL_ROLE_LABELS,
 } from "./SquadTab.helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 import { PlayerAvatar } from "../ui/PlayerAvatar";
-import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/lolIdentity";
-import { normalizeChampionKey } from "../../lib/championIds";
-import { resolveChampionTile } from "../../lib/championImages";
+import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/players/lolIdentity";
+import { normalizeChampionKey } from "../../lib/champions/championIds";
+import { resolveChampionTile } from "../../lib/champions/championImages";
 
 type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 type SortKey = "pos" | "ovr" | "condition" | "fitness" | "morale" | "age";
@@ -402,3 +402,4 @@ export default function SquadRosterView({
     </div>
   );
 }
+

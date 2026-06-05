@@ -1,6 +1,6 @@
 import { DollarSign, Trophy, Users } from "lucide-react";
 
-import { formatVal } from "../../lib/helpers";
+import { formatVal } from "../../lib/common/helpers";
 import type { TeamData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
 import type { TeamProfileTranslate, TeamProfileViewModel } from "./TeamProfile.types";
@@ -86,3 +86,4 @@ export default function TeamProfileSummaryCard({
     </Card>
   );
 }
+

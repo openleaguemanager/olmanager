@@ -5,7 +5,7 @@ import { CalendarDays, ChevronRight, WandSparkles, Swords } from "lucide-react";
 import {
   buildTeamLolOvrMap,
   type WeeklyScrimContext,
-} from "../../lib/scrimContext";
+} from "../../lib/scrims/scrimContext";
 import { setWeeklyScrimPlans } from "../../services/trainingService";
 import type { GameStateData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader, Select } from "../ui";
@@ -249,3 +249,4 @@ export default function ScrimPlanningCard({
     </Card>
   );
 }
+

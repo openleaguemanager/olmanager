@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { User, Calendar, Shield, Eye, EyeOff, TrendingUp, BarChart3 } from "lucide-react";
 import { ProgressBar, CountryFlag } from "./ui";
-import { countryName } from "../lib/countries";
+import { countryName } from "../lib/common/countries";
 import type { ScoutReportData } from "../store/gameStore";
 
 interface ScoutPlayerCardProps {
@@ -154,3 +154,4 @@ export default function ScoutPlayerCard({ report, onPlayerClick }: ScoutPlayerCa
     </div>
   );
 }
+

@@ -2,8 +2,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import { EyeOff, Pencil, Shield, User } from "lucide-react";
 import type { PlayerData } from "../../store/gameStore";
 import { formatPlayerMarketValue, formatPlayerWage } from "./PlayerProfile.helpers";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 import type {
   PlayerProfileScoutStatus,
   ScoutAvailability,
@@ -406,3 +406,5 @@ function MobileQuickStat({
     </div>
   );
 }
+
+

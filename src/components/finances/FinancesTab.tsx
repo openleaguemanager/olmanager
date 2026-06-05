@@ -14,22 +14,22 @@ import {
   getContractRiskBadgeVariant,
   getContractRiskLevel,
   getContractYearsRemaining,
-} from "../../lib/helpers";
+} from "../../lib/common/helpers";
 import {
   annualAmountToMonthlyCommitment,
   getTeamFinanceSnapshot,
   safeFinanceNumber,
-} from "../../lib/finance";
-import type { FacilityUpgradeId } from "../../lib/lolFinanceContracts";
+} from "../../lib/finances/finance";
+import type { FacilityUpgradeId } from "../../lib/finances/lolFinanceContracts";
 import {
   getClubInstallationContract,
   getSponsorshipContractView,
-} from "../../lib/lolFinanceContracts";
+} from "../../lib/finances/lolFinanceContracts";
 import { useTranslation } from "react-i18next";
 import ContextMenu from "../ContextMenu";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveMessage } from "../../utils/backendI18n";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { resolveMessage } from "../../lib/i18n/backendI18n";
 
 function getFacilityUpgradeCost(level: number): number {
   return level * 250_000;
@@ -1001,3 +1001,4 @@ export default function FinancesTab({
     </div>
   );
 }
+

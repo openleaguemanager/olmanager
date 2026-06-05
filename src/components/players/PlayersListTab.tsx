@@ -15,11 +15,11 @@ import {
   getTeamName,
   calcAge,
   formatVal,
-} from "../../lib/helpers";
+} from "../../lib/common/helpers";
 import { useTranslation } from "react-i18next";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { getAllCountryNames } from "../../lib/countries";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { getAllCountryNames } from "../../lib/common/countries";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 import { PlayerAvatar } from "../ui/PlayerAvatar";
 import {
   getLolRoleForPlayer,
@@ -535,3 +535,4 @@ function SortHeader({
     </th>
   );
 }
+

@@ -1,8 +1,8 @@
 import { Gauge } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { RECOVERY_TRAINING_FOCUS } from "../../lib/trainingFocus";
-import { LOL_VISIBLE_STAT_LABEL_KEYS, type LolVisibleStatId } from "../../lib/lolPlayerStats";
+import { RECOVERY_TRAINING_FOCUS } from "../../lib/teams/trainingFocus";
+import { LOL_VISIBLE_STAT_LABEL_KEYS, type LolVisibleStatId } from "../../lib/players/lolPlayerStats";
 import { Card, CardBody, CardHeader } from "../ui";
 
 interface TrainingSettingsPanelProps {
@@ -191,3 +191,5 @@ export default function TrainingSettingsPanel({
     </>
   );
 }
+
+

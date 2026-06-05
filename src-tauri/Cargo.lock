@@ -991,23 +991,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "db"
-version = "0.1.1"
-dependencies = [
- "bincode",
- "chrono",
- "domain",
- "log",
- "ofm_core",
- "rusqlite",
- "rusqlite_migration",
- "serde",
- "serde_json",
- "tempfile",
- "uuid",
-]
-
-[[package]]
 name = "dbus"
 version = "0.9.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1172,16 +1155,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "domain"
-version = "0.1.1"
-dependencies = [
- "log",
- "serde",
- "serde_json",
- "ts-rs",
-]
-
-[[package]]
 name = "dotenvy"
 version = "0.15.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1281,16 +1254,6 @@ name = "endi"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "66b7e2430c6dff6a955451e2cfc438f09cea1965a9d6f87f7e3b90decc014099"
-
-[[package]]
-name = "engine"
-version = "0.1.1"
-dependencies = [
- "log",
- "rand 0.10.1",
- "serde",
- "serde_json",
-]
 
 [[package]]
 name = "enumflags2"
@@ -3140,17 +3103,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "ofm_core"
+name = "olm_core"
 version = "0.1.1"
 dependencies = [
+ "bincode",
  "chrono",
- "domain",
- "engine",
  "log",
  "rand 0.10.1",
  "rand 0.8.6",
+ "rusqlite",
+ "rusqlite_migration",
  "serde",
  "serde_json",
+ "tempfile",
  "ts-rs",
  "uuid",
 ]
@@ -3161,12 +3126,9 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "chrono",
- "db",
- "domain",
  "dotenvy",
- "engine",
  "jsonwebtoken",
- "ofm_core",
+ "olm_core",
  "reqwest 0.12.28",
  "serde",
  "serde_json",
@@ -3203,12 +3165,9 @@ version = "0.2.1"
 dependencies = [
  "base64 0.22.1",
  "chrono",
- "db",
  "dirs",
- "domain",
- "engine",
  "log",
- "ofm_core",
+ "olm_core",
  "rand 0.10.1",
  "serde",
  "serde_json",

@@ -1,7 +1,7 @@
 import type { TeamData } from "../../store/gameStore";
 import type { TOptions } from "i18next";
-import { annualAmountToMonthlyCommitment } from "../../lib/finance";
-import { calcAge, formatWeeklyAmount } from "../../lib/helpers";
+import { annualAmountToMonthlyCommitment } from "../../lib/finances/finance";
+import { calcAge, formatWeeklyAmount } from "../../lib/common/helpers";
 
 export function getPlayerTeamName(
     teams: TeamData[],
@@ -54,3 +54,6 @@ export function getAttributeColorClass(value: number): string {
     }
     return "text-red-500 dark:text-red-400";
 }
+
+
+

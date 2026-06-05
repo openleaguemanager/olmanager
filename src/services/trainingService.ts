@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import {
   normalizeOptionalTrainingFocus,
   normalizeTrainingFocus,
-} from "../lib/trainingFocus";
+} from "../lib/teams/trainingFocus";
 import type { GameStateData, PostScrimDecision, ScrimFocus, ScrimReportData } from "../store/gameStore";
 
 export interface BackendTodayScrimContext {
@@ -191,3 +191,6 @@ export async function setPlayerTrainingFocus(
     focus: normalizeOptionalTrainingFocus(focus),
   });
 }
+
+
+

@@ -6,7 +6,7 @@ import {
   type TodayScrimContext,
   type WeeklyScrimContext,
   type WeeklyScrimSlotContext,
-} from "../lib/scrimContext";
+} from "../lib/scrims/scrimContext";
 import type { BackendScrimContextResponse } from "../services/trainingService";
 import type { GameStateData } from "../store/gameStore";
 
@@ -233,3 +233,4 @@ export async function invoke<T = unknown>(command: string, args?: InvokeArgs): P
       });
   }
 }
+

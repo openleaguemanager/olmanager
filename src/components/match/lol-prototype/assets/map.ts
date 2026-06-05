@@ -1,4 +1,4 @@
-import { STRUCTURES_LAYOUT } from "../../../../lib/lolMapLayout";
+import { STRUCTURES_LAYOUT } from "../../../../lib/match/lolMapLayout";
 import fullWalls from "./lol_walls_full.json";
 import type { LaneId, TeamId, Vec2 } from "../engine/types";
 
@@ -96,3 +96,4 @@ export function getStructures() {
     pos: { x: s.x, y: s.y },
   }));
 }
+

@@ -10,7 +10,7 @@ import {
     formatDate,
     getContractRiskBadgeVariant,
     getContractYearsRemaining,
-} from "../../lib/helpers";
+} from "../../lib/common/helpers";
 import { formatPlayerMarketValue, formatPlayerWage } from "./PlayerProfile.helpers";
 import { Badge, Button, Card, CardBody, CardHeader } from "../ui";
 
@@ -205,3 +205,4 @@ function InfoRow({
         </div>
     );
 }
+

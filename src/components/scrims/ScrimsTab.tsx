@@ -10,7 +10,7 @@ import {
   deriveTodayScrimContext,
   deriveWeeklyScrimContext,
   effectiveWeeklyScrimSlots,
-} from "../../lib/scrimContext";
+} from "../../lib/scrims/scrimContext";
 import { Card, CardBody, CardHeader, Select } from "../ui";
 import {
   chooseDailyScrimAction,
@@ -738,3 +738,4 @@ export default function ScrimsTab({
     </div>
   );
 }
+

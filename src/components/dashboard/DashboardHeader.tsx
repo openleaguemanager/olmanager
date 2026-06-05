@@ -10,13 +10,13 @@ import {
 import type { JSX, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getTeamName } from "../../lib/helpers";
+import { getTeamName } from "../../lib/common/helpers";
 import type { PlayerData, TeamData, ChampionData } from "../../store/gameStore";
 import type { MatchModeType } from "../../hooks/useAdvanceTime";
 import { Badge, ThemeToggle } from "../ui";
 import { translatePositionAbbreviation } from "../squad/SquadTab.helpers";
 import { getPlayerBadgeVariant } from "./dashboardHelpers";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 
 export interface DashboardMatchModeMeta {
   buttonColorClass: string;
@@ -543,3 +543,5 @@ export default function DashboardHeader({
     </header>
   );
 }
+
+

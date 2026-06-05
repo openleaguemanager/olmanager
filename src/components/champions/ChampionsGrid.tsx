@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Search, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter } from "lucide-react";
 import type { ChampionData } from "../../store/types";
 import { Card, CardBody } from "../ui";
-import { resolveChampionTile } from "../../lib/championImages";
+import { resolveChampionTile } from "../../lib/champions/championImages";
 
 interface ChampionsGridProps {
   champions?: ChampionData[];
@@ -230,3 +230,4 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
     </div>
   );
 }
+

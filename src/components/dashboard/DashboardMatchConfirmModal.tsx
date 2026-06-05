@@ -2,7 +2,7 @@ import { AlertCircle } from "lucide-react";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getFixtureDisplayLabel, getTeamName } from "../../lib/helpers";
+import { getFixtureDisplayLabel, getTeamName } from "../../lib/common/helpers";
 import type { FixtureData, TeamData } from "../../store/gameStore";
 import type { MatchModeType } from "../../hooks/useAdvanceTime";
 import type { DashboardMatchModeMeta } from "./DashboardHeader";
@@ -127,3 +127,4 @@ export default function DashboardMatchConfirmModal({
     </DashboardModalFrame>
   );
 }
+

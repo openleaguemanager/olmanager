@@ -1,9 +1,9 @@
-use domain::player::Player;
-use domain::staff::Staff;
-use domain::team::Team;
+use olm_core::domain::player::Player;
+use olm_core::domain::staff::Staff;
+use olm_core::domain::team::Team;
 use log::info;
-use ofm_core::competitions;
-use ofm_core::generator::definitions::{
+use olm_core::competitions;
+use olm_core::generator::definitions::{
     CompetitionManifest, CompetitionSummary, LeagueSelectionData, TeamSummary,
 };
 use std::path::PathBuf;
@@ -76,7 +76,7 @@ fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
 }
 
 // ---------------------------------------------------------------------------
-// Thin wrappers — resolve paths and delegate to ofm_core
+// Thin wrappers — resolve paths and delegate to olm_core
 // ---------------------------------------------------------------------------
 
 pub fn scan_competitions(app_handle: &tauri::AppHandle) -> Vec<CompetitionManifest> {
@@ -141,3 +141,5 @@ pub fn get_league_selection_data(
         .ok_or_else(|| "Data directory not found.".to_string())?;
     Ok(competitions::build_league_selection(&data_base))
 }
+
+

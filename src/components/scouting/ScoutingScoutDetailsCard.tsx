@@ -5,11 +5,11 @@ import type {
   ScoutingAssignment,
   StaffData,
 } from "../../store/gameStore";
-import { countryName } from "../../lib/countries";
+import { countryName } from "../../lib/common/countries";
 import { Badge, Card, CardBody, CardHeader, CountryFlag, ProgressBar } from "../ui";
 import { Eye } from "lucide-react";
 import { scoutAssignmentCount, scoutMaxSlots } from "./ScoutingTab.helpers";
-import { resolveStaffPhoto } from "../../lib/playerPhotos";
+import { resolveStaffPhoto } from "../../lib/players/playerPhotos";
 
 interface ScoutingScoutDetailsCardProps {
   scouts: StaffData[];

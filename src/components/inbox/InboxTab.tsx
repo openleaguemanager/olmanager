@@ -11,7 +11,7 @@ import {
   markMessageRead,
   resolveMessageAction,
 } from "../../services/inboxService";
-import { resolveBackendText, resolveMessage } from "../../utils/backendI18n";
+import { resolveBackendText, resolveMessage } from "../../lib/i18n/backendI18n";
 import InboxDeleteConfirmModal from "./InboxDeleteConfirmModal";
 import InboxMessageDetailPane from "./InboxMessageDetailPane";
 import InboxMessageListPane from "./InboxMessageListPane";
@@ -366,3 +366,4 @@ export default function InboxTab({
     </div>
   );
 }
+

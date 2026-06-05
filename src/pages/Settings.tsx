@@ -40,8 +40,8 @@ import {
   type ImportSummary,
 } from "../web/importData";
 import { useUpdater } from "../hooks/useUpdater";
-import { APP_VERSION } from "../lib/appInfo";
-import { APP_NAME } from "../lib/appInfo";
+import { APP_VERSION } from "../lib/common/appInfo";
+import { APP_NAME } from "../lib/common/appInfo";
 import MenuBackground from "../components/menu/MenuBackground";
 
 const CURRENCY_OPTIONS = [
@@ -1685,3 +1685,4 @@ function GameButton({
     </button>
   );
 }
+

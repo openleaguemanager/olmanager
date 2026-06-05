@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { buildLolScrimPrepInsight } from "../../lib/lolScrimPrep";
+import { buildLolScrimPrepInsight } from "../../lib/scrims/lolScrimPrep";
 import type { FixtureData, GameStateData } from "../../store/gameStore";
 import type { MatchEvent, MatchSnapshot } from "./types";
 import type { LolSimV1RuntimeState } from "./lol-prototype/backend/contract-v1";
@@ -423,3 +423,4 @@ export default function LolResultScreen({
     </div>
   );
 }
+

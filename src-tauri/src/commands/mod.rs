@@ -6,7 +6,7 @@ pub mod contracts;
 pub mod game;
 pub mod jobs;
 pub mod live_match;
-pub mod lol_sim_v2;
+pub mod sim_live;
 pub mod messages;
 pub mod round_summary;
 pub mod season;
@@ -27,7 +27,7 @@ pub use contracts::*;
 pub use game::*;
 pub use jobs::*;
 pub use live_match::*;
-pub use lol_sim_v2::*;
+pub use sim_live::*;
 pub use messages::*;
 pub use season::*;
 pub use settings::*;
@@ -43,3 +43,4 @@ pub use world::*;
 pub fn debug_log(message: String) {
     println!("[JS DEBUG] {}", message);
 }
+

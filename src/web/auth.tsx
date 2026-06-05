@@ -13,8 +13,8 @@ import MenuBackground from "../components/menu/MenuBackground";
 import {
   DEFAULT_MANAGER_ICON_PATH,
   MANAGER_ICON_PATHS,
-} from "../lib/managerAvatars";
-import { allNationalities } from "../lib/countries";
+} from "../lib/common/managerAvatars";
+import { allNationalities } from "../lib/common/countries";
 import { supabase } from "./supabase";
 
 const PLAYTIME_SYNC_INTERVAL_MS = 60_000;
@@ -464,3 +464,4 @@ function LoginScreen() {
     </div>
   );
 }
+

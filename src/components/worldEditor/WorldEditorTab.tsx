@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, Database, FileSpreadsheet, Image, Plus, Save, Search, Trash2, Upload, User, UserCog } from "lucide-react";
 import type { PlayerData, StaffData, TeamData } from "../../store/gameStore";
-import { calcAge } from "../../lib/helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { resolvePlayerPhoto, resolveStaffPhoto } from "../../lib/playerPhotos";
+import { calcAge } from "../../lib/common/helpers";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { resolvePlayerPhoto, resolveStaffPhoto } from "../../lib/players/playerPhotos";
 import { Card, CardBody, ThemeToggle } from "../ui";
 
 type EditorMode = "players" | "staff";
@@ -796,3 +796,4 @@ function ProfilePreview({ photo, fallbackIcon, title, subtitle }: { photo: strin
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useRef } from "react";
-import { resolveChampionTile } from "../../lib/championImages";
+import { resolveChampionTile } from "../../lib/champions/championImages";
 
 export interface ChampionCardProps {
   id: number;
@@ -119,3 +119,4 @@ function championCardPropsAreEqual(
 }
 
 export default memo(ChampionCard, championCardPropsAreEqual);
+

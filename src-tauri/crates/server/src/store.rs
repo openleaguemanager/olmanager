@@ -4,7 +4,7 @@
 //! runtime query API (not the compile-time macros) so the crate builds without
 //! a live database connection.
 
-use ofm_core::game::Game;
+use olm_core::game::Game;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 use sqlx::Row;
 use uuid::Uuid;
@@ -136,3 +136,4 @@ impl Store {
         Ok(result.rows_affected() > 0)
     }
 }
+

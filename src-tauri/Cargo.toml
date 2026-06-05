@@ -17,7 +17,7 @@ name = "olmanager_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [workspace]
-members = ["crates/ofm_core", "crates/db", "crates/domain", "crates/engine", "crates/server"]
+members = ["crates/olm_core", "crates/server"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
@@ -30,10 +30,7 @@ tauri-plugin-updater = "2"
 log = "0.4"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
-domain = { path = "crates/domain" }
-ofm_core = { path = "crates/ofm_core" }
-engine = { path = "crates/engine" }
-db = { path = "crates/db" }
+olm_core = { path = "crates/olm_core" }
 chrono = "0.4.44"
 rand = "0.10"
 base64 = "0.22"
@@ -44,4 +41,5 @@ validator = { version = "0.19", features = ["derive"] }
 ts-rs = { version = "10", optional = true, features = ["serde-compat"] }
 
 [features]
-typescript = ["ts-rs", "domain/typescript", "ofm_core/typescript"]
+typescript = ["ts-rs", "olm_core/typescript"]
+

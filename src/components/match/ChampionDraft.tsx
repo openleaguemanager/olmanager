@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import type { MatchSnapshot } from "./types";
 import type { GameStateData, ScrimReportData } from "../../store/gameStore";
 import { useSettingsStore } from "../../store/settingsStore";
-import { getChampionTiming } from "../../lib/championTiming";
-import { getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
-import { resolvePlayerLolRole } from "../../lib/lolIdentity";
-import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
+import { getChampionTiming } from "../../lib/champions/championTiming";
+import { getLolStaffEffectsForTeam } from "../../lib/teams/lolStaffEffects";
+import { resolvePlayerLolRole } from "../../lib/players/lolIdentity";
+import { ROLE_ICON_PATHS } from "../../lib/players/roleIcons";
 import championsSeed from "../../../assets/simulation/champions.json";
 import championListSeed from "../../../assets/simulation/champion-list.json";
 import aiConfigSeed from "../../../assets/simulation/ai-config.json";
@@ -3332,3 +3332,5 @@ function DraftSlot({
     </div>
   );
 }
+
+

@@ -1,14 +1,14 @@
-import { countryName } from "../../lib/countries";
+import { countryName } from "../../lib/common/countries";
 import {
   calcAge,
   formatVal,
-} from "../../lib/helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+} from "../../lib/common/helpers";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import type { PlayerData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader, CountryFlag, ProgressBar } from "../ui";
 import { getLolRoleForPlayer, type LolRole } from "../squad/SquadTab.helpers";
 import type { TeamProfileTranslate } from "./TeamProfile.types";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 
 interface TeamProfileRosterCardProps {
   roster: PlayerData[];
@@ -162,3 +162,4 @@ export default function TeamProfileRosterCard({
     </Card>
   );
 }
+

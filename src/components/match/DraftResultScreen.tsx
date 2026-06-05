@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { buildLolScrimPrepInsight } from "../../lib/lolScrimPrep";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { buildLolScrimPrepInsight } from "../../lib/scrims/lolScrimPrep";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 import type { MatchSnapshot } from "./types";
 import type { DraftMatchResult, DraftTimelineEvent } from "./draftResultSimulator";
 
@@ -649,3 +649,5 @@ export default function DraftResultScreen({
     </div>
   );
 }
+
+

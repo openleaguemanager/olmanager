@@ -80,7 +80,7 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("../../lib/countries", () => ({
+vi.mock("../../lib/common/countries", () => ({
   countryName: () => "England",
   isValidCountryCode: () => true,
   normaliseNationality: (value: string) => value,
@@ -428,3 +428,4 @@ describe("TeamProfile", () => {
     expect(screen.queryByText("London")).not.toBeInTheDocument();
   });
 });
+

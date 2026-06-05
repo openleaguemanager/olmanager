@@ -4,15 +4,15 @@ import { Fragment } from "react";
 
 import { GameStateData } from "../store/gameStore";
 import { Badge } from "./ui";
-import { parseUtcDate } from "../lib/dateFormatting";
+import { parseUtcDate } from "../lib/formatting/dateFormatting";
 import {
   findNextFixture,
   formatMatchDate,
   getTeamName,
   getTeamShort,
   isSeasonComplete,
-} from "../lib/helpers";
-import { calculateLolOvr } from "../lib/lolPlayerStats";
+} from "../lib/common/helpers";
+import { calculateLolOvr } from "../lib/players/lolPlayerStats";
 
 type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
@@ -246,3 +246,4 @@ export default function NextMatchDisplay({
     </div>
   );
 }
+

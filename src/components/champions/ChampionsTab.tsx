@@ -4,14 +4,14 @@ import { Sparkles, Clock3, Search } from "lucide-react";
 import type { GameStateData } from "../../store/gameStore";
 import championsSeed from "../../../assets/simulation/champions.json";
 import { setPlayerChampionTrainingTarget, delegateChampionTraining } from "../../services/playerService";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { formatStaffEffectPercent, getLolStaffEffectsForTeam } from "../../lib/teams/lolStaffEffects";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { ROLE_ICON_PATHS } from "../../lib/players/roleIcons";
 import { t } from "i18next";
-import { resolvePlayerCurrentLolRole } from "../../lib/lolIdentity";
-import { normalizeChampionKey } from "../../lib/championIds";
-import { resolveChampionTile } from "../../lib/championImages";
+import { resolvePlayerCurrentLolRole } from "../../lib/players/lolIdentity";
+import { normalizeChampionKey } from "../../lib/champions/championIds";
+import { resolveChampionTile } from "../../lib/champions/championImages";
 
 interface ChampionsTabProps {
   gameState: GameStateData;
@@ -708,3 +708,5 @@ export default function ChampionsTab({ gameState, onGameUpdate, onViewChampion }
     </div>
   );
 }
+
+

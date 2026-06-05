@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GraduationCap, Search, Sparkles, Star, TrendingUp, Users, ArrowUpDown, ArrowUp, ArrowDown, Info, EyeOff } from "lucide-react";
 
-import { calcAge } from "../../lib/helpers";
+import { calcAge } from "../../lib/common/helpers";
 import { acquireAcademyTeam, getAcademyAcquisitionOptions, promoteAcademyPlayer } from "../../services/academyService";
 import type { GameStateData, PlayerData } from "../../store/gameStore";
 import { findAcademyTeamForParent, getTeamAcademyRoster } from "../../store/academySelectors";
 import type { AcademyAcquisitionOptionData } from "../../store/gameStore";
 import { Badge, Button, Card, CardBody, CardHeader } from "../ui";
-import { resolvePlayerLolRole } from "../../lib/lolIdentity";
-import { resolveTeamLogo } from "../../lib/teamLogos";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolvePlayerLolRole } from "../../lib/players/lolIdentity";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 
 interface YouthAcademyTabProps {
   gameState: GameStateData;
@@ -610,3 +610,5 @@ export default function YouthAcademyTab({ gameState, onSelectPlayer, onGameUpdat
     </div>
   );
 }
+
+

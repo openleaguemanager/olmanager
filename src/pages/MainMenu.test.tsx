@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { invoke } from "@tauri-apps/api/core";
 import type { ComponentPropsWithoutRef } from "react";
 
-import { countryName } from "../lib/countries";
+import { countryName } from "../lib/common/countries";
 import MainMenu from "./MainMenu";
 
 const navigateMock = vi.fn();
@@ -377,3 +377,4 @@ describe("MainMenu", () => {
     expect(screen.getByAltText("Open League Manager")).toBeInTheDocument();
   });
 });
+

@@ -9,11 +9,11 @@ use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use chrono::{Datelike, TimeZone, Utc};
-use domain::player::Player;
-use domain::staff::Staff;
-use domain::team::Team;
-use ofm_core::game::Game;
-use ofm_core::generator::definitions::ScheduleConfig;
+use olm_core::domain::player::Player;
+use olm_core::domain::staff::Staff;
+use olm_core::domain::team::Team;
+use olm_core::game::Game;
+use olm_core::generator::definitions::ScheduleConfig;
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -305,7 +305,7 @@ pub fn repair_player_financials(game: &mut Game) -> bool {
 }
 
 /// Coerce the `null`/missing fields that OLMDBManager staff exports routinely
-/// carry into the shapes `domain::Staff` requires, so a single bad record (or
+/// carry into the shapes `olm_core::domain::Staff` requires, so a single bad record (or
 /// `"wage": null`, `"attributes": null`) doesn't drop the whole file.
 fn sanitize_staff_value(value: &mut Value) {
     let Some(obj) = value.as_object_mut() else {
@@ -556,7 +556,7 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
         if team_ids.len() < 2 || manifest.schedule.splits.is_empty() {
             continue;
         }
-        let mut league = ofm_core::schedule::generate_schedule_from_config(
+        let mut league = olm_core::schedule::generate_schedule_from_config(
             &manifest.id,
             &manifest.name,
             season_year,
@@ -585,14 +585,14 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
                     )
                     .unwrap();
                 let today = game.clock.current_date.format("%Y-%m-%d").to_string();
-                let mut friendlies = ofm_core::schedule::generate_preseason_friendlies(
+                let mut friendlies = olm_core::schedule::generate_preseason_friendlies(
                     team_id,
                     &opponents,
                     season_start,
                     manifest.schedule.preseason_friendlies as usize,
                 );
                 friendlies.retain(|f| f.date >= today);
-                ofm_core::schedule::append_fixtures(&mut league, friendlies);
+                olm_core::schedule::append_fixtures(&mut league, friendlies);
             }
         }
 
@@ -613,9 +613,9 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
     }
     game.leagues = leagues;
 
-    ofm_core::champions::bootstrap_champion_state(game);
+    olm_core::champions::bootstrap_champion_state(game);
     repair_active_competition(game);
-    ofm_core::season_context::refresh_game_context(game);
+    olm_core::season_context::refresh_game_context(game);
 
     Ok(())
 }
@@ -623,11 +623,11 @@ pub fn select_team(game: &mut Game, team_id: &str) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use domain::league::League;
-    use domain::manager::Manager;
-    use domain::player::PlayerAttributes;
-    use domain::stats::LolRole;
-    use ofm_core::clock::GameClock;
+    use olm_core::domain::league::League;
+    use olm_core::domain::manager::Manager;
+    use olm_core::domain::player::PlayerAttributes;
+    use olm_core::domain::stats::LolRole;
+    use olm_core::clock::GameClock;
 
     fn imported_player_without_financials() -> Player {
         let attributes = PlayerAttributes {
@@ -797,3 +797,5 @@ mod tests {
         assert_eq!(player.wage, wage);
     }
 }
+
+

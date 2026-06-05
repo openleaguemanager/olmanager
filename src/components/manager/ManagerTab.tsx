@@ -10,13 +10,13 @@ import {
   Button,
   Badge,
 } from "../ui";
-import { formatDate } from "../../lib/helpers";
+import { formatDate } from "../../lib/common/helpers";
 import { useTranslation } from "react-i18next";
-import { countryName, allNationalities } from "../../lib/countries";
+import { countryName, allNationalities } from "../../lib/common/countries";
 import DashboardModalFrame from "../dashboard/DashboardModalFrame";
 import { Settings, X, ChevronDown, Check, ImagePlus } from "lucide-react";
-import { resolveStaffPhoto } from "../../lib/playerPhotos";
-import { MANAGER_ICON_PATHS } from "../../lib/managerAvatars";
+import { resolveStaffPhoto } from "../../lib/players/playerPhotos";
+import { MANAGER_ICON_PATHS } from "../../lib/common/managerAvatars";
 
 interface ManagerTabProps {
   gameState: GameStateData;
@@ -648,3 +648,4 @@ function StatBlock({
     </div>
   );
 }
+

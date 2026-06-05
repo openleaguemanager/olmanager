@@ -14,8 +14,8 @@ import {
   readStoredFixtureDraftResult,
   type BestOfContext,
 } from "./ScheduleTab.helpers";
-import { formatMatchDate, getTeamName } from "../../lib/helpers";
-import { deriveWeeklyScrimContext, type WeeklyScrimContext } from "../../lib/scrimContext";
+import { formatMatchDate, getTeamName } from "../../lib/common/helpers";
+import { deriveWeeklyScrimContext, type WeeklyScrimContext } from "../../lib/scrims/scrimContext";
 import { useScrimContextWithFallback } from "../../hooks/useScrimContextWithFallback";
 
 interface Props {
@@ -585,3 +585,4 @@ export default function ScheduleCalendarView({
     </Card>
   );
 }
+

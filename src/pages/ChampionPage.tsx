@@ -3,9 +3,9 @@ import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, Users, AlertTriangle, TrendingUp, Swords, Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "../store/gameStore";
-import { ROLE_ICON_PATHS } from "../lib/roleIcons";
+import { ROLE_ICON_PATHS } from "../lib/players/roleIcons";
 import { Card, CardBody, CardHeader } from "../components/ui";
-import { resolveChampionTile, resolveChampionSplash } from "../lib/championImages";
+import { resolveChampionTile, resolveChampionSplash } from "../lib/champions/championImages";
 
 export interface ChampionPageProps {
   championKey: string;
@@ -643,3 +643,4 @@ export default function ChampionPage({ championKey, onClose }: ChampionPageProps
     </div>
   );
 }
+

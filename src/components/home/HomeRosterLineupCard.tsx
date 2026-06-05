@@ -4,11 +4,11 @@ import { useTranslation } from "react-i18next";
 
 import type { ChampionMasteryEntryData, PlayerData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
-import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/lolIdentity";
+import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/players/lolIdentity";
 
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { normalizeChampionKey } from "../../lib/championIds";
-import { resolveChampionSplash } from "../../lib/championImages";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { normalizeChampionKey } from "../../lib/champions/championIds";
+import { resolveChampionSplash } from "../../lib/champions/championImages";
 
 type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
@@ -191,3 +191,4 @@ export default function HomeRosterLineupCard({
     </Card>
   );
 }
+

@@ -1,11 +1,11 @@
 use tracing::info;
 
-use ofm_core::game::Game;
-use ofm_core::player_rating::{effective_rating_for_assignment, natural_ovr, position_slots};
+use olm_core::game::Game;
+use olm_core::player_rating::{effective_rating_for_assignment, natural_ovr, position_slots};
 
 fn user_team_context<'a>(
     game: &'a Game,
-) -> Option<(&'a domain::team::Team, Vec<&'a domain::player::Player>)> {
+) -> Option<(&'a olm_core::domain::team::Team, Vec<&'a olm_core::domain::player::Player>)> {
     let user_team_id = game.manager.team_id.as_deref()?;
     let team = game.teams.iter().find(|team| team.id == user_team_id)?;
     let roster = game
@@ -44,9 +44,9 @@ fn should_notify_contract_risk_30d(
 
 fn build_effective_lineup_ids(
     saved_lineup_ids: &[String],
-    roster: &[&domain::player::Player],
+    roster: &[&olm_core::domain::player::Player],
 ) -> Vec<String> {
-    let by_id: std::collections::HashMap<&str, &domain::player::Player> = roster
+    let by_id: std::collections::HashMap<&str, &olm_core::domain::player::Player> = roster
         .iter()
         .copied()
         .map(|player| (player.id.as_str(), player))
@@ -60,7 +60,7 @@ fn build_effective_lineup_ids(
         }
     }
 
-    let mut remaining_players: Vec<&domain::player::Player> = roster
+    let mut remaining_players: Vec<&olm_core::domain::player::Player> = roster
         .iter()
         .copied()
         .filter(|player| !used.contains(&player.id))
@@ -133,7 +133,7 @@ fn build_effective_lineup_ids(
 
 fn incomplete_lineup_blocker(
     effective_lineup_ids: &[String],
-    roster: &[&domain::player::Player],
+    roster: &[&olm_core::domain::player::Player],
 ) -> Option<serde_json::Value> {
     let selected_count = effective_lineup_ids.len();
 
@@ -205,7 +205,7 @@ fn urgent_unread_messages_blocker(game: &Game) -> Option<serde_json::Value> {
         .messages
         .iter()
         .filter(|message| {
-            !message.read && message.priority == domain::message::MessagePriority::Urgent
+            !message.read && message.priority == olm_core::domain::message::MessagePriority::Urgent
         })
         .count();
 
@@ -220,14 +220,14 @@ fn urgent_unread_messages_blocker(game: &Game) -> Option<serde_json::Value> {
 }
 
 fn key_contract_risk_blocker(
-    roster: &[&domain::player::Player],
+    roster: &[&olm_core::domain::player::Player],
     effective_lineup_ids: &[String],
     current_date: chrono::NaiveDate,
 ) -> Option<serde_json::Value> {
     let effective_xi_id_set: std::collections::HashSet<&str> =
         effective_lineup_ids.iter().map(String::as_str).collect();
 
-    let mut effective_xi_players: Vec<&domain::player::Player> = roster
+    let mut effective_xi_players: Vec<&olm_core::domain::player::Player> = roster
         .iter()
         .copied()
         .filter(|player| effective_xi_id_set.contains(player.id.as_str()))
@@ -261,8 +261,8 @@ fn key_contract_risk_blocker(
 }
 
 fn contract_wage_risk_blocker(
-    team: &domain::team::Team,
-    roster: &[&domain::player::Player],
+    team: &olm_core::domain::team::Team,
+    roster: &[&olm_core::domain::player::Player],
     current_date: chrono::NaiveDate,
 ) -> Option<serde_json::Value> {
     let at_risk_wages: u32 = roster
@@ -288,7 +288,7 @@ fn contract_wage_risk_blocker(
     })
 }
 
-fn minimum_main_roster_blocker(roster: &[&domain::player::Player]) -> Option<serde_json::Value> {
+fn minimum_main_roster_blocker(roster: &[&olm_core::domain::player::Player]) -> Option<serde_json::Value> {
     (roster.len() < 5).then(|| {
         build_blocker(
             "main_roster_minimum",
@@ -302,7 +302,7 @@ fn minimum_main_roster_blocker(roster: &[&domain::player::Player]) -> Option<ser
     })
 }
 
-fn main_role_coverage_blocker(roster: &[&domain::player::Player]) -> Option<serde_json::Value> {
+fn main_role_coverage_blocker(roster: &[&olm_core::domain::player::Player]) -> Option<serde_json::Value> {
     let role_set: std::collections::HashSet<&'static str> = roster
         .iter()
         .map(|player| role_to_string(&player.natural_position))
@@ -327,8 +327,8 @@ fn main_role_coverage_blocker(roster: &[&domain::player::Player]) -> Option<serd
     })
 }
 
-fn role_to_string(role: &domain::stats::LolRole) -> &'static str {
-    use domain::stats::LolRole;
+fn role_to_string(role: &olm_core::domain::stats::LolRole) -> &'static str {
+    use olm_core::domain::stats::LolRole;
     match role {
         LolRole::Top => "TOP",
         LolRole::Jungle => "JUNGLE",
@@ -341,21 +341,21 @@ fn role_to_string(role: &domain::stats::LolRole) -> &'static str {
 
 /// Determines if the game is using LoL mode by checking for any player with a known LoL role.
 /// In LoL mode, teams need 5 roles; in football mode, teams need 11 players.
-fn is_lol_mode(roster: &[&domain::player::Player]) -> bool {
+fn is_lol_mode(roster: &[&olm_core::domain::player::Player]) -> bool {
     roster
         .iter()
-        .any(|player| player.natural_position != domain::stats::LolRole::Unknown)
+        .any(|player| player.natural_position != olm_core::domain::stats::LolRole::Unknown)
 }
 
 fn academy_role_coverage_blocker(
     game: &Game,
-    team: &domain::team::Team,
+    team: &olm_core::domain::team::Team,
 ) -> Option<serde_json::Value> {
     let academy_team_id = team.academy_team_id.clone().or_else(|| {
         game.teams
             .iter()
             .find(|candidate| {
-                candidate.team_kind == domain::team::TeamKind::Academy
+                candidate.team_kind == olm_core::domain::team::TeamKind::Academy
                     && candidate.parent_team_id.as_deref() == Some(team.id.as_str())
             })
             .map(|academy| academy.id.clone())
@@ -445,3 +445,5 @@ pub fn compute_blocking_actions(game: &Game) -> Vec<serde_json::Value> {
 
     blockers
 }
+
+

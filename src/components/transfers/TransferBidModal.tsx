@@ -10,7 +10,7 @@ import {
   getTeamName,
   positionBadgeVariant,
   calcAge,
-} from "../../lib/helpers";
+} from "../../lib/common/helpers";
 import type {
   TransferDestinationData,
   TransferBidProjectionData,
@@ -297,3 +297,4 @@ export default function TransferBidModal({
     </div>
   );
 }
+

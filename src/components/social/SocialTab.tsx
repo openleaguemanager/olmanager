@@ -3,9 +3,9 @@ import { BadgeCheck, Heart, MessageCircle, Repeat2, Sparkles } from "lucide-reac
 import { useTranslation } from "react-i18next";
 import type { GameStateData, PlayerData, SocialPostData, TeamData } from "../../store/gameStore";
 import { Badge } from "../ui";
-import { formatDateShort } from "../../lib/helpers";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { formatDateShort } from "../../lib/common/helpers";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 import { createManagerSocialPost, relocalizeSocialFeed } from "../../services/socialService";
 import SocialEditor from "./SocialEditor";
 
@@ -415,3 +415,5 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
     </div>
   );
 }
+
+

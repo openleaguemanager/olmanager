@@ -1,20 +1,20 @@
 use chrono::{Datelike, TimeZone};
-use domain::player::Player;
-use domain::staff::Staff;
-use domain::team::{Team, TeamKind};
+use olm_core::domain::player::Player;
+use olm_core::domain::staff::Staff;
+use olm_core::domain::team::{Team, TeamKind};
 use log::info;
 use serde::Serialize;
 use std::path::PathBuf;
 use tauri::Manager as TauriManager;
 use tauri::State;
 
-use db::save_index::SaveEntry;
-use domain::manager::Manager;
-use domain::stats::StatsState;
-use ofm_core::clock::GameClock;
-use ofm_core::game::Game;
-use ofm_core::game_setup;
-use ofm_core::state::StateManager;
+use olm_core::db::save_index::SaveEntry;
+use olm_core::domain::manager::Manager;
+use olm_core::domain::stats::StatsState;
+use olm_core::clock::GameClock;
+use olm_core::game::Game;
+use olm_core::game_setup;
+use olm_core::state::StateManager;
 
 use crate::SaveManagerState;
 use crate::application::game_setup::avatar;
@@ -24,8 +24,8 @@ use validator::Validate;
 #[derive(Debug, Clone, Serialize)]
 pub struct TeamSelectionData {
     pub manager: Manager,
-    pub teams: Vec<domain::team::Team>,
-    pub players: Vec<domain::player::Player>,
+    pub teams: Vec<olm_core::domain::team::Team>,
+    pub players: Vec<olm_core::domain::player::Player>,
 }
 
 // ---------------------------------------------------------------------------
@@ -56,7 +56,7 @@ fn assemble_world_from_modular_data(
     );
 
     // Initialize shared resource directory for static functions
-    ofm_core::state::RESOURCE_DATA_DIR.get_or_init(|| {
+    olm_core::state::RESOURCE_DATA_DIR.get_or_init(|| {
         app_handle.path().resource_dir()
             .ok()
             .map(|d| d.join("data"))
@@ -292,7 +292,7 @@ pub async fn select_team(
     let season_year = game.clock.current_date.year();
     let user_cid = competition_id_from_team_id(&team_id);
     let all_manifests = crate::commands::competitions::scan_competitions(&app_handle);
-    let mut all_leagues: Vec<domain::league::League> = Vec::new();
+    let mut all_leagues: Vec<olm_core::domain::league::League> = Vec::new();
 
     for manifest in all_manifests.iter().filter(|m| !m.legacy) {
         let cid = &manifest.id;
@@ -314,7 +314,7 @@ pub async fn select_team(
             );
             continue;
         }
-        let mut league = ofm_core::schedule::generate_schedule_from_config(
+        let mut league = olm_core::schedule::generate_schedule_from_config(
             cid, &manifest.name, season_year as u32, &team_ids, schedule_config, 0,
         );
 
@@ -331,11 +331,11 @@ pub async fn select_team(
                 let opponents: Vec<String> = team_ids.iter()
                     .filter(|tid| tid.as_str() != team_id).cloned().collect();
                 if !opponents.is_empty() {
-                    let mut friendlies = ofm_core::schedule::generate_preseason_friendlies(
+                    let mut friendlies = olm_core::schedule::generate_preseason_friendlies(
                         &team_id, &opponents, season_start, num_friendlies,
                     );
                     friendlies.retain(|fixture| fixture.date >= today);
-                    ofm_core::schedule::append_fixtures(&mut league, friendlies);
+                    olm_core::schedule::append_fixtures(&mut league, friendlies);
                 }
             } else {
                 // Background competitions: generate friendlies for all teams
@@ -343,11 +343,11 @@ pub async fn select_team(
                     let opponents: Vec<String> = team_ids.iter()
                         .filter(|t| t.as_str() != tid.as_str()).cloned().collect();
                     if !opponents.is_empty() {
-                        let mut friendlies = ofm_core::schedule::generate_preseason_friendlies(
+                        let mut friendlies = olm_core::schedule::generate_preseason_friendlies(
                             tid, &opponents, season_start, num_friendlies,
                         );
                         friendlies.retain(|fixture| fixture.date >= today);
-                        ofm_core::schedule::append_fixtures(&mut league, friendlies);
+                        olm_core::schedule::append_fixtures(&mut league, friendlies);
                     }
                 }
             }
@@ -366,8 +366,8 @@ pub async fn select_team(
 
     game.leagues = all_leagues;
     game.user_competition_id = user_cid.map(String::from);
-    ofm_core::champions::bootstrap_champion_state(&mut game);
-    ofm_core::season_context::refresh_game_context(&mut game);
+    olm_core::champions::bootstrap_champion_state(&mut game);
+    olm_core::season_context::refresh_game_context(&mut game);
 
     // Rich templated messages
     let date_str = game.clock.current_date.to_rfc3339();
@@ -378,7 +378,7 @@ pub async fn select_team(
         .map(|m| format!("{} {}", m.name, m.schedule.splits.first().map(|s| s.name.as_str()).unwrap_or("")))
         .unwrap_or_else(|| "LEC Winter".to_string());
 
-    let welcome_msg = ofm_core::messages::welcome_message(&team_name, &team_id, &date_str);
+    let welcome_msg = olm_core::messages::welcome_message(&team_name, &team_id, &date_str);
     game.messages.push(welcome_msg);
 
     if let Some(parent_team) = game.teams.iter().find(|team| team.id == team_id) {
@@ -416,7 +416,7 @@ pub async fn select_team(
         format!("January 18, {}", season_year)
     };
 
-    let season_msg = ofm_core::messages::season_schedule_message(
+    let season_msg = olm_core::messages::season_schedule_message(
         &league_display_name,
         &season_start_str,
         &date_str,
@@ -429,15 +429,15 @@ pub async fn select_team(
         .filter(|team| team.team_kind != TeamKind::Academy)
         .map(|team| team.name.clone())
         .collect();
-    game.news.push(ofm_core::news::season_preview_article(
+    game.news.push(olm_core::news::season_preview_article(
         &team_names,
         &date_str,
     ));
 
-    let staff_msg = ofm_core::messages::staff_advice_message(&team_name, &team_id, &date_str);
+    let staff_msg = olm_core::messages::staff_advice_message(&team_name, &team_id, &date_str);
     game.messages.push(staff_msg);
 
-    ofm_core::player_events::generate_contract_concern_messages(&mut game, false);
+    olm_core::player_events::generate_contract_concern_messages(&mut game, false);
 
     // Save to new per-save DB
     let manager_name = game.manager.display_name();
@@ -527,7 +527,7 @@ pub async fn get_active_game(state: State<'_, StateManager>) -> Result<Game, Str
         game.players.len(),
         game.teams.len()
     );
-    ofm_core::champions::bootstrap_champion_state(&mut game.clone());
+    olm_core::champions::bootstrap_champion_state(&mut game.clone());
     Ok(game)
 }
 
@@ -802,3 +802,8 @@ pub async fn update_manager_profile(
     info!("[cmd] update_manager_profile: completed");
     Ok(())
 }
+
+
+
+
+

@@ -7,7 +7,7 @@ import type {
   StaffData,
   TeamData,
 } from "../../store/gameStore";
-import { getTeamName } from "../../lib/helpers";
+import { getTeamName } from "../../lib/common/helpers";
 import { getLolRoleForPlayer } from "../squad/SquadTab.helpers";
 import { Card, CardBody, CardHeader } from "../ui";
 
@@ -86,3 +86,4 @@ export default function ScoutingAssignmentsList({
     </Card>
   );
 }
+

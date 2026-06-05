@@ -27,10 +27,10 @@ import {
   computeCoherenceBreakdown,
   computeRoleModifiers,
   type DraftRole,
-} from "../../lib/lolTactics";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
+} from "../../lib/teams/lolTactics";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { Card, CardBody, CardHeader } from "../ui";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 
 interface TacticsTabProps {
   gameState: GameStateData;
@@ -741,3 +741,5 @@ export default function TacticsTab({
     </div>
   );
 }
+
+

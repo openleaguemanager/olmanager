@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { FixtureData, GameStateData } from "../../store/gameStore";
-import { getFixtureDisplayLabel } from "../../lib/helpers";
+import { getFixtureDisplayLabel } from "../../lib/common/helpers";
 import { MatchSnapshot } from "./types";
 import PreMatchLineup, {
   getPositionOvr,
@@ -268,3 +268,4 @@ export default function PreMatchSetup({
     </MatchScreenLayout>
   );
 }
+

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { formatDateShort } from "../../lib/helpers";
+import { formatDateShort } from "../../lib/common/helpers";
 import type { MessageData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
 

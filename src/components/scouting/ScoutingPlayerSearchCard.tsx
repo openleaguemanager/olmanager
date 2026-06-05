@@ -2,12 +2,12 @@ import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, ScanSearch, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { countryName } from "../../lib/countries";
-import { calcAge, formatVal, getTeamName } from "../../lib/helpers";
+import { countryName } from "../../lib/common/countries";
+import { calcAge, formatVal, getTeamName } from "../../lib/common/helpers";
 import type { PlayerData, TeamData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader, CountryFlag } from "../ui";
 import { getLolRoleForPlayer, type LolRole } from "../squad/SquadTab.helpers";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 
 const POSITION_FILTERS = ["All", "TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 
@@ -306,3 +306,4 @@ export default function ScoutingPlayerSearchCard({
     </Card>
   );
 }
+

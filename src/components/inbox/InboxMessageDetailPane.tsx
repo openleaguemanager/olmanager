@@ -2,7 +2,7 @@ import { ArrowLeft, CheckCircle2, MailOpen, MessageCircle, Trash2 } from "lucide
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import { formatDateFull, getTeamName } from "../../lib/helpers";
+import { formatDateFull, getTeamName } from "../../lib/common/helpers";
 import type { GameStateData } from "../../store/gameStore";
 import ScoutPlayerCard from "../ScoutPlayerCard";
 import { Badge, Button } from "../ui";
@@ -228,3 +228,4 @@ export default function InboxMessageDetailPane({
     </>
   );
 }
+

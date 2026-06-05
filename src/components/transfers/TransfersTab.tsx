@@ -24,15 +24,15 @@ import {
   getTeamName,
   calcAge,
   formatVal,
-} from "../../lib/helpers";
-import { calculateLolOvr } from "../../lib/lolPlayerStats";
-import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+} from "../../lib/common/helpers";
+import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
+import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 import { useTranslation } from "react-i18next";
-import { countryName } from "../../lib/countries";
+import { countryName } from "../../lib/common/countries";
 import {
   getLolRoleForPlayer,
 } from "../squad/SquadTab.helpers";
-import { resolveSeasonContext } from "../../lib/seasonContext";
+import { resolveSeasonContext } from "../../lib/season/seasonContext";
 import { type NegotiationFeedbackPanelData } from "../NegotiationFeedbackPanel";
 import TransferBidModal from "./TransferBidModal";
 import TransferCounterOfferModal from "./TransferCounterOfferModal";
@@ -65,7 +65,7 @@ import {
   type TransferSortState,
   type TransferTabView,
 } from "./TransfersTab.model";
-import { annualAmountToMonthlyCommitment } from "../../lib/finance";
+import { annualAmountToMonthlyCommitment } from "../../lib/finances/finance";
 
 interface TransfersTabProps {
   gameState: GameStateData;
@@ -1132,3 +1132,4 @@ export default function TransfersTab({
     </div>
   );
 }
+

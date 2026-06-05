@@ -4,7 +4,7 @@ import {
   isValidCountryCode,
   normaliseNationality,
   resolveCountryFlagCode,
-} from "../../lib/countries";
+} from "../../lib/common/countries";
 
 type FlagComponent = (props: React.SVGProps<SVGSVGElement>) => React.JSX.Element;
 
@@ -71,3 +71,4 @@ export function CountryFlag({
     </span>
   );
 }
+

@@ -3,7 +3,7 @@ import { useState, type JSX } from "react";
 
 import ReportBugModal from "./ReportBugModal";
 import { useGameStore } from "../../store/gameStore";
-import { APP_VERSION } from "../../lib/appInfo";
+import { APP_VERSION } from "../../lib/common/appInfo";
 import { getManagerTeamName } from "../dashboard/dashboardHelpers";
 
 export default function FloatingBugButton(): JSX.Element | null {
@@ -40,3 +40,4 @@ export default function FloatingBugButton(): JSX.Element | null {
     </>
   );
 }
+

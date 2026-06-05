@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import type { PlayerData, TeamData, TransferOfferData } from "../../store/gameStore";
-import { formatVal, getTeamName, positionBadgeVariant } from "../../lib/helpers";
+import { formatVal, getTeamName, positionBadgeVariant } from "../../lib/common/helpers";
 import type { WageNegotiationResponseData } from "../../services/transfersService";
 import NegotiationFeedbackPanel, {
   type NegotiationFeedbackPanelData,
@@ -249,3 +249,4 @@ export default function WageNegotiationModal({
     </div>
   );
 }
+

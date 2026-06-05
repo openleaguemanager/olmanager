@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 
 import type { MessageData } from "../../store/gameStore";
-import { resolveBackendText } from "../../utils/backendI18n";
+import { resolveBackendText } from "../../lib/i18n/backendI18n";
 import { renderMessageBodyLine } from "./inboxHelpers";
 
 interface InboxDelegatedRenewalReportProps {
@@ -65,3 +65,4 @@ export default function InboxDelegatedRenewalReport({
     </div>
   );
 }
+

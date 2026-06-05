@@ -1,7 +1,7 @@
 import { Newspaper } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { formatDateShort, getTeamName } from "../../lib/helpers";
+import { formatDateShort, getTeamName } from "../../lib/common/helpers";
 import type { NewsArticle, TeamData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
 

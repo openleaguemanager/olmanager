@@ -2,8 +2,8 @@ import { useState } from "react";
 import { compareStandingsByLolScore, GameStateData, FixtureData, getStandingKillDiff, getStandingKillsAgainst, getStandingKillsFor } from "../../store/gameStore";
 import { Card, CardBody, CardHeader, Badge } from "../ui";
 import { Trophy, TableProperties, Calendar } from "lucide-react";
-import { getTeamName, formatMatchDate } from "../../lib/helpers";
-import { resolveSeasonContext } from "../../lib/seasonContext";
+import { getTeamName, formatMatchDate } from "../../lib/common/helpers";
+import { resolveSeasonContext } from "../../lib/season/seasonContext";
 import { useTranslation } from "react-i18next";
 import PlayoffBracketBoard from "../playoffs/PlayoffBracketBoard";
 
@@ -414,3 +414,4 @@ export default function TournamentsTab({
     </div>
   );
 }
+

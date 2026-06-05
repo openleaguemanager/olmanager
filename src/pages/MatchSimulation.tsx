@@ -35,9 +35,9 @@ import {
   type LolSimV1PolicyConfig,
   type LolSimV1RuntimeState,
 } from "../components/match/lol-prototype/backend/contract-v1";
-import { computeRoleModifiers, ROLE_ORDER, type DraftRole } from "../lib/lolTactics";
-import { getLolStaffEffectsForTeam } from "../lib/lolStaffEffects";
-import { buildLolScrimPrepPayload } from "../lib/lolScrimPrep";
+import { computeRoleModifiers, ROLE_ORDER, type DraftRole } from "../lib/teams/lolTactics";
+import { getLolStaffEffectsForTeam } from "../lib/teams/lolStaffEffects";
+import { buildLolScrimPrepPayload } from "../lib/scrims/lolScrimPrep";
 
 // ---------------------------------------------------------------------------
 // Multi-stage Match Day Orchestrator
@@ -1955,3 +1955,5 @@ export default function MatchSimulation() {
     );
   }
 }
+
+

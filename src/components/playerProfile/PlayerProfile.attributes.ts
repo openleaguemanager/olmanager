@@ -3,7 +3,7 @@ import {
   LOL_VISIBLE_STAT_GROUPS,
   LOL_VISIBLE_STAT_LABEL_KEYS,
   getLolVisibleStatValue,
-} from "../../lib/lolPlayerStats";
+} from "../../lib/players/lolPlayerStats";
 
 type TranslateFn = (key: string) => string;
 
@@ -76,3 +76,4 @@ export function buildPlayerAttributeGroups(
     ),
   );
 }
+

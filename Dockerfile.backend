@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/li
 # Cache dependencies
 COPY src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/
 RUN mkdir -p src-tauri/src && echo "fn main() {}" > src-tauri/src/main.rs
-RUN for d in ofm_core domain engine db server; do \
+RUN for d in olm_core server; do \
     mkdir -p src-tauri/crates/$d/src && \
     echo "pub fn dummy() {}" > src-tauri/crates/$d/src/lib.rs; \
     [ "$d" = "server" ] && echo "fn main() {}" > src-tauri/crates/$d/src/main.rs || true; \

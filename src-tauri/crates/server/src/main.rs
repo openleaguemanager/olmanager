@@ -1,7 +1,7 @@
 //! OLManager web server.
 //!
 //! Authenticated, Postgres-backed game API (Supabase). The pure engine
-//! (ofm_core/engine/domain/db) runs server-side; each mutating request loads
+//! (olm_core/engine/domain/db) runs server-side; each mutating request loads
 //! the player's save blob, runs the command, and persists it back.
 //!
 //! Endpoints:
@@ -28,9 +28,9 @@ use serde_json::json;
 use tower_http::cors::CorsLayer;
 use uuid::Uuid;
 
-use domain::manager::Manager;
-use ofm_core::clock::GameClock;
-use ofm_core::game::Game;
+use olm_core::domain::manager::Manager;
+use olm_core::clock::GameClock;
+use olm_core::game::Game;
 
 mod auth;
 mod commands;
@@ -377,7 +377,7 @@ async fn advance(
         Err(e) => return err(StatusCode::INTERNAL_SERVER_ERROR, e).into_response(),
     };
 
-    ofm_core::turn::process_day(&mut game);
+    olm_core::turn::process_day(&mut game);
 
     match store.save(&user.user_id, save_id, &game).await {
         Ok(true) => (StatusCode::OK, Json(json!({ "id": id, "game": game }))).into_response(),
@@ -444,3 +444,5 @@ async fn delete_save(
         Err(e) => err(StatusCode::INTERNAL_SERVER_ERROR, e).into_response(),
     }
 }
+
+

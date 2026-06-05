@@ -6,7 +6,7 @@ import {
   NEUTRAL_OBJECTIVE_ICON_PATH,
   STRUCTURES_LAYOUT,
   STRUCTURE_ICON_PATH,
-} from "../../lib/lolMapLayout";
+} from "../../lib/match/lolMapLayout";
 import type { ChampionSelectionByPlayer } from "./LolMatchLive";
 import { useTranslation } from "react-i18next";
 
@@ -216,3 +216,4 @@ export default function LolLiveMap({ snapshot, championSelections }: LolLiveMapP
     </div>
   );
 }
+

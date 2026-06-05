@@ -8,11 +8,11 @@ import { useGameStore } from "@/store/gameStore";
 import type { GameStateData, PlayerSelectionOptions } from "@/store/gameStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useAdvanceTime, type MatchModeType } from "@/hooks/useAdvanceTime";
-import { resolveTeamLogo } from "@/lib/teamLogos";
+import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import {
   formatDateFull,
   isSeasonComplete as isLeagueSeasonComplete,
-} from "@/lib/helpers";
+} from "@/lib/common/helpers";
 import DashboardWorkspaceContent from "@/components/dashboard/DashboardWorkspaceContent";
 import DashboardOverlays from "@/components/dashboard/DashboardOverlays";
 import FiredModal from "@/components/dashboard/FiredModal";
@@ -411,3 +411,6 @@ export default function DashboardV2() {
     </div>
   );
 }
+
+
+

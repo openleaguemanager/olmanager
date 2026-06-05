@@ -15,15 +15,15 @@ import {
 import {
   getTeamName,
   calcAge,
-} from "../../lib/helpers";
-import { countryName } from "../../lib/countries";
+} from "../../lib/common/helpers";
+import { countryName } from "../../lib/common/countries";
 import { useTranslation } from "react-i18next";
 import { hireStaff, releaseStaff } from "../../services/staffService";
 import {
   formatStaffEffectPercent,
   getLolStaffEffectsForTeam,
-} from "../../lib/lolStaffEffects";
-import { resolveStaffPhoto } from "../../lib/playerPhotos";
+} from "../../lib/teams/lolStaffEffects";
+import { resolveStaffPhoto } from "../../lib/players/playerPhotos";
 
 interface StaffTabProps {
   gameState: GameStateData;
@@ -517,3 +517,5 @@ function AttrBar({ label, value }: { label: string; value: number }) {
     </div>
   );
 }
+
+

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import type { TransferOfferData } from "../../store/gameStore";
-import { formatVal } from "../../lib/helpers";
+import { formatVal } from "../../lib/common/helpers";
 
 interface TransferNegotiationHistoryProps {
   offer: TransferOfferData | null;

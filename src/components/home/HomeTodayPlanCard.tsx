@@ -3,7 +3,7 @@ import { CalendarClock, Dumbbell, Eye, Swords, Trophy } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import type { GameStateData, PostScrimDecision, TeamData } from "../../store/gameStore";
-import { dateKey, deriveDailyScrimBlockMeta, deriveTodayScrimContext, effectiveWeeklyScrimSlots } from "../../lib/scrimContext";
+import { dateKey, deriveDailyScrimBlockMeta, deriveTodayScrimContext, effectiveWeeklyScrimSlots } from "../../lib/scrims/scrimContext";
 import { chooseDailyScrimAction, type DailyScrimAction } from "../../services/trainingService";
 import { useScrimContextWithFallback } from "../../hooks/useScrimContextWithFallback";
 import { Card, CardBody } from "../ui";
@@ -494,3 +494,4 @@ export default function HomeTodayPlanCard({
     </Card>
   );
 }
+

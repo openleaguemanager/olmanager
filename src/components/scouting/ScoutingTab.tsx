@@ -12,7 +12,7 @@ import {
   ScanSearch,
 } from "lucide-react";
 import { sendScout } from "../../services/scoutingService";
-import { resolveTeamLogo } from "../../lib/teamLogos";
+import { resolveTeamLogo } from "../../lib/teams/teamLogos";
 import {
   calculateAvailableScouts,
   scoutMaxSlots,
@@ -232,3 +232,5 @@ export default function ScoutingTab({
     </div>
   );
 }
+
+
