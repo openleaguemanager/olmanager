@@ -11,9 +11,7 @@ import MatchScreenLayout from "./MatchScreenLayout";
 import { ChevronRight } from "lucide-react";
 import OpponentIntelCard from "./OpponentIntelCard";
 import { buildOpponentIntel } from "./opponentIntelService";
-import teamsSeed from "../../../data/draft/teams.json";
-import playersSeed from "../../../data/draft/players.json";
-import championsSeed from "../../../data/draft/champions.json";
+import championsSeed from "../../../assets/simulation/champions.json";
 
 interface PreMatchSetupProps {
   snapshot: MatchSnapshot;
@@ -65,9 +63,9 @@ export default function PreMatchSetup({
 
   const opponentIntel = useMemo(
     () => {
-      const teamCatalog = ((teamsSeed as { data?: { teams?: Array<{ id: string; name: string }> } }).data?.teams ?? []);
-      const rosteredSeeds = ((playersSeed as { data?: { rostered_seeds?: Array<{ ign: string; teamId: string; role: string; champions: Array<Array<string | number>> }> } }).data?.rostered_seeds ?? []);
-      const freeAgentSeeds = ((playersSeed as { data?: { free_agent_seeds?: Array<{ ign: string; teamId: string; role: string; champions: Array<Array<string | number>> }> } }).data?.free_agent_seeds ?? []);
+      const teamCatalog: Array<{ id: string; name: string }> = [];
+      const rosteredSeeds: Array<{ ign: string; teamId: string; role: string; champions: Array<Array<string | number>> }> = [];
+      const freeAgentSeeds: Array<{ ign: string; teamId: string; role: string; champions: Array<Array<string | number>> }> = [];
       const playerCatalog = [...rosteredSeeds, ...freeAgentSeeds];
       const rolesMap = ((championsSeed as { data?: { roles?: Record<string, string[]> } }).data?.roles ?? {});
       const championCatalog = Object.entries(rolesMap).map(([name, roleHints]) => ({

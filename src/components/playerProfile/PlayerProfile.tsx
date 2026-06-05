@@ -35,8 +35,7 @@ import {
   type PlayerProfileScoutStatus,
 } from "./PlayerProfile.scouting";
 import PlayerProfileChampionsCard from "./PlayerProfileChampionsCard";
-import playersSeed from "../../../data/draft/players.json";
-import championsSeed from "../../../data/draft/champions.json";
+import championsSeed from "../../../assets/simulation/champions.json";
 import NegotiationFeedbackPanel from "../NegotiationFeedbackPanel";
 import TransferNegotiationHistory from "../transfers/TransferNegotiationHistory";
 import WageNegotiationModal from "../transfers/WageNegotiationModal";
@@ -78,10 +77,7 @@ interface PlayerSeed {
   champions: Array<Array<string | number>>;
 }
 
-const PLAYER_SEEDS: PlayerSeed[] = [
-  ...(((playersSeed as { data?: { rostered_seeds?: PlayerSeed[] } }).data?.rostered_seeds ?? []) as PlayerSeed[]),
-  ...(((playersSeed as { data?: { free_agent_seeds?: PlayerSeed[] } }).data?.free_agent_seeds ?? []) as PlayerSeed[]),
-];
+const PLAYER_SEEDS: PlayerSeed[] = [];
 
 const CHAMPION_ALIASES = (
   championsSeed as { data?: { display_aliases?: Record<string, string>; roles?: Record<string, unknown> } }

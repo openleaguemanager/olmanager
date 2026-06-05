@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Fragment } from "react";
-import playersSeed from "../../data/draft/players.json";
+
 
 import { GameStateData } from "../store/gameStore";
 import { Badge } from "./ui";
@@ -23,10 +23,7 @@ interface PlayerSeed {
   role: string;
 }
 
-const PLAYER_SEEDS: PlayerSeed[] = [
-  ...(((playersSeed as { data?: { rostered_seeds?: PlayerSeed[] } }).data?.rostered_seeds ?? []) as PlayerSeed[]),
-  ...(((playersSeed as { data?: { free_agent_seeds?: PlayerSeed[] } }).data?.free_agent_seeds ?? []) as PlayerSeed[]),
-];
+const PLAYER_SEEDS: PlayerSeed[] = [];
 
 const ROLE_BY_IGN = new Map(
   PLAYER_SEEDS.map((player) => [normalizeKey(player.ign), String(player.role || "").toLowerCase()]),

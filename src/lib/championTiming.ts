@@ -1,4 +1,4 @@
-import championTimings from "../../data/draft/champion-timings.json";
+import championTimings from "../../assets/simulation/champion-timings.json";
 
 export type ChampionTiming = "Early" | "Mid" | "Late" | "Unknown";
 export type TeamTimingPreference = "Early" | "Mid" | "Late";

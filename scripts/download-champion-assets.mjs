@@ -24,7 +24,7 @@ const TileEndpoint = "/cdn/img/champion/tiles";
 const SplashEndpoint = "/cdn/img/champion/splash";
 const TILE_DIR = resolve(ROOT, "public/champion-tiles");
 const SPLASH_DIR = resolve(ROOT, "public/champion-splash");
-const DATA_DIR = resolve(ROOT, "data/draft");
+const DATA_DIR = resolve(ROOT, "assets/simulation");
 const CONCURRENCY = 10;
 
 /**

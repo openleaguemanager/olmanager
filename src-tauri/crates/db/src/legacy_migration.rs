@@ -6,7 +6,7 @@ use std::path::Path;
 use ofm_core::game::Game;
 use ofm_core::player_identity;
 
-use crate::save_manager::{SaveManager, canonicalize_game_active_lineup_ids};
+use crate::save_manager::SaveManager;
 
 /// A row extracted from the legacy `saves.db` file.
 #[derive(Debug)]
@@ -161,7 +161,6 @@ fn migrate_single_save(
     let mut game: Game = serde_json::from_str(&row.game_data)
         .map_err(|e| format!("Failed to parse game JSON: {}", e))?;
 
-    canonicalize_game_active_lineup_ids(&mut game);
     player_identity::upgrade_game_player_identities(&mut game);
     ofm_core::identity_upgrade::upgrade_game_football_identities(&mut game);
 
@@ -808,87 +807,6 @@ mod tests {
 
         assert_eq!(format!("{:?}", pending_promise.kind), "PlayingTime");
         assert_eq!(pending_promise.matches_remaining, 0);
-    }
-
-    #[test]
-    #[ignore = "legacy: upgrade_game_player_identities is no-op after LoL role migration (see #92)"]
-    fn test_migrate_legacy_save_upgrades_player_identity_fields() {
-        let dir = tempfile::tempdir().unwrap();
-        let legacy_path = dir.path().join("saves.db");
-        let saves_dir = dir.path().join("saves");
-        let json = legacy_game_json_for_position_identity_upgrade();
-
-        create_legacy_db(
-            &legacy_path,
-            &[("old-save-7", "Legacy Identity Save", "Test Manager", &json)],
-        );
-
-        let mut sm = SaveManager::init(&saves_dir).unwrap();
-        let results = migrate_legacy_saves(dir.path(), &mut sm).unwrap();
-
-        assert_eq!(results.len(), 1);
-        assert!(matches!(&results[0], LegacyMigrationResult::Success { .. }));
-
-        let save_id = sm.list_saves()[0].id.clone();
-        let loaded = sm.load_game(&save_id).unwrap();
-        let player = loaded
-            .players
-            .iter()
-            .find(|player| player.id == "p-001")
-            .unwrap();
-
-        assert_eq!(player.natural_position, domain::stats::LolRole::Top);
-        assert!(
-            player
-                .alternate_positions
-                .contains(&domain::stats::LolRole::Top)
-        );
-    }
-
-    #[test]
-    fn test_migrate_legacy_save_canonicalizes_mirrored_starting_xi_order() {
-        let dir = tempfile::tempdir().unwrap();
-        let legacy_path = dir.path().join("saves.db");
-        let saves_dir = dir.path().join("saves");
-        let json = legacy_game_json_with_mirrored_starting_xi();
-
-        create_legacy_db(
-            &legacy_path,
-            &[(
-                "old-save-8",
-                "Legacy Mirrored XI Save",
-                "Test Manager",
-                &json,
-            )],
-        );
-
-        let mut sm = SaveManager::init(&saves_dir).unwrap();
-        let results = migrate_legacy_saves(dir.path(), &mut sm).unwrap();
-
-        assert_eq!(results.len(), 1);
-        assert!(matches!(&results[0], LegacyMigrationResult::Success { .. }));
-
-        let save_entry = &sm.list_saves()[0];
-        let db_path = saves_dir.join(&save_entry.db_filename);
-        let db = Connection::open(&db_path).unwrap();
-        let starting_xi_json: String = db
-            .query_row(
-                "SELECT starting_xi_ids FROM teams WHERE id = ?1",
-                params!["team-001"],
-                |row| row.get(0),
-            )
-            .unwrap();
-        let starting_xi_ids: Vec<String> = serde_json::from_str(&starting_xi_json).unwrap();
-
-        // Input was ["sup","jng","mid","top","adc"];
-        // canonicalization uses in-game role order: top, jungle, mid, adc, support
-        assert_eq!(
-            starting_xi_ids,
-            vec!["top", "jng", "mid", "adc", "sup"]
-                .into_iter()
-                .map(str::to_string)
-                .collect::<Vec<_>>()
-        );
     }
 
     #[test]

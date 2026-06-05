@@ -89,7 +89,6 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             list_world_databases,
-            start_new_game,
             start_new_game_lightweight,
             export_world_database,
             write_temp_database,
@@ -201,11 +200,6 @@ pub fn run() {
             save_manager_avatar,
             load_manager_avatar,
             update_manager_profile,
-            get_champions,
-            get_champion_by_id,
-            seed_champions_from_json,
-            get_champion_stats,
-            get_top_champions,
             debug_log
         ])
         .run(tauri::generate_context!())

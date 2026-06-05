@@ -29,14 +29,11 @@
     "createUpdaterArtifacts": true,
     "resources": [
       "databases/world.json",
-      "data/competitions/*/manifest.json",
-      "data/teams/*.json",
-      "data/players/*.json",
-      "data/staffs/*.json",
-      "data/erls/competitions/*/manifest.json",
-      "data/erls/teams/*.json",
-      "data/erls/players/*.json",
-      "data/draft/*.json"
+      "../data/competitions/*/manifest.json",
+      "../data/teams/*.json",
+      "../data/players/*.json",
+      "../data/staffs/*.json",
+      "../assets/simulation/*.json"
     ],
     "icon": [
       "icons/32x32.png",

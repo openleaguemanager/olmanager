@@ -1,13 +1,9 @@
 use std::collections::HashMap;
-use std::path::Path;
 
 use axum::http::StatusCode;
 use domain::team::{DraftStrategy, TeamKind, TrainingFocus, TrainingIntensity};
 use ofm_core::game::Game;
-use ofm_core::generator::definitions::{
-    CompetitionManifest, CompetitionSummary, LeagueSelectionData, PlayerDataFile, TeamDataFile,
-    TeamSummary,
-};
+use ofm_core::generator::definitions::LeagueSelectionData;
 use serde_json::{json, Value};
 
 use crate::data;
@@ -169,19 +165,78 @@ pub fn dispatch(
             ok(json!(blockers), false)
         }
         "get_academy_acquisition_options" => {
-            // The acquisition pool is seeded from the ERL data tree, which the web
-            // server does not assemble yet. Return a valid, non-blocking response so
-            // the tab renders cleanly instead of erroring.
             let parent_team_id = string_arg(&args, &["parentTeamId", "parent_team_id"])?;
-            ok(
-                json!({
-                    "parent_team_id": parent_team_id,
-                    "acquisition_allowed": false,
-                    "blocked_reason": "Academy acquisition is not yet available in the web version",
-                    "options": [],
-                }),
-                false,
-            )
+
+            // Bootstrap academy seeds from ERL data
+            let bootstrap_date = game.clock.current_date.format("%Y-%m-%d").to_string();
+            ofm_core::game_setup::bootstrap_example_academy_pool_from_example(
+                &mut game.teams,
+                &mut game.players,
+                &bootstrap_date,
+            );
+
+            let parent = match game.teams.iter().find(|t| t.id == parent_team_id) {
+                Some(t) => t.clone(),
+                None => return Err(CommandError::bad_request(format!("Team '{}' not found", parent_team_id))),
+            };
+
+            let occupied_source_ids: std::collections::HashSet<String> = game.teams
+                .iter()
+                .filter(|t| t.team_kind == domain::team::TeamKind::Academy && t.parent_team_id.is_some())
+                .flat_map(|t| {
+                    let mut ids = vec![t.id.clone()];
+                    if let Some(ref meta) = t.academy {
+                        ids.push(meta.source_team_id.clone());
+                    }
+                    ids
+                })
+                .collect();
+
+            let taken_original_names: std::collections::HashSet<String> = game.teams
+                .iter()
+                .filter(|t| t.team_kind == domain::team::TeamKind::Academy && t.parent_team_id.is_some())
+                .filter_map(|t| t.academy.as_ref().map(|m| {
+                    m.original_name.to_lowercase().chars()
+                        .filter(|ch| ch.is_ascii_alphanumeric())
+                        .collect::<String>()
+                }))
+                .collect();
+
+            let options: Vec<ofm_core::academy::AcademyAcquisitionOption> =
+                ofm_core::academy::eligible_academy_acquisition_options(
+                    &parent.country,
+                    ofm_core::academy::academy_erl_catalog(),
+                    ofm_core::academy::academy_candidate_catalog(),
+                )
+                .into_iter()
+                .filter(|opt| {
+                    !occupied_source_ids.contains(&opt.source_team_id)
+                        && !taken_original_names.contains(
+                            &opt.name.to_lowercase().chars()
+                                .filter(|ch| ch.is_ascii_alphanumeric())
+                                .collect::<String>()
+                        )
+                })
+                .collect();
+
+            let blocked_reason = if !parent.is_main() {
+                Some("Academy can only be acquired for a main team".to_string())
+            } else if parent.academy_team_id.is_some() {
+                Some("Parent team already has academy".to_string())
+            } else if options.is_empty() {
+                Some("No free academy candidates available".to_string())
+            } else if options.iter().all(|o| parent.finance < o.acquisition_cost) {
+                Some("Insufficient funds for all eligible academy acquisition options".to_string())
+            } else {
+                None
+            };
+
+            ok(json!({
+                "parent_team_id": parent_team_id,
+                "acquisition_allowed": blocked_reason.is_none(),
+                "blocked_reason": blocked_reason,
+                "options": options,
+            }), false)
         }
         _ => Err(CommandError::not_found(format!(
             "unsupported command: {command}"
@@ -300,116 +355,7 @@ fn managed_team_mut<'a>(
 
 fn league_selection_data() -> Result<LeagueSelectionData, String> {
     let base = data::data_dir();
-    let competition_dir = base.join("competitions");
-    let entries = std::fs::read_dir(&competition_dir).map_err(|e| {
-        format!(
-            "failed to read competitions directory {:?}: {e}",
-            competition_dir
-        )
-    })?;
-
-    let mut manifests = Vec::new();
-    for entry in entries.flatten() {
-        let manifest_path = entry.path().join("manifest.json");
-        if !manifest_path.is_file() {
-            continue;
-        }
-        let json = std::fs::read_to_string(&manifest_path)
-            .map_err(|e| format!("failed to read {:?}: {e}", manifest_path))?;
-        match serde_json::from_str::<CompetitionManifest>(&json) {
-            Ok(manifest) => manifests.push(manifest),
-            Err(e) => tracing::warn!("skipping malformed manifest {:?}: {e}", manifest_path),
-        }
-    }
-
-    manifests.sort_by(|a, b| a.id.cmp(&b.id));
-    let competitions = manifests
-        .into_iter()
-        .filter_map(|manifest| competition_summary(&base, manifest))
-        .collect();
-
-    Ok(LeagueSelectionData { competitions })
-}
-
-fn competition_summary(base: &Path, manifest: CompetitionManifest) -> Option<CompetitionSummary> {
-    let teams = load_teams(base, &manifest).ok()?;
-    let player_count_by_team = load_player_count_by_team(base, &manifest).unwrap_or_default();
-    let prefix = format!("{}-", manifest.id);
-
-    let team_summaries = teams
-        .into_iter()
-        .map(|mut team| {
-            if let Some(url) = &mut team.logo_url {
-                if url.starts_with("/team-logos/") {
-                    *url = url.replacen("/team-logos/", "/teams-icons/", 1);
-                }
-            }
-
-            let id = if team.id.starts_with(&prefix) {
-                team.id.clone()
-            } else {
-                format!("{}-{}", manifest.id, team.id)
-            };
-            let player_count = player_count_by_team.get(&team.id).copied();
-            TeamSummary {
-                id,
-                name: team.name,
-                short_name: team.short_name,
-                logo_url: team.logo_url,
-                country: team.country,
-                city: Some(team.city),
-                finance: Some(team.finance),
-                reputation: Some(team.reputation),
-                colors: Some(team.colors),
-                ovr: None,
-                player_count,
-            }
-        })
-        .collect();
-
-    Some(CompetitionSummary {
-        id: manifest.id,
-        name: manifest.name,
-        region: manifest.region,
-        logo: manifest.logo,
-        tier: manifest.tier.unwrap_or(0),
-        team_count: manifest.schedule.team_count,
-        teams: team_summaries,
-    })
-}
-
-fn load_teams(
-    base: &Path,
-    manifest: &CompetitionManifest,
-) -> Result<Vec<domain::team::Team>, String> {
-    // Prefer the ERL-complete shard so the picker's team ids match the world
-    // `assemble_world` builds (otherwise selecting an ERL team would 404).
-    let path = data::preferred_shard_path(base, "teams", &manifest.id)
-        .unwrap_or_else(|| base.join(&manifest.teams_file));
-    let json = std::fs::read_to_string(&path)
-        .map_err(|e| format!("failed to read teams file {:?}: {e}", path))?;
-    let data: TeamDataFile =
-        serde_json::from_str(&json).map_err(|e| format!("failed to parse teams file: {e}"))?;
-    Ok(data.teams)
-}
-
-fn load_player_count_by_team(
-    base: &Path,
-    manifest: &CompetitionManifest,
-) -> Result<HashMap<String, usize>, String> {
-    let path = data::preferred_shard_path(base, "players", &manifest.id)
-        .unwrap_or_else(|| base.join(&manifest.players_file));
-    let json = std::fs::read_to_string(&path)
-        .map_err(|e| format!("failed to read players file {:?}: {e}", path))?;
-    let data: PlayerDataFile =
-        serde_json::from_str(&json).map_err(|e| format!("failed to parse players file: {e}"))?;
-    let mut counts = HashMap::new();
-    for player in data.players {
-        if let Some(team_id) = player.team_id {
-            *counts.entry(team_id).or_default() += 1;
-        }
-    }
-    Ok(counts)
+    Ok(ofm_core::competitions::build_league_selection(&base))
 }
 
 /// Splits a camel/Pascal-case champion key into a display name, e.g.
@@ -431,7 +377,7 @@ fn split_camel_case(key: &str) -> String {
 fn champions_catalog() -> &'static Vec<Value> {
     static CATALOG: std::sync::OnceLock<Vec<Value>> = std::sync::OnceLock::new();
     CATALOG.get_or_init(|| {
-        let raw = include_str!("../../../../data/draft/champions.json");
+        let raw = include_str!("../../../../assets/simulation/champions.json");
         let json: Value = match serde_json::from_str(raw) {
             Ok(value) => value,
             Err(_) => return Vec::new(),

@@ -8,6 +8,7 @@ use domain::player::Player;
 use domain::season::SeasonContext;
 use domain::social::{SocialAccount, SocialPost, SocialTemplate};
 use domain::staff::Staff;
+use domain::stats::StatsState;
 use domain::team::Team;
 use domain::transfer_history::TransferHistory;
 #[cfg(feature = "typescript")]
@@ -130,6 +131,8 @@ pub struct Game {
     #[serde(default)]
     pub champion_patch: ChampionPatchState,
     #[serde(default)]
+    pub stats_state: StatsState,
+    #[serde(default)]
     pub competition_configs: HashMap<String, ScheduleConfig>,
     #[serde(default)]
     pub transfer_history: TransferHistory,
@@ -177,6 +180,8 @@ impl<'de> Deserialize<'de> for Game {
             #[serde(default)]
             pub champion_patch: ChampionPatchState,
             #[serde(default)]
+            pub stats_state: StatsState,
+            #[serde(default)]
             pub competition_configs: HashMap<String, ScheduleConfig>,
             #[serde(default)]
             pub user_competition_id: Option<String>,
@@ -212,6 +217,7 @@ impl<'de> Deserialize<'de> for Game {
             days_since_last_job_offer: legacy.days_since_last_job_offer,
             champion_masteries: legacy.champion_masteries,
             champion_patch: legacy.champion_patch,
+            stats_state: legacy.stats_state,
             competition_configs: legacy.competition_configs,
             transfer_history: legacy.transfer_history,
         })
@@ -247,6 +253,7 @@ impl Game {
             days_since_last_job_offer: None,
             champion_masteries: vec![],
             champion_patch: ChampionPatchState::default(),
+            stats_state: StatsState::default(),
             competition_configs: HashMap::new(),
             transfer_history: TransferHistory::default(),
         };

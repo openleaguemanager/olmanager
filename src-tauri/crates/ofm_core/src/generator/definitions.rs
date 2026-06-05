@@ -1,132 +1,5 @@
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-
 use domain::team::TeamColors;
-use super::data::{NATIONALITY_POOLS, TEAM_TEMPLATES};
-
-// ---------------------------------------------------------------------------
-// Definition file types (JSON-serialisable)
-// ---------------------------------------------------------------------------
-
-/// Name pools definition file format.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct NamesDefinition {
-    #[serde(default)]
-    pub version: u32,
-    #[serde(default)]
-    pub description: String,
-    /// Keyed by ISO 3166-1 alpha-2 country code.
-    pub pools: HashMap<String, NamePool>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct NamePool {
-    pub first_names: Vec<String>,
-    pub last_names: Vec<String>,
-}
-
-/// Team templates definition file format.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TeamsDefinition {
-    #[serde(default)]
-    pub version: u32,
-    #[serde(default)]
-    pub description: String,
-    pub teams: Vec<TeamDef>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TeamDef {
-    pub name: String,
-    #[serde(default)]
-    pub short_name: String,
-    pub city: String,
-    /// ISO 3166-1 alpha-2 country code.
-    pub country: String,
-    pub colors: TeamColorsDef,
-    #[serde(default = "default_play_style")]
-    pub play_style: String,
-    #[serde(default)]
-    pub stadium_name: String,
-    #[serde(default)]
-    pub reputation_range: Option<[u32; 2]>,
-    #[serde(default)]
-    pub finance_range: Option<[i64; 2]>,
-}
-
-fn default_play_style() -> String {
-    "Balanced".to_string()
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TeamColorsDef {
-    pub primary: String,
-    pub secondary: String,
-}
-
-/// Try to load a names definition from a file, returning None on any error.
-pub fn load_names_definition(path: &std::path::Path) -> Option<NamesDefinition> {
-    let contents = std::fs::read_to_string(path).ok()?;
-    serde_json::from_str(&contents).ok()
-}
-
-/// Try to load a teams definition from a file, returning None on any error.
-pub fn load_teams_definition(path: &std::path::Path) -> Option<TeamsDefinition> {
-    let contents = std::fs::read_to_string(path).ok()?;
-    serde_json::from_str(&contents).ok()
-}
-
-/// Build the hardcoded names definition as fallback.
-pub(super) fn default_names_definition() -> NamesDefinition {
-    let mut pools = HashMap::new();
-    for entry in NATIONALITY_POOLS {
-        pools.insert(
-            entry.nationality.to_string(),
-            NamePool {
-                first_names: entry.first_names.iter().map(|s| s.to_string()).collect(),
-                last_names: entry.last_names.iter().map(|s| s.to_string()).collect(),
-            },
-        );
-    }
-    NamesDefinition {
-        version: 1,
-        description: "Built-in default".to_string(),
-        pools,
-    }
-}
-
-/// Build the hardcoded teams definition as fallback.
-pub(super) fn default_teams_definition() -> TeamsDefinition {
-    TeamsDefinition {
-        version: 1,
-        description: "Built-in default".to_string(),
-        teams: TEAM_TEMPLATES
-            .iter()
-            .map(|t| TeamDef {
-                name: t.name.to_string(),
-                short_name: t
-                    .name
-                    .split_whitespace()
-                    .filter_map(|w| w.chars().next())
-                    .collect::<String>()
-                    .to_uppercase()
-                    .chars()
-                    .take(3)
-                    .collect(),
-                city: t.city.to_string(),
-                country: t.country.to_string(),
-                colors: TeamColorsDef {
-                    primary: t.colors.0.to_string(),
-                    secondary: t.colors.1.to_string(),
-                },
-                play_style: t.play_style.to_string(),
-                stadium_name: format!("{} Arena", t.city),
-                reputation_range: Some([300, 900]),
-                finance_range: Some([500_000, 10_000_000]),
-            })
-            .collect(),
-    }
-}
+use serde::{Deserialize, Serialize};
 
 /// Serialisable world database — can be saved to / loaded from JSON.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -173,6 +46,10 @@ pub struct CompetitionManifest {
     /// Nearby country codes for cross-border ERL eligibility.
     #[serde(default)]
     pub nearby_country_codes: Vec<String>,
+    /// True for legacy/template competitions that should not be loaded into the game.
+    /// Legacy competitions are hidden from selection and skipped during world assembly.
+    #[serde(default)]
+    pub legacy: bool,
 }
 
 fn default_teams_file() -> String {

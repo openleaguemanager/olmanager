@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import playersSeed from "../../../data/draft/players.json";
+
 
 import type { ChampionMasteryEntryData, PlayerData } from "../../store/gameStore";
 import { Card, CardBody, CardHeader } from "../ui";
@@ -26,10 +26,7 @@ interface PlayerSeed {
   champions: Array<Array<string | number>>;
 }
 
-const PLAYER_SEEDS: PlayerSeed[] = [
-  ...(((playersSeed as { data?: { rostered_seeds?: PlayerSeed[] } }).data?.rostered_seeds ?? []) as PlayerSeed[]),
-  ...(((playersSeed as { data?: { free_agent_seeds?: PlayerSeed[] } }).data?.free_agent_seeds ?? []) as PlayerSeed[]),
-];
+const PLAYER_SEEDS: PlayerSeed[] = [];
 
 const TOP_CHAMPION_BY_IGN = new Map(
   PLAYER_SEEDS.map((player) => {

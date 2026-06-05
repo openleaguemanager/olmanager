@@ -1,7 +1,7 @@
-use log::{info, warn};
+use log::info;
 use std::path::{Path, PathBuf};
 
-use crate::save_index::{self, SaveEntry, SaveIndex, load_or_rebuild_index, write_index};
+use crate::save_index::{SaveEntry, SaveIndex, load_or_create_index, write_index};
 
 pub struct SaveIndexManager {
     index_path: PathBuf,
@@ -11,16 +11,7 @@ pub struct SaveIndexManager {
 impl SaveIndexManager {
     pub fn init(saves_dir: &Path) -> Result<Self, String> {
         let index_path = saves_dir.join("save_index.json");
-        let (index, validations) = load_or_rebuild_index(&index_path, saves_dir)?;
-
-        for validation in &validations {
-            if let save_index::DbValidation::Invalid { filename, reason } = validation {
-                warn!(
-                    "[save_manager] invalid database during init: {} — {}",
-                    filename, reason
-                );
-            }
-        }
+        let index = load_or_create_index(&index_path)?;
 
         info!(
             "[save_manager] initialized with {} saves",

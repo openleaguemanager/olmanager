@@ -15,7 +15,7 @@ use tauri::State;
 
 use ofm_core::state::StateManager;
 
-use crate::commands::game::{
+use ofm_core::game_setup::{
     apply_seed_potential_defaults, bootstrap_example_academy_pool_from_example,
     inject_seed_free_agents, remove_free_agents_shadowed_by_academy,
 };
@@ -150,7 +150,7 @@ fn write_database_json_to_dir(db_dir: &std::path::Path, json: &str) -> Result<St
     Ok(path.to_string_lossy().to_string())
 }
 
-/// List available world databases (built-in random + any user JSON files).
+/// List available world databases (any JSON files in bundled or user databases dirs).
 #[tauri::command]
 pub fn list_world_databases(
     app_handle: tauri::AppHandle,
@@ -158,16 +158,7 @@ pub fn list_world_databases(
     info!("[cmd] list_world_databases");
     use ofm_core::generator::WorldDatabaseInfo;
 
-    // Always include the built-in random option
-    let mut databases = vec![WorldDatabaseInfo {
-        id: "random".to_string(),
-        name: "Random World".to_string(),
-        description: "Randomly generated league with 16 teams across Europe".to_string(),
-        team_count: 16,
-        player_count: 352,
-        source: "builtin".to_string(),
-        path: String::new(),
-    }];
+    let mut databases = Vec::new();
 
     // Scan bundled databases directory (next to the executable / in resources)
     if let Ok(resource_dir) = app_handle.path().resource_dir() {

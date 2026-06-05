@@ -7,11 +7,9 @@ import { getChampionTiming } from "../../lib/championTiming";
 import { getLolStaffEffectsForTeam } from "../../lib/lolStaffEffects";
 import { resolvePlayerLolRole } from "../../lib/lolIdentity";
 import { ROLE_ICON_PATHS } from "../../lib/roleIcons";
-import teamsSeed from "../../../data/draft/teams.json";
-import playersSeed from "../../../data/draft/players.json";
-import championsSeed from "../../../data/draft/champions.json";
-import championListSeed from "../../../data/draft/champion-list.json";
-import aiConfigSeed from "../../../data/draft/ai-config.json";
+import championsSeed from "../../../assets/simulation/champions.json";
+import championListSeed from "../../../assets/simulation/champion-list.json";
+import aiConfigSeed from "../../../assets/simulation/ai-config.json";
 import {
   computeBanRecommendationScore as computeUnifiedBanRecommendationScore,
   rankBanCandidates,
@@ -410,16 +408,8 @@ const TEAM_BRAND_MAP: Record<string, { tricode: string; logo: string | null }> =
   "karmine corp": { tricode: "KC", logo: "/teams-icons/karmine-corp.webp" },
 };
 
-const TEAM_SEEDS: TeamSeed[] = ((teamsSeed as { data?: { teams?: TeamSeed[] } })
-  .data?.teams ?? []) as TeamSeed[];
-const PLAYER_SEEDS: PlayerSeed[] = [
-  ...(((playersSeed as unknown as {
-    data?: { rostered_seeds?: PlayerSeed[] };
-  }).data?.rostered_seeds ?? []) as PlayerSeed[]),
-  ...(((playersSeed as unknown as {
-    data?: { free_agent_seeds?: PlayerSeed[] };
-  }).data?.free_agent_seeds ?? []) as PlayerSeed[]),
-];
+const TEAM_SEEDS: TeamSeed[] = [];
+const PLAYER_SEEDS: PlayerSeed[] = [];
 const CHAMPIONS_SEED: ChampionsSeed = championsSeed as ChampionsSeed;
 const AI_CONFIG_SEED: DraftAiConfigSeed = aiConfigSeed as DraftAiConfigSeed;
 
