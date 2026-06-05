@@ -2,10 +2,13 @@ FROM node:22-alpine AS builder
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_PUBLISHABLE_KEY
 WORKDIR /app
-COPY web/package.json web/package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci
-COPY web/ .
-RUN npm run build
+COPY vite.config.ts tsconfig.json tsconfig.app.json ./
+COPY src src/
+COPY public public/
+COPY index.html ./
+RUN VITE_API_BASE="" npm run build -- --mode web
 
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
