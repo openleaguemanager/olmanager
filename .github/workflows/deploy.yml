@@ -52,6 +52,9 @@ jobs:
           file: Dockerfile.frontend
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_FRONTEND }}:latest
+          build-args: |
+            VITE_SUPABASE_URL=https://gfllmaxmiuyqnlbabwsx.supabase.co
+            VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_FrpeAZFFvB_SKh_L1xusiA_tbZbXxKJ
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -1,4 +1,6 @@
 FROM node:22-alpine AS builder
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_PUBLISHABLE_KEY
 WORKDIR /app
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
