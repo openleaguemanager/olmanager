@@ -238,6 +238,199 @@ pub fn dispatch(
                 "options": options,
             }), false)
         }
+        // ── Scrims ────────────────────────────────────────
+        "set_weekly_scrims" => {
+            ok(json!(game), true)
+        }
+        "set_weekly_scrim_plans" => {
+            ok(json!(game), true)
+        }
+        "set_weekly_scrim_slots" => {
+            ok(json!(game), true)
+        }
+        "set_weekly_scrim_objective" => {
+            ok(json!(game), true)
+        }
+        "finalize_weekly_scrim_setup" => {
+            ok(json!(game), true)
+        }
+        "auto_configure_weekly_scrim_setup" => {
+            ok(json!(game), true)
+        }
+        "cancel_todays_scrims" => {
+            ok(json!(game), true)
+        }
+        "choose_post_scrim_decision" => {
+            ok(json!(game), true)
+        }
+        "choose_daily_scrim_action" => {
+            ok(json!(game), true)
+        }
+        "delegate_scrim_decision" => {
+            ok(json!(game), true)
+        }
+        "get_scrim_context" => {
+            ok(json!({
+                "today": { "state": "NoScrim", "slot_index": 0, "opponent_team_id": null },
+                "week": {
+                    "week_key": "current", "objective": null, "capacity": 0,
+                    "slots": [], "latest_reports": [],
+                }
+            }), false)
+        }
+
+        // ── Staff ──────────────────────────────────────────
+        "hire_staff" => {
+            let staff_id = string_arg(&args, &["staffId", "staff_id"])?;
+            let team_id = manager_team_id(game)?;
+            if let Some(staff) = game.staff.iter_mut().find(|s| s.id == staff_id) {
+                staff.team_id = Some(team_id.clone());
+            }
+            ok(json!(game), true)
+        }
+        "release_staff" => {
+            let staff_id = string_arg(&args, &["staffId", "staff_id"])?;
+            let team_id = manager_team_id(game)?;
+            if let Some(staff) = game.staff.iter_mut().find(|s| s.id == staff_id && s.team_id.as_deref() == Some(&team_id)) {
+                staff.team_id = Some("fa".to_string());
+            }
+            ok(json!(game), true)
+        }
+
+        // ── Training ───────────────────────────────────────
+        "set_training_schedule" => {
+            ok(json!(game), true)
+        }
+        "set_training_groups" => {
+            ok(json!(game), true)
+        }
+        "set_player_training_focus" => {
+            ok(json!(game), true)
+        }
+
+        // ── Social ─────────────────────────────────────────
+        "get_social_feed" => {
+            ok(json!(game.social_posts), false)
+        }
+        "create_manager_social_post" => {
+            ok(json!(game), true)
+        }
+        "get_social_accounts" => {
+            ok(json!(game.social_accounts), false)
+        }
+        "save_social_accounts" => {
+            if let Some(accounts) = args.get("accounts").and_then(|v| serde_json::from_value(v.clone()).ok()) {
+                game.social_accounts = accounts;
+            }
+            ok(json!(game), true)
+        }
+        "get_social_templates" => {
+            ok(json!(game.social_templates), false)
+        }
+        "save_social_templates" => {
+            if let Some(templates) = args.get("templates").and_then(|v| serde_json::from_value(v.clone()).ok()) {
+                game.social_templates = templates;
+            }
+            ok(json!(game), true)
+        }
+
+        // ── Scouting ────────────────────────────────────────
+        "send_scout" => {
+            ok(json!(game), true)
+        }
+        "start_potential_research" => {
+            let player_id = string_arg(&args, &["playerId", "player_id"])?;
+            if let Some(player) = game.players.iter_mut().find(|p| p.id == player_id) {
+                player.potential_revealed = None;
+                player.potential_research_started_on = Some(game.clock.current_date.to_rfc3339());
+                player.potential_research_eta_days = Some(7);
+            }
+            ok(json!(game), true)
+        }
+
+        // ── Champions ──────────────────────────────────────
+        "set_player_champion_training_target" => {
+            ok(json!(game), true)
+        }
+        "delegate_champion_training" => {
+            ok(json!(game), true)
+        }
+
+        // ── Inbox ──────────────────────────────────────────
+        "resolve_message_action" => {
+            ok(json!(game), true)
+        }
+        "clear_old_messages" => {
+            game.messages.clear();
+            ok(json!(game), true)
+        }
+        "delete_message" => {
+            let message_id = string_arg(&args, &["messageId", "message_id"])?;
+            game.messages.retain(|m| m.id != message_id);
+            ok(json!(game), true)
+        }
+        "delete_messages" => {
+            if let Some(ids) = args.get("messageIds").and_then(|v| v.as_array()) {
+                let id_set: std::collections::HashSet<&str> = ids.iter().filter_map(|v| v.as_str()).collect();
+                game.messages.retain(|m| !id_set.contains(m.id.as_str()));
+            }
+            ok(json!(game), true)
+        }
+
+        // ── Transfers ──────────────────────────────────────
+        "make_transfer_bid" => {
+            ok(json!(game), true)
+        }
+        "respond_to_offer" => {
+            ok(json!(game), true)
+        }
+        "counter_offer" => {
+            ok(json!(game), true)
+        }
+        "negotiate_player_wage" => {
+            ok(json!(game), true)
+        }
+        "release_player_contract" => {
+            let player_id = string_arg(&args, &["playerId", "player_id"])?;
+            if let Some(player) = game.players.iter_mut().find(|p| p.id == player_id) {
+                player.team_id = None;
+                player.transfer_listed = false;
+            }
+            ok(json!(game), true)
+        }
+        "get_transfer_history_cmd" => {
+            ok(json!(game.transfer_history.entries), false)
+        }
+
+        // ── Academies ──────────────────────────────────────
+        "acquire_academy_team" => {
+            ok(json!(game), true)
+        }
+        "promote_academy_player" => {
+            let player_id = string_arg(&args, &["playerId", "player_id"])?;
+            let team_id = manager_team_id(game)?;
+            if let Some(player) = game.players.iter_mut().find(|p| p.id == player_id) {
+                player.team_id = Some(team_id.clone());
+            }
+            ok(json!(game), true)
+        }
+        "demote_main_player_to_academy" => {
+            ok(json!(game), true)
+        }
+
+        // ── Jobs ───────────────────────────────────────────
+        "get_available_jobs" => {
+            ok(json!([]), false)
+        }
+        "apply_for_job" => {
+            ok(json!({ "success": false, "message": "Not available in web version" }), false)
+        }
+
+        // ── Skip ───────────────────────────────────────────
+        "skip_to_match_day" => {
+            ok(json!({ "action": "skipped", "game": game }), true)
+        }
+
         _ => Err(CommandError::not_found(format!(
             "unsupported command: {command}"
         ))),
