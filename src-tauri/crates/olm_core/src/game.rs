@@ -197,7 +197,7 @@ impl<'de> Deserialize<'de> for Game {
             }
         }
 
-        Ok(Game {
+        let mut game = Game {
             clock: legacy.clock,
             day_phase: legacy.day_phase,
             manager: legacy.manager,
@@ -220,7 +220,12 @@ impl<'de> Deserialize<'de> for Game {
             stats_state: legacy.stats_state,
             competition_configs: legacy.competition_configs,
             transfer_history: legacy.transfer_history,
-        })
+        };
+
+        // Recompute OVRs on load so legacy saves get the field populated
+        game.refresh_lol_ovrs();
+
+        Ok(game)
     }
 }
 
@@ -259,6 +264,7 @@ impl Game {
         };
         crate::identity_upgrade::upgrade_game_football_identities(&mut game);
         crate::season_context::refresh_game_context(&mut game);
+        game.refresh_lol_ovrs();
         game
     }
 
@@ -280,6 +286,13 @@ impl Game {
             }
         }
         self.leagues.first_mut()
+    }
+
+    /// Recompute `lol_ovr` for every player from their current attributes.
+    pub fn refresh_lol_ovrs(&mut self) {
+        for player in &mut self.players {
+            player.lol_ovr = crate::potential::calculate_lol_ovr(player);
+        }
     }
 
     /// Returns the index of the player's active league.

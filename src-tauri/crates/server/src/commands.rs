@@ -42,7 +42,7 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
             "players":game.players
         }), false),
         "get_league_selection_data" => { ok(json!(league_selection_data().map_err(CommandError::bad_request)?), false) }
-        "check_blocking_actions" => ok(json!(crate::time_blockers::compute_blocking_actions(game)), false),
+        "check_blocking_actions" => ok(json!(olm_core::time_blockers::compute_blocking_actions(game)), false),
         "relocalize_social_feed" => {
             let lang = optional_string_arg(&args, &["language","locale"]).unwrap_or_else(||"en".to_string());
             olm_core::social::relocalize_social_posts(game, &lang);
@@ -57,7 +57,11 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
             olm_core::commands::set_training(game, &manager_team_id(game)?, &focus, &intensity);
             ok(json!(game), true)
         }
-        "set_training_schedule" => { ok(json!(game), true) }
+        "set_training_schedule" => {
+            let schedule = string_arg(&args, &["schedule"])?;
+            olm_core::commands::set_training_schedule(game, &manager_team_id(game)?, &schedule);
+            ok(json!(game), true)
+        }
         "set_training_groups" => { ok(json!(game), true) }
         "set_player_training_focus" => {
             let pid = string_arg(&args, &["playerId","player_id"]).unwrap_or_default();
@@ -210,24 +214,9 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
         "get_academy_acquisition_options" => {
             let ptid = string_arg(&args, &["parentTeamId","parent_team_id"])?;
             olm_core::commands::bootstrap_academy_pool(game);
-            let parent = game.teams.iter().find(|t|t.id==ptid).cloned()
-                .ok_or_else(|| CommandError::bad_request(format!("Team '{ptid}' not found")))?;
-            let occupied: std::collections::HashSet<String> = game.teams.iter()
-                .filter(|t|t.team_kind==TeamKind::Academy&&t.parent_team_id.is_some())
-                .flat_map(|t|{let mut ids=vec![t.id.clone()];if let Some(ref m)=t.academy{ids.push(m.source_team_id.clone())};ids}).collect();
-            let taken: std::collections::HashSet<String> = game.teams.iter()
-                .filter(|t|t.team_kind==TeamKind::Academy&&t.parent_team_id.is_some())
-                .filter_map(|t|t.academy.as_ref().map(|m|norm(&m.original_name))).collect();
-            let options: Vec<olm_core::academy::AcademyAcquisitionOption> =
-                olm_core::academy::eligible_academy_acquisition_options(&parent.country,
-                    olm_core::academy::academy_erl_catalog(), olm_core::academy::academy_candidate_catalog())
-                .into_iter().filter(|o|!occupied.contains(&o.source_team_id)&&!taken.contains(&norm(&o.name))).collect();
-            let blocked = if!parent.is_main(){Some("Academy can only be acquired for a main team".to_string())}
-                else if parent.academy_team_id.is_some(){Some("Parent team already has academy".to_string())}
-                else if options.is_empty(){Some("No free academy candidates available".to_string())}
-                else if options.iter().all(|o|parent.finance<o.acquisition_cost){Some("Insufficient funds".to_string())}
-                else{None};
-            ok(json!({"parent_team_id":ptid,"acquisition_allowed":blocked.is_none(),"blocked_reason":blocked,"options":options}), false)
+            let (options, blocked) = olm_core::academy::get_acquisition_options(game, &ptid);
+            let acquisition_allowed = blocked.is_none();
+            ok(json!({"parent_team_id":ptid,"acquisition_allowed":acquisition_allowed,"blocked_reason":blocked,"options":options}), false)
         }
         "acquire_academy_team" => {
             let req = args.get("request").cloned().unwrap_or(args);
@@ -235,33 +224,9 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
             let sid = string_arg(&req, &["sourceTeamId","source_team_id"])?;
             let cn = optional_string_arg(&req, &["customName","custom_name"]);
             let cs = optional_string_arg(&req, &["customShortName","custom_short_name"]);
-            let pidx = game.teams.iter().position(|t|t.id==pid).ok_or_else(||CommandError::bad_request("Parent team not found"))?;
             olm_core::commands::bootstrap_academy_pool(game);
-            let a = olm_core::academy::eligible_academy_acquisition_options(&game.teams[pidx].country,
-                    olm_core::academy::academy_erl_catalog(), olm_core::academy::academy_candidate_catalog())
-                .into_iter().find(|o|o.source_team_id==sid);
-            if let Some(opt) = a {
-                game.teams[pidx].finance -= opt.acquisition_cost;
-                game.teams[pidx].season_expenses += opt.acquisition_cost;
-                game.teams[pidx].academy_team_id = Some(sid.clone());
-                if let Some(idx) = game.teams.iter().position(|t|t.id==sid&&t.team_kind==TeamKind::Academy) {
-                    game.teams[idx].name = cn.unwrap_or_else(||opt.name.clone());
-                    game.teams[idx].short_name = cs.unwrap_or_else(||opt.short_name.clone());
-                    game.teams[idx].parent_team_id = Some(pid.clone());
-                    game.teams[idx].academy = Some(olm_core::domain::team::AcademyMetadata {
-                        lifecycle: olm_core::domain::team::AcademyLifecycle::Active,
-                        erl_assignment: olm_core::domain::team::ErlAssignment {
-                            erl_league_id: opt.erl_league_id.clone(), country_rule: olm_core::domain::team::ErlAssignmentRule::Domestic,
-                            fallback_reason: Some("Acquired by user".to_string()), reputation: opt.reputation,
-                            acquisition_cost: opt.acquisition_cost, acquired_at: game.clock.current_date.to_rfc3339(),
-                            creation_cost: 0, created_at: game.clock.current_date.to_rfc3339(),
-                        },
-                        source_team_id: sid.clone(), original_name: opt.name, original_short_name: opt.short_name,
-                        original_logo_url: opt.logo_url, current_logo_url: None,
-                        acquisition_cost: opt.acquisition_cost, acquired_at: game.clock.current_date.to_rfc3339(),
-                    });
-                }
-            }
+            olm_core::academy::acquire_academy(game, &pid, &sid, cn.as_deref(), cs.as_deref())
+                .map_err(CommandError::bad_request)?;
             ok(json!(game), true)
         }
         "promote_academy_player" => {
@@ -353,7 +318,6 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
 }
 
 fn ok(value: Value, persist: bool) -> Result<CommandResult, CommandError> { Ok(CommandResult { value, persist }) }
-fn norm(s: &str) -> String { s.to_lowercase().chars().filter(|c|c.is_ascii_alphanumeric()).collect() }
 
 fn get_arg<'a>(args: &'a Value, names: &[&str]) -> Result<&'a Value, CommandError> {
     names.iter().find_map(|n|args.get(*n)).ok_or_else(||CommandError::bad_request(format!("missing: {}",names[0])))

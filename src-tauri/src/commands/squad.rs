@@ -645,16 +645,7 @@ pub fn set_training_schedule(
         .clone()
         .ok_or("No team assigned".to_string())?;
 
-    let training_schedule = match schedule.as_str() {
-        "Intense" => olm_core::domain::team::TrainingSchedule::Intense,
-        "Balanced" => olm_core::domain::team::TrainingSchedule::Balanced,
-        "Light" => olm_core::domain::team::TrainingSchedule::Light,
-        _ => olm_core::domain::team::TrainingSchedule::Balanced,
-    };
-
-    if let Some(team) = game.teams.iter_mut().find(|t| t.id == team_id) {
-        team.training_schedule = training_schedule;
-    }
+    olm_core::commands::set_training_schedule(&mut game, &team_id, &schedule);
 
     state.set_game(game.clone());
     Ok(game)

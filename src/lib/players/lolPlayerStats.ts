@@ -92,7 +92,9 @@ export function calcOvr(
   );
 }
 
+/** LoL OVR: pre-computed by olm_core, or calculated client-side as fallback. */
 export function calculateLolOvr(player: PlayerData): number {
+  if (player.lol_ovr != null) return player.lol_ovr;
   return calcOvr(
     getLolVisibleStatValue(player, "mechanics"),
     getLolVisibleStatValue(player, "laning"),

@@ -2,7 +2,7 @@ use chrono::Datelike;
 use crate::game::Game;
 use crate::domain::player::Player;
 use crate::domain::stats::LolRole;
-use crate::domain::team::{DraftStrategy, ScrimFocus, Team, TeamKind, TrainingFocus, TrainingIntensity};
+use crate::domain::team::{DraftStrategy, ScrimFocus, Team, TeamKind, TrainingFocus, TrainingIntensity, TrainingSchedule};
 use crate::domain::transfer_history::TransferHistoryEntry;
 
 // ── Training ────────────────────────────────────────────────
@@ -18,8 +18,14 @@ pub fn set_training(game: &mut Game, team_id: &str, focus: &str, intensity: &str
     }
 }
 
-pub fn set_training_schedule(game: &mut Game, team_id: &str, _schedule: &str) {
-    // Placeholder - training schedule stored on team
+pub fn set_training_schedule(game: &mut Game, team_id: &str, schedule: &str) {
+    if let Some(team) = game.teams.iter_mut().find(|t| t.id == team_id) {
+        team.training_schedule = match schedule {
+            "Intense" => TrainingSchedule::Intense,
+            "Light" => TrainingSchedule::Light,
+            _ => TrainingSchedule::Balanced,
+        };
+    }
 }
 
 pub fn set_training_groups(_game: &mut Game, _team_id: &str, _groups: &[serde_json::Value]) {

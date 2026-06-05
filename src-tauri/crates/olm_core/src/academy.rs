@@ -1,6 +1,8 @@
 use crate::domain::team::{Team, TeamKind};
+use crate::game::Game;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::sync::OnceLock;
 
 use log::info;
@@ -525,5 +527,112 @@ pub fn academy_candidate_catalog() -> &'static [ErlAcademyCandidate] {
             })
             .collect()
     })
+}
+
+// ── Academy acquisition (from Game state) ────────────────────
+
+fn normalize(val: &str) -> String {
+    val.to_lowercase().chars().filter(|c| c.is_ascii_alphanumeric()).collect()
+}
+
+/// Compute available acquisition options and any blocking reason for a parent team.
+pub fn get_acquisition_options(game: &Game, parent_team_id: &str) -> (Vec<AcademyAcquisitionOption>, Option<String>) {
+    let parent = match game.teams.iter().find(|t| t.id == parent_team_id) {
+        Some(t) => t.clone(),
+        None => return (vec![], Some("Team not found".to_string())),
+    };
+
+    // Already occupied academy team IDs + names
+    let occupied: HashSet<String> = game.teams.iter()
+        .filter(|t| t.team_kind == TeamKind::Academy && t.parent_team_id.is_some())
+        .flat_map(|t| {
+            let mut ids = vec![t.id.clone()];
+            if let Some(ref m) = t.academy {
+                ids.push(m.source_team_id.clone());
+            }
+            ids
+        })
+        .collect();
+
+    let taken: HashSet<String> = game.teams.iter()
+        .filter(|t| t.team_kind == TeamKind::Academy && t.parent_team_id.is_some())
+        .filter_map(|t| t.academy.as_ref().map(|m| normalize(&m.original_name)))
+        .collect();
+
+    let options: Vec<AcademyAcquisitionOption> = eligible_academy_acquisition_options(
+        &parent.country,
+        academy_erl_catalog(),
+        academy_candidate_catalog(),
+    )
+    .into_iter()
+    .filter(|o| !occupied.contains(&o.source_team_id) && !taken.contains(&normalize(&o.name)))
+    .collect();
+
+    let blocked = if !parent.is_main() {
+        Some("Academy can only be acquired for a main team".to_string())
+    } else if parent.academy_team_id.is_some() {
+        Some("Parent team already has academy".to_string())
+    } else if options.is_empty() {
+        Some("No free academy candidates available".to_string())
+    } else if options.iter().all(|o| parent.finance < o.acquisition_cost) {
+        Some("Insufficient funds".to_string())
+    } else {
+        None
+    };
+
+    (options, blocked)
+}
+
+/// Acquire an academy team for the parent, deducting cost and linking.
+pub fn acquire_academy(
+    game: &mut Game,
+    parent_team_id: &str,
+    source_team_id: &str,
+    custom_name: Option<&str>,
+    custom_short_name: Option<&str>,
+) -> Result<(), String> {
+    let pidx = game.teams.iter().position(|t| t.id == parent_team_id)
+        .ok_or_else(|| "Parent team not found".to_string())?;
+
+    // Recompute fresh options to validate
+    let (options, _) = get_acquisition_options(game, parent_team_id);
+    let opt = options.into_iter().find(|o| o.source_team_id == source_team_id)
+        .ok_or_else(|| "Acquisition option not available".to_string())?;
+
+    if game.teams[pidx].finance < opt.acquisition_cost {
+        return Err("Insufficient funds".to_string());
+    }
+
+    game.teams[pidx].finance -= opt.acquisition_cost;
+    game.teams[pidx].season_expenses += opt.acquisition_cost;
+    game.teams[pidx].academy_team_id = Some(source_team_id.to_string());
+
+    if let Some(idx) = game.teams.iter().position(|t| t.id == source_team_id && t.team_kind == TeamKind::Academy) {
+        game.teams[idx].name = custom_name.unwrap_or(&opt.name).to_string();
+        game.teams[idx].short_name = custom_short_name.unwrap_or(&opt.short_name).to_string();
+        game.teams[idx].parent_team_id = Some(parent_team_id.to_string());
+        game.teams[idx].academy = Some(crate::domain::team::AcademyMetadata {
+            lifecycle: crate::domain::team::AcademyLifecycle::Active,
+            erl_assignment: crate::domain::team::ErlAssignment {
+                erl_league_id: opt.erl_league_id.clone(),
+                country_rule: crate::domain::team::ErlAssignmentRule::Domestic,
+                fallback_reason: Some("Acquired by user".to_string()),
+                reputation: opt.reputation,
+                acquisition_cost: opt.acquisition_cost,
+                acquired_at: game.clock.current_date.to_rfc3339(),
+                creation_cost: 0,
+                created_at: game.clock.current_date.to_rfc3339(),
+            },
+            source_team_id: source_team_id.to_string(),
+            original_name: opt.name.clone(),
+            original_short_name: opt.short_name,
+            original_logo_url: opt.logo_url,
+            current_logo_url: None,
+            acquisition_cost: opt.acquisition_cost,
+            acquired_at: game.clock.current_date.to_rfc3339(),
+        });
+    }
+
+    Ok(())
 }
 

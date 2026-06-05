@@ -343,6 +343,7 @@ export interface PlayerData {
   potential_research_eta_days?: number | null;
   champion_training_target?: string | null;
   champion_training_targets?: string[];
+  lol_ovr?: number;
 }
 
 export interface ScrimSlotResultData {

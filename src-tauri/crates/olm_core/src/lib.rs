@@ -38,6 +38,7 @@ pub mod social_registry;
 mod social_templates;
 pub mod staff_effects;
 pub mod state;
+pub mod time_blockers;
 pub mod training;
 pub mod transfers;
 pub mod turn;
