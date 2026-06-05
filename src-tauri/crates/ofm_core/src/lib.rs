@@ -2,6 +2,7 @@ pub mod academy;
 pub mod board_objectives;
 pub mod champions;
 pub mod clock;
+pub mod commands;
 pub mod competitions;
 pub mod club;
 pub mod contract_wage_policy;
