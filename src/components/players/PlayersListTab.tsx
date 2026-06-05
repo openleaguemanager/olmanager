@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { getAllCountryNames } from "../../lib/countries";
 import { resolvePlayerPhoto } from "../../lib/playerPhotos";
+import { PlayerAvatar } from "../ui/PlayerAvatar";
 import {
   getLolRoleForPlayer,
   LolRole,
@@ -362,26 +363,10 @@ export default function PlayersListTab({
                         className="cursor-pointer"
                       >
                         <td className="py-2.5 px-4">
-                          <img
-                            src={photoSrc ?? "/default/defaultplayer.webp"}
+                          <PlayerAvatar
+                            src={photoSrc}
                             alt={player.match_name}
-                            data-debug-player={player.match_name}
-                            className="w-8 h-8 rounded-full object-cover bg-gray-200 dark:bg-navy-600"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              const FALLBACK = "/default/defaultplayer.webp";
-                              if (target.src.endsWith("defaultplayer.webp")) {
-                                return;
-                              }
-                              invoke("debug_log", { message: `IMG ERROR: ${player.match_name} | src: ${target.src}` });
-                              target.src = FALLBACK;
-                            }}
-                            ref={(el) => {
-                              if (el && el.getAttribute("data-first-mount") !== "true") {
-                                invoke("debug_log", { message: `IMG MOUNTED: ${player.match_name}` });
-                                el.setAttribute("data-first-mount", "true");
-                              }
-                            }}
+                            className="w-8 h-8 bg-gray-200 dark:bg-navy-600"
                           />
                         </td>
                         <td className="py-2.5 px-4">

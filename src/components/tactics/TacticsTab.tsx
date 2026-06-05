@@ -30,6 +30,7 @@ import {
 } from "../../lib/lolTactics";
 import { calculateLolOvr } from "../../lib/lolPlayerStats";
 import { Card, CardBody, CardHeader } from "../ui";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 interface TacticsTabProps {
   gameState: GameStateData;
@@ -252,6 +253,25 @@ function positionToRole(position: string): DraftRole | null {
   return null;
 }
 
+function ImageWithFallback({ playerId, playerName, gameState }: { playerId: string; playerName: string; gameState: GameStateData }) {
+  const player = gameState.players.find(p => p.id === playerId || p.match_name === playerName);
+  const photo = resolvePlayerPhoto(playerId, playerName, player?.profile_image_url);
+  return (
+    <img
+      src={photo ?? "/default/defaultplayer.webp"}
+      alt={playerName}
+      className="h-10 w-10 shrink-0 rounded object-cover"
+      onError={(e) => {
+        // Clear the handler before swapping so a missing fallback can't retrigger
+        // onError and spin in an infinite reload loop.
+        const img = e.currentTarget;
+        img.onerror = null;
+        img.src = "/default/defaultplayer.webp";
+      }}
+      loading="lazy"
+    />
+  );
+}
 function Section<T extends string>({
   title,
   options,
@@ -643,11 +663,10 @@ export default function TacticsTab({
                       </div>
 
                       {row.playerId ? (
-                        <img
-                          src={row.profileImageUrl ?? "/default/defaultplayer.webp"}
-                          alt={row.playerName}
-                          className="h-10 w-10 shrink-0 rounded object-cover"
-                          loading="lazy"
+                        <ImageWithFallback
+                          playerId={row.playerId}
+                          playerName={row.playerName}
+                          gameState={gameState}
                         />
                       ) : (
                         <div className="h-10 w-10 shrink-0 rounded bg-gray-100 dark:bg-navy-700/40" />

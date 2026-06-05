@@ -28,6 +28,7 @@ import { resolveStaffPhoto } from "../../lib/playerPhotos";
 interface StaffTabProps {
   gameState: GameStateData;
   onGameUpdate?: (state: GameStateData) => void;
+  mode?: "club" | "world";
 }
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
@@ -148,7 +149,7 @@ function getStaffImpactRows(s: StaffData): ImpactRow[] {
   ];
 }
 
-export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
+export default function StaffTab({ gameState, onGameUpdate, mode = "club" }: StaffTabProps) {
   const { t, i18n } = useTranslation();
   const userTeamId = gameState.manager.team_id;
   const [view, setView] = useState<"mystaff" | "available">("mystaff");
@@ -198,7 +199,12 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
     return gameState.leagues.map(l => ({ id: l.competition_id ?? l.id, name: l.name }));
   }, [gameState.leagues]);
 
-  const displayStaff = view === "mystaff" ? myStaff : availableStaff;
+  const isWorldMode = mode === "world";
+  const displayStaff = isWorldMode
+    ? gameState.staff
+    : view === "mystaff"
+      ? myStaff
+      : availableStaff;
 
   const filtered = displayStaff.filter((s) => {
     if (roleFilter && s.role !== roleFilter) return false;
@@ -211,38 +217,53 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
     return true;
   });
 
-  const roles = ["AssistantManager", "Coach", "Scout", "Physio", "Owner"];
+  const roles = useMemo(
+    () => Array.from(new Set(gameState.staff.map((s) => s.role))).sort(),
+    [gameState.staff],
+  );
   const teamEffects = getLolStaffEffectsForTeam(gameState, userTeamId);
   const attrLabel = (key: StaffAttrKey) => t(ATTR_LABEL_KEYS[key]);
+  const roleLabel = (role: string) => t(`staff.roles.${role}`, { defaultValue: role });
 
   return (
     <div className="max-w-5xl mx-auto">
       {/* View toggle */}
       <div className="flex flex-wrap gap-3 mb-4 items-center">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setView("mystaff")}
-            className={`px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-1.5 ${
-              view === "mystaff"
-                ? "bg-primary-500 text-white shadow-md shadow-primary-500/20"
-                : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
-            }`}
-          >
-            <UserCog className="w-4 h-4" />{" "}
-            {t("staff.myStaff", { count: myStaff.length })}
-          </button>
-          <button
-            onClick={() => setView("available")}
-            className={`px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-1.5 ${
-              view === "available"
-                ? "bg-primary-500 text-white shadow-md shadow-primary-500/20"
-                : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
-            }`}
-          >
-            <UserPlus className="w-4 h-4" />{" "}
-            {t("staff.available", { count: availableStaff.length })}
-          </button>
-        </div>
+        {isWorldMode ? (
+          <div className="rounded-lg border border-gray-200 bg-white px-4 py-2 dark:border-navy-600 dark:bg-navy-800">
+            <p className="font-heading text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-100">
+              Staff BD
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {filtered.length} de {gameState.staff.length}
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setView("mystaff")}
+              className={`px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                view === "mystaff"
+                  ? "bg-primary-500 text-white shadow-md shadow-primary-500/20"
+                  : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
+              }`}
+            >
+              <UserCog className="w-4 h-4" />{" "}
+              {t("staff.myStaff", { count: myStaff.length })}
+            </button>
+            <button
+              onClick={() => setView("available")}
+              className={`px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                view === "available"
+                  ? "bg-primary-500 text-white shadow-md shadow-primary-500/20"
+                  : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
+              }`}
+            >
+              <UserPlus className="w-4 h-4" />{" "}
+              {t("staff.available", { count: availableStaff.length })}
+            </button>
+          </div>
+        )}
 
         <div className="relative flex-1 min-w-[180px] max-w-xs">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -287,13 +308,13 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
                   : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"
               }`}
             >
-              {ROLE_ICONS[r]} {t(`staff.roles.${r}`)}
+              {ROLE_ICONS[r] || <UserCog className="w-4 h-4" />} {roleLabel(r)}
             </button>
           ))}
         </div>
       </div>
 
-      {view === "mystaff" && myStaff.length > 0 && (
+      {!isWorldMode && view === "mystaff" && myStaff.length > 0 && (
         <Card className="mb-4">
           <CardBody>
             <div className="flex flex-wrap items-center gap-2">
@@ -366,7 +387,7 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
                         </Badge>
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {t(`staff.roles.${staff.role}`)} — {t("common.age")}{" "}
+                        {roleLabel(staff.role)} — {t("common.age")}{" "}
                         {age}
                         <span className="ml-1.5 inline-flex items-center gap-1 align-middle">
                           <CountryFlag
@@ -376,7 +397,7 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
                           />
                           <span>{countryName(staff.nationality, i18n.language)}</span>
                         </span>
-                        {staff.team_id && view === "available" && (
+                        {staff.team_id && (isWorldMode || view === "available") && (
                           <span className="ml-1.5">
                             @ {getTeamName(gameState.teams, staff.team_id)}
                           </span>
@@ -446,7 +467,7 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
                     </div>
 
                     {/* Action button */}
-                    {view === "mystaff" && (
+                    {!isWorldMode && view === "mystaff" && (
                       <button
                         disabled={actionLoading === staff.id}
                         onClick={() => handleRelease(staff.id)}
@@ -456,7 +477,7 @@ export default function StaffTab({ gameState, onGameUpdate }: StaffTabProps) {
                         <UserMinus className="w-4 h-4" />
                       </button>
                     )}
-                    {view === "available" && (
+                    {!isWorldMode && view === "available" && (
                       <button
                         disabled={actionLoading === staff.id}
                         onClick={() => handleHire(staff.id)}

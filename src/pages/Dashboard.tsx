@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { MatchModeType } from "../hooks/useAdvanceTime";
@@ -49,6 +49,12 @@ import { resolveTeamLogo } from "../lib/teamLogos";
 import { resolveStaffPhoto } from "../lib/playerPhotos";
 
 const CLUB_TABS = new Set(["Squad", "Tactics", "Training", "Meta", "Scrims", "Staff", "Scouting", "Youth", "Finances", "Transfers"]);
+const PATH_TAB_MAP: Record<string, string> = {
+  "/finanzas": "Finances",
+  "/finances": "Finances",
+  "/competiciones": "Competitions",
+  "/competitions": "Competitions",
+};
 
 const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Home: "dashboard.home",
@@ -62,8 +68,10 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Staff: "dashboard.staff",
   Finances: "dashboard.finances",
   Transfers: "dashboard.transfers",
+  Competitions: "dashboard.competitions",
   Players: "dashboard.players",
   Teams: "dashboard.teams",
+  WorldStaff: "dashboard.worldStaff",
   Tournaments: "dashboard.tournaments",
   ChampionsWorld: "dashboard.champions_world",
   Schedule: "dashboard.schedule",
@@ -76,11 +84,13 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
 
 export default function Dashboard(): JSX.Element {
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     hasActiveGame,
     managerName,
     gameState,
     setGameState,
+    setGameActive,
     clearGame,
     isDirty,
     markClean,
@@ -97,7 +107,7 @@ export default function Dashboard(): JSX.Element {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [viewingChampionKey, setViewingChampionKey] = useState<string | null>(null);
   const [profileNavigation, setProfileNavigation] = useState(() =>
-    createDashboardProfileNavigationState("Home"),
+    createDashboardProfileNavigationState(PATH_TAB_MAP[location.pathname] ?? "Home"),
   );
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [isExitingToMenu, setIsExitingToMenu] = useState(false);
@@ -119,28 +129,49 @@ export default function Dashboard(): JSX.Element {
     };
   }, []);
 
+  useEffect(() => {
+    const tab = PATH_TAB_MAP[location.pathname];
+    if (!tab) {
+      return;
+    }
+    setProfileNavigation((currentState) =>
+      currentState.activeTab === tab
+        ? currentState
+        : navigateDashboardProfiles(currentState, tab),
+    );
+  }, [location.pathname]);
+
   // Fetch initial state
   useEffect(() => {
     console.log("[Dashboard] mounted, hasActiveGame:", hasActiveGame);
-    if (!hasActiveGame) {
-      console.log("[Dashboard] no active game, redirecting to /");
-      navigate("/");
-      return;
-    }
-
+    let cancelled = false;
     const fetchState = async () => {
       try {
         console.log("[Dashboard] calling get_active_game...");
         const state = await invoke<GameStateData>("get_active_game");
+        if (cancelled) return;
         console.log("[Dashboard] get_active_game returned:", state ? "success" : "null");
         setGameState(state);
+        if (!hasActiveGame) {
+          const displayName =
+            state.manager.nickname?.trim() ||
+            `${state.manager.first_name} ${state.manager.last_name}`;
+          setGameActive(true, displayName);
+        }
       } catch (err) {
         console.error("Failed to fetch game state:", err);
+        if (!cancelled && !hasActiveGame) {
+          console.log("[Dashboard] no active game, redirecting to /");
+          navigate("/");
+        }
       }
     };
 
-    fetchState();
-  }, [hasActiveGame, navigate, setGameState]);
+    void fetchState();
+    return () => {
+      cancelled = true;
+    };
+  }, [hasActiveGame, navigate, setGameActive, setGameState]);
 
   // Load champions once when game loads (if not already in gameState)
   useEffect(() => {
@@ -151,7 +182,11 @@ export default function Dashboard(): JSX.Element {
       try {
         console.log("[Dashboard] Loading champions for world tab...");
         const champions = await invoke<import("../store/types").ChampionData[]>("get_champions");
-        setGameState({ ...gameState, champions });
+        // Merge into the freshest state from the store, not the gameState captured
+        // in this effect's closure — otherwise a concurrent update (e.g. marking an
+        // inbox message read) made while this request was in flight gets clobbered.
+        const latest = useGameStore.getState().gameState;
+        setGameState({ ...(latest ?? gameState), champions });
         console.log(`[Dashboard] Loaded ${champions.length} champions`);
       } catch (err) {
         console.error("Failed to load champions:", err);
@@ -223,7 +258,12 @@ export default function Dashboard(): JSX.Element {
     }
   }, [isUnemployed, profileNavigation.activeTab]);
 
-  const seasonComplete = isLeagueSeasonComplete(gameState?.leagues[0]);
+  const activeLeague = gameState?.user_competition_id
+    ? gameState.leagues.find(
+        (league) => league.competition_id === gameState.user_competition_id,
+      ) ?? gameState.leagues[0]
+    : gameState?.leagues[0];
+  const seasonComplete = isLeagueSeasonComplete(activeLeague);
 
   // Advance-time hook
   const {
@@ -511,6 +551,9 @@ export default function Dashboard(): JSX.Element {
         managerAvatar={managerAvatar}
         onNavigateSettings={handleNavigateSettings}
         isUnemployed={isUnemployed ?? false}
+        playerCount={gameState.players.length}
+        teamCount={gameState.teams.length}
+        staffCount={gameState.staff.length}
         onExitClick={() => {
           if (!isExitingToMenu) {
             setShowExitConfirm(true);

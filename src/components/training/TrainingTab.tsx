@@ -29,6 +29,7 @@ import { setTraining, setTrainingSchedule } from "../../services/trainingService
 import { Card, CardBody, CardHeader, ProgressBar } from "../ui";
 import TrainingSettingsPanel from "./TrainingSettingsPanel";
 import { getTrainingStaffAdvice } from "./trainingAdvice";
+import { resolvePlayerPhoto } from "../../lib/playerPhotos";
 
 type SoloQTier = "Challenger" | "Grandmaster" | "Master";
 
@@ -399,7 +400,7 @@ export default function TrainingTab({
                       <div className="flex min-w-0 items-center gap-2">
                         <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-navy-900/60 dark:border-navy-600">
                           <img
-                            src={player.profile_image_url ?? "/default/defaultplayer.webp"}
+                            src={resolvePlayerPhoto(player.id, player.match_name, (player as any).profile_image_url) ?? undefined}
                             alt={player.match_name}
                             className="h-full w-full object-cover"
                             loading="lazy"

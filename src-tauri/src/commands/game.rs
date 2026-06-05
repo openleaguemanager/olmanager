@@ -1742,7 +1742,7 @@ pub(crate) fn remove_free_agents_shadowed_by_academy(players: &mut Vec<Player>, 
 /// Used when the frontend wants to show league/team selection first.
 #[tauri::command]
 pub async fn start_new_game_lightweight(
-    app_handle: tauri::AppHandle,
+    _app_handle: tauri::AppHandle,
     state: State<'_, StateManager>,
     nickname: Option<String>,
     first_name: String,
@@ -2113,6 +2113,16 @@ pub async fn select_team(
         if team_ids.len() < 2 { continue; }
 
         let schedule_config = &manifest.schedule;
+        // Competitions whose manifest has no schedule splits (e.g. several
+        // legacy/ERL leagues) cannot generate a calendar — skip them instead
+        // of indexing into an empty `splits` vec and panicking.
+        if schedule_config.splits.is_empty() {
+            log::warn!(
+                "[game] skipping schedule for '{}' — manifest has no schedule splits",
+                cid
+            );
+            continue;
+        }
         let mut league = ofm_core::schedule::generate_schedule_from_config(
             cid, &manifest.name, season_year as u32, &team_ids, schedule_config, 0,
         );
@@ -2516,6 +2526,7 @@ pub async fn load_manager_avatar(
 
 /// Validated input for updating manager profile fields.
 #[derive(Debug, validator::Validate)]
+#[allow(dead_code)]
 struct ManagerProfileInput {
     #[validate(length(max = 30))]
     nickname: Option<String>,

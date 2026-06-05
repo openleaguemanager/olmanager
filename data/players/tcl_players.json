@@ -4,8 +4,8 @@
   "players": [
     {
       "id": "player-b2160bc5",
-      "match_name": "Fatih Kurşun",
-      "full_name": "Fade",
+      "match_name": "Fade",
+      "full_name": "Fatih Kurşun",
       "date_of_birth": "2003-12-03",
       "nationality": "TR",
       "profile_image_url": null,
@@ -138,8 +138,8 @@
     },
     {
       "id": "player-ba94a490",
-      "match_name": "Tomasz Gas",
-      "full_name": "Iwanan",
+      "match_name": "Iwanan",
+      "full_name": "Tomasz Gas",
       "date_of_birth": null,
       "nationality": "PL",
       "profile_image_url": null,
@@ -236,8 +236,8 @@
     },
     {
       "id": "player-38c26301",
-      "match_name": "Eren Yücel",
-      "full_name": "Warner",
+      "match_name": "Warner",
+      "full_name": "Eren Yücel",
       "date_of_birth": "2005-06-23",
       "nationality": "TR",
       "profile_image_url": null,
@@ -325,8 +325,8 @@
     },
     {
       "id": "player-e970485e",
-      "match_name": "Yunus Emre Şahin",
-      "full_name": "Ksaez",
+      "match_name": "Ksaez",
+      "full_name": "Yunus Emre Şahin",
       "date_of_birth": "2000-12-12",
       "nationality": "TR",
       "profile_image_url": null,
@@ -468,8 +468,8 @@
     },
     {
       "id": "player-5f7e7ef8",
-      "match_name": "Yiğithan Yaşar",
-      "full_name": "SmallBugi",
+      "match_name": "SmallBugi",
+      "full_name": "Yiğithan Yaşar",
       "date_of_birth": null,
       "nationality": "TR",
       "profile_image_url": null,
@@ -530,8 +530,8 @@
     },
     {
       "id": "player-564a1818",
-      "match_name": "Resul Polat",
-      "full_name": "FireAscept",
+      "match_name": "FireAscept",
+      "full_name": "Resul Polat",
       "date_of_birth": "2006-09-20",
       "nationality": "TR",
       "profile_image_url": null,
@@ -610,8 +610,8 @@
     },
     {
       "id": "player-da2efcc9",
-      "match_name": "Maciej Charzyński",
-      "full_name": "Secrett",
+      "match_name": "Secrett",
+      "full_name": "Maciej Charzyński",
       "date_of_birth": null,
       "nationality": "PL",
       "profile_image_url": null,
@@ -699,8 +699,8 @@
     },
     {
       "id": "player-52665c56",
-      "match_name": "Emre Akça",
-      "full_name": "Kofte",
+      "match_name": "Kofte",
+      "full_name": "Emre Akça",
       "date_of_birth": "2001-05-15",
       "nationality": "TR",
       "profile_image_url": null,

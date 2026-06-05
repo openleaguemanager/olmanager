@@ -11,7 +11,7 @@ pub struct Player {
     pub id: String,
     pub match_name: String,
     pub full_name: String,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "crate::serde_util::null_to_default")]
     pub date_of_birth: String,
     #[serde(default)]
     pub nationality: String,
@@ -32,6 +32,7 @@ pub struct Player {
     pub alternate_positions: Vec<LolRole>,
 
     // Core attributes 0-100
+    #[serde(default)]
     pub attributes: PlayerAttributes,
 
     // Dynamic match/season values
@@ -52,12 +53,19 @@ pub struct Player {
 
     // Contract & value
     pub contract_end: Option<String>,
-    #[serde(default = "default_wage")]
+    #[serde(
+        default = "default_wage",
+        deserialize_with = "crate::serde_util::lenient_u32"
+    )]
     pub wage: u32, // annual wage
-    #[serde(default = "default_market_value")]
+    #[serde(
+        default = "default_market_value",
+        deserialize_with = "crate::serde_util::lenient_u64"
+    )]
     pub market_value: u64,
 
-    // Season stats (required — all players need stats)
+    // Season stats — defaulted because some exported records omit them.
+    #[serde(default)]
     pub stats: PlayerSeasonStats,
 
     // Career history
@@ -103,7 +111,7 @@ pub enum Footedness {
     Both,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "typescript", derive(TS))]
 #[cfg_attr(feature = "typescript", ts(export))]
 pub struct PlayerAttributes {

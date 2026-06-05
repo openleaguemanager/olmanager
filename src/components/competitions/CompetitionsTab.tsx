@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Trophy,
-  Calendar as CalendarIcon,
-  TrendingUp,
-  Globe,
   Users,
+  Globe,
+  Search,
+  Loader2,
   Building2,
+  Calendar,
+  TrendingUp,
+  Trophy,
   ListOrdered,
 } from "lucide-react";
 import type { GameStateData, LeagueData } from "../../store/gameStore";
@@ -21,6 +23,7 @@ import type { StoredFixtureDraftResult } from "../schedule/ScheduleTab.helpers";
 
 interface CompetitionsTabProps {
   gameState: GameStateData;
+  onSelectTeam?: (id: string) => void;
 }
 
 type DetailView = "calendar" | "standings" | "teams" | "players";
@@ -38,14 +41,14 @@ function getCompetitionColor(id: string): string {
   return COMPETITION_COLORS[id] ?? "bg-gray-500/20 text-gray-300 border-gray-500/30";
 }
 
-export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
+export default function CompetitionsTab({ gameState, onSelectTeam }: CompetitionsTabProps) {
   const { t } = useTranslation();
   const [selectedCid, setSelectedCid] = useState<string | null>(null);
   const [detailView, setDetailView] = useState<DetailView>("calendar");
 
-  const leagues = gameState.leagues;
+  const leagues = Array.isArray(gameState.leagues) ? gameState.leagues : [];
   const selectedLeague = selectedCid
-    ? leagues.find((l) => l.competition_id === selectedCid) ?? null
+    ? leagues.find((l) => (l.competition_id ?? l.id) === selectedCid) ?? null
     : null;
 
   // Teams in selected competition (competition_id = manifest id like "lec", not UUID)
@@ -64,18 +67,18 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
 
   // Standings sorted
   const sortedStandings = selectedLeague
-    ? [...selectedLeague.standings].sort(compareStandingsByLolScore)
+    ? [...(selectedLeague.standings ?? [])].sort(compareStandingsByLolScore)
     : [];
 
   // Build competition label map for calendar
   const competitionLabelMap = new Map<string, string>();
   leagues.forEach((l) => {
-    l.fixtures.forEach((f) => competitionLabelMap.set(f.id, l.name));
+    (l.fixtures ?? []).forEach((f) => competitionLabelMap.set(f.id, l.name));
   });
 
   const calendarFixtures = selectedLeague
-    ? selectedLeague.fixtures
-    : leagues.flatMap((l) => l.fixtures);
+    ? selectedLeague.fixtures ?? []
+    : leagues.flatMap((l) => l.fixtures ?? []);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -89,22 +92,25 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
 
       {/* Competitions grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {leagues.map((league) => (
-          <CompetitionCard
-            key={league.id}
-            league={league}
-            selected={selectedCid === league.id}
-            colorClass={getCompetitionColor(league.id)}
-            teamsCount={
-              gameState.teams.filter((t) => t.competition_id === league.id)
-                .length
-            }
-            onSelect={() => {
-              const cid = league.competition_id ?? league.id;
-              setSelectedCid(selectedCid === cid ? null : cid);
-            }}
-          />
-        ))}
+        {leagues.map((league) => {
+          const cid = league.competition_id ?? league.id;
+
+          return (
+            <CompetitionCard
+              key={league.id}
+              league={league}
+              selected={selectedCid === cid}
+              colorClass={getCompetitionColor(cid)}
+              teamsCount={
+                gameState.teams.filter((t) => t.competition_id === cid)
+                  .length
+              }
+              onSelect={() => {
+                setSelectedCid(selectedCid === cid ? null : cid);
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Selected competition detail */}
@@ -113,7 +119,7 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
           {/* View switcher */}
           <div className="flex items-center gap-2 flex-wrap">
             <ViewButton
-              icon={<CalendarIcon />}
+              icon={<Calendar />}
               label={t("competitions.calendar", "Calendario")}
               active={detailView === "calendar"}
               onClick={() => setDetailView("calendar")}
@@ -155,6 +161,7 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
             <StandingsTable
               standings={sortedStandings}
               gameState={gameState}
+              onSelectTeam={onSelectTeam}
             />
           )}
 
@@ -163,6 +170,7 @@ export default function CompetitionsTab({ gameState }: CompetitionsTabProps) {
             <TeamsGrid
               teamIds={selectedTeamIds}
               gameState={gameState}
+              onSelectTeam={onSelectTeam}
             />
           )}
 
@@ -230,11 +238,12 @@ function CompetitionCard({
 }: CompetitionCardProps) {
   const { t } = useTranslation();
 
-  const totalMatches = league.fixtures.length;
-  const playedMatches = league.fixtures.filter(
+  const fixtures = league.fixtures ?? [];
+  const totalMatches = fixtures.length;
+  const playedMatches = fixtures.filter(
     (f) => f.status === "Completed",
   ).length;
-  const playoffFixtures = league.fixtures.filter(
+  const playoffFixtures = fixtures.filter(
     (f) => f.match_type === "Playoffs",
   ).length;
 
@@ -254,11 +263,24 @@ function CompetitionCard({
           <div
             className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClass} border overflow-hidden`}
           >
-            {league.logo ? (
-              <img src={league.logo} alt="" className="w-full h-full object-contain" />
-            ) : (
-              <Trophy className="w-5 h-5" />
-            )}
+            {(() => {
+              const iconId = (league.competition_id ?? league.id).replace(/\s+/g, "_");
+              const src = league.logo ?? `/competitions-icons/${iconId}.webp`;
+              return (
+                <>
+                  <img
+                    src={src}
+                    alt={league.name}
+                    className="w-10 h-10 object-contain"
+                    onError={(event) => {
+                      event.currentTarget.style.display = "none";
+                      event.currentTarget.nextElementSibling?.classList.remove("hidden");
+                    }}
+                  />
+                  <Trophy className="hidden w-5 h-5" />
+                </>
+              );
+            })()}
           </div>
           <div>
             <h4 className="font-heading font-bold text-sm text-gray-800 dark:text-gray-100">
@@ -278,7 +300,7 @@ function CompetitionCard({
           {teamsCount} {t("competitions.teams", "equipos")}
         </span>
         <span className="flex items-center gap-1">
-          <CalendarIcon className="w-3.5 h-3.5" />
+          <Calendar className="w-3.5 h-3.5" />
           {totalMatches} {t("competitions.matches", "partidos")}
         </span>
         <span className="flex items-center gap-1">
@@ -300,9 +322,10 @@ function CompetitionCard({
 interface StandingsTableProps {
   standings: LeagueData["standings"];
   gameState: GameStateData;
+  onSelectTeam?: (id: string) => void;
 }
 
-function StandingsTable({ standings, gameState }: StandingsTableProps) {
+function StandingsTable({ standings, gameState, onSelectTeam }: StandingsTableProps) {
   const { t } = useTranslation();
 
   return (
@@ -345,7 +368,8 @@ function StandingsTable({ standings, gameState }: StandingsTableProps) {
               {standings.map((entry, idx) => (
                 <tr
                   key={entry.team_id}
-                  className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors"
+                  onClick={() => onSelectTeam?.(entry.team_id)}
+                  className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer"
                 >
                   <td className="px-4 py-3 text-gray-500 dark:text-gray-400 font-mono text-xs">
                     {idx + 1}
@@ -415,9 +439,10 @@ function StandingsTable({ standings, gameState }: StandingsTableProps) {
 interface TeamsGridProps {
   teamIds: string[];
   gameState: GameStateData;
+  onSelectTeam?: (id: string) => void;
 }
 
-function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
+function TeamsGrid({ teamIds, gameState, onSelectTeam }: TeamsGridProps) {
   const { t } = useTranslation();
 
   const teams = teamIds
@@ -439,7 +464,7 @@ function TeamsGrid({ teamIds, gameState }: TeamsGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {teams.map((team) => (
-        <Card key={team.id}>
+        <Card key={team.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onSelectTeam?.(team.id)}>
           <CardBody>
             <div className="flex items-center gap-3">
               <img

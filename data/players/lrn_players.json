@@ -4,8 +4,8 @@
   "players": [
     {
       "id": "player-8cdb4eb9",
-      "match_name": "Sebastián Alonso Niño Zavaleta",
-      "full_name": "Oddie",
+      "match_name": "Oddie",
+      "full_name": "Sebastián Alonso Niño Zavaleta",
       "date_of_birth": "1997-08-28",
       "nationality": "PE",
       "profile_image_url": null,
@@ -192,8 +192,8 @@
     },
     {
       "id": "player-558e85b3",
-      "match_name": "Jeong Ye-chan",
-      "full_name": "Ivory",
+      "match_name": "Ivory",
+      "full_name": "Jeong Ye-chan",
       "date_of_birth": "2003-10-12",
       "nationality": "KR",
       "profile_image_url": null,
@@ -317,8 +317,8 @@
     },
     {
       "id": "player-0e4ae1fb",
-      "match_name": "Sergio Steven Bautista Grajales",
-      "full_name": "Gato",
+      "match_name": "Gato",
+      "full_name": "Sergio Steven Bautista Grajales",
       "date_of_birth": "2003-07-10",
       "nationality": "Colombia",
       "profile_image_url": "/player-photos/37420bb8.webp",
@@ -480,8 +480,8 @@
     },
     {
       "id": "player-1947b668",
-      "match_name": "Juan Fernando Bernal Garzón",
-      "full_name": "Keis",
+      "match_name": "Keis",
+      "full_name": "Juan Fernando Bernal Garzón",
       "date_of_birth": "2003-08-20",
       "nationality": "CO",
       "profile_image_url": null,
@@ -596,8 +596,8 @@
     },
     {
       "id": "player-06e1af72",
-      "match_name": "Ángel Santiago Saens Aguilar",
-      "full_name": "Saens",
+      "match_name": "Saens",
+      "full_name": "Ángel Santiago Saens Aguilar",
       "date_of_birth": "2003-06-17",
       "nationality": "Mexico",
       "profile_image_url": null,
@@ -741,8 +741,8 @@
     },
     {
       "id": "player-6f1ee624",
-      "match_name": "Jose Sergio Ricalday Ramirez",
-      "full_name": "Feng",
+      "match_name": "Feng",
+      "full_name": "Jose Sergio Ricalday Ramirez",
       "date_of_birth": "1998-08-21",
       "nationality": "Mexico",
       "profile_image_url": null,

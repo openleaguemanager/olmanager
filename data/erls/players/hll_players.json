@@ -5,89 +5,25 @@
     {
       "id": "player-022f6244",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "APM Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Howl Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Spartans EU",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Spartans EU",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The ParadOx",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-86bb25d6",
       "condition": 100,
-      "full_name": "Prosty",
+      "full_name": "Dimitris Aggelos Chiotelis",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 68,
+        "laning": 66,
+        "teamfighting": 67,
         "macro_play": 66,
         "consistency": 66,
         "shotcalling": 65,
-        "teamfighting": 67,
         "champion_pool": 64,
+        "discipline": 68,
         "mental_resilience": 67
       },
-      "match_name": "Dimitris Aggelos Chiotelis",
+      "match_name": "Prosty",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -97,155 +33,64 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-09-18",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779873997221_Prosty.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2003-09-18",
+      "stats": {},
+      "profile_image_url": "/player-photos/46af571d8b7af316.webp"
     },
     {
       "id": "player-0c105108",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ionikos Nikaias",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Spawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hell Zerolag Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SINS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "REAVER (Giannis Dimitrelis)",
+      "full_name": "Giannis Dimitrelis",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 64,
+        "laning": 66,
+        "teamfighting": 67,
         "macro_play": 66,
         "consistency": 67,
         "shotcalling": 65,
-        "teamfighting": 67,
         "champion_pool": 65,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Giannis Dimitrelis",
-      "date_of_birth": "2002-08-30",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874032263_REAVER__Giannis_Dimitrelis_.webp",
+      "match_name": "REAVER (Giannis Dimitrelis)",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-34f5f8b3",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "GR",
+      "date_of_birth": "2002-08-30",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/8c67733fd4f24269.webp"
     },
     {
       "id": "player-292851e3",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ALMO Players",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-b2dec67c",
       "condition": 100,
-      "full_name": "K1ckbait",
+      "full_name": "Dimitris Mixopoulos",
       "attributes": {
-        "laning": 60,
         "mechanics": 62,
-        "discipline": 62,
+        "laning": 60,
+        "teamfighting": 62,
         "macro_play": 60,
         "consistency": 60,
         "shotcalling": 65,
-        "teamfighting": 62,
         "champion_pool": 61,
+        "discipline": 62,
         "mental_resilience": 62
       },
-      "match_name": "Dimitris Mixopoulos",
+      "match_name": "K1ckbait",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -255,21 +100,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-08-18",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874053264_K1ckbait.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2007-08-18",
+      "stats": {},
+      "profile_image_url": "/player-photos/7a2962baded879ca.webp"
     },
     {
       "id": "player-2b8f258b",
@@ -282,14 +117,14 @@
       "condition": 100,
       "full_name": "Raizy",
       "attributes": {
-        "laning": 60,
         "mechanics": 60,
-        "discipline": 65,
+        "laning": 60,
+        "teamfighting": 60,
         "macro_play": 62,
         "consistency": 60,
         "shotcalling": 65,
-        "teamfighting": 60,
         "champion_pool": 61,
+        "discipline": 65,
         "mental_resilience": 63
       },
       "match_name": "Raizy",
@@ -302,21 +137,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-2ba313af",
@@ -329,14 +154,14 @@
       "condition": 100,
       "full_name": "Ace",
       "attributes": {
-        "laning": 64,
         "mechanics": 60,
-        "discipline": 68,
+        "laning": 64,
+        "teamfighting": 64,
         "macro_play": 62,
         "consistency": 62,
         "shotcalling": 60,
-        "teamfighting": 64,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 64
       },
       "match_name": "Ace",
@@ -349,81 +174,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "ES",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "ES",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-3f11bfa5",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crvena zvezda",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BeFive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ALMO Players",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Axolotl",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-b2dec67c",
       "condition": 100,
-      "full_name": "Cripple",
+      "full_name": "Viktor Milanović",
       "attributes": {
-        "laning": 60,
         "mechanics": 62,
-        "discipline": 66,
+        "laning": 60,
+        "teamfighting": 64,
         "macro_play": 62,
         "consistency": 62,
         "shotcalling": 60,
-        "teamfighting": 64,
         "champion_pool": 61,
+        "discipline": 66,
         "mental_resilience": 64
       },
-      "match_name": "Viktor Milanović",
+      "match_name": "Cripple",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -433,324 +211,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-03-25",
-      "nationality": "RS",
-      "profile_image_url": "/player-photos/1779874049117_Cripple.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RS",
+      "date_of_birth": "2003-03-25",
+      "stats": {},
+      "profile_image_url": "/player-photos/ace020f1440a9390.webp"
     },
     {
       "id": "player-4def1a81",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "VIRUS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Auxesis Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LUL Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Optimization Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Outlawz",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Reformed Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Spawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "VIRUS",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "CBS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Convict of Shadows",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LUL Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nordavind Talent",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Pyrsos Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Rejects Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hive Athens",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LUL Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SLR",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "VG Phenomenon",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "FLY5",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SLR",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Legion",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Mythic",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Paradox",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Paradox",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The ParadOx",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-86bb25d6",
       "condition": 100,
-      "full_name": "Jimsnop",
+      "full_name": "Dimitris Dimitropoulos",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 67,
+        "laning": 66,
+        "teamfighting": 66,
         "macro_play": 66,
         "consistency": 66,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 67,
         "mental_resilience": 67
       },
-      "match_name": "Dimitris Dimitropoulos",
+      "match_name": "Jimsnop",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -760,234 +248,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "1999-11-06",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779873993267_Jimsnop.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "1999-11-06",
+      "stats": {},
+      "profile_image_url": "/player-photos/ed83cd6ae71e136f.webp"
     },
     {
       "id": "player-53bcdbcf",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Spawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "CBI Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NLD eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Pyrsos Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Spawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "CBI Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NLD eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Olympiacos Alimou",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "VG Phenomenon",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Olympiacos Alimou",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Anorthosis Famagusta",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ionikos Nikaias",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SINS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Paradox",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SINS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-92da5b60",
       "condition": 100,
-      "full_name": "Druxy",
+      "full_name": "Apostolis Kabosos",
       "attributes": {
-        "laning": 65,
         "mechanics": 64,
-        "discipline": 64,
+        "laning": 65,
+        "teamfighting": 62,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 62,
         "champion_pool": 65,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Apostolis Kabosos",
+      "match_name": "Druxy",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -997,749 +285,127 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874054588_Druxy.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/83346584054cb853.webp"
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TT willhaben",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "XAL Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BRUTE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "MS Company",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "UOL Sexy Edition",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "UOL Sexy Edition",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BRUTE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ROSSMANN Centaurs",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Lille Esport",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "attributes": {
-        "laning": 73,
         "mechanics": 68,
-        "discipline": 75,
+        "laning": 73,
+        "teamfighting": 72,
         "macro_play": 71,
         "consistency": 70,
         "shotcalling": 68,
-        "teamfighting": 72,
         "champion_pool": 71,
+        "discipline": 75,
         "mental_resilience": 74
       },
       "id": "player-58912b88",
-      "match_name": "Gia Huy Khuat",
-      "full_name": "Addusto",
-      "date_of_birth": "2005-12-16",
-      "nationality": "DE",
-      "profile_image_url": "/player-photos/1779874104656_Addusto.webp",
+      "match_name": "Addusto",
+      "full_name": "Gia Huy Khuat",
       "position": "Top",
-      "natural_position": "Top",
-      "alternate_positions": [],
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-34f5f8b3",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "DE",
+      "date_of_birth": "2005-12-16",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/76cb9d19419c2b19.webp"
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Movistar Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Stormbringers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Movistar Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Origen SB",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Astralis SB",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "AYM Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wild Panthers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Atletec",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wild Panthers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "IziDream",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Esprit Shōnen",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "IziDream",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Esprit Shōnen",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "attributes": {
-        "laning": 69,
         "mechanics": 72,
-        "discipline": 70,
+        "laning": 69,
+        "teamfighting": 69,
         "macro_play": 75,
         "consistency": 71,
         "shotcalling": 72,
-        "teamfighting": 69,
         "champion_pool": 70,
+        "discipline": 70,
         "mental_resilience": 70
       },
       "loan_listed": false,
       "transfer_listed": false,
       "id": "player-6d2ca6cd",
-      "match_name": "Sergi Señé Molist",
-      "full_name": "CRoNiiK",
-      "date_of_birth": "2002-01-01",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779874027647_CRoNiiK.webp",
+      "match_name": "CRoNiiK",
+      "full_name": "Sergi Señé Molist",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "alternate_positions": [],
-      "condition": 100,
-      "morale": 100,
-      "fitness": 100,
       "team_id": "team-34f5f8b3",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "ES",
+      "date_of_birth": "2002-01-01",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/b08a57de62e7b170.webp"
     },
     {
       "id": "player-70b58dd0",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2013,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Empire",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2014,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Empire",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2014,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Just",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2015,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Just",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2017,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Just.ICE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Just",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dragon Army",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "M19",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Just",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dragon Army",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gambit Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "RoX",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Beşiktaş Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gambit Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Unicorns of Love",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Cyberground",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Unicorns of Love",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "UOL Sexy Edition",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Rebels Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "UOL Sexy Edition",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BIG",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Rebels Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "IziDream",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Bushido Wildcats",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Lekcyc",
+      "full_name": "Alexander Leksikov",
       "attributes": {
-        "laning": 66,
         "mechanics": 64,
-        "discipline": 64,
+        "laning": 66,
+        "teamfighting": 64,
         "macro_play": 67,
         "consistency": 67,
         "shotcalling": 60,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Alexander Leksikov",
-      "date_of_birth": "1996-07-24",
-      "nationality": "RU",
-      "profile_image_url": "/player-photos/1779874120925_Lekcyc.webp",
+      "match_name": "Lekcyc",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-34f5f8b3",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "RU",
+      "date_of_birth": "1996-07-24",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/9b0f8bee536a5539.webp"
     },
     {
       "id": "player-7190040f",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Flama Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Flama Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NYYRIKKI",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NYYRIKKI",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Misa Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "RNL ROAR",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Villarreal QLASH",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Akroma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Misa Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Project Conquerors",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Abagnale",
+      "full_name": "Yusuf&#160;Semih Bilir",
       "attributes": {
-        "laning": 64,
         "mechanics": 65,
-        "discipline": 66,
+        "laning": 64,
+        "teamfighting": 65,
         "macro_play": 66,
         "consistency": 65,
         "shotcalling": 59,
-        "teamfighting": 65,
         "champion_pool": 64,
+        "discipline": 66,
         "mental_resilience": 65
       },
-      "match_name": "Yusuf&#160;Semih Bilir",
-      "date_of_birth": null,
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779874057766_Abagnale.webp",
+      "match_name": "Abagnale",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-92da5b60",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "TR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/efdce75c121c62fc.webp"
     },
     {
       "id": "player-72d33bdb",
@@ -1752,14 +418,14 @@
       "condition": 100,
       "full_name": "GaraXy",
       "attributes": {
-        "laning": 64,
         "mechanics": 62,
-        "discipline": 65,
+        "laning": 64,
+        "teamfighting": 68,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 68,
         "champion_pool": 61,
+        "discipline": 65,
         "mental_resilience": 65
       },
       "match_name": "GaraXy",
@@ -1772,81 +438,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-73e94a07",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamers404",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Axolotl",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-92da5b60",
       "condition": 100,
-      "full_name": "Elix1r",
+      "full_name": "Aggelos Kosterias",
       "attributes": {
-        "laning": 66,
         "mechanics": 65,
-        "discipline": 64,
+        "laning": 66,
+        "teamfighting": 62,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 62,
         "champion_pool": 64,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Aggelos Kosterias",
+      "match_name": "Elix1r",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -1856,270 +475,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2007-10-04",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874048249_Elix1r.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2007-10-04",
+      "stats": {},
+      "profile_image_url": "/player-photos/811a727b8ab5b385.webp"
     },
     {
       "id": "player-81bb6359",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2018,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Akademia",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Akademia",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BloodRain",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Fluffy Tail",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Katastrofa Awionetki",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PRIDE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "QLASH Forge",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "x25 Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "7more7",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "7more7 Pompa",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "7more7 White",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "AGO ROGUE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "FALKN",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Pompa Team Acad.",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vitality.Bee",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "7more7 Pompa",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "G2 Arctic",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PDW",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "G2 Arctic",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Zero Tenacity",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Zero Tenacity",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Macko Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Macko Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Anubis Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-34f5f8b3",
       "condition": 100,
-      "full_name": "Color",
+      "full_name": "Sebastian Czyżyk",
       "attributes": {
-        "laning": 65,
         "mechanics": 66,
-        "discipline": 68,
+        "laning": 65,
+        "teamfighting": 68,
         "macro_play": 67,
         "consistency": 67,
         "shotcalling": 60,
-        "teamfighting": 68,
         "champion_pool": 63,
+        "discipline": 68,
         "mental_resilience": 66
       },
-      "match_name": "Sebastian Czyżyk",
+      "match_name": "Color",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -2129,90 +512,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2000-12-06",
-      "nationality": "PL",
-      "profile_image_url": "/player-photos/1779874026057_Color.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": "2000-12-06",
+      "stats": {},
+      "profile_image_url": "/player-photos/5a24281739b18f58.webp"
     },
     {
       "id": "player-81e016be",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BERZLOY",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "REDPack Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Secret Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ALMO Players",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "REDPack Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-b2dec67c",
       "condition": 100,
-      "full_name": "Azu (Robert Jarcu)",
+      "full_name": "Robert Jarcu",
       "attributes": {
-        "laning": 60,
         "mechanics": 64,
-        "discipline": 64,
+        "laning": 60,
+        "teamfighting": 66,
         "macro_play": 60,
         "consistency": 60,
         "shotcalling": 60,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 64,
         "mental_resilience": 62
       },
-      "match_name": "Robert Jarcu",
+      "match_name": "Azu (Robert Jarcu)",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -2222,290 +549,64 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-05-23",
-      "nationality": "RO",
-      "profile_image_url": "/player-photos/1779874056984_Azu__Robert_Jarcu_.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RO",
+      "date_of_birth": "2004-05-23",
+      "stats": {},
+      "profile_image_url": "/player-photos/3bb7c2ad1fd31206.webp"
     },
     {
       "id": "player-8717e0db",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "4Elements Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "4Elements Scuttle Squad",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PSV Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PSV Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dynasty",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "mCon esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZennIT",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "eSports Cologne",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "mCon esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Myth Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GMBLERS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "mCon esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Senshi eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "6GPA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Reveal Multigaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SixSeven",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The ParadOx",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Mahonix",
+      "full_name": "Anthonie van Bemmelen",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 65,
+        "laning": 66,
+        "teamfighting": 65,
         "macro_play": 67,
         "consistency": 66,
         "shotcalling": 60,
-        "teamfighting": 65,
         "champion_pool": 63,
+        "discipline": 65,
         "mental_resilience": 66
       },
-      "match_name": "Anthonie van Bemmelen",
-      "date_of_birth": "2002-03-20",
-      "nationality": "NL",
-      "profile_image_url": "/player-photos/1779874007799_Mahonix.webp",
+      "match_name": "Mahonix",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-86bb25d6",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "NL",
+      "date_of_birth": "2002-03-20",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/989784f48a66fcab.webp"
     },
     {
       "id": "player-8959e40e",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ambys Team",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "SINS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-34f5f8b3",
       "condition": 100,
-      "full_name": "Drofan",
+      "full_name": "Avraam Tsakiridis",
       "attributes": {
-        "laning": 67,
         "mechanics": 67,
-        "discipline": 64,
+        "laning": 67,
+        "teamfighting": 66,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Avraam Tsakiridis",
+      "match_name": "Drofan",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -2515,21 +616,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2005-06-03",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874108087_Drofan.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2005-06-03",
+      "stats": {},
+      "profile_image_url": "/player-photos/1c05c98558a5f566.webp"
     },
     {
       "id": "player-89b58605",
@@ -2542,14 +633,14 @@
       "condition": 100,
       "full_name": "Alex",
       "attributes": {
-        "laning": 64,
         "mechanics": 64,
-        "discipline": 65,
+        "laning": 64,
+        "teamfighting": 64,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 60,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 65,
         "mental_resilience": 65
       },
       "match_name": "Alex",
@@ -2562,167 +653,41 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "FR",
-      "profile_image_url": null,
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "FR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-912c10cc",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Convict of Shadows",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Convict of Shadows",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Spawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "42 Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "42 Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "New Era",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Howl Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Speedy1",
+      "full_name": "Loukas Prekas",
       "attributes": {
-        "laning": 68,
         "mechanics": 68,
-        "discipline": 68,
+        "laning": 68,
+        "teamfighting": 68,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 65,
-        "teamfighting": 68,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 68
       },
-      "match_name": "Loukas Prekas",
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874026553_Speedy1.webp",
+      "match_name": "Speedy1",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-2e0c08a9",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "GR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/27a21f08bbb442b5.webp"
     },
     {
       "id": "player-939bf4aa",
@@ -2735,14 +700,14 @@
       "condition": 100,
       "full_name": "SM",
       "attributes": {
-        "laning": 64,
         "mechanics": 64,
-        "discipline": 66,
+        "laning": 64,
+        "teamfighting": 64,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 66,
         "mental_resilience": 65
       },
       "match_name": "SM",
@@ -2755,326 +720,64 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": null,
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-97f6c89d",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Abyssal E.C.",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Phlox Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dream Makers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Erfolg Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "PDK Sideral",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Erfolg Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Guinea Pink",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Tan'i eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZETA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZETA",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "EscoX",
+      "full_name": "Javier Escobedo Sevilla",
       "attributes": {
-        "laning": 62,
         "mechanics": 60,
-        "discipline": 65,
+        "laning": 62,
+        "teamfighting": 63,
         "macro_play": 64,
         "consistency": 62,
         "shotcalling": 60,
-        "teamfighting": 63,
         "champion_pool": 64,
+        "discipline": 65,
         "mental_resilience": 63
       },
-      "match_name": "Javier Escobedo Sevilla",
-      "date_of_birth": "1999-06-23",
-      "nationality": "ES",
-      "profile_image_url": "/player-photos/1779874043067_EscoX.webp",
+      "match_name": "EscoX",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-ca24ae43",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "ES",
+      "date_of_birth": "1999-06-23",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/5fc00d9622116cfc.webp"
     },
     {
       "id": "player-9996ddf4",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gaming Hive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "CBS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Genji",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crvena zvezda",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hive Athens",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Cyber Wolves",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "AF willhaben",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-34f5f8b3",
       "condition": 100,
-      "full_name": "Vaynedeta",
+      "full_name": "Stavros Giannoulakis",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 66,
+        "laning": 66,
+        "teamfighting": 66,
         "macro_play": 66,
         "consistency": 66,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 66,
         "mental_resilience": 66
       },
-      "match_name": "Stavros Giannoulakis",
+      "match_name": "Vaynedeta",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3084,21 +787,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2001-09-27",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874030814_Vaynedeta.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2001-09-27",
+      "stats": {},
+      "profile_image_url": "/player-photos/0105fe8151a9c1d8.webp"
     },
     {
       "id": "player-9da643ae",
@@ -3111,14 +804,14 @@
       "condition": 100,
       "full_name": "Matixx",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 67,
+        "laning": 66,
+        "teamfighting": 65,
         "macro_play": 65,
         "consistency": 66,
         "shotcalling": 60,
-        "teamfighting": 65,
         "champion_pool": 65,
+        "discipline": 67,
         "mental_resilience": 66
       },
       "match_name": "Matixx",
@@ -3131,21 +824,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "PL",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PL",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-a435f989",
@@ -3158,14 +841,14 @@
       "condition": 100,
       "full_name": "Septico1",
       "attributes": {
-        "laning": 64,
         "mechanics": 64,
-        "discipline": 65,
+        "laning": 64,
+        "teamfighting": 65,
         "macro_play": 62,
         "consistency": 64,
         "shotcalling": 60,
-        "teamfighting": 65,
         "champion_pool": 63,
+        "discipline": 65,
         "mental_resilience": 65
       },
       "match_name": "Septico1",
@@ -3178,216 +861,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "RO",
-      "profile_image_url": null,
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "RO",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-a45f1314",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Aris Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Auxesis Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dawn of Stars",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Rocket",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The Spawn",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Game Changers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NLD eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hell Zerolag Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Cyber Wolves",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-34f5f8b3",
       "condition": 100,
-      "full_name": "Peppe",
+      "full_name": "Petros Berdebes",
       "attributes": {
-        "laning": 68,
         "mechanics": 66,
-        "discipline": 66,
+        "laning": 68,
+        "teamfighting": 66,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 66,
         "mental_resilience": 66
       },
-      "match_name": "Petros Berdebes",
+      "match_name": "Peppe",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3397,153 +898,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-07-19",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874029345_Peppe.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2002-07-19",
+      "stats": {},
+      "profile_image_url": "/player-photos/89d2ec1843213347.webp"
     },
     {
       "id": "player-aa415602",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Europe Saviors Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Cidade Curiosa",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GeekCase eSports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Odivelas Sports Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Leões Porto Salvo",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ZeroZone Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Keypulse Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Leões Porto Salvo",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Keypulse Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The ParadOx",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-86bb25d6",
       "condition": 100,
-      "full_name": "D4rtaine",
+      "full_name": "David Pires",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 68,
+        "laning": 66,
+        "teamfighting": 66,
         "macro_play": 66,
         "consistency": 66,
         "shotcalling": 60,
-        "teamfighting": 66,
         "champion_pool": 64,
+        "discipline": 68,
         "mental_resilience": 67
       },
-      "match_name": "David Pires",
+      "match_name": "D4rtaine",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3553,135 +935,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-05-18",
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779873984525_D4rtaine.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "PT",
+      "date_of_birth": "2004-05-18",
+      "stats": {},
+      "profile_image_url": "/player-photos/93bf271cf2a60951.webp"
     },
     {
       "id": "player-ad8acba1",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "5 Ronin Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Angry Bats",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Chasing Haze 07",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NASR Turkey",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ruddy Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crvena zvezda",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Zerance",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Bushido Wildcats",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-34f5f8b3",
       "condition": 100,
-      "full_name": "Alix",
+      "full_name": "Alihan Özdemir",
       "attributes": {
-        "laning": 67,
         "mechanics": 66,
-        "discipline": 67,
+        "laning": 67,
+        "teamfighting": 67,
         "macro_play": 67,
         "consistency": 68,
         "shotcalling": 59,
-        "teamfighting": 67,
         "champion_pool": 65,
+        "discipline": 67,
         "mental_resilience": 66
       },
-      "match_name": "Alihan Özdemir",
+      "match_name": "Alix",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3691,63 +972,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2006-08-14",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779874112015_Alix.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": "2006-08-14",
+      "stats": {},
+      "profile_image_url": "/player-photos/df4d0e076496e5e1.webp"
     },
     {
       "id": "player-b4598e15",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "The ParadOx",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-86bb25d6",
       "condition": 100,
-      "full_name": "Leon (Leonidas Vogiatzis)",
+      "full_name": "Leonidas Vogiatzis",
       "attributes": {
-        "laning": 66,
         "mechanics": 66,
-        "discipline": 68,
+        "laning": 66,
+        "teamfighting": 66,
         "macro_play": 66,
         "consistency": 66,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 64,
+        "discipline": 68,
         "mental_resilience": 67
       },
-      "match_name": "Leonidas Vogiatzis",
+      "match_name": "Leon (Leonidas Vogiatzis)",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3757,117 +1009,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779873987947_Leon__Leonidas_Vogiatzis_.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/d2a830fb90ffea1d.webp"
     },
     {
       "id": "player-be301281",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Zhonyas Revolution",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "FoxFire",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Insidious",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-34f5f8b3",
       "condition": 100,
-      "full_name": "Nikiyas",
+      "full_name": "Nikitas Stefanakis",
       "attributes": {
-        "laning": 64,
         "mechanics": 64,
-        "discipline": 64,
+        "laning": 64,
+        "teamfighting": 64,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Nikitas Stefanakis",
+      "match_name": "Nikiyas",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -3877,126 +1046,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2001-05-09",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874113326_Nikiyas.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2001-05-09",
+      "stats": {},
+      "profile_image_url": "/player-photos/6165522871065075.webp"
     },
     {
       "id": "player-c217cfa2",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Pentagon Maze",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ionikos Nikaias",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Pentagon Maze",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hell Zerolag Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-2e0c08a9",
       "condition": 100,
-      "full_name": "Pallet",
+      "full_name": "Angelos Visvikis",
       "attributes": {
-        "laning": 68,
         "mechanics": 68,
-        "discipline": 68,
+        "laning": 68,
+        "teamfighting": 68,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 65,
-        "teamfighting": 68,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 68
       },
-      "match_name": "Angelos Visvikis",
+      "match_name": "Pallet",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -4006,362 +1083,64 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-06-21",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874015489_Pallet.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2003-06-21",
+      "stats": {},
+      "profile_image_url": "/player-photos/009244dd4f18d254.webp"
     },
     {
       "id": "player-c7f9cd49",
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EGN Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Boavista FC",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EGN Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Boavista FC",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "QLASH Spain",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EGN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Cyber Wolves",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EGN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GMBLERS Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Leões Porto Salvo",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ALMO Players",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vantex Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "morale": 100,
       "fitness": 100,
       "condition": 100,
-      "full_name": "Tochas",
+      "full_name": "Duarte Martins Vieira",
       "attributes": {
-        "laning": 62,
         "mechanics": 62,
-        "discipline": 65,
+        "laning": 62,
+        "teamfighting": 64,
         "macro_play": 64,
         "consistency": 62,
         "shotcalling": 60,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 65,
         "mental_resilience": 63
       },
-      "match_name": "Duarte Martins Vieira",
-      "date_of_birth": "2004-06-02",
-      "nationality": "PT",
-      "profile_image_url": "/player-photos/1779874058356_Tochas.webp",
+      "match_name": "Tochas",
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-b2dec67c",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "PT",
+      "date_of_birth": "2004-06-02",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/6d34b43ae9dcf1cd.webp"
     },
     {
       "id": "player-cba3d205",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Anorthosis Revolution",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "NVision Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TP Community",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Lundqvist Lightside",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Project Sinners",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Lundqvist Lightside",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wild Panthers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ankora Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wild Panthers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hell Zerolag Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Howl Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ALMO Players",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Howl Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-ca24ae43",
       "condition": 100,
-      "full_name": "Faded (Anastasios Koutsouras)",
+      "full_name": "Anastasios Koutsouras",
       "attributes": {
-        "laning": 62,
         "mechanics": 62,
-        "discipline": 68,
+        "laning": 62,
+        "teamfighting": 66,
         "macro_play": 62,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 66
       },
-      "match_name": "Anastasios Koutsouras",
+      "match_name": "Faded (Anastasios Koutsouras)",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -4371,191 +1150,27 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-07-21",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874040382_Faded__Anastasios_Koutsouras_.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2004-07-21",
+      "stats": {},
+      "profile_image_url": "/player-photos/96b3a1aa4c83f945.webp"
     },
     {
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Giants Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Abyssal E.C.",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Kawaii Kiwis",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Abyssal E.C.",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "BCN Squad",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Zeta Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Case Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Case Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": "lrn-icon-esports",
-          "team_name": "Icon Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Heracles Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Melilla Fortune",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": "lrn-icon-esports",
-          "team_name": "Icon Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Falke Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GLORE.FIFINE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": "lrn-icon-esports",
-          "team_name": "Icon Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vantex Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "condition": 100,
       "attributes": {
-        "laning": 63,
         "mechanics": 62,
-        "discipline": 64,
+        "laning": 63,
+        "teamfighting": 66,
         "macro_play": 64,
         "consistency": 65,
         "shotcalling": 62,
-        "teamfighting": 66,
         "champion_pool": 60,
+        "discipline": 64,
         "mental_resilience": 62
       },
       "loan_listed": false,
@@ -4563,30 +1178,16 @@
       "potential_base": 77,
       "transfer_listed": false,
       "id": "player-cea7803b",
-      "match_name": "Ignacio David Piaggio",
-      "full_name": "Ace (Ignacio David Piaggio)",
-      "date_of_birth": "2007-04-18",
-      "nationality": "CU",
-      "profile_image_url": "/player-photos/1779874041876_Ace__Ignacio_David_Piaggio_.webp",
+      "match_name": "Ace (Ignacio David Piaggio)",
+      "full_name": "Ignacio David Piaggio",
       "position": "ADC",
-      "natural_position": "ADC",
-      "alternate_positions": [],
       "team_id": "team-ca24ae43",
-      "traits": [],
+      "nationality": "CU",
+      "date_of_birth": "2007-04-18",
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_offers": [],
-      "morale_core": {},
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": "/player-photos/5af23a8cf080b54c.webp"
     },
     {
       "id": "player-cf100a02",
@@ -4599,14 +1200,14 @@
       "condition": 100,
       "full_name": "Nikolex",
       "attributes": {
-        "laning": 65,
         "mechanics": 64,
-        "discipline": 65,
+        "laning": 65,
+        "teamfighting": 66,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 65,
-        "teamfighting": 66,
         "champion_pool": 65,
+        "discipline": 65,
         "mental_resilience": 65
       },
       "match_name": "Nikolex",
@@ -4619,99 +1220,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": null,
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-d7451d6f",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Zhonyas Revolution",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Comanchero Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Actions Per Minute",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "One More Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-ca24ae43",
       "condition": 100,
-      "full_name": "Loading",
+      "full_name": "Berkay Çelebi",
       "attributes": {
-        "laning": 62,
         "mechanics": 62,
-        "discipline": 60,
+        "laning": 62,
+        "teamfighting": 62,
         "macro_play": 62,
         "consistency": 60,
         "shotcalling": 59,
-        "teamfighting": 62,
         "champion_pool": 63,
+        "discipline": 60,
         "mental_resilience": 60
       },
-      "match_name": "Berkay Çelebi",
+      "match_name": "Loading",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -4721,171 +1257,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-10-16",
-      "nationality": "TR",
-      "profile_image_url": "/player-photos/1779874037798_Loading.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "TR",
+      "date_of_birth": "2003-10-16",
+      "stats": {},
+      "profile_image_url": "/player-photos/0553d584e9ded143.webp"
     },
     {
       "id": "player-da31c731",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TP Community",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wild Panthers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hell Zerolag Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "EYA X Prestige",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GTZ Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Phantasma",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Eintracht Frankfurt",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Howl Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "One More Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Ramboot Club",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-2e0c08a9",
       "condition": 100,
-      "full_name": "Unkn0wn5",
+      "full_name": "Paraskevas Fragkos",
       "attributes": {
-        "laning": 68,
         "mechanics": 68,
-        "discipline": 68,
+        "laning": 68,
+        "teamfighting": 68,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 65,
-        "teamfighting": 68,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 68
       },
-      "match_name": "Paraskevas Fragkos",
+      "match_name": "Unkn0wn5",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -4895,207 +1294,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874024190_Unkn0wn5.webp",
       "position": "ADC",
-      "natural_position": "ADC",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/bd5b71fe17ee57a0.webp"
     },
     {
       "id": "player-da5ed41c",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2019,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gaming Hive",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Genji",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "CBI Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crvena zvezda",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hive Athens",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Olympiacos Alimou",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Crvena zvezda",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Olympiacos Alimou",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Olympus Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wizards",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Wizards",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "LUA Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Stormbringers",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-2e0c08a9",
       "condition": 100,
-      "full_name": "Tsiperakos",
+      "full_name": "Vasilis Lalas",
       "attributes": {
-        "laning": 68,
         "mechanics": 68,
-        "discipline": 68,
+        "laning": 68,
+        "teamfighting": 68,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 65,
-        "teamfighting": 68,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 68
       },
-      "match_name": "Vasilis Lalas",
+      "match_name": "Tsiperakos",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -5105,54 +1331,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-09-27",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874019850_Tsiperakos.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2002-09-27",
+      "stats": {},
+      "profile_image_url": "/player-photos/fdb2098b52880e2c.webp"
     },
     {
       "id": "player-dc41310e",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ALMO Players",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-b2dec67c",
       "condition": 100,
-      "full_name": "Ambush",
+      "full_name": "Panagiotis Thymio",
       "attributes": {
-        "laning": 58,
         "mechanics": 59,
-        "discipline": 61,
+        "laning": 58,
+        "teamfighting": 58,
         "macro_play": 60,
         "consistency": 59,
         "shotcalling": 65,
-        "teamfighting": 58,
         "champion_pool": 60,
+        "discipline": 61,
         "mental_resilience": 64
       },
-      "match_name": "Panagiotis Thymio",
+      "match_name": "Ambush",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -5162,117 +1368,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2002-01-08",
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874052017_Ambush.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": "2002-01-08",
+      "stats": {},
+      "profile_image_url": "/player-photos/9fc815ae4e5460a7.webp"
     },
     {
       "id": "player-e4a6342d",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Dragon Army",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "DREN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "ENEMI3S",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Esprit Shōnen",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "aNc Outplayed",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Esprit Shōnen",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "FN Esports",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-92da5b60",
       "condition": 100,
-      "full_name": "KPr",
+      "full_name": "Maxim Grebonos",
       "attributes": {
-        "laning": 68,
         "mechanics": 67,
-        "discipline": 60,
+        "laning": 68,
+        "teamfighting": 65,
         "macro_play": 66,
         "consistency": 68,
         "shotcalling": 60,
-        "teamfighting": 65,
         "champion_pool": 61,
+        "discipline": 60,
         "mental_resilience": 63
       },
-      "match_name": "Maxim Grebonos",
+      "match_name": "KPr",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -5282,117 +1405,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2003-04-19",
-      "nationality": "MD",
-      "profile_image_url": "/player-photos/1779874044432_KPr.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "MD",
+      "date_of_birth": "2003-04-19",
+      "stats": {},
+      "profile_image_url": "/player-photos/f8237894c85ba8de.webp"
     },
     {
       "id": "player-e66132bd",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hive Athens",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Hive Athens Academy",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Intrepid Fox",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Spartans EU",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Team Refuse",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Gamespace MCE",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-ca24ae43",
       "condition": 100,
-      "full_name": "Fame",
+      "full_name": "Vasilis Amiridis",
       "attributes": {
-        "laning": 62,
         "mechanics": 62,
-        "discipline": 67,
+        "laning": 62,
+        "teamfighting": 64,
         "macro_play": 60,
         "consistency": 60,
         "shotcalling": 65,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 67,
         "mental_resilience": 66
       },
-      "match_name": "Vasilis Amiridis",
+      "match_name": "Fame",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -5402,171 +1442,34 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": "/player-photos/1779874038990_Fame.webp",
       "position": "Jungle",
-      "natural_position": "Jungle",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "GR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/7b14b02d1833b00f.webp"
     },
     {
       "id": "player-82f8e30c",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nordavind Talent",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2020,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vanir",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "00 Nation",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Guasones",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nordavind Talent",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2021,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Vanir",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2022,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Guasones",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Lille Esport",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Fox Gaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Nativz",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TeamOrangeGaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "TeamOrangeGaming",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "A One Man Army",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "WLGaming Esports",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-2e0c08a9",
       "condition": 100,
-      "full_name": "Smurfe",
+      "full_name": "Felix Rivedal Hylleseth",
       "attributes": {
-        "laning": 68,
         "mechanics": 68,
-        "discipline": 68,
+        "laning": 68,
+        "teamfighting": 68,
         "macro_play": 68,
         "consistency": 68,
         "shotcalling": 60,
-        "teamfighting": 68,
         "champion_pool": 65,
+        "discipline": 68,
         "mental_resilience": 68
       },
-      "match_name": "Felix Rivedal Hylleseth",
+      "match_name": "Smurfe",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -5576,21 +1479,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": "2004-09-27",
-      "nationality": "NO",
-      "profile_image_url": "/player-photos/1779874014042_Smurfe.webp",
       "position": "Top",
-      "natural_position": "Top",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "NO",
+      "date_of_birth": "2004-09-27",
+      "stats": {},
+      "profile_image_url": "/player-photos/5b1387bdc3e7b165.webp"
     },
     {
       "id": "player-eab83b8b",
@@ -5600,112 +1493,50 @@
       "condition": 100,
       "full_name": "Lagas",
       "attributes": {
-        "laning": 65,
         "mechanics": 64,
-        "discipline": 65,
+        "laning": 65,
+        "teamfighting": 64,
         "macro_play": 64,
         "consistency": 66,
         "shotcalling": 65,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 65,
         "mental_resilience": 65
       },
       "match_name": "Lagas",
-      "date_of_birth": null,
-      "nationality": "GR",
-      "profile_image_url": null,
       "position": "Support",
-      "natural_position": "Support",
-      "alternate_positions": [],
       "team_id": "team-8aeeec01",
-      "traits": [],
-      "contract_end": "",
+      "nationality": "GR",
+      "date_of_birth": null,
       "wage": 0,
       "market_value": 0,
-      "stats": {
-        "appearances": 0
-      },
-      "champion_mastery": [],
-      "training_focus": null,
-      "transfer_listed": false,
-      "loan_listed": false,
-      "transfer_offers": [],
-      "morale_core": {},
+      "contract_end": "",
       "potential_base": 0,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "stats": {},
+      "profile_image_url": null
     },
     {
       "id": "player-fb63ac1b",
       "wage": 0,
-      "career": [
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2023,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "MS Company",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2024,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Zerance",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Project Conquerors",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2025,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "Zerance",
-          "appearances": 0
-        },
-        {
-          "kills": 0,
-          "deaths": 0,
-          "season": 2026,
-          "assists": 0,
-          "team_id": null,
-          "team_name": "GOAL",
-          "appearances": 0
-        }
-      ],
+      "career": [],
       "injury": null,
       "morale": 100,
       "fitness": 100,
       "team_id": "team-92da5b60",
       "condition": 100,
-      "full_name": "Kuroneel",
+      "full_name": "Romain Poilane",
       "attributes": {
-        "laning": 62,
         "mechanics": 67,
-        "discipline": 64,
+        "laning": 62,
+        "teamfighting": 64,
         "macro_play": 64,
         "consistency": 64,
         "shotcalling": 60,
-        "teamfighting": 64,
         "champion_pool": 63,
+        "discipline": 64,
         "mental_resilience": 65
       },
-      "match_name": "Romain Poilane",
+      "match_name": "Kuroneel",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -5715,21 +1546,11 @@
       "transfer_offers": [],
       "champion_mastery": [],
       "alternate_positions": [],
-      "date_of_birth": null,
-      "nationality": "FR",
-      "profile_image_url": "/player-photos/1779874050223_Kuroneel.webp",
       "position": "Mid",
-      "natural_position": "Mid",
-      "traits": [],
-      "stats": {
-        "appearances": 0
-      },
-      "training_focus": null,
-      "potential_revealed": null,
-      "potential_research_started_on": null,
-      "potential_research_eta_days": null,
-      "champion_training_targets": [],
-      "can_be_transferred_until": null
+      "nationality": "FR",
+      "date_of_birth": null,
+      "stats": {},
+      "profile_image_url": "/player-photos/ef2a9b88faed4b09.webp"
     }
   ]
 }

@@ -280,6 +280,7 @@ pub struct CompetitionSummary {
     pub region: String,
     #[serde(default)]
     pub logo: Option<String>,
+    pub tier: u8,
     pub team_count: u32,
     pub teams: Vec<TeamSummary>,
 }

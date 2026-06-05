@@ -17,7 +17,13 @@ import { Check, ChevronDown } from "lucide-react";
 
 interface SelectProps {
   selectSize?: "xs" | "sm" | "md";
-  variant?: "default" | "subtle" | "muted" | "highlighted" | "placeholder";
+  variant?:
+    | "default"
+    | "subtle"
+    | "muted"
+    | "highlighted"
+    | "placeholder"
+    | "glass";
   dropdownPlacement?: "auto" | "bottom" | "top";
   dropdownClassName?: string;
   icon?: ReactNode;
@@ -235,6 +241,8 @@ export function Select({
       "bg-primary-50 dark:bg-primary-500/10 border-primary-300 dark:border-primary-500/40 text-primary-700 dark:text-primary-300 font-bold",
     placeholder:
       "bg-gray-50 dark:bg-navy-700 border-gray-200 dark:border-navy-600 text-gray-400 dark:text-gray-500",
+    glass:
+      "bg-white/5 border-accent-400/40 text-white hover:bg-white/10 hover:border-accent-400/70",
   };
 
   const sizes = {
