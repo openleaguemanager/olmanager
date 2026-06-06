@@ -1,3 +1,4 @@
+import { supabase } from "../../web/supabase"
 import type { ApiClient } from "../types"
 
 const BASE = "/api"
@@ -23,19 +24,31 @@ function requireSaveId(): string {
   return id
 }
 
+// ─── Auth ────────────────────────────────────────────────────
+
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession()
+  const token = data.session?.access_token
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 // ─── Helpers HTTP ────────────────────────────────────────────
 
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { credentials: "include" })
+  const headers = { ...(await authHeaders()) }
+  const res = await fetch(`${BASE}${path}`, { headers })
   if (!res.ok) throw new Error(`[HttpAdapter] GET ${path} → ${res.status}`)
   return res.json()
 }
 
 async function post<T>(path: string, body?: unknown): Promise<T> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(await authHeaders()),
+  }
   const res = await fetch(`${BASE}${path}`, {
     method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
   if (!res.ok) throw new Error(`[HttpAdapter] POST ${path} → ${res.status}`)
@@ -44,7 +57,8 @@ async function post<T>(path: string, body?: unknown): Promise<T> {
 }
 
 async function del<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { method: "DELETE", credentials: "include" })
+  const headers = { ...(await authHeaders()) }
+  const res = await fetch(`${BASE}${path}`, { method: "DELETE", headers })
   if (!res.ok) throw new Error(`[HttpAdapter] DELETE ${path} → ${res.status}`)
   if (res.status === 204) return undefined as T
   return res.json()
@@ -67,8 +81,9 @@ export const httpAdapter: ApiClient = {
       return result as any
     },
 
-    create: async (name) => {
-      const result = await post<{ id: string } & Record<string, unknown>>("/saves", { name })
+    create: async (name, _manager, data) => {
+      const body = { name, ...(typeof data === "object" && data !== null ? data as Record<string, unknown> : {}) }
+      const result = await post<{ id: string } & Record<string, unknown>>("/saves", body)
       setActiveSaveId(result.id)
       return result as any
     },
