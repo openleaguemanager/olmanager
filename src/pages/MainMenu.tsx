@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { getApiClientSync } from "../api/client";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -37,16 +37,6 @@ import {
   DEFAULT_MANAGER_ICON_PATH,
   MANAGER_ICON_PATHS,
 } from "../lib/common/managerAvatars";
-
-const canUseTauriInvoke = () => {
-  if (import.meta.env.MODE === "test") return true;
-  if (import.meta.env.MODE === "web") return true;
-  if (typeof window === "undefined") return false;
-  const internals = (
-    window as unknown as { __TAURI_INTERNALS__?: { invoke?: unknown } }
-  ).__TAURI_INTERNALS__;
-  return typeof internals?.invoke === "function";
-};
 
 interface SaveEntry {
   id: string;
@@ -329,19 +319,22 @@ export default function MainMenu() {
   const handleStartGame = async () => {
     setIsStarting(true);
     try {
-      if (!canUseTauriInvoke()) {
-        throw new Error(
-          "Backend Tauri no disponible. Cierra cualquier `npm run tauri dev` suelto y ejecutá `npm run tauri dev`.",
-        );
-      }
+      const client = getApiClientSync();
 
-      await invoke<string>("start_new_game_lightweight", {
-        nickname: formData.nickname || null,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        dob: formData.dob,
-        nationality: formData.nationality,
-      });
+      await client.serverCommands.debugLog("start_new_game_lightweight");
+
+      // Save creation uses the HTTP endpoint in web mode, invoke in desktop
+      await client.saves.create(
+        formData.nickname?.trim() || `${formData.firstName} ${formData.lastName}`.trim() || "Career",
+        "",
+        {
+          nickname: formData.nickname || null,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          dob: formData.dob,
+          nationality: formData.nationality,
+        },
+      );
 
       const displayName =
         formData.nickname?.trim() ||
@@ -363,8 +356,9 @@ export default function MainMenu() {
     setMenuState("load");
     setIsLoadingSaves(true);
     try {
-      const dbSaves = await invoke<SaveEntry[]>("get_saves");
-      setSaves(dbSaves);
+      const client = getApiClientSync();
+      const dbSaves = await client.saves.list();
+      setSaves(dbSaves as SaveEntry[]);
     } catch (error) {
       console.error("Failed to load saves:", error);
     } finally {
@@ -376,10 +370,13 @@ export default function MainMenu() {
     console.log("[MainMenu] handleLoadGame start, saveId:", saveId);
     setLoadingSaveId(saveId);
     try {
-      const managerName = await invoke<string>("load_game", { saveId });
-      console.log("[MainMenu] load_game returned, managerName:", managerName);
-      setGameActive(true, managerName);
-      console.log("[MainMenu] setGameActive called, navigating to /dashboard");
+      const client = getApiClientSync();
+      const result = await client.saves.load(saveId);
+      const displayName = (result as any)?.manager?.display_name
+        || (result as any)?.manager?.nickname
+        || `${(result as any)?.manager?.first_name ?? ""} ${(result as any)?.manager?.last_name ?? ""}`.trim()
+        || "Manager";
+      setGameActive(true, displayName);
       navigate("/dashboard");
     } catch (error) {
       console.error("Failed to load game:", error);
@@ -389,7 +386,8 @@ export default function MainMenu() {
 
   const handleDeleteSave = async (saveId: string) => {
     try {
-      await invoke<boolean>("delete_save", { saveId });
+      const client = getApiClientSync();
+      await client.saves.delete(saveId);
       setSaves((prev) => prev.filter((s) => s.id !== saveId));
       setConfirmDeleteId(null);
     } catch (error) {
