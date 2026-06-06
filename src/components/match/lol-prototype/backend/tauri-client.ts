@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { getApiClientSync } from "../../../../api/client";
 
 import type {
   LolSimV1DisposeRequest,
@@ -14,31 +14,31 @@ import type {
 } from "./contract-v1";
 
 export async function lolSimV2Init(request: LolSimV1InitRequest): Promise<LolSimV1StateResponse> {
-  return invoke<LolSimV1StateResponse>("lol_sim_v2_init", { request });
+  return getApiClientSync().sim.init({ request }) as Promise<LolSimV1StateResponse>;
 }
 
 export async function lolSimV2Tick(request: LolSimV1TickRequest): Promise<LolSimV1StateResponse> {
-  return invoke<LolSimV1StateResponse>("lol_sim_v2_tick", { request });
+  return getApiClientSync().sim.tick({ request }) as Promise<LolSimV1StateResponse>;
 }
 
 export async function lolSimV2Reset(request: LolSimV1ResetRequest): Promise<LolSimV1StateResponse> {
-  return invoke<LolSimV1StateResponse>("lol_sim_v2_reset", { request });
+  return getApiClientSync().sim.reset({ request }) as Promise<LolSimV1StateResponse>;
 }
 
 export async function lolSimV2Dispose(request: LolSimV1DisposeRequest): Promise<LolSimV1DisposeResponse> {
-  return invoke<LolSimV1DisposeResponse>("lol_sim_v2_dispose", { request });
+  return getApiClientSync().sim.dispose({ request }) as Promise<LolSimV1DisposeResponse>;
 }
 
 export async function lolSimV2RunToCompletion(
   request: LolSimV1RunToCompletionRequest,
 ): Promise<LolSimV1RunToCompletionResponse> {
-  return invoke<LolSimV1RunToCompletionResponse>("lol_sim_v2_run_to_completion", { request });
+  return getApiClientSync().sim.runToCompletion({ request }) as Promise<LolSimV1RunToCompletionResponse>;
 }
 
 export async function lolSimV2SkipToEnd(
   request: LolSimV1SkipToEndRequest,
 ): Promise<LolSimV1SkipToEndResponse> {
-  return invoke<LolSimV1SkipToEndResponse>("lol_sim_v2_skip_to_end", { request });
+  return getApiClientSync().sim.skipToEnd({ request }) as Promise<LolSimV1SkipToEndResponse>;
 }
 
 function createSessionId() {
