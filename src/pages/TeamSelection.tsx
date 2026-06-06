@@ -175,7 +175,7 @@ async function apiPost<T>(pathOrCmd: string, body?: Record<string, unknown>): Pr
   const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: JSON.stringify(body ?? {}),
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }))
