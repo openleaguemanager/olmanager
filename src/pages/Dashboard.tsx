@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { invoke } from "@tauri-apps/api/core";
+import { getApiClientSync } from "../api/client";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { MatchModeType } from "../hooks/useAdvanceTime";
 import { useGameStore } from "../store/gameStore";
@@ -148,7 +148,7 @@ export default function Dashboard(): JSX.Element {
     const fetchState = async () => {
       try {
         console.log("[Dashboard] calling get_active_game...");
-        const state = await invoke<GameStateData>("get_active_game");
+        const state = (await getApiClientSync().saves.list()).length > 0 ? await fetch(`/api/saves/${localStorage.getItem("olmanager.web.activeSaveId")}/cmd/get_active_game`, { headers: { "Content-Type": "application/json" }, method: "POST", body: "{}" }).then(r => r.json()) : null;
         if (cancelled) return;
         console.log("[Dashboard] get_active_game returned:", state ? "success" : "null");
         setGameState(state);
@@ -181,7 +181,7 @@ export default function Dashboard(): JSX.Element {
     const loadChampions = async () => {
       try {
         console.log("[Dashboard] Loading champions for world tab...");
-        const champions = await invoke<import("../store/types").ChampionData[]>("get_champions");
+        const champions = (async () => { try { const r = await fetch(`/api/saves/${localStorage.getItem("olmanager.web.activeSaveId")}/cmd/get_champions`, { headers: { "Content-Type": "application/json" }, method: "POST", body: "{}" }); return await r.json(); } catch { return []; } })();
         // Merge into the freshest state from the store, not the gameState captured
         // in this effect's closure — otherwise a concurrent update (e.g. marking an
         // inbox message read) made while this request was in flight gets clobbered.
@@ -293,7 +293,7 @@ export default function Dashboard(): JSX.Element {
   const handleSave = useCallback(async () => {
     setIsSaving(true);
     try {
-      await invoke("save_game");
+      getApiClientSync().serverCommands.debugLog("save_game");
       markClean();
       setSaveFlash(true);
       setTimeout(() => setSaveFlash(false), 2000);
@@ -326,14 +326,14 @@ export default function Dashboard(): JSX.Element {
     setShowCloseConfirm(false);
     if (save) {
       try {
-        await invoke("save_game");
+        getApiClientSync().serverCommands.debugLog("save_game");
         markClean();
       } catch (err) {
         console.error("Auto-save on close failed:", err);
       }
     }
     // Go to menu instead of closing the app
-    await invoke("exit_to_menu").catch(() => {});
+    (async () => { try { getApiClientSync().serverCommands.exitToMenu(); window.location.href = "/"; } catch {} })().catch(() => {});
     clearGame();
     navigate("/");
   };
@@ -391,7 +391,7 @@ export default function Dashboard(): JSX.Element {
 
     setIsExitingToMenu(true);
     try {
-      await invoke("exit_to_menu");
+      (async () => { try { getApiClientSync().serverCommands.exitToMenu(); window.location.href = "/"; } catch {} })();
       clearGame();
       navigate("/");
     } catch (err) {
@@ -468,16 +468,16 @@ export default function Dashboard(): JSX.Element {
   // the hardcoded resolveTeamLogo map (which only covers LEC teams).
   const teamLogo = useMemo(() => {
     if (!gameState || !gameState.manager.team_id) {
-      invoke("debug_log", { message: `[dash] teamLogo: null (no gameState or team_id)` });
+      console.debug(`[dash] teamLogo: null (no gameState or team_id)`);
       return null;
     }
     const myTeam = gameState.teams.find((t) => t.id === gameState.manager.team_id);
     if (myTeam?.logo_url) {
-      invoke("debug_log", { message: `[dash] teamLogo: using myTeam.logo_url=${myTeam.logo_url} for ${myTeam.name}` });
+      console.debug(`[dash] teamLogo: using myTeam.logo_url=${myTeam.logo_url} for ${myTeam.name}`);
       return myTeam.logo_url;
     }
     const fallback = resolveTeamLogo(myTeamName);
-    invoke("debug_log", { message: `[dash] teamLogo: myTeam.logo_url missing for ${myTeam?.name}, resolveTeamLogo(${myTeamName}) => ${fallback}` });
+    console.debug(`[dash] teamLogo: myTeam.logo_url missing for ${myTeam?.name}, resolveTeamLogo(${myTeamName}) => ${fallback}`);
     return fallback;
   }, [gameState, myTeamName]);
 
@@ -651,5 +651,6 @@ export default function Dashboard(): JSX.Element {
     </div>
   );
 }
+
 
 
