@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { getApiClientSync } from "../api/client";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -157,6 +157,28 @@ function isAcademyPlayer(playerId: string): boolean {
 // Component
 // ---------------------------------------------------------------------------
 
+// Temporary API helper — will be replaced when ApiClient gets these methods
+const API_BASE = (import.meta as any).env?.VITE_API_BASE ?? ""
+
+function activeSaveId(): string {
+  if (typeof window === "undefined") return ""
+  return localStorage.getItem("olmanager.web.activeSaveId") ?? ""
+}
+
+async function apiPost<T>(pathOrCmd: string, body?: Record<string, unknown>): Promise<T> {
+  const path = pathOrCmd.startsWith("/") ? pathOrCmd : `/api/saves/${activeSaveId()}/cmd/${pathOrCmd}`
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }))
+    throw new Error(String(err.error ?? res.statusText))
+  }
+  return res.json()
+}
+
 export default function TeamSelection() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -193,9 +215,8 @@ export default function TeamSelection() {
       try {
         // Step 1: Try the new get_league_selection_data
         console.debug("[TeamSelection] trying get_league_selection_data");
-        const leagueResult = await invoke<LeagueSelectionData>(
-          "get_league_selection_data",
-        );
+        // Team selection data is loaded from the save context
+        const leagueResult = await clientGetLeagueData();
         if (cancelled) return;
 
         console.debug("[TeamSelection] leagueResult:", JSON.stringify(leagueResult));
@@ -214,9 +235,7 @@ export default function TeamSelection() {
 
         // Step 2: No competitions found → try legacy fallback
         console.debug("[TeamSelection] no competitions, trying legacy fallback");
-        const legacyResult = await invoke<OldTeamSelectionData>(
-          "get_team_selection_data",
-        );
+        const legacyResult = await apiPost("get_team_selection_data");
         if (cancelled) return;
         console.debug(
           "[TeamSelection] legacy data recovered, teams:",
@@ -229,9 +248,7 @@ export default function TeamSelection() {
           error,
         );
         try {
-          const legacyResult = await invoke<OldTeamSelectionData>(
-            "get_team_selection_data",
-          );
+          const legacyResult = await apiPost("get_team_selection_data");
           if (cancelled) return;
           console.debug(
             "[TeamSelection] legacy data recovered via fallback, teams:",
@@ -338,9 +355,7 @@ export default function TeamSelection() {
     if (!selectedTeamId || isConfirming) return;
     setIsConfirming(true);
     try {
-      const updatedGame = await invoke<GameStateData>("select_team", {
-        teamId: selectedTeamId,
-      });
+      const updatedGame = await apiPost("select_team", { teamId: selectedTeamId })
       setGameState(updatedGame);
       const mgr = updatedGame.manager;
       const displayName =
@@ -769,3 +784,5 @@ function StatItem({
     </div>
   );
 }
+
+
