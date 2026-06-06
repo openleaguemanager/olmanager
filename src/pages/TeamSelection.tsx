@@ -167,19 +167,22 @@ function activeSaveId(): string {
 
 async function apiPost<T>(pathOrCmd: string, body?: Record<string, unknown>): Promise<T> {
   const path = pathOrCmd.startsWith("/") ? pathOrCmd : `/api/saves/${activeSaveId()}/cmd/${pathOrCmd}`
-  // Add auth token for web mode
+  const url = `${API_BASE}${path}`
   const { data } = await import("../web/supabase").then(m => m.supabase.auth.getSession()).catch(() => ({ data: null }))
   const token = data?.session?.access_token
   const headers: Record<string, string> = { "Content-Type": "application/json" }
   if (token) headers["Authorization"] = `Bearer ${token}`
-  const res = await fetch(`${API_BASE}${path}`, {
+  console.debug(`[apiPost] POST ${url}`, { headers, body })
+  const res = await fetch(url, {
     method: "POST",
     headers,
     body: JSON.stringify(body ?? {}),
   })
+  console.debug(`[apiPost] response ${res.status}`, { status: res.status, statusText: res.statusText })
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }))
-    throw new Error(String(err.error ?? res.statusText))
+    let msg = res.statusText
+    try { const j = await res.json(); msg = j.error ?? j.message ?? msg } catch {}
+    throw new Error(msg)
   }
   return res.json()
 }
