@@ -228,13 +228,26 @@ pub fn dispatch(command: &str, args: Value, game: &mut Game) -> Result<CommandRe
             ok(json!(catalog), false)
         },
         "get_transfer_history_cmd" => ok(json!(&game.transfer_history), false),
-        "make_transfer_bid" => ok(json!(game), true),   // stub
-        "preview_transfer_bid_financial_impact" => ok(json!({
-            "bid_amount": 0, "wage_contribution": 0, "total_impact": 0,
-        }), false),
+        "make_transfer_bid" => {
+            let pid = string_arg(&args, &["playerId","player_id"])?;
+            let fee = args.get("fee").and_then(|v| v.as_u64()).unwrap_or(0);
+            let included: Vec<String> = args.get("includedPlayerIds").and_then(|v| v.as_array())
+                .map(|a| a.iter().filter_map(|x| x.as_str().map(String::from)).collect()).unwrap_or_default();
+            let outcome = olm_core::transfers::make_transfer_bid(game, &pid, fee, olm_core::transfers::TransferDestination::Main, &included)
+                .map_err(CommandError::bad_request)?;
+            ok(json!({"decision": "counter_offer", "suggested_fee": null, "is_terminal": false, "feedback": outcome, "game": game}), true)
+        }
+        "preview_transfer_bid_financial_impact" => {
+            let pid = string_arg(&args, &["playerId","player_id"])?;
+            let fee = args.get("fee").and_then(|v| v.as_u64()).unwrap_or(0);
+            let projection = olm_core::transfers::project_transfer_bid_financial_impact(game, &pid, fee, olm_core::transfers::TransferDestination::Main)
+                .map_err(CommandError::bad_request)?;
+            ok(json!({"projection": projection}), false)
+        }
         _ => Err(CommandError::bad_request(format!("Unknown command: {command}")))
     }
 }
+
 
 
 
