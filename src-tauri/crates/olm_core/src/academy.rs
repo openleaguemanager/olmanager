@@ -1,4 +1,5 @@
-use crate::domain::team::{Team, TeamKind};
+use crate::domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
+use crate::domain::team::{AcademyLifecycle, AcademyMetadata, ErlAssignment, Team, TeamKind};
 use crate::game::Game;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -203,15 +204,109 @@ pub fn validate_academy_acquisition(
 pub fn validate_parent_academy_link(parent: &Team, academy: &Team) -> Result<(), AcademyError> {
     let linked_from_parent = parent.academy_team_id.as_deref() == Some(academy.id.as_str());
     let linked_from_academy = academy.parent_team_id.as_deref() == Some(parent.id.as_str());
-
     if academy.team_kind == TeamKind::Academy && (linked_from_parent || linked_from_academy) {
         return Ok(());
     }
-
     Err(AcademyError::UnrelatedAcademy {
         parent_team_id: parent.id.clone(),
         academy_team_id: academy.id.clone(),
     })
+}
+
+// ── Helper functions shared with Tauri layer ─────────────────
+
+/// Find a team by ID, returning a helpful error message.
+pub fn find_team<'a>(game: &'a Game, team_id: &str) -> Result<&'a Team, String> {
+    game.teams.iter().find(|team| team.id == team_id)
+        .ok_or_else(|| format!("Team '{}' not found", team_id))
+}
+
+/// Resolve the academy team ID linked to a parent team.
+pub fn resolve_manager_academy_team_id(game: &Game, parent_team_id: &str) -> Result<String, String> {
+    let parent = find_team(game, parent_team_id)?;
+    if !parent.is_main() {
+        return Err("Academy actions are only available for main teams".to_string());
+    }
+    if let Some(id) = parent.academy_team_id.clone() {
+        return Ok(id);
+    }
+    game.teams.iter()
+        .find(|t| t.team_kind == TeamKind::Academy && t.parent_team_id.as_deref() == Some(parent_team_id))
+        .map(|t| t.id.clone())
+        .ok_or("No academy team linked to manager team".to_string())
+}
+
+/// Build AcademyMetadata from an acquisition option.
+pub fn academy_metadata(option: &AcademyAcquisitionOption, acquired_at: String, current_logo_url: Option<String>) -> AcademyMetadata {
+    AcademyMetadata {
+        lifecycle: AcademyLifecycle::Active,
+        erl_assignment: ErlAssignment {
+            erl_league_id: option.erl_league_id.clone(),
+            country_rule: option.assignment_rule.clone(),
+            fallback_reason: option.fallback_reason.clone(),
+            reputation: option.reputation,
+            acquisition_cost: option.acquisition_cost,
+            acquired_at: acquired_at.clone(),
+            creation_cost: 0,
+            created_at: String::new(),
+        },
+        source_team_id: option.source_team_id.clone(),
+        original_name: option.name.clone(),
+        original_short_name: option.short_name.clone(),
+        original_logo_url: option.logo_url.clone(),
+        current_logo_url,
+        acquisition_cost: option.acquisition_cost,
+        acquired_at,
+    }
+}
+
+/// Push an inbox message notifying the manager about a completed academy acquisition.
+pub fn push_academy_acquired_message(game: &mut Game, parent: &Team, academy_name: &str, cost: i64) {
+    let date = game.clock.current_date.format("%Y-%m-%d").to_string();
+    let msg = InboxMessage::new(
+        format!("academy-acquired-{}-{}", parent.id, academy_name.to_lowercase().replace(' ', "-")),
+        format!("Academia financiada: {}", academy_name),
+        format!("La operacion se completo con exito. {} ahora tiene una academia vinculada ({}) por un costo de €{}.", parent.name, academy_name, cost),
+        "Direccion Deportiva".to_string(),
+        date,
+    )
+    .with_category(MessageCategory::Finance)
+    .with_priority(MessagePriority::High)
+    .with_sender_role("Director Deportivo")
+    .with_context(MessageContext {
+        team_id: Some(parent.id.clone()),
+        ..Default::default()
+    });
+    game.messages.push(msg);
+}
+
+/// Push an inbox message about a player being moved to/from the academy.
+pub fn push_academy_player_moved_message(
+    game: &mut Game,
+    id_prefix: &str,
+    parent_team_id: &str,
+    player_id: &str,
+    player_name: &str,
+    subject: &str,
+    body_template: &str,
+) {
+    let date = game.clock.current_date.format("%Y-%m-%d").to_string();
+    let msg = InboxMessage::new(
+        format!("{}-{}", id_prefix, player_id),
+        subject.to_string(),
+        body_template.replace("{player}", player_name),
+        "Staff Academia".to_string(),
+        date,
+    )
+    .with_category(MessageCategory::Training)
+    .with_priority(MessagePriority::Normal)
+    .with_sender_role("Coordinador de Academia")
+    .with_context(MessageContext {
+        team_id: Some(parent_team_id.to_string()),
+        player_id: Some(player_id.to_string()),
+        ..Default::default()
+    });
+    game.messages.push(msg);
 }
 
 fn acquisition_option_from_league(

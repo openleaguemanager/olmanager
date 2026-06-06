@@ -1,6 +1,5 @@
 use chrono::Utc;
-use olm_core::domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use olm_core::domain::team::{AcademyLifecycle, AcademyMetadata, ErlAssignment, Team, TeamKind};
+use olm_core::domain::team::{Team, TeamKind};
 use log::info;
 use olm_core::academy::{
     academy_candidate_catalog, academy_erl_catalog, eligible_academy_acquisition_options,
@@ -86,7 +85,7 @@ pub fn promote_academy_player(
         .clone()
         .ok_or("No team assigned".to_string())?;
 
-    let academy_team_id = resolve_manager_academy_team_id(&game, &parent_team_id)?;
+    let academy_team_id = olm_core::academy::resolve_manager_academy_team_id(&game, &parent_team_id)?;
 
     let (moved_player_id, moved_player_name) = {
         let player = game
@@ -103,7 +102,7 @@ pub fn promote_academy_player(
         (player.id.clone(), player.match_name.clone())
     };
 
-    push_academy_player_moved_message(
+    olm_core::academy::push_academy_player_moved_message(
         &mut game,
         "academy-promote",
         &parent_team_id,
@@ -136,7 +135,7 @@ pub fn demote_main_player_to_academy(
         .clone()
         .ok_or("No team assigned".to_string())?;
 
-    let academy_team_id = resolve_manager_academy_team_id(&game, &parent_team_id)?;
+    let academy_team_id = olm_core::academy::resolve_manager_academy_team_id(&game, &parent_team_id)?;
 
     let (moved_player_id, moved_player_name) = {
         let player = game
@@ -153,7 +152,7 @@ pub fn demote_main_player_to_academy(
         (player.id.clone(), player.match_name.clone())
     };
 
-    push_academy_player_moved_message(
+    olm_core::academy::push_academy_player_moved_message(
         &mut game,
         "academy-demote",
         &parent_team_id,
@@ -203,7 +202,7 @@ pub(crate) fn get_academy_acquisition_options_for_game(
     game: &Game,
     parent_team_id: &str,
 ) -> Result<AcademyAcquisitionOptionsResponse, String> {
-    let parent = find_team(game, parent_team_id)?;
+    let parent = olm_core::academy::find_team(game, parent_team_id)?;
     let normalize_key = |value: &str| {
         value
             .chars()
@@ -291,13 +290,13 @@ pub(crate) fn acquire_academy_team_in_game(
             )
         })?;
 
-    let parent_snapshot = find_team(game, &request.parent_team_id)?.clone();
+    let parent_snapshot = olm_core::academy::find_team(game, &request.parent_team_id)?.clone();
     validate_academy_acquisition(&parent_snapshot, &option).map_err(format_academy_error)?;
 
     let academy_id = option.source_team_id.clone();
 
     let created_at = game.clock.current_date.with_timezone(&Utc).to_rfc3339();
-    let metadata = academy_metadata(&option, created_at.clone(), request.custom_logo_url.clone());
+    let metadata = olm_core::academy::academy_metadata(&option, created_at.clone(), request.custom_logo_url.clone());
 
     let existing_academy_index = game
         .teams
@@ -367,65 +366,13 @@ pub(crate) fn acquire_academy_team_in_game(
         game.teams.push(academy);
     }
 
-    push_academy_acquired_message(
+    olm_core::academy::push_academy_acquired_message(
         game,
         &parent_snapshot,
         &option.name,
         option.acquisition_cost,
     );
     Ok(game.clone())
-}
-
-fn push_academy_acquired_message(game: &mut Game, parent: &Team, academy_name: &str, cost: i64) {
-    let date = game.clock.current_date.format("%Y-%m-%d").to_string();
-    let message = InboxMessage::new(
-        format!("academy-acquired-{}-{}", parent.id, academy_name.to_lowercase().replace(' ', "-")),
-        format!("Academia financiada: {}", academy_name),
-        format!(
-            "La operacion se completo con exito. {} ahora tiene una academia vinculada ({}) por un costo de €{}.",
-            parent.name, academy_name, cost
-        ),
-        "Direccion Deportiva".to_string(),
-        date,
-    )
-    .with_category(MessageCategory::Finance)
-    .with_priority(MessagePriority::High)
-    .with_sender_role("Director Deportivo")
-    .with_context(MessageContext {
-        team_id: Some(parent.id.clone()),
-        ..Default::default()
-    });
-
-    game.messages.push(message);
-}
-
-fn push_academy_player_moved_message(
-    game: &mut Game,
-    id_prefix: &str,
-    parent_team_id: &str,
-    player_id: &str,
-    player_name: &str,
-    subject: &str,
-    body_template: &str,
-) {
-    let date = game.clock.current_date.format("%Y-%m-%d").to_string();
-    let message = InboxMessage::new(
-        format!("{}-{}", id_prefix, player_id),
-        subject.to_string(),
-        body_template.replace("{player}", player_name),
-        "Staff Academia".to_string(),
-        date,
-    )
-    .with_category(MessageCategory::Training)
-    .with_priority(MessagePriority::Normal)
-    .with_sender_role("Coordinador de Academia")
-    .with_context(MessageContext {
-        team_id: Some(parent_team_id.to_string()),
-        player_id: Some(player_id.to_string()),
-        ..Default::default()
-    });
-
-    game.messages.push(message);
 }
 
 #[allow(dead_code)]
@@ -438,60 +385,6 @@ pub(crate) fn create_academy_in_game(
         "create_academy_in_game is deprecated; use acquire_academy_team_in_game with a source team candidate instead of ERL '{}'.",
         erl_league_id
     ))
-}
-
-fn find_team<'game>(game: &'game Game, team_id: &str) -> Result<&'game Team, String> {
-    game.teams
-        .iter()
-        .find(|team| team.id == team_id)
-        .ok_or_else(|| format!("Team '{}' not found", team_id))
-}
-
-fn resolve_manager_academy_team_id(game: &Game, parent_team_id: &str) -> Result<String, String> {
-    let parent_team = find_team(game, parent_team_id)?;
-    if !parent_team.is_main() {
-        return Err("Academy actions are only available for main teams".to_string());
-    }
-
-    if let Some(academy_team_id) = parent_team.academy_team_id.clone() {
-        return Ok(academy_team_id);
-    }
-
-    game.teams
-        .iter()
-        .find(|team| {
-            team.team_kind == TeamKind::Academy
-                && team.parent_team_id.as_deref() == Some(parent_team_id)
-        })
-        .map(|team| team.id.clone())
-        .ok_or("No academy team linked to manager team".to_string())
-}
-
-fn academy_metadata(
-    option: &AcademyAcquisitionOption,
-    acquired_at: String,
-    current_logo_url: Option<String>,
-) -> AcademyMetadata {
-    AcademyMetadata {
-        lifecycle: AcademyLifecycle::Active,
-        erl_assignment: ErlAssignment {
-            erl_league_id: option.erl_league_id.clone(),
-            country_rule: option.assignment_rule.clone(),
-            fallback_reason: option.fallback_reason.clone(),
-            reputation: option.reputation,
-            acquisition_cost: option.acquisition_cost,
-            acquired_at: acquired_at.clone(),
-            creation_cost: 0,
-            created_at: String::new(),
-        },
-        source_team_id: option.source_team_id.clone(),
-        original_name: option.name.clone(),
-        original_short_name: option.short_name.clone(),
-        original_logo_url: option.logo_url.clone(),
-        current_logo_url,
-        acquisition_cost: option.acquisition_cost,
-        acquired_at,
-    }
 }
 
 fn format_academy_error(error: olm_core::academy::AcademyError) -> String {
@@ -843,5 +736,6 @@ mod tests {
         );
     }
 }
+
 
 
