@@ -167,9 +167,14 @@ function activeSaveId(): string {
 
 async function apiPost<T>(pathOrCmd: string, body?: Record<string, unknown>): Promise<T> {
   const path = pathOrCmd.startsWith("/") ? pathOrCmd : `/api/saves/${activeSaveId()}/cmd/${pathOrCmd}`
+  // Add auth token for web mode
+  const { data } = await import("../web/supabase").then(m => m.supabase.auth.getSession()).catch(() => ({ data: null }))
+  const token = data?.session?.access_token
+  const headers: Record<string, string> = { "Content-Type": "application/json" }
+  if (token) headers["Authorization"] = `Bearer ${token}`
   const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   })
   if (!res.ok) {
