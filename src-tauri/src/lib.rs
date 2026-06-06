@@ -104,8 +104,7 @@ pub fn run() {
             acquire_academy_team,
             promote_academy_player,
             demote_main_player_to_academy,
-            get_academy_creation_options,
-            create_academy,
+
             advance_time,
             advance_time_with_mode,
             upgrade_facility,
