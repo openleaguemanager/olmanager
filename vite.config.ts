@@ -57,7 +57,6 @@ export default defineConfig(async ({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
         ...(isWeb
           ? {
-              "@tauri-apps/api/core": path.resolve(__dirname, "./src/web/tauriCoreShim.ts"),
               "@tauri-apps/api/window": path.resolve(__dirname, "./src/web/tauriWindowShim.ts"),
               "@tauri-apps/plugin-updater": path.resolve(__dirname, "./src/web/tauriUpdaterShim.ts"),
             }
