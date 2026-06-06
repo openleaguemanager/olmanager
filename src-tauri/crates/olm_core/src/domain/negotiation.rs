@@ -27,6 +27,6 @@ pub struct NegotiationFeedback {
     pub tension: u8,
     pub patience: u8,
     pub round: u8,
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default)]
     pub params: HashMap<String, String>,
 }

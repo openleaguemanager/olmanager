@@ -43,7 +43,7 @@ pub struct MessageAction {
     pub action_type: ActionType,
     pub resolved: bool,
     /// Optional i18n key for the action label (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub label_key: Option<String>,
 }
 
@@ -64,9 +64,9 @@ pub struct ActionOption {
     pub id: String,
     pub label: String,
     pub description: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub label_key: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub description_key: Option<String>,
 }
 
@@ -87,19 +87,19 @@ pub struct InboxMessage {
     /// Optional references to entities relevant to this message
     pub context: MessageContext,
     /// Optional i18n key for the subject (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub subject_key: Option<String>,
     /// Optional i18n key for the body (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub body_key: Option<String>,
     /// Optional i18n key for the sender name (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub sender_key: Option<String>,
     /// Optional i18n key for the sender role (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub sender_role_key: Option<String>,
     /// Interpolation parameters for the i18n keys (shared by subject/body/sender)
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default)]
     pub i18n_params: HashMap<String, String>,
 }
 
@@ -111,9 +111,9 @@ pub struct MessageContext {
     pub player_id: Option<String>,
     pub fixture_id: Option<String>,
     pub match_result: Option<ContextMatchResult>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub scout_report: Option<ScoutReportData>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub delegated_renewal_report: Option<DelegatedRenewalReportData>,
 }
 
@@ -134,13 +134,13 @@ pub struct DelegatedRenewalCaseData {
     pub player_id: String,
     pub player_name: String,
     pub status: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub agreed_wage: Option<u32>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub agreed_years: Option<u32>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub note_key: Option<String>,
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default)]
     pub note_params: HashMap<String, String>,
 }
 
@@ -161,17 +161,17 @@ pub struct ScoutReportData {
     pub dribbling: Option<u8>,
     pub defending: Option<u8>,
     pub physical: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub mechanics: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub laning: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub teamfighting: Option<u8>,
-    #[serde(default, rename = "macro", skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "macro")]
     pub macro_: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub champion_pool: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub discipline: Option<u8>,
     pub condition: Option<u8>,
     pub morale: Option<u8>,

@@ -101,9 +101,9 @@ pub struct DelegatedRenewalCase {
     pub agreed_wage: Option<u32>,
     pub agreed_years: Option<u32>,
     pub note: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub note_key: Option<String>,
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default)]
     pub note_params: HashMap<String, String>,
 }
 

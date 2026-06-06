@@ -35,16 +35,16 @@ pub struct NewsArticle {
     pub match_score: Option<NewsMatchScore>,
     pub read: bool,
     /// Optional i18n key for the headline (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub headline_key: Option<String>,
     /// Optional i18n key for the body (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub body_key: Option<String>,
     /// Optional i18n key for the source (frontend resolves via t())
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub source_key: Option<String>,
     /// Interpolation parameters for the i18n keys
-    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default)]
     pub i18n_params: HashMap<String, String>,
 }
 

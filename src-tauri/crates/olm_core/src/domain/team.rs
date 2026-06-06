@@ -178,9 +178,9 @@ pub struct ErlAssignment {
     pub acquisition_cost: i64,
     #[serde(default)]
     pub acquired_at: String,
-    #[serde(default, skip_serializing_if = "is_zero_i64")]
+    #[serde(default)]
     pub creation_cost: i64,
-    #[serde(default, skip_serializing_if = "String::is_empty")]
+    #[serde(default)]
     pub created_at: String,
 }
 
@@ -765,10 +765,7 @@ pub enum FacilityType {
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct Facilities {
-    #[serde(
-        default = "default_main_hub_level",
-        skip_serializing_if = "is_default_main_hub_level"
-    )]
+    #[serde(default = "default_main_hub_level")]
     pub main_hub_level: u8,
     #[serde(default)]
     pub training: u8,
@@ -776,17 +773,17 @@ pub struct Facilities {
     pub medical: u8,
     #[serde(default)]
     pub scouting: u8,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub scrims_room_level: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub analysis_room_level: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub bootcamp_area_level: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub recovery_suite_level: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub content_studio_level: Option<u8>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub scouting_lab_level: Option<u8>,
 }
 

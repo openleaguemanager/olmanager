@@ -97,7 +97,7 @@ pub struct MatchResult {
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct CompactMatchReport {
-    #[serde(default, skip_serializing)]
+    #[serde(default)]
     pub total_minutes: u32,
     pub game_duration_seconds: u32,
     pub home_stats: CompactTeamMatchStats,
@@ -110,7 +110,7 @@ pub struct CompactMatchReport {
 #[cfg_attr(feature = "typescript", ts(export))]
 #[serde(default)]
 pub struct CompactTeamMatchStats {
-    #[serde(default, skip_serializing)]
+    #[serde(default)]
     pub possession_pct: u8,
     pub kills: u16,
     pub deaths: u16,
