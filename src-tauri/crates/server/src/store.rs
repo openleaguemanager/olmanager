@@ -107,7 +107,13 @@ impl Store {
     /// doesn't exist or isn't the user's.
     pub async fn save(&self, user_id: &str, save_id: Uuid, game: &Game) -> Result<bool, String> {
         let uid = Uuid::parse_str(user_id).map_err(|e| format!("bad user id: {e}"))?;
-        let blob = bincode::serialize(game).map_err(|e| format!("serialize game: {e}"))?;
+        let blob = match bincode::serialize(game) {
+            Ok(b) => b,
+            Err(e) => {
+                tracing::error!("serialize game error: {e}");
+                return Err(format!("serialize game: {e}"));
+            }
+        };
         let manager = game.manager.display_name();
 
         let result = sqlx::query(
