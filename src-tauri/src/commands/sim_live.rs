@@ -1,6 +1,6 @@
 use tauri::State;
 
-use crate::application::sim_live::{
+use olm_core::sim_live::{
     dispose, init, reset, run_to_completion, skip_to_end, tick, SimLiveDisposeRequest,
     SimLiveDisposeResponse, SimLiveResetRequest, SimLiveRunToCompletionRequest,
     SimLiveRunToCompletionResponse, SimLiveSkipToEndRequest, SimLiveSkipToEndResponse,
@@ -10,7 +10,7 @@ use crate::application::sim_live::{
 #[tauri::command]
 pub fn sim_live_init(
     state: State<'_, SimLiveStoreState>,
-    request: crate::application::sim_live::SimLiveInitRequest,
+    request: olm_core::sim_live::SimLiveInitRequest,
 ) -> Result<SimLiveStateResponse, String> {
     init(&state, request)
 }

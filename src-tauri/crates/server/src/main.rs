@@ -36,6 +36,7 @@ mod auth;
 mod commands;
 mod data;
 mod import;
+mod sim;
 mod store;
 
 use auth::{AuthUser, HasVerifier, JwtVerifier};
@@ -108,6 +109,7 @@ async fn main() {
         .route("/api/saves/{id}/select-team", post(select_team))
         .route("/api/saves/{id}/advance", post(advance))
         .route("/api/saves/{id}/cmd/{command}", post(dispatch_command))
+.route("/api/saves/{id}/sim", get(sim::sim_handler))
         .route(
             "/api/admin/import-export",
             post(import_export).layer(DefaultBodyLimit::max(512 * 1024 * 1024)),

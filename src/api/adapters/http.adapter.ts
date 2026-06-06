@@ -200,3 +200,4 @@ export const httpAdapter: ApiClient = {
     exitToMenu: () => { setActiveSaveId(null); return Promise.resolve() },
   },
 }
+

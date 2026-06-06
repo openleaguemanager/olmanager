@@ -2141,7 +2141,7 @@ fn active_nav_walls() -> &'static [WallPolygon] {
     static WALLS: OnceLock<Vec<WallPolygon>> = OnceLock::new();
     WALLS
         .get_or_init(|| {
-            let raw = include_str!("../../crates/olm_core/src/engine/sim_background/lol_walls.json");
+            let raw = include_str!("./engine/sim_background/lol_walls.json");
             let Ok(file) = serde_json::from_str::<WallFile>(raw) else {
                 return Vec::new();
             };

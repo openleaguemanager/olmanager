@@ -3,7 +3,7 @@ mod commands;
 pub mod error;
 use commands::*;
 
-use application::sim_live::SimLiveStoreState;
+use olm_core::sim_live::SimLiveStoreState;
 use olm_core::db::save_manager::SaveManager;
 use olm_core::state::StateManager;
 use std::sync::Mutex;
