@@ -15,9 +15,9 @@ import {
   getPlayerTeamName,
 } from "./PlayerProfile.helpers";
 import { buildPlayerAttributeGroups } from "./PlayerProfile.attributes";
-import PlayerProfileAttributesCard from "./PlayerProfileAttributesCard";
+import PlayerProfileAttributesCardV2 from "@/ui-v2/pages/PlayerProfileAttributesCardV2";
 import PlayerProfileContractCard from "./PlayerProfileContractCard";
-import PlayerProfileHeroCard from "./PlayerProfileHeroCard";
+import PlayerProfileHeroCardV2 from "@/ui-v2/pages/PlayerProfileHeroCardV2";
 import PlayerProfileRenewalModal from "./PlayerProfileRenewalModal";
 import {
   type DelegatedRenewalCaseData,
@@ -918,7 +918,7 @@ export default function PlayerProfile({
         </span>
       </button>
 
-      <PlayerProfileHeroCard
+      <PlayerProfileHeroCardV2
         player={player}
         ovr={ovr}
         primaryRole={primaryRole}
@@ -1042,7 +1042,7 @@ export default function PlayerProfile({
         />
 
         <div className="lg:col-span-2 flex flex-col gap-5">
-          <PlayerProfileAttributesCard
+          <PlayerProfileAttributesCardV2
             attrGroups={attrGroups}
             canViewAttributes={canViewAttributes}
             title={t("playerProfile.attributes")}

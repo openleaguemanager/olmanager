@@ -522,7 +522,7 @@ export function TacticsTabV2({ gameState, onGameUpdate }: TacticsTabV2Props) {
   // ─── Render ───────────────────────────────────────────────────────
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-6">
-      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[1.6fr_1fr]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.6fr_1fr]">
         {/* ── Left column: 6 tactic sections ────────────────────────── */}
         <div className="flex flex-col gap-4">
           <Section<GameTiming>
@@ -587,8 +587,8 @@ export function TacticsTabV2({ gameState, onGameUpdate }: TacticsTabV2Props) {
         </div>
 
         {/* ── Right column: Sidebar (sticky) ─────────────────────────── */}
-        <aside className="sticky top-2">
-          <Card>
+        <aside className="sticky top-2 h-full">
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
                 {t("tactics.lol.impactAndCoherence")}

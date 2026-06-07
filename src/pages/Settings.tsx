@@ -152,8 +152,8 @@ export default function Settings() {
 
   if (!loaded) {
     return (
-      <div className="h-full bg-gray-100 dark:bg-navy-900 flex items-center justify-center transition-colors">
-        <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+      <div className="h-full bg-background flex items-center justify-center transition-colors">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -265,7 +265,7 @@ export default function Settings() {
               )}
             >
               <div className="flex items-center gap-2">
-                <Type className="w-4 h-4 text-gray-400" />
+                <Type className="w-4 h-4 text-muted-foreground/70" />
                 <GameSegmented
                   options={[
                     { value: "xsmall", label: "XS" },
@@ -281,7 +281,7 @@ export default function Settings() {
                   }}
                 />
                 {isAndroid ? (
-                  <span className="text-2xs font-heading uppercase tracking-wide text-gray-400">
+                  <span className="text-2xs font-heading uppercase tracking-wide text-muted-foreground/70">
                     {t(
                       "settings.uiScaleAndroidLocked",
                       "Bloqueado en XS en Android",
@@ -398,7 +398,7 @@ export default function Settings() {
               )}
             >
               <div className="flex items-center gap-2">
-                <Bug className="w-4 h-4 text-gray-400" />
+                <Bug className="w-4 h-4 text-muted-foreground/70" />
                 <GameToggle
                   checked={settings.debug_tools_enabled}
                   onChange={(v) => handleUpdate({ debug_tools_enabled: v })}
@@ -439,7 +439,7 @@ export default function Settings() {
               </p>
             )}
 
-            <div className="border-t border-white/10 pt-4 mt-2">
+            <div className="border-t border-border/40 pt-4 mt-2">
               <GameRow
                 label={t("settings.clearSaves")}
                 description={t("settings.clearSavesDesc")}
@@ -479,7 +479,7 @@ export default function Settings() {
               label={t("settings.currentVersion")}
               description={t("settings.currentVersionDesc")}
             >
-              <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-300">
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-foreground/80">
                 {updateInfo?.version ?? APP_VERSION}
               </span>
             </GameRow>
@@ -535,10 +535,10 @@ export default function Settings() {
         content: (
           <div className="flex justify-between items-center py-4">
             <div>
-              <p className="text-sm font-medium text-white">{APP_NAME}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{APP_VERSION}</p>
+              <p className="text-sm font-medium text-foreground">{APP_NAME}</p>
+              <p className="text-xs text-muted-foreground/70 mt-0.5">{APP_VERSION}</p>
             </div>
-            <span className="text-2xs font-heading uppercase tracking-widest text-gray-500">
+            <span className="text-2xs font-heading uppercase tracking-widest text-muted-foreground">
               Open League Manager Community
             </span>
           </div>
@@ -550,25 +550,23 @@ export default function Settings() {
       gameSections.find((s) => s.id === activeSettingsTab) ?? gameSections[0];
 
     return (
-      <div className="dark h-full relative overflow-hidden font-sans text-white">
-        <MenuBackground />
-
-        <div className="relative z-10 h-full flex flex-col px-6 sm:px-10 lg:px-16 py-8">
+      <div className="dark h-full bg-background text-foreground">
+        <div className="h-full flex flex-col px-6 sm:px-10 lg:px-16 py-8 overflow-y-auto scrollbar-v2">
           {/* Header */}
           <div className="flex items-center gap-3 mb-8">
             <button
               onClick={() => navigate(returnTo)}
-              className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-lg text-foreground/80 hover:text-foreground hover:bg-muted/50 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-white drop-shadow">
+            <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-foreground drop-shadow">
               {t("settings.title")}
             </h1>
           </div>
 
           {/* Section tabs */}
-          <nav className="flex flex-wrap gap-1 border-b border-white/10 mb-6">
+          <nav className="flex flex-wrap gap-1 border-b border-border/40 mb-6">
             {gameSections.map((s) => (
               <GameTab
                 key={s.id}
@@ -584,7 +582,7 @@ export default function Settings() {
           <div className="flex-1 overflow-y-auto">
             <div
               key={active.id}
-              className="animate-fade-in-up max-w-3xl border-t border-white/10"
+              className="animate-fade-in-up max-w-3xl border-t border-border/40"
             >
               {active.content}
             </div>
@@ -686,7 +684,7 @@ export default function Settings() {
             )}
           >
             <div className="flex items-center gap-2">
-              <Type className="w-4 h-4 text-gray-400" />
+              <Type className="w-4 h-4 text-muted-foreground/70" />
               <SegmentedControl
                 options={[
                   { value: "xsmall", label: "XS" },
@@ -702,7 +700,7 @@ export default function Settings() {
                 }}
               />
               {isAndroid ? (
-                <span className="text-2xs font-heading uppercase tracking-wide text-gray-400">
+                <span className="text-2xs font-heading uppercase tracking-wide text-muted-foreground/70">
                   {t("settings.uiScaleAndroidLocked", "Bloqueado en XS en Android")}
                 </span>
               ) : null}
@@ -731,7 +729,7 @@ export default function Settings() {
           >
             <button
               onClick={toggleFullscreen}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-navy-600 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-foreground/80 hover:bg-muted/80 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
             >
               {isFullscreen ? (
                 <Minimize className="w-4 h-4" />
@@ -818,7 +816,7 @@ export default function Settings() {
             )}
           >
             <div className="flex items-center gap-2">
-              <Bug className="w-4 h-4 text-gray-400" />
+              <Bug className="w-4 h-4 text-muted-foreground/70" />
               <Toggle
                 checked={settings.debug_tools_enabled}
                 onChange={(v) => handleUpdate({ debug_tools_enabled: v })}
@@ -850,19 +848,19 @@ export default function Settings() {
           >
             <button
               onClick={handleExportWorld}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-500/10 text-primary-600 dark:text-primary-400 hover:bg-primary-500/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors"
             >
               <Download className="w-4 h-4" />
               {t("settings.export")}
             </button>
           </SettingRow>
           {exportPath && (
-            <p className="text-xs text-primary-500 -mt-2 ml-1">
+            <p className="text-xs text-primary -mt-2 ml-1">
               {t("settings.exportedTo", { path: exportPath })}
             </p>
           )}
 
-          <div className="border-t border-gray-200 dark:border-navy-600 pt-4 mt-2">
+          <div className="border-t border-border pt-4 mt-2">
             <SettingRow
               label={t("settings.clearSaves")}
               description={t("settings.clearSavesDesc")}
@@ -872,19 +870,19 @@ export default function Settings() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleClearSaves}
-                    className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-heading font-bold uppercase tracking-wider hover:bg-red-600 transition-colors"
+                    className="px-4 py-2 rounded-lg bg-red-500 text-foreground text-sm font-heading font-bold uppercase tracking-wider hover:bg-red-600 transition-colors"
                   >
                     {t("common.confirm")}
                   </button>
                   <button
                     onClick={() => setConfirmClear(false)}
-                    className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-navy-600 text-gray-700 dark:text-gray-300 text-sm font-heading font-bold uppercase tracking-wider hover:bg-gray-300 dark:hover:bg-navy-500 transition-colors"
+                    className="px-4 py-2 rounded-lg bg-muted text-foreground/80 text-sm font-heading font-bold uppercase tracking-wider hover:bg-muted hover:bg-muted/80 transition-colors"
                   >
                     {t("common.cancel")}
                   </button>
                 </div>
               ) : clearSuccess ? (
-                <span className="text-sm text-primary-500 font-heading font-bold uppercase tracking-wider">
+                <span className="text-sm text-primary font-heading font-bold uppercase tracking-wider">
                   {t("settings.savesCleared")}
                 </span>
               ) : (
@@ -911,7 +909,7 @@ export default function Settings() {
             label={t("settings.currentVersion")}
             description={t("settings.currentVersionDesc")}
           >
-            <span className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <span className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground">
               {updateInfo?.version ?? APP_VERSION}
             </span>
           </SettingRow>
@@ -923,7 +921,7 @@ export default function Settings() {
             <button
               onClick={checkUpdate}
               disabled={checkingUpdate}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-500/10 text-primary-600 dark:text-primary-400 hover:bg-primary-500/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
             >
               {checkingUpdate ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -941,8 +939,8 @@ export default function Settings() {
           </SettingRow>
 
           {updateAvailable && updateInfo && (
-            <div className="rounded-lg bg-primary-500/5 border border-primary-500/20 p-3">
-              <p className="text-xs text-primary-600 dark:text-primary-400 font-medium">
+            <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
+              <p className="text-xs text-primary font-medium">
                 {t("settings.updateAvailableDetail", {
                   version: updateInfo.version,
                 })}
@@ -967,14 +965,14 @@ export default function Settings() {
       content: (
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            <p className="text-sm font-medium text-foreground">
               {APP_NAME}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {APP_VERSION}
             </p>
           </div>
-          <span className="text-2xs font-heading uppercase tracking-widest text-gray-400 dark:text-gray-600">
+          <span className="text-2xs font-heading uppercase tracking-widest text-muted-foreground/70 text-muted-foreground/70">
             Open League Manager Community
           </span>
         </div>
@@ -984,18 +982,18 @@ export default function Settings() {
 
   // ── Classic scrolling settings (entered from inside a game) ──
   return (
-    <div className="h-full bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
+    <div className="h-full bg-background transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 shadow-sm">
+      <header className="bg-card border-b border-border shadow-sm">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(returnTo)}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
+              className="p-2 rounded-lg text-muted-foreground/70 hover:text-foreground/90 hover:text-foreground hover:bg-muted transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white">
+            <h1 className="text-xl font-heading font-bold uppercase tracking-wide text-foreground">
               {t("settings.title")}
             </h1>
           </div>
@@ -1027,10 +1025,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white dark:bg-navy-800 rounded-2xl border border-gray-200 dark:border-navy-700 shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 dark:border-navy-700">
-        <span className="text-primary-500">{icon}</span>
-        <h2 className="text-sm font-heading font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200">
+    <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+      <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 border-border">
+        <span className="text-primary">{icon}</span>
+        <h2 className="text-sm font-heading font-bold uppercase tracking-wider text-foreground">
           {title}
         </h2>
       </div>
@@ -1054,11 +1052,11 @@ function SettingRow({
     <div className="flex items-center justify-between gap-4">
       <div className="flex-1 min-w-0">
         <p
-          className={`text-sm font-medium ${danger ? "text-red-500" : "text-gray-800 dark:text-gray-200"}`}
+          className={`text-sm font-medium ${danger ? "text-red-500" : "text-foreground"}`}
         >
           {label}
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+        <p className="text-xs text-muted-foreground mt-0.5">
           {description}
         </p>
       </div>
@@ -1078,7 +1076,7 @@ function Toggle({
     <button
       onClick={() => onChange(!checked)}
       className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-        checked ? "bg-primary-500" : "bg-gray-300 dark:bg-navy-600"
+        checked ? "bg-primary-500" : "bg-muted"
       }`}
     >
       <div
@@ -1100,15 +1098,15 @@ function SegmentedControl({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex rounded-lg bg-gray-100 dark:bg-navy-700 p-0.5 border border-gray-200 dark:border-navy-600">
+    <div className="flex rounded-lg bg-muted p-0.5 border border-border">
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-heading font-bold uppercase tracking-wider transition-all ${
             value === opt.value
-              ? "bg-white dark:bg-navy-500 text-primary-600 dark:text-primary-400 shadow-sm"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              ? "bg-white bg-muted text-primary shadow-sm"
+              : "text-muted-foreground hover:text-foreground/90 hover:text-foreground/80"
           }`}
         >
           {opt.icon}
@@ -1136,14 +1134,14 @@ function GameTab({
     <button
       onClick={onClick}
       className={`group relative flex items-center gap-2 px-4 py-3 font-heading font-bold text-sm uppercase tracking-wider transition-colors ${
-        active ? "text-white" : "text-gray-400 hover:text-gray-200"
+        active ? "text-foreground" : "text-muted-foreground/70 hover:text-foreground/90"
       }`}
     >
       <span
         className={
           active
             ? "text-accent-400"
-            : "text-gray-500 group-hover:text-gray-300"
+            : "text-muted-foreground group-hover:text-foreground/80"
         }
       >
         {icon}
@@ -1170,16 +1168,16 @@ function GameRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-4 border-b border-white/10 last:border-b-0">
+    <div className="flex items-center justify-between gap-4 py-4 border-b border-border/40 last:border-b-0">
       <div className="flex-1 min-w-0">
         <p
           className={`text-sm font-heading font-bold uppercase tracking-wider ${
-            danger ? "text-red-400" : "text-white"
+            danger ? "text-red-400" : "text-foreground"
           }`}
         >
           {label}
         </p>
-        <p className="text-xs text-gray-400 mt-1 normal-case">{description}</p>
+        <p className="text-xs text-muted-foreground/70 mt-1 normal-case">{description}</p>
       </div>
       <div className="shrink-0">{children}</div>
     </div>
@@ -1204,7 +1202,7 @@ function GameSegmented({
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-heading font-bold uppercase tracking-wider transition-all ${
             value === opt.value
               ? "border-accent-400 text-accent-400 bg-accent-400/10"
-              : "border-white/15 text-gray-300 hover:border-white/35 hover:text-white"
+              : "border-border text-foreground/80 hover:border-white/35 hover:text-foreground"
           }`}
         >
           {opt.icon}
@@ -1228,14 +1226,14 @@ function GameToggle({
       className={`relative w-11 h-6 rounded-full border transition-colors duration-200 ${
         checked
           ? "bg-accent-400/20 border-accent-400"
-          : "bg-white/5 border-white/20"
+          : "bg-muted/30 border-border"
       }`}
     >
       <div
         className={`absolute top-0.5 w-5 h-5 rounded-full shadow-sm transition-transform duration-200 ${
           checked
             ? "translate-x-[22px] bg-accent-400"
-            : "translate-x-0.5 bg-gray-300"
+            : "translate-x-0.5 bg-muted"
         }`}
       />
     </button>
@@ -1255,7 +1253,7 @@ function GameButton({
 }) {
   const tones = {
     neutral:
-      "border-white/20 text-white hover:border-white/40 hover:bg-white/5",
+      "border-border text-foreground hover:border-white/40 hover:bg-muted/30",
     primary:
       "border-accent-400/50 text-accent-400 hover:border-accent-400 hover:bg-accent-400/10",
     danger:
@@ -1271,4 +1269,6 @@ function GameButton({
     </button>
   );
 }
+
+
 

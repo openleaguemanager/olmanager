@@ -1,12 +1,15 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
 import {
   AlertTriangle,
   ChevronRight,
+  Heart,
   Repeat,
   ShoppingCart,
+  Star,
   User,
+  Zap,
 } from "lucide-react";
 
 import type { GameStateData, PlayerData, PlayerSelectionOptions } from "@/store/gameStore";
@@ -22,6 +25,7 @@ import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import { resolvePlayerLolRole } from "@/lib/players/lolIdentity";
 import ContextMenu from "@/components/ContextMenu";
 import { calcAge, formatVal } from "@/lib/common/helpers";
+import { safeFinanceNumber } from "@/lib/finances/finance";
 import { PlayerAvatar } from "@/components/ui/PlayerAvatar";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
@@ -75,9 +79,12 @@ export function SquadTabV2({
   onSelectPlayer,
 }: SquadTabV2Props) {
   const { t } = useTranslation();
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
   const myTeam = gameState.teams.find((tm) => tm.id === gameState.manager.team_id);
   const [sortKey, setSortKey] = useState<SortKey>("pos");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [search, setSearch] = useState("");
 
   // ─── Derived data ────────────────────────────────────────────────
   if (!myTeam) {
@@ -149,142 +156,257 @@ export function SquadTabV2({
   };
 
   const benchPlayers = sortedRoster.filter((p) => !activeIds.has(p.id));
+  const benchFiltered = search.trim()
+    ? benchPlayers.filter((p) =>
+        p.match_name.toLowerCase().includes(search.toLowerCase()),
+      )
+    : benchPlayers;
   const hasRoster = roster.length > 0;
+
+  // ─── Squad KPIs ──────────────────────────────────────────────────
+  const avgOvr = roster.length > 0 ? Math.round(roster.reduce((s, p) => s + calculateLolOvr(p), 0) / roster.length) : 0;
+  const avgCondition = roster.length > 0 ? Math.round(roster.reduce((s, p) => s + p.condition, 0) / roster.length) : 0;
+  const avgMorale = roster.length > 0 ? Math.round(roster.reduce((s, p) => s + p.morale, 0) / roster.length) : 0;
+  const avgFitness = roster.length > 0 ? Math.round(roster.reduce((s, p) => s + (p.fitness ?? 75), 0) / roster.length) : 0;
+  const totalValue = roster.reduce((s, p) => s + safeFinanceNumber(p.market_value), 0);
+  const totalWages = roster.reduce((s, p) => s + safeFinanceNumber(p.wage), 0);
+  const roleCounts = useMemo(() => {
+    const counts: Record<string, number> = { TOP: 0, JUNGLE: 0, MID: 0, ADC: 0, SUPPORT: 0 };
+    roster.forEach((p) => { const r = resolveRole(p); if (counts[r] !== undefined) counts[r]++; });
+    return counts;
+  }, [roster]);
+  const lowestCondition = roster.length > 0 ? Math.min(...roster.map((p) => p.condition)) : 0;
+  const lowestConditionPlayer = roster.find((p) => p.condition === lowestCondition);
 
   // ─── Render ──────────────────────────────────────────────────────
   return (
-    <div className="flex h-full flex-col gap-4 p-6">
+    <div className={cn("flex h-full flex-col gap-4 overflow-y-auto p-6 scrollbar-v2", visible && "animate-fade-in-up")}>
+      {hasRoster && (
+        <>
+          {/* ── Squad KPIs ── */}
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
+              <div className="rounded-lg bg-muted/50 p-3 text-center">
+                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("common.ovr", "OVR")}</p>
+                <p className="mt-1 font-heading text-xl font-bold tabular-nums text-primary">{avgOvr}</p>
+                <div className="mx-auto mt-1 h-1 w-12 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${avgOvr}%` }} />
+                </div>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3 text-center">
+                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("common.condition", "Energía")}</p>
+                <p className="mt-1 font-heading text-xl font-bold tabular-nums text-amber-400">{avgCondition}</p>
+                <div className="mx-auto mt-1 h-1 w-12 overflow-hidden rounded-full bg-muted">
+                  <div className={cn("h-full rounded-full", avgCondition >= 70 ? "bg-amber-400" : avgCondition >= 40 ? "bg-amber-400" : "bg-red-400")} style={{ width: `${avgCondition}%` }} />
+                </div>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3 text-center">
+                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("common.morale", "Moral")}</p>
+                <p className="mt-1 font-heading text-xl font-bold tabular-nums text-emerald-400">{avgMorale}</p>
+                <div className="mx-auto mt-1 h-1 w-12 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-emerald-400" style={{ width: `${avgMorale}%` }} />
+                </div>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3 text-center">
+                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("common.fitness", "Fitness")}</p>
+                <p className="mt-1 font-heading text-xl font-bold tabular-nums text-green-400">{avgFitness}</p>
+                <div className="mx-auto mt-1 h-1 w-12 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-green-400" style={{ width: `${avgFitness}%` }} />
+                </div>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3 text-center">
+                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.squadValue", "Valor plantilla")}</p>
+                <p className="mt-1 font-heading text-lg font-bold tabular-nums text-foreground">{formatVal(totalValue)}</p>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-3 text-center">
+                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.wageBill", "Masa salarial")}</p>
+                <p className="mt-1 font-heading text-lg font-bold tabular-nums text-foreground">{formatVal(totalWages)}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Role distribution + alerts ── */}
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "25ms", animationFillMode: "forwards" }}>
+            <div className="flex flex-wrap items-center gap-3">
+              {(Object.entries(LOL_ROLE_ORDER) as Array<[LolRole, number]>).map(([role]) => (
+                <div key={role} className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-1.5">
+                  <img src={ROLE_ICON_URLS[role]} alt={role} className="size-4 object-contain" />
+                  <span className="font-heading text-xs font-bold tabular-nums text-foreground">{roleCounts[role]}</span>
+                  <span className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{role}</span>
+                </div>
+              ))}
+              {lowestCondition < 50 && lowestConditionPlayer && (
+                <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5">
+                  <AlertTriangle className="size-4 text-amber-400" />
+                  <span className="font-heading text-[10px] uppercase tracking-wider text-amber-400">
+                    {lowestConditionPlayer.match_name}: {lowestCondition}% energía
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* ── Active Lineup ───────────────────────────────────────── */}
+      <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <div>
+        <CardHeader className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
             <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
               {t("squad.activeLineup", { defaultValue: "Alineación titular" })}
             </CardTitle>
-            <p className="mt-0.5 text-xs text-muted-foreground/70">
-              {t("squad.activeLineupHint", {
-                defaultValue: "Cinco jugadores titulares para League of Legends.",
-              })}
-            </p>
+            {hasRoster && (
+              <span className="text-xs tabular-nums text-muted-foreground/70">
+                {activeLineupSlots.filter((s) => s.player).length} / {LOL_ACTIVE_ROLES.length}
+              </span>
+            )}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {!hasRoster ? (
             <div className="py-8 text-center font-heading text-sm uppercase tracking-wider text-muted-foreground">
               {t("squad.noPlayers", { defaultValue: "Sin jugadores" })}
             </div>
           ) : (
-            <div
-              className="grid grid-cols-1 gap-3 md:grid-cols-5"
-              data-testid="active-lineup"
-            >
+            <div className="divide-y divide-border/40" data-testid="active-lineup">
               {activeLineupSlots.map((slot) => {
                 const player = slot.player;
                 const roleLabel = LOL_ROLE_LABELS[slot.role];
                 const ovr = player ? calculateLolOvr(player) : null;
                 const photo = player
-                  ? resolvePlayerPhoto(
-                      player.id,
-                      player.match_name,
-                      player.profile_image_url,
-                    )
+                  ? resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url)
                   : null;
-                const outOfPosition = player
-                  ? isPlayerOutOfPosition(player, slot.role)
-                  : false;
+                const outOfPosition = player ? isPlayerOutOfPosition(player, slot.role) : false;
+
+                if (!player) {
+                  return (
+                    <div key={slot.role} className="flex items-center gap-3 px-4 py-3 opacity-50">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-dashed border-muted-foreground/30 bg-muted/20">
+                        <img src={ROLE_ICON_URLS[slot.role]} alt={roleLabel} className="size-4 object-contain opacity-40" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-heading text-sm font-bold text-muted-foreground/50">{roleLabel}</p>
+                        <p className="text-xs text-muted-foreground/30">{t("squad.noRoleAvailable", { defaultValue: "Sin jugador" })}</p>
+                      </div>
+                    </div>
+                  );
+                }
+
+                const age = calcAge(player.date_of_birth, gameState.clock.current_date);
+                const condition = player.condition;
+                const fitness = player.fitness ?? 75;
+                const morale = player.morale;
+                const annualWage = player.wage;
+
+                const contextItems = [
+                  {
+                    label: t("squad.viewProfile", { defaultValue: "Ver perfil" }),
+                    icon: <User className="size-4" />,
+                    onClick: () => onSelectPlayer(player.id),
+                  },
+                ];
 
                 return (
-                  <button
-                    key={slot.role}
-                    type="button"
-                    disabled={!player}
-                    onClick={() => {
-                      if (player) onSelectPlayer(player.id);
-                    }}
-                    className={cn(
-                      "flex flex-col rounded-lg border bg-card p-3 text-left transition-colors",
-                      player
-                        ? "cursor-pointer border-border hover:bg-muted/50"
-                        : "cursor-default border-border/60 opacity-70",
-                    )}
-                    data-testid={`active-lineup-role-${slot.role}`}
-                  >
-                    {/* Role header */}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-heading text-xs font-bold uppercase tracking-widest text-primary">
-                        {roleLabel}
-                      </span>
-                      <img
-                        src={ROLE_ICON_URLS[slot.role]}
-                        alt={roleLabel}
-                        className="size-5 object-contain opacity-70"
-                      />
-                    </div>
-
-                    {player ? (
-                      <div className="mt-3 flex items-center gap-3">
-                        <PlayerAvatar
-                          src={photo}
-                          alt={player.match_name}
-                          className="size-10"
-                        />
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <p className="truncate font-heading text-base font-bold leading-none text-foreground">
-                              {player.match_name}
-                            </p>
-                            {outOfPosition && (
-                              <span
-                                className="shrink-0 text-amber-400"
-                                title={t("squad.outOfPositionTooltip", {
-                                  defaultValue: "Fuera de rol",
-                                })}
-                              >
-                                <AlertTriangle className="size-4" />
-                              </span>
-                            )}
-                          </div>
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {t("common.ovr", { defaultValue: "OVR" })}{" "}
-                            <span className="font-heading font-bold text-foreground tabular-nums">
-                              {ovr}
+                  <ContextMenu items={contextItems} key={player.id}>
+                    <button type="button" onClick={() => onSelectPlayer(player.id)}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/30">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted/50">
+                        <img src={ROLE_ICON_URLS[slot.role]} alt={roleLabel} className="size-4 object-contain opacity-80" />
+                      </div>
+                      <PlayerAvatar src={photo} alt={player.match_name} className="size-10" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate font-heading text-base font-bold text-foreground">{player.match_name}</p>
+                          {outOfPosition && (
+                            <span className="shrink-0 text-amber-400" title={t("squad.outOfPositionTooltip", { defaultValue: "Fuera de rol" })}>
+                              <AlertTriangle className="size-4" />
                             </span>
-                          </p>
+                          )}
+                        </div>
+                        <p className="truncate text-xs text-muted-foreground">{player.full_name}</p>
+                      </div>
+                      <div className="hidden w-12 shrink-0 text-center md:block">
+                        <p className="font-heading text-xl font-black text-primary tabular-nums">{ovr}</p>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">OVR</p>
+                      </div>
+                      <div className="hidden w-14 shrink-0 text-center md:block">
+                        <span className="font-heading text-sm font-bold text-muted-foreground">{slot.role}</span>
+                      </div>
+                      <div className="hidden w-28 shrink-0 lg:block">
+                        <div className="mb-0.5 flex items-center justify-between">
+                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Energía</span>
+                          <span className="font-heading text-[11px] font-bold text-amber-400 tabular-nums">{condition}</span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                          <div className={cn("h-full rounded-full transition-all", condition <= 0 ? "bg-amber-400/30" : "bg-amber-400")}
+                            style={{ width: `${clampBar(condition)}%` }} />
                         </div>
                       </div>
-                    ) : (
-                      <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2">
-                        <p className="font-heading text-xs font-bold uppercase tracking-wide text-amber-400">
-                          {t("squad.missingRoleCoverage", {
-                            defaultValue: "Sin jugador disponible",
-                          })}
-                        </p>
-                        <p className="mt-0.5 text-xs text-amber-300/80">
-                          {t("squad.noRoleAvailable", {
-                            defaultValue: `No hay ${roleLabel.toLowerCase()} disponible`,
-                          })}
-                        </p>
+                      <div className="hidden w-28 shrink-0 lg:block">
+                        <div className="mb-0.5 flex items-center justify-between">
+                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Moral</span>
+                          <span className="font-heading text-[11px] font-bold text-emerald-400 tabular-nums">{morale}</span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                          <div className={cn("h-full rounded-full transition-all", morale <= 0 ? "bg-emerald-400/30" : "bg-emerald-400")}
+                            style={{ width: `${clampBar(morale)}%` }} />
+                        </div>
                       </div>
-                    )}
-                  </button>
+                      <div className="hidden w-28 shrink-0 lg:block">
+                        <div className="mb-0.5 flex items-center justify-between">
+                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Fitness</span>
+                          <span className="font-heading text-[11px] font-bold text-green-400 tabular-nums">{fitness}</span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                          <div className={cn("h-full rounded-full transition-all", fitness <= 0 ? "bg-green-400/30" : "bg-green-400")}
+                            style={{ width: `${clampBar(fitness)}%` }} />
+                        </div>
+                      </div>
+                      <div className="hidden w-12 shrink-0 text-center lg:block">
+                        <p className="font-heading text-sm font-bold text-foreground tabular-nums">{age}</p>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Edad</p>
+                      </div>
+                      <div className="hidden w-20 shrink-0 text-right lg:block">
+                        <p className="font-heading text-sm font-bold text-foreground tabular-nums">{formatVal(annualWage)}</p>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">/año</p>
+                      </div>
+                      <ChevronRight className="size-4 shrink-0 text-muted-foreground/50" />
+                    </button>
+                  </ContextMenu>
                 );
               })}
             </div>
           )}
         </CardContent>
       </Card>
+      </div>
 
       {/* ── Bench / Substitutes ─────────────────────────────────── */}
+      <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "50ms", animationFillMode: "forwards" }}>
       <Card>
         <CardHeader className="space-y-3">
-          <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-            {t("squad.benchSubstitutes", {
-              defaultValue: "Suplentes / Banca",
-            })}
-          </CardTitle>
-          {/* Sort toggles */}
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
+              {t("squad.benchSubstitutes", {
+                defaultValue: "Suplentes / Banca",
+              })}
+            </CardTitle>
+            {hasRoster && (
+              <span className="text-xs tabular-nums text-muted-foreground/70">
+                {benchPlayers.length} / {roster.length}
+              </span>
+            )}
+          </div>
+          {/* Search + Sort */}
           {hasRoster && (
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                type="text"
+                placeholder={t("common.search", { defaultValue: "Buscar jugador..." })}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-8 flex-1 min-w-[140px] max-w-[200px] rounded-md border border-border bg-muted/30 px-2.5 text-xs text-foreground outline-none placeholder:text-muted-foreground/40"
+              />
               {(
                 [
                   ["pos", t("squad.pos", { defaultValue: "Posición" })],
@@ -322,7 +444,7 @@ export function SquadTabV2({
           )}
         </CardHeader>
         <CardContent className="p-0">
-          {benchPlayers.length === 0 && hasRoster ? (
+          {benchFiltered.length === 0 && hasRoster ? (
             <div className="p-8 text-center font-heading text-sm uppercase tracking-wider text-muted-foreground">
               {t("squad.allStarting", {
                 defaultValue: "Todos los jugadores en la alineación titular",
@@ -334,7 +456,7 @@ export function SquadTabV2({
             </div>
           ) : (
             <div className="divide-y divide-border/40">
-              {benchPlayers.map((player) => {
+              {benchFiltered.map((player) => {
                 const role = resolveRole(player);
                 const ovr = calculateLolOvr(player);
                 const photo = resolvePlayerPhoto(
@@ -434,9 +556,21 @@ export function SquadTabV2({
 
                       {/* Name + full_name */}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-heading text-base font-bold text-foreground">
-                          {player.match_name}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate font-heading text-base font-bold text-foreground">
+                            {player.match_name}
+                          </p>
+                          {player.transfer_listed && (
+                            <span className="shrink-0 rounded bg-red-500/10 px-1 py-0.5 text-[9px] font-heading font-bold uppercase tracking-wider text-red-400">
+                              {t("common.transferListed", { defaultValue: "TR" })}
+                            </span>
+                          )}
+                          {player.loan_listed && (
+                            <span className="shrink-0 rounded bg-blue-500/10 px-1 py-0.5 text-[9px] font-heading font-bold uppercase tracking-wider text-blue-400">
+                              {t("common.loanListed", { defaultValue: "CD" })}
+                            </span>
+                          )}
+                        </div>
                         <p className="truncate text-xs text-muted-foreground">
                           {player.full_name}
                         </p>
@@ -566,6 +700,7 @@ export function SquadTabV2({
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

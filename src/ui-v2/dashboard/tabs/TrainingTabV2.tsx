@@ -253,6 +253,9 @@ export function TrainingTabV2({
 }: TrainingTabV2Props) {
   const { t } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupFocus, setNewGroupFocus] = useState(DEFAULT_TRAINING_FOCUS);
 
   const myTeam = gameState.teams.find(
     (tm) => tm.id === gameState.manager.team_id,
@@ -418,6 +421,20 @@ export function TrainingTabV2({
 
   const setPlayerGroup = (playerId: string, groupId: string) => {
     saveGroups(reassignPlayerTrainingGroup(groups, playerId, groupId));
+  };
+
+  const handleAddGroup = () => {
+    if (!newGroupName.trim()) return;
+    const newGroup: TrainingGroupData = {
+      id: `group-${Date.now()}`,
+      name: newGroupName.trim(),
+      focus: newGroupFocus,
+      player_ids: [],
+    };
+    saveGroups([...groups, newGroup]);
+    setNewGroupName("");
+    setNewGroupFocus(DEFAULT_TRAINING_FOCUS);
+    setShowCreateGroup(false);
   };
 
   // ─── Day labels for schedule indicator ────────────────────────
@@ -966,16 +983,77 @@ export function TrainingTabV2({
             </div>
           )}
 
-          {!hasRoster || groups.length === 0 ? (
-            <p className="py-4 text-center font-heading text-sm uppercase tracking-wider text-muted-foreground">
-              {!hasRoster
-                ? t("training.emptyRoster", {
-                    defaultValue: "Plantilla vacía",
-                  })
-                : t("training.groups.noGroups", {
-                    defaultValue: "No training groups configured",
-                  })}
-            </p>
+          {!hasRoster || groups.length === 0 || showCreateGroup ? (
+            <div>
+              {!hasRoster ? (
+                <p className="py-4 text-center font-heading text-sm uppercase tracking-wider text-muted-foreground">
+                  {t("training.emptyRoster")}
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {groups.length === 0 && !showCreateGroup && (
+                    <>
+                      <p className="py-4 text-center font-heading text-sm uppercase tracking-wider text-muted-foreground">
+                        {t("training.groups.noGroups")}
+                      </p>
+                      <p className="mt-3 text-center text-xs text-muted-foreground">
+                        {t("training.groups.trainingGroupsDesc")}
+                      </p>
+                      <div className="flex justify-center">
+                        <button
+                          type="button"
+                          onClick={() => setShowCreateGroup(true)}
+                          className="rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+                        >
+                          + {t("training.groups.addGroup", "Añadir grupo")}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {showCreateGroup && (
+                    <div className="mx-auto max-w-md space-y-3 rounded-lg border border-border bg-muted/20 p-4">
+                      <p className="font-heading text-xs font-bold uppercase tracking-wider text-foreground">
+                        {t("training.groups.newGroup", "Nuevo grupo")}
+                      </p>
+                      <input
+                        value={newGroupName}
+                        onChange={(e) => setNewGroupName(e.target.value)}
+                        placeholder={t("training.groups.groupNamePlaceholder", "Nombre del grupo")}
+                        className="w-full rounded-md border border-border bg-muted/30 px-2.5 py-1.5 text-xs text-foreground outline-none"
+                      />
+                      <select
+                        value={newGroupFocus}
+                        onChange={(e) => setNewGroupFocus(e.target.value)}
+                        className="w-full rounded-md border border-border bg-muted/30 px-2.5 py-1.5 text-xs text-foreground outline-none"
+                      >
+                        {TRAINING_FOCUS_IDS.map((f) => (
+                          <option key={f} value={f}>
+                            {t(`training.focuses.${f}.label`)}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => { setShowCreateGroup(false); setNewGroupName(""); }}
+                          className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
+                        >
+                          {t("common.cancel")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleAddGroup}
+                          disabled={!newGroupName.trim()}
+                          className="rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
+                        >
+                          {t("common.create", "Crear")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           ) : (
             <Table>
               <TableHeader>

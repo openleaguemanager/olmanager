@@ -83,12 +83,14 @@ function getStandingPosition(
 export function getNextOpponentWidgetData(
   gameState: GameStateData,
 ): NextOpponentWidgetData | null {
-  const playerLeague = gameState.leagues[0];
   const userTeamId = gameState.manager.team_id;
+  if (!userTeamId) return null;
 
-  if (!playerLeague || !userTeamId) {
-    return null;
-  }
+  const playerLeague =
+    gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id) ??
+    gameState.leagues[0];
+
+  if (!playerLeague) return null;
 
   const nextFixture = findNextFixture(playerLeague.fixtures, userTeamId);
 

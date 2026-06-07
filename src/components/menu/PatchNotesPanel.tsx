@@ -139,7 +139,7 @@ export default function PatchNotesPanel({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      <div className="max-h-[60vh] overflow-y-auto overscroll-contain border-t border-white/10">
+      <div className="max-h-[60vh] overflow-y-auto overscroll-contain border-t border-white/10 scrollbar-v2">
         {releases.length === 0 ? (
           <p className="text-sm text-gray-400 py-4">
             {t("patchNotes.empty", "Todavía no hay notas de versión.")}

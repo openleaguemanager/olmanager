@@ -7,7 +7,7 @@ import FinancesTab from "../finances/FinancesTab";
 import TransfersTab from "../transfers/TransfersTab";
 import PlayersListTab from "../players/PlayersListTab";
 import TeamsListTab from "../teams/TeamsListTab";
-import TournamentsTab from "../tournaments/TournamentsTab";
+
 import ScoutingTab from "../scouting/ScoutingTab";
 import YouthAcademyTab from "../youthAcademy/YouthAcademyTab";
 import StaffTab from "../staff/StaffTab";

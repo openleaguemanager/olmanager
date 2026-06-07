@@ -1,56 +1,25 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, BicepsFlexed, Check, Landmark, Loader2, MapPin, Star, Swords, Trophy, Users } from "lucide-react";
+import { Check, Landmark, MapPin, Star, Users } from "lucide-react";
 import type { TeamSummary } from "@/store/gameStore";
 import { Badge } from "@/ui-v2/components/ui/badge";
 import { cn } from "@/ui-v2/lib/utils";
 import { formatFinance, getReputationLabel, getTeamLogoPath } from "./teamSelection.helpers";
 
 interface TeamGridV2Props {
-  leagueName: string;
   teams: TeamSummary[];
   onSelectTeam: (id: string) => void;
-  onBack: () => void;
   selectedTeamId: string | null;
-  onConfirm: () => void;
-  isConfirming: boolean;
 }
 
 export function TeamGridV2({
-  leagueName, teams, onSelectTeam, onBack, selectedTeamId, onConfirm, isConfirming,
+  teams, onSelectTeam, selectedTeamId,
 }: TeamGridV2Props) {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
-  useEffect(() => setVisible(true), []);
 
   const selectedTeam = teams.find((t) => t.id === selectedTeamId);
 
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-background to-background/95">
-      {/* Header */}
-      <header className="relative flex h-14 shrink-0 items-center justify-between border-b border-border bg-gradient-to-r from-primary/5 to-transparent px-6">
-        <div className="flex items-center gap-3">
-          <button type="button" onClick={onBack}
-            className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            <ArrowLeft className="size-4" />
-          </button>
-          <div>
-            <h1 className="font-heading text-lg font-black uppercase tracking-widest text-foreground">{leagueName}</h1>
-            <p className="text-xs text-muted-foreground/70">{teams.length} equipos disponibles</p>
-          </div>
-        </div>
-
-        {selectedTeam && (
-          <button type="button" disabled={isConfirming} onClick={onConfirm}
-            className="flex h-8 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 disabled:pointer-events-none disabled:opacity-50">
-            {isConfirming ? <Loader2 className="size-4 animate-spin" /> : <Trophy className="size-4" />}
-            {t("teamSelect.confirm", "Confirmar")}
-          </button>
-        )}
-      </header>
-
-      {/* Team grid */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-v2">
+    <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-v2">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
           {teams.map((team, i) => {
             const isSelected = team.id === selectedTeamId;
@@ -61,11 +30,10 @@ export function TeamGridV2({
             return (
               <button key={team.id} type="button" onClick={() => onSelectTeam(team.id)}
                 className={cn(
-                  "group relative overflow-hidden rounded-xl border-2 p-5 text-left transition-all duration-300",
+                    "group relative overflow-hidden rounded-xl border-2 p-5 text-left transition-all duration-300 animate-fade-in-up",
                   isSelected
                     ? "border-primary bg-gradient-to-br from-primary/10 to-primary/5 shadow-xl shadow-primary/10"
                     : "border-border bg-card hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5",
-                  visible && "animate-fade-in-up",
                 )}
                 style={{ animationDelay: `${i * 50}ms` }}
               >
@@ -148,6 +116,5 @@ export function TeamGridV2({
           })}
         </div>
       </div>
-    </div>
   );
 }

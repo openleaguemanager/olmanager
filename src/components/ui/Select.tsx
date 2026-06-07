@@ -228,21 +228,21 @@ export function Select({
   };
 
   const base =
-    "rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed";
+    "rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variants = {
     default:
-      "bg-white dark:bg-navy-800 border-gray-200 dark:border-navy-600 text-gray-700 dark:text-gray-200",
+      "bg-card border-border text-foreground",
     subtle:
-      "bg-gray-100 dark:bg-navy-700 border-gray-200 dark:border-navy-600 text-gray-600 dark:text-gray-300",
+      "bg-muted border-border text-foreground/80",
     muted:
-      "bg-gray-50 dark:bg-navy-700 border-gray-200 dark:border-navy-600 text-gray-700 dark:text-gray-300",
+      "bg-muted/50 border-border text-foreground/80",
     highlighted:
-      "bg-primary-50 dark:bg-primary-500/10 border-primary-300 dark:border-primary-500/40 text-primary-700 dark:text-primary-300 font-bold",
+      "bg-primary/10 border-primary/40 text-primary font-bold",
     placeholder:
-      "bg-gray-50 dark:bg-navy-700 border-gray-200 dark:border-navy-600 text-gray-400 dark:text-gray-500",
+      "bg-muted/50 border-border text-muted-foreground/70",
     glass:
-      "bg-white/5 border-accent-400/40 text-white hover:bg-white/10 hover:border-accent-400/70",
+      "bg-muted/30 border-border text-foreground hover:bg-muted/50 hover:border-primary/70",
   };
 
   const sizes = {
@@ -282,7 +282,7 @@ export function Select({
       ) : null}
       {icon ? (
         <span
-          className={`pointer-events-none absolute inset-y-0 ${iconInset} flex items-center text-gray-400 dark:text-gray-500`}
+          className={`pointer-events-none absolute inset-y-0 ${iconInset} flex items-center text-muted-foreground/70`}
           aria-hidden="true"
         >
           <span className="[&>svg]:w-4 [&>svg]:h-4">{icon}</span>
@@ -315,7 +315,7 @@ export function Select({
         <span className="truncate">{selectedOption?.label ?? ""}</span>
       </button>
       <span
-        className={`pointer-events-none absolute inset-y-0 ${chevronInset} flex items-center text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        className={`pointer-events-none absolute inset-y-0 ${chevronInset} flex items-center text-muted-foreground/70 transition-transform ${isOpen ? "rotate-180" : ""}`}
         aria-hidden="true"
       >
         <ChevronDown className={chevronSize} />
@@ -323,7 +323,7 @@ export function Select({
 
       {isOpen ? (
         <div
-          className={`absolute left-0 right-0 z-50 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl dark:border-navy-600 dark:bg-navy-800 ${opensUp ? "bottom-full mb-1" : "top-full mt-1"} ${dropdownClassName}`}
+          className={`absolute left-0 right-0 z-50 overflow-hidden rounded-xl border border-border bg-card shadow-xl ${opensUp ? "bottom-full mb-1" : "top-full mt-1"} ${dropdownClassName}`}
         >
           <div
             id={listboxId}
@@ -341,7 +341,7 @@ export function Select({
                   role="option"
                   aria-selected={isSelected}
                   disabled={option.disabled}
-                  className={`${optionTextSize} flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${isSelected ? "bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400" : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-navy-700"} ${option.disabled ? "cursor-not-allowed opacity-50" : ""}`}
+                  className={`${optionTextSize} flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${isSelected ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-muted"} ${option.disabled ? "cursor-not-allowed opacity-50" : ""}`}
                   onClick={(event) => {
                     event.stopPropagation();
                     if (!option.disabled) {
@@ -362,3 +362,4 @@ export function Select({
     </div>
   );
 }
+

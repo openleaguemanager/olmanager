@@ -10,7 +10,7 @@ use crate::db::save_index::SaveEntry;
 use crate::db::save_index_manager::SaveIndexManager;
 
 /// Current save format version. Increment when breaking changes are made.
-const FORMAT_VERSION: u32 = 1;
+const FORMAT_VERSION: u32 = 2;
 
 /// Manages save sessions: creating, loading, saving, deleting, and listing.
 pub struct SaveManager {
@@ -25,10 +25,51 @@ impl SaveManager {
             .map_err(|e| format!("Failed to create saves directory: {}", e))?;
         let save_index = SaveIndexManager::init(saves_dir)?;
 
-        Ok(Self {
+        let mut mgr = Self {
             saves_dir: saves_dir.to_path_buf(),
             save_index,
-        })
+        };
+
+        // Prune entries whose .olsave files have wrong format version
+        mgr.prune_incompatible_saves();
+
+        Ok(mgr)
+    }
+
+    /// Remove save entries whose .olsave files have an incompatible format version.
+    fn prune_incompatible_saves(&mut self) {
+        let to_remove: Vec<String> = self
+            .save_index
+            .list_saves()
+            .iter()
+            .filter(|entry| {
+                let path = self.save_path(&entry.id);
+                if !path.exists() {
+                    return true;
+                }
+                match Self::read_olsave_version(&path) {
+                    Ok(v) => v != FORMAT_VERSION,
+                    Err(_) => true,
+                }
+            })
+            .map(|entry| entry.id.clone())
+            .collect();
+
+        for id in &to_remove {
+            let path = self.save_path(id);
+            let _ = fs::remove_file(&path);
+            let _ = self.save_index.remove_save(id);
+        }
+    }
+
+    /// Read only the format version from an .olsave file (first 4 bytes).
+    fn read_olsave_version(path: &Path) -> Result<u32, String> {
+        let mut file =
+            fs::File::open(path).map_err(|e| format!("Failed to open: {}", e))?;
+        let mut buf = [0u8; 4];
+        file.read_exact(&mut buf)
+            .map_err(|e| format!("Failed to read version: {}", e))?;
+        Ok(u32::from_le_bytes(buf))
     }
 
     /// List all save entries.
@@ -87,7 +128,7 @@ impl SaveManager {
 
         // Deserialize Game from the rest of the file
         let game: Game = bincode::deserialize_from(&mut file)
-            .map_err(|e| format!("Failed to deserialize game: {}", e))?;
+            .map_err(|e| format!("Failed to deserialize game (format_version={}): {}", version, e))?;
 
         Ok(game)
     }

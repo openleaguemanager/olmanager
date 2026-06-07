@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Trophy } from "lucide-react";
 
 import type { LeagueSelectionData, GameStateData } from "@/store/gameStore";
 import { useGameStore } from "@/store/gameStore";
@@ -98,28 +98,61 @@ export default function TeamSelectionV2() {
     );
   }
 
-  // League picker
-  if (screen === "league" && leagueData) {
-    return (
-      <LeaguePickerV2
-        competitions={leagueData.competitions}
-        onSelect={handleLeagueSelect}
-        onBack={handleBackToMenu}
-      />
-    );
-  }
-
-  // Team grid
   const selectedCompetition = leagueData?.competitions.find((c) => c.id === selectedCompetitionId);
+  const isLeagueScreen = screen === "league" && leagueData;
+
+  // League picker / Team grid — persistent header + swap content
   return (
-    <TeamGridV2
-      leagueName={selectedCompetition?.name ?? ""}
-      teams={selectedCompetition?.teams ?? []}
-      onSelectTeam={setSelectedTeamId}
-      onBack={handleBackToLeagues}
-      selectedTeamId={selectedTeamId}
-      onConfirm={handleConfirm}
-      isConfirming={isConfirming}
-    />
+    <div className="flex h-full flex-col bg-background">
+      {/* Persistent header */}
+      <header className="relative flex h-14 shrink-0 items-center border-b border-border bg-gradient-to-r from-primary/5 to-transparent px-6">
+        <button
+          type="button"
+          onClick={isLeagueScreen ? handleBackToMenu : handleBackToLeagues}
+          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+        </button>
+        <div className="ml-3 flex flex-1 items-center justify-between">
+          <div>
+            <h1 className="font-heading text-lg font-black uppercase tracking-widest text-foreground">
+              {isLeagueScreen
+                ? t("teamSelect.selectLeague", "Select League")
+                : selectedCompetition?.name ?? ""}
+            </h1>
+            <p className="text-xs text-muted-foreground/70">
+              {isLeagueScreen
+                ? t("teamSelect.selectLeagueSubtitle", "Choose a competition")
+                : t("teamSelect.selectTeam", "Elige un equipo")}
+            </p>
+          </div>
+          {!isLeagueScreen && selectedTeamId && (
+            <button
+              type="button"
+              disabled={isConfirming}
+              onClick={handleConfirm}
+              className="flex h-8 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 disabled:pointer-events-none disabled:opacity-50"
+            >
+              {isConfirming ? <Loader2 className="size-4 animate-spin" /> : <Trophy className="size-4" />}
+              {t("teamSelect.confirm", "Confirmar")}
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* Content */}
+      {isLeagueScreen ? (
+        <LeaguePickerV2
+          competitions={leagueData.competitions}
+          onSelect={handleLeagueSelect}
+        />
+      ) : (
+        <TeamGridV2
+          teams={selectedCompetition?.teams ?? []}
+          onSelectTeam={setSelectedTeamId}
+          selectedTeamId={selectedTeamId}
+        />
+      )}
+    </div>
   );
 }

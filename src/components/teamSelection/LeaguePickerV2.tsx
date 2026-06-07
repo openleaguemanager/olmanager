@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, ChevronRight, Globe, Trophy, Users } from "lucide-react";
+import { ChevronRight, Globe, Users } from "lucide-react";
 import type { CompetitionSummary } from "@/store/gameStore";
 import { cn } from "@/ui-v2/lib/utils";
 
 interface LeaguePickerV2Props {
   competitions: CompetitionSummary[];
   onSelect: (id: string) => void;
-  onBack: () => void;
 }
 
 const REGION_BG: Record<string, string> = {
@@ -19,35 +17,11 @@ const REGION_BG: Record<string, string> = {
   "CBLOL": "from-emerald-600/30 via-emerald-800/10 to-transparent",
 };
 
-export function LeaguePickerV2({ competitions, onSelect, onBack }: LeaguePickerV2Props) {
+export function LeaguePickerV2({ competitions, onSelect }: LeaguePickerV2Props) {
   const { t } = useTranslation();
-  const [visible, setVisible] = useState(false);
-  useEffect(() => setVisible(true), []);
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      {/* Header */}
-      <header className="relative flex h-14 shrink-0 items-center gap-3 border-b border-border bg-gradient-to-r from-primary/5 to-transparent px-6">
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" />
-        </button>
-        <div>
-          <h1 className="font-heading text-lg font-black uppercase tracking-widest text-foreground">
-            {t("teamSelect.selectLeague", "Select League")}
-          </h1>
-          <p className="text-xs text-muted-foreground/70">
-            {t("teamSelect.selectLeagueSubtitle", "Choose a competition")}
-          </p>
-        </div>
-        <Trophy className="ml-auto size-5 text-muted-foreground/20" />
-      </header>
-
-      {/* Grid */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-v2">
+    <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-v2">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
           {competitions.map((comp, i) => {
             const region = Object.keys(REGION_BG).find((k) => comp.name.toUpperCase().includes(k) || comp.region.toUpperCase().includes(k));
@@ -59,9 +33,8 @@ export function LeaguePickerV2({ competitions, onSelect, onBack }: LeaguePickerV
                 type="button"
                 onClick={() => onSelect(comp.id)}
                 className={cn(
-                  "group relative overflow-hidden rounded-xl border border-border bg-card p-6 text-left transition-all duration-300",
+                  "group relative overflow-hidden rounded-xl border border-border bg-card p-6 text-left transition-all duration-300 animate-fade-in-up",
                   "hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5",
-                  visible && "animate-fade-in-up",
                 )}
                 style={{ animationDelay: `${i * 60}ms` }}
               >
@@ -99,6 +72,5 @@ export function LeaguePickerV2({ competitions, onSelect, onBack }: LeaguePickerV
           })}
         </div>
       </div>
-    </div>
   );
 }

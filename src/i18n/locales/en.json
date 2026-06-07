@@ -1,4 +1,4 @@
-﻿{
+{
   "app": {
     "name": "Open League Manager",
     "version": "pre-alpha"
@@ -3207,6 +3207,13 @@
     "rounds": "rnds",
     "youBought": "You bought",
     "youSold": "You sold",
-    "includedPlayers": "Included in deal"
+    "includedPlayers": "Included in deal",
+    "scrims.assistantCoach": "Assistant Coach",
+    "scrims.delegation": "Delegate scrim review",
+    "scrims.todayBlock": "Today's Block",
+    "scrims.weeklyReportInline": "Weekly Report",
+    "scrims.recentReports": "Recent Reports",
+    "scrims.noRecentReports": "No recent reports.",
+    "playerProfile.startPotentialResearch": "Research potential"
   }
 }

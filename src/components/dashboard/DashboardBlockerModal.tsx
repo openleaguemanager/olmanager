@@ -1,9 +1,9 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { BlockerModal } from "../../hooks/useAdvanceTime.helpers";
-import DashboardModalFrame from "./DashboardModalFrame";
+import { cn } from "@/ui-v2/lib/utils";
 
 interface DashboardBlockerModalProps {
   blockerModal: BlockerModal;
@@ -12,23 +12,14 @@ interface DashboardBlockerModalProps {
   onNavigate: (tab: string) => void;
 }
 
-function getBlockerButtonClassName(severity: string): string {
-  const baseClassName =
-    "w-full rounded-xl border p-3 text-left transition-all hover:shadow-sm";
-
-  if (severity === "warn") {
-    return `${baseClassName} border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10`;
-  }
-
-  return `${baseClassName} border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10`;
+function blockerBorder(severity: string): string {
+  return severity === "warn"
+    ? "border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10"
+    : "border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10";
 }
 
-function getBlockerTextClassName(severity: string): string {
-  if (severity === "warn") {
-    return "text-sm font-medium text-amber-600 dark:text-amber-400";
-  }
-
-  return "text-sm font-medium text-blue-600 dark:text-blue-400";
+function blockerTextColor(severity: string): string {
+  return severity === "warn" ? "text-amber-400" : "text-blue-400";
 }
 
 export default function DashboardBlockerModal({
@@ -40,54 +31,67 @@ export default function DashboardBlockerModal({
   const { t } = useTranslation();
 
   return (
-    <DashboardModalFrame maxWidthClassName="max-w-md">
-      <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20">
-          <AlertCircle className="h-5 w-5 text-amber-500" />
-        </div>
-        <div>
-          <h3 className="text-lg font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white">
-            {t("notifications.attentionRequired")}
-          </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {t(
-              "notifications.resolveBeforeContinuing",
-            )}
-          </p>
-        </div>
-      </div>
-      <div className="mb-5 flex flex-col gap-2">
-        {blockerModal.blockers.map((blocker) => (
-          <button
-            key={blocker.id}
-            onClick={() => onNavigate(blocker.tab)}
-            className={getBlockerButtonClassName(blocker.severity)}
-          >
-            <p className={getBlockerTextClassName(blocker.severity)}>
-              {blocker.text}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div
+        className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-4 flex items-start gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20">
+            <AlertCircle className="size-5 text-amber-400" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between">
+              <h3 className="font-heading text-lg font-bold uppercase tracking-wide text-foreground">
+                {t("notifications.attentionRequired")}
+              </h3>
+              <button type="button" onClick={onClose} className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <X className="size-4" />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {t("notifications.resolveBeforeContinuing")}
             </p>
-            <p className="mt-1 text-2xs font-heading uppercase tracking-widest text-gray-400">
-              {t("notifications.goTo")} {blocker.tab} →
-            </p>
-          </button>
-        ))}
-      </div>
-      <div className="flex gap-3">
-        <button
-          onClick={onClose}
-          className="flex-1 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 transition-colors hover:bg-gray-200 dark:bg-navy-700 dark:text-gray-300 dark:hover:bg-navy-600"
-        >
-          {t("notifications.reviewIssues")}
-        </button>
-        {onContinueAnyway && (
+          </div>
+        </div>
+
+        <div className="mb-5 flex flex-col gap-2">
+          {blockerModal.blockers.map((blocker) => (
+            <button
+              key={blocker.id}
+              type="button"
+              onClick={() => onNavigate(blocker.tab)}
+              className={cn("w-full rounded-xl border p-3 text-left transition-all hover:shadow-sm", blockerBorder(blocker.severity))}
+            >
+              <p className={cn("text-sm font-medium", blockerTextColor(blocker.severity))}>
+                {blocker.text}
+              </p>
+              <p className="mt-1 font-heading text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                {t("notifications.goTo")} {blocker.tab} →
+              </p>
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-3">
           <button
-            onClick={onContinueAnyway}
-            className="flex-1 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-white transition-colors hover:bg-amber-600"
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-lg border border-border bg-muted/30 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:bg-muted"
           >
-            {t("notifications.continueAnyway")}
+            {t("notifications.reviewIssues")}
           </button>
-        )}
+          {onContinueAnyway && (
+            <button
+              type="button"
+              onClick={onContinueAnyway}
+              className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              {t("notifications.continueAnyway")}
+            </button>
+          )}
+        </div>
       </div>
-    </DashboardModalFrame>
+    </div>
   );
 }

@@ -104,6 +104,8 @@ export default function TransfersTab({
   const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [posFilter, setPosFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<TransferSortState | null>(null);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 50;
 
   const toggleSort = (key: TransferSortKey) => {
     setSort((current) => {
@@ -511,6 +513,9 @@ export default function TransfersTab({
     filterTransferPlayers(currentList, search, posFilter, competitionTeamIds),
     sort,
   );
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const paginatedList = filteredList.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
   const annualWageBudget = myTeam ? myTeam.wage_budget : 0;
   const weeklyWageBudget = annualAmountToMonthlyCommitment(annualWageBudget);
   const bidAmountValue = Number.parseFloat(bidAmount);
@@ -635,7 +640,7 @@ export default function TransfersTab({
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setView(tab.id)}
+            onClick={() => { setView(tab.id); setPage(0); }}
             className={`px-4 py-2 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all flex items-center gap-1.5 ${view === tab.id
               ? "bg-primary-500 text-white shadow-md shadow-primary-500/20"
               : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600 hover:text-gray-700 dark:hover:text-gray-200"
@@ -654,7 +659,7 @@ export default function TransfersTab({
             type="text"
             placeholder={t("transfers.searchByName")}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
             className="w-full pl-9 pr-8 py-2 rounded-lg bg-white dark:bg-navy-800 border border-gray-200 dark:border-navy-600 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
           />
           <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-heading font-bold tabular-nums text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-navy-700 px-1.5 py-0.5 rounded">
@@ -663,7 +668,7 @@ export default function TransfersTab({
         </div>
         <Select
           value={competitionFilter ?? ""}
-          onChange={(e) => setCompetitionFilter(e.target.value || null)}
+          onChange={(e) => { setCompetitionFilter(e.target.value || null); setPage(0); }}
           selectSize="sm"
           className="min-w-32 font-heading font-bold uppercase tracking-wider"
         >
@@ -674,7 +679,7 @@ export default function TransfersTab({
         </Select>
         <div className="flex gap-1.5">
           <button
-            onClick={() => setPosFilter(null)}
+            onClick={() => { setPosFilter(null); setPage(0); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${!posFilter ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
             title="All roles"
           >
@@ -683,7 +688,7 @@ export default function TransfersTab({
           {positions.map((pos) => (
             <button
               key={pos}
-              onClick={() => setPosFilter(posFilter === pos ? null : pos)}
+              onClick={() => { setPosFilter(posFilter === pos ? null : pos); setPage(0); }}
               className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${posFilter === pos ? "bg-primary-500 text-white shadow-sm" : "bg-white dark:bg-navy-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-navy-600"}`}
               title={pos}
             >
@@ -706,7 +711,7 @@ export default function TransfersTab({
                 {t("transfers.goToProfile")}
               </p>
               <button
-                onClick={() => setView("market")}
+                onClick={() => { setView("market"); setPage(0); }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-heading font-bold text-xs uppercase tracking-wider bg-primary-500 text-white shadow-md hover:bg-primary-600 transition-colors"
               >
                 <TrendingUp className="w-3.5 h-3.5" /> {t("transfers.browseMarket", "Ir al mercado")}
@@ -840,7 +845,7 @@ export default function TransfersTab({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
-                  {filteredList.map((player) => {
+                  {paginatedList.map((player) => {
                     const ovr = calculateLolOvr(player);
                     const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const offersForThisPlayer = player.transfer_offers;
@@ -1028,6 +1033,47 @@ export default function TransfersTab({
             </div>
           </CardBody>
         </Card>
+      )}
+
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 py-3">
+          <button
+            type="button"
+            disabled={safePage === 0}
+            onClick={() => setPage(0)}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>
+          </button>
+          <button
+            type="button"
+            disabled={safePage === 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <span className="px-3 py-1 text-xs font-heading font-bold text-gray-600 dark:text-gray-300">
+            {safePage + 1} / {totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={safePage >= totalPages - 1}
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button
+            type="button"
+            disabled={safePage >= totalPages - 1}
+            onClick={() => setPage(totalPages - 1)}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>
+          </button>
+        </div>
       )}
 
       {(view === "market" || view === "erl" || view === "loans") && filteredList.length === 0 && (

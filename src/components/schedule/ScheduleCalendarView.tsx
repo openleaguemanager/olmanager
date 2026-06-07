@@ -375,8 +375,8 @@ export default function ScheduleCalendarView({
     : [];
 
   return (
-    <Card>
-      <div className="flex items-center justify-between gap-3 p-4 border-b border-border/60 bg-muted">
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between gap-3 p-4 border-b border-border/60 bg-muted rounded-t-xl">
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -532,7 +532,7 @@ export default function ScheduleCalendarView({
           onClick={() => setOpenDayKey(null)}
         >
           <div
-            className="bg-card rounded-xl shadow-2xl border border-border w-full max-w-lg max-h-[80vh] flex flex-col"
+            className="bg-card rounded-xl shadow-2xl border border-border w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-border/60">

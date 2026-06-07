@@ -241,7 +241,7 @@
     "transfers": "Fichajes",
     "players": "Jugadores",
     "teams": "Equipos",
-    "worldStaff": "Staff BD",
+    "worldStaff": "Staffs",
     "tournaments": "Liga",
     "champions_world": "Campeones",
     "market": "Mercado",
@@ -852,7 +852,7 @@
         "TOP": "Carril superior",
         "JUNGLE": "Jungla",
         "MID": "Carril central",
-        "ADC": "Carril inferior (ADC)",
+        "ADC": "ADC",
         "SUPPORT": "Soporte"
       },
       "sections": {
@@ -3205,6 +3205,13 @@
     "rounds": "ronda(s)",
     "youBought": "Compraste",
     "youSold": "Vendiste",
-    "includedPlayers": "Incluido en la oferta"
+    "includedPlayers": "Incluido en la oferta",
+    "scrims.assistantCoach": "Entrenador asistente",
+    "scrims.delegation": "Delegar revisión de scrims",
+    "scrims.todayBlock": "Bloque de hoy",
+    "scrims.weeklyReportInline": "Reporte semanal",
+    "scrims.recentReports": "Reportes recientes",
+    "scrims.noRecentReports": "No hay reportes recientes.",
+    "playerProfile.startPotentialResearch": "Investigar potencial"
   }
 }

@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
-
-import DashboardModalFrame from "./DashboardModalFrame";
+import { LogOut, Save, X } from "lucide-react";
 
 interface DashboardExitConfirmModalProps {
   onCancel: () => void;
@@ -17,35 +16,54 @@ export default function DashboardExitConfirmModal({
   const { t } = useTranslation();
 
   return (
-    <DashboardModalFrame maxWidthClassName="max-w-sm">
-      <h3 className="text-lg font-heading font-bold uppercase tracking-wide text-gray-900 dark:text-white">
-        {t("exitConfirm.title")}
-      </h3>
-      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-        {t("exitConfirm.message")}
-      </p>
-      <div className="mt-6 flex flex-col gap-2">
-        <button
-          onClick={onConfirm}
-          className="w-full rounded-lg bg-primary-500 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-white transition-colors hover:bg-primary-600"
-        >
-          {t("exitConfirm.saveExit")}
-        </button>
-        {onExitWithoutSave && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onCancel}>
+      <div
+        className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between">
+          <h3 className="font-heading text-lg font-bold uppercase tracking-wide text-foreground">
+            {t("exitConfirm.title")}
+          </h3>
           <button
-            onClick={onExitWithoutSave}
-            className="w-full rounded-lg bg-red-500 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-white transition-colors hover:bg-red-600"
+            type="button"
+            onClick={onCancel}
+            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
-            {t("exitConfirm.exitNoSave", "Salir sin guardar")}
+            <X className="size-4" />
           </button>
-        )}
-        <button
-          onClick={onCancel}
-          className="w-full rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 transition-colors hover:bg-gray-200 dark:bg-navy-700 dark:text-gray-300 dark:hover:bg-navy-600"
-        >
-          {t("common.cancel")}
-        </button>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t("exitConfirm.message")}
+        </p>
+        <div className="mt-6 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            <Save className="size-4" />
+            {t("exitConfirm.saveExit")}
+          </button>
+          {onExitWithoutSave && (
+            <button
+              type="button"
+              onClick={onExitWithoutSave}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-destructive px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-destructive-foreground transition-colors hover:bg-destructive/90"
+            >
+              <LogOut className="size-4" />
+              {t("exitConfirm.exitNoSave", "Salir sin guardar")}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full rounded-lg border border-border bg-muted/30 px-4 py-2.5 text-sm font-heading font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:bg-muted"
+          >
+            {t("common.cancel")}
+          </button>
+        </div>
       </div>
-    </DashboardModalFrame>
+    </div>
   );
 }

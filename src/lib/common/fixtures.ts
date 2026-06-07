@@ -34,7 +34,7 @@ export function findNextFixture(
 ): FixtureData | undefined {
     return fixtures.find(
         (fixture) =>
-            fixture.status === "Scheduled" &&
+            fixture.status !== "Completed" &&
             (fixture.home_team_id === teamId || fixture.away_team_id === teamId),
     );
 }
