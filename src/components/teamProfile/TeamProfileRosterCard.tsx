@@ -44,34 +44,34 @@ export default function TeamProfileRosterCard({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 dark:bg-navy-800 border-b border-gray-200 dark:border-navy-600 text-xs">
+              <tr className="bg-muted border-b border-border text-xs">
                 <th className="py-3 px-5 w-14"></th>
-                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("common.position")}
                 </th>
-                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("common.name")}
                 </th>
-                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("common.age")}
                 </th>
-                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("common.nationality")}
                 </th>
-                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("common.value")}
                 </th>
                 {isOwnTeam && (
-                  <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                     {t("common.condition")}
                   </th>
                 )}
-                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("common.ovr")}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
+            <tbody className="divide-y divide-border/40">
               {roster.map((player) => {
                 const ovr = calculateLolOvr(player);
                 const age = calcAge(player.date_of_birth, currentDate);
@@ -82,7 +82,7 @@ export default function TeamProfileRosterCard({
                   <tr
                     key={player.id}
                     onClick={() => onSelectPlayer?.(player.id)}
-                    className="hover:bg-gray-50 dark:hover:bg-navy-700/50 transition-colors cursor-pointer group"
+                    className="hover:bg-muted/50 transition-colors cursor-pointer group"
                   >
                     <td className="py-3 px-5">
                       {photoUrl ? (
@@ -92,7 +92,7 @@ export default function TeamProfileRosterCard({
                           className="w-8 h-8 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-xs font-heading font-bold text-gray-500 dark:text-gray-400">
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-heading font-bold text-muted-foreground">
                           {player.match_name?.charAt(0)?.toUpperCase() ?? "?"}
                         </div>
                       )}
@@ -106,14 +106,14 @@ export default function TeamProfileRosterCard({
                       />
                     </td>
                     <td className="py-3 px-5">
-                      <span className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                      <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
                         {player.match_name || player.full_name}
                       </span>
                     </td>
-                    <td className="py-3 px-5 text-sm text-gray-600 dark:text-gray-400 tabular-nums">
+                    <td className="py-3 px-5 text-sm text-muted-foreground/80 tabular-nums">
                       {age}
                     </td>
-                    <td className="py-3 px-5 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="py-3 px-5 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <CountryFlag
                           code={player.nationality}
@@ -123,7 +123,7 @@ export default function TeamProfileRosterCard({
                         <span>{countryName(player.nationality, locale)}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-5 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="py-3 px-5 text-sm text-muted-foreground/80">
                       {formatVal(player.market_value)}
                     </td>
                     {isOwnTeam && (
@@ -142,9 +142,9 @@ export default function TeamProfileRosterCard({
                         className={`font-heading font-bold text-lg tabular-nums ${
                           isOwnTeam
                             ? ovr >= 75
-                              ? "text-primary-500"
+                              ? "text-primary"
                               : ovr >= 55
-                                ? "text-accent-500"
+                                ? "text-primary"
                                 : "text-gray-400"
                             : "text-gray-400"
                         }`}
@@ -162,4 +162,5 @@ export default function TeamProfileRosterCard({
     </Card>
   );
 }
+
 

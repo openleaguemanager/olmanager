@@ -486,23 +486,27 @@ pub async fn load_game(
         .map_err(|e| format!("Lock error: {}", e))?;
 
     info!("[cmd] load_game: loading game data from save");
-    let game = sm.load_game(&save_id)?;
+    let mut game = sm.load_game(&save_id)?;
     info!(
         "[cmd] load_game: game loaded, players={}, teams={}",
         game.players.len(),
         game.teams.len()
     );
 
-    // Extract stats_state from the game (now embedded) into the session
-    let stats_state = game.stats_state.clone();
-
-    let mgr_name = game.manager.display_name();
-    info!("[cmd] load_game: manager={}", mgr_name);
+    // Bootstrap champion state so the Champions tab has data
+    info!("[cmd] load_game: bootstrapping champion state...");
+    olm_core::champions::bootstrap_champion_state(&mut game);
+    info!(
+        "[cmd] load_game: champion_patch.hidden_meta={}, champion_masteries={}",
+        game.champion_patch.hidden_meta.len(),
+        game.champion_masteries.len()
+    );
 
     info!("[cmd] load_game: setting state");
+    let mgr_name = game.manager.display_name();
     state.set_save_id(save_id);
     state.set_game(game);
-    state.set_stats_state(stats_state);
+    state.set_stats_state(StatsState::default());
     info!("[cmd] load_game: state set, returning manager name");
 
     Ok(mgr_name)
@@ -511,7 +515,7 @@ pub async fn load_game(
 #[tauri::command]
 pub async fn get_active_game(state: State<'_, StateManager>) -> Result<Game, String> {
     log::info!("[cmd] get_active_game: start");
-    let game = state.get_game(|g: &Game| g.clone()).ok_or_else(|| {
+    let mut game = state.get_game(|g: &Game| g.clone()).ok_or_else(|| {
         log::error!("[cmd] get_active_game: no active game in state");
         "No active game session".to_string()
     })?;
@@ -520,8 +524,42 @@ pub async fn get_active_game(state: State<'_, StateManager>) -> Result<Game, Str
         game.players.len(),
         game.teams.len()
     );
-    olm_core::champions::bootstrap_champion_state(&mut game.clone());
+    log::info!("[cmd] get_active_game: bootstrapping champion state...");
+    olm_core::champions::bootstrap_champion_state(&mut game);
+    log::info!(
+        "[cmd] get_active_game: champion_patch.hidden_meta={}, champion_masteries={}",
+        game.champion_patch.hidden_meta.len(),
+        game.champion_masteries.len()
+    );
     Ok(game)
+}
+
+#[tauri::command]
+pub async fn get_champions() -> Result<Vec<olm_core::domain::champion::Champion>, String> {
+    let raw = include_str!("../../../assets/draft/champion-list.json");
+    let list: olm_core::champions::ChampionListFile = serde_json::from_str(raw)
+        .map_err(|e| format!("Failed to parse champion-list.json: {e}"))?;
+    let catalog: Vec<olm_core::domain::champion::Champion> = list.champions
+        .into_iter()
+        .enumerate()
+        .map(|(i, entry)| {
+            let champion_name = entry.name.clone();
+            let image_splash = format!("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg",
+                champion_name.replace(' ', "").replace("'", ""));
+            olm_core::domain::champion::Champion {
+                id: (i + 1) as i64,
+                name: entry.name,
+                champion_key: entry.id,
+                roles_json: serde_json::to_string(&entry.tags).unwrap_or_default(),
+                counterpicks_json: None,
+                synergies_json: None,
+                image_tile_url: Some(format!("https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/{}", entry.image)),
+                image_splash_url: Some(image_splash),
+            }
+        })
+        .collect();
+    log::info!("[cmd] get_champions: embedded {} champions", catalog.len());
+    Ok(catalog)
 }
 
 #[tauri::command]

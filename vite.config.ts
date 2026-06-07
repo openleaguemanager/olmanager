@@ -57,8 +57,7 @@ export default defineConfig(async ({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
         ...(isWeb
           ? {
-              "@tauri-apps/api/window": path.resolve(__dirname, "./src/web/tauriWindowShim.ts"),
-              "@tauri-apps/plugin-updater": path.resolve(__dirname, "./src/web/tauriUpdaterShim.ts"),
+
             }
           : {}),
       },
@@ -107,7 +106,7 @@ export default defineConfig(async ({ mode }) => {
           "**/public/player-photos/**",
           "**/public/teams-icons/**",
           "**/public/competitions-icons/**",
-          "**/public/staff-photos/**",
+          "**/public/staff-icons/**",
           "**/data/**",
         ],
       },

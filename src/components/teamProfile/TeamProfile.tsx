@@ -27,7 +27,7 @@ export default function TeamProfile({
     <div className="w-[92%] max-w-[2000px] mx-auto">
       <button
         onClick={onClose}
-        className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors mb-4"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
       >
         <ArrowLeft className="w-4 h-4" />
         <span className="font-heading font-bold uppercase tracking-wider">
@@ -71,3 +71,4 @@ export default function TeamProfile({
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { getApiClientSync } from "../api/client";
+import { invoke } from "@tauri-apps/api/core";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -160,18 +160,26 @@ function isAcademyPlayer(playerId: string): boolean {
 // Temporary API helper — will be replaced when ApiClient gets these methods
 const API_BASE = (import.meta as any).env?.VITE_API_BASE ?? ""
 
+function isTauri(): boolean {
+  return typeof window !== "undefined" && (
+    "__TAURI__" in window ||
+    "__TAURI_INTERNALS__" in window
+  )
+}
+
 function activeSaveId(): string {
   if (typeof window === "undefined") return ""
   return localStorage.getItem("olmanager.web.activeSaveId") ?? ""
 }
 
 async function apiPost<T>(pathOrCmd: string, body?: Record<string, unknown>): Promise<T> {
+  // En modo Tauri usar invoke en vez de fetch
+  if (isTauri()) {
+    return invoke(pathOrCmd, body ?? {}) as Promise<T>
+  }
   const path = pathOrCmd.startsWith("/") ? pathOrCmd : `/api/saves/${activeSaveId()}/cmd/${pathOrCmd}`
   const url = `${API_BASE}${path}`
-  const { data } = await import("../web/supabase").then(m => m.supabase.auth.getSession()).catch(() => ({ data: null }))
-  const token = data?.session?.access_token
   const headers: Record<string, string> = { "Content-Type": "application/json" }
-  if (token) headers["Authorization"] = `Bearer ${token}`
   console.debug(`[apiPost] POST ${url}`, { headers, body })
   const res = await fetch(url, {
     method: "POST",
@@ -384,7 +392,7 @@ export default function TeamSelection() {
 
   if (isRecovering) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
+      <div className="h-full bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
         <div className="text-center text-gray-600 dark:text-gray-300">
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" />
           <p className="text-sm">{t("worldSelect.creatingWorld")}</p>
@@ -399,7 +407,7 @@ export default function TeamSelection() {
 
   if (errorMessage && !leagueData && !legacyTeams) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
+      <div className="h-full bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 mb-4">{errorMessage}</p>
           <button
@@ -432,7 +440,7 @@ export default function TeamSelection() {
     // Si hay competencias, mostramos el league picker
     if (leagueData.competitions.length > 0) {
       return (
-        <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
+        <div className="h-full bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
           <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 px-6 py-4 flex justify-between items-center shadow-sm">
             <div className="flex items-center gap-4">
               <button
@@ -502,7 +510,7 @@ export default function TeamSelection() {
 
     // leagueData existe pero competitions está vacío: mostramos error
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
+      <div className="h-full bg-gray-100 dark:bg-navy-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <Trophy className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <h2 className="text-xl font-heading font-bold text-gray-800 dark:text-gray-100 mb-2">
@@ -562,7 +570,7 @@ export default function TeamSelection() {
   // -----------------------------------------------------------------------
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
+    <div className="h-full bg-gray-100 dark:bg-navy-900 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-navy-800 border-b border-gray-200 dark:border-navy-700 px-6 py-4 flex justify-between items-center shadow-sm">
         <div className="flex items-center gap-4">

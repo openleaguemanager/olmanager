@@ -6,6 +6,7 @@ interface DatePickerProps {
   value: string; // YYYY-MM-DD
   onChange: (date: string) => void;
   error?: boolean;
+  nextFieldId?: string; // id del elemento a enfocar con Tab desde el año
 }
 
 interface DateParts {
@@ -90,7 +91,7 @@ function getSelectedMonthLabel(monthValue: string, months: MonthOption[], fallba
   return months.find(m => m.value === monthValue || m.value === parseInt(monthValue).toString())?.label ?? fallback;
 }
 
-export function DatePicker({ value, onChange, error }: DatePickerProps) {
+export function DatePicker({ value, onChange, error, nextFieldId }: DatePickerProps) {
   const { t, i18n } = useTranslation();
   
   // Parse initial value or use current date components
@@ -99,7 +100,10 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
   const [year, setYear] = useState<string>("");
   
   const [monthOpen, setMonthOpen] = useState(false);
+  const [monthFocusIdx, setMonthFocusIdx] = useState(0);
   const monthRef = useRef<HTMLDivElement>(null);
+  const monthBtnRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const dayRef = useRef<HTMLInputElement>(null);
   const yearRef = useRef<HTMLInputElement>(null);
 
@@ -118,6 +122,13 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
     if (!monthOpen || !monthRef.current) {
       return;
     }
+
+    // Focus the dropdown and reset highlight to current month
+    const currentIdx = months.findIndex(
+      m => m.value === month || m.value.padStart(2, '0') === month
+    )
+    setMonthFocusIdx(currentIdx >= 0 ? currentIdx : 0)
+    dropdownRef.current?.focus()
 
     const monthElement = monthRef.current;
 
@@ -184,10 +195,12 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
           onChange={handleDayChange}
           onBlur={() => setDay(normaliseDayOnBlur(day))}
           onKeyDown={(e) => {
-            if (e.key === "Tab" && !e.shiftKey && dayRef.current) {
-              e.preventDefault();
-              const monthBtn = monthRef.current?.querySelector("button");
-              monthBtn?.focus();
+            if (e.key === "Tab" && !e.shiftKey) {
+              const btn = document.getElementById("dp-month-btn");
+              if (btn) {
+                e.preventDefault();
+                btn.focus();
+              }
             }
           }}
           className={`w-full bg-white/5 border text-white rounded-lg p-3 outline-none focus:ring-2 transition-all placeholder:text-gray-500 text-center ${
@@ -201,21 +214,48 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
       {/* Month Dropdown */}
       <div className="flex-[2] relative" ref={monthRef}>
         <button
+          id="dp-month-btn"
+          ref={monthBtnRef}
           type="button"
+          tabIndex={0}
           onClick={() => setMonthOpen(!monthOpen)}
           onKeyDown={(e) => {
             if (e.key === "Tab" && !e.shiftKey) {
-              e.preventDefault();
-              if (monthOpen) setMonthOpen(false);
-              yearRef.current?.focus();
+              const next = document.getElementById("dp-year-input");
+              if (next) {
+                e.preventDefault();
+                if (monthOpen) setMonthOpen(false);
+                next.focus();
+              }
+              return
             }
             if (e.key === "Tab" && e.shiftKey) {
               e.preventDefault();
               if (monthOpen) setMonthOpen(false);
               dayRef.current?.focus();
+              return
+            }
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+              const dir = e.key === "ArrowDown" ? 1 : -1;
+              const currentIdx = months.findIndex(
+                m => m.value === month || m.value.padStart(2, '0') === month
+              );
+              let nextIdx = currentIdx < 0 ? 0 : currentIdx + dir;
+              if (nextIdx < 0) nextIdx = months.length - 1;
+              if (nextIdx >= months.length) nextIdx = 0;
+              const m = months[nextIdx];
+              const nextMonth = m.value.padStart(2, '0');
+              setMonth(nextMonth);
+              if (day && year.length === 4) {
+                const clampedDay = clampDayValue(day, nextMonth, year);
+                if (clampedDay !== day) {
+                  setDay(clampedDay.padStart(2, '0'));
+                }
+              }
             }
           }}
-          className={`w-full flex items-center justify-between bg-white/5 border text-left rounded-lg p-3 outline-none transition-all ${
+          className={`w-full flex items-center justify-between bg-white/5 border text-left rounded-lg p-3 outline-none transition-all focus:border-accent-400 focus:ring-2 focus:ring-accent-400/20 ${
             error
               ? "border-red-400 dark:border-red-500"
               : monthOpen
@@ -231,7 +271,9 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
 
         {monthOpen && (
           <div
-            className="absolute z-50 top-full mt-1 left-0 right-0 bg-navy-800 rounded-lg shadow-xl border border-white/10 overflow-hidden"
+            ref={dropdownRef}
+            tabIndex={-1}
+            className="absolute z-50 top-full mt-1 left-0 right-0 bg-navy-800 rounded-lg shadow-xl border border-white/10 overflow-hidden outline-none"
             onKeyDown={(e) => {
               if (e.key === "Tab") {
                 e.preventDefault();
@@ -241,30 +283,59 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
                 } else {
                   yearRef.current?.focus();
                 }
+                return
+              }
+              if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                e.preventDefault()
+                const dir = e.key === "ArrowDown" ? 1 : -1
+                setMonthFocusIdx(i => {
+                  const next = i + dir
+                  if (next < 0) return months.length - 1
+                  if (next >= months.length) return 0
+                  return next
+                })
+              }
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                const m = months[monthFocusIdx]
+                if (!m) return
+                const nextMonth = m.value.padStart(2, '0')
+                setMonth(nextMonth)
+                setMonthOpen(false)
+                if (day && year.length === 4) {
+                  const clampedDay = clampDayValue(day, nextMonth, year)
+                  if (clampedDay !== day) {
+                    setDay(clampedDay.padStart(2, '0'))
+                  }
+                }
+                monthBtnRef.current?.focus()
               }
             }}
           >
             <div className="max-h-48 overflow-y-auto">
-              {months.map(m => (
+              {months.map((m, i) => (
                 <button
                   key={m.value}
                   type="button"
+                  onMouseEnter={() => setMonthFocusIdx(i)}
                   onClick={() => {
                     const nextMonth = m.value.padStart(2, '0');
                     setMonth(nextMonth);
                     setMonthOpen(false);
-                    // Re-validate day
                     if (day && year.length === 4) {
                       const clampedDay = clampDayValue(day, nextMonth, year);
                       if (clampedDay !== day) {
                         setDay(clampedDay.padStart(2, '0'));
                       }
                     }
+                    monthBtnRef.current?.focus()
                   }}
                   className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
                     (month === m.value || month === m.value.padStart(2, '0'))
                       ? "bg-accent-400/10 text-accent-400"
-                      : "text-gray-200 hover:bg-white/10"
+                      : monthFocusIdx === i
+                        ? "bg-white/15 text-gray-200"
+                        : "text-gray-200 hover:bg-white/10"
                   }`}
                 >
                   <span>{m.label}</span>
@@ -279,6 +350,7 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
       {/* Year */}
       <div className="flex-[1.5]">
         <input
+          id="dp-year-input"
           type="text"
           inputMode="numeric"
           placeholder={t('date.year', 'YYYY')}
@@ -290,6 +362,24 @@ export function DatePicker({ value, onChange, error }: DatePickerProps) {
               if (normalisedYear !== year) {
                 setYear(normalisedYear);
               }
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Tab" && !e.shiftKey) {
+              if (nextFieldId) {
+                const next = document.getElementById(nextFieldId);
+                if (next) {
+                  e.preventDefault();
+                  next.focus();
+                  return;
+                }
+              }
+              e.preventDefault();
+              dayRef.current?.focus();
+            }
+            if (e.key === "Tab" && e.shiftKey) {
+              e.preventDefault();
+              monthBtnRef.current?.focus();
             }
           }}
           className={`w-full bg-white/5 border text-white rounded-lg p-3 outline-none focus:ring-2 transition-all placeholder:text-gray-500 text-center ${

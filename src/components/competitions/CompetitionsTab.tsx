@@ -3,8 +3,6 @@ import { useTranslation } from "react-i18next";
 import {
   Users,
   Globe,
-  Search,
-  Loader2,
   Building2,
   Calendar,
   TrendingUp,
@@ -37,6 +35,8 @@ const COMPETITION_COLORS: Record<string, string> = {
   cblol: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
 };
 
+const TIER_1_COMPETITIONS = new Set(["lec", "lcs", "lck", "lpl", "lcp", "cblol"]);
+
 function getCompetitionColor(id: string): string {
   return COMPETITION_COLORS[id] ?? "bg-gray-500/20 text-gray-300 border-gray-500/30";
 }
@@ -46,7 +46,12 @@ export default function CompetitionsTab({ gameState, onSelectTeam }: Competition
   const [selectedCid, setSelectedCid] = useState<string | null>(null);
   const [detailView, setDetailView] = useState<DetailView>("calendar");
 
-  const leagues = Array.isArray(gameState.leagues) ? gameState.leagues : [];
+  const leagues = Array.isArray(gameState.leagues)
+    ? gameState.leagues.filter((l) => {
+        const cid = l.competition_id ?? l.id;
+        return TIER_1_COMPETITIONS.has(cid);
+      })
+    : [];
   const selectedLeague = selectedCid
     ? leagues.find((l) => (l.competition_id ?? l.id) === selectedCid) ?? null
     : null;
@@ -254,8 +259,8 @@ function CompetitionCard({
       className={[
         "relative text-left rounded-xl border-2 p-5 transition-all duration-200 hover:shadow-lg",
         selected
-          ? "border-primary-500 bg-primary-500/10 shadow-md shadow-primary-500/10"
-          : "border-gray-200 dark:border-navy-600 bg-white dark:bg-navy-800 hover:border-primary-400/50",
+          ? "border-primary bg-primary/10 shadow-md shadow-primary/10"
+          : "border-border bg-card hover:border-primary/50",
       ].join(" ")}
     >
       <div className="flex items-start justify-between mb-3">
@@ -283,10 +288,10 @@ function CompetitionCard({
             })()}
           </div>
           <div>
-            <h4 className="font-heading font-bold text-sm text-gray-800 dark:text-gray-100">
+            <h4 className="font-heading font-bold text-sm text-foreground">
               {league.name}
             </h4>
-            <p className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
               {t("competitions.season", "Temporada")} {league.season}
             </p>
           </div>
@@ -294,7 +299,7 @@ function CompetitionCard({
         {selected && <div className="w-3 h-3 rounded-full bg-primary-500" />}
       </div>
 
-      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
           <Building2 className="w-3.5 h-3.5" />
           {teamsCount} {t("competitions.teams", "equipos")}

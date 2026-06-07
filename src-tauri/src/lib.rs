@@ -98,6 +98,7 @@ pub fn run() {
             get_saves,
             load_game,
             get_active_game,
+            get_champions,
             get_team_selection_data,
             get_league_selection_data,
             get_academy_acquisition_options,

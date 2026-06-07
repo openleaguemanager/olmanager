@@ -103,10 +103,8 @@ impl<'de> Deserialize<'de> for LolRole {
                     3 => Ok(LolRole::Adc),
                     4 => Ok(LolRole::Support),
                     5 => Ok(LolRole::Unknown),
-                    _ => Err(serde::de::Error::invalid_value(
-                        serde::de::Unexpected::Unsigned(value as u64),
-                        &"a LolRole variant index 0-5",
-                    )),
+                    // Legacy Position numbers beyond LolRole range → Unknown
+                    _ => Ok(LolRole::Unknown),
                 }
             }
 

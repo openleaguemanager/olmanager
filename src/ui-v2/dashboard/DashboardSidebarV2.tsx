@@ -82,6 +82,7 @@ export function DashboardSidebarV2({
     { tab: "Youth", label: t("dashboard.youthAcademy"), icon: GraduationCap },
     { tab: "Finances", label: t("dashboard.finances"), icon: DollarSign },
     { tab: "Transfers", label: t("dashboard.transfers"), icon: TrendingUp },
+    { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
   ];
 
   const world: Item[] = [
@@ -89,12 +90,11 @@ export function DashboardSidebarV2({
     { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
     { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staff BD" }), icon: UserCog, badge: staffCount },
     { tab: "Tournaments", label: t("dashboard.tournaments"), icon: Trophy },
-    { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
     { tab: "ChampionsWorld", label: t("dashboard.champions_world"), icon: Gamepad2 },
   ];
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
+    <aside className="flex h-full w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
       <div className="flex items-center gap-3 p-4">
         {teamLogo ? (
           <img src={teamLogo} alt={teamName ?? ""} className="size-9 rounded-md object-contain" />
@@ -131,7 +131,7 @@ export function DashboardSidebarV2({
 
       <Separator />
 
-      <nav className="flex-1 overflow-y-auto px-2 py-3 text-sm">
+      <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 text-sm">
         <Group items={top} activeTab={activeTab} onNavClick={onNavClick} />
 
         {!isUnemployed && (
@@ -147,14 +147,14 @@ export function DashboardSidebarV2({
 
       <Separator />
 
-      <div className="p-2 text-sm">
-        <FooterButton icon={Settings} label={t("dashboard.settings")} onClick={onNavigateSettings} />
+      <div className="shrink-0 p-2 text-sm">
         <FooterButton
           icon={LogOut}
           label={t("dashboard.exitToMenu")}
           onClick={onExitClick}
           danger
         />
+        <FooterButton icon={Settings} label={t("dashboard.settings")} onClick={onNavigateSettings} />
       </div>
     </aside>
   );

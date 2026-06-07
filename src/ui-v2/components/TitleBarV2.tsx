@@ -42,7 +42,7 @@ export function TitleBarV2() {
 
   const handleMinimize = async () => { try { await getCurrentWindow().minimize(); } catch {} };
   const handleMaximize = async () => { try { await getCurrentWindow().toggleMaximize(); } catch {} };
-  const handleClose = async () => { try { await getCurrentWindow().close(); } catch {} };
+  const handleClose = async () => { try { await getCurrentWindow().destroy(); } catch {} };
 
   return (
     <div

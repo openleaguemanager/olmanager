@@ -7,7 +7,7 @@ interface NewsTabV2Props {
 
 export function NewsTabV2({ gameState }: NewsTabV2Props) {
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-6">
+    <div className="flex h-full flex-col overflow-y-auto p-6 scrollbar-v2">
       <NewsTab gameState={gameState} />
     </div>
   );

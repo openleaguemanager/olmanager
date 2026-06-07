@@ -110,7 +110,7 @@ export default function PlayerProfileContractCard({
                         label={t("common.condition")}
                         value={
                             <div className="flex items-center gap-1.5">
-                                <div className="w-12 h-1.5 rounded-full bg-gray-200 dark:bg-navy-600 overflow-hidden">
+                                <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
                                     <div
                                         className={`h-full rounded-full ${condition >= 70 ? "bg-success-400" : condition >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
                                         style={{ width: `${condition}%` }}
@@ -125,7 +125,7 @@ export default function PlayerProfileContractCard({
                         label={t("common.fitness")}
                         value={
                             <div className="flex items-center gap-1.5">
-                                <div className="w-12 h-1.5 rounded-full bg-gray-200 dark:bg-navy-600 overflow-hidden">
+                                <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
                                     <div
                                         className={`h-full rounded-full ${fitness >= 70 ? "bg-success-400" : fitness >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
                                         style={{ width: `${fitness}%` }}
@@ -140,7 +140,7 @@ export default function PlayerProfileContractCard({
                         label={t("common.morale")}
                         value={
                             <div className="flex items-center gap-1.5">
-                                <div className="w-12 h-1.5 rounded-full bg-gray-200 dark:bg-navy-600 overflow-hidden">
+                                <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
                                     <div
                                         className={`h-full rounded-full ${morale >= 70 ? "bg-success-400" : morale >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
                                         style={{ width: `${morale}%` }}
@@ -194,15 +194,18 @@ function InfoRow({
     value: React.ReactNode;
 }) {
     return (
-        <div className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-navy-600 last:border-0">
-            <div className="text-gray-400 dark:text-gray-500">{icon}</div>
-            <span className="text-sm text-gray-500 dark:text-gray-400 flex-1">
+        <div className="flex items-center gap-3 py-2 border-b border-border/60 last:border-0">
+            <div className="text-muted-foreground/70">{icon}</div>
+            <span className="text-sm text-muted-foreground flex-1">
                 {label}
             </span>
-            <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+            <span className="text-sm font-semibold text-foreground">
                 {value}
             </span>
         </div>
     );
 }
+
+
+
 

@@ -16,11 +16,14 @@ export default function PlayerProfileV2({
   onGameUpdate,
   onSelectPlayer,
 }: PlayerProfileV2Props) {
+  const player = gameState.players.find((p) => p.id === playerId);
+  if (!player) return null;
+
   return (
-    <div className="flex h-full flex-col overflow-y-auto scrollbar-v2">
+    <div className="player-profile-v2 flex h-full flex-col overflow-y-auto scrollbar-v2">
       <PlayerProfile
         gameState={gameState}
-        playerId={playerId}
+        player={player}
         onClose={onClose}
         onGameUpdate={onGameUpdate}
         onSelectPlayer={onSelectPlayer}

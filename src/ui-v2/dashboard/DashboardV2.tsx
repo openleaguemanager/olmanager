@@ -9,6 +9,7 @@ import type { GameStateData, PlayerSelectionOptions } from "@/store/gameStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useAdvanceTime, type MatchModeType } from "@/hooks/useAdvanceTime";
 import { resolveTeamLogo } from "@/lib/teams/teamLogos";
+import TeamProfileV2 from "@/ui-v2/pages/TeamProfileV2";
 import { resolveStaffPhoto } from "@/lib/players/playerPhotos";
 import {
   formatDateFull,
@@ -56,7 +57,9 @@ import { TournamentsTabV2 } from "./tabs/TournamentsTabV2";
 import { ManagerTabV2 } from "./tabs/ManagerTabV2";
 import { YouthTabV2 } from "./tabs/YouthTabV2";
 import { CompetitionsTabV2 } from "./tabs/CompetitionsTabV2";
+import StaffTabV1 from "@/components/staff/StaffTab";
 import { ChampionsWorldTabV2 } from "./tabs/ChampionsWorldTabV2";
+import { MetaTabV2 } from "./tabs/MetaTabV2";
 import ChampionPageV2 from "@/ui-v2/pages/ChampionPageV2";
 import PlayerProfileV2 from "@/ui-v2/pages/PlayerProfileV2";
 
@@ -500,6 +503,17 @@ export default function DashboardV2() {
               onGameUpdate={setGameState}
             />
           </div>
+        ) : profileNavigation.activeTab === "WorldStaff" &&
+          !viewingChampionKey &&
+          !profileNavigation.selectedPlayerId &&
+          !profileNavigation.selectedTeamId ? (
+          <div className="flex-1 overflow-y-auto scrollbar-v2">
+            <StaffTabV1
+              gameState={gameState}
+              onGameUpdate={setGameState}
+              mode="world"
+            />
+          </div>
         ) : profileNavigation.activeTab === "Finances" &&
           !viewingChampionKey &&
           !profileNavigation.selectedPlayerId &&
@@ -610,6 +624,17 @@ export default function DashboardV2() {
               onViewChampion={(k) => setViewingChampionKey(k)}
             />
           </div>
+        ) : profileNavigation.activeTab === "Meta" &&
+          !viewingChampionKey &&
+          !profileNavigation.selectedPlayerId &&
+          !profileNavigation.selectedTeamId ? (
+          <div className="flex-1 overflow-y-auto scrollbar-v2">
+            <MetaTabV2
+              gameState={gameState}
+              onGameUpdate={setGameState}
+              onViewChampion={(k) => setViewingChampionKey(k)}
+            />
+          </div>
         ) : profileNavigation.selectedPlayerId && !viewingChampionKey && !profileNavigation.selectedTeamId ? (
           <div className="flex-1 overflow-hidden">
             <PlayerProfileV2
@@ -624,20 +649,11 @@ export default function DashboardV2() {
           </div>
         ) : profileNavigation.selectedTeamId && !viewingChampionKey && !profileNavigation.selectedPlayerId ? (
           <div className="flex-1 overflow-hidden">
-            <DashboardWorkspaceContent
-              dashboardAlerts={dashboardAlerts}
+            <TeamProfileV2
               gameState={gameState}
-              profileNavigation={profileNavigation}
-              dashboardTabContentModel={dashboardTabContentModel}
-              onBack={handleBack}
-              onNavigate={handleNavigate}
+              teamId={profileNavigation.selectedTeamId}
+              onClose={handleBack}
               onSelectPlayer={selectPlayer}
-              onSelectTeam={selectTeam}
-              onGameUpdate={setGameState}
-              isUnemployed={isUnemployed ?? false}
-              viewingChampionKey={viewingChampionKey}
-              onCloseChampion={() => setViewingChampionKey(null)}
-              onViewChampion={(k) => setViewingChampionKey(k)}
             />
           </div>
         ) : viewingChampionKey && !profileNavigation.selectedPlayerId && !profileNavigation.selectedTeamId ? (

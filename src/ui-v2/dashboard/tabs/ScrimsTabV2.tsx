@@ -1,6 +1,17 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Gauge, Lightbulb, SlidersHorizontal, Swords, Target } from "lucide-react";
+import {
+  Brain,
+  CalendarDays,
+  Gauge,
+  Lightbulb,
+  Swords,
+  Target,
+  TrendingUp,
+  Video,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 
 import type { GameStateData, ScrimFocus } from "@/store/gameStore";
 import {
@@ -23,7 +34,7 @@ import { useSettingsStore } from "@/store/settingsStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
 import { cn } from "@/ui-v2/lib/utils";
-import ScrimPlanningCard from "@/components/scrims/ScrimPlanningCard";
+import ScrimPlanningCardV2 from "./ScrimPlanningCardV2";
 
 interface ScrimsTabV2Props {
   gameState: GameStateData;
@@ -64,6 +75,43 @@ function riskBand(opponentOvr: number, ownOvr: number, repGap: number): string {
   if (opponentOvr >= 77) return "Medio";
   return Math.max(opponentOvr - ownOvr, Math.round(repGap / 4)) >= 4 ? "Alto" : Math.max(opponentOvr - ownOvr, Math.round(repGap / 4)) >= 2 ? "Medio" : "Bajo";
 }
+
+function riskColor(risk: string): string {
+  if (risk === "Alto") return "text-red-400 border-red-500/30 bg-red-500/10";
+  if (risk === "Medio") return "text-amber-400 border-amber-500/30 bg-amber-500/10";
+  return "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+}
+
+function stateBorder(state: string): string {
+  switch (state) {
+    case "PlayedNeedsReview": return "border-amber-500/30 bg-amber-500/5";
+    case "Reviewed": return "border-emerald-500/30 bg-emerald-500/5";
+    case "Planned": return "border-primary/30 bg-primary/5";
+    case "Cancelled": return "border-red-500/30 bg-red-500/5";
+    default: return "border-border bg-muted/20";
+  }
+}
+
+function stateIcon(state: string): LucideIcon {
+  switch (state) {
+    case "PlayedNeedsReview": return TrendingUp;
+    case "Reviewed": return Zap;
+    case "Planned": return Swords;
+    case "Cancelled": return Lightbulb;
+    default: return CalendarDays;
+  }
+}
+
+const DECISION_META: Record<DailyScrimAction, { icon: LucideIcon; color: string }> = {
+  ContinueToBlock2: { icon: TrendingUp, color: "text-emerald-400" },
+  OfferRest: { icon: Brain, color: "text-blue-400" },
+  PushThrough: { icon: Zap, color: "text-amber-400" },
+  CancelScrims: { icon: Lightbulb, color: "text-red-400" },
+  VodReview: { icon: Video, color: "text-purple-400" },
+  MentalReset: { icon: Brain, color: "text-cyan-400" },
+  TargetedDrills: { icon: Target, color: "text-orange-400" },
+  DayOff: { icon: CalendarDays, color: "text-muted-foreground" },
+};
 
 export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
   const { t } = useTranslation();
@@ -199,9 +247,12 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
     finally { setDecisionSaving(null); }
   };
 
+  const todayState = todayContext.state;
+  const StateIcon = stateIcon(todayState);
+
   return (
-    <div className="flex h-full flex-col gap-4 overflow-y-auto p-6">
-      {/* Hero header */}
+    <div className="flex h-full flex-col gap-4 overflow-y-auto p-6 scrollbar-v2">
+      {/* ── Hero header ── */}
       <Card>
         <CardContent className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -210,29 +261,57 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
             <p className="mt-2 max-w-xl text-sm text-muted-foreground">{t("scrims.pageDescription")}</p>
           </div>
           <div className="flex gap-3">
-            {[
-              { icon: CalendarDays, value: `${plannedScrims}/${weeklyCapacity}`, label: t("scrims.planned") },
-              { icon: Swords, value: `${wins}-${losses}`, label: t("scrims.weekRecord") },
-              { icon: Gauge, value: String(weeklyContext.reputation), label: t("scrims.reputation") },
-            ].map((s) => (
-              <div key={s.label} className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-center">
-                <s.icon className="mx-auto mb-1 size-4 text-primary" />
-                <p className="font-heading text-xl font-bold text-foreground tabular-nums">{s.value}</p>
-                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</p>
+            {/* Planned gauge */}
+            <div className="w-28 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-center">
+              <p className="font-heading text-xl font-bold text-foreground tabular-nums">{plannedScrims}/{weeklyCapacity}</p>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{ width: `${weeklyCapacity > 0 ? (plannedScrims / weeklyCapacity) * 100 : 0}%` }}
+                />
               </div>
-            ))}
+              <p className="mt-1 font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("scrims.planned")}</p>
+            </div>
+            {/* W/L gauge */}
+            <div className="w-28 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-center">
+              <p className="font-heading text-xl font-bold tabular-nums">
+                <span className="text-emerald-400">{wins}</span>
+                <span className="text-muted-foreground/40">-</span>
+                <span className="text-red-400">{losses}</span>
+              </p>
+              <div className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-muted">
+                {played > 0 && (
+                  <>
+                    <div className="h-full bg-emerald-400 transition-all" style={{ width: `${(wins / played) * 100}%` }} />
+                    <div className="h-full bg-red-400 transition-all" style={{ width: `${(losses / played) * 100}%` }} />
+                  </>
+                )}
+              </div>
+              <p className="mt-1 font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("scrims.weekRecord")}</p>
+            </div>
+            {/* Rep gauge */}
+            <div className="w-28 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-center">
+              <p className="font-heading text-xl font-bold text-foreground tabular-nums">{weeklyContext.reputation}</p>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-amber-400 transition-all"
+                  style={{ width: `${Math.min(100, weeklyContext.reputation * 10)}%` }}
+                />
+              </div>
+              <p className="mt-1 font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("scrims.reputation")}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
-        {/* Main column */}
+        {/* ── Main column ── */}
         <div className="flex flex-col gap-4">
           {/* Weekly setup */}
           <Card>
             <CardHeader className="flex-row items-center justify-between space-y-0">
               <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-                <SlidersHorizontal className="mr-1.5 inline size-4" />
+                <Target className="mr-1.5 inline size-4" />
                 {t("scrims.weeklySetup")}
               </CardTitle>
             </CardHeader>
@@ -307,7 +386,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
             </CardContent>
           </Card>
 
-          <ScrimPlanningCard
+          <ScrimPlanningCardV2
             gameState={gameState}
             weeklyContext={weeklyContext}
             onGameUpdate={onGameUpdate}
@@ -317,23 +396,29 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
           />
         </div>
 
-        {/* Sidebar */}
+        {/* ── Sidebar ── */}
         <aside className="flex flex-col gap-4 xl:sticky xl:top-4 xl:self-start">
-          {/* Assistant coach toggle */}
+          {/* Assistant coach */}
           <Card>
             <CardHeader className="space-y-0">
-              <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
+              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-widest text-muted-foreground">
+                <Brain className="size-4" />
                 {t("scrims.assistantCoach")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 p-3">
-                <p className="text-xs text-muted-foreground">{t("scrims.delegation")}</p>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">{t("scrims.delegation")}</p>
+                  <p className="mt-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground/60">
+                    {settings.scrim_review_mode === "assistant" ? "Modo automático" : "Control manual"}
+                  </p>
+                </div>
                 <button
                   type="button"
                   onClick={() => updateSettings({ scrim_review_mode: settings.scrim_review_mode === "assistant" ? "manual" : "assistant" })}
                   className={cn(
-                    "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                    "shrink-0 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
                     settings.scrim_review_mode === "assistant"
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border text-muted-foreground",
@@ -346,33 +431,36 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
           </Card>
 
           {/* Today's block */}
-          <Card>
+          <Card className={stateBorder(todayState)}>
             <CardHeader className="space-y-0">
-              <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
+              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-widest text-muted-foreground">
+                <StateIcon className="size-4" />
                 {t("scrims.todayBlock")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <p className="text-xs text-muted-foreground">
-                  {todayContext.state === "PlayedNeedsReview"
-                    ? t("scrims.todayNeedsReview")
-                    : todayContext.state === "Reviewed"
-                      ? t("scrims.todayReviewed")
-                      : todayContext.state === "Planned"
-                        ? t("scrims.todayPlanned")
-                        : todayContext.state === "Cancelled"
-                          ? t("scrims.todayCancelled")
-                          : t("scrims.todayNoScrim")}
-                </p>
+                {/* State badge */}
+                <div className="flex items-center gap-2">
+                  {todayState === "PlayedNeedsReview" && <Badge className="border-amber-500/30 bg-amber-500/10 text-amber-400">Pendiente revisión</Badge>}
+                  {todayState === "Reviewed" && <Badge className="border-emerald-500/30 bg-emerald-500/10 text-emerald-400">Revisado</Badge>}
+                  {todayState === "Planned" && <Badge className="border-primary/30 bg-primary/10 text-primary">Planificado</Badge>}
+                  {todayState === "Cancelled" && <Badge className="border-red-500/30 bg-red-500/10 text-red-400">Cancelado</Badge>}
+                  {todayState !== "PlayedNeedsReview" && todayState !== "Reviewed" && todayState !== "Planned" && todayState !== "Cancelled" && (
+                    <Badge variant="outline" className="text-muted-foreground">Sin scrim</Badge>
+                  )}
+                </div>
 
                 {todayOpponentName && (
                   <div className="rounded-lg border border-border bg-muted/20 p-3">
                     <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("scrims.todayOpponent")}</p>
                     <p className="font-heading text-sm font-bold uppercase tracking-wide text-foreground">{todayOpponentName}</p>
                     {todayContext.state === "Planned" && (
-                      <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                        <p>{t("scrims.todayRisk")}: <span className="font-medium text-foreground">{todayRisk}</span></p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">{t("scrims.todayRisk")}:</span>
+                        <span className={cn("rounded-md border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider", riskColor(todayRisk))}>
+                          {todayRisk}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -381,29 +469,51 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                 {/* Post-scrim review decisions */}
                 {todayContext.state === "PlayedNeedsReview" && todayContext.report && reviewPhaseActive && (
                   <div className="space-y-2">
-                    {decisionOptions.map((opt) => (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        disabled={decisionSaving !== null}
-                        onClick={() => handleReviewDecision(opt.id)}
-                        className={cn(
-                          "w-full rounded-lg border-2 p-3 text-left transition-all",
-                          "border-border hover:border-primary/50",
-                          decisionSaving === opt.id && "pointer-events-none opacity-50",
-                        )}
-                      >
-                        <p className="font-heading text-xs font-bold uppercase tracking-wider text-foreground">
-                          {decisionSaving === opt.id ? t("common.saving") : opt.label}
-                        </p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{opt.description}</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {decisionImpactTags[opt.id].map((tag) => (
-                            <Badge key={tag} variant="outline" className="text-[10px]">{tag}</Badge>
-                          ))}
-                        </div>
-                      </button>
-                    ))}
+                    <p className="font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      {isFirstBlock ? (showCancelFollowups ? "Elegí seguimiento técnico" : "Decisión post-block 1") : "Cerrá la jornada"}
+                    </p>
+                    {decisionOptions.map((opt) => {
+                      const meta = DECISION_META[opt.id];
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          disabled={decisionSaving !== null}
+                          onClick={() => handleReviewDecision(opt.id)}
+                          className={cn(
+                            "group relative w-full overflow-hidden rounded-xl border-2 p-3 text-left transition-all",
+                            "hover:border-primary/50",
+                            decisionSaving === opt.id && "pointer-events-none opacity-50",
+                          )}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30", meta.color)}>
+                              <meta.icon className="size-4" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="font-heading text-xs font-bold uppercase tracking-wider text-foreground">
+                                {decisionSaving === opt.id ? t("common.saving") : opt.label}
+                              </p>
+                              <p className="mt-0.5 text-xs text-muted-foreground">{opt.description}</p>
+                              <div className="mt-2 flex flex-wrap gap-1.5">
+                                {decisionImpactTags[opt.id].map((tag) => (
+                                  <Badge
+                                    key={tag}
+                                    variant="outline"
+                                    className={cn(
+                                      "text-[9px]",
+                                      tag.includes("+") ? "border-emerald-500/20 text-emerald-400" : "border-red-500/20 text-red-400",
+                                    )}
+                                  >
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -417,12 +527,40 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
           {/* Weekly summary */}
           <Card>
             <CardHeader className="space-y-0">
-              <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
+              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-widest text-muted-foreground">
+                <TrendingUp className="size-4" />
                 {t("scrims.weeklyReportInline")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
+                {/* W/L sparkline */}
+                {played > 0 && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Rachas
+                      </span>
+                      <span className="font-heading text-[10px] tabular-nums text-muted-foreground/60">
+                        {t("scrims.played")}: {played}
+                      </span>
+                    </div>
+                    <div className="flex h-4 gap-0.5 overflow-hidden rounded-md">
+                      {latestReports.slice(0, 7).map((r, i) => (
+                        <div
+                          key={`${r.week_key}-${r.slot_index}-${i}`}
+                          className={cn(
+                            "flex-1 rounded-sm transition-all",
+                            r.won ? "bg-emerald-500/60" : "bg-red-500/60",
+                          )}
+                          title={`${teamNameById.get(r.opponent_team_id) ?? r.opponent_team_id}: ${r.won ? "W" : "L"}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent reports */}
                 <div>
                   <p className="mb-2 font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                     {t("scrims.recentReports")}
@@ -435,7 +573,9 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                             <p className="truncate text-xs font-medium text-foreground">
                               {teamNameById.get(r.opponent_team_id) ?? r.opponent_team_id}
                             </p>
-                            <span className={cn("text-[10px] font-bold", r.won ? "text-emerald-400" : "text-red-400")}>{r.won ? "W" : "L"}</span>
+                            <span className={cn("text-[10px] font-bold", r.won ? "text-emerald-400" : "text-red-400")}>
+                              {r.won ? "W" : "L"}
+                            </span>
                           </div>
                           <p className="mt-0.5 text-[10px] text-muted-foreground">{r.focus} · Q{r.quality}</p>
                         </div>
@@ -446,12 +586,23 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                   )}
                 </div>
 
+                {/* Quality & objective */}
                 {weeklyContext.avgQuality > 0 && (
                   <div className="rounded-lg border border-border bg-muted/20 p-3">
-                    <p className="font-heading text-[10px] font-bold uppercase tracking-wider text-foreground">{t("scrims.weeklyObjective")}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {wins}-{losses} · {t("scrims.played")}: {played} · Q: {weeklyContext.avgQuality}
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <p className="font-heading text-[10px] font-bold uppercase tracking-wider text-foreground">{t("scrims.weeklyObjective")}</p>
+                      <span className="font-heading text-[10px] tabular-nums text-muted-foreground">Q: {weeklyContext.avgQuality}</span>
+                    </div>
+                    <div className="mt-1 flex items-center gap-2">
+                      <div className="flex-1">
+                        <p className="text-xs text-muted-foreground">{wins}-{losses}</p>
+                      </div>
+                      {weeklyContext.lossStreak > 1 && (
+                        <Badge className="border-red-500/30 bg-red-500/10 text-[10px] text-red-400">
+                          {weeklyContext.lossStreak}L streak
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

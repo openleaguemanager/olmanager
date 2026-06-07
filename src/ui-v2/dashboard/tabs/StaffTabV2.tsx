@@ -4,12 +4,15 @@ import {
   Briefcase,
   Eye,
   GraduationCap,
+  Loader2,
   Search,
   Stethoscope,
   UserCog,
   UserMinus,
   UserPlus,
   Star,
+  Frown,
+  Users,
 } from "lucide-react";
 
 import type { GameStateData, StaffData } from "@/store/gameStore";
@@ -19,7 +22,9 @@ import {
   getLolStaffEffectsForTeam,
 } from "@/lib/teams/lolStaffEffects";
 import { resolveStaffPhoto } from "@/lib/players/playerPhotos";
-import { calcAge } from "@/lib/common/helpers";
+import { calcAge, getTeamName } from "@/lib/common/helpers";
+import { countryName } from "@/lib/common/countries";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 import { Card, CardContent } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
 
@@ -120,19 +125,33 @@ function getStaffImpactRows(s: StaffData) {
 }
 
 export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const userTeamId = gameState.manager.team_id;
   const [view, setView] = useState<"mystaff" | "available">("mystaff");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const myStaff = gameState.staff.filter((s) => s.team_id === userTeamId);
   const availableStaff = gameState.staff.filter((s) => !s.team_id);
   const displayStaff = view === "mystaff" ? myStaff : availableStaff;
 
+  const competitionTeamIds = useMemo(() => {
+    if (!competitionFilter) return null;
+    return new Set(
+      gameState.teams.filter((t) => t.competition_id === competitionFilter).map((t) => t.id),
+    );
+  }, [gameState.teams, competitionFilter]);
+
+  const leagueOptions = useMemo(
+    () => gameState.leagues.map((l) => ({ id: l.competition_id ?? l.id, name: l.name })),
+    [gameState.leagues],
+  );
+
   const filtered = displayStaff.filter((s) => {
     if (roleFilter && s.role !== roleFilter) return false;
+    if (competitionTeamIds && (!s.team_id || !competitionTeamIds.has(s.team_id))) return false;
     if (search.length >= 2) {
       const q = search.toLowerCase();
       if (!`${s.first_name} ${s.last_name}`.toLowerCase().includes(q)) return false;
@@ -212,6 +231,17 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
           />
         </div>
 
+        <select
+          value={competitionFilter ?? ""}
+          onChange={(e) => setCompetitionFilter(e.target.value || null)}
+          className="h-8 rounded-md border border-border bg-card px-2 text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground"
+        >
+          <option value="">{t("common.all")}</option>
+          {leagueOptions.map((l) => (
+            <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </select>
+
         <div className="flex gap-1.5">
           <button
             type="button"
@@ -271,12 +301,41 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
       {filtered.length === 0 ? (
         <div className="flex flex-1 items-center justify-center">
           <div className="text-center">
-            <UserCog className="mx-auto mb-2 size-10 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">
-              {view === "mystaff"
-                ? t("staff.noStaffMatch")
-                : t("staff.noAvailableStaff")}
-            </p>
+            {roleFilter || search.length >= 2 || competitionFilter ? (
+              <>
+                <Frown className="mx-auto mb-2 size-10 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">
+                  {t("staff.noStaffMatch")}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground/60">
+                  Try adjusting filters or search
+                </p>
+              </>
+            ) : (
+              <>
+                {view === "mystaff" ? (
+                  <>
+                    <UserCog className="mx-auto mb-2 size-10 text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">
+                      {t("staff.noStaffMatch")}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground/60">
+                      Hire staff from the available tab
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Users className="mx-auto mb-2 size-10 text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">
+                      {t("staff.noAvailableStaff")}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground/60">
+                      All staff are currently employed
+                    </p>
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
       ) : (
@@ -292,93 +351,120 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
 
             return (
               <Card key={staff.id} className="h-full">
-                <CardContent>
-                  <div className="flex items-start gap-4">
-                    {/* Avatar */}
-                    <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted text-muted-foreground">
-                      {photo ? (
-                        <img src={photo} alt={`${staff.first_name} ${staff.last_name}`} className="size-full object-cover" />
-                      ) : (
-                        roleIcon
+                <CardContent className="flex gap-4">
+                  {/* Avatar */}
+                  <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted text-muted-foreground">
+                    {photo ? (
+                      <img
+                        src={photo}
+                        alt={`${staff.first_name} ${staff.last_name}`}
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      roleIcon
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    {/* Name + OVR */}
+                    <div className="flex items-center gap-2">
+                      <h3 className="truncate font-heading text-sm font-bold uppercase tracking-wide text-foreground">
+                        {staff.first_name} {staff.last_name}
+                      </h3>
+                      <Badge
+                        variant={ovr >= 65 ? "default" : ovr >= 45 ? "secondary" : "outline"}
+                        className="text-[10px]"
+                      >
+                        {ovr} OVR
+                      </Badge>
+                    </div>
+
+                    {/* Role + Age + Nationality + Team */}
+                    <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+                      <span>{t(`staff.roles.${staff.role}`, { defaultValue: staff.role })}</span>
+                      <span className="text-border">·</span>
+                      <span>{t("common.age")} {age}</span>
+                      {staff.nationality && (
+                        <>
+                          <span className="text-border">·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <CountryFlag code={staff.nationality} locale={i18n.language} className="text-xs leading-none" />
+                            <span>{countryName(staff.nationality, i18n.language)}</span>
+                          </span>
+                        </>
+                      )}
+                      {view === "available" && staff.team_id && (
+                        <>
+                          <span className="text-border">·</span>
+                          <span className="text-muted-foreground/70">
+                            @ {getTeamName(gameState.teams, staff.team_id)}
+                          </span>
+                        </>
+                      )}
+                    </p>
+
+                    {/* Specialization + Wage */}
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {staff.specialization && (
+                        <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground">
+                          <Star className="size-3" /> {t(`staff.specializations.${staff.specialization}`)}
+                        </span>
+                      )}
+                      {staff.wage > 0 && (
+                        <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground">
+                          €{staff.wage.toLocaleString()}/año
+                        </span>
                       )}
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      {/* Name + OVR */}
-                      <div className="flex items-center gap-2">
-                        <h3 className="truncate font-heading text-sm font-bold uppercase tracking-wide text-foreground">
-                          {staff.first_name} {staff.last_name}
-                        </h3>
-                        <Badge
-                          variant={ovr >= 65 ? "default" : ovr >= 45 ? "secondary" : "outline"}
-                          className="text-[10px]"
-                        >
-                          {ovr} OVR
-                        </Badge>
-                      </div>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {t(`staff.roles.${staff.role}`, { defaultValue: staff.role })} — {t("common.age")} {age}
-                      </p>
+                    {/* Attributes */}
+                    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                      <AttrBar label={attrLabel("coaching")} value={staff.attributes.coaching} />
+                      <AttrBar label={attrLabel("judgingAbility")} value={staff.attributes.judging_ability} />
+                      <AttrBar label={attrLabel("judgingPotential")} value={staff.attributes.judging_potential} />
+                      <AttrBar label={attrLabel("physiotherapy")} value={staff.attributes.physiotherapy} />
+                    </div>
 
-                      {/* Specialization + Wage */}
-                      <div className="mt-1.5 flex flex-wrap gap-1.5">
-                        {staff.specialization && (
-                          <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground">
-                            <Star className="size-3" /> {t(`staff.specializations.${staff.specialization}`)}
-                          </span>
-                        )}
-                        {staff.wage > 0 && (
-                          <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground">
-                            €{staff.wage.toLocaleString()}/año
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Attributes */}
-                      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
-                        <AttrBar label={attrLabel("coaching")} value={staff.attributes.coaching} />
-                        <AttrBar label={attrLabel("judgingAbility")} value={staff.attributes.judging_ability} />
-                        <AttrBar label={attrLabel("judgingPotential")} value={staff.attributes.judging_potential} />
-                        <AttrBar label={attrLabel("physiotherapy")} value={staff.attributes.physiotherapy} />
-                      </div>
-
-                      {/* Impact rows */}
-                      {impactRows.length > 0 && (
-                        <div className="mt-3">
-                          <p className="mb-1 font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                            {t("staff.lolImpactTitle")}
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {impactRows.map((row) => (
-                              <span
-                                key={row.labelKey}
-                                className="inline-flex items-center gap-1 rounded bg-muted/50 px-1.5 py-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground"
-                              >
-                                <span>{t(row.labelKey)}</span>
-                                <span className="font-bold text-primary tabular-nums">
-                                  {formatStaffEffectPercent(row.value)}
-                                </span>
+                    {/* Separator + Impact */}
+                    {impactRows.length > 0 && (
+                      <>
+                        <div className="my-2.5 border-t border-border/40" />
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {impactRows.map((row) => (
+                            <span
+                              key={row.labelKey}
+                              className="inline-flex items-center gap-1 rounded bg-primary/5 px-1.5 py-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground"
+                            >
+                              <span>{t(row.labelKey)}</span>
+                              <span className="font-bold text-primary tabular-nums">
+                                {formatStaffEffectPercent(row.value)}
                               </span>
-                            ))}
-                          </div>
+                            </span>
+                          ))}
                         </div>
-                      )}
+                      </>
+                    )}
 
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        {t("staff.best")}: <span className="font-medium text-foreground">{attrLabel(best.key as StaffAttrKey)} ({best.value})</span>
-                      </p>
-                    </div>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      {t("staff.best")}: <span className="font-medium text-foreground">{attrLabel(best.key as StaffAttrKey)} ({best.value})</span>
+                    </p>
+                  </div>
 
-                    {/* Action */}
+                  {/* Action */}
+                  <div className="flex shrink-0 flex-col items-center justify-start gap-2">
                     {view === "mystaff" && (
                       <button
                         type="button"
                         disabled={actionLoading === staff.id}
                         onClick={() => handleRelease(staff.id)}
-                        className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-500 transition-colors hover:bg-red-500/20 disabled:pointer-events-none disabled:opacity-50"
+                        className="flex size-8 items-center justify-center rounded-lg bg-red-500/10 text-red-500 transition-colors hover:bg-red-500/20 disabled:pointer-events-none disabled:opacity-50"
                         title={t("staff.releaseStaff")}
                       >
-                        <UserMinus className="size-4" />
+                        {actionLoading === staff.id ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <UserMinus className="size-4" />
+                        )}
                       </button>
                     )}
                     {view === "available" && (
@@ -386,10 +472,14 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
                         type="button"
                         disabled={actionLoading === staff.id}
                         onClick={() => handleHire(staff.id)}
-                        className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
+                        className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
                         title={t("staff.hireStaff")}
                       >
-                        <UserPlus className="size-4" />
+                        {actionLoading === staff.id ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <UserPlus className="size-4" />
+                        )}
                       </button>
                     )}
                   </div>

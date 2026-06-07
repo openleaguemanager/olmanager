@@ -478,3 +478,14 @@
     transform: none;
   }
 }
+
+/* ── Legacy card bg override in v2 context ───── */
+.dark .schedule-calendar-container [class*="bg-navy-700"],
+.dark .schedule-calendar-container [class*="bg-navy-800"],
+.dark .competitions-v2 [class*="bg-navy-700"],
+.dark .competitions-v2 [class*="bg-navy-800"],
+.dark .player-profile-v2 [class*="bg-navy-700"],
+.dark .player-profile-v2 [class*="bg-navy-800"],
+.dark .player-profile-v2 [class*="bg-navy-600"] {
+  background-color: hsl(var(--card)) !important;
+}

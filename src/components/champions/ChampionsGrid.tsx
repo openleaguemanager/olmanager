@@ -4,6 +4,11 @@ import { Search, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, Ch
 import type { ChampionData } from "../../store/types";
 import { Card, CardBody } from "../ui";
 import { resolveChampionTile } from "../../lib/champions/championImages";
+import championsSeed from "../../../assets/simulation/champions.json";
+
+type ChampionRolesMap = Record<string, string[]>;
+const CHAMPION_ROLES: ChampionRolesMap =
+  ((championsSeed as { data?: { roles?: ChampionRolesMap } }).data?.roles ?? {}) as ChampionRolesMap;
 
 interface ChampionsGridProps {
   champions?: ChampionData[];
@@ -56,8 +61,8 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
       .filter((c) => {
         if (q && !c.name.toLowerCase().includes(q) && !c.champion_key.toLowerCase().includes(q)) return false;
         if (roleFilter !== "ALL") {
-          const roles = parseRoles(c.roles_json);
-          if (!roles.some((r) => r.toUpperCase() === roleFilter || (r === "Bot" && roleFilter === "ADC"))) return false;
+          const roles = CHAMPION_ROLES[c.champion_key] ?? [];
+          if (!roles.some((r) => r === "Bot" ? roleFilter === "ADC" : r.toUpperCase() === roleFilter)) return false;
         }
         return true;
       })
@@ -140,7 +145,7 @@ export default function ChampionsGrid({ champions, onChampionClick }: ChampionsG
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-navy-600">
                 {paginated.map((champion) => {
-                  const roles = parseRoles(champion.roles_json);
+                  const roles = CHAMPION_ROLES[champion.champion_key] ?? [];
                   return (
                     <tr
                       key={champion.id}

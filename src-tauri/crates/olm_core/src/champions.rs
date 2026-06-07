@@ -1349,23 +1349,29 @@ pub fn process_daily_champion_system(game: &mut Game) {
 // ── Champion catalog (from JSON data file) ─────────────────
 
 #[derive(Deserialize)]
-struct ChampionListFile {
-    champions: Vec<ChampionListEntry>,
+pub struct ChampionListFile {
+    pub champions: Vec<ChampionListEntry>,
 }
 
 #[derive(Deserialize)]
-struct ChampionListEntry {
-    id: String,
-    name: String,
-    tags: Vec<String>,
-    image: String,
+pub struct ChampionListEntry {
+    pub id: String,
+    pub name: String,
+    pub tags: Vec<String>,
+    pub image: String,
 }
 
-/// Load the champion catalog from `data/draft/champion-list.json`.
+/// Load the champion catalog from `assets/draft/champion-list.json`.
 /// Returns an empty vec if the file cannot be read.
 pub fn load_champion_catalog(data_base: &Path) -> Vec<crate::domain::champion::Champion> {
-    let path = data_base.join("draft").join("champion-list.json");
-    let content = match std::fs::read_to_string(&path) {
+    let path = data_base.parent().unwrap_or(data_base).join("assets").join("draft").join("champion-list.json");
+    load_champion_catalog_from_path(&path)
+}
+
+/// Load the champion catalog from a specific file path.
+/// Returns an empty vec if the file cannot be read.
+pub fn load_champion_catalog_from_path(path: &Path) -> Vec<crate::domain::champion::Champion> {
+    let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
             log::warn!("Failed to read champion catalog at {:?}: {e}", path);

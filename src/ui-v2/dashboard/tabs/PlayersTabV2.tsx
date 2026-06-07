@@ -315,10 +315,10 @@ export function PlayersTabV2({
 
   // ── Render ───────────────────────────────────────────────────
   return (
-    <div className="flex h-full flex-col gap-4 p-6">
-      <Card className="flex h-full flex-col">
+    <div className="flex h-full flex-col gap-4 p-6 overflow-hidden">
+      <Card className="flex h-full flex-col overflow-hidden">
         {/* ── Header ──────────────────────────────────────────── */}
-        <CardHeader className="space-y-4">
+        <CardHeader className="shrink-0 space-y-4">
           <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
             Jugadores
           </CardTitle>
@@ -433,7 +433,7 @@ export function PlayersTabV2({
         <Separator className="mb-0" />
 
         {/* ── Table ───────────────────────────────────────────── */}
-        <CardContent className="flex-1 p-0">
+        <CardContent className="min-h-0 flex-1 overflow-y-auto p-0 scrollbar-v2">
           {sorted.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <p className="font-heading text-sm font-bold uppercase tracking-wider text-muted-foreground">

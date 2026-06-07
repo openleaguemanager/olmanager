@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GraduationCap, ScanSearch } from "lucide-react";
+import { Clock, Eye, GraduationCap, ScanSearch, User } from "lucide-react";
 
 import type { GameStateData } from "@/store/gameStore";
 import { sendScout } from "@/services/scoutingService";
 import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import { calculateAvailableScouts, scoutMaxSlots } from "@/components/scouting/ScoutingTab.helpers";
 import { buildAlreadyScoutingIds, filterScoutablePlayers, paginateScoutablePlayers } from "@/components/scouting/ScoutingTab.model";
-import ScoutingOverviewCards from "@/components/scouting/ScoutingOverviewCards";
-import ScoutingAssignmentsList from "@/components/scouting/ScoutingAssignmentsList";
-import ScoutingScoutDetailsCard from "@/components/scouting/ScoutingScoutDetailsCard";
-import ScoutingPlayerSearchCard from "@/components/scouting/ScoutingPlayerSearchCard";
+import ScoutingAssignmentsListV2 from "./ScoutingAssignmentsListV2";
+import ScoutingScoutDetailsCardV2 from "./ScoutingScoutDetailsCardV2";
 import { Card, CardContent } from "@/ui-v2/components/ui/card";
+import { cn } from "@/ui-v2/lib/utils";
+import ScoutingPlayerSearchCardV2 from "./ScoutingPlayerSearchCardV2";
 
 interface ScoutingTabV2Props {
   gameState: GameStateData;
@@ -40,6 +40,7 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
   const scouts = gameState.staff.filter((s) => s.role === "Scout" && s.team_id === myTeamId);
   const assignments = gameState.scouting_assignments || [];
   const availableScouts = calculateAvailableScouts(scouts, assignments);
+  const totalCapacity = scouts.reduce((s, scout) => s + scoutMaxSlots(scout.attributes.judging_ability), 0);
 
   const allScoutable = filterScoutablePlayers({
     players: gameState.players,
@@ -65,7 +66,7 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
   };
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-y-auto p-6">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto p-6 scrollbar-v2">
       {/* Header */}
       <div className="flex items-center gap-2">
         <ScanSearch className="size-5 text-primary" />
@@ -77,21 +78,40 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
       <div className="grid min-h-0 flex-1 grid-cols-1 items-start gap-4 xl:grid-cols-[1fr_1.4fr]">
         {/* Left column */}
         <div className="flex flex-col gap-4">
-          <ScoutingOverviewCards
-            scouts={scouts}
-            assignmentCount={assignments.length}
-            availableScoutCount={availableScouts.length}
-            totalCapacity={scouts.reduce((s, scout) => s + scoutMaxSlots(scout.attributes.judging_ability), 0)}
-            labels={{
-              scouts: t("scouting.scouts"),
-              activeAssignments: t("scouting.activeAssignments"),
-              freeSlots: t("scouting.freeSlots"),
-            }}
-          />
+          {/* Overview gauges */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-lg border border-border bg-card px-3 py-3 text-center">
+              <Eye className="mx-auto mb-1 size-4 text-primary" />
+              <p className="font-heading text-xl font-bold text-foreground tabular-nums">{scouts.length}</p>
+              <p className="font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("scouting.scouts")}</p>
+            </div>
+            <div className="rounded-lg border border-border bg-card px-3 py-3 text-center">
+              <Clock className="mx-auto mb-1 size-4 text-amber-400" />
+              <p className="font-heading text-xl font-bold text-foreground tabular-nums">{assignments.length}/{totalCapacity}</p>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-amber-400 transition-all"
+                  style={{ width: `${totalCapacity > 0 ? (assignments.length / totalCapacity) * 100 : 0}%` }}
+                />
+              </div>
+              <p className="mt-1 font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("scouting.activeAssignments")}</p>
+            </div>
+            <div className="rounded-lg border border-border bg-card px-3 py-3 text-center">
+              <User className="mx-auto mb-1 size-4 text-emerald-400" />
+              <p className="font-heading text-xl font-bold text-foreground tabular-nums">{availableScouts.length}</p>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-emerald-400 transition-all"
+                  style={{ width: `${scouts.length > 0 ? (availableScouts.length / scouts.length) * 100 : 0}%` }}
+                />
+              </div>
+              <p className="mt-1 font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("scouting.freeSlots")}</p>
+            </div>
+          </div>
 
           {/* Academy card */}
           <Card>
-            <CardContent>
+            <CardContent className="py-4">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-start gap-3">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
@@ -131,7 +151,7 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
             </CardContent>
           </Card>
 
-          <ScoutingAssignmentsList
+          <ScoutingAssignmentsListV2
             assignments={assignments}
             scouts={scouts}
             players={gameState.players}
@@ -139,7 +159,7 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
             onSelectPlayer={onSelectPlayer}
           />
 
-          <ScoutingScoutDetailsCard
+          <ScoutingScoutDetailsCardV2
             scouts={scouts}
             assignments={assignments}
             players={gameState.players}
@@ -149,7 +169,7 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
         {/* Right column: player search */}
         <div className="flex flex-col gap-4">
           {scouts.length > 0 ? (
-            <ScoutingPlayerSearchCard
+            <ScoutingPlayerSearchCardV2
               players={scoutablePlayers}
               teams={gameState.teams}
               currentDate={gameState.clock.current_date}

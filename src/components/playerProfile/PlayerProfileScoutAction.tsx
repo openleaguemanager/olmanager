@@ -22,7 +22,7 @@ export default function PlayerProfileScoutAction({
 
     if (availability.scouts.length === 0) {
         return (
-            <p className="text-xs text-gray-500">{t("scouting.noScoutsHint")}</p>
+            <p className="text-xs text-muted-foreground">{t("scouting.noScoutsHint")}</p>
         );
     }
 
@@ -50,3 +50,5 @@ export default function PlayerProfileScoutAction({
         </>
     );
 }
+
+

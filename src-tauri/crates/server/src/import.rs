@@ -3,7 +3,7 @@
 //!
 //! The export zip has this top-level shape:
 //!   data/competitions/**, data/teams/**, data/players/**, data/staffs/**, ...
-//!   public/player-photos/**, public/teams-icons/**, public/staff-photos/**
+//!   public/player-photos/**, public/teams-icons/**, public/staff-icons/**
 //!   _meta.json
 //!
 //! `data/**` is written under OLM_DATA_DIR; the `public/<dir>/**` photo folders
@@ -71,7 +71,7 @@ const PUBLIC_PHOTO_DIRS: [&str; 4] = [
     "player-photos",
     "teams-icons",
     "competitions-icons",
-    "staff-photos",
+    "staff-icons",
 ];
 
 fn data_dir() -> PathBuf {
@@ -94,7 +94,7 @@ fn env_truthy(name: &str) -> bool {
 
 fn count_entities(rel_name: &str, bytes: &[u8]) -> (usize, usize, usize) {
     let lower = rel_name.to_ascii_lowercase();
-    if !lower.starts_with("data/") || lower.starts_with("data/draft/") {
+    if !lower.starts_with("data/") || lower.starts_with("assets/draft/") {
         return (0, 0, 0);
     }
 
@@ -163,7 +163,7 @@ fn json_string(value: &Value, keys: &[&str]) -> Option<String> {
 
 fn rel_category(rel_name: &str) -> Option<&'static str> {
     let lower = rel_name.to_ascii_lowercase();
-    if !lower.starts_with("data/") || lower.starts_with("data/draft/") {
+    if !lower.starts_with("data/") || lower.starts_with("assets/draft/") {
         return None;
     }
     if lower.contains("/players/") || lower.ends_with("_players.json") {

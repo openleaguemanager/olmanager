@@ -264,21 +264,21 @@ pub fn build_free_agent_player(seed: &DraftPlayerSeed, index: usize) -> Option<P
 // ---------------------------------------------------------------------------
 
 pub fn load_draft_seed_root() -> DraftSeedRoot {
-    // Runtime read from draft/players.json for world editor compatibility.
+    // Runtime read from assets/draft/players.json for world editor compatibility.
     // Returns empty if file doesn't exist — Flow C provides players from modular data.
     let Some(content) = RESOURCE_DATA_DIR.get()
-        .map(|dir| dir.join("draft").join("players.json"))
+        .map(|dir| dir.parent().unwrap_or(dir).join("assets").join("draft").join("players.json"))
         .filter(|p| p.exists())
         .or_else(|| {
             std::env::current_dir().ok().and_then(|cwd| {
                 let mut path = cwd.clone();
-                path.push("data");
+                path.push("assets");
                 path.push("draft");
                 path.push("players.json");
                 if path.exists() { return Some(path); }
                 path = cwd;
                 path.push("..");
-                path.push("data");
+                path.push("assets");
                 path.push("draft");
                 path.push("players.json");
                 if path.exists() { return Some(path); }

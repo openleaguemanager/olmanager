@@ -64,7 +64,7 @@ finish one.**
 | Scrims         | ✅ done     | `tabs/ScrimsTabV2.tsx`                           | Weekly setup, decisions, scrim planning      |
 | Scouting       | ✅ done     | `tabs/ScoutingTabV2.tsx`                         | Overview, assignments, player search          |
 | Transfers      | ✅ done     | `tabs/TransfersTabV2.tsx`                        | Bids, counter-offers, wage negotiation        |
-| Meta           | ⬜ pending  |                                                   |                                               |
+| Meta           | ✅ done     | `tabs/MetaTabV2.tsx`                             | Patch meta tier grid + mastery training with SoloQ, champ select per slot |
 | Staff          | ✅ done     | `tabs/StaffTabV2.tsx`                            | Card grid, hire/release, stats bars          |
 | Scouting       | ✅ done     | `tabs/ScoutingTabV2.tsx`                         | Overview, assignments, player search          |
 | Finances       | ✅ done     | `tabs/FinancesTabV2.tsx`                         | Budget, cash flow, risks, sponsors, payroll   |

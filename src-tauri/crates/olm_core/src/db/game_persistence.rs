@@ -128,30 +128,22 @@ impl GamePersistenceReader {
         let manager = manager_repo::load_manager(conn, &meta.manager_id)?
             .ok_or_else(|| format!("Manager '{}' not found", meta.manager_id))?;
         log::info!("[GamePersistenceReader] read_game: loading teams...");
-        let teams = team_repo::load_all_teams(conn)?;
+        let teams = team_repo::load_all_teams(conn).map_err(|e| format!("teams: {}", e))?;
         log::info!("[GamePersistenceReader] read_game: loading players...");
-        let players = player_repo::load_all_players(conn)?;
+        let players = player_repo::load_all_players(conn).map_err(|e| format!("players: {}", e))?;
         log::info!(
             "[GamePersistenceReader] read_game: players loaded: {}",
             players.len()
         );
         log::info!("[GamePersistenceReader] read_game: loading staff...");
-        let staff = staff_repo::load_all_staff(conn)?;
-        log::info!(
-            "[GamePersistenceReader] read_game: staff loaded: {}",
-            staff.len()
-        );
-        let messages = message_repo::load_all_messages(conn)?;
-        log::info!(
-            "[GamePersistenceReader] read_game: messages loaded: {}",
-            messages.len()
-        );
-        let news = news_repo::load_all_news(conn)?;
-        let social_posts = social_repo::load_all_social_posts(conn)?;
-        let social_accounts = social_repo::load_social_accounts(conn)?;
-        let social_templates = social_repo::load_social_templates(conn)?;
+        let staff = staff_repo::load_all_staff(conn).map_err(|e| format!("staff: {}", e))?;
+        let messages = message_repo::load_all_messages(conn).map_err(|e| format!("messages: {}", e))?;
+        let news = news_repo::load_all_news(conn).map_err(|e| format!("news: {}", e))?;
+        let social_posts = social_repo::load_all_social_posts(conn).map_err(|e| format!("social_posts: {}", e))?;
+        let social_accounts = social_repo::load_social_accounts(conn).map_err(|e| format!("social_accounts: {}", e))?;
+        let social_templates = social_repo::load_social_templates(conn).map_err(|e| format!("social_templates: {}", e))?;
         // Load ALL competitions (background leagues survive save/load)
-        let (all_leagues, config_jsons) = competition_repo::load_competitions(conn)?;
+        let (all_leagues, config_jsons) = competition_repo::load_competitions(conn).map_err(|e| format!("competitions: {}", e))?;
 
         // Parse schedule_config JSON strings into ScheduleConfig objects
         use crate::generator::definitions::ScheduleConfig;
@@ -187,31 +179,14 @@ impl GamePersistenceReader {
             .collect();
 
         log::info!("[GamePersistenceReader] read_game: loading scouting...");
-        let scouting_rows = scouting_repo::load_all_scouting(conn)?;
+        let scouting_rows = scouting_repo::load_all_scouting(conn).map_err(|e| format!("scouting: {}", e))?;
         log::info!(
-            "[GamePersistenceReader] read_game: scouting loaded: {}",
-            scouting_rows.len()
-        );
-        let scouting_assignments: Vec<ScoutingAssignment> = scouting_rows
-            .into_iter()
-            .map(|assignment| ScoutingAssignment {
-                id: assignment.id,
-                scout_id: assignment.scout_id,
-                player_id: assignment.player_id,
-                days_remaining: assignment.days_remaining,
-            })
-            .collect();
 
-        log::info!("[GamePersistenceReader] read_game: loading champion progression...");
-        let (champion_masteries, champion_patch) = champion_progression_repo::load_state(conn)?
+        let (champion_masteries, champion_patch) = champion_progression_repo::load_state(conn)
+            .map_err(|e| format!("champion_progression: {}", e))?
             .unwrap_or_else(|| (vec![], crate::champions::ChampionPatchState::default()));
-        log::info!(
-            "[GamePersistenceReader] read_game: champion masteries: {}",
-            champion_masteries.len()
-        );
 
-        log::info!("[GamePersistenceReader] read_game: loading transfer history...");
-        let transfer_history = transfer_history_repo::load_transfer_history(conn)?;
+        let transfer_history = transfer_history_repo::load_transfer_history(conn).map_err(|e| format!("transfer_history: {}", e))?;
         log::info!(
             "[GamePersistenceReader] read_game: transfer history entries: {}",
             transfer_history.entries.len()

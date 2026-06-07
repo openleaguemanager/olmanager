@@ -174,8 +174,8 @@ function FixtureChip({
         isFull ? "px-3 py-2 gap-2" : "px-1 py-0.5",
         userResultTone ||
           (isUserMatch
-            ? "bg-primary-50/70 dark:bg-primary-500/10 border-primary-400/30"
-            : "bg-gray-50 dark:bg-navy-700/50 border-gray-200/60 dark:border-navy-600"),
+            ? "bg-primary-50/70 dark:bg-primary/10 border-primary-400/30"
+            : "bg-muted/50 border-border/60"),
         clickable ? "hover:border-primary-400 cursor-pointer" : "cursor-default",
       ].join(" ")}
       title={`${homeName} ${score ? `${score.home}-${score.away}` : "vs"} ${awayName}`}
@@ -191,19 +191,19 @@ function FixtureChip({
         <span className={`shrink-0 ${isFull ? "w-5 h-5" : "w-3.5 h-3.5"}`} />
       )}
       {isFull ? (
-        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">
+        <span className="text-xs font-semibold text-foreground/90 truncate">
           {homeName}
         </span>
       ) : null}
       <span
-        className={`font-heading font-bold tabular-nums text-gray-700 dark:text-gray-200 ${
+        className={`font-heading font-bold tabular-nums text-foreground/90 ${
           isFull ? "text-sm px-2" : "text-2xs px-0.5"
         }`}
       >
         {score ? `${score.home}-${score.away}` : "vs"}
       </span>
       {isFull ? (
-        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">
+        <span className="text-xs font-semibold text-foreground/90 truncate">
           {awayName}
         </span>
       ) : null}
@@ -376,24 +376,24 @@ export default function ScheduleCalendarView({
 
   return (
     <Card>
-      <div className="flex items-center justify-between gap-3 p-4 border-b border-gray-100 dark:border-navy-600 bg-gray-50 dark:bg-navy-800 rounded-t-xl">
+      <div className="flex items-center justify-between gap-3 p-4 border-b border-border/60 bg-muted">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={goPrev}
             aria-label={t("schedule.previousMonth", "Mes anterior")}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary-500 hover:bg-white dark:hover:bg-navy-700 transition-colors"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary hover:bg-white dark:hover:bg-navy-700 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-gray-700 dark:text-gray-200 min-w-40 text-center">
+          <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-foreground/90 min-w-40 text-center">
             {monthLabel}
           </h4>
           <button
             type="button"
             onClick={goNext}
             aria-label={t("schedule.nextMonth", "Mes siguiente")}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary-500 hover:bg-white dark:hover:bg-navy-700 transition-colors"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary hover:bg-white dark:hover:bg-navy-700 transition-colors"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -401,7 +401,7 @@ export default function ScheduleCalendarView({
         <button
           type="button"
           onClick={goToday}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-xs font-heading font-bold uppercase tracking-wider text-gray-600 dark:text-gray-200 hover:text-primary-500 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-card border border-border text-xs font-heading font-bold uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors"
         >
           <CalendarIcon className="w-3.5 h-3.5" />
           {t("schedule.today", "Hoy")}
@@ -412,7 +412,7 @@ export default function ScheduleCalendarView({
           {weekdayLabels.map((label, idx) => (
             <div
               key={`${label}-${idx}`}
-              className="text-center text-2xs font-heading font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 py-1"
+              className="text-center text-2xs font-heading font-bold uppercase tracking-wider text-muted-foreground/60 py-1"
             >
               {label}
             </div>
@@ -442,28 +442,28 @@ export default function ScheduleCalendarView({
                 className={[
                   "min-h-[120px] rounded-md border p-2 flex flex-col gap-1 transition-colors",
                   inMonth
-                    ? "bg-white dark:bg-navy-800 border-gray-200 dark:border-navy-600"
-                    : "bg-gray-50/60 dark:bg-navy-900/40 border-gray-100 dark:border-navy-700 opacity-60",
-                  isToday ? "ring-2 ring-primary-500/60 border-primary-400" : "",
+                    ? "bg-card border-border"
+                    : "bg-muted/30 border-border/40 opacity-60",
+                  isToday ? "ring-2 ring-primary/60 border-primary-400" : "",
                   hasUserMatch && !isToday ? "border-accent-400/60" : "",
                   isPlayoffsStart ? "ring-1 ring-accent-500/50 border-accent-500/50" : "",
-                  isSeasonStart && !isToday ? "ring-1 ring-primary-500/50 border-primary-500/50" : "",
+                  isSeasonStart && !isToday ? "ring-1 ring-primary/50 border-primary/50" : "",
                 ].join(" ")}
               >
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-xs font-heading font-bold tabular-nums ${
                       isToday
-                        ? "text-primary-500"
+                        ? "text-primary"
                         : inMonth
-                          ? "text-gray-600 dark:text-gray-300"
-                          : "text-gray-400 dark:text-gray-500"
+                          ? "text-foreground/80"
+                          : "text-muted-foreground/60"
                     }`}
                   >
                     {cell.getDate()}
                   </span>
                   {cellEvents.length > 1 ? (
-                    <span className="text-2xs text-gray-400 dark:text-gray-500 tabular-nums">
+                    <span className="text-2xs text-muted-foreground/60 tabular-nums">
                       ×{cellEvents.length}
                     </span>
                   ) : null}
@@ -471,7 +471,7 @@ export default function ScheduleCalendarView({
                 <div className="flex flex-col gap-1 overflow-hidden">
                   {isSeasonStart ? (
                     <div
-                      className="flex items-center gap-1 px-1 py-0.5 rounded border border-primary-500/60 bg-primary-500/10 text-primary-600 dark:text-primary-300"
+                      className="flex items-center gap-1 px-1 py-0.5 rounded border border-primary/60 bg-primary/10 text-primary-600 dark:text-primary-300"
                       title={t("schedule.seasonStartHint", "Día de inicio de la temporada regular")}
                     >
                       <Flag className="w-3 h-3 shrink-0" />
@@ -514,7 +514,7 @@ export default function ScheduleCalendarView({
                     <button
                       type="button"
                       onClick={() => setOpenDayKey(cellKey)}
-                      className="text-2xs font-heading font-bold uppercase tracking-wider text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 px-1 text-left transition-colors"
+                      className="text-2xs font-heading font-bold uppercase tracking-wider text-primary hover:text-primary px-1 text-left transition-colors"
                     >
                       +{overflow} {t("schedule.moreMatches", "más")}
                     </button>
@@ -532,15 +532,15 @@ export default function ScheduleCalendarView({
           onClick={() => setOpenDayKey(null)}
         >
           <div
-            className="bg-white dark:bg-navy-800 rounded-xl shadow-2xl border border-gray-200 dark:border-navy-600 w-full max-w-lg max-h-[80vh] flex flex-col"
+            className="bg-card rounded-xl shadow-2xl border border-border w-full max-w-lg max-h-[80vh] flex flex-col"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 dark:border-navy-600">
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-border/60">
               <div className="flex flex-col gap-0.5">
-                <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("schedule.matchesOnDay", "Partidos del día")}
                 </h3>
-                <p className="text-base font-heading font-bold text-gray-800 dark:text-gray-100">
+                <p className="text-base font-heading font-bold text-foreground">
                   {formatMatchDate(openDayKey, i18n.language)}
                 </p>
               </div>
@@ -548,7 +548,7 @@ export default function ScheduleCalendarView({
                 type="button"
                 onClick={() => setOpenDayKey(null)}
                 aria-label={t("common.close", "Cerrar")}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-primary hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -585,4 +585,5 @@ export default function ScheduleCalendarView({
     </Card>
   );
 }
+
 

@@ -10,7 +10,6 @@ import SavesList from "../components/menu/SavesList";
 import MenuBackground from "../components/menu/MenuBackground";
 import CommunityPanel from "../components/menu/CommunityPanel";
 import PatchNotesPanel from "../components/menu/PatchNotesPanel";
-import { useAuth } from "../web/auth";
 import {
   FolderOpen,
   Settings,
@@ -24,19 +23,8 @@ import {
   Database,
   Users,
   Newspaper,
-  UserCircle,
-  LogOut,
-  Mail,
-  KeyRound,
-  ImagePlus,
-  Clock,
-  Globe2,
 } from "lucide-react";
 import { countryName, allNationalities } from "../lib/common/countries";
-import {
-  DEFAULT_MANAGER_ICON_PATH,
-  MANAGER_ICON_PATHS,
-} from "../lib/common/managerAvatars";
 
 interface SaveEntry {
   id: string;
@@ -124,49 +112,16 @@ function logNationalityDebug(
   });
 }
 
-function numericUserMetadataValue(value: unknown): number | null {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
-}
-
-function formatPlaytime(totalSeconds: number): string {
-  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
-  const hours = Math.floor(safeSeconds / 3600);
-  const minutes = Math.floor((safeSeconds % 3600) / 60);
-
-  if (hours > 0) {
-    return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
-  }
-
-  return `${minutes}m`;
-}
-
 export default function MainMenu() {
   const navigate = useNavigate();
   const setGameActive = useGameStore((state) => state.setGameActive);
-  const { session, playtimeSeconds, signOut, updateUserAvatarPath } = useAuth();
   const debugToolsEnabled = useSettingsStore(
     (state) => state.settings.debug_tools_enabled,
   );
   const { t, i18n } = useTranslation();
-  const isWebSession = import.meta.env.MODE === "web" && !!session;
-  const userEmail = session?.user.email ?? "";
-  const userDisplayName =
-    (session?.user.user_metadata?.full_name as string | undefined) ||
-    (session?.user.user_metadata?.name as string | undefined) ||
-    userEmail.split("@")[0] ||
-    t("auth.user", "Usuario");
-  const userAvatarPath =
-    (session?.user.user_metadata?.avatar_path as string | undefined) ||
-    (session?.user.user_metadata?.avatar_url as string | undefined) ||
-    (session?.user.user_metadata?.picture as string | undefined) ||
-    DEFAULT_MANAGER_ICON_PATH;
-  const userCountry =
-    (session?.user.user_metadata?.country as string | undefined) || "";
-  const userAge = numericUserMetadataValue(session?.user.user_metadata?.age);
-
+  const isWebSession = false;
   const [menuState, setMenuState] = useState<
-    "main" | "create" | "load" | "community" | "patchnotes" | "profile"
+    "main" | "create" | "load" | "community" | "patchnotes"
   >("main");
   const [saves, setSaves] = useState<SaveEntry[]>([]);
   const [isLoadingSaves, setIsLoadingSaves] = useState(false);
@@ -372,11 +327,10 @@ export default function MainMenu() {
     try {
       const client = getApiClientSync();
       const result = await client.saves.load(saveId);
-      const displayName = (result as any)?.manager?.display_name
+      setGameActive(true, (result as any)?.manager?.display_name
         || (result as any)?.manager?.nickname
         || `${(result as any)?.manager?.first_name ?? ""} ${(result as any)?.manager?.last_name ?? ""}`.trim()
-        || "Manager";
-      setGameActive(true, displayName);
+        || "Manager");
       navigate("/dashboard");
     } catch (error) {
       console.error("Failed to load game:", error);
@@ -406,26 +360,20 @@ export default function MainMenu() {
     }
   };
 
-  const handleSignOut = async (): Promise<void> => {
-    setGameActive(false);
-    setMenuState("main");
-    await signOut();
-  };
-
   return (
-    <div className="min-h-screen relative overflow-hidden font-sans text-white">
+    <div className="h-full relative overflow-hidden font-sans text-white">
       <MenuBackground />
 
       {/* Theme Toggle */}
       <ThemeToggle className="absolute top-6 right-6 z-20" />
 
       {/* Two-column layout: persistent nav on the left, active panel on the right */}
-      <div className="relative z-10 min-h-screen flex">
+      <div className="relative z-10 h-full flex">
         {/* Left column — logo + nav (always visible) */}
         <div className="flex flex-col justify-start pt-[15vh] pb-8 px-8 sm:px-14 lg:px-20 w-full max-w-md shrink-0">
           <div className="w-full animate-fade-in-up">
             <img
-              src="/olmanager-logo.svg"
+              src="/olmanager-logo.webp"
               alt="Open League Manager"
               className="h-24 mb-10 drop-shadow-[0_4px_24px_rgba(0,0,0,0.65)]"
             />
@@ -486,31 +434,6 @@ export default function MainMenu() {
                 />
               )}
             </nav>
-
-            {isWebSession && (
-              <button
-                type="button"
-                onClick={() => setMenuState("profile")}
-                className="mt-12 sm:mt-14 flex w-full items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-left transition-colors hover:bg-white/10"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent-400/40 bg-white/10">
-                  <img
-                    src={userAvatarPath}
-                    alt={userDisplayName}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </span>
-                <span className="min-w-0">
-                  <span className="block truncate font-heading text-sm font-bold uppercase tracking-wider text-white">
-                    {userDisplayName}
-                  </span>
-                  <span className="block truncate text-xs text-gray-400">
-                    {userEmail}
-                  </span>
-                </span>
-              </button>
-            )}
           </div>
         </div>
 
@@ -677,6 +600,7 @@ export default function MainMenu() {
                           setFormErrors((prev) => ({ ...prev, dob: "" }));
                         }}
                         error={!!dobDisplayedError}
+                        nextFieldId="create-manager-field-nationality-btn"
                       />
                       {dobDisplayedError && (
                         <p className="flex items-center gap-1 text-xs text-red-500 mt-1">
@@ -700,7 +624,9 @@ export default function MainMenu() {
                       </label>
                       <div className="relative">
                         <button
+                          id="create-manager-field-nationality-btn"
                           type="button"
+                          tabIndex={0}
                           onMouseDown={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
@@ -718,9 +644,31 @@ export default function MainMenu() {
                               document
                                 .getElementById("create-manager-submit")
                                 ?.focus();
+                              return
+                            }
+                            if (e.key === "Tab" && e.shiftKey) {
+                              e.preventDefault();
+                              if (nationalityOpen) setNationalityOpen(false);
+                              document
+                                .getElementById("dp-year-input")
+                                ?.focus();
+                              return
+                            }
+                            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                              e.preventDefault();
+                              const dir = e.key === "ArrowDown" ? 1 : -1;
+                              const currentIdx = countriesList.findIndex(
+                                c => c.code === formData.nationality
+                              );
+                              let nextIdx = currentIdx < 0 ? (dir > 0 ? -1 : countriesList.length) : currentIdx + dir;
+                              if (nextIdx < 0) nextIdx = countriesList.length - 1;
+                              if (nextIdx >= countriesList.length) nextIdx = 0;
+                              const code = countriesList[nextIdx].code;
+                              setFormData(prev => ({ ...prev, nationality: code }));
+                              setFormErrors(prev => ({ ...prev, nationality: "" }));
                             }
                           }}
-                          className={`w-full flex items-center justify-between bg-white/5 border text-left rounded-lg p-3 outline-none transition-all ${
+                          className={`w-full flex items-center justify-between bg-white/5 border text-left rounded-lg p-3 outline-none transition-all focus:border-accent-400 focus:ring-2 focus:ring-accent-400/20 ${
                             formErrors.nationality
                               ? "border-red-400 dark:border-red-500"
                               : nationalityOpen
@@ -893,262 +841,18 @@ export default function MainMenu() {
                   <PatchNotesPanel onClose={() => setMenuState("main")} />
                 )}
 
-                {/* User profile */}
-                {menuState === "profile" && session && (
-                  <UserProfilePanel
-                    email={userEmail}
-                    userId={session.user.id}
-                    displayName={userDisplayName}
-                    avatarPath={userAvatarPath}
-                    country={userCountry}
-                    age={userAge}
-                    playtimeSeconds={playtimeSeconds}
-                    createdAt={session.user.created_at}
-                    onClose={() => setMenuState("main")}
-                    onSignOut={handleSignOut}
-                    onAvatarChange={updateUserAvatarPath}
-                  />
-                )}
+                {/* User profile — removed: no auth */}
               </div>
             </div>
           </div>
         )}
+
       </div>
 
       {/* Version */}
       <div className="absolute bottom-4 right-4 text-gray-300/70 text-xs font-heading uppercase tracking-widest drop-shadow z-20">
         {t("app.version")} {__APP_VERSION__}
       </div>
-    </div>
-  );
-}
-
-function UserProfilePanel({
-  email,
-  userId,
-  displayName,
-  avatarPath,
-  country,
-  age,
-  playtimeSeconds,
-  createdAt,
-  onClose,
-  onSignOut,
-  onAvatarChange,
-}: {
-  email: string;
-  userId: string;
-  displayName: string;
-  avatarPath: string;
-  country: string;
-  age: number | null;
-  playtimeSeconds: number;
-  createdAt?: string;
-  onClose: () => void;
-  onSignOut: () => Promise<void>;
-  onAvatarChange: (avatarPath: string) => Promise<void>;
-}) {
-  const { t, i18n } = useTranslation();
-  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
-  const [avatarError, setAvatarError] = useState<string | null>(null);
-  const createdDate = createdAt
-    ? new Intl.DateTimeFormat(i18n.language, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(new Date(createdAt))
-    : null;
-
-  const handleSelectAvatar = async (nextAvatarPath: string) => {
-    setIsSavingAvatar(true);
-    setAvatarError(null);
-    try {
-      await onAvatarChange(nextAvatarPath);
-      setShowAvatarPicker(false);
-    } catch (error) {
-      console.error("Failed to update user avatar:", error);
-      setAvatarError(t("auth.avatarSaveError"));
-    } finally {
-      setIsSavingAvatar(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-col">
-      <div className="flex items-center justify-between pb-5">
-        <h2 className="text-2xl font-heading font-bold uppercase tracking-wider text-white drop-shadow">
-          {t("auth.profile")}
-        </h2>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="border-t border-white/10">
-        <div className="flex items-center gap-4 border-b border-white/10 py-5">
-          <div className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => setShowAvatarPicker((current) => !current)}
-              className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-accent-400/40 bg-white/10 shadow-lg shadow-black/20"
-              title={t("auth.changeAvatar")}
-            >
-              <img
-                src={avatarPath}
-                alt={displayName}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-              <span className="absolute inset-0 flex items-center justify-center bg-black/55 opacity-0 transition-opacity group-hover:opacity-100">
-                <ImagePlus className="h-6 w-6 text-white" />
-              </span>
-            </button>
-
-            {showAvatarPicker && (
-              <div className="absolute bottom-full left-0 z-50 mb-3 w-[21rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-white/15 bg-navy-900/95 p-4 shadow-2xl shadow-black/50 backdrop-blur-xl">
-                <div className="absolute -bottom-2 left-6 h-4 w-4 rotate-45 border-b border-r border-white/15 bg-navy-900/95" />
-                <div className="relative">
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="font-heading text-sm font-bold uppercase tracking-wider text-white">
-                      {t("auth.selectAvatar")}
-                    </p>
-                    {isSavingAvatar && (
-                      <span className="text-xs text-gray-400">
-                        {t("common.saving", "Guardando...")}
-                      </span>
-                    )}
-                  </div>
-                  <div className="grid max-h-64 grid-cols-6 gap-3 overflow-y-auto pr-1">
-                    {MANAGER_ICON_PATHS.map((path) => (
-                      <button
-                        key={path}
-                        type="button"
-                        onClick={() => {
-                          void handleSelectAvatar(path);
-                        }}
-                        disabled={isSavingAvatar}
-                        className={`relative aspect-square overflow-hidden rounded-xl border-2 transition-all hover:scale-105 disabled:cursor-wait disabled:opacity-70 ${
-                          avatarPath === path
-                            ? "border-accent-400 ring-2 ring-accent-400/30"
-                            : "border-white/10 hover:border-accent-400/70"
-                        }`}
-                        aria-label={t("auth.selectAvatar")}
-                      >
-                        <img
-                          src={path}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                        {avatarPath === path && (
-                          <span className="absolute right-1 top-1 rounded-full bg-accent-400 p-0.5 text-navy-950">
-                            <Check className="h-3.5 w-3.5" />
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  {avatarError && (
-                    <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
-                      {avatarError}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="min-w-0">
-            <p className="font-heading text-xl font-bold uppercase tracking-wider text-white">
-              {displayName}
-            </p>
-            <p className="truncate text-sm text-gray-400">{email}</p>
-            <button
-              type="button"
-              onClick={() => setShowAvatarPicker((current) => !current)}
-              className="mt-2 font-heading text-xs font-bold uppercase tracking-wider text-accent-400 transition-colors hover:text-accent-300"
-            >
-              {t("auth.changeAvatar")}
-            </button>
-          </div>
-        </div>
-
-        <ProfileRow
-          icon={<Mail />}
-          label={t("auth.email")}
-          value={email || t("auth.notAvailable")}
-        />
-        {country && (
-          <ProfileRow
-            icon={<Globe2 />}
-            label={t("auth.country")}
-            value={countryName(country, i18n.language)}
-          />
-        )}
-        {age && (
-          <ProfileRow
-            icon={<UserCircle />}
-            label={t("auth.age")}
-            value={String(age)}
-          />
-        )}
-        <ProfileRow
-          icon={<Clock />}
-          label={t("auth.playtime")}
-          value={formatPlaytime(playtimeSeconds)}
-        />
-        <ProfileRow
-          icon={<KeyRound />}
-          label={t("auth.userId")}
-          value={userId}
-        />
-        {createdDate && (
-          <ProfileRow
-            icon={<UserCircle />}
-            label={t("auth.createdAt")}
-            value={createdDate}
-          />
-        )}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => {
-          void onSignOut();
-        }}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/50 px-4 py-3 font-heading text-lg font-bold uppercase tracking-wide text-red-300 transition-colors hover:border-red-500 hover:bg-red-500/10"
-      >
-        <LogOut className="h-5 w-5" />
-        {t("auth.signOut")}
-      </button>
-    </div>
-  );
-}
-
-function ProfileRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-4 border-b border-white/10 py-4">
-      <div className="flex items-center gap-3 text-gray-300">
-        <span className="text-accent-400 [&>svg]:h-5 [&>svg]:w-5">{icon}</span>
-        <span className="font-heading text-sm font-bold uppercase tracking-wider text-white">
-          {label}
-        </span>
-      </div>
-      <span className="min-w-0 truncate text-right text-sm text-gray-400">
-        {value}
-      </span>
     </div>
   );
 }

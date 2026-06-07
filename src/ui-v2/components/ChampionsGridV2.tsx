@@ -4,6 +4,11 @@ import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "
 import type { ChampionData } from "@/store/types";
 import { resolveChampionTile, resolveChampionSplash } from "@/lib/champions/championImages";
 import { cn } from "@/ui-v2/lib/utils";
+import championsSeed from "../../../assets/simulation/champions.json";
+
+type ChampionRolesMap = Record<string, string[]>;
+const CHAMPION_ROLES: ChampionRolesMap =
+  ((championsSeed as { data?: { roles?: ChampionRolesMap } }).data?.roles ?? {}) as ChampionRolesMap;
 
 interface ChampionsGridV2Props {
   champions?: ChampionData[];
@@ -22,11 +27,6 @@ const LOL_ROLE_ICON_URLS: Record<DraftRole, string> = {
   ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
   SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
 };
-
-function parseRoles(rolesJson: string): string[] {
-  try { const p = JSON.parse(rolesJson); return Array.isArray(p) ? p : []; }
-  catch { return []; }
-}
 
 function normalizeRole(role: string): DraftRole {
   return role === "Bot" ? "ADC" : role.toUpperCase() as DraftRole;
@@ -50,7 +50,7 @@ export default function ChampionsGridV2({ champions, onChampionClick }: Champion
       .filter((c) => {
         if (q && !c.name.toLowerCase().includes(q) && !c.champion_key.toLowerCase().includes(q)) return false;
         if (roleFilter !== "ALL") {
-          return parseRoles(c.roles_json).some((r) => normalizeRole(r) === roleFilter);
+          return (CHAMPION_ROLES[c.champion_key] ?? []).some((r) => normalizeRole(r) === roleFilter);
         }
         return true;
       })
@@ -113,7 +113,7 @@ export default function ChampionsGridV2({ champions, onChampionClick }: Champion
         className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8"
       >
         {paginated.map((champion, i) => {
-          const roles = parseRoles(champion.roles_json);
+          const roles = CHAMPION_ROLES[champion.champion_key] ?? [];
           const tile = resolveChampionTile(champion.champion_key);
           return (
             <button

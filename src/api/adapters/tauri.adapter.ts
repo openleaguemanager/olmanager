@@ -5,7 +5,7 @@ export const tauriAdapter: ApiClient = {
   saves: {
     list: () => invoke("get_saves"),
     load: (id) => invoke("load_game", { saveId: id }),
-    create: (name, manager, data) => invoke("start_new_game_lightweight", { name, manager, data }),
+    create: (name, manager, data) => invoke("start_new_game_lightweight", { name, manager, ...(data as Record<string, unknown>) }),
     delete: (id) => invoke("delete_save", { saveId: id }),
     clearAll: () => invoke("clear_all_saves"),
   },

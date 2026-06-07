@@ -2,19 +2,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getApiClientSync } from "../api/client";
-import { supabase } from "../web/supabase";
-import { getCurrentWindow } from "../web/tauriWindowShim";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api/core";
 import type { MatchModeType } from "../hooks/useAdvanceTime";
 import { useGameStore } from "../store/gameStore";
 
-/** Helper: call a server command via the unified dispatch with auth. */
+/** Helper: call a server command. */
 async function apiCmd<T>(command: string, body?: unknown): Promise<T> {
+  const isTauri = typeof window !== "undefined" && ("__TAURI__" in window || "__TAURI_INTERNALS__" in window);
+  if (isTauri) {
+    return invoke(command, (body ?? {}) as Record<string, unknown>) as Promise<T>;
+  }
   const saveId = localStorage.getItem("olmanager.web.activeSaveId")
   if (!saveId) throw new Error("No active save")
-  const { data } = await supabase.auth.getSession()
-  const token = data?.session?.access_token
   const headers: Record<string, string> = { "Content-Type": "application/json" }
-  if (token) headers["Authorization"] = `Bearer ${token}`
   const res = await fetch(`/api/saves/${saveId}/cmd/${command}`, {
     method: "POST", headers,
     body: JSON.stringify(body ?? {}),
@@ -196,13 +197,14 @@ export default function Dashboard(): JSX.Element {
   // Load champions once when game loads (if not already in gameState)
   useEffect(() => {
     if (!gameState) return;
-    if (gameState.champions && gameState.champions.length > 0) return;
+    if (gameState.champions) return;
 
     let cancelled = false;
     const loadChampions = async () => {
       try {
         console.log("[Dashboard] Loading champions for world tab...");
-        const champions = await apiCmd<unknown[]>("get_champions").catch(() => []);
+        const champions = await apiCmd<unknown[]>("get_champions");
+        console.log("[Dashboard] get_champions response:", champions);
         if (cancelled) return;
         // Merge into the freshest state from the store, not the gameState captured
         // in this effect's closure — otherwise a concurrent update (e.g. marking an
@@ -487,22 +489,11 @@ export default function Dashboard(): JSX.Element {
   const unreadMessagesCount = gameState ? getUnreadMessagesCount(gameState) : 0;
   const myTeamName = gameState ? getManagerTeamName(gameState) : null;
 
-  // Use the team's logo_url from backend (already mapped to /teams-icons/) instead of
-  // the hardcoded resolveTeamLogo map (which only covers LEC teams).
   const teamLogo = useMemo(() => {
-    if (!gameState || !gameState.manager.team_id) {
-      console.debug(`[dash] teamLogo: null (no gameState or team_id)`);
-      return null;
-    }
+    if (!gameState || !gameState.manager.team_id) return null;
     const myTeam = gameState.teams.find((t) => t.id === gameState.manager.team_id);
-    if (myTeam?.logo_url) {
-      console.debug(`[dash] teamLogo: using myTeam.logo_url=${myTeam.logo_url} for ${myTeam.name}`);
-      return myTeam.logo_url;
-    }
-    const fallback = resolveTeamLogo(myTeamName);
-    console.debug(`[dash] teamLogo: myTeam.logo_url missing for ${myTeam?.name}, resolveTeamLogo(${myTeamName}) => ${fallback}`);
-    return fallback;
-  }, [gameState, myTeamName]);
+    return resolveTeamLogo(myTeam?.name, myTeam?.logo_url);
+  }, [gameState?.manager.team_id, gameState?.teams]);
 
   const managerAvatar = useMemo(() => {
     return resolveStaffPhoto(gameState?.manager?.avatar_path);

@@ -1794,7 +1794,7 @@ export default function MatchSimulation() {
   // Loading state
   if (!snapshot || !gameState) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center transition-colors duration-300">
+      <div className="h-full bg-gray-100 dark:bg-navy-900 flex items-center justify-center transition-colors duration-300">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
           <span className="text-gray-500 dark:text-gray-400 font-heading uppercase tracking-wider text-sm">
@@ -1939,7 +1939,7 @@ export default function MatchSimulation() {
   } catch (renderError) {
     console.error("[MatchSimulation] render:error", { stage, error: renderError });
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-navy-900 flex items-center justify-center p-8">
+      <div className="h-full bg-gray-100 dark:bg-navy-900 flex items-center justify-center p-8">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-2xl">
           <h2 className="text-lg font-heading font-bold text-red-700 dark:text-red-400 mb-2">
             Render Error

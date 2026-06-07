@@ -180,3 +180,4 @@ describe("PlayerProfileHeroCard potential UX", () => {
     expect(screen.queryByRole("button", { name: "Investigar potencial" })).not.toBeInTheDocument();
   });
 });
+

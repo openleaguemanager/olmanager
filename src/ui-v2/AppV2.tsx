@@ -21,10 +21,11 @@ export default function AppV2() {
   return (
     <div className="flex h-screen flex-col dark">
       <TitleBarV2 />
-      <ErrorBoundary>
-        <BrowserRouter>
-          <Suspense fallback={<LazyFallback />}>
-            <Routes>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <ErrorBoundary>
+          <BrowserRouter>
+            <Suspense fallback={<LazyFallback />}>
+              <Routes>
               <Route path="/" element={<MainMenu />} />
               <Route path="/select-team" element={<TeamSelectionV2 />} />
               <Route path="/dashboard" element={<DashboardV2 />} />
@@ -39,5 +40,6 @@ export default function AppV2() {
         </BrowserRouter>
       </ErrorBoundary>
     </div>
+  </div>
   );
 }

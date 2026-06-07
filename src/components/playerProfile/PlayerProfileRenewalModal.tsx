@@ -67,10 +67,10 @@ export default function PlayerProfileRenewalModal({
     <DashboardModalFrame maxWidthClassName="max-w-md">
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-heading font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">
+          <h3 className="text-lg font-heading font-bold uppercase tracking-wider text-foreground">
             {t("playerProfile.renewalTitle")}
           </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {playerName}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function PlayerProfileRenewalModal({
           <div>
             <label
               htmlFor="renewal-wage"
-              className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-1"
+              className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground block mb-1"
             >
               {t("playerProfile.renewalWage")}
             </label>
@@ -91,14 +91,14 @@ export default function PlayerProfileRenewalModal({
               value={renewalWage}
               onChange={(event) => onWageChange(event.target.value)}
               disabled={renewalIsTerminal}
-              className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+              className="w-full px-3 py-2 rounded-lg bg-muted/50 bg-muted border border-border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
           </div>
 
           <div>
             <label
               htmlFor="renewal-length"
-              className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-1"
+              className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground block mb-1"
             >
               {t("playerProfile.renewalLength")}
             </label>
@@ -111,7 +111,7 @@ export default function PlayerProfileRenewalModal({
               value={renewalLength}
               onChange={(event) => onLengthChange(event.target.value)}
               disabled={renewalIsTerminal}
-              className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+              className="w-full px-3 py-2 rounded-lg bg-muted/50 bg-muted border border-border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
           </div>
         </div>
@@ -131,13 +131,13 @@ export default function PlayerProfileRenewalModal({
         ) : null}
 
         {renewalProjection ? (
-          <div className="rounded-lg border border-gray-200 dark:border-navy-600 bg-gray-50 dark:bg-navy-700/40 p-3 space-y-2">
-            <p className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <div className="rounded-lg border border-border border-border bg-muted/50 bg-card/40 p-3 space-y-2">
+            <p className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground">
               {t("playerProfile.renewalProjectionTitle", {
                 defaultValue: "Projected financial impact",
               })}
             </p>
-            <p className="text-xs text-gray-600 dark:text-gray-300">
+            <p className="text-xs text-foreground/70">
               {t("playerProfile.renewalProjectionWageBill", {
                 before: formatPlayerWage(
                   renewalProjection.current_annual_wage_bill,
@@ -150,7 +150,7 @@ export default function PlayerProfileRenewalModal({
                 defaultValue: "Annual wage bill {{before}} -> {{after}}",
               })}
             </p>
-            <p className="text-xs text-gray-600 dark:text-gray-300">
+            <p className="text-xs text-foreground/70">
               {t("playerProfile.renewalProjectionBudgetUsage", {
                 before:
                   renewalProjection.annual_wage_budget > 0
@@ -171,7 +171,7 @@ export default function PlayerProfileRenewalModal({
                 defaultValue: "Wage budget use {{before}}% -> {{after}}%",
               })}
             </p>
-            <p className="text-xs text-gray-600 dark:text-gray-300">
+            <p className="text-xs text-foreground/70">
               {t("playerProfile.renewalProjectionRunway", {
                 before:
                   renewalProjection.current_cash_runway_weeks === null
@@ -238,3 +238,4 @@ export default function PlayerProfileRenewalModal({
     </DashboardModalFrame>
   );
 }
+

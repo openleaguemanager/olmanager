@@ -35,6 +35,9 @@ import {
   type PlayerProfileScoutStatus,
 } from "./PlayerProfile.scouting";
 import PlayerProfileChampionsCard from "./PlayerProfileChampionsCard";
+import PlayerProfileStatsCard from "./PlayerProfileStatsCard";
+import PlayerProfileCareerCard from "./PlayerProfileCareerCard";
+import PlayerProfileMatchHistoryCard from "./PlayerProfileMatchHistoryCard";
 import championsSeed from "../../../assets/simulation/champions.json";
 import NegotiationFeedbackPanel from "../NegotiationFeedbackPanel";
 import TransferNegotiationHistory from "../transfers/TransferNegotiationHistory";
@@ -266,11 +269,12 @@ export default function PlayerProfile({
 }: PlayerProfileProps) {
   const { t, i18n } = useTranslation();
   const annualSuffix = t("finances.perYearSuffix", "/yr");
-  const primaryRole = resolvePlayerLolRole(player);
 
   if (!player) {
     return null;
   }
+
+  const primaryRole = resolvePlayerLolRole(player);
 
   const [scoutStatus, setScoutStatus] = useState<PlayerProfileScoutStatus>(
     "idle",
@@ -449,7 +453,7 @@ export default function PlayerProfile({
     scoutStatus,
   });
   const latestScoutReport = getLatestScoutReportForPlayer(gameState, player.id);
-  const attrGroups = buildPlayerAttributeGroups(player, t);
+  const attrGroups = buildPlayerAttributeGroups(player, t, latestScoutReport);
   const canViewAttributes = true;
   const championPerformance = buildChampionPerformanceMap(playerHistory);
   const visibleChampionMasteryCount = actualIsOwnClub ? 4 : latestScoutReport ? 2 : 1;
@@ -906,7 +910,7 @@ export default function PlayerProfile({
     <div className="w-[92%] max-w-[2000px] mx-auto">
       <button
         onClick={onClose}
-        className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors mb-4"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-muted-foreground hover:text-foreground transition-colors mb-4"
       >
         <ArrowLeft className="w-4 h-4" />
         <span className="font-heading font-bold uppercase tracking-wider">
@@ -1054,6 +1058,48 @@ export default function PlayerProfile({
 
       </div>
 
+      {/* ── Extra info cards ─────────────────────────────── */}
+      <div className="mt-5 space-y-5">
+        {/* Traits */}
+        {player.traits && player.traits.length > 0 && (
+          <div className="rounded-xl border border-border bg-card p-5">
+            <h4 className="mb-3 font-heading text-sm font-bold uppercase tracking-wider text-muted-foreground">
+              {t("playerProfile.traits", { defaultValue: "Rasgos" })}
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {player.traits.map((trait) => (
+                <span
+                  key={trait}
+                  className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground/80"
+                >
+                  {trait}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Season stats */}
+        {player.stats && (
+          <PlayerProfileStatsCard stats={player.stats} t={t} />
+        )}
+
+        {/* Career history */}
+        {player.career && player.career.length > 0 && (
+          <PlayerProfileCareerCard career={player.career} gameState={gameState} t={t} />
+        )}
+
+        {/* Match history */}
+        {playerHistory.length > 0 && (
+          <PlayerProfileMatchHistoryCard
+            history={playerHistory}
+            gameState={gameState}
+            t={t}
+            language={i18n.language}
+          />
+        )}
+      </div>
+
       <PlayerProfileRenewalModal
         show={showRenewalModal}
         playerName={player.full_name}
@@ -1081,14 +1127,14 @@ export default function PlayerProfile({
       {showReleaseContractModal ? (
         <DashboardModalFrame maxWidthClassName="max-w-md">
           <div className="space-y-4">
-            <h3 className="text-lg font-heading font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-heading font-bold uppercase tracking-wider text-foreground">
               {t("playerProfile.releaseContract")}
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="text-sm text-foreground/70">
               {t("playerProfile.releaseContractConfirm")}
             </p>
-            <div className="rounded-lg border border-gray-200 dark:border-navy-600 bg-gray-50 dark:bg-navy-700/40 p-3">
-              <p className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <div className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground">
                 {t("playerProfile.releasePenalty", { defaultValue: "Termination cost" })}
               </p>
               <p className="text-sm font-semibold text-red-500 mt-1">
@@ -1119,14 +1165,14 @@ export default function PlayerProfile({
       {showTransferOfferModal ? (
         <DashboardModalFrame maxWidthClassName="max-w-md">
           <div className="space-y-4">
-            <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-muted-foreground">
               {t("playerProfile.makeTransferOffer", { defaultValue: "Make Transfer Offer" })}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{player.full_name}</p>
+            <p className="text-sm text-muted-foreground">{player.full_name}</p>
             <div>
               <label
                 htmlFor="transfer-offer-destination"
-                className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-1"
+                className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground block mb-1"
               >
                 {t("playerProfile.transferOfferDestination", {
                   defaultValue: "Destination",
@@ -1140,7 +1186,7 @@ export default function PlayerProfile({
                     event.target.value as TransferDestinationData,
                   )
                 }
-                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
                 <option value="main">
                   {gameState.teams.find((team) => team.id === managerTeamId)?.name ??
@@ -1154,7 +1200,7 @@ export default function PlayerProfile({
               </select>
             </div>
             {!player.team_id ? (
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 {t("transfers.freeAgentSigningHint", { defaultValue: "This player is a free agent and can be signed without a transfer fee." })}
               </p>
             ) : (
@@ -1162,7 +1208,7 @@ export default function PlayerProfile({
               <div>
               <label
                 htmlFor="transfer-offer-amount"
-                className="text-xs font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-1"
+                className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground block mb-1"
               >
                 {t("playerProfile.transferOfferAmount", {
                   defaultValue: "Offer amount",
@@ -1186,7 +1232,7 @@ export default function PlayerProfile({
                       .catch(() => {});
                   }
                 }}
-                className="w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             </div>
             {transferOfferError ? (
@@ -1195,25 +1241,25 @@ export default function PlayerProfile({
               </p>
             ) : null}
             {transferOfferFee !== null && transferOfferProjection ? (
-              <div className="rounded-lg border border-gray-200 dark:border-navy-700 bg-white/70 dark:bg-navy-900/40 p-3 space-y-2">
-                <p className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <div className="rounded-lg border border-border bg-white/70 bg-card/60 p-3 space-y-2">
+                <p className="text-[11px] font-heading font-bold uppercase tracking-wider text-muted-foreground">
                   {t("transfers.bidImpactTitle", { defaultValue: "Projected impact" })}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">
+                <p className="text-xs text-foreground/70">
                   {t("transfers.bidImpactTransferBudget", {
                     before: formatVal(transferOfferProjection.transfer_budget_before),
                     after: formatVal(transferOfferProjection.transfer_budget_after),
                     defaultValue: "Transfer budget {{before}} -> {{after}}",
                   })}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">
+                <p className="text-xs text-foreground/70">
                   {t("transfers.bidImpactBalance", {
                     before: formatVal(transferOfferProjection.finance_before),
                     after: formatVal(transferOfferProjection.finance_after),
                     defaultValue: "Club balance {{before}} -> {{after}}",
                   })}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">
+                <p className="text-xs text-foreground/70">
                   {t("transfers.bidImpactWagePressure", {
                     percent: transferOfferProjection.projected_wage_budget_usage_pct,
                     defaultValue: "Projected wage budget usage {{percent}}%",
@@ -1279,7 +1325,7 @@ export default function PlayerProfile({
                 variant="ghost"
                 onClick={() => setShowTransferOfferModal(false)}
                 disabled={transferActionSubmitting}
-                className="px-4 py-2 bg-gray-200 dark:bg-navy-700 text-gray-600 dark:text-gray-300 rounded-lg font-heading font-bold text-sm uppercase tracking-wider hover:bg-gray-300 dark:hover:bg-navy-600 transition-colors"
+                className="px-4 py-2 bg-muted text-foreground/70 rounded-lg font-heading font-bold text-sm uppercase tracking-wider hover:bg-muted transition-colors"
               >
                 {t("common.cancel", { defaultValue: "Cancel" })}
               </Button>
@@ -1315,4 +1361,7 @@ export default function PlayerProfile({
     </div>
   );
 }
+
+
+
 
