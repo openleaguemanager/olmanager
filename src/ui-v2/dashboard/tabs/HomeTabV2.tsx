@@ -19,12 +19,12 @@ import {
   Swords,
   TrendingUp,
   Trophy,
+  ArrowRight,
 } from "lucide-react";
 
 import { compareStandingsByLolScore, type GameStateData } from "@/store/gameStore";
 import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import {
-  getHomeRosterOverview,
   getLeagueDigestArticles,
   getNextOpponentWidgetData,
   getRecentResultsForTeam,
@@ -37,10 +37,9 @@ import {
   getTeamShort,
 } from "@/lib/common/helpers";
 import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
+import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import {
-  daysUntil,
   getLineupByRole,
-  playerPhotoUrl,
   ROLE_ORDER,
   teamLineupOvr,
 } from "@/components/NextMatchDisplay";
@@ -63,9 +62,10 @@ function getActiveLeague(gameState: GameStateData) {
 interface Props {
   gameState: GameStateData;
   onNavigate?: (tab: string) => void;
+  onSelectPlayer?: (id: string) => void;
 }
 
-export function HomeTabV2({ gameState, onNavigate }: Props) {
+export function HomeTabV2({ gameState, onNavigate, onSelectPlayer }: Props) {
   const { i18n } = useTranslation();
   const myTeamId = gameState.manager.team_id;
   const myTeam = gameState.teams.find((tm) => tm.id === myTeamId);
@@ -74,16 +74,7 @@ export function HomeTabV2({ gameState, onNavigate }: Props) {
     : [];
 
   const next = useMemo(() => getNextOpponentWidgetData(gameState), [gameState]);
-  const overview = useMemo(() => getHomeRosterOverview(roster), [roster]);
-  // Injury system was removed in 0.3; surface low-condition players instead.
-  const tiredPlayers = useMemo(
-    () =>
-      [...roster]
-        .filter((p) => p.condition < 60)
-        .sort((a, b) => a.condition - b.condition)
-        .slice(0, 5),
-    [roster],
-  );
+
   const results = useMemo(
     () => (myTeamId ? getRecentResultsForTeam(gameState, myTeamId, 5) : []),
     [gameState, myTeamId],
@@ -111,71 +102,50 @@ export function HomeTabV2({ gameState, onNavigate }: Props) {
 
   const digestArticles = useMemo(() => getLeagueDigestArticles(gameState), [gameState]);
 
+  const cardHover = "h-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5";
+
   return (
-    <div className="grid auto-rows-min grid-flow-dense gap-4 p-6 lg:grid-cols-4">
-      {/* Left column: TodayPhase + NextOpponent + Roster */}
-      <div className="lg:col-span-3 flex flex-col gap-4">
+    <div className="relative grid auto-rows-min grid-flow-dense gap-3 p-4 sm:gap-4 sm:p-6 lg:grid-cols-4">
+      {/* Noise texture background */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        }}
+      />
+      {/* Today phase — full width */}
+      <div className="lg:col-span-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
         <TodayPhaseCard gameState={gameState} onNavigate={onNavigate} />
+      </div>
 
-        <NextOpponentCard gameState={gameState} data={next} onNavigate={onNavigate} />
+      {/* Row: Next opponent (left), Standings (right) */}
+      <div className="lg:col-span-4 flex gap-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "25ms", animationFillMode: "forwards" }}>
+        <div className="flex flex-1 flex-col gap-4 min-w-0">
+          <NextOpponentCard gameState={gameState} data={next} onNavigate={onNavigate} />
+        </div>
+        <div className="w-72 shrink-0 hidden lg:flex lg:flex-col">
+          <div className={cn(cardHover, "flex-1")}>
+            <FullStandingsCard
+              league={getActiveLeague(gameState)}
+              standings={sortedStandings}
+              teams={gameState.teams}
+              myTeamId={myTeamId}
+              onNavigate={onNavigate}
+            />
+          </div>
+        </div>
+      </div>
 
+      {/* Row: Roster lineup */}
+      <div className="lg:col-span-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "50ms", animationFillMode: "forwards" }}>
         <RosterLineupV2
           roster={roster}
           championMasteries={gameState.champion_masteries}
           onNavigate={onNavigate}
+          onSelectPlayer={onSelectPlayer}
         />
       </div>
 
-      {/* Right column: standings — spans 2 rows */}
-      <div className="lg:col-span-1 lg:row-span-2">
-        <FullStandingsCard
-          league={getActiveLeague(gameState)}
-          standings={sortedStandings}
-          teams={gameState.teams}
-          myTeamId={myTeamId}
-          onNavigate={onNavigate}
-        />
-      </div>
 
-      {/* Row 3+: standings has ended, content uses all 4 cols */}
-      <div className="lg:col-span-3">
-        <WeekScheduleCard gameState={gameState} onNavigate={onNavigate} />
-      </div>
-      <div className="lg:col-span-2">
-        <KpiGroup overview={overview} squadSize={roster.length} />
-      </div>
-
-      {/* Row 4+: standings has ended, content flows full 4-col width */}
-      {myTeam && (
-        <div className="lg:col-span-2">
-          <FinancesCard team={myTeam} onNavigate={onNavigate} />
-        </div>
-      )}
-      <div className="lg:col-span-2">
-        <MessagesCard
-          messages={recentMessages}
-          lang={i18n.language}
-          onNavigate={onNavigate}
-        />
-      </div>
-
-      <div className="lg:col-span-2">
-        <RecentResultsCard results={results} teams={gameState.teams} />
-      </div>
-      <div className="lg:col-span-2">
-        <LowConditionCard
-          players={tiredPlayers}
-          onNavigate={onNavigate}
-        />
-      </div>
-
-      <div className="lg:col-span-4">
-        <NewsCard
-          articles={newsArticles.length > 0 ? newsArticles : digestArticles}
-          lang={i18n.language}
-          onNavigate={onNavigate}
-        />
-      </div>
     </div>
   );
 }
@@ -207,12 +177,22 @@ function NextOpponentCard({
 
   if (!data || !nextFixture || !userTeamId) {
     return (
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle>{t("home.nextOpponent.title", { defaultValue: "Próximo partido" })}</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          {t("home.nextOpponent.none", { defaultValue: "No hay partidos programados." })}
+        <CardContent className="flex flex-col items-center gap-2 py-8">
+          <CalendarDays className="size-8 text-muted-foreground/30" />
+          <p className="text-sm text-muted-foreground">
+            {t("home.nextOpponent.none", { defaultValue: "No hay partidos programados." })}
+          </p>
+          <button
+            type="button"
+            onClick={() => onNavigate?.("Competitions")}
+            className="text-xs text-primary hover:underline"
+          >
+            Ver competiciones
+          </button>
         </CardContent>
       </Card>
     );
@@ -233,8 +213,6 @@ function NextOpponentCard({
   const totalOvr = Math.max(1, homeOvr + awayOvr);
   const homePct = (homeOvr / totalOvr) * 100;
   const awayPct = 100 - homePct;
-  const countdown = daysUntil(nextFixture.date);
-
   const fixtureLabel =
     nextFixture.match_type === "League"
       ? t("home.matchdayN", { n: nextFixture.matchday, defaultValue: `Jornada ${nextFixture.matchday}` })
@@ -244,10 +222,17 @@ function NextOpponentCard({
 
   const homeShort = getTeamShort(gameState.teams, nextFixture.home_team_id);
   const awayShort = getTeamShort(gameState.teams, nextFixture.away_team_id);
+  const homeLogo = data.isHome ? myLogo : logo;
+  const awayLogo = data.isHome ? logo : myLogo;
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
+    <Card className="relative h-full overflow-hidden">
+      {/* Accent stripe with opponent color */}
+      <div
+        className="absolute left-0 top-0 h-full w-1"
+        style={{ backgroundColor: data.opponent.colors?.primary ?? "var(--color-border)" }}
+      />
+      <CardHeader className="flex-row items-center justify-between space-y-0 pl-5">
         <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
           Próximo partido
         </CardTitle>
@@ -260,8 +245,8 @@ function NextOpponentCard({
         {/* Matchup hero */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           <div className="flex items-center gap-3">
-            {myLogo ? (
-              <img src={myLogo} alt={myTeam?.name ?? ""} className="size-14 shrink-0 object-contain" />
+            {homeLogo ? (
+              <img src={homeLogo} alt={homeShort} className="size-14 shrink-0 object-contain" />
             ) : (
               <div className="size-14 shrink-0 rounded-md bg-muted" />
             )}
@@ -285,8 +270,8 @@ function NextOpponentCard({
                 {!data.isHome ? "Tu equipo" : data.opponent.name}
               </div>
             </div>
-            {logo ? (
-              <img src={logo} alt={data.opponent.name} className="size-14 shrink-0 object-contain" />
+            {awayLogo ? (
+              <img src={awayLogo} alt={awayShort} className="size-14 shrink-0 object-contain" />
             ) : (
               <div className="size-14 shrink-0 rounded-md bg-muted" />
             )}
@@ -316,8 +301,8 @@ function NextOpponentCard({
             const away = awayLineup[i];
             const homeOvrVal = home ? calculateLolOvr(home) : null;
             const awayOvrVal = away ? calculateLolOvr(away) : null;
-            const homePhoto = home ? playerPhotoUrl(home.id) : null;
-            const awayPhoto = away ? playerPhotoUrl(away.id) : null;
+            const homePhoto = home ? resolvePlayerPhoto(home.id, home.match_name, home.profile_image_url) : null;
+            const awayPhoto = away ? resolvePlayerPhoto(away.id, away.match_name, away.profile_image_url) : null;
             return (
               <div
                 key={role}
@@ -337,23 +322,13 @@ function NextOpponentCard({
                   <span className="truncate font-medium">
                     {home?.match_name ?? "—"}
                   </span>
-                  {homeOvrVal !== null && (
-                    <span className="font-heading font-bold text-emerald-400 tabular-nums">
-                      {homeOvrVal}
-                    </span>
-                  )}
                 </div>
 
                 <div className="px-2 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {t(`tactics.lol.roles.${role}`, { defaultValue: role })}
+                  {role}
                 </div>
 
                 <div className="flex min-w-0 items-center justify-end gap-2">
-                  {awayOvrVal !== null && (
-                    <span className="font-heading font-bold text-red-400 tabular-nums">
-                      {awayOvrVal}
-                    </span>
-                  )}
                   <span className="truncate font-medium">
                     {away?.match_name ?? "—"}
                   </span>
@@ -375,7 +350,7 @@ function NextOpponentCard({
 
         <Separator />
 
-        {/* Footer: form + countdown + cta */}
+        {/* Footer: form + cta */}
         <div className="flex items-center justify-between gap-4">
           <div>
             <div className="mb-1 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -385,24 +360,15 @@ function NextOpponentCard({
               {data.recentForm.length > 0 ? (
                 data.recentForm.map((r, i) => <FormPill key={i} result={r} />)
               ) : (
-                <span className="text-sm text-muted-foreground">—</span>
+                <span className="text-xs text-muted-foreground/60">Sin historial</span>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="rounded-md border border-border bg-muted/30 px-3 py-1.5 text-right">
-              <div className="font-heading text-xl font-bold tabular-nums leading-none">
-                {countdown}d
-              </div>
-              <div className="mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-                Días
-              </div>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => onNavigate?.("Schedule")}>
-              Calendario <ArrowRight className="size-3" />
-            </Button>
-          </div>
+          <Button onClick={() => onNavigate?.("Schedule")} className="gap-1.5">
+            <CalendarDays className="size-4" />
+            Calendario
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -425,66 +391,6 @@ function FormPill({ result }: { result: string }) {
     >
       {m.label}
     </span>
-  );
-}
-
-// ──────────────────────────────────────────────────────────────────────
-
-function KpiGroup({
-  overview,
-  squadSize,
-}: {
-  overview: ReturnType<typeof getHomeRosterOverview>;
-  squadSize: number;
-}) {
-  return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-          Equipo
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="grid grid-cols-2 gap-4">
-        <Kpi icon={<Star className="size-4" />} label="OVR medio" value={overview.avgOvr || "—"} />
-        <Kpi icon={<Heart className="size-4" />} label="Condición" value={`${overview.avgCondition}%`} />
-        <Kpi
-          icon={<ShieldAlert className="size-4" />}
-          label="Cansados"
-          value={overview.exhaustedCount}
-          danger={overview.exhaustedCount > 0}
-        />
-        <Kpi icon={<Activity className="size-4" />} label="Plantilla" value={squadSize} />
-      </CardContent>
-    </Card>
-  );
-}
-
-function Kpi({
-  icon,
-  label,
-  value,
-  danger,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string | number;
-  danger?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-border bg-card/50 p-3">
-      <div className="mb-1 flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <div
-        className={cn(
-          "font-heading text-2xl font-bold tabular-nums",
-          danger && "text-destructive",
-        )}
-      >
-        {value}
-      </div>
-    </div>
   );
 }
 
@@ -547,7 +453,10 @@ function FullStandingsCard({
       </CardHeader>
       <CardContent className="p-0">
         {standings.length === 0 ? (
-          <p className="px-6 py-4 text-sm text-muted-foreground">Pretemporada.</p>
+          <p className="flex flex-col items-center gap-2 px-6 py-8 text-sm text-muted-foreground">
+            <TrendingUp className="size-8 text-muted-foreground/30" />
+            <span>Pretemporada.</span>
+          </p>
         ) : (
           <table className="w-full">
             <thead className="bg-muted/30 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -559,7 +468,20 @@ function FullStandingsCard({
               </tr>
             </thead>
             <tbody>
-              {standings.map((s, i) => {
+              {Array.from({ length: 8 }).map((_, i) => {
+                const s = standings[i];
+                if (!s) {
+                  return (
+                    <tr key={`empty-${i}`} className="border-b border-border/30 last:border-0">
+                      <td className="px-2 py-2.5 text-right font-heading text-sm text-muted-foreground tabular-nums">
+                        {i + 1}
+                      </td>
+                      <td className="px-2 py-2.5 text-sm text-muted-foreground/40">—</td>
+                      <td className="px-2 py-2.5 text-center text-muted-foreground/40">—</td>
+                      <td className="px-3 py-2.5 text-center text-muted-foreground/40">—</td>
+                    </tr>
+                  );
+                }
                 const team = teams.find((tm) => tm.id === s.team_id);
                 const isMe = s.team_id === myTeamId;
                 const teamName = team?.short_name ?? team?.name ?? s.team_id;
@@ -630,7 +552,10 @@ function RecentResultsCard({
       </CardHeader>
       <CardContent>
         {results.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Sin partidos jugados aún.</p>
+          <p className="flex flex-col items-center gap-2 px-6 py-8 text-sm text-muted-foreground">
+            <TrendingUp className="size-8 text-muted-foreground/30" />
+            <span>Sin partidos jugados aún.</span>
+          </p>
         ) : (
           <ul className="divide-y divide-border/40">
             {results.map((r, i) => {
@@ -710,6 +635,34 @@ function FinancesCard({
             {formatBalance(team.finance)}
           </div>
         </div>
+
+        {/* Budget usage bar */}
+        {team.wage_budget > 0 && (
+          <div>
+            <div className="mb-1 flex items-center justify-between text-xs">
+              <span className="uppercase tracking-wider text-muted-foreground">Presupuesto salarial</span>
+              <span className="tabular-nums text-muted-foreground/70">
+                {((team.season_expenses / team.wage_budget) * 100).toFixed(0)}%
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  team.season_expenses > team.wage_budget
+                    ? "bg-destructive"
+                    : team.season_expenses > team.wage_budget * 0.85
+                      ? "bg-amber-500"
+                      : "bg-emerald-500",
+                )}
+                style={{
+                  width: `${Math.min(100, (team.season_expenses / team.wage_budget) * 100)}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         <Separator />
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
@@ -769,7 +722,10 @@ function MessagesCard({
       </CardHeader>
       <CardContent className="p-0">
         {messages.length === 0 ? (
-          <p className="px-6 py-4 text-sm text-muted-foreground">Sin mensajes recientes.</p>
+          <div className="flex flex-col items-center gap-2 px-6 py-8 text-sm text-muted-foreground">
+            <Mail className="size-8 text-muted-foreground/30" />
+            <span>Sin mensajes recientes.</span>
+          </div>
         ) : (
           <ul className="divide-y divide-border/40">
             {messages.map((m) => (
@@ -793,13 +749,20 @@ function MessagesCard({
                     {m.sender.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div
-                      className={cn(
-                        "truncate text-sm font-semibold",
-                        m.read ? "text-muted-foreground" : "text-foreground",
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          "truncate text-sm font-semibold",
+                          m.read ? "text-muted-foreground" : "text-foreground",
+                        )}
+                      >
+                        {m.subject}
+                      </div>
+                      {m.priority === "high" && (
+                        <span className="shrink-0 rounded bg-destructive/10 px-1.5 py-0.5 text-[9px] font-heading font-bold uppercase tracking-wider text-destructive">
+                          Urgente
+                        </span>
                       )}
-                    >
-                      {m.subject}
                     </div>
                     <div
                       className={cn(
@@ -818,121 +781,17 @@ function MessagesCard({
             ))}
           </ul>
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-// ──────────────────────────────────────────────────────────────────────
-
-function WeekScheduleCard({
-  gameState,
-  onNavigate,
-}: {
-  gameState: GameStateData;
-  onNavigate?: (tab: string) => void;
-}) {
-  const { i18n } = useTranslation();
-  const league = getActiveLeague(gameState);
-  const teamId = gameState.manager.team_id;
-
-  const todayKey = String(gameState.clock.current_date).slice(0, 10);
-  const todayParts = todayKey.split("-").map(Number);
-  const today = new Date(todayParts[0], (todayParts[1] || 1) - 1, todayParts[2] || 1);
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-  monday.setHours(0, 0, 0, 0);
-
-  const week = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    const dKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    const fixture =
-      league && teamId
-        ? league.fixtures.find(
-            (f) =>
-              (f.home_team_id === teamId || f.away_team_id === teamId) &&
-              String(f.date).slice(0, 10) === dKey,
-          ) ?? null
-        : null;
-    const label = new Intl.DateTimeFormat(i18n.language, { weekday: "short" })
-      .format(d)
-      .replace(".", "")
-      .toUpperCase();
-    return { date: d, label, isToday: dKey === todayKey, fixture };
-  });
-
-  return (
-    <Card className="h-full">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-          Esta semana
-        </CardTitle>
-        <button
-          type="button"
-          onClick={() => onNavigate?.("Schedule")}
-          className="text-xs text-primary hover:underline"
-        >
-          Calendario
-        </button>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-7 gap-1.5">
-          {week.map((d) => {
-            const isMatch = !!d.fixture;
-            const opponentId =
-              d.fixture &&
-              (d.fixture.home_team_id === teamId
-                ? d.fixture.away_team_id
-                : d.fixture.home_team_id);
-            const opp = opponentId
-              ? gameState.teams.find((t) => t.id === opponentId)
-              : null;
-            const oppLogo = opp
-              ? resolveTeamLogo(opp.short_name ?? opp.name, opp.logo_url) ??
-                resolveTeamLogo(opp.name, opp.logo_url)
-              : null;
-            return (
-              <div
-                key={d.date.toISOString()}
-                className={cn(
-                  "rounded-md border p-2 text-center transition-colors",
-                  d.isToday
-                    ? "border-primary/60 bg-primary/10"
-                    : "border-border bg-card/60",
-                  isMatch && "border-primary/40",
-                )}
-              >
-                <div className="font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  {d.label}
-                </div>
-                <div
-                  className={cn(
-                    "mt-1 font-heading text-base font-bold tabular-nums",
-                    d.isToday && "text-primary",
-                  )}
-                >
-                  {d.date.getDate()}
-                </div>
-                <div className="mt-2 flex h-7 items-center justify-center">
-                  {isMatch ? (
-                    oppLogo ? (
-                      <img src={oppLogo} alt="" className="size-7 object-contain" />
-                    ) : (
-                      <span className="font-heading text-[10px] font-bold text-primary">
-                        PARTIDO
-                      </span>
-                    )
-                  ) : (
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60">
-                      ·
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {messages.length > 0 && (
+          <div className="border-t border-border/40 px-4 py-2 text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate?.("Inbox")}
+              className="text-xs font-heading font-bold uppercase tracking-wider text-primary hover:underline"
+            >
+              Ver todos ({messages.length})
+            </button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -966,73 +825,33 @@ function NewsCard({
       </CardHeader>
       <CardContent className="p-0">
         {articles.length === 0 ? (
-          <p className="px-6 py-4 text-sm text-muted-foreground">No hay noticias todavía.</p>
+          <div className="flex flex-col items-center gap-2 px-6 py-8 text-sm text-muted-foreground">
+            <Newspaper className="size-8 text-muted-foreground/30" />
+            <span>No hay noticias todavía.</span>
+          </div>
         ) : (
-          <ul className="divide-y divide-border/40">
-            {articles.map((a) => (
-              <li key={a.id} className="px-6 py-3">
-                <div className="flex items-baseline justify-between gap-3">
-                  <div className="text-sm font-medium leading-snug">{a.headline}</div>
-                  <span className="shrink-0 text-xs text-muted-foreground">
+          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border/40">
+            {articles.slice(0, 4).map((a, i) => (
+              <div
+                key={a.id}
+                className={cn(
+                  "px-5 py-4",
+                  i % 2 !== 0 && "sm:border-l-0",
+                  i >= 2 && "border-t border-border/40 sm:border-t",
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-2 text-sm font-medium leading-snug">{a.headline}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{a.source}</p>
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                     {formatDateShort(a.date, lang)}
                   </span>
                 </div>
-                <div className="mt-0.5 text-xs text-muted-foreground">{a.source}</div>
-              </li>
+              </div>
             ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-// ──────────────────────────────────────────────────────────────────────
-
-function LowConditionCard({
-  players,
-  onNavigate,
-}: {
-  players: GameStateData["players"];
-  onNavigate?: (tab: string) => void;
-}) {
-  return (
-    <Card className="h-full">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-          <ShieldAlert className="mr-1 inline size-4" />
-          Baja forma física
-        </CardTitle>
-        <button
-          type="button"
-          onClick={() => onNavigate?.("Training")}
-          className="text-xs text-primary hover:underline"
-        >
-          Entrenamiento
-        </button>
-      </CardHeader>
-      <CardContent>
-        {players.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Toda la plantilla en forma.</p>
-        ) : (
-          <ul className="space-y-2">
-            {players.map((p) => (
-              <li key={p.id} className="flex items-center justify-between gap-2 text-sm">
-                <span className="min-w-0 truncate">{p.full_name}</span>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    "shrink-0 tabular-nums",
-                    p.condition < 40
-                      ? "border-destructive/40 text-destructive"
-                      : "border-amber-500/40 text-amber-400",
-                  )}
-                >
-                  {p.condition}%
-                </Badge>
-              </li>
-            ))}
-          </ul>
+          </div>
         )}
       </CardContent>
     </Card>
@@ -1178,14 +997,6 @@ function TodayPhaseCard({
             Fase actual · {meta.label}
           </div>
         </div>
-        <Button
-          variant="default"
-          onClick={() => onNavigate?.(meta.actionTab)}
-          className="gap-1.5"
-        >
-          <Calendar className="size-4 shrink-0" />
-          {meta.actionLabel}
-        </Button>
       </CardContent>
     </Card>
   );

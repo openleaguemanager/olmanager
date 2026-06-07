@@ -42,9 +42,10 @@ interface Props {
   roster: PlayerData[];
   championMasteries?: ChampionMasteryEntryData[];
   onNavigate?: (tab: string) => void;
+  onSelectPlayer?: (id: string) => void;
 }
 
-export function RosterLineupV2({ roster, championMasteries = [], onNavigate }: Props) {
+export function RosterLineupV2({ roster, championMasteries = [], onNavigate, onSelectPlayer }: Props) {
   const { t } = useTranslation();
 
   const topMasteryByPlayer = useMemo(() => {
@@ -104,7 +105,11 @@ export function RosterLineupV2({ roster, championMasteries = [], onNavigate }: P
             return (
               <div
                 key={role}
-                className="relative overflow-hidden rounded-lg border border-border bg-card"
+                onClick={() => player && onSelectPlayer?.(player.id)}
+                className={cn(
+                  "relative overflow-hidden rounded-lg border border-border bg-card",
+                  player && "cursor-pointer transition-colors hover:border-primary/50",
+                )}
               >
                 {splash && (
                   <>
@@ -128,6 +133,7 @@ export function RosterLineupV2({ roster, championMasteries = [], onNavigate }: P
                         alt={player?.match_name ?? role}
                         className="size-9 shrink-0 rounded-full border border-white/20 object-cover"
                         loading="lazy"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
                     ) : (
                       <div className="size-9 shrink-0 rounded-full border border-white/10 bg-muted" />

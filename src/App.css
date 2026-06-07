@@ -386,7 +386,7 @@
 
 .scrollbar-v2 {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--border)) transparent;
+  scrollbar-color: var(--border) transparent;
 }
 .scrollbar-v2::-webkit-scrollbar {
   width: 5px;
@@ -396,12 +396,12 @@
   background: transparent;
 }
 .scrollbar-v2::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--border));
+  background-color: var(--border);
   border-radius: 9999px;
   transition: background-color 0.2s;
 }
 .scrollbar-v2::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--muted-foreground) / 0.5);
+  background-color: color-mix(in oklch, var(--border), var(--foreground) 30%);
 }
 
 /* ── Animations ────────────────────────────────── */
@@ -480,12 +480,16 @@
 }
 
 /* ── Legacy card bg override in v2 context ───── */
-.dark .schedule-calendar-container [class*="bg-navy-700"],
-.dark .schedule-calendar-container [class*="bg-navy-800"],
-.dark .competitions-v2 [class*="bg-navy-700"],
-.dark .competitions-v2 [class*="bg-navy-800"],
-.dark .player-profile-v2 [class*="bg-navy-700"],
-.dark .player-profile-v2 [class*="bg-navy-800"],
-.dark .player-profile-v2 [class*="bg-navy-600"] {
-  background-color: hsl(var(--card)) !important;
+.dark .schedule-calendar-container [class*="bg-navy-"],
+.dark .schedule-calendar-container [class*="border-navy-"],
+.dark .competitions-v2 [class*="bg-navy-"],
+.dark .competitions-v2 [class*="border-navy-"],
+.dark .player-profile-v2 [class*="bg-navy-"],
+.dark .player-profile-v2 [class*="border-navy-"],
+.dark .settings-v2 [class*="bg-navy-"],
+.dark .settings-v2 [class*="border-navy-"],
+.dark .news-v2 [class*="bg-navy-"],
+.dark .news-v2 [class*="border-navy-"] {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
 }

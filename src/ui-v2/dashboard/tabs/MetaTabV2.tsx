@@ -411,9 +411,9 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
   }
 
   return (
-    <div className="grid h-full grid-cols-2 gap-4 overflow-y-auto p-6 scrollbar-v2">
+    <div className="grid h-full grid-cols-2 grid-rows-[minmax(0,1fr)] gap-4 p-6">
       {/* ── Left column ── */}
-      <div className="flex flex-col gap-4">
+      <div className="flex min-h-0 flex-col gap-4 overflow-y-auto scrollbar-v2">
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
@@ -526,7 +526,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
         </Card>
 
         {/* ── Discovery Stats ── */}
-        <Card>
+        <Card className="flex-1 min-h-0">
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
               Discovery Stats
@@ -566,8 +566,9 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
         </Card>
       </div>
 
-      {/* ── Mastery Training ── */}
-      <Card className="flex min-h-0 flex-col">
+      {/* ── Right column ── */}
+      <div className="flex min-h-0 flex-col gap-4">
+        <Card className="flex min-h-0 flex-col">
         <CardHeader className="flex-row items-center justify-between space-y-0 shrink-0">
           <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
             Mastery Training
@@ -758,6 +759,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
           })}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

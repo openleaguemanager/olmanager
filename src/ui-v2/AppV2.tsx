@@ -7,7 +7,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 const MainMenu = lazy(() => import("@/pages/MainMenu"));
 const TeamSelectionV2 = lazy(() => import("@/pages/TeamSelectionV2"));
 const MatchSimulation = lazy(() => import("@/pages/MatchSimulation"));
-const Settings = lazy(() => import("@/pages/Settings"));
+const SettingsV2 = lazy(() => import("@/pages/SettingsV2"));
 
 function LazyFallback() {
   return (
@@ -34,7 +34,7 @@ export default function AppV2() {
               <Route path="/competiciones" element={<DashboardV2 />} />
               <Route path="/competitions" element={<DashboardV2 />} />
               <Route path="/match" element={<MatchSimulation />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/settings" element={<SettingsV2 />} />
             </Routes>
           </Suspense>
         </BrowserRouter>

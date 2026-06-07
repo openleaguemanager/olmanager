@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Briefcase,
+  ChevronLeft,
+  ChevronRight,
   Eye,
   GraduationCap,
   Loader2,
@@ -132,6 +134,8 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 4;
 
   const myStaff = gameState.staff.filter((s) => s.team_id === userTeamId);
   const availableStaff = gameState.staff.filter((s) => !s.team_id);
@@ -158,6 +162,12 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
     }
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const pageData = filtered.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+
+  useEffect(() => setPage(0), [view, roleFilter, competitionFilter, search]);
 
   const roles = useMemo(
     () => Array.from(new Set(gameState.staff.map((s) => s.role))).sort(),
@@ -339,8 +349,8 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
           </div>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2">
-          {filtered.map((staff) => {
+        <div className="grid min-h-0 grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 xl:grid-cols-3">
+          {pageData.map((staff) => {
             const roleIcon = ROLE_ICONS[staff.role] || <GraduationCap className="size-4" />;
             const age = calcAge(staff.date_of_birth, gameState.clock.current_date);
             const ovr = ovrRating(staff);
@@ -350,7 +360,15 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
             const attrLabel = (key: StaffAttrKey) => t(ATTR_LABEL_KEYS[key]);
 
             return (
-              <Card key={staff.id} className="h-full">
+              <Card
+                key={staff.id}
+                className="h-full cursor-pointer transition-all hover:ring-1 hover:ring-primary/30"
+                onClick={() => {
+                  if (actionLoading === staff.id) return;
+                  if (view === "mystaff") handleRelease(staff.id);
+                  else handleHire(staff.id);
+                }}
+              >
                 <CardContent className="flex gap-4">
                   {/* Avatar */}
                   <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted text-muted-foreground">
@@ -456,7 +474,7 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
                       <button
                         type="button"
                         disabled={actionLoading === staff.id}
-                        onClick={() => handleRelease(staff.id)}
+                        onClick={(e) => { e.stopPropagation(); handleRelease(staff.id); }}
                         className="flex size-8 items-center justify-center rounded-lg bg-red-500/10 text-red-500 transition-colors hover:bg-red-500/20 disabled:pointer-events-none disabled:opacity-50"
                         title={t("staff.releaseStaff")}
                       >
@@ -471,7 +489,7 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
                       <button
                         type="button"
                         disabled={actionLoading === staff.id}
-                        onClick={() => handleHire(staff.id)}
+                        onClick={(e) => { e.stopPropagation(); handleHire(staff.id); }}
                         className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
                         title={t("staff.hireStaff")}
                       >
@@ -487,6 +505,27 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
               </Card>
             );
           })}
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex shrink-0 items-center justify-center gap-3 pb-2">
+          <button
+            disabled={safePage === 0}
+            onClick={() => setPage(safePage - 1)}
+            className="flex size-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <span className="font-heading text-xs font-bold tabular-nums text-muted-foreground">
+            {safePage + 1} / {totalPages}
+          </span>
+          <button
+            disabled={safePage >= totalPages - 1}
+            onClick={() => setPage(safePage + 1)}
+            className="flex size-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+          >
+            <ChevronRight className="size-4" />
+          </button>
         </div>
       )}
     </div>

@@ -17,7 +17,6 @@ import {
   TrendingUp,
   UsersRound,
   Building2,
-  Trophy,
   Globe,
   Settings,
   LogOut,
@@ -82,14 +81,14 @@ export function DashboardSidebarV2({
     { tab: "Youth", label: t("dashboard.youthAcademy"), icon: GraduationCap },
     { tab: "Finances", label: t("dashboard.finances"), icon: DollarSign },
     { tab: "Transfers", label: t("dashboard.transfers"), icon: TrendingUp },
-    { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
   ];
 
   const world: Item[] = [
-    { tab: "Players", label: t("dashboard.players"), icon: UsersRound, badge: playerCount },
-    { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
-    { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staff BD" }), icon: UserCog, badge: staffCount },
-    { tab: "Tournaments", label: t("dashboard.tournaments"), icon: Trophy },
+    { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
+    { tab: "Players", label: t("dashboard.players"), icon: UsersRound },
+    { tab: "Teams", label: t("dashboard.teams"), icon: Building2 },
+    { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staffs" }), icon: UserCog },
+
     { tab: "ChampionsWorld", label: t("dashboard.champions_world"), icon: Gamepad2 },
   ];
 
@@ -131,7 +130,7 @@ export function DashboardSidebarV2({
 
       <Separator />
 
-      <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 text-sm">
+      <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3 text-sm scrollbar-v2">
         <Group items={top} activeTab={activeTab} onNavClick={onNavClick} />
 
         {!isUnemployed && (
@@ -148,13 +147,13 @@ export function DashboardSidebarV2({
       <Separator />
 
       <div className="shrink-0 p-2 text-sm">
+        <FooterButton icon={Settings} label={t("dashboard.settings")} onClick={onNavigateSettings} />
         <FooterButton
           icon={LogOut}
           label={t("dashboard.exitToMenu")}
           onClick={onExitClick}
           danger
         />
-        <FooterButton icon={Settings} label={t("dashboard.settings")} onClick={onNavigateSettings} />
       </div>
     </aside>
   );
@@ -189,7 +188,7 @@ function Group({
             <span className="flex-1 truncate font-heading text-xs font-semibold uppercase tracking-wider">
               {it.label}
             </span>
-            {it.badge !== undefined && (
+            {it.badge !== undefined && it.badge > 0 && (
               <Badge className="h-5 px-1.5 text-[10px]">{it.badge}</Badge>
             )}
           </button>

@@ -1,4 +1,4 @@
-import { ArrowLeft, Calendar as CalendarIcon, Loader2, Play, Save, Search, Swords } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon, Loader2, Play, Save, Swords } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/ui-v2/components/ui/button";
 import { Separator } from "@/ui-v2/components/ui/separator";
@@ -31,7 +31,7 @@ export function DashboardHeaderV2({
   const { t } = useTranslation();
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-4">
+    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-card px-4">
       {/* Back button */}
       {hasProfileHistory && (
         <>
@@ -43,12 +43,12 @@ export function DashboardHeaderV2({
       )}
 
       {/* Active tab label */}
-      <h1 className="truncate font-heading text-sm font-bold uppercase tracking-widest text-foreground">
+      <h1 className="min-w-0 flex-1 truncate font-heading text-sm font-bold uppercase tracking-widest text-foreground">
         {activeTabLabel}
       </h1>
 
       {/* Date */}
-      <div className="ml-4 flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2.5 py-1">
+      <div className="flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2.5 py-1">
         <CalendarIcon className="size-3.5 text-primary" />
         <span className="text-[11px] font-medium tabular-nums text-muted-foreground">
           {currentDate}
@@ -57,10 +57,6 @@ export function DashboardHeaderV2({
 
       {/* Right actions */}
       <div className="ml-auto flex items-center gap-1.5">
-        <Button variant="ghost" size="icon-sm" aria-label="Search">
-          <Search className="size-4" />
-        </Button>
-
         <Button variant="outline" size="sm" onClick={onSave} disabled={isSaving} className="h-7 gap-1.5 text-xs">
           {isSaving ? (
             <Loader2 className="size-3.5 animate-spin" />

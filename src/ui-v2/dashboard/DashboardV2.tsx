@@ -53,11 +53,10 @@ import { ScoutingTabV2 } from "./tabs/ScoutingTabV2";
 import { TransfersTabV2 } from "./tabs/TransfersTabV2";
 import { NewsTabV2 } from "./tabs/NewsTabV2";
 import { SocialTabV2 } from "./tabs/SocialTabV2";
-import { TournamentsTabV2 } from "./tabs/TournamentsTabV2";
+
 import { ManagerTabV2 } from "./tabs/ManagerTabV2";
 import { YouthTabV2 } from "./tabs/YouthTabV2";
 import { CompetitionsTabV2 } from "./tabs/CompetitionsTabV2";
-import StaffTabV1 from "@/components/staff/StaffTab";
 import { ChampionsWorldTabV2 } from "./tabs/ChampionsWorldTabV2";
 import { MetaTabV2 } from "./tabs/MetaTabV2";
 import ChampionPageV2 from "@/ui-v2/pages/ChampionPageV2";
@@ -79,7 +78,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Players: "dashboard.players",
   Teams: "dashboard.teams",
   WorldStaff: "dashboard.worldStaff",
-  Tournaments: "dashboard.tournaments",
+
   ChampionsWorld: "dashboard.champions_world",
   Schedule: "dashboard.schedule",
   News: "dashboard.news",
@@ -124,6 +123,15 @@ export default function DashboardV2() {
   useEffect(() => {
     if (!settingsLoaded) loadSettings();
   }, [settingsLoaded, loadSettings]);
+
+  // Block browser back from leaving the dashboard
+  useEffect(() => {
+    const handlePopState = () => {
+      navigate("/dashboard", { replace: true });
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [navigate]);
 
   useEffect(() => {
     const tab = PATH_TAB_MAP[location.pathname];
@@ -420,7 +428,7 @@ export default function DashboardV2() {
         !profileNavigation.selectedTeamId &&
         !seasonComplete ? (
           <div className="flex-1 overflow-y-auto scrollbar-v2">
-            <HomeTabV2 gameState={gameState} onNavigate={handleNavigate} />
+            <HomeTabV2 gameState={gameState} onNavigate={handleNavigate} onSelectPlayer={selectPlayer} />
           </div>
         ) : profileNavigation.activeTab === "Inbox" &&
           !viewingChampionKey &&
@@ -508,10 +516,9 @@ export default function DashboardV2() {
           !profileNavigation.selectedPlayerId &&
           !profileNavigation.selectedTeamId ? (
           <div className="flex-1 overflow-y-auto scrollbar-v2">
-            <StaffTabV1
+            <StaffTabV2
               gameState={gameState}
               onGameUpdate={setGameState}
-              mode="world"
             />
           </div>
         ) : profileNavigation.activeTab === "Finances" &&
@@ -576,16 +583,6 @@ export default function DashboardV2() {
               onGameUpdate={setGameState}
             />
           </div>
-        ) : profileNavigation.activeTab === "Tournaments" &&
-          !viewingChampionKey &&
-          !profileNavigation.selectedPlayerId &&
-          !profileNavigation.selectedTeamId ? (
-          <div className="flex-1 overflow-y-auto scrollbar-v2">
-            <TournamentsTabV2
-              gameState={gameState}
-              onSelectTeam={selectTeam}
-            />
-          </div>
         ) : profileNavigation.activeTab === "Manager" &&
           !viewingChampionKey &&
           !profileNavigation.selectedPlayerId &&
@@ -601,6 +598,7 @@ export default function DashboardV2() {
             <YouthTabV2
               gameState={gameState}
               onSelectPlayer={selectPlayer}
+              onSelectTeam={selectTeam}
               onGameUpdate={setGameState}
             />
           </div>
@@ -645,6 +643,7 @@ export default function DashboardV2() {
               }
               onGameUpdate={setGameState}
               onSelectPlayer={selectPlayer}
+              onViewChampion={(k) => setViewingChampionKey(k)}
             />
           </div>
         ) : profileNavigation.selectedTeamId && !viewingChampionKey && !profileNavigation.selectedPlayerId ? (
@@ -656,7 +655,7 @@ export default function DashboardV2() {
               onSelectPlayer={selectPlayer}
             />
           </div>
-        ) : viewingChampionKey && !profileNavigation.selectedPlayerId && !profileNavigation.selectedTeamId ? (
+        ) : viewingChampionKey ? (
           <div className="flex-1 overflow-hidden">
             <ChampionPageV2
               championKey={viewingChampionKey}

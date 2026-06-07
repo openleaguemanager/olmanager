@@ -6,6 +6,8 @@ import {
   ArrowUp,
   ArrowUpDown,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Gavel,
   Globe,
   Handshake,
@@ -140,6 +142,8 @@ export function TransfersTabV2({
   const [posFilter, setPosFilter] = useState<string | null>(null);
   const [competitionFilter, setCompetitionFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<TransferSortState | null>({ key: "ovr", direction: "desc" });
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 25;
 
   // ─── Bid modal state ───
   const [bidTarget, setBidTarget] = useState<PlayerData | null>(null);
@@ -205,6 +209,16 @@ export function TransfersTabV2({
     ),
     [currentList, search, posFilter, competitionTeamIds, sort],
   );
+
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const paginatedList = useMemo(
+    () => filteredList.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE),
+    [filteredList, safePage],
+  );
+
+  // Reset page when filters change
+  useEffect(() => { setPage(0); }, [search, posFilter, competitionFilter, view]);
 
   const tabCounts: Record<TransferTabView, number> = useMemo(
     () => ({
@@ -652,7 +666,7 @@ export function TransfersTabV2({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredList.map((player) => {
+                {paginatedList.map((player) => {
                   const ovr = calculateLolOvr(player);
                   const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                   const lolRole = resolvePlayerCurrentLolRole(player, myTeam ?? null);
@@ -803,6 +817,34 @@ export function TransfersTabV2({
               </TableBody>
             </Table>
           </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-border px-4 py-3">
+              <span className="text-[10px] text-muted-foreground">
+                {safePage * PAGE_SIZE + 1}–{Math.min((safePage + 1) * PAGE_SIZE, filteredList.length)} / {filteredList.length}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={safePage === 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  className="inline-flex size-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted disabled:opacity-30"
+                >
+                  <ChevronLeft className="size-3.5" />
+                </button>
+                <span className="font-heading text-xs tabular-nums text-muted-foreground">
+                  {safePage + 1}/{totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={safePage >= totalPages - 1}
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  className="inline-flex size-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted disabled:opacity-30"
+                >
+                  <ChevronRight className="size-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </Card>
       )}
 

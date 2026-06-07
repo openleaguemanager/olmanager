@@ -130,6 +130,9 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
   const annualSponsorIncome = financeSnapshot.annualSponsorIncome;
   const projectedAnnualNet = financeSnapshot.projectedAnnualNet;
   const cashRunwayMonths = financeSnapshot.cashRunwayMonths;
+  const wageBudgetUsagePercent = financeSnapshot.wageBudgetUsagePercent;
+  const playerWages = roster.reduce((s, p) => s + safeFinanceNumber(p.wage), 0);
+  const staffWages = teamStaff.reduce((s, st) => s + safeFinanceNumber(st.wage), 0);
   const installationContract = myTeam ? getClubInstallationContract(myTeam) : [];
   const mainHubLevel = installationContract.reduce((max, m) => Math.max(max, m.level), 1);
   const nextHubExpansionCost = getMainHubExpansionCost(mainHubLevel);
@@ -273,21 +276,36 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-            {[
-              { label: t("finances.clubBalance"), value: teamBalance, color: teamBalance >= 0 ? "text-emerald-400" : "text-red-400" },
-              { label: t("finances.wageBudget"), value: teamWageBudget, color: "text-foreground" },
-              { label: t("finances.transferBudget"), value: teamTransferBudget, color: "text-foreground" },
-              { label: t("finances.seasonIncome"), value: teamSeasonIncome, color: "text-emerald-400" },
-              { label: t("finances.seasonExpenses"), value: teamSeasonExpenses, color: "text-red-400" },
-              { label: t("finances.squadValue"), value: totalValue, color: "text-foreground" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-lg bg-muted/50 p-3 text-center">
-                <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{item.label}</p>
-                <p className={cn("mt-1 font-heading text-lg font-bold tabular-nums", item.color)}>
-                  {formatVal(item.value)}
-                </p>
+            <div className="rounded-lg bg-muted/50 p-3 text-center">
+              <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.clubBalance")}</p>
+              <p className={cn("mt-1 font-heading text-lg font-bold tabular-nums", teamBalance >= 0 ? "text-emerald-400" : "text-red-400")}>{formatVal(teamBalance)}</p>
+            </div>
+            <div className="rounded-lg bg-muted/50 p-3 text-center">
+              <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.wageBudget")}</p>
+              <p className="mt-1 font-heading text-lg font-bold tabular-nums text-foreground">{formatVal(teamWageBudget)}</p>
+              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
+                <div className={cn("h-full rounded-full transition-all", wageBudgetUsagePercent > 100 ? "bg-red-400" : "bg-primary")} style={{ width: `${Math.min(100, wageBudgetUsagePercent)}%` }} />
               </div>
-            ))}
+            </div>
+            <div className="rounded-lg bg-muted/50 p-3 text-center">
+              <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.transferBudget")}</p>
+              <p className="mt-1 font-heading text-lg font-bold tabular-nums text-foreground">{formatVal(teamTransferBudget)}</p>
+              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
+                <div className={cn("h-full rounded-full transition-all", teamTransferBudget > 0 && totalValue / teamTransferBudget > 1 ? "bg-amber-400" : "bg-primary/60")} style={{ width: `${Math.min(100, teamTransferBudget > 0 ? (totalValue / teamTransferBudget) * 100 : 0)}%` }} />
+              </div>
+            </div>
+            <div className="rounded-lg bg-muted/50 p-3 text-center">
+              <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.seasonIncome")}</p>
+              <p className="mt-1 font-heading text-lg font-bold tabular-nums text-emerald-400">{formatVal(teamSeasonIncome)}</p>
+            </div>
+            <div className="rounded-lg bg-muted/50 p-3 text-center">
+              <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.seasonExpenses")}</p>
+              <p className="mt-1 font-heading text-lg font-bold tabular-nums text-red-400">{formatVal(teamSeasonExpenses)}</p>
+            </div>
+            <div className="rounded-lg bg-muted/50 p-3 text-center">
+              <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.squadValue")}</p>
+              <p className="mt-1 font-heading text-lg font-bold tabular-nums text-foreground">{formatVal(totalValue)}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -300,25 +318,45 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
               {t("finances.wageBill")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-center">
-            <p className="font-heading text-2xl font-bold tabular-nums text-foreground">
-              €{totalWages.toLocaleString()}{annualSuffix}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("finances.budget")}: €{annualWageBudget.toLocaleString()}{annualSuffix}
-              {totalWages <= annualWageBudget ? (
-                <span className="ml-1 text-emerald-400">— {t("finances.underBudget")}</span>
-              ) : (
-                <span className="ml-1 inline-flex items-center gap-1 text-red-400">
-                  <AlertTriangle className="size-3" /> {t("finances.overBudget")}
-                </span>
-              )}
-            </p>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className={cn("h-full rounded-full transition-all", totalWages <= annualWageBudget ? "bg-emerald-400" : "bg-red-400")}
-                style={{ width: `${Math.min(100, Math.round((totalWages / Math.max(1, annualWageBudget)) * 100))}%` }}
-              />
+          <CardContent>
+            <div className="text-center">
+              <p className="font-heading text-2xl font-bold tabular-nums text-foreground">
+                €{totalWages.toLocaleString()}{annualSuffix}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("finances.budget")}: €{annualWageBudget.toLocaleString()}{annualSuffix}
+                {totalWages <= annualWageBudget ? (
+                  <span className="ml-1 text-emerald-400">— {t("finances.underBudget")}</span>
+                ) : (
+                  <span className="ml-1 inline-flex items-center gap-1 text-red-400">
+                    <AlertTriangle className="size-3" /> {t("finances.overBudget")}
+                  </span>
+                )}
+              </p>
+              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className={cn("h-full rounded-full transition-all", totalWages <= annualWageBudget ? "bg-emerald-400" : "bg-red-400")}
+                  style={{ width: `${Math.min(100, Math.round((totalWages / Math.max(1, annualWageBudget)) * 100))}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Wage breakdown */}
+            <div className="mt-4 space-y-2 border-t border-border pt-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">{t("finances.playerWages", "Sueldos jugadores")}</span>
+                <span className="tabular-nums text-foreground">€{playerWages.toLocaleString()}{annualSuffix}</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(100, (playerWages / Math.max(1, totalWages)) * 100)}%` }} />
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">{t("finances.staffWages", "Sueldos staff")}</span>
+                <span className="tabular-nums text-foreground">€{staffWages.toLocaleString()}{annualSuffix}</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-amber-400 transition-all" style={{ width: `${Math.min(100, (staffWages / Math.max(1, totalWages)) * 100)}%` }} />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -339,6 +377,8 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
                 <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.annualSponsorIncome")}</p>
                 <p className="mt-1 font-heading text-lg font-bold text-emerald-400 tabular-nums">€{annualSponsorIncome.toLocaleString()}{annualSuffix}</p>
               </div>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-muted/50 p-3 text-center">
                 <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.projectedAnnualNet")}</p>
                 <p className={cn("mt-1 font-heading text-lg font-bold tabular-nums", projectedAnnualNet >= 0 ? "text-emerald-400" : "text-red-400")}>
@@ -347,22 +387,27 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
               </div>
               <div className="rounded-lg bg-muted/50 p-3 text-center">
                 <p className="font-heading text-[10px] uppercase tracking-wider text-muted-foreground">{t("finances.cashRunway")}</p>
-                <p className={cn("mt-1 font-heading text-sm font-bold tabular-nums", cashRunwayMonths !== null && cashRunwayMonths < 12 ? "text-red-400" : cashRunwayMonths !== null && cashRunwayMonths < 52 ? "text-amber-400" : "text-foreground")}>
+                <p className={cn("mt-1 font-heading text-lg font-bold tabular-nums", cashRunwayMonths !== null && cashRunwayMonths < 12 ? "text-red-400" : cashRunwayMonths !== null && cashRunwayMonths < 52 ? "text-amber-400" : "text-foreground")}>
                   {cashRunwayMonths === null ? t("finances.runwayStable") : t("finances.runwayMonths", { count: cashRunwayMonths })}
                 </p>
-                {cashRunwayMonths !== null && (
-                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all",
-                        cashRunwayMonths < 12 ? "bg-red-400" : cashRunwayMonths < 52 ? "bg-amber-400" : "bg-emerald-400",
-                      )}
-                      style={{ width: `${Math.min(100, (cashRunwayMonths / 60) * 100)}%` }}
-                    />
-                  </div>
-                )}
               </div>
             </div>
+            {cashRunwayMonths !== null && (
+              <div className="mt-3">
+                <div className="mb-1 flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">{t("finances.cashRunway")}</span>
+                  <span className={cn("tabular-nums font-medium", cashRunwayMonths < 12 ? "text-red-400" : cashRunwayMonths < 52 ? "text-amber-400" : "text-emerald-400")}>
+                    {cashRunwayMonths}m
+                  </span>
+                </div>
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={cn("h-full rounded-full transition-all", cashRunwayMonths < 12 ? "bg-red-400" : cashRunwayMonths < 52 ? "bg-amber-400" : "bg-emerald-400")}
+                    style={{ width: `${Math.min(100, (cashRunwayMonths / 60) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -407,42 +452,52 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
           )}
           {contractRiskPlayers.length > 0 ? (
             <div className="space-y-2">
-              {contractRiskPlayers.map(({ player, riskLevel }) => (
-                <div
-                  key={player.id}
-                  className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedRiskPlayerIds.includes(player.id)}
-                    onChange={() => handleToggleRiskPlayer(player.id)}
-                    className="size-4 accent-primary"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground">{player.match_name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {t("finances.contractExpiresOn", { date: player.contract_end })} —{" "}
-                      {t("playerProfile.yearsRemaining")}:{" "}
-                      {getContractYearsRemaining(player.contract_end, gameState.clock.current_date)}
+              {contractRiskPlayers.map(({ player, riskLevel }) => {
+                const yearsRemaining = Number.parseFloat(getContractYearsRemaining(player.contract_end, gameState.clock.current_date));
+                return (
+                  <div
+                    key={player.id}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg border p-3 transition-colors",
+                      riskLevel === "critical" ? "border-red-500/20 bg-red-500/5" : "border-amber-500/20 bg-amber-500/5",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedRiskPlayerIds.includes(player.id)}
+                      onChange={() => handleToggleRiskPlayer(player.id)}
+                      className="size-4 accent-primary"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground">{player.match_name}</p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                          <div
+                            className={cn("h-full rounded-full transition-all", riskLevel === "critical" ? "bg-red-400" : "bg-amber-400")}
+                            style={{ width: `${Math.min(100, (yearsRemaining / 5) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="font-heading text-[10px] tabular-nums text-muted-foreground">{yearsRemaining.toFixed(1)}y</span>
+                      </div>
+                    </div>
+                    <Badge variant={riskLevel === "critical" ? "destructive" : "secondary"} className="text-[10px]">
+                      {riskLevel === "critical" ? t("finances.contractRiskCritical") : t("finances.contractRiskWarning")}
+                    </Badge>
+                    <p className="font-heading text-xs font-bold tabular-nums text-foreground">
+                      €{safeFinanceNumber(player.wage).toLocaleString()}{annualSuffix}
                     </p>
+                    {onSelectPlayer && (
+                      <button
+                        type="button"
+                        onClick={() => onSelectPlayer(player.id, { openRenewal: true })}
+                        className="rounded-md border border-border px-2 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-muted"
+                      >
+                        {t("common.renewContract")}
+                      </button>
+                    )}
                   </div>
-                  <Badge variant={riskLevel === "critical" ? "destructive" : "secondary"} className="text-[10px]">
-                    {riskLevel === "critical" ? t("finances.contractRiskCritical") : t("finances.contractRiskWarning")}
-                  </Badge>
-                  <p className="text-xs font-medium tabular-nums text-foreground">
-                    €{safeFinanceNumber(player.wage).toLocaleString()}{annualSuffix}
-                  </p>
-                  {onSelectPlayer && (
-                    <button
-                      type="button"
-                      onClick={() => onSelectPlayer(player.id, { openRenewal: true })}
-                      className="rounded-md border border-border px-2 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-muted"
-                    >
-                      {t("common.renewContract")}
-                    </button>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">{t("finances.noContractRisks")}</p>
@@ -460,21 +515,25 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
           </CardHeader>
           <CardContent>
             {activeSponsorship ? (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-heading text-base font-bold uppercase tracking-wide text-foreground">
-                    {activeSponsorship.sponsorName}
-                  </h3>
-                  <Badge variant="secondary" className="text-[10px]">
-                    {activeSponsorship.theme === "esports" ? t("finances.esportsSponsor") : t("finances.standardSponsor")}
-                  </Badge>
+              <div className="flex items-start gap-4">
+                <div className="flex size-14 shrink-0 items-center justify-center rounded-xl border-2 border-border bg-muted/50 font-heading text-xl font-bold uppercase text-muted-foreground">
+                  {activeSponsorship.sponsorName.charAt(0)}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {t("finances.sponsorWeeklyValue", { amount: Math.round(activeSponsorship.baseValue / 12) })}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t("finances.sponsorRemainingMonths", { count: activeSponsorship.remainingMonths })}
-                </p>
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="truncate font-heading text-base font-bold uppercase tracking-wide text-foreground">
+                      {activeSponsorship.sponsorName}
+                    </h3>
+                    <Badge variant={activeSponsorship.theme === "esports" ? "default" : "secondary"} className="text-[10px]">
+                      {activeSponsorship.theme === "esports" ? t("finances.esportsSponsor") : t("finances.standardSponsor")}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t("finances.sponsorWeeklyValue", { amount: Math.round(activeSponsorship.baseValue / 12) })}
+                    <span className="mx-1.5 text-border">·</span>
+                    {t("finances.sponsorRemainingMonths", { count: activeSponsorship.remainingMonths })}
+                  </p>
+                </div>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">{t("finances.noActiveSponsor")}</p>
@@ -542,23 +601,34 @@ export function FinancesTabV2({ gameState, onGameUpdate, onSelectPlayer }: Finan
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 flex flex-col items-start gap-3 rounded-lg border border-border bg-muted/30 p-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="font-heading text-sm font-bold text-foreground">
-                {t("finances.facilityLevel", { level: mainHubLevel })}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t("finances.nextUpgradeCost", { amount: nextHubExpansionCost.toLocaleString() })}
-              </p>
+          {/* Hub expansion */}
+          <div className="mb-4 rounded-lg border-2 border-dashed border-border bg-muted/20 p-4">
+            <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/50">
+                  <Monitor className="size-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="font-heading text-sm font-bold text-foreground">
+                    {t("finances.mainHub", "Hub principal")} · Lv.{mainHubLevel}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("finances.nextUpgradeCost", { amount: nextHubExpansionCost.toLocaleString() })}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={!canExpandMainHub || actionLoading === "expand-main-hub"}
+                onClick={handleExpandMainHub}
+                className="shrink-0 rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
+              >
+                {actionLoading === "expand-main-hub" ? (
+                  <RefreshCw className="mr-1 inline size-3 animate-spin" />
+                ) : null}
+                {t("finances.expandOffices")}
+              </button>
             </div>
-            <button
-              type="button"
-              disabled={!canExpandMainHub || actionLoading === "expand-main-hub"}
-              onClick={handleExpandMainHub}
-              className="rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
-            >
-              {t("finances.expandOffices")}
-            </button>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {installationContract.map((facility) => {

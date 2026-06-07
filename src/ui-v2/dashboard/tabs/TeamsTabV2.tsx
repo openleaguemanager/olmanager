@@ -33,7 +33,7 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
     () => [...(gameState.leagues?.[0]?.standings ?? [])].sort(compareStandingsByLolScore),
     [gameState.leagues],
   );
-  const leagues = useMemo(() => gameState.leagues.map((l) => ({ id: l.id, name: l.name })), [gameState.leagues]);
+  const leagues = useMemo(() => gameState.leagues.map((l) => ({ id: l.competition_id ?? l.id, name: l.name })), [gameState.leagues]);
 
   const teamsData = useMemo(() => {
     const main = getMainTeams(gameState.teams);

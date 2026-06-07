@@ -74,17 +74,17 @@ export function getLineupByRole(gameState: GameStateData, teamId: string) {
 
   const lineup = ROLE_ORDER.map((role) => {
     const candidates = teamPlayers
-      .filter((player) => {
-        const roleFromSeed = seedRoleToDraftRole(ROLE_BY_IGN.get(normalizeKey(player.match_name)) ?? "");
-        const fallbackRole = positionToDraftRole(player.natural_position || player.position);
-        return (roleFromSeed ?? fallbackRole) === role;
-      })
+      .filter((player) => player.position === role || player.natural_position === role)
       .sort((a, b) => calculateLolOvr(b) - calculateLolOvr(a));
 
     return candidates[0] ?? null;
   });
 
-  return lineup;
+  if (lineup.some((p) => p !== null)) return lineup;
+
+  const sorted = [...teamPlayers].sort((a, b) => calculateLolOvr(b) - calculateLolOvr(a));
+  const top5 = sorted.slice(0, 5);
+  return ROLE_ORDER.map((_, i) => top5[i] ?? null);
 }
 
 export function teamLineupOvr(lineup: Array<GameStateData["players"][number] | null>): number {

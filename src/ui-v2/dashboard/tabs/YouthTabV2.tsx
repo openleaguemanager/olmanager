@@ -43,6 +43,7 @@ import { cn } from "@/ui-v2/lib/utils";
 interface YouthTabV2Props {
   gameState: GameStateData;
   onSelectPlayer?: (id: string) => void;
+  onSelectTeam?: (id: string) => void;
   onGameUpdate?: (state: GameStateData) => void;
 }
 
@@ -82,7 +83,7 @@ function getLolOvr(player: PlayerData): number {
   return Math.max(1, Math.min(99, Math.round(avg)));
 }
 
-export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTabV2Props) {
+export function YouthTabV2({ gameState, onSelectPlayer, onSelectTeam, onGameUpdate }: YouthTabV2Props) {
   const { t } = useTranslation();
   const myTeam = gameState.teams.find((team) => team.id === gameState.manager.team_id);
   const academyTeam = useMemo(
@@ -349,15 +350,15 @@ export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTab
 
       {/* Academy Acquisition */}
       {!academyTeam && (
-        <Card>
+        <Card className="flex-1">
           <CardHeader>
             <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
               {t("youthAcademy.academyCardTitle")}
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
+          <CardContent className="flex min-h-0 flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col gap-3">
+              <p className="shrink-0 text-sm text-muted-foreground">
                 {acquisitionLoading
                   ? t("youthAcademy.acquisitionLoading")
                   : acquisitionOptions.length > 0
@@ -368,7 +369,7 @@ export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTab
               </p>
 
               {acquisitionOptions.length > 0 && (
-                <div className="grid gap-2 md:grid-cols-3">
+                <div className="grid shrink-0 gap-2 md:grid-cols-3">
                   <input
                     value={academyCustomName}
                     onChange={(e) => setAcademyCustomName(e.target.value)}
@@ -391,13 +392,14 @@ export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTab
               )}
 
               {acquisitionOptions.length > 0 && (
-                <div className="grid gap-2 md:grid-cols-2">
+                <div className="grid min-h-0 flex-1 gap-2 overflow-y-auto md:grid-cols-2 scrollbar-v2">
                   {acquisitionOptions.map((option) => {
                     const optionLogo = option.source_team_logo_url ?? resolveTeamLogo(option.source_team_name);
                     return (
                       <div
                         key={option.source_team_id}
-                        className="flex items-center gap-3 rounded-lg border border-border bg-muted/20 p-3"
+                        onClick={() => onSelectTeam?.(option.source_team_id)}
+                        className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-muted/20 p-3 transition-colors hover:bg-muted/40"
                       >
                         <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted">
                           {optionLogo ? (
@@ -470,12 +472,13 @@ export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTab
       )}
 
       {/* Roster */}
-      <Card className="flex min-h-0 flex-1 flex-col">
-        <CardHeader className="flex-row items-center justify-between space-y-0 shrink-0">
-          <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-            {academyTeam ? t("youthAcademy.academyRosterLinked") : t("youthAcademy.academyNotLinked")}
-          </CardTitle>
-          {youthPlayers.length > 0 && (
+      {youthPlayers.length > 0 && (
+        <Card className="flex min-h-0 flex-1 flex-col">
+          <CardHeader className="flex-row items-center justify-between space-y-0 shrink-0">
+            <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
+              {academyTeam ? t("youthAcademy.academyRosterLinked") : t("youthAcademy.academyNotLinked")}
+            </CardTitle>
+            {youthPlayers.length > 0 && (
             <div className="relative">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground/50" />
               <input
@@ -488,12 +491,6 @@ export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTab
           )}
         </CardHeader>
         <CardContent className="flex-1 p-0">
-          {youthPlayers.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-12">
-              <GraduationCap className="size-10 text-muted-foreground/30" />
-              <p className="text-sm text-muted-foreground">{t("youthAcademy.noYouthPlayers")}</p>
-            </div>
-          ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -656,9 +653,9 @@ export function YouthTabV2({ gameState, onSelectPlayer, onGameUpdate }: YouthTab
                 </TableBody>
               </Table>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
