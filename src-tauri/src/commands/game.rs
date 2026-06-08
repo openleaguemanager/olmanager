@@ -496,6 +496,10 @@ pub async fn load_game(
     // Bootstrap champion state so the Champions tab has data
     info!("[cmd] load_game: bootstrapping champion state...");
     olm_core::champions::bootstrap_champion_state(&mut game);
+    // Refresh lol_ovr for all players (it's stored as 0 in the save DB)
+    for player in &mut game.players {
+        player.lol_ovr = olm_core::potential::calculate_lol_ovr(player);
+    }
     info!(
         "[cmd] load_game: champion_patch.hidden_meta={}, champion_masteries={}",
         game.champion_patch.hidden_meta.len(),
@@ -526,6 +530,10 @@ pub async fn get_active_game(state: State<'_, StateManager>) -> Result<Game, Str
     );
     log::info!("[cmd] get_active_game: bootstrapping champion state...");
     olm_core::champions::bootstrap_champion_state(&mut game);
+    // Refresh lol_ovr for all players (it's stored as 0 in the save DB)
+    for player in &mut game.players {
+        player.lol_ovr = olm_core::potential::calculate_lol_ovr(player);
+    }
     log::info!(
         "[cmd] get_active_game: champion_patch.hidden_meta={}, champion_masteries={}",
         game.champion_patch.hidden_meta.len(),
