@@ -86,6 +86,16 @@ impl SaveManager {
     fn write_olsave(path: &Path, game: &Game) -> Result<(), String> {
         let tmp_path = path.with_extension("olsave.tmp");
 
+        // Serialize to buffer first so we can validate before writing to disk
+        let encoded: Vec<u8> = bincode::serialize(game)
+            .map_err(|e| {
+                // Try JSON fallback for diagnostics
+                let json_diag = serde_json::to_string(game)
+                    .map(|j| format!(" (JSON serialization ok, {} bytes)", j.len()))
+                    .unwrap_or_else(|je| format!(" (JSON also failed: {je})"));
+                format!("Failed to serialize game: {e}{json_diag}")
+            })?;
+
         let mut file = fs::File::create(&tmp_path)
             .map_err(|e| format!("Failed to create temp file: {}", e))?;
 
@@ -94,9 +104,9 @@ impl SaveManager {
         file.write_all(&version_bytes)
             .map_err(|e| format!("Failed to write format version: {}", e))?;
 
-        // Serialize Game with bincode
-        bincode::serialize_into(&mut file, game)
-            .map_err(|e| format!("Failed to serialize game: {}", e))?;
+        // Write the pre-encoded buffer
+        file.write_all(&encoded)
+            .map_err(|e| format!("Failed to write game data: {}", e))?;
 
         file.flush()
             .map_err(|e| format!("Failed to flush: {}", e))?;
@@ -141,10 +151,16 @@ impl SaveManager {
         // Deserialize Game from the rest of the file
         let game: Game = match bincode::deserialize_from(std::io::Cursor::new(&bytes[4..])) {
             Ok(g) => g,
-            Err(e) => return Err(format!(
-                "Failed to deserialize game (v={}, file={}B, path={:?}, hex={}): {}",
-                version, file_size, path, hex_str, e
-            )),
+            Err(e) => {
+                // Try JSON to see if the binary data is structurally coherent
+                let json_hint = serde_json::from_slice::<serde_json::Value>(&bytes[4..])
+                    .map(|v| format!("json_ok(type={})", v.as_object().map(|o| o.len()).unwrap_or(0)))
+                    .unwrap_or_else(|je| format!("json_fail({je})"));
+                return Err(format!(
+                    "Failed to deserialize game (v={}, file={}B, path={:?}, hex={}, {json_hint}): {}",
+                    version, file_size, path, hex_str, e
+                ));
+            }
         };
 
         Ok(game)
