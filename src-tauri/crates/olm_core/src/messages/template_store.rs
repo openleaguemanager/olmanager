@@ -106,6 +106,9 @@ impl TemplateStore {
                 .push(template);
         }
 
+        // Log loaded templates
+        eprintln!("[template_store] loaded triggers: {:?}", by_trigger.keys().collect::<Vec<_>>());
+
         // Also scan subdirectories for nested JSONs
         let dir_entries = fs::read_dir(messages_dir)
             .map_err(|e| format!("Failed to read messages dir: {e}"))?;
@@ -132,6 +135,11 @@ impl TemplateStore {
                     .or_default()
                     .push(template);
             }
+        }
+
+        // Log loaded templates
+        for (trigger, templates) in &by_trigger {
+            eprintln!("[template_store] trigger={trigger}: {} template(s)", templates.len());
         }
 
         Ok(Self { by_trigger })

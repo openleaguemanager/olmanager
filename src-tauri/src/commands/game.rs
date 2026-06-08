@@ -372,10 +372,18 @@ pub async fn select_team(
         .unwrap_or_else(|| "LEC Winter".to_string());
 
     // Initialize message template store
-    if let Some(data_base) = crate::commands::competitions::resolve_data_base(&app_handle) {
-        let msg_dir = data_base.join("..").join("messages");
-        if msg_dir.is_dir() {
-            let _ = olm_core::messages::template_store::init_template_store(&msg_dir);
+    {
+        let msg_candidates = vec![
+            std::env::current_dir().ok().map(|d| d.join("data").join("messages")),
+            std::env::current_dir().ok().map(|d| d.join("../data").join("messages")),
+            std::env::current_dir().ok().map(|d| d.join("src-tauri/data").join("messages")),
+        ];
+        for candidate in msg_candidates.into_iter().flatten() {
+            if candidate.is_dir() {
+                let result = olm_core::messages::template_store::init_template_store(&candidate);
+                eprintln!("[template_store] init from {:?}: {:?}", candidate, result);
+                break;
+            }
         }
     }
 
