@@ -101,6 +101,9 @@ pub struct InboxMessage {
     /// Interpolation parameters for the i18n keys (shared by subject/body/sender)
     #[serde(default)]
     pub i18n_params: HashMap<String, String>,
+    /// Optional icon identifier for the sender (rendered in UI, e.g. "board", "coach", "scout")
+    #[serde(default)]
+    pub sender_icon: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -214,6 +217,7 @@ impl InboxMessage {
             sender_key: None,
             sender_role_key: None,
             i18n_params: HashMap::new(),
+            sender_icon: None,
         }
     }
 
@@ -257,6 +261,11 @@ impl InboxMessage {
     pub fn with_sender_i18n(mut self, sender_key: &str, role_key: &str) -> Self {
         self.sender_key = Some(sender_key.to_string());
         self.sender_role_key = Some(role_key.to_string());
+        self
+    }
+
+    pub fn with_sender_icon(mut self, icon: &str) -> Self {
+        self.sender_icon = Some(icon.to_string());
         self
     }
 }

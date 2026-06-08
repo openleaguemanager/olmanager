@@ -1,4 +1,5 @@
 mod match_messages;
+pub mod template_store;
 pub use match_messages::{match_result_message, pre_match_message};
 
 use crate::domain::message::*;
@@ -27,6 +28,16 @@ fn action(id: &str, label: &str, label_key: &str, action_type: ActionType) -> Me
 /// Message template system — generates rich messages with variations.
 
 pub fn welcome_message(team_name: &str, team_id: &str, date: &str) -> InboxMessage {
+    // Try to build from template store; fall back to legacy hardcoded version
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "welcome",
+        &format!("welcome_{}_{}", team_id, date),
+        date,
+        vec![("team", team_name), ("days", "0")],
+    ) {
+        return msg;
+    }
+
     let mut rng = rand::rng();
     let variations = [
         (

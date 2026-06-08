@@ -53,7 +53,7 @@ fn resolve_competitions_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
 }
 
 /// Resolve the base `data/` directory for runtime file reads.
-fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
+pub fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     let cwd = std::env::current_dir().ok()?;
 
     let candidates: Vec<Option<PathBuf>> = vec![

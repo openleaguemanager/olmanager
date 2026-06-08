@@ -371,6 +371,14 @@ pub async fn select_team(
         .map(|m| format!("{} {}", m.name, m.schedule.splits.first().map(|s| s.name.as_str()).unwrap_or("")))
         .unwrap_or_else(|| "LEC Winter".to_string());
 
+    // Initialize message template store
+    if let Some(data_base) = crate::commands::competitions::resolve_data_base(&app_handle) {
+        let msg_dir = data_base.join("..").join("messages");
+        if msg_dir.is_dir() {
+            let _ = olm_core::messages::template_store::init_template_store(&msg_dir);
+        }
+    }
+
     let welcome_msg = olm_core::messages::welcome_message(&team_name, &team_id, &date_str);
     game.messages.push(welcome_msg);
 

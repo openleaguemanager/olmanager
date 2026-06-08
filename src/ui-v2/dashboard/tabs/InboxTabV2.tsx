@@ -349,11 +349,24 @@ function MessageRow({
       >
         <div
           className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-lg font-heading text-sm font-bold",
+            "flex size-9 shrink-0 items-center justify-center rounded-lg font-heading text-sm font-bold overflow-hidden",
             message.read ? "bg-muted text-muted-foreground" : "bg-primary/15 text-primary",
           )}
         >
-          {message.sender.charAt(0).toUpperCase()}
+          {message.sender_icon ? (
+            <img
+              src={`/ui-icons/${message.sender_icon}.webp`}
+              alt={message.sender}
+              className="size-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+                (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden");
+              }}
+            />
+          ) : null}
+          <span className={cn(message.sender_icon && "hidden")}>
+            {message.sender.charAt(0).toUpperCase()}
+          </span>
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
@@ -425,6 +438,14 @@ function DetailPane({
       <div className="flex-1 overflow-y-auto p-5">
         <h2 className="font-heading text-xl font-bold leading-tight">{message.subject}</h2>
         <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+          {message.sender_icon && (
+            <img
+              src={`/ui-icons/${message.sender_icon}.webp`}
+              alt=""
+              className="size-5 rounded object-contain bg-muted"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+            />
+          )}
           <span>{message.sender}</span>
           {message.sender_role && (
             <>

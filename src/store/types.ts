@@ -560,11 +560,12 @@ export interface MessageData {
   subject_key?: string;
   body_key?: string;
   sender_key?: string;
-  sender_role_key?: string;
-  i18n_params?: Record<string, string>;
-}
+    sender_role_key?: string;
+    i18n_params?: Record<string, string>;
+    sender_icon?: string;
+  }
 
-export interface ManagerCareerStats {
+  export interface ManagerCareerStats {
   matches_managed: number;
   /** @deprecated Legacy test fixture alias. Use matches_managed. */
   matches?: number;
