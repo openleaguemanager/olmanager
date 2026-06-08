@@ -286,6 +286,12 @@ pub(super) fn rival_interest_message(
     rival_name: &str,
     date: &str,
 ) -> InboxMessage {
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "rival_interest", msg_id, date, "en",
+        vec![("player", player_name), ("rival", rival_name)],
+    ) {
+        return msg;
+    }
     let mut rng = rand::rng();
     let variations = [
         format!(

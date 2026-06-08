@@ -340,6 +340,13 @@ pub(super) fn media_story_message(
         return message;
     }
 
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "media_story", msg_id, date, "en",
+        vec![("team", team_name), ("player", player_name)],
+    ) {
+        return msg;
+    }
+
     let mut rng = rand::rng();
     let variant = rng.random_range(0..ESPORTMANIACOS_VARIANT_COUNT);
     let (subject, body, subject_key, body_key, priority) =
@@ -539,6 +546,14 @@ pub(super) fn allio_podcast_message(
     player_name: Option<&str>,
     date: &str,
 ) -> InboxMessage {
+    let pname = player_name.unwrap_or("one of your players");
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "podcast", msg_id, date, "en",
+        vec![("team", team_name), ("player", pname)],
+    ) {
+        return msg;
+    }
+
     let mut rng = rand::rng();
     let variant = rng.random_range(0..10usize);
     let pname = player_name.unwrap_or("one of your players");
@@ -695,6 +710,11 @@ pub(super) fn allio_podcast_message(
 }
 
 pub(super) fn yuste_stream_message(msg_id: &str, is_positive: bool, date: &str) -> InboxMessage {
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "stream", msg_id, date, "en", vec![],
+    ) {
+        return msg;
+    }
     let mut rng = rand::rng();
     let variant = rng.random_range(0..10usize);
 

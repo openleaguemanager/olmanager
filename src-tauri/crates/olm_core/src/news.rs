@@ -1,4 +1,5 @@
 mod match_report;
+pub mod template_store;
 pub use match_report::match_report_article;
 
 use crate::domain::news::*;
@@ -187,27 +188,30 @@ pub fn standings_update_article(
     )
 }
 
-fn preview_contenders<'a>(team_names: &'a [String], rng: &mut impl Rng) -> (&'a str, &'a str) {
-    let favourite = &team_names[rng.random_range(0..team_names.len())];
-
-    if team_names.len() == 1 {
-        return (favourite.as_str(), favourite.as_str());
-    }
-
-    let dark_horse = loop {
-        let pick = &team_names[rng.random_range(0..team_names.len())];
-        if pick != favourite {
-            break pick;
-        }
-    };
-
-    (favourite.as_str(), dark_horse.as_str())
-}
-
 /// Generate a season preview article at the start of the season.
+///
+/// Uses the template-based news system (see `data/news/season_preview/template.json`).
+/// Falls back to the legacy inline generation if no template is registered.
 pub fn season_preview_article(team_names: &[String], date: &str) -> NewsArticle {
     let mut rng = rand::rng();
 
+    if let Some(tpl) = template_store::NewsTemplateStore::global().get(&NewsCategory::SeasonPreview)
+    {
+        let (favourite, dark_horse) = preview_contenders(team_names, &mut rng);
+        return tpl.build_article(
+            "season_preview".to_string(),
+            date.to_string(),
+            &[
+                ("teamCount", &team_names.len().to_string()),
+                ("favourite", favourite),
+                ("darkHorse", dark_horse),
+                ("teamList", &team_names.join(", ")),
+            ],
+            "en",
+        );
+    }
+
+    // ── Legacy fallback ────────────────────────────────────────
     let (favourite, dark_horse) = preview_contenders(team_names, &mut rng);
 
     let body = format!(
@@ -254,6 +258,23 @@ pub fn season_preview_article(team_names: &[String], date: &str) -> NewsArticle 
             ("teamList", &team_names.join(", ")),
         ]),
     )
+}
+
+fn preview_contenders<'a>(team_names: &'a [String], rng: &mut impl Rng) -> (&'a str, &'a str) {
+    let favourite = &team_names[rng.random_range(0..team_names.len())];
+
+    if team_names.len() == 1 {
+        return (favourite.as_str(), favourite.as_str());
+    }
+
+    let dark_horse = loop {
+        let pick = &team_names[rng.random_range(0..team_names.len())];
+        if pick != favourite {
+            break pick;
+        }
+    };
+
+    (favourite.as_str(), dark_horse.as_str())
 }
 
 pub fn major_transfer_article(
