@@ -35,6 +35,7 @@ chrono = "0.4.44"
 rand = "0.10"
 base64 = "0.22"
 zip = "2"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
 dirs = "6"
 thiserror = "2"
 validator = { version = "0.19", features = ["derive"] }

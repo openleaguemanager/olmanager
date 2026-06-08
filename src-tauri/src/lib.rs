@@ -11,6 +11,32 @@ use std::sync::Mutex;
 /// Tauri-managed wrapper around SaveManager.
 pub struct SaveManagerState(pub Mutex<SaveManager>);
 
+/// Minimal percent-decoder for `olm-asset://` request paths (filenames may
+/// contain encoded spaces or unicode). Path separators are not encoded.
+fn percent_decode(input: &str) -> String {
+    let bytes = input.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let hex = |b: u8| match b {
+        b'0'..=b'9' => Some(b - b'0'),
+        b'a'..=b'f' => Some(b - b'a' + 10),
+        b'A'..=b'F' => Some(b - b'A' + 10),
+        _ => None,
+    };
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let (Some(h), Some(l)) = (hex(bytes[i + 1]), hex(bytes[i + 2])) {
+                out.push(h * 16 + l);
+                i += 3;
+                continue;
+            }
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+    String::from_utf8_lossy(&out).into_owned()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     eprintln!("[OLManager] BUILD: format-v2-fix");
@@ -36,6 +62,22 @@ pub fn run() {
                 .max_file_size(5_000_000) // 5 MB per log file
                 .build(),
         )
+        .register_uri_scheme_protocol("olm-asset", |ctx, request| {
+            use tauri::http::Response;
+            let rel = percent_decode(request.uri().path().trim_start_matches('/'));
+            match commands::import::resolve_public_asset(ctx.app_handle(), &rel) {
+                Some((bytes, mime)) => Response::builder()
+                    .status(200)
+                    .header("Content-Type", mime)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .body(bytes)
+                    .unwrap_or_else(|_| Response::new(Vec::new())),
+                None => Response::builder()
+                    .status(404)
+                    .body(Vec::new())
+                    .unwrap_or_else(|_| Response::new(Vec::new())),
+            }
+        })
         .manage(StateManager::new())
         .manage(SimLiveStoreState::default())
         .setup(|app| {
@@ -200,6 +242,10 @@ pub fn run() {
             save_manager_avatar,
             load_manager_avatar,
             update_manager_profile,
+            auto_import_database,
+            import_export_zip,
+            get_catalog_summary,
+            get_catalog,
             debug_log,
             debug_serde_test,
         ])

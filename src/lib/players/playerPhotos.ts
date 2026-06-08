@@ -1,6 +1,7 @@
 import lesPlayersData from "../../../data/players/les_players.json";
 import lflPlayersData from "../../../data/players/lfl_players.json";
 import primeLeaguePlayersData from "../../../data/players/prm_players.json";
+import { assetUrl } from "../assetUrl";
 
 const FALLBACK_PLAYER_PHOTO = "/default/defaultplayer.webp";
 const FALLBACK_STAFF_PHOTO = "/manager-icons/0.webp";
@@ -32,11 +33,11 @@ function normalizeProfileImageUrl(url?: string | null): string | null {
   return value || null;
 }
 
-export function resolvePlayerPhoto(
+function resolvePlayerPhotoRaw(
   playerId: string,
   matchName?: string,
   profileImageUrl?: string | null,
-): string | null {
+): string {
   const explicit = normalizeProfileImageUrl(profileImageUrl);
   if (explicit) return explicit;
 
@@ -53,6 +54,14 @@ export function resolvePlayerPhoto(
   return FALLBACK_PLAYER_PHOTO;
 }
 
+export function resolvePlayerPhoto(
+  playerId: string,
+  matchName?: string,
+  profileImageUrl?: string | null,
+): string | null {
+  return assetUrl(resolvePlayerPhotoRaw(playerId, matchName, profileImageUrl));
+}
+
 export function resolveStaffPhoto(profileImageUrl?: string | null): string | null {
-  return normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_STAFF_PHOTO;
+  return assetUrl(normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_STAFF_PHOTO);
 }

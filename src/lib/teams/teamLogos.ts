@@ -1,3 +1,5 @@
+import { assetUrl } from "../assetUrl";
+
 /**
  * Resolve a team's logo path.
  *
@@ -9,12 +11,12 @@
  * providing a matching file under public/teams-icons/.
  */
 export function resolveTeamLogo(teamName?: string | null, logoUrl?: string | null): string | null {
-  if (logoUrl) return logoUrl;
+  if (logoUrl) return assetUrl(logoUrl);
   if (!teamName) return null;
   const slug = teamName
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/g, "");
-  return slug ? `/teams-icons/${slug}.webp` : null;
+  return slug ? assetUrl(`/teams-icons/${slug}.webp`) : null;
 }
