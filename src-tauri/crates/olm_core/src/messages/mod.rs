@@ -17,6 +17,37 @@ fn format_fee(fee: u64) -> String {
     }
 }
 
+/// Apply sender info (name, role, icon) from the senders store to a message.
+/// Falls back silently if the sender ID is not found.
+pub fn with_sender(mut msg: InboxMessage, sender_id: &str, i18n_params: Vec<(&str, &str)>) -> InboxMessage {
+    if let Some(sender) = crate::messages::template_store::get_sender(sender_id) {
+        let params: std::collections::HashMap<String, String> = i18n_params
+            .iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect();
+        msg.sender = interpolate_text(&sender.name, &params);
+        msg.sender_role = interpolate_text(&sender.role, &params);
+        if let Some(icon) = &sender.icon {
+            msg.sender_icon = Some(icon.clone());
+        }
+        if let Some(key) = &sender.name_key {
+            msg.sender_key = Some(key.clone());
+        }
+        if let Some(key) = &sender.role_key {
+            msg.sender_role_key = Some(key.clone());
+        }
+    }
+    msg
+}
+
+fn interpolate_text(text: &str, params: &std::collections::HashMap<String, String>) -> String {
+    let mut result = text.to_string();
+    for (key, value) in params {
+        result = result.replace(&format!("{{{}}}", key), value);
+    }
+    result
+}
+
 /// Helper to build a HashMap<String, String> from key-value pairs.
 fn params(pairs: &[(&str, &str)]) -> HashMap<String, String> {
     pairs

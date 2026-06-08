@@ -57,7 +57,7 @@ pub fn init_senders_store(senders_dir: &Path) {
     let _ = SENDERS_STORE.set(senders);
 }
 
-fn get_sender(id: &str) -> Option<MessageTemplateSender> {
+pub fn get_sender(id: &str) -> Option<MessageTemplateSender> {
     SENDERS_STORE.get_or_init(HashMap::new).get(id).cloned()
 }
 

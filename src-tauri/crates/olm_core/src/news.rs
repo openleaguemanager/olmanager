@@ -208,6 +208,7 @@ pub fn season_preview_article(team_names: &[String], date: &str) -> NewsArticle 
                 ("teamList", &team_names.join(", ")),
             ],
             "en",
+            None,
         );
     }
 

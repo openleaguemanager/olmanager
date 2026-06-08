@@ -787,18 +787,21 @@ fn contract_expired_message(
     team_name: &str,
     date: &str,
 ) -> InboxMessage {
-    InboxMessage::new(
-        format!("contract_expired_{}", player_id),
-        format!("{} Leaves on a Free", player_name),
-        format!(
-            "{} has left {} after their contract expired. The player is now a free agent.",
-            player_name, team_name
-        ),
-        "Assistant Manager".to_string(),
-        date.to_string(),
+    crate::messages::with_sender(
+        InboxMessage::new(
+            format!("contract_expired_{}", player_id),
+            format!("{} Leaves on a Free", player_name),
+            format!(
+                "{} has left {} after their contract expired. The player is now a free agent.",
+                player_name, team_name
+            ),
+            "Director of Football".to_string(),
+            date.to_string(),
+        )
+        .with_category(MessageCategory::Contract)
+        .with_priority(MessagePriority::Urgent),
+        "director_of_football",
+        vec![("player", player_name), ("team", team_name)],
     )
-    .with_category(MessageCategory::Contract)
-    .with_priority(MessagePriority::Urgent)
-    .with_sender_role("Assistant Manager")
 }
 

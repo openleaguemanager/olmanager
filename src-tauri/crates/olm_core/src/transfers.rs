@@ -2680,19 +2680,22 @@ pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, 
         player.transfer_offers.clear();
     }
 
-    let message = crate::domain::message::InboxMessage::new(
-        format!("contract_terminated_{}", player_id),
-        format!("Contract terminated: {}", player_name),
-        format!(
-            "You terminated {}'s contract. The player is now a free agent. Termination cost: €{}.",
-            player_name, penalty
-        ),
-        "Director of Football".to_string(),
-        today,
-    )
-    .with_category(crate::domain::message::MessageCategory::Contract)
-    .with_priority(crate::domain::message::MessagePriority::High)
-    .with_sender_role("Director of Football");
+    let message = crate::messages::with_sender(
+        crate::domain::message::InboxMessage::new(
+            format!("contract_terminated_{}", player_id),
+            format!("Contract terminated: {}", player_name),
+            format!(
+                "You terminated {}'s contract. The player is now a free agent. Termination cost: €{}.",
+                player_name, penalty
+            ),
+            "Director of Football".to_string(),
+            today,
+        )
+        .with_category(crate::domain::message::MessageCategory::Contract)
+        .with_priority(crate::domain::message::MessagePriority::High),
+        "director_of_football",
+        vec![("player", &player_name)],
+    );
     game.messages.push(message);
 
     Ok(penalty)
