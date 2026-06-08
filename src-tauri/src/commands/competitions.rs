@@ -57,12 +57,6 @@ fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     let cwd = std::env::current_dir().ok()?;
 
     let candidates: Vec<Option<PathBuf>> = vec![
-        // Imported OLMDBManager data (writable app-data dir) takes precedence.
-        app_handle
-            .path()
-            .app_data_dir()
-            .ok()
-            .map(|dir| dir.join("data")),
         app_handle
             .path()
             .resource_dir()
