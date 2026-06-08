@@ -16,6 +16,7 @@ import {
   isSeasonComplete as isLeagueSeasonComplete,
 } from "@/lib/common/helpers";
 import DashboardWorkspaceContent from "@/components/dashboard/DashboardWorkspaceContent";
+import DashboardAlerts from "@/components/dashboard/DashboardAlerts";
 import DashboardOverlays from "@/components/dashboard/DashboardOverlays";
 import FiredModal from "@/components/dashboard/FiredModal";
 import {
@@ -57,6 +58,8 @@ import { SocialTabV2 } from "./tabs/SocialTabV2";
 import { ManagerTabV2 } from "./tabs/ManagerTabV2";
 import { YouthTabV2 } from "./tabs/YouthTabV2";
 import { CompetitionsTabV2 } from "./tabs/CompetitionsTabV2";
+import { TournamentsTabV2 } from "./tabs/TournamentsTabV2";
+import { MarketTabV2 } from "./tabs/MarketTabV2";
 import { ChampionsWorldTabV2 } from "./tabs/ChampionsWorldTabV2";
 import { MetaTabV2 } from "./tabs/MetaTabV2";
 import ChampionPageV2 from "@/ui-v2/pages/ChampionPageV2";
@@ -74,6 +77,8 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Staff: "dashboard.staff",
   Finances: "dashboard.finances",
   Competitions: "dashboard.competitions",
+  Tournaments: "dashboard.tournaments",
+  Market: "dashboard.market",
   Transfers: "dashboard.transfers",
   Players: "dashboard.players",
   Teams: "dashboard.teams",
@@ -422,6 +427,15 @@ export default function DashboardV2() {
           onContinue={handleContinue}
         />
 
+        {!viewingChampionKey &&
+          !profileNavigation.selectedPlayerId &&
+          !profileNavigation.selectedTeamId &&
+          dashboardAlerts.length > 0 && (
+            <div className="shrink-0 px-6 pt-4">
+              <DashboardAlerts alerts={dashboardAlerts} onNavigate={handleNavigate} />
+            </div>
+          )}
+
         {profileNavigation.activeTab === "Home" &&
         !viewingChampionKey &&
         !profileNavigation.selectedPlayerId &&
@@ -519,6 +533,7 @@ export default function DashboardV2() {
             <StaffTabV2
               gameState={gameState}
               onGameUpdate={setGameState}
+              mode="world"
             />
           </div>
         ) : profileNavigation.activeTab === "Finances" &&
@@ -612,6 +627,23 @@ export default function DashboardV2() {
               onSelectTeam={selectTeam}
             />
           </div>
+        ) : profileNavigation.activeTab === "Tournaments" &&
+          !viewingChampionKey &&
+          !profileNavigation.selectedPlayerId &&
+          !profileNavigation.selectedTeamId ? (
+          <div className="flex-1 overflow-y-auto scrollbar-v2">
+            <TournamentsTabV2
+              gameState={gameState}
+              onSelectTeam={selectTeam}
+            />
+          </div>
+        ) : profileNavigation.activeTab === "Market" &&
+          !viewingChampionKey &&
+          !profileNavigation.selectedPlayerId &&
+          !profileNavigation.selectedTeamId ? (
+          <div className="flex-1 overflow-y-auto scrollbar-v2">
+            <MarketTabV2 gameState={gameState} />
+          </div>
         ) : profileNavigation.activeTab === "ChampionsWorld" &&
           !viewingChampionKey &&
           !profileNavigation.selectedPlayerId &&
@@ -664,7 +696,7 @@ export default function DashboardV2() {
           </div>
         ) : (
           <DashboardWorkspaceContent
-            dashboardAlerts={dashboardAlerts}
+            dashboardAlerts={[]}
             gameState={gameState}
             profileNavigation={profileNavigation}
             dashboardTabContentModel={dashboardTabContentModel}

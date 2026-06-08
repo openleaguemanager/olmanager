@@ -33,6 +33,7 @@ import { Badge } from "@/ui-v2/components/ui/badge";
 interface StaffTabV2Props {
   gameState: GameStateData;
   onGameUpdate: (state: GameStateData) => void;
+  mode?: "club" | "world";
 }
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
@@ -126,8 +127,9 @@ function getStaffImpactRows(s: StaffData) {
   ];
 }
 
-export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
+export function StaffTabV2({ gameState, onGameUpdate, mode = "club" }: StaffTabV2Props) {
   const { t, i18n } = useTranslation();
+  const isWorldMode = mode === "world";
   const userTeamId = gameState.manager.team_id;
   const [view, setView] = useState<"mystaff" | "available">("mystaff");
   const [search, setSearch] = useState("");
@@ -139,7 +141,11 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
 
   const myStaff = gameState.staff.filter((s) => s.team_id === userTeamId);
   const availableStaff = gameState.staff.filter((s) => !s.team_id);
-  const displayStaff = view === "mystaff" ? myStaff : availableStaff;
+  const displayStaff = isWorldMode
+    ? gameState.staff
+    : view === "mystaff"
+      ? myStaff
+      : availableStaff;
 
   const competitionTeamIds = useMemo(() => {
     if (!competitionFilter) return null;
@@ -204,32 +210,43 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
     <div className="flex h-full flex-col gap-4 p-6">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setView("mystaff")}
-            className={`rounded-lg border px-3 py-1.5 font-heading text-xs font-bold uppercase tracking-wider transition-all ${
-              view === "mystaff"
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-card text-muted-foreground"
-            }`}
-          >
-            <UserCog className="mr-1 inline size-3.5" />
-            {t("staff.myStaff", { count: myStaff.length })}
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("available")}
-            className={`rounded-lg border px-3 py-1.5 font-heading text-xs font-bold uppercase tracking-wider transition-all ${
-              view === "available"
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-card text-muted-foreground"
-            }`}
-          >
-            <UserPlus className="mr-1 inline size-3.5" />
-            {t("staff.available", { count: availableStaff.length })}
-          </button>
-        </div>
+        {isWorldMode ? (
+          <div className="rounded-lg border border-border bg-card px-4 py-1.5">
+            <p className="font-heading text-xs font-bold uppercase tracking-wider text-foreground">
+              {t("dashboard.worldStaff", { defaultValue: "Staffs" })}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              {filtered.length} / {gameState.staff.length}
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setView("mystaff")}
+              className={`rounded-lg border px-3 py-1.5 font-heading text-xs font-bold uppercase tracking-wider transition-all ${
+                view === "mystaff"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border bg-card text-muted-foreground"
+              }`}
+            >
+              <UserCog className="mr-1 inline size-3.5" />
+              {t("staff.myStaff", { count: myStaff.length })}
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("available")}
+              className={`rounded-lg border px-3 py-1.5 font-heading text-xs font-bold uppercase tracking-wider transition-all ${
+                view === "available"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border bg-card text-muted-foreground"
+              }`}
+            >
+              <UserPlus className="mr-1 inline size-3.5" />
+              {t("staff.available", { count: availableStaff.length })}
+            </button>
+          </div>
+        )}
 
         <div className="flex h-8 flex-1 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 min-w-40">
           <Search className="size-3.5 text-muted-foreground" />
@@ -411,7 +428,7 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
                           </span>
                         </>
                       )}
-                      {view === "available" && staff.team_id && (
+                      {(isWorldMode || view === "available") && staff.team_id && (
                         <>
                           <span className="text-border">·</span>
                           <span className="text-muted-foreground/70">
@@ -470,7 +487,7 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
 
                   {/* Action */}
                   <div className="flex shrink-0 flex-col items-center justify-start gap-2">
-                    {view === "mystaff" && (
+                    {!isWorldMode && view === "mystaff" && (
                       <button
                         type="button"
                         disabled={actionLoading === staff.id}
@@ -485,7 +502,7 @@ export function StaffTabV2({ gameState, onGameUpdate }: StaffTabV2Props) {
                         )}
                       </button>
                     )}
-                    {view === "available" && (
+                    {!isWorldMode && view === "available" && (
                       <button
                         type="button"
                         disabled={actionLoading === staff.id}

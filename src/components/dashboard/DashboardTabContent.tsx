@@ -20,6 +20,7 @@ import ChampionsWorldTab from "../world/ChampionsWorldTab";
 import ScrimsTab from "../scrims/ScrimsTab";
 import CompetitionsTab from "../competitions/CompetitionsTab";
 import MarketTab from "../market/MarketTab";
+import TournamentsTab from "../tournaments/TournamentsTab";
 import EndOfSeasonScreen from "../EndOfSeasonScreen";
 import type { DashboardTabContentModel } from "./dashboardTabContentModel";
 

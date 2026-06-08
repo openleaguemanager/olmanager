@@ -18,6 +18,8 @@ import {
   UsersRound,
   Building2,
   Globe,
+  Trophy,
+  Store,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -85,11 +87,12 @@ export function DashboardSidebarV2({
 
   const world: Item[] = [
     { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
-    { tab: "Players", label: t("dashboard.players"), icon: UsersRound },
-    { tab: "Teams", label: t("dashboard.teams"), icon: Building2 },
-    { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staffs" }), icon: UserCog },
-
+    { tab: "Tournaments", label: t("dashboard.tournaments"), icon: Trophy },
+    { tab: "Players", label: t("dashboard.players"), icon: UsersRound, badge: playerCount },
+    { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
+    { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staffs" }), icon: UserCog, badge: staffCount },
     { tab: "ChampionsWorld", label: t("dashboard.champions_world"), icon: Gamepad2 },
+    { tab: "Market", label: t("dashboard.market"), icon: Store },
   ];
 
   return (
