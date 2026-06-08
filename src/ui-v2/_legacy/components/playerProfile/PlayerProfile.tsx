@@ -437,7 +437,7 @@ export default function PlayerProfile({
     playerId: player.id,
     scoutStatus,
   });
-  const latestScoutReport = getLatestScoutReportForPlayer(gameState, player.id);
+  const latestScoutReport = getLatestScoutReportForPlayer(gameState, player.id) ?? undefined;
   const attrGroups = buildPlayerAttributeGroups(player, t, latestScoutReport);
   const canViewAttributes = true;
   const championPerformance = buildChampionPerformanceMap(playerHistory);
