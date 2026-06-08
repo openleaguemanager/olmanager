@@ -313,8 +313,8 @@ export default function MainMenu() {
     setIsLoadingSaves(true);
     try {
       const client = getApiClientSync();
-      const dbSaves = await client.saves.list();
-        console.debug("[DEBUG] saves loaded:", (dbSaves as SaveEntry[]).length, "entries", (dbSaves as SaveEntry[]).map((s: SaveEntry) => ({ id: s.id, name: s.name })));
+      const dbSaves = (await client.saves.list()) as unknown as SaveEntry[];
+        console.debug("[DEBUG] saves loaded:", dbSaves.length, "entries", dbSaves.map((s: SaveEntry) => ({ id: s.id, name: s.name })));
         // Run serde diagnostic
         try {
           const serdeResult = await invoke("debug_serde_test");
@@ -322,7 +322,7 @@ export default function MainMenu() {
         } catch (serdeErr) {
           console.error("[DEBUG] serde roundtrip FAILED:", serdeErr);
         }
-        setSaves(dbSaves as SaveEntry[]);
+        setSaves(dbSaves);
       } catch (error) {
         console.error("Failed to load saves:", error);
       } finally {

@@ -18,42 +18,6 @@ type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
 export const ROLE_ORDER: DraftRole[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 
-interface PlayerSeed {
-  ign: string;
-  role: string;
-}
-
-const PLAYER_SEEDS: PlayerSeed[] = [];
-
-const ROLE_BY_IGN = new Map(
-  PLAYER_SEEDS.map((player) => [normalizeKey(player.ign), String(player.role || "").toLowerCase()]),
-);
-
-function normalizeKey(value: string): string {
-  return value.toLowerCase().replace(/[^a-z]/g, "");
-}
-
-function positionToDraftRole(position: string): DraftRole | null {
-  // position is already a LolRole ("TOP", "JUNGLE", "MID", "ADC", "SUPPORT")
-  const normalized = normalizeKey(position);
-  if (normalized === "top") return "TOP";
-  if (normalized === "jungle") return "JUNGLE";
-  if (normalized === "mid") return "MID";
-  if (normalized === "adc" || normalized === "bot" || normalized === "bottom") return "ADC";
-  if (normalized === "support" || normalized === "sup") return "SUPPORT";
-  return null;
-}
-
-function seedRoleToDraftRole(role: string): DraftRole | null {
-  const key = normalizeKey(role);
-  if (key === "top") return "TOP";
-  if (key === "jungle") return "JUNGLE";
-  if (key === "mid") return "MID";
-  if (key === "bot" || key === "bottom" || key === "adc") return "ADC";
-  if (key === "support" || key === "sup") return "SUPPORT";
-  return null;
-}
-
 export function playerPhotoUrl(playerId: string): string | null {
   const match = playerId.match(/^lec-player-(.+)$/);
   if (!match) return null;

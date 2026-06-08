@@ -27,6 +27,21 @@ import {
   BarChart3,
 } from "lucide-react";
 
+/**
+ * `MatchResult` exposes legacy scoreline/scorer fields through an `unknown`
+ * index signature (they are no longer modeled explicitly). These accessors
+ * narrow them safely at the point of use.
+ */
+type LegacyScorer = { player_id: string | null; minute: number };
+
+function legacyScorers(value: unknown): LegacyScorer[] {
+  return Array.isArray(value) ? (value as LegacyScorer[]) : [];
+}
+
+function legacyScore(value: unknown): string | number {
+  return typeof value === "number" || typeof value === "string" ? value : "";
+}
+
 interface PostMatchScreenProps {
   snapshot: MatchSnapshot;
   gameState: GameStateData;
@@ -122,8 +137,8 @@ export default function PostMatchScreen({
     }
 
     const scorers = [
-      ...fixture.result.home_scorers,
-      ...fixture.result.away_scorers,
+      ...legacyScorers(fixture.result.home_scorers),
+      ...legacyScorers(fixture.result.away_scorers),
     ]
       .sort((left, right) => left.minute - right.minute)
       .map(
@@ -472,8 +487,8 @@ export default function PostMatchScreen({
                               <div className="flex items-center justify-between gap-3">
                                 <span className="truncate font-medium text-gray-800 dark:text-gray-200">
                                   {entry.homeTeamName}{" "}
-                                  {entry.fixture.result?.home_goals} -{" "}
-                                  {entry.fixture.result?.away_goals}{" "}
+                                  {legacyScore(entry.fixture.result?.home_goals)} -{" "}
+                                  {legacyScore(entry.fixture.result?.away_goals)}{" "}
                                   {entry.awayTeamName}
                                 </span>
                                 {entry.fixture.result?.report && (
@@ -764,8 +779,8 @@ export default function PostMatchScreen({
                 </p>
                 <p className="text-lg font-heading font-bold text-gray-900 dark:text-white">
                   {getTeamNameById(selectedOtherFixture.home_team_id)}{" "}
-                  {selectedOtherFixture.result?.home_goals} -{" "}
-                  {selectedOtherFixture.result?.away_goals}{" "}
+                  {legacyScore(selectedOtherFixture.result?.home_goals)} -{" "}
+                  {legacyScore(selectedOtherFixture.result?.away_goals)}{" "}
                   {getTeamNameById(selectedOtherFixture.away_team_id)}
                 </p>
               </div>

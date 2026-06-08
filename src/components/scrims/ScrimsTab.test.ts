@@ -39,7 +39,6 @@ function player(id: string, teamId: string, ovr: number): PlayerData {
     },
     condition: 100,
     morale: 100,
-    injury: null,
     team_id: teamId,
     contract_end: null,
     wage: 0,

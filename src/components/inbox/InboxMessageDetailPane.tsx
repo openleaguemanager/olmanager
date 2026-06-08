@@ -133,17 +133,17 @@ export default function InboxMessageDetailPane({
               <span className="font-heading font-bold text-sm text-gray-700 dark:text-gray-200">
                 {getTeamName(
                   gameState.teams,
-                  selectedMessage.context.match_result.home_team_id,
+                  String(selectedMessage.context.match_result.home_team_id ?? ""),
                 )}
               </span>
               <span className="font-heading font-bold text-2xl text-gray-800 dark:text-gray-100">
-                {selectedMessage.context.match_result.home_goals} -{" "}
-                {selectedMessage.context.match_result.away_goals}
+                {Number(selectedMessage.context.match_result.home_goals ?? 0)} -{" "}
+                {Number(selectedMessage.context.match_result.away_goals ?? 0)}
               </span>
               <span className="font-heading font-bold text-sm text-gray-700 dark:text-gray-200">
                 {getTeamName(
                   gameState.teams,
-                  selectedMessage.context.match_result.away_team_id,
+                  String(selectedMessage.context.match_result.away_team_id ?? ""),
                 )}
               </span>
             </div>

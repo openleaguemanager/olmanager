@@ -109,7 +109,6 @@ function createPlayer(overrides: Partial<PlayerData> = {}): PlayerData {
     },
     condition: 90,
     morale: 70,
-    injury: null,
     team_id: "team-1",
     contract_end: "2028-06-30",
     wage: 1000,
@@ -178,6 +177,10 @@ describe("TransferCounterOfferModal", () => {
         counterResult={"counter_offer" as TransferNegotiationResponseData["decision"]}
         counterError={"Negotiation warning"}
         counterLoading={false}
+        currentDate="2026-08-01"
+        userPlayers={[]}
+        selectedPlayerIds={[]}
+        onSelectedPlayersChange={vi.fn()}
         onSubmit={vi.fn()}
         onClose={vi.fn()}
       />,
@@ -207,6 +210,10 @@ describe("TransferCounterOfferModal", () => {
         counterResult={null}
         counterError={null}
         counterLoading={false}
+        currentDate="2026-08-01"
+        userPlayers={[]}
+        selectedPlayerIds={[]}
+        onSelectedPlayersChange={vi.fn()}
         onSubmit={onSubmit}
         onClose={onClose}
       />,

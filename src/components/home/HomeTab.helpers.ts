@@ -201,10 +201,10 @@ export function getRecentResultsForTeam(
     }
 
     const isHome = fixture.home_team_id === teamId;
-    const myGoals = isHome ? fixture.result.home_goals : fixture.result.away_goals;
-    const opponentGoals = isHome
-      ? fixture.result.away_goals
-      : fixture.result.home_goals;
+    // home_goals/away_goals are legacy fields typed `unknown` — coerce to number.
+    const myGoals = Number(isHome ? fixture.result.home_goals : fixture.result.away_goals) || 0;
+    const opponentGoals =
+      Number(isHome ? fixture.result.away_goals : fixture.result.home_goals) || 0;
 
     recentResults.push({
       fixture: fixture as FixtureData & {

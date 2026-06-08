@@ -399,7 +399,7 @@ describe("InboxTab", function (): void {
       expect(mockedInvoke).toHaveBeenCalledWith("resolve_message_action", {
         messageId: "m1",
         actionId: "action-1",
-        optionId: null,
+        optionId: "",
       });
     });
 

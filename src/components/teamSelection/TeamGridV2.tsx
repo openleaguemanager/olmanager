@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { Check, Landmark, MapPin, Star, Users } from "lucide-react";
 import type { TeamSummary } from "@/store/gameStore";
 import { Badge } from "@/ui-v2/components/ui/badge";
@@ -14,10 +13,6 @@ interface TeamGridV2Props {
 export function TeamGridV2({
   teams, onSelectTeam, selectedTeamId,
 }: TeamGridV2Props) {
-  const { t } = useTranslation();
-
-  const selectedTeam = teams.find((t) => t.id === selectedTeamId);
-
   return (
     <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-v2">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
@@ -25,7 +20,6 @@ export function TeamGridV2({
             const isSelected = team.id === selectedTeamId;
             const rep = getReputationLabel(team.reputation ?? 0);
             const logo = getTeamLogoPath(team.id, team.logo_url);
-            const selBg = team.colors?.primary && team.colors.primary !== "#000000" ? team.colors.primary : "#1e293b";
 
             return (
               <button key={team.id} type="button" onClick={() => onSelectTeam(team.id)}

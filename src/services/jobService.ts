@@ -15,11 +15,11 @@ export interface JobApplicationResponse {
 }
 
 export async function getAvailableJobs(): Promise<JobOpportunity[]> {
-  return getApiClientSync().jobs.getAvailable();
+  return (await getApiClientSync().jobs.getAvailable()) as JobOpportunity[];
 }
 
 export async function applyForJob(
   teamId: string,
 ): Promise<JobApplicationResponse> {
-  return getApiClientSync().jobs.apply({ teamId });
+  return (await getApiClientSync().jobs.apply({ teamId })) as JobApplicationResponse;
 }

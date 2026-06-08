@@ -363,7 +363,7 @@ export function deriveWeeklyScrimContext(gameState: GameStateData, team: TeamDat
     avgQuality: playedReports.length > 0
       ? Math.round(playedReports.reduce((sum, report) => sum + report.quality, 0) / playedReports.length)
       : 0,
-    topFocus: Object.entries(recurringFocus).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null,
+    topFocus: (Object.entries(recurringFocus).sort((a, b) => b[1] - a[1])[0]?.[0] as ScrimFocus | undefined) ?? null,
     topIssue: Object.entries(recurringIssue).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null,
     nextOfficialRivalTeamId,
     nextOfficialRivalCompetition: nextOfficialFixture?.match_type ?? null,

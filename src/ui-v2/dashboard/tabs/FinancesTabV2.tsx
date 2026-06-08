@@ -14,7 +14,6 @@ import {
   Monitor,
   RefreshCw,
   Search,
-  Shield,
   User,
 } from "lucide-react";
 

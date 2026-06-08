@@ -143,7 +143,7 @@ describe("PreMatchLineup component", () => {
 
     expect(screen.getByRole("img", { name: "Custom Top" })).toHaveAttribute(
       "src",
-      "/data/lec/images/players/custom-top.webp",
+      "/images/players/custom-top.webp",
     );
   });
 

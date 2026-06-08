@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { GameStateData, PlayerSelectionOptions } from "../../store/gameStore";
 import { Card, CardBody, Badge, Select, CountryFlag, RoleBadge } from "../ui";
 import {
@@ -48,7 +47,6 @@ export default function PlayersListTab({
   onSelectTeam,
 }: PlayersListTabProps) {
   const { t } = useTranslation();
-  invoke("debug_log", { message: "PlayersListTab render" });
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState<LolRole | null>(null);
   const [teamFilter, setTeamFilter] = useState<string | null>(null);
@@ -350,12 +348,6 @@ export default function PlayersListTab({
                     const ovr = calculateLolOvr(player);
                     const age = calcAge(player.date_of_birth, gameState.clock.current_date);
                     const photoSrc = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
-                    // debug: log photoSrc for first 3 visible players
-                    try {
-                      if (player.match_name === "Gabriel Dzelme" || player.match_name === "Jeong Seong-hoon" || player.match_name === "Brian Alejo Distefano") {
-                        invoke("debug_log", { message: `[${player.match_name}] photoSrc: ${photoSrc} | clock: ${gameState.clock.current_date}` });
-                      }
-                    } catch (_e) { /* ignore */ }
                     return (
                       <tr
                         key={player.id}

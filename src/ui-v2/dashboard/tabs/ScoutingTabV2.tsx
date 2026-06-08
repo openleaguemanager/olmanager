@@ -10,7 +10,6 @@ import { buildAlreadyScoutingIds, filterScoutablePlayers, paginateScoutablePlaye
 import ScoutingAssignmentsListV2 from "./ScoutingAssignmentsListV2";
 import ScoutingScoutDetailsCardV2 from "./ScoutingScoutDetailsCardV2";
 import { Card, CardContent } from "@/ui-v2/components/ui/card";
-import { cn } from "@/ui-v2/lib/utils";
 import ScoutingPlayerSearchCardV2 from "./ScoutingPlayerSearchCardV2";
 
 interface ScoutingTabV2Props {

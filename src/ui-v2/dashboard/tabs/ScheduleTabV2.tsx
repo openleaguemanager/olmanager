@@ -4,7 +4,6 @@ import { Calendar as CalendarIcon, CalendarDays, ChevronRight } from "lucide-rea
 
 import type { GameStateData, FixtureData } from "@/store/gameStore";
 import { getTeamName, formatMatchDate } from "@/lib/common/helpers";
-import { resolveSeasonContext } from "@/lib/season/seasonContext";
 import {
   buildBestOfContext,
   getTeamLogoPath,
@@ -51,7 +50,6 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
     ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)
     : gameState.leagues[0];
   const userTeamId = gameState.manager.team_id;
-  const seasonContext = resolveSeasonContext(gameState);
 
   const getFixtureGroupKey = (f: FixtureData): string => {
     if (f.match_type === "League") return `league-${f.matchday}`;

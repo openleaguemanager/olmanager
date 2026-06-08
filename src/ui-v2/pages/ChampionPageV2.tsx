@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { ArrowLeft, Swords, Shield, Crosshair, Zap, TrendingUp, Crown, BarChart3, Activity } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { Swords, Shield, Crosshair, Zap, TrendingUp, Crown, BarChart3, Activity } from "lucide-react";
 import { resolveChampionTile, resolveChampionSplash } from "@/lib/champions/championImages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
@@ -14,7 +13,7 @@ interface Stats {
   total_games: number; total_wins: number;
   win_rate: number; pick_rate: number; ban_rate: number;
   avg_kills: number; avg_deaths: number; avg_assists: number; avg_kda: number;
-  avg_gold: number; avg_damage: number; avg_cs: number; avg_vision: number;
+  avg_gold: number; avg_damage: number; avg_cs: number; avg_vision: number; avg_duration: number;
   role_distribution: { role: string; games: number; percentage: number }[];
   best_against: { vs_champion_key: string; vs_champion_name: string; games: number; wins: number; win_rate: number }[];
   worst_against: { vs_champion_key: string; vs_champion_name: string; games: number; wins: number; win_rate: number }[];
@@ -30,8 +29,7 @@ const ROLE_META: Record<string, { icon: typeof Shield; color: string; label: str
   SUPPORT: { icon: Shield, color: "text-purple-400", label: "SUP" },
 };
 
-export default function ChampionPageV2({ championKey, onClose }: Props) {
-  const { t } = useTranslation();
+export default function ChampionPageV2({ championKey }: Props) {
   const [s, setS] = useState<Stats | null>(null);
   const splash = resolveChampionSplash(championKey);
   const tile = resolveChampionTile(championKey);

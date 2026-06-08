@@ -35,16 +35,6 @@ const ROLE_BADGE_STYLES: Record<DraftRole, string> = {
   ADC: "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300",
   SUPPORT: "bg-gray-100 text-gray-600 dark:bg-navy-600 dark:text-gray-400",
 };
-function parseRoles(rolesJson: string): string[] {
-  try {
-    const parsed = JSON.parse(rolesJson);
-    if (Array.isArray(parsed)) return parsed;
-    return [];
-  } catch {
-    return [];
-  }
-}
-
 export default function ChampionsGrid({ champions, onChampionClick }: ChampionsGridProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");

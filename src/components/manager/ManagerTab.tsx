@@ -589,9 +589,6 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
                       {t("common.won")}
                     </th>
                     <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
-                      {t("common.drawn")}
-                    </th>
-                    <th className="py-3 px-5 font-heading font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">
                       {t("common.lost")}
                     </th>
                   </tr>
@@ -611,9 +608,6 @@ export default function ManagerTab({ gameState }: ManagerTabProps) {
                       </td>
                       <td className="py-3 px-5 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
                         {entry.wins}
-                      </td>
-                      <td className="py-3 px-5 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
-                        {entry.draws}
                       </td>
                       <td className="py-3 px-5 text-center text-sm text-gray-600 dark:text-gray-400 tabular-nums">
                         {entry.losses}

@@ -7,16 +7,14 @@ import {
   PlayerSelectionOptions,
 } from "../../store/gameStore";
 import { Card, CardHeader, CardBody, Badge, ProgressBar, Button, RoleBadge } from "../ui";
-import { User, ArrowUpDown, ArrowUp, ArrowDown, Check, Lock, AlertTriangle } from "lucide-react";
+import { User, ArrowUpDown, ArrowUp, ArrowDown, Lock, AlertTriangle } from "lucide-react";
 import {
   formatVal,
-  formatWeeklyAmount,
   getContractRiskBadgeVariant,
   getContractRiskLevel,
   getContractYearsRemaining,
 } from "../../lib/common/helpers";
 import {
-  annualAmountToMonthlyCommitment,
   getTeamFinanceSnapshot,
   safeFinanceNumber,
 } from "../../lib/finances/finance";
@@ -37,11 +35,6 @@ function getFacilityUpgradeCost(level: number): number {
 
 function getMainHubExpansionCost(level: number): number {
   return level * 500_000;
-}
-
-function formatSignedAmount(value: number): string {
-  const formatted = formatVal(Math.abs(value));
-  return value < 0 ? `-${formatted}` : formatted;
 }
 
 function formatCurrencyAmountParam(value: number): string {
@@ -160,16 +153,6 @@ export default function FinancesTab({
   const projectedAnnualNet = financeSnapshot.projectedAnnualNet;
   const cashRunwayMonths = financeSnapshot.cashRunwayMonths;
   const wageBudgetUsagePercent = financeSnapshot.wageBudgetUsagePercent;
-  const weeklyWageBudget = financeSnapshot.weeklyWageBudget;
-  const playerWeeklyWages = roster.reduce(
-    (sum, p) => sum + annualAmountToMonthlyCommitment(p.wage),
-    0,
-  );
-  const staffWeeklyWages = teamStaff.reduce(
-    (sum, s) => sum + annualAmountToMonthlyCommitment(s.wage),
-    0,
-  );
-  const unusedWeeklyBudget = Math.max(0, weeklyWageBudget - playerWeeklyWages - staffWeeklyWages);
   const annualWageBudget = financeSnapshot.annualWageBudget;
   const sponsorOffers = gameState.messages
     .filter(isPendingSponsorOffer)

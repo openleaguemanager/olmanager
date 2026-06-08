@@ -11,7 +11,7 @@ interface Props {
   language: string;
 }
 
-export default function PlayerProfileMatchHistoryCard({ history, gameState, t, language }: Props) {
+export default function PlayerProfileMatchHistoryCard({ history, t, language }: Props) {
   const [collapsed, setCollapsed] = useState(true);
 
   const sorted = useMemo(

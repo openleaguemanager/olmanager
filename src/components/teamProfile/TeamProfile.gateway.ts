@@ -6,7 +6,7 @@ export const TEAM_PROFILE_RECENT_MATCH_LIMIT = 5;
 export async function fetchTeamStatsOverview(
   teamId: string,
 ): Promise<TeamStatsOverview | null> {
-  return getApiClientSync().teams.getStatsOverview({ teamId });
+  return (await getApiClientSync().teams.getStatsOverview({ teamId })) as TeamStatsOverview | null;
 }
 
 export async function fetchTeamRecentMatches(
@@ -14,5 +14,5 @@ export async function fetchTeamRecentMatches(
   limit = TEAM_PROFILE_RECENT_MATCH_LIMIT,
 ): Promise<TeamRecentMatchEntry[]> {
   const result = await getApiClientSync().teams.getMatchHistory({ teamId, limit });
-  return Array.isArray(result) ? result : [];
+  return Array.isArray(result) ? (result as TeamRecentMatchEntry[]) : [];
 }

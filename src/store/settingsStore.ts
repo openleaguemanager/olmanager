@@ -49,7 +49,7 @@ function mergeWithDefaultSettings(settings: Partial<AppSettings> = {}): AppSetti
 }
 
 async function persistSettings(settings: AppSettings) {
-  await getApiClientSync().settings.save(settings);
+  await getApiClientSync().settings.save(settings as unknown as Partial<import("../api/types").AppSettings>);
 }
 
 interface SettingsStore {

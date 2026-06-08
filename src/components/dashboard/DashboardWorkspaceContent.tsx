@@ -9,7 +9,6 @@ import DashboardTabContent from "./DashboardTabContent";
 import type { DashboardTabContentModel } from "./dashboardTabContentModel";
 import { ShieldX } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Card, CardBody } from "../ui";
 
 interface DashboardWorkspaceContentProps {
   dashboardAlerts: DashboardAlert[];

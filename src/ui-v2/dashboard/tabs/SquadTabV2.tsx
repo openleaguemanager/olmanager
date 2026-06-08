@@ -4,12 +4,9 @@ import { invoke } from "@tauri-apps/api/core";
 import {
   AlertTriangle,
   ChevronRight,
-  Heart,
   Repeat,
   ShoppingCart,
-  Star,
   User,
-  Zap,
 } from "lucide-react";
 
 import type { GameStateData, PlayerData, PlayerSelectionOptions } from "@/store/gameStore";

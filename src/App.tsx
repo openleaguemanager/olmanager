@@ -2,6 +2,7 @@ import { useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useSettingsStore } from "./store/settingsStore";
 import { useUpdater } from "./hooks/useUpdater";
+import type { UpdateInfo } from "./services/updaterService";
 import UpdateModal from "./components/updater/UpdateModal";
 import FloatingBugButton from "./components/dashboard/FloatingBugButton";
 import i18n from "./i18n";
@@ -190,9 +191,9 @@ function AppContent({
 }: {
   updateAvailable: boolean;
   dismissed: boolean;
-  updateInfo: object | null;
+  updateInfo: UpdateInfo | null;
   downloading: boolean;
-  progress: number;
+  progress: { percent: number; contentLength?: number } | null;
   error: string | null;
   install: () => void;
   dismiss: () => void;

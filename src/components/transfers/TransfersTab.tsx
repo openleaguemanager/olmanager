@@ -1130,6 +1130,7 @@ export default function TransfersTab({
         <TransferCounterOfferModal
           counterTarget={counterTarget}
           teams={gameState.teams}
+          currentDate={gameState.clock.current_date}
           counterAmount={counterAmount}
           onCounterAmountChange={setCounterAmount}
           counterFeedback={counterFeedback}

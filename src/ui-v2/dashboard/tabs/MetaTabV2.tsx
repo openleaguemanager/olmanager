@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Clock3, Sparkles, Search, User } from "lucide-react";
+import { Search, User } from "lucide-react";
 
 import type { GameStateData } from "@/store/gameStore";
 import championsSeed from "../../../../assets/simulation/champions.json";
@@ -228,7 +227,6 @@ const SOLOQ_EMBLEM_URLS: Record<SoloQTier, string> = {
 };
 
 export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2Props) {
-  const { t } = useTranslation();
   const [submittingKey, setSubmittingKey] = useState<string | null>(null);
   const [metaRoleFilter, setMetaRoleFilter] = useState<"ALL" | UiRole>("ALL");
   const [delegating, setDelegating] = useState(false);

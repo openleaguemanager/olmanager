@@ -196,7 +196,6 @@ function createPlayer(overrides: Partial<PlayerData> = {}): PlayerData {
     },
     condition: 80,
     morale: 80,
-    injury: null,
     team_id: "team-1",
     contract_end: null,
     wage: 1000,

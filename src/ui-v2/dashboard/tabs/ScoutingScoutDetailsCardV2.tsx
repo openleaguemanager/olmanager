@@ -8,7 +8,6 @@ import { scoutAssignmentCount, scoutMaxSlots } from "@/components/scouting/Scout
 import { resolveStaffPhoto } from "@/lib/players/playerPhotos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
-import { cn } from "@/ui-v2/lib/utils";
 
 interface ScoutingScoutDetailsCardV2Props {
   scouts: StaffData[];

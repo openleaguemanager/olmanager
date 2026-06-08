@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Building2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Filter, Search, SortAsc, Swords, Trophy, TrendingUp, Users } from "lucide-react";
+import { Building2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Filter, Search, SortAsc, Swords, Trophy } from "lucide-react";
 
 import type { GameStateData } from "@/store/gameStore";
 import { compareStandingsByLolScore } from "@/store/gameStore";
@@ -46,7 +46,7 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
       const totalValue = roster.reduce((s, p) => s + p.market_value, 0);
       const leaguePos = allStandings.findIndex((s) => s.team_id === team.id) + 1;
       const standing = allStandings.find((s) => s.team_id === team.id);
-      const wr = standing?.played > 0 ? Math.round((standing.won / standing.played) * 100) : null;
+      const wr = standing && standing.played > 0 ? Math.round((standing.won / standing.played) * 100) : null;
       return { team, roster, avgOvr, totalValue, leaguePos, standing, wr };
     });
     mapped.sort((a, b) => {

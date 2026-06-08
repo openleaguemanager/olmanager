@@ -76,7 +76,6 @@ function createPlayer(overrides: Partial<PlayerData> = {}): PlayerData {
     },
     condition: 80,
     morale: 80,
-    injury: null,
     team_id: "team-1",
     contract_end: null,
     wage: 0,
@@ -254,8 +253,8 @@ describe("dashboardHelpers", function (): void {
 
   it("builds dashboard alerts for critical squad issues", function (): void {
     const roster = [
-      createPlayer({ id: "p1", condition: 20, injury: { name: "Hamstring", days_remaining: 5 } }),
-      createPlayer({ id: "p2", condition: 21, injury: { name: "Ankle", days_remaining: 3 } }),
+      createPlayer({ id: "p1", condition: 20 }),
+      createPlayer({ id: "p2", condition: 21 }),
       createPlayer({ id: "p3", condition: 22 }),
       createPlayer({ id: "p4", condition: 80 }),
       createPlayer({ id: "p5", condition: 80 }),

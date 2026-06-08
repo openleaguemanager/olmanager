@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import type { JSX, ReactNode } from "react";
 import {
@@ -119,7 +118,6 @@ export default function DashboardSidebar({
   staffCount = 0,
 }: DashboardSidebarProps): JSX.Element {
   const { t } = useTranslation();
-  invoke("debug_log", { message: `[sidebar] teamName=${teamName} | teamLogo=${teamLogo} | collapsed=${collapsed}` });
 
   const clubItems: Array<{ icon: JSX.Element; label: string; tab: string }> = [
     { icon: <Users />, label: t("dashboard.squad"), tab: "Squad" },

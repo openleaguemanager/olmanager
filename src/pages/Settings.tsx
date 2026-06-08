@@ -33,7 +33,6 @@ import {
 import { useUpdater } from "../hooks/useUpdater";
 import { APP_VERSION } from "../lib/common/appInfo";
 import { APP_NAME } from "../lib/common/appInfo";
-import MenuBackground from "../components/menu/MenuBackground";
 
 const CURRENCY_OPTIONS = [
   { value: "EUR", label: "Euro (€)", symbol: "€" },

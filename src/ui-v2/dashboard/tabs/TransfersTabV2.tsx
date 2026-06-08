@@ -11,7 +11,6 @@ import {
   Gavel,
   Globe,
   Handshake,
-  Loader2,
   Search,
   ShoppingCart,
   TrendingUp,
@@ -38,12 +37,16 @@ import {
   respondToOffer,
   negotiatePlayerWage,
 } from "@/services/transfersService";
+import type {
+  TransferBidProjectionData,
+  TransferNegotiationResponseData,
+} from "@/services/transfersService";
+
+type NegotiationResult = TransferNegotiationResponseData["decision"] | "error" | null;
 import {
   buildResumedBidFeedback,
   buildResumedCounterFeedback,
   getOutgoingNegotiationOffer,
-  getTransferOfferBadgeVariant,
-  getTransferOfferStatusLabel,
   mapTransferNegotiationError,
 } from "@/components/transfers/TransfersTab.helpers";
 import {
@@ -150,25 +153,19 @@ export function TransfersTabV2({
   const [bidAmount, setBidAmount] = useState("");
   const [bidDestination, setBidDestination] = useState<"main" | "academy">("main");
   const [bidLoading, setBidLoading] = useState(false);
-  const [bidResult, setBidResult] = useState<string | null>(null);
+  const [bidResult, setBidResult] = useState<NegotiationResult>(null);
   const [bidFeedback, setBidFeedback] = useState<NegotiationFeedbackPanelData | null>(null);
-  const [bidError, setBidError] = useState<string | null>(null);
-  const [bidProjection, setBidProjection] = useState<{
-    exceeds_transfer_budget: boolean;
-    exceeds_finance: boolean;
-    transfer_budget_after: number;
-    finance_after: number;
-    annual_wage_bill_after: number;
-    annual_wage_budget: number;
-    projected_wage_budget_usage_pct: number;
-  } | null>(null);
+  const [, setBidError] = useState<string | null>(null);
+  const [bidProjection, setBidProjection] = useState<
+    TransferBidProjectionData["projection"] | null
+  >(null);
   const [bidSelectedPlayerIds, setBidSelectedPlayerIds] = useState<string[]>([]);
 
   // ─── Counter modal state ───
   const [counterTarget, setCounterTarget] = useState<CounterTarget | null>(null);
   const [counterAmount, setCounterAmount] = useState("");
   const [counterLoading, setCounterLoading] = useState(false);
-  const [counterResult, setCounterResult] = useState<string | null>(null);
+  const [counterResult, setCounterResult] = useState<NegotiationResult>(null);
   const [counterFeedback, setCounterFeedback] = useState<NegotiationFeedbackPanelData | null>(null);
   const [counterError, setCounterError] = useState<string | null>(null);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
@@ -178,7 +175,7 @@ export function TransfersTabV2({
   const [wageAmount, setWageAmount] = useState("");
   const [contractYears, setContractYears] = useState(3);
   const [wageLoading, setWageLoading] = useState(false);
-  const [wageResult, setWageResult] = useState<string | null>(null);
+  const [wageResult, setWageResult] = useState<NegotiationResult>(null);
   const [wageFeedback, setWageFeedback] = useState<NegotiationFeedbackPanelData | null>(null);
   const [wageError, setWageError] = useState<string | null>(null);
 
@@ -886,6 +883,7 @@ export function TransfersTabV2({
         <TransferCounterOfferModal
           counterTarget={counterTarget}
           teams={gameState.teams}
+          currentDate={gameState.clock.current_date}
           counterAmount={counterAmount}
           onCounterAmountChange={setCounterAmount}
           counterFeedback={counterFeedback}

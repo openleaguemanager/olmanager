@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import type { ChampionData } from "@/store/types";
-import { resolveChampionTile, resolveChampionSplash } from "@/lib/champions/championImages";
+import { resolveChampionTile } from "@/lib/champions/championImages";
 import { cn } from "@/ui-v2/lib/utils";
 import championsSeed from "../../../assets/simulation/champions.json";
 

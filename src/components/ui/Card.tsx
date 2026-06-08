@@ -4,9 +4,10 @@ interface CardProps {
   children: ReactNode;
   className?: string;
   accent?: "primary" | "accent" | "success" | "danger" | "none";
+  onClick?: () => void;
 }
 
-export function Card({ children, className = "", accent = "none" }: CardProps) {
+export function Card({ children, className = "", accent = "none", onClick }: CardProps) {
   const accentBorder = {
     primary: "border-t-4 border-t-primary-500",
     accent: "border-t-4 border-t-accent-400",
@@ -17,6 +18,7 @@ export function Card({ children, className = "", accent = "none" }: CardProps) {
 
   return (
     <div
+      onClick={onClick}
       className={`
         bg-white dark:bg-navy-700
         ${accent === "none" ? accentBorder : `border ${accentBorder} border-gray-200 dark:border-navy-600`}

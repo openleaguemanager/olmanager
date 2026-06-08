@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Building2, Calendar, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Globe, ListOrdered, Search, TrendingUp, Trophy, Users } from "lucide-react";
+import { Building2, Calendar, ChevronLeft, ChevronRight, Globe, ListOrdered, Search, Users } from "lucide-react";
 
 import type { GameStateData, LeagueData } from "@/store/gameStore";
 import { compareStandingsByLolScore, getStandingKillDiff } from "@/store/gameStore";
@@ -73,7 +73,6 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
           {leagues.map((league) => {
             const lcid = league.competition_id ?? league.id;
             const sel = selectedCid === lcid;
-            const r = Object.keys(REGION_GRADIENT).find((k) => lcid.includes(k) || k === lcid) ?? null;
             const fixtures = league.fixtures ?? [];
             const played = fixtures.filter((f) => f.status === "Completed").length;
             return (

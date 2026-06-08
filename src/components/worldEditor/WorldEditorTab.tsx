@@ -200,7 +200,6 @@ function createNewPlayer(index: number): PlayerData {
     attributes: defaultPlayerAttributes(60),
     condition: 100,
     morale: 70,
-    injury: null,
     team_id: null,
     contract_end: null,
     wage: 40_000,

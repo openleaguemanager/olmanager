@@ -138,7 +138,7 @@ export default function HomeLeaguePositionCard({
 
                 {spotlightFixture.result ? (
                   <p className="mt-1 text-xs text-gray-300 font-heading uppercase tracking-wider">
-                    {(spotlightFixture.result.home_wins ?? spotlightFixture.result.home_goals ?? 0)} - {(spotlightFixture.result.away_wins ?? spotlightFixture.result.away_goals ?? 0)}
+                    {Number(spotlightFixture.result.home_wins ?? spotlightFixture.result.home_goals ?? 0)} - {Number(spotlightFixture.result.away_wins ?? spotlightFixture.result.away_goals ?? 0)}
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-gray-400 font-heading uppercase tracking-wider">

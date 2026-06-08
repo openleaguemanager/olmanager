@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { compareStandingsByLolScore, GameStateData, FixtureData, getStandingKillDiff, getStandingKillsAgainst, getStandingKillsFor } from "../../store/gameStore";
+import { compareStandingsByLolScore, GameStateData, FixtureData, getStandingKillsAgainst, getStandingKillsFor } from "../../store/gameStore";
 import { Card, CardBody, CardHeader, Badge } from "../ui";
 import { Trophy, TableProperties, Calendar } from "lucide-react";
 import { getTeamName, formatMatchDate } from "../../lib/common/helpers";
@@ -55,16 +55,7 @@ export default function TournamentsTab({
     (a, b) => a[0] - b[0],
   );
 
-  const completedMatchdays = sortedMatchdays.filter(([, fixtures]) =>
-    fixtures.every((f) => f.status === "Completed"),
-  ).length;
-  const totalMatchdays = sortedMatchdays.length;
   const standings = league?.standings ?? [];
-  const userStanding = standings.find((entry) => entry.team_id === userTeamId);
-  const userWins = userStanding?.won ?? 0;
-  const completedMatches = tournamentFixtures.filter(
-    (f) => f.status === "Completed",
-  ).length;
 
   const academyStandings = academyLeague
       ? [...academyLeague.standings].sort(compareStandingsByLolScore)

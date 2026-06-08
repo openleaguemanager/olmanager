@@ -29,3 +29,12 @@ export function getApiClientSync(): ApiClient {
   if (!_client) throw new Error("[ApiClient] No inicializado. Llama a getApiClient() primero.")
   return _client
 }
+
+/**
+ * Override the active client. Intended for tests, which wire a specific adapter
+ * (whose `invoke` is mocked) instead of going through environment detection.
+ * Pass `null` to reset back to the uninitialized state.
+ */
+export function setApiClient(client: ApiClient | null): void {
+  _client = client
+}

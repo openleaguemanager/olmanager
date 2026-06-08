@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { EyeOff, Pencil, Shield, Swords, User } from "lucide-react";
+import { EyeOff, Pencil, Shield, User } from "lucide-react";
 import type { PlayerData } from "@/store/gameStore";
 import { formatPlayerMarketValue, formatPlayerWage } from "@/components/playerProfile/PlayerProfile.helpers";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";

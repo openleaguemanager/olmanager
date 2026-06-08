@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type {
@@ -24,6 +23,7 @@ interface TransferCounterTarget {
 interface TransferCounterOfferModalProps {
   counterTarget: TransferCounterTarget;
   teams: TeamData[];
+  currentDate: string;
   counterAmount: string;
   onCounterAmountChange: (value: string) => void;
   counterFeedback: NegotiationFeedbackPanelData | null;
@@ -41,6 +41,7 @@ interface TransferCounterOfferModalProps {
 export default function TransferCounterOfferModal({
   counterTarget,
   teams,
+  currentDate,
   counterAmount,
   onCounterAmountChange,
   counterFeedback,
@@ -129,7 +130,7 @@ export default function TransferCounterOfferModal({
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {userPlayers.map((p) => {
               const isSelected = selectedPlayerIds.includes(p.id);
-              const age = calcAge(p.date_of_birth);
+              const age = calcAge(p.date_of_birth, currentDate);
               const role = getLolRoleForPlayer(p);
               return (
                 <button

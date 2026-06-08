@@ -20,9 +20,7 @@ import {
 import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { resolvePlayerPhoto } from "../../lib/players/playerPhotos";
 import { PlayerAvatar } from "../ui/PlayerAvatar";
-import { fallbackChampionForRole, resolvePlayerLolRole } from "../../lib/players/lolIdentity";
-import { normalizeChampionKey } from "../../lib/champions/championIds";
-import { resolveChampionTile } from "../../lib/champions/championImages";
+import { resolvePlayerLolRole } from "../../lib/players/lolIdentity";
 
 type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 type SortKey = "pos" | "ovr" | "condition" | "fitness" | "morale" | "age";

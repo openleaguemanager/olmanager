@@ -165,16 +165,10 @@ describe("ScheduleTab", () => {
     expect(screen.getByText("No league")).toBeInTheDocument();
   });
 
-  it("switches to standings and lets the user select a team", () => {
-    const onSelectTeam = vi.fn();
-
-    render(<ScheduleTab gameState={createGameState(true)} onSelectTeam={onSelectTeam} />);
-
-    fireEvent.click(screen.getByRole("button", { name: /Standings/i }));
-    fireEvent.click(screen.getByText("Beta FC"));
-
-    expect(onSelectTeam).toHaveBeenCalledWith("team-2");
-  });
+  // NOTE: the standings view (and its in-table team selection) was removed from
+  // ScheduleTab — see "Sorted standings — removed (tab deleted)" in the source.
+  // The former "switches to standings and lets the user select a team" test was
+  // dropped because it exercised that deleted functionality.
 
   it("renders playoff series score from home_wins and away_wins", () => {
     const playoffFixture = createFixture({

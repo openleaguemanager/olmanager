@@ -232,7 +232,7 @@ export default function TeamSelection() {
         // Step 1: Try the new get_league_selection_data
         console.debug("[TeamSelection] trying get_league_selection_data");
         // Team selection data is loaded from the save context
-        const leagueResult = await apiPost("get_league_selection_data");
+        const leagueResult = await apiPost<LeagueSelectionData>("get_league_selection_data");
         if (cancelled) return;
 
         console.debug("[TeamSelection] leagueResult:", JSON.stringify(leagueResult));
@@ -251,7 +251,7 @@ export default function TeamSelection() {
 
         // Step 2: No competitions found → try legacy fallback
         console.debug("[TeamSelection] no competitions, trying legacy fallback");
-        const legacyResult = await apiPost("get_team_selection_data");
+        const legacyResult = await apiPost<OldTeamSelectionData>("get_team_selection_data");
         if (cancelled) return;
         console.debug(
           "[TeamSelection] legacy data recovered, teams:",
@@ -264,7 +264,7 @@ export default function TeamSelection() {
           error,
         );
         try {
-          const legacyResult = await apiPost("get_team_selection_data");
+          const legacyResult = await apiPost<OldTeamSelectionData>("get_team_selection_data");
           if (cancelled) return;
           console.debug(
             "[TeamSelection] legacy data recovered via fallback, teams:",
@@ -371,7 +371,7 @@ export default function TeamSelection() {
     if (!selectedTeamId || isConfirming) return;
     setIsConfirming(true);
     try {
-      const updatedGame = await apiPost("select_team", { teamId: selectedTeamId })
+      const updatedGame = await apiPost<GameStateData>("select_team", { teamId: selectedTeamId })
       setGameState(updatedGame);
       const mgr = updatedGame.manager;
       const displayName =

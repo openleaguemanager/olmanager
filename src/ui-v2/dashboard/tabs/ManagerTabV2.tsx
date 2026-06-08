@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { Building2, ChevronDown, Check, ImagePlus, Settings, Swords, Trophy, Users } from "lucide-react";
+import { Building2, ChevronDown, Check, ImagePlus, Settings, Trophy, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { useGameStore, compareStandingsByLolScore, type GameStateData } from "@/store/gameStore";
@@ -286,7 +286,6 @@ export function ManagerTabV2({ gameState }: ManagerTabV2Props) {
                     <th className="px-4 py-3 font-heading font-bold">{t("manager.period")}</th>
                     <th className="px-3 py-3 text-center font-heading font-bold">PJ</th>
                     <th className="px-3 py-3 text-center font-heading font-bold">G</th>
-                    <th className="px-3 py-3 text-center font-heading font-bold">E</th>
                     <th className="px-3 py-3 text-center font-heading font-bold">P</th>
                   </tr>
                 </thead>
@@ -299,7 +298,6 @@ export function ManagerTabV2({ gameState }: ManagerTabV2Props) {
                       </td>
                       <td className="px-3 py-3 text-center text-xs tabular-nums text-muted-foreground">{entry.matches}</td>
                       <td className="px-3 py-3 text-center text-xs tabular-nums text-emerald-400">{entry.wins}</td>
-                      <td className="px-3 py-3 text-center text-xs tabular-nums text-muted-foreground">{entry.draws}</td>
                       <td className="px-3 py-3 text-center text-xs tabular-nums text-red-400">{entry.losses}</td>
                     </tr>
                   ))}

@@ -20,9 +20,9 @@ describe("CompetitionsTab", () => {
     const gameState = {
       leagues: [
         {
-          id: "league-les",
-          competition_id: "les",
-          name: "Liga Regional Spain",
+          id: "league-lec",
+          competition_id: "lec",
+          name: "LEC",
           season: 1,
           fixtures: undefined,
           standings: undefined,
@@ -34,7 +34,7 @@ describe("CompetitionsTab", () => {
 
     render(<CompetitionsTab gameState={gameState} />);
 
-    expect(screen.getByText("Liga Regional Spain")).toBeInTheDocument();
+    expect(screen.getByText("LEC")).toBeInTheDocument();
     expect(screen.getByText("0 partidos")).toBeInTheDocument();
   });
 });

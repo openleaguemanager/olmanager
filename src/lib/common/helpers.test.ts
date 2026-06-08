@@ -70,7 +70,6 @@ const makePlayer = (overrides: Partial<PlayerData> = {}): PlayerData => ({
   },
   condition: 100,
   morale: 80,
-  injury: null,
   team_id: "team_1",
   contract_end: "2028-06-30",
   wage: 10000,

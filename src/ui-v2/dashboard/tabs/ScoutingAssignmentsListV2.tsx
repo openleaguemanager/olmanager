@@ -5,7 +5,6 @@ import type { PlayerData, ScoutingAssignment, StaffData, TeamData } from "@/stor
 import { getTeamName } from "@/lib/common/helpers";
 import { getLolRoleForPlayer } from "@/components/squad/SquadTab.helpers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
-import { cn } from "@/ui-v2/lib/utils";
 
 interface ScoutingAssignmentsListV2Props {
   assignments: ScoutingAssignment[];

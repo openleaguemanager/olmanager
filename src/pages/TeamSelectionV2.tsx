@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Loader2, Trophy } from "lucide-react";
 
-import type { LeagueSelectionData, GameStateData } from "@/store/gameStore";
+import type { LeagueSelectionData } from "@/store/gameStore";
 import { useGameStore } from "@/store/gameStore";
 import { LeaguePickerV2 } from "@/components/teamSelection/LeaguePickerV2";
 import { TeamGridV2 } from "@/components/teamSelection/TeamGridV2";

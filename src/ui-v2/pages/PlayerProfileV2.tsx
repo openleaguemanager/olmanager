@@ -15,7 +15,6 @@ export default function PlayerProfileV2({
   playerId,
   onClose,
   onGameUpdate,
-  onSelectPlayer,
   onViewChampion,
 }: PlayerProfileV2Props) {
   const player = gameState.players.find((p) => p.id === playerId);
@@ -26,9 +25,9 @@ export default function PlayerProfileV2({
       <PlayerProfile
         gameState={gameState}
         player={player}
+        isOwnClub={player.team_id === gameState.manager.team_id}
         onClose={onClose}
         onGameUpdate={onGameUpdate}
-        onSelectPlayer={onSelectPlayer}
         onViewChampion={onViewChampion}
       />
     </div>

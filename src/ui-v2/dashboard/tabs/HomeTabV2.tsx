@@ -1,25 +1,18 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Activity,
-  Briefcase,
-  Calendar,
   CalendarDays,
   DollarSign,
   Dumbbell,
   Eye,
-  Heart,
   Home,
   Mail,
   MapPin,
   Moon,
   Newspaper,
-  ShieldAlert,
-  Star,
   Swords,
   TrendingUp,
   Trophy,
-  ArrowRight,
 } from "lucide-react";
 
 import { compareStandingsByLolScore, type GameStateData } from "@/store/gameStore";
@@ -36,7 +29,6 @@ import {
   formatMatchDate,
   getTeamShort,
 } from "@/lib/common/helpers";
-import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import {
   getLineupByRole,
@@ -66,7 +58,6 @@ interface Props {
 }
 
 export function HomeTabV2({ gameState, onNavigate, onSelectPlayer }: Props) {
-  const { i18n } = useTranslation();
   const myTeamId = gameState.manager.team_id;
   const myTeam = gameState.teams.find((tm) => tm.id === myTeamId);
   const roster = myTeam
@@ -102,6 +93,18 @@ export function HomeTabV2({ gameState, onNavigate, onSelectPlayer }: Props) {
 
   const digestArticles = useMemo(() => getLeagueDigestArticles(gameState), [gameState]);
 
+  // These data sources and the cards below (RecentResultsCard, FinancesCard,
+  // MessagesCard, NewsCard) are intentionally retained for upcoming layout work.
+  // The `void` references keep them alive so noUnusedLocals doesn't flag them.
+  void results;
+  void recentMessages;
+  void newsArticles;
+  void digestArticles;
+  void RecentResultsCard;
+  void FinancesCard;
+  void MessagesCard;
+  void NewsCard;
+
   const cardHover = "h-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5";
 
   return (
@@ -125,7 +128,7 @@ export function HomeTabV2({ gameState, onNavigate, onSelectPlayer }: Props) {
         <div className="w-72 shrink-0 hidden lg:flex lg:flex-col">
           <div className={cn(cardHover, "flex-1")}>
             <FullStandingsCard
-              league={getActiveLeague(gameState)}
+              league={getActiveLeague(gameState) ?? undefined}
               standings={sortedStandings}
               teams={gameState.teams}
               myTeamId={myTeamId}
@@ -299,8 +302,6 @@ function NextOpponentCard({
           {ROLE_ORDER.map((role, i) => {
             const home = homeLineup[i];
             const away = awayLineup[i];
-            const homeOvrVal = home ? calculateLolOvr(home) : null;
-            const awayOvrVal = away ? calculateLolOvr(away) : null;
             const homePhoto = home ? resolvePlayerPhoto(home.id, home.match_name, home.profile_image_url) : null;
             const awayPhoto = away ? resolvePlayerPhoto(away.id, away.match_name, away.profile_image_url) : null;
             return (

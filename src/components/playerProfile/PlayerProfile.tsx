@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { getContractRiskLevel, calcAge, formatVal, positionBadgeVariant } from "../../lib/common/helpers";
+import { getContractRiskLevel, formatVal } from "../../lib/common/helpers";
 import { parseUtcDate } from "../../lib/formatting/dateFormatting";
 import { calculateLolOvr } from "../../lib/players/lolPlayerStats";
 import { PlayerData, GameStateData, PlayerMatchHistoryEntryData, ScoutReportData, ChampionMasteryEntryData } from "../../store/gameStore";
@@ -365,21 +365,6 @@ export default function PlayerProfile({
       }
     });
   }
-
-  const transferOfferAvailablePlayers = gameState.players.filter(
-    (p) =>
-      managedTeamIds.has(p.team_id ?? "") &&
-      p.id !== player.id &&
-      p.transfer_offers.every((o) => o.status !== "Pending"),
-  );
-
-  const toggleTransferOfferPlayer = (playerId: string) => {
-    if (transferOfferIncludedPlayerIds.includes(playerId)) {
-      setTransferOfferIncludedPlayerIds(transferOfferIncludedPlayerIds.filter((id) => id !== playerId));
-    } else if (transferOfferIncludedPlayerIds.length < 2) {
-      setTransferOfferIncludedPlayerIds([...transferOfferIncludedPlayerIds, playerId]);
-    }
-  };
 
   const isOwnMainPlayer = managerTeamId !== null && player.team_id === managerTeamId;
   const isOwnAcademyPlayer = player.team_id !== null && managedTeamIds.has(player.team_id) && !isOwnMainPlayer;
