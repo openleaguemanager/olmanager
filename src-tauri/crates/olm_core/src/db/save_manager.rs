@@ -10,7 +10,7 @@ use crate::db::save_index::SaveEntry;
 use crate::db::save_index_manager::SaveIndexManager;
 
 /// Current save format version. Increment when breaking changes are made.
-const FORMAT_VERSION: u32 = 2;
+const FORMAT_VERSION: u32 = 3;
 
 /// Manages save sessions: creating, loading, saving, deleting, and listing.
 pub struct SaveManager {
@@ -83,29 +83,33 @@ impl SaveManager {
     }
 
     /// Write a Game to a .olsave file at the given path using atomic tmp+rename.
+    /// Format: FORMAT_VERSION (u32 LE) + gzipped JSON of the Game.
     fn write_olsave(path: &Path, game: &Game) -> Result<(), String> {
         let tmp_path = path.with_extension("olsave.tmp");
 
-        // Serialize to buffer first so we can validate before writing to disk
-        let encoded: Vec<u8> = bincode::serialize(game)
-            .map_err(|e| {
-                // Try JSON fallback for diagnostics
-                let json_diag = serde_json::to_string(game)
-                    .map(|j| format!(" (JSON serialization ok, {} bytes)", j.len()))
-                    .unwrap_or_else(|je| format!(" (JSON also failed: {je})"));
-                format!("Failed to serialize game: {e}{json_diag}")
-            })?;
+        // Serialize to JSON, then gzip
+        use flate2::write::GzEncoder;
+        use flate2::Compression;
+        use std::io::Write;
+
+        let json = serde_json::to_string(game)
+            .map_err(|e| format!("Failed to JSON-serialize game: {e}"))?;
+
+        let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+        encoder.write_all(json.as_bytes())
+            .map_err(|e| format!("Failed to gzip game: {e}"))?;
+        let compressed = encoder.finish()
+            .map_err(|e| format!("Failed to finalize gzip: {e}"))?;
 
         let mut file = fs::File::create(&tmp_path)
             .map_err(|e| format!("Failed to create temp file: {}", e))?;
 
         // Write format version (u32, little-endian)
-        let version_bytes = FORMAT_VERSION.to_le_bytes();
-        file.write_all(&version_bytes)
+        file.write_all(&FORMAT_VERSION.to_le_bytes())
             .map_err(|e| format!("Failed to write format version: {}", e))?;
 
-        // Write the pre-encoded buffer
-        file.write_all(&encoded)
+        // Write compressed JSON
+        file.write_all(&compressed)
             .map_err(|e| format!("Failed to write game data: {}", e))?;
 
         file.flush()
@@ -148,16 +152,23 @@ impl SaveManager {
             ));
         }
 
-        // Deserialize Game from the rest of the file
-        let game: Game = match bincode::deserialize_from(std::io::Cursor::new(&bytes[4..])) {
+        // Decompress gzipped JSON and deserialize
+        let game: Game = match (|| -> Result<Game, String> {
+            use flate2::read::GzDecoder;
+            use std::io::Read;
+
+            let mut decoder = GzDecoder::new(&bytes[4..]);
+            let mut json_str = String::new();
+            decoder.read_to_string(&mut json_str)
+                .map_err(|e| format!("Failed to decompress save: {e}"))?;
+
+            serde_json::from_str(&json_str)
+                .map_err(|e| format!("Failed to parse JSON save: {e}"))
+        })() {
             Ok(g) => g,
             Err(e) => {
-                // Try JSON to see if the binary data is structurally coherent
-                let json_hint = serde_json::from_slice::<serde_json::Value>(&bytes[4..])
-                    .map(|v| format!("json_ok(type={})", v.as_object().map(|o| o.len()).unwrap_or(0)))
-                    .unwrap_or_else(|je| format!("json_fail({je})"));
                 return Err(format!(
-                    "Failed to deserialize game (v={}, file={}B, path={:?}, hex={}, {json_hint}): {}",
+                    "Failed to load game (v={}, file={}B, path={:?}, hex={}): {}",
                     version, file_size, path, hex_str, e
                 ));
             }
@@ -169,40 +180,13 @@ impl SaveManager {
     /// Create a new save from the current in-memory Game state.
     /// Returns the save_id.
     pub fn create_save(&mut self, game: &Game, save_name: &str) -> Result<String, String> {
-        // Self-test: verify bincode roundtrip before writing to disk
-        {
-            // First check if JSON serialization works (structural validation)
-            match serde_json::to_string(game) {
-                Ok(json) => {
-                    // Verify JSON deserialization roundtrip
-                    match serde_json::from_str::<Game>(&json) {
-                        Ok(_) => {},
-                        Err(e) => return Err(format!("[serde-test] JSON deserialize failed: {e}")),
-                    }
-                },
-                Err(e) => return Err(format!("[serde-test] JSON serialize failed: {e}")),
-            }
-
-            // Now test bincode serialization
-            let test_bytes = match bincode::serialize(game) {
-                Ok(b) => b,
-                Err(e) => {
-                    let json_diag = serde_json::to_string(game).unwrap_or_else(|_| "json_fail".into());
-                    let hex_first: Vec<String> = json_diag.bytes().take(32).map(|b| format!("{:02x}", b)).collect();
-                    return Err(format!("[serde-test] bincode serialize failed ({e}). JSON len={}, hex={}", json_diag.len(), hex_first.join(" ")));
-                }
-            };
-            match bincode::deserialize::<Game>(&test_bytes) {
-                Ok(back) => {
-                    if back.clock.current_date != game.clock.current_date {
-                        return Err("[serde-test] roundtrip data mismatch: clock.current_date differs".into());
-                    }
-                },
-                Err(e) => {
-                    let hex_first: Vec<String> = test_bytes.iter().take(64).map(|b| format!("{:02x}", b)).collect();
-                    return Err(format!("[serde-test] bincode deserialize failed ({} bytes, hex={}): {e}", test_bytes.len(), hex_first.join(" ")));
-                }
-            }
+        // Self-test: verify JSON roundtrip before writing to disk
+        let json = serde_json::to_string(game)
+            .map_err(|e| format!("[serde-test] JSON serialize failed: {e}"))?;
+        let back: Game = serde_json::from_str(&json)
+            .map_err(|e| format!("[serde-test] JSON deserialize failed ({}B JSON): {e}", json.len()))?;
+        if back.clock.current_date != game.clock.current_date {
+            return Err("[serde-test] roundtrip mismatch: clock.current_date differs".into());
         }
         let save_id = uuid::Uuid::new_v4().to_string();
         let save_path = self.save_path(&save_id);
