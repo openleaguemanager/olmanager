@@ -1,16 +1,18 @@
 use chrono::{TimeZone, Utc};
-use domain::league::{Fixture, FixtureStatus, League, MatchResult, MatchType, StandingEntry};
-use domain::manager::Manager;
-use domain::message::{ActionOption, ActionType, MessageAction, MessageContext};
-use domain::player::{
+use olm_core::domain::league::{
+    Fixture, FixtureStatus, League, LeagueKind, MatchResult, MatchType, StandingEntry,
+};
+use olm_core::domain::manager::Manager;
+use olm_core::domain::message::{ActionOption, ActionType, MessageAction, MessageContext};
+use olm_core::domain::player::{
     Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, PlayerMoraleCore, PlayerPromise,
     PlayerPromiseKind, RenewalSessionOutcome, RenewalSessionStatus,
 };
-use domain::stats::LolRole;
-use domain::team::Team;
-use ofm_core::clock::GameClock;
-use ofm_core::game::Game;
-use ofm_core::player_events;
+use olm_core::domain::stats::LolRole;
+use olm_core::domain::team::Team;
+use olm_core::clock::GameClock;
+use olm_core::game::Game;
+use olm_core::player_events;
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -104,7 +106,7 @@ fn make_game() -> Game {
 
 /// Helper: construct a player event message with a specific prefix and player context
 fn inject_player_message(game: &mut Game, msg_id: &str, player_id: &str, action_id: &str) {
-    use domain::message::InboxMessage;
+    use olm_core::domain::message::InboxMessage;
     let msg = InboxMessage::new(
         msg_id.to_string(),
         "Test".to_string(),
@@ -259,6 +261,8 @@ fn bench_complaint_after_5_missed_matches() {
         name: "Test League".to_string(),
         season: 1,
         competition_id: None,
+        logo: None,
+        league_kind: LeagueKind::Main,
         fixtures,
         standings: vec![StandingEntry::new("team1".to_string())],
     };
@@ -317,6 +321,8 @@ fn bench_complaint_not_for_gk() {
         name: "Test League".to_string(),
         season: 1,
         competition_id: None,
+        logo: None,
+        league_kind: LeagueKind::Main,
         fixtures,
         standings: vec![],
     }];
@@ -363,6 +369,8 @@ fn bench_complaint_not_with_fewer_than_5_fixtures() {
         name: "Test League".to_string(),
         season: 1,
         competition_id: None,
+        logo: None,
+        league_kind: LeagueKind::Main,
         fixtures,
         standings: vec![],
     }];
@@ -944,10 +952,11 @@ fn repeated_identical_talk_reduces_positive_weight() {
     let fresh = make_player("fresh", "Fresh", "team1", LolRole::Adc);
 
     let mut repeated = make_player("repeated", "Repeated", "team1", LolRole::Adc);
-    repeated.morale_core.recent_treatment = Some(domain::player::RecentTreatmentMemory {
-        action_key: "morale_talk:encourage".to_string(),
-        times_recently_used: 2,
-    });
+    repeated.morale_core.recent_treatment =
+        Some(olm_core::domain::player::RecentTreatmentMemory {
+            action_key: "morale_talk:encourage".to_string(),
+            times_recently_used: 2,
+        });
 
     let fresh_weights =
         player_events::build_response_band_weights(&fresh, "morale_talk_fresh", "encourage");

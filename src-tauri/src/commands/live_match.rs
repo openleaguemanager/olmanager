@@ -434,9 +434,13 @@ mod tests {
         apply_press_conference_effects, apply_team_talk_internal, finish_live_match_internal,
     };
     use chrono::{TimeZone, Utc};
-    use olm_core::domain::league::{Fixture, FixtureStatus, League, MatchType, StandingEntry};
+    use olm_core::domain::league::{
+        Fixture, FixtureStatus, League, LeagueKind, MatchType, StandingEntry,
+    };
     use olm_core::domain::manager::Manager;
-    use olm_core::domain::player::{Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory, LolRole};
+    use olm_core::domain::player::{
+        LolRole, Player, PlayerAttributes, PlayerIssue, PlayerIssueCategory,
+    };
     use olm_core::domain::team::Team;
     use olm_core::clock::GameClock;
     use olm_core::game::Game;
@@ -549,6 +553,8 @@ mod tests {
             name: "Test League".to_string(),
             season: 1,
             competition_id: None,
+            logo: None,
+            league_kind: LeagueKind::Main,
             fixtures: vec![
                 Fixture {
                     id: "fix1".to_string(),
@@ -556,8 +562,6 @@ mod tests {
                     date: "2025-06-15".to_string(),
                     home_team_id: "team1".to_string(),
                     away_team_id: "team2".to_string(),
-                    match_type: MatchType::League,
-
                     match_type: MatchType::League,
                     best_of: 1,
                     status: FixtureStatus::Scheduled,
@@ -721,6 +725,4 @@ mod tests {
         assert!(delta_for(&second, "t1_mid0") <= delta_for(&first, "t1_mid0"));
     }
 }
-
-
 

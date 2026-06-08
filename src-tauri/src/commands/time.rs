@@ -175,7 +175,7 @@ pub fn skip_to_match_day(state: State<'_, StateManager>) -> Result<serde_json::V
 mod tests {
     use super::{advance_time_with_mode_internal, compute_blocking_actions};
     use chrono::{TimeZone, Utc};
-    use olm_core::domain::league::{Fixture, FixtureStatus, MatchType};
+    use olm_core::domain::league::{Fixture, FixtureStatus, LeagueKind, MatchType};
     use olm_core::domain::manager::Manager;
     use olm_core::domain::message::{InboxMessage, MessagePriority};
     use olm_core::domain::player::{LolRole, Player, PlayerAttributes};
@@ -298,6 +298,8 @@ mod tests {
             name: "League".to_string(),
             season: 2025,
             competition_id: None,
+            logo: None,
+            league_kind: LeagueKind::Main,
             fixtures: vec![Fixture {
                 id: "fixture-1".to_string(),
                 matchday: 1,
@@ -614,6 +616,8 @@ mod tests {
             name: "Test League".to_string(),
             season: 1,
             competition_id: None,
+            logo: None,
+            league_kind: LeagueKind::Main,
             fixtures: vec![
                 olm_core::domain::league::Fixture {
                     id: "fix1".to_string(),
@@ -757,5 +761,4 @@ mod tests {
         );
     }
 }
-
 

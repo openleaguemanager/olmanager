@@ -1,7 +1,7 @@
 use chrono::{TimeZone, Utc};
 use olm_core::domain::league::MatchType;
 use olm_core::domain::manager::Manager;
-use olm_core::domain::player::{Player, PlayerAttributes, LolRole};
+use olm_core::domain::player::{LolRole, Player, PlayerAttributes};
 use olm_core::domain::stats::{
     MatchOutcome, PlayerMatchStatsRecord, StatsState, TeamMatchStatsRecord, TeamSide,
 };
@@ -100,7 +100,38 @@ fn player_record(
         matchday: 1,
         date: fixture_id.to_string(),
         match_type: MatchType::League,
+        player_id: player_id.to_string(),
+        team_id: "team-1".to_string(),
+        opponent_team_id: "team-2".to_string(),
+        side,
+        result,
+        role: LolRole::Mid,
+        champion: None,
+        duration_seconds: 1800,
+        kills,
+        deaths,
+        assists,
+        creep_score,
+        gold_earned: 60_000,
+        damage_dealt: 95_000,
+        vision_score: 30,
+        wards_placed: 12,
+        bans_json: String::new(),
+    }
+}
 
+fn team_record(
+    fixture_id: &str,
+    side: TeamSide,
+    result: MatchOutcome,
+    kills: u16,
+    deaths: u16,
+) -> TeamMatchStatsRecord {
+    TeamMatchStatsRecord {
+        fixture_id: fixture_id.to_string(),
+        season: 2025,
+        matchday: 1,
+        date: fixture_id.to_string(),
         match_type: MatchType::League,
         team_id: "team-1".to_string(),
         opponent_team_id: "team-2".to_string(),
@@ -329,5 +360,4 @@ fn get_team_match_history_returns_lol_first_fields() {
     assert_eq!(history[0].kills, 11);
     assert_eq!(history[0].objectives, 7);
 }
-
 
