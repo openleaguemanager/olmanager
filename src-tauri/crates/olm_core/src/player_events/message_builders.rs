@@ -55,6 +55,13 @@ pub(crate) fn low_morale_message(
         return message;
     }
 
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "low_morale", msg_id, date, "en",
+        vec![("player", player_name), ("morale", &morale.to_string())],
+    ) {
+        return msg;
+    }
+
     let mut rng = rand::rng();
     let variations = [
         format!(
@@ -137,6 +144,13 @@ pub(crate) fn bench_complaint_message(
         date,
     ) {
         return message;
+    }
+
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "bench_complaint", msg_id, date, "en",
+        vec![("player", player_name)],
+    ) {
+        return msg;
     }
 
     let mut rng = rand::rng();
@@ -223,6 +237,13 @@ pub(crate) fn happy_player_message(
         return message;
     }
 
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "happy_player", msg_id, date, "en",
+        vec![("player", player_name), ("morale", "100")],
+    ) {
+        return msg;
+    }
+
     let mut rng = rand::rng();
     let variations = [
         format!(
@@ -307,6 +328,13 @@ pub(crate) fn contract_concern_message(
         date,
     ) {
         return message;
+    }
+
+    if let Some(msg) = crate::messages::template_store::template_store().build_message(
+        "contract_concern", msg_id, date, "en",
+        vec![("player", player_name), ("days", &days_remaining.to_string())],
+    ) {
+        return msg;
     }
 
     let mut rng = rand::rng();
