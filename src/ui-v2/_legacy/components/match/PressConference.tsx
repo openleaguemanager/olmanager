@@ -6,6 +6,7 @@ import { MatchSnapshot } from "@/ui-v2/_legacy/components/match/types";
 import { Badge, ThemeToggle } from "@/ui-v2/_legacy/components/ui";
 import { ChevronRight, Mic, MessageSquare } from "lucide-react";
 import { buildPressConferenceQuestions } from "@/ui-v2/_legacy/components/match/pressConferenceContent";
+import { cn } from "@/ui-v2/lib/utils";
 
 interface PressConferenceProps {
   snapshot: MatchSnapshot;
@@ -182,62 +183,59 @@ export default function PressConference({
     userSide === "Home" ? snapshot.home_team.name : snapshot.away_team.name;
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-navy-900 dark:text-white flex flex-col transition-colors duration-300">
-      {/* Header */}
-      <header className="bg-linear-to-r from-gray-200 via-white to-gray-200 dark:from-navy-800 dark:via-navy-900 dark:to-navy-800 border-b border-gray-200 dark:border-navy-700 px-4 py-6 transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <header className="border-b border-border bg-card px-4 py-6">
         <div className="max-w-3xl mx-auto text-center relative">
           <ThemeToggle className="absolute right-0 top-0" />
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gray-200 dark:bg-navy-700 rounded-full mb-3 transition-colors duration-300">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-muted rounded-full mb-3">
             <Mic className="w-4 h-4 text-accent-400" />
-            <span className="font-heading font-bold text-xs uppercase tracking-widest text-gray-700 dark:text-gray-300">
+            <span className="font-heading font-bold text-xs uppercase tracking-widest text-muted-foreground">
               {t("match.pressConference")}
             </span>
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground">
             {t("match.pressSubtitle", { team: userTeamName })}
           </p>
           <div className="flex items-center justify-center gap-1 mt-3">
             {questions.map((_, i) => (
               <div
                 key={i}
-                className={`w-8 h-1 rounded-full transition-colors ${
+                className={cn(
+                  "w-8 h-1 rounded-full transition-colors",
                   i < currentIdx
                     ? "bg-primary-500"
                     : i === currentIdx
                       ? "bg-primary-400"
-                      : "bg-gray-300 dark:bg-navy-700"
-                }`}
+                      : "bg-muted-foreground/30",
+                )}
               />
             ))}
           </div>
         </div>
       </header>
 
-      {/* Main content */}
       <div className="flex-1 flex items-center justify-center p-6">
         {currentQ && (
           <div className="max-w-2xl w-full">
-            {/* Journalist */}
             <div className="flex items-start gap-4 mb-8">
-               <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-navy-700 flex items-center justify-center flex-shrink-0 transition-colors duration-300">
-                 <MessageSquare className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-               </div>
-               <div>
-                 <div className="flex items-center gap-2 mb-1">
-                   <span className="font-heading font-bold text-sm text-gray-800 dark:text-gray-200">
-                     {currentQ.journalist}
-                   </span>
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                <MessageSquare className="w-5 h-5 text-muted-foreground" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-heading font-bold text-sm text-foreground">
+                    {currentQ.journalist}
+                  </span>
                   <Badge variant="neutral" size="sm">
                     {currentQ.outlet}
                   </Badge>
                 </div>
-                 <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed italic">
-                   "{currentQ.question}"
-                 </p>
+                <p className="text-lg text-muted-foreground leading-relaxed italic">
+                  "{currentQ.question}"
+                </p>
               </div>
             </div>
 
-            {/* Responses */}
             <div className="flex flex-col gap-3 ml-16">
               {currentQ.responses.map((r) => {
                 const isSelected = answers[currentQ.id] === r.id;
@@ -246,14 +244,15 @@ export default function PressConference({
                     key={r.id}
                     onClick={() => handleAnswer(r.id)}
                     disabled={hasAnswered}
-                     className={`p-4 rounded-xl text-left transition-all ${
-                       isSelected
-                         ? "bg-primary-500/20 ring-2 ring-primary-500/50"
-                       : hasAnswered
-                          ? "bg-gray-200/70 dark:bg-navy-800/50 opacity-40"
-                          : "bg-white hover:bg-gray-100 border border-gray-200 dark:bg-navy-800 dark:hover:bg-navy-700 dark:border-navy-700"
-                     }`}
-                   >
+                    className={cn(
+                      "p-4 rounded-xl text-left transition-all",
+                      isSelected
+                        ? "bg-primary-500/20 ring-2 ring-primary-500/50"
+                        : hasAnswered
+                          ? "bg-muted/50 opacity-40"
+                          : "bg-card hover:bg-accent border border-border",
+                    )}
+                  >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge
                         variant={isSelected ? "primary" : "neutral"}
@@ -262,17 +261,19 @@ export default function PressConference({
                         {r.tone}
                       </Badge>
                     </div>
-                     <p
-                       className={`text-sm ${isSelected ? "text-gray-800 dark:text-gray-200" : "text-gray-500 dark:text-gray-400"}`}
-                     >
-                       "{r.text}"
+                    <p
+                      className={cn(
+                        "text-sm",
+                        isSelected ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
+                      "{r.text}"
                     </p>
                   </button>
                 );
               })}
             </div>
 
-            {/* Next button */}
             {hasAnswered && (
               <div className="flex justify-end mt-6 ml-16">
                 <button
@@ -292,12 +293,11 @@ export default function PressConference({
         )}
       </div>
 
-      {/* Skip button */}
-      <footer className="bg-white dark:bg-navy-800 border-t border-gray-200 dark:border-navy-700 px-6 py-3 transition-colors duration-300">
+      <footer className="bg-card border-t border-border px-6 py-3">
         <div className="max-w-3xl mx-auto flex justify-end">
           <button
             onClick={onFinish}
-            className="text-xs font-heading uppercase tracking-wider text-gray-600 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            className="text-xs font-heading uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
           >
             {t("match.skipConference")}
           </button>

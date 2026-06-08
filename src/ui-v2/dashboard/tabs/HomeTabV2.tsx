@@ -282,17 +282,9 @@ function NextOpponentCard({
         </div>
 
         {/* Strength bar */}
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-          <span className="font-heading text-sm font-bold text-emerald-400 tabular-nums">
-            {homeOvr.toFixed(1)}
-          </span>
-          <div className="flex h-2 overflow-hidden rounded-full bg-muted">
-            <div className="bg-emerald-500" style={{ width: `${homePct}%` }} />
-            <div className="bg-red-500" style={{ width: `${awayPct}%` }} />
-          </div>
-          <span className="font-heading text-sm font-bold text-red-400 tabular-nums">
-            {awayOvr.toFixed(1)}
-          </span>
+        <div className="flex h-2 overflow-hidden rounded-full bg-muted">
+          <div className="bg-emerald-500" style={{ width: `${homePct}%` }} />
+          <div className="bg-red-500" style={{ width: `${awayPct}%` }} />
         </div>
 
         <Separator />

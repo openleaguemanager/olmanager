@@ -181,7 +181,7 @@ export default function PreMatchSetup({
                 )}
               </div>
               <div>
-                <p className="font-heading font-bold text-lg text-gray-900 dark:text-primary-foreground">
+                <p className="font-heading font-bold text-lg text-foreground">
                   {snapshot.home_team.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -191,7 +191,7 @@ export default function PreMatchSetup({
             </div>
 
             <div className="text-center">
-              <p className="text-xs font-heading uppercase tracking-widest text-primary dark:text-accent-400 mb-1">
+              <p className="text-xs font-heading uppercase tracking-widest text-primary mb-1">
                 {fixtureLabel}
               </p>
               <p className="text-3xl font-heading font-bold text-muted-foreground">
@@ -201,7 +201,7 @@ export default function PreMatchSetup({
 
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="font-heading font-bold text-lg text-gray-900 dark:text-primary-foreground">
+                <p className="font-heading font-bold text-lg text-foreground">
                   {snapshot.away_team.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -233,7 +233,7 @@ export default function PreMatchSetup({
           <div className="flex justify-center gap-3 mt-2">
             <button
               onClick={onCancel}
-              className="flex items-center gap-2 px-6 py-3.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40 rounded-xl font-heading font-bold uppercase tracking-wider text-sm text-red-700 dark:text-red-300 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center gap-2 px-6 py-3.5 bg-red-500/10 hover:bg-red-500/20 rounded-xl font-heading font-bold uppercase tracking-wider text-sm text-red-400 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               {t("common.cancel")}
             </button>
@@ -268,6 +268,7 @@ export default function PreMatchSetup({
     </MatchScreenLayout>
   );
 }
+
 
 
 

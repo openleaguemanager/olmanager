@@ -13,7 +13,7 @@ import {
   type StoredFixtureDraftResult,
 } from "@/lib/schedule/helpers";
 import ScheduleCalendarView from "@/ui-v2/_legacy/components/schedule/ScheduleCalendarView";
-import DraftResultScreen from "@/ui-v2/_legacy/components/match/DraftResultScreen";
+import DraftResultScreenV2 from "@/ui-v2/components/DraftResultScreenV2";
 import PlayoffBracketBoard from "@/ui-v2/_legacy/components/playoffs/PlayoffBracketBoard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
@@ -78,7 +78,7 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
 
   if (fixtureResultView) {
     return (
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={fixtureResultView.snapshot}
         controlledSide={fixtureResultView.controlledSide}
         result={fixtureResultView.result}

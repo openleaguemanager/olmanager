@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-import type { LeagueSelectionData } from "@/store/gameStore";
+import type { GameStateData, LeagueSelectionData } from "@/store/gameStore";
 import { useGameStore } from "@/store/gameStore";
 import { LeaguePickerV2 } from "@/ui-v2/_legacy/components/teamSelection/LeaguePickerV2";
 import { TeamGridV2 } from "@/ui-v2/_legacy/components/teamSelection/TeamGridV2";
 import { loadLeagueSelectionData, selectTeam } from "@/ui-v2/_legacy/components/teamSelection/teamSelection.helpers";
-import { buildActiveLineupIds } from "@/lib/squad/helpers";
+import { resolvePlayerLolRole } from "@/lib/players/lolIdentity";
+import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 
 type Screen = "loading" | "error" | "league" | "teams";
 
@@ -55,12 +57,27 @@ export default function TeamSelectionV2() {
     if (!selectedTeamId || isConfirming) return;
     setIsConfirming(true);
     try {
-      const updatedGame = await selectTeam(selectedTeamId, i18n.language);
+      let updatedGame = await selectTeam(selectedTeamId, i18n.language);
       const myTeam = updatedGame.teams.find((t: any) => t.id === selectedTeamId);
       if (myTeam) {
         const roster = updatedGame.players.filter((p: any) => p.team_id === myTeam.id);
-        const lineup = buildActiveLineupIds(roster, myTeam.active_lineup_ids ?? myTeam.starting_xi_ids ?? []);
-        if (lineup.some(Boolean)) myTeam.active_lineup_ids = lineup;
+        const roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"] as const;
+        const used = new Set<string>();
+        const lineup = roles.map((role) => {
+          const candidates = roster
+            .filter((p: any) => !used.has(p.id) && resolvePlayerLolRole(p) === role)
+            .sort((a: any, b: any) => calculateLolOvr(b) - calculateLolOvr(a));
+          const best = candidates[0];
+          if (best) used.add(best.id);
+          return best?.id ?? "";
+        });
+        if (lineup.every(Boolean)) {
+          try {
+            updatedGame = await invoke<GameStateData>("set_active_lineup", { playerIds: lineup });
+          } catch (e) {
+            console.error("[TeamSelection] set_active_lineup failed:", e);
+          }
+        }
       }
       setGameState(updatedGame);
       const mgr = updatedGame.manager;

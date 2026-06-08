@@ -2,6 +2,7 @@ use chrono::{Datelike, TimeZone};
 use olm_core::domain::player::Player;
 use olm_core::domain::staff::Staff;
 use olm_core::domain::team::{Team, TeamKind};
+use olm_core::domain::stats::LolRole;
 use log::info;
 use serde::Serialize;
 use std::path::PathBuf;
@@ -263,6 +264,38 @@ pub async fn select_team(
         game.teams = assembled_teams;
         game.players = assembled_players;
         game.staff = assembled_staff;
+
+        // Auto-populate active lineup for the user's team
+        let roles = [LolRole::Top, LolRole::Jungle, LolRole::Mid, LolRole::Adc, LolRole::Support];
+        if let Some(user_team) = game.teams.iter_mut().find(|t| t.id == team_id) {
+            let mut used = std::collections::HashSet::new();
+            let lineup: Vec<String> = roles.iter().map(|role| {
+                let candidates: Vec<&str> = game.players.iter()
+                    .filter(|p| {
+                        p.team_id.as_deref() == Some(&team_id)
+                        && !used.contains(&p.id)
+                        && (p.position == *role || p.natural_position == *role)
+                    })
+                    .map(|p| p.id.as_str())
+                    .collect();
+                candidates.first().map(|id| {
+                    used.insert(id.to_string());
+                    id.to_string()
+                }).unwrap_or_default()
+            }).collect();
+            eprintln!("[select_team] auto_lineup: {:?} (roles: {:?})", lineup, roles);
+            eprintln!("[select_team] roster_roles: {:?}", game.players.iter()
+                .filter(|p| p.team_id.as_deref() == Some(&team_id))
+                .map(|p| format!("{} pos={:?} nat={:?}", p.id, p.position, p.natural_position))
+                .collect::<Vec<_>>());
+            if lineup.iter().all(|id| !id.is_empty()) {
+                user_team.active_lineup_ids = lineup;
+                eprintln!("[select_team] active_lineup_ids set to {:?}", user_team.active_lineup_ids);
+            } else {
+                eprintln!("[select_team] WARNING: auto_lineup incomplete, setting empty");
+                user_team.active_lineup_ids = vec![];
+            }
+        }
         eprintln!("[select_team] AFTER assembly: staff.len={}", game.staff.len());
     }
 

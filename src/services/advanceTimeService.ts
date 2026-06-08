@@ -39,6 +39,9 @@ export async function checkBlockingActions(
       count: blockers.length,
       blockers,
     });
+    if (blockers.length > 0) {
+      console.debug(`[useAdvanceTime] RAW blocker response:`, blockers);
+    }
     return blockers;
   } catch (err) {
     console.warn(`[useAdvanceTime] ${logContext}:blockerCheckFailed`, err);

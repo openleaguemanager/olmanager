@@ -112,6 +112,18 @@ export function SquadTabV2({
     [activeLineupIds, playersById],
   );
 
+  // Auto-save lineup if computed differs from stored and all slots filled
+  useEffect(() => {
+    const storedIds = myTeam.active_lineup_ids ?? myTeam.starting_xi_ids ?? [];
+    const storedStr = JSON.stringify(storedIds);
+    const computedStr = JSON.stringify(activeLineupIds);
+    if (activeLineupIds.every(Boolean) && storedStr !== computedStr) {
+      invoke("set_active_lineup", { playerIds: activeLineupIds }).catch((e) =>
+        console.warn("[SquadTab] auto-save lineup failed:", e),
+      );
+    }
+  }, []); // only on mount
+
   const sortedRoster = useMemo(() => {
     const sorted = [...roster].sort((a, b) => {
       switch (sortKey) {

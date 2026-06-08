@@ -18,7 +18,6 @@ import {
   UsersRound,
   Building2,
   Globe,
-  Trophy,
   Store,
   Settings,
   LogOut,
@@ -87,7 +86,6 @@ export function DashboardSidebarV2({
 
   const world: Item[] = [
     { tab: "Competitions", label: t("dashboard.competitions", { defaultValue: "Competiciones" }), icon: Globe },
-    { tab: "Tournaments", label: t("dashboard.tournaments"), icon: Trophy },
     { tab: "Players", label: t("dashboard.players"), icon: UsersRound, badge: playerCount },
     { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
     { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staffs" }), icon: UserCog, badge: staffCount },

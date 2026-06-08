@@ -57,6 +57,8 @@ fn build_effective_lineup_ids(
     for id in saved_lineup_ids {
         if by_id.contains_key(id.as_str()) && used.insert(id.clone()) {
             valid_saved_ids.push(id.clone());
+        } else {
+            eprintln!("[build_effective_lineup_ids] saved_id {} NOT in by_id (keys: {:?}) or already used", id, by_id.keys().collect::<Vec<_>>());
         }
     }
 
@@ -106,7 +108,7 @@ fn build_effective_lineup_ids(
         return xi_ids;
     }
 
-    let mut xi_ids = Vec::new();
+    let mut xi_ids = valid_saved_ids;
 
     for slot in slots.iter().take(11) {
         let best_player = roster
@@ -399,6 +401,12 @@ pub fn compute_blocking_actions(game: &Game) -> Vec<serde_json::Value> {
     let saved_xi_ids = &team.active_lineup_ids;
     let current_date = game.clock.current_date.date_naive();
     let effective_lineup_ids = build_effective_lineup_ids(saved_xi_ids, &roster);
+
+    eprintln!("[blockers] team={} active_lineup_ids={:?} effective_ids={:?} roster_count={}", 
+        team.id, saved_xi_ids, effective_lineup_ids, roster.len());
+    for p in &roster {
+        eprintln!("[blockers] roster player: id={} pos={:?} nat={:?}", p.id, p.position, p.natural_position);
+    }
 
     if let Some(blocker) = incomplete_lineup_blocker(&effective_lineup_ids, &roster) {
         blockers.push(blocker);

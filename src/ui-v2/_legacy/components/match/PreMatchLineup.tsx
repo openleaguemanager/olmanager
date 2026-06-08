@@ -68,15 +68,15 @@ export function getPositionOvr(p: EnginePlayerData): number {
 }
 
 export function condColor(c: number): string {
-  if (c >= 75) return "text-primary-400";
+  if (c >= 75) return "text-primary";
   if (c >= 50) return "text-amber-400";
   return "text-red-400";
 }
 
 export function statColor(v: number): string {
-  if (v >= 75) return "text-primary-400 font-bold";
+  if (v >= 75) return "text-primary font-bold";
   if (v >= 60) return "text-gray-200";
-  return "text-gray-500";
+  return "text-muted-foreground";
 }
 
 export function getStatVal(p: EnginePlayerData, key: string): number {
@@ -128,17 +128,17 @@ function TeamLineupColumn({
   const startersLabel = `${t("match.lineup")} 5`;
 
   return (
-    <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-4 transition-colors duration-300">
+    <div className="bg-card rounded-xl border border-border p-4 transition-colors duration-300">
       {/* Header: Alineación 5 + Auto-select (user only) */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+        <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-muted-foreground">
           {startersLabel}
         </h3>
         <div className="flex items-center gap-2">
           {selectedStarterId && isUserSide && (
             <button
               onClick={() => onSelectStarter(null)}
-              className="text-[10px] text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 font-heading uppercase tracking-wider"
+              className="text-[10px] text-muted-foreground hover:text-foreground font-heading uppercase tracking-wider"
             >
               {t("match.cancel")}
             </button>
@@ -151,7 +151,7 @@ function TeamLineupColumn({
       </div>
 
       {selectedStarterId && isUserSide && (
-        <p className="text-[10px] text-accent-400 font-heading uppercase tracking-wider mb-2">
+        <p className="text-[10px] text-primary font-heading uppercase tracking-wider mb-2">
           {t("match.swapPrompt")}
         </p>
       )}
@@ -163,7 +163,7 @@ function TeamLineupColumn({
         return (
           <div key={role} className="mb-1">
             {players.length === 0 ? (
-              <div className="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-2 py-1.5 px-2 text-[11px] text-muted-foreground">
                 <img src={LOL_ROLE_ICON_URLS[role]} alt={role} className="w-5 h-5 object-contain flex-shrink-0" title={role} />
                 {t("match.noBenchAvailable2")}
               </div>
@@ -184,7 +184,7 @@ function TeamLineupColumn({
                         ? "cursor-default"
                         : isSelected
                           ? "bg-primary-500/20 ring-1 ring-primary-500/50"
-                          : "hover:bg-gray-100 dark:hover:bg-navy-700/50"
+                          : "hover:bg-muted"
                     }`}
                   >
                     {photoUrl ? (
@@ -205,15 +205,15 @@ function TeamLineupColumn({
                         {p.name.substring(0, 1).toUpperCase()}
                       </div>
                     )}
-                    <span className="text-sm text-gray-800 dark:text-gray-200 font-medium flex-1 truncate">
+                    <span className="text-sm text-foreground font-medium flex-1 truncate">
                       {p.name}
                     </span>
                     <img src={LOL_ROLE_ICON_URLS[role]} alt={role} className="w-5 h-5 object-contain" title={role} />
-                    {isSelected && <ArrowUpDown className="w-3.5 h-3.5 text-primary-400 flex-shrink-0" />}
+                    {isSelected && <ArrowUpDown className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
                     <div className="flex items-center gap-0">
                       <span
                         className={`text-[10px] font-heading font-bold tabular-nums w-7 text-center ${
-                          ovr >= 70 ? "text-primary-400" : ovr >= 50 ? "text-gray-300" : "text-red-400"
+                          ovr >= 70 ? "text-primary" : ovr >= 50 ? "text-gray-300" : "text-red-400"
                         }`}
                       >
                         {ovr}
@@ -241,9 +241,9 @@ function TeamLineupColumn({
       })}
 
       {/* Bench / Substitutes */}
-      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-navy-700">
+      <div className="mt-6 pt-4 border-t border-border">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          <h3 className="text-xs font-heading font-bold uppercase tracking-widest text-muted-foreground">
             {t("match.substitutes")}
           </h3>
           <Badge variant="neutral" size="sm">
@@ -251,19 +251,19 @@ function TeamLineupColumn({
           </Badge>
         </div>
         {bench.length === 0 ? (
-          <p className="text-xs text-gray-600 dark:text-gray-500">{t("match.noBenchAvailable2")}</p>
+          <p className="text-xs text-muted-foreground/70">{t("match.noBenchAvailable2")}</p>
             ) : (
             <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 px-2 pb-1">
               <span className="w-7" />
               <span className="flex-1" />
-              <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 dark:text-gray-500 w-8 text-center">
+              <span className="text-[8px] font-heading uppercase tracking-widest text-muted-foreground/70 w-8 text-center">
                 POS
               </span>
-              <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 w-[84px] text-center">
+              <span className="text-[8px] font-heading uppercase tracking-widest text-muted-foreground w-[84px] text-center">
                 {t("match.keyStats")}
               </span>
-              <span className="text-[8px] font-heading uppercase tracking-widest text-gray-600 w-8 text-right">
+              <span className="text-[8px] font-heading uppercase tracking-widest text-muted-foreground w-8 text-right">
                 FIT
               </span>
             </div>
@@ -283,7 +283,7 @@ function TeamLineupColumn({
                     canSwap
                       ? "hover:bg-primary-500/20 hover:ring-1 hover:ring-primary-500/50 cursor-pointer"
                       : isUserSide
-                        ? "hover:bg-gray-100 dark:hover:bg-navy-700/50"
+                        ? "hover:bg-muted"
                         : "cursor-default"
                   }`}
                 >
@@ -295,11 +295,11 @@ function TeamLineupColumn({
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-[10px] font-heading font-bold text-gray-500 dark:text-gray-400 flex-shrink-0 transition-colors duration-300">
+                    <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-[10px] font-heading font-bold text-muted-foreground flex-shrink-0 transition-colors duration-300">
                       {bp.name.substring(0, 1).toUpperCase()}
                     </div>
                   )}
-                  <span className="text-sm text-gray-700 dark:text-gray-300 font-medium flex-1 truncate">
+                  <span className="text-sm text-foreground font-medium flex-1 truncate">
                     {bp.name}
                   </span>
                   <img
@@ -353,9 +353,9 @@ export default function PreMatchLineup({
   return (
     <div className="flex flex-col gap-4">
       {/* Formation fit bar */}
-      <div className="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 shadow-sm p-3 flex items-center justify-between transition-colors duration-300">
+      <div className="bg-card rounded-xl border border-border p-3 flex items-center justify-between transition-colors duration-300">
         <div className="flex items-center gap-4">
-          <span className="text-2xs font-heading uppercase tracking-widest text-gray-700 dark:text-gray-500">
+          <span className="text-2xs font-heading uppercase tracking-widest text-gray-700 dark:text-muted-foreground">
             {t("match.formationFit")}
           </span>
           {LOL_ROLE_ORDER.map((role) => {
@@ -365,11 +365,11 @@ export default function PreMatchLineup({
             const ok = actual === 1;
             return (
               <div key={role} className="flex items-center gap-1">
-                <span className="text-2xs font-heading uppercase tracking-widest text-gray-600 dark:text-gray-400">
+                <span className="text-2xs font-heading uppercase tracking-widest text-muted-foreground dark:text-gray-400">
                   {role === "JUNGLE" ? "JG" : role}
                 </span>
                 <span
-                  className={`text-sm font-heading font-bold tabular-nums ${ok ? "text-primary-700 dark:text-primary-400" : "text-amber-600 dark:text-amber-400"}`}
+                  className={`text-sm font-heading font-bold tabular-nums ${ok ? "text-primary-700 dark:text-primary" : "text-amber-600 dark:text-amber-400"}`}
                 >
                   {actual}/1
                 </span>
@@ -383,8 +383,8 @@ export default function PreMatchLineup({
           disabled={isAutoSelecting}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${
             isAutoSelecting
-              ? "bg-gray-200 dark:bg-navy-700 text-gray-600 dark:text-gray-400 cursor-wait"
-              : "bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-500/20 dark:text-accent-300 dark:hover:bg-accent-500/30"
+              ? "bg-gray-200 dark:bg-navy-700 text-muted-foreground dark:text-gray-400 cursor-wait"
+              : "bg-primary/10 text-primary hover:bg-primary/20"
           }`}
         >
           <Wand2 className="w-3.5 h-3.5" />
@@ -416,4 +416,5 @@ export default function PreMatchLineup({
     </div>
   );
 }
+
 
