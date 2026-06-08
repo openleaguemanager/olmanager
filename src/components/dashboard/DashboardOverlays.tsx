@@ -13,6 +13,7 @@ interface DashboardOverlaysProps {
   currentModeMeta: DashboardMatchModeMeta;
   handleConfirmMatch: () => void;
   handleExitToMenu: () => void | Promise<void>;
+  handleExitWithoutSave?: () => void;
   handleNavigate: (tab: string) => void;
   handleCloseQuit: (save: boolean) => void | Promise<void>;
   isExitingToMenu: boolean;
@@ -33,6 +34,7 @@ export default function DashboardOverlays({
   currentModeMeta,
   handleConfirmMatch,
   handleExitToMenu,
+  handleExitWithoutSave,
   handleNavigate,
   handleCloseQuit,
   isExitingToMenu,
@@ -60,7 +62,7 @@ export default function DashboardOverlays({
           }}
           onExitWithoutSave={() => {
             setShowExitConfirm(false);
-            void handleCloseQuit(false);
+            handleExitWithoutSave?.();
           }}
         />
       ) : null}

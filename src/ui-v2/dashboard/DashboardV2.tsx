@@ -249,6 +249,11 @@ export default function DashboardV2() {
     }
   };
 
+  const handleExitWithoutSave = () => {
+    clearGame();
+    navigate("/");
+  };
+
   const handleCloseQuit = async (save: boolean) => {
     setShowCloseConfirm(false);
     if (save) {
@@ -396,6 +401,7 @@ export default function DashboardV2() {
         currentModeMeta={currentModeMeta}
         handleConfirmMatch={handleConfirmMatch}
         handleExitToMenu={handleExitToMenu}
+        handleExitWithoutSave={handleExitWithoutSave}
         handleNavigate={handleNavigate}
         handleCloseQuit={handleCloseQuit}
         isExitingToMenu={isExitingToMenu}
