@@ -391,7 +391,7 @@ describe("TeamProfile", () => {
     );
 
     const logo = await screen.findByAltText("Movistar KOI Fénix logo");
-    expect(logo.getAttribute("src")).toContain("Movistar_KOIlogo_square.png");
+    expect(logo.getAttribute("src")).toBe("/teams-icons/movistarkoifenix.webp");
   });
 
   it("shows ERL league in club details only for academy teams", async () => {
@@ -427,4 +427,3 @@ describe("TeamProfile", () => {
     expect(screen.queryByText("London")).not.toBeInTheDocument();
   });
 });
-

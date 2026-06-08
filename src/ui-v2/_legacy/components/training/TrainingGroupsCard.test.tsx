@@ -7,7 +7,7 @@ import TrainingGroupsCard from "@/ui-v2/_legacy/components/training/TrainingGrou
 const setTrainingGroupsMock = vi.fn();
 const setPlayerTrainingFocusMock = vi.fn();
 
-vi.mock("../../services/trainingService", () => ({
+vi.mock("@/services/trainingService", () => ({
   setTrainingGroups: (...args: unknown[]) => setTrainingGroupsMock(...args),
   setPlayerTrainingFocus: (...args: unknown[]) =>
     setPlayerTrainingFocusMock(...args),

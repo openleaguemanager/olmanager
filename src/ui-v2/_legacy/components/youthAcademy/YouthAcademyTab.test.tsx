@@ -8,7 +8,7 @@ const promoteAcademyPlayer = vi.fn();
 const getAcademyAcquisitionOptions = vi.fn();
 const acquireAcademyTeam = vi.fn();
 
-vi.mock("../../services/academyService", () => ({
+vi.mock("@/services/academyService", () => ({
   getAcademyAcquisitionOptions: (...args: unknown[]) => getAcademyAcquisitionOptions(...args),
   acquireAcademyTeam: (...args: unknown[]) => acquireAcademyTeam(...args),
   promoteAcademyPlayer: (...args: unknown[]) => promoteAcademyPlayer(...args),

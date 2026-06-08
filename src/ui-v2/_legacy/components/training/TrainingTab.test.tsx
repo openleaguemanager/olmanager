@@ -225,9 +225,9 @@ describe("TrainingTab", () => {
     render(<TrainingTab gameState={gameState} />);
 
     expect(screen.getAllByAltText("training.roleIconAlt").map((icon) => icon.getAttribute("src"))).toEqual([
-      "/role-icons/adc.png",
-      "/role-icons/support.png",
-      "/role-icons/top.png",
+      "/role-icons/top.webp",
+      "/role-icons/adc.webp",
+      "/role-icons/support.webp",
     ]);
   });
 
@@ -247,6 +247,6 @@ describe("TrainingTab", () => {
 
     render(<TrainingTab gameState={gameState} />);
 
-    expect(screen.getByAltText("training.roleIconAlt")).toHaveAttribute("src", "/role-icons/top.png");
+    expect(screen.getByAltText("training.roleIconAlt")).toHaveAttribute("src", "/role-icons/top.webp");
   });
 });

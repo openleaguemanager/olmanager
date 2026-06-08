@@ -316,6 +316,7 @@ describe("TransfersTab", function (): void {
         playerId: "player-1",
         offerId: "offer-1",
         requestedFee: 1200000,
+        includedPlayerIds: [],
       });
     });
 
