@@ -85,8 +85,8 @@ export default function PatchNotesPanel({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      <div ref={scrollRef} tabIndex={-1}
-        className="max-h-[60vh] overflow-y-auto overscroll-contain border-t border-white/10 scrollbar-v2"
+      <div ref={scrollRef} tabIndex={0}
+        className="max-h-[60vh] overflow-y-auto overscroll-contain border-t border-white/10 scrollbar-v2 outline-none"
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             const el = scrollRef.current;
