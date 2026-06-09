@@ -489,7 +489,7 @@ export function useAdvanceTime(
           }
           if (retry.game) setGameState(retry.game as GameStateData);
           if (retry.action === "blocked" && retry.blockers && retry.blockers.length > 0) {
-            setBlockerModal({ blockers: retry.blockers });
+            setBlockerModal({ blockers: retry.blockers, pendingAction: doSkipToMatchDay });
           }
           return;
         } catch (error) {
@@ -497,7 +497,7 @@ export function useAdvanceTime(
         }
       }
       if (result.action === "blocked" && result.blockers && result.blockers.length > 0) {
-        setBlockerModal({ blockers: result.blockers });
+        setBlockerModal({ blockers: result.blockers, pendingAction: doSkipToMatchDay });
       }
     } catch (err) {
       console.error("Failed to skip to match day:", err);

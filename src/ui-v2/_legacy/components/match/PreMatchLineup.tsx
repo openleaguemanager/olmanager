@@ -75,7 +75,7 @@ export function condColor(c: number): string {
 
 export function statColor(v: number): string {
   if (v >= 75) return "text-primary font-bold";
-  if (v >= 60) return "text-gray-200";
+  if (v >= 60) return "text-foreground";
   return "text-muted-foreground";
 }
 
@@ -183,7 +183,7 @@ function TeamLineupColumn({
                       !isUserSide
                         ? "cursor-default"
                         : isSelected
-                          ? "bg-primary-500/20 ring-1 ring-primary-500/50"
+                          ? "bg-primary/10 ring-1 ring-primary/50"
                           : "hover:bg-muted"
                     }`}
                   >
@@ -213,7 +213,7 @@ function TeamLineupColumn({
                     <div className="flex items-center gap-0">
                       <span
                         className={`text-[10px] font-heading font-bold tabular-nums w-7 text-center ${
-                          ovr >= 70 ? "text-primary" : ovr >= 50 ? "text-gray-300" : "text-red-400"
+                          ovr >= 70 ? "text-primary" : ovr >= 50 ? "text-muted-foreground" : "text-red-400"
                         }`}
                       >
                         {ovr}
@@ -281,7 +281,7 @@ function TeamLineupColumn({
                   }}
                   className={`flex items-center gap-2 py-1.5 px-2 rounded w-full text-left transition-all ${
                     canSwap
-                      ? "hover:bg-primary-500/20 hover:ring-1 hover:ring-primary-500/50 cursor-pointer"
+                      ? "hover:bg-primary/10 hover:ring-1 hover:ring-primary/50 cursor-pointer"
                       : isUserSide
                         ? "hover:bg-muted"
                         : "cursor-default"
@@ -295,7 +295,7 @@ function TeamLineupColumn({
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-600 flex items-center justify-center text-[10px] font-heading font-bold text-muted-foreground flex-shrink-0 transition-colors duration-300">
+                    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-[10px] font-heading font-bold text-muted-foreground flex-shrink-0">
                       {bp.name.substring(0, 1).toUpperCase()}
                     </div>
                   )}
@@ -355,7 +355,7 @@ export default function PreMatchLineup({
       {/* Formation fit bar */}
       <div className="bg-card rounded-xl border border-border p-3 flex items-center justify-between transition-colors duration-300">
         <div className="flex items-center gap-4">
-          <span className="text-2xs font-heading uppercase tracking-widest text-gray-700 dark:text-muted-foreground">
+          <span           className="text-2xs font-heading uppercase tracking-widest text-muted-foreground">
             {t("match.formationFit")}
           </span>
           {LOL_ROLE_ORDER.map((role) => {
@@ -365,15 +365,15 @@ export default function PreMatchLineup({
             const ok = actual === 1;
             return (
               <div key={role} className="flex items-center gap-1">
-                <span className="text-2xs font-heading uppercase tracking-widest text-muted-foreground dark:text-gray-400">
+                <span className="text-2xs font-heading uppercase tracking-widest text-muted-foreground">
                   {role === "JUNGLE" ? "JG" : role}
                 </span>
                 <span
-                  className={`text-sm font-heading font-bold tabular-nums ${ok ? "text-primary-700 dark:text-primary" : "text-amber-600 dark:text-amber-400"}`}
+                  className={`text-sm font-heading font-bold tabular-nums ${ok ? "text-primary" : "text-amber-400"}`}
                 >
                   {actual}/1
                 </span>
-                {!ok && <AlertTriangle className="w-3 h-3 text-amber-600 dark:text-amber-400" />}
+                {!ok && <AlertTriangle className="w-3 h-3 text-amber-400" />}
               </div>
             );
           })}
@@ -383,7 +383,7 @@ export default function PreMatchLineup({
           disabled={isAutoSelecting}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all ${
             isAutoSelecting
-              ? "bg-gray-200 dark:bg-navy-700 text-muted-foreground dark:text-gray-400 cursor-wait"
+              ? "bg-muted text-muted-foreground cursor-wait"
               : "bg-primary/10 text-primary hover:bg-primary/20"
           }`}
         >
