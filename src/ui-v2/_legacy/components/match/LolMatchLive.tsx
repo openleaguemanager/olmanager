@@ -960,7 +960,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
   void tick;
 
   return (
-    <div className="relative min-h-0 flex-1 overflow-auto bg-[#050505] text-white">
+    <div className="relative min-h-0 flex-1 overflow-auto scrollbar-v2 bg-[#050505] text-white">
       <div className="flex h-full w-full flex-col items-center justify-start px-[5%] pt-[2.5%]">
         <div className="map-container flex w-full flex-[0_0_auto] flex-col items-center justify-center">
           <div className="relative mb-2 w-full px-2 pb-6 sm:px-4 sm:pb-9">
