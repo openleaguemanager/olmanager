@@ -183,7 +183,7 @@ export default function PressConference({
     userSide === "Home" ? snapshot.home_team.name : snapshot.away_team.name;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-0 flex-1 bg-background text-foreground flex flex-col overflow-y-auto">
       <header className="border-b border-border bg-card px-4 py-6">
         <div className="max-w-3xl mx-auto text-center relative">
           <ThemeToggle className="absolute right-0 top-0" />

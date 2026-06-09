@@ -22,14 +22,14 @@ export default function MatchTacticsStage({
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-navy-900 transition-colors duration-300 p-4 md:p-6">
+    <div className="min-h-0 flex-1 overflow-y-auto bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-4 rounded-xl border border-primary-200 dark:border-primary-900/50 bg-primary-50/70 dark:bg-primary-900/20 p-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-xs font-heading uppercase tracking-widest text-primary-700 dark:text-primary-300">
+            <p className="text-xs font-heading uppercase tracking-widest text-primary">
               {t("match.tactics")}
             </p>
-            <p className="text-sm text-primary-900/90 dark:text-primary-100/90">
+            <p className="text-sm text-primary/80">
               {t("match.tacticsBeforeLive")}
             </p>
           </div>

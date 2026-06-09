@@ -249,7 +249,7 @@ export default function LolResultScreen({
   const peakAbsDelta = Math.max(1, ...goldDiffSeries.map((value) => Math.abs(value)));
 
   return (
-    <div className="min-h-screen bg-[#0b1631] text-white p-4 md:p-6" style={{ backgroundImage: "radial-gradient(circle at 20% 15%, rgba(59,130,246,0.12), transparent 35%), radial-gradient(circle at 85% 15%, rgba(236,72,153,0.12), transparent 35%)" }}>
+    <div className="min-h-0 flex-1 overflow-y-auto bg-[#0b1631] text-white p-4 md:p-6" style={{ backgroundImage: "radial-gradient(circle at 20% 15%, rgba(59,130,246,0.12), transparent 35%), radial-gradient(circle at 85% 15%, rgba(236,72,153,0.12), transparent 35%)" }}>
       <div className="w-[92%] max-w-[2000px] mx-auto space-y-4">
         <header className="rounded-2xl border border-cyan-400/20 bg-[#12274c]/95 px-6 py-5 text-center shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
           <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{t("match.matchOver")}</p>

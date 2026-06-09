@@ -326,7 +326,7 @@ export default function DraftResultScreen({
   };
 
   return (
-    <div className="min-h-screen overflow-y-auto overflow-x-hidden bg-background text-foreground p-4 md:p-6">
+    <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-background text-foreground p-4 md:p-6">
       <div className="max-w-[1600px] mx-auto space-y-4">
         <header className="rounded-xl border border-primary/20 bg-[#0a1433] p-5 text-center shadow-[0_0_24px_rgba(0,242,255,0.1)]">
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">{t("match.matchOver")}</p>

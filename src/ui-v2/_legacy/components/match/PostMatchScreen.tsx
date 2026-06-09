@@ -296,7 +296,7 @@ export default function PostMatchScreen({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-navy-900 dark:text-white flex flex-col transition-colors duration-300">
+    <div className="min-h-0 flex-1 overflow-y-auto bg-background text-foreground flex flex-col">
       {/* Result Header */}
       <header
         className={`border-b border-gray-200 dark:border-navy-700 px-4 py-8 transition-colors duration-300 ${
