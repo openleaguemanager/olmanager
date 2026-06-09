@@ -249,38 +249,38 @@ export default function LolResultScreen({
   const peakAbsDelta = Math.max(1, ...goldDiffSeries.map((value) => Math.abs(value)));
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-[#0b1631] text-white p-4 md:p-6" style={{ backgroundImage: "radial-gradient(circle at 20% 15%, rgba(59,130,246,0.12), transparent 35%), radial-gradient(circle at 85% 15%, rgba(236,72,153,0.12), transparent 35%)" }}>
+    <div className="min-h-0 flex-1 overflow-y-auto scrollbar-v2 bg-background text-foreground p-4 md:p-6">
       <div className="w-[92%] max-w-[2000px] mx-auto space-y-4">
-        <header className="rounded-2xl border border-cyan-400/20 bg-[#12274c]/95 px-6 py-5 text-center shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{t("match.matchOver")}</p>
+        <header className="rounded-2xl border border-border bg-card px-6 py-5 text-center shadow-lg">
+          <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("match.matchOver")}</p>
           <h1 className={`mt-1 text-5xl font-heading uppercase ${userWon ? "text-emerald-400" : "text-rose-400"}`}>
             {userWon ? t("match.victory") : t("match.defeat")}
           </h1>
           <div className="mt-4 flex items-center justify-center gap-4 text-3xl font-black">
-            <span className="text-cyan-200">{snapshot.home_team.name}</span>
-            <span className="text-cyan-300">{displayHomeKills}</span>
-            <span className="text-white/70">-</span>
-            <span className="text-orange-300">{displayAwayKills}</span>
-            <span className="text-orange-200">{snapshot.away_team.name}</span>
+            <span className="text-foreground">{snapshot.home_team.name}</span>
+            <span className="text-primary">{displayHomeKills}</span>
+            <span className="text-muted-foreground/70">-</span>
+            <span className="text-orange-400">{displayAwayKills}</span>
+            <span className="text-foreground">{snapshot.away_team.name}</span>
           </div>
-          <div className="mt-3 inline-flex items-center gap-3 rounded-full border border-yellow-400/30 bg-yellow-500/10 px-3 py-1 text-sm text-yellow-300">
+          <div className="mt-3 inline-flex items-center gap-3 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
             <span className="font-heading uppercase tracking-wider">{t("match.draftResult.mvp")}</span>
             <span>{mvp?.name ?? "-"}</span>
-            <span className="text-white/60">· {durationMin}:{String(Math.max(0, Math.floor((runtime?.timeSec ?? 0) % 60))).padStart(2, "0")}</span>
+            <span className="text-muted-foreground">· {durationMin}:{String(Math.max(0, Math.floor((runtime?.timeSec ?? 0) % 60))).padStart(2, "0")}</span>
           </div>
         </header>
 
         {userPrepInsight ? (
-          <section className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 shadow-[0_10px_30px_rgba(0,0,0,0.24)]">
+          <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 shadow-md">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="font-heading text-xs uppercase tracking-[0.22em] text-emerald-200">
+              <p className="font-heading text-xs uppercase tracking-[0.22em] text-emerald-400">
                 {t(userPrepInsight.title.key, { defaultValue: userPrepInsight.title.defaultValue })}
               </p>
-              <span className="rounded-full border border-emerald-300/30 bg-black/20 px-3 py-1 text-sm font-bold text-emerald-100">
+              <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-3 py-1 text-sm font-bold text-emerald-400">
                 +{userPrepInsight.totalSignal}
               </span>
             </div>
-            <p className="mt-2 text-sm text-emerald-50/90">
+            <p className="mt-2 text-sm text-emerald-300/90">
               {t(userPrepInsight.summary.key, {
                 ...userPrepInsight.summary.values,
                 focus: userPrepFocus ?? userPrepInsight.focusLabel.defaultValue,
@@ -289,7 +289,7 @@ export default function LolResultScreen({
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {userPrepInsight.details.map((detail) => (
-                <span key={detail.key} className="rounded-full border border-white/10 bg-black/20 px-2 py-1 text-xs text-emerald-100">
+                <span key={detail.key} className="rounded-full border border-border bg-muted px-2 py-1 text-xs text-muted-foreground">
                   {t(detail.key, {
                     ...detail.values,
                     focus: userPrepFocus ?? userPrepInsight.focusLabel.defaultValue,
@@ -302,29 +302,29 @@ export default function LolResultScreen({
         ) : null}
 
         <section className="grid grid-cols-1 xl:grid-cols-[1.25fr_0.9fr] gap-4">
-          <div className="rounded-2xl border border-cyan-400/15 bg-[#12274c]/90 p-4">
-            <p className="text-xs uppercase tracking-[0.22em] text-slate-400 mb-3">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-3">
               {t("match.lolResult.performanceHeader")}
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <div className="rounded-xl border border-cyan-400/20 bg-cyan-500/5 p-3">
-                <p className="text-cyan-300 font-heading mb-2">{snapshot.home_team.name}</p>
+              <div className="rounded-xl border border-border bg-muted/50 p-3">
+                <p className="text-primary font-heading mb-2">{snapshot.home_team.name}</p>
                 {(homeChampions.length ? homeChampions : []).map((champion) => {
                   const isMvp = mvp?.id === champion.id;
                   return (
-                    <div key={champion.id} className={`grid grid-cols-[1fr_auto] gap-2 py-1.5 border-b border-white/5 text-sm ${isMvp ? "text-yellow-300" : "text-gray-100"}`}>
+                    <div key={champion.id} className={`grid grid-cols-[1fr_auto] gap-2 py-1.5 border-b border-border text-sm ${isMvp ? "text-amber-400" : "text-foreground"}`}>
                       <span className="truncate">{isMvp ? "★ " : ""}{champion.name}</span>
                       <span>{champion.kills}/{champion.deaths}/{champion.assists} · {champion.cs} · {champion.gold}</span>
                     </div>
                   );
                 })}
               </div>
-              <div className="rounded-xl border border-orange-400/20 bg-orange-500/5 p-3">
-                <p className="text-orange-300 font-heading mb-2">{snapshot.away_team.name}</p>
+              <div className="rounded-xl border border-border bg-muted/50 p-3">
+                <p className="text-orange-400 font-heading mb-2">{snapshot.away_team.name}</p>
                 {(awayChampions.length ? awayChampions : []).map((champion) => {
                   const isMvp = mvp?.id === champion.id;
                   return (
-                    <div key={champion.id} className={`grid grid-cols-[1fr_auto] gap-2 py-1.5 border-b border-white/5 text-sm ${isMvp ? "text-yellow-300" : "text-gray-100"}`}>
+                    <div key={champion.id} className={`grid grid-cols-[1fr_auto] gap-2 py-1.5 border-b border-border text-sm ${isMvp ? "text-amber-400" : "text-foreground"}`}>
                       <span className="truncate">{isMvp ? "★ " : ""}{champion.name}</span>
                       <span>{champion.kills}/{champion.deaths}/{champion.assists} · {champion.cs} · {champion.gold}</span>
                     </div>
@@ -334,31 +334,31 @@ export default function LolResultScreen({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#12274c]/90 p-4">
-            <p className="text-xs uppercase tracking-[0.22em] text-slate-400 mb-3">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-3">
               {t("match.lolResult.teamStats")}
             </p>
             <div className="space-y-2 text-sm">
               {statRows.map((row) => (
-                <div key={row.label} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2">
-                  <span className="text-cyan-300 font-semibold">{row.home}</span>
-                  <span className="text-center uppercase tracking-wider text-slate-300">{row.label}</span>
-                  <span className="text-orange-300 font-semibold text-right">{row.away}</span>
+                <div key={row.label} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg bg-muted/30 px-3 py-2">
+                  <span className="text-primary font-semibold">{row.home}</span>
+                  <span className="text-center uppercase tracking-wider text-muted-foreground">{row.label}</span>
+                  <span className="text-orange-400 font-semibold text-right">{row.away}</span>
                 </div>
               ))}
             </div>
-            {dragonSummary && <p className="mt-3 text-xs text-slate-300">{dragonSummary}</p>}
-            <p className="mt-2 text-xs text-slate-400">{t("match.neutralObjectives")}: <span className="text-cyan-300">{homeObjectives}</span> - <span className="text-orange-300">{awayObjectives}</span></p>
+            {dragonSummary && <p className="mt-3 text-xs text-muted-foreground">{dragonSummary}</p>}
+            <p className="mt-2 text-xs text-muted-foreground">{t("match.neutralObjectives")}: <span className="text-primary">{homeObjectives}</span> - <span className="text-orange-400">{awayObjectives}</span></p>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-[#12274c]/90 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-400 mb-3">
+        <section className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-3">
             {t("match.lolResult.goldDiffOverTime")}
           </p>
-          <div className="h-40 rounded-xl border border-white/10 bg-[#0b1835] p-3">
+          <div className="h-40 rounded-xl border border-border bg-muted/30 p-3">
             <div className="relative h-full w-full">
-              <div className="absolute left-0 right-0 top-1/2 border-t border-white/10" />
+              <div className="absolute left-0 right-0 top-1/2 border-t border-border" />
               <div className="absolute inset-0 flex items-end gap-1">
                 {goldDiffSeries.map((value, idx) => {
                   const normalizedHeight = clamp01(Math.abs(value) / peakAbsDelta);
@@ -367,7 +367,7 @@ export default function LolResultScreen({
                   return (
                     <div key={`${value}-${idx}`} className="flex-1 h-full flex flex-col justify-center">
                       <div
-                        className={`w-full rounded-sm ${isPositive ? "bg-cyan-400/70" : "bg-rose-400/70"}`}
+                        className={`w-full rounded-sm ${isPositive ? "bg-primary/70" : "bg-rose-400/70"}`}
                         style={{
                           height: `${height}px`,
                           marginTop: isPositive ? `-${height}px` : undefined,
@@ -381,23 +381,23 @@ export default function LolResultScreen({
               </div>
             </div>
           </div>
-          <div className="mt-2 flex items-center justify-between text-xs text-slate-400">
+          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
             <span>0:00</span>
-            <span className="text-cyan-300">{snapshot.home_team.name} {homeGold - awayGold >= 0 ? `+${homeGold - awayGold}` : homeGold - awayGold}</span>
+            <span className="text-primary">{snapshot.home_team.name} {homeGold - awayGold >= 0 ? `+${homeGold - awayGold}` : homeGold - awayGold}</span>
             <span>{durationMin}:00</span>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-[#12274c]/90 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-400 mb-2">
+        <section className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground mb-2">
             {t("match.lolResult.keyTimeline")}
           </p>
-          <div className="space-y-1 max-h-52 overflow-auto pr-1">
+          <div className="space-y-1 max-h-52 overflow-auto scrollbar-v2 pr-1">
             {timelineItems.map((evt) => (
-              <div key={evt.key} className="text-sm text-gray-200 flex items-center justify-between gap-3">
+              <div key={evt.key} className="text-sm text-foreground flex items-center justify-between gap-3">
                 <span>{evt.minute}'</span>
                 <span className="flex-1 truncate">{evt.label}</span>
-                <span className={evt.side === "Home" ? "text-cyan-300" : evt.side === "Away" ? "text-orange-300" : "text-gray-400"}>
+                <span className={evt.side === "Home" ? "text-primary" : evt.side === "Away" ? "text-orange-400" : "text-muted-foreground"}>
                   {evt.side === "Home" ? t("match.home") : evt.side === "Away" ? t("match.away") : "-"}
                 </span>
               </div>
@@ -408,13 +408,13 @@ export default function LolResultScreen({
         <footer className="flex items-center justify-end gap-2 pt-1">
           <button
             onClick={onPressConference}
-            className="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 text-xs uppercase tracking-wider"
+            className="px-4 py-2 rounded-lg border border-border bg-muted hover:bg-muted/70 text-xs uppercase tracking-wider text-foreground"
           >
             {t("match.pressConference")}
           </button>
           <button
             onClick={onFinish}
-            className="px-6 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-[#101625] font-heading text-sm uppercase tracking-wider"
+            className="px-6 py-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-heading text-sm uppercase tracking-wider"
           >
             {t("match.continue")}
           </button>
