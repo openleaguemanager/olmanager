@@ -757,6 +757,7 @@ export default function MainMenu() {
                               return
                             }
                             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                              if (nationalityOpen) return;
                               e.preventDefault();
                               const dir = e.key === "ArrowDown" ? 1 : -1;
                               const currentIdx = countriesList.findIndex(
@@ -840,56 +841,43 @@ export default function MainMenu() {
                                 onChange={(e) =>
                                   setNationalitySearch(e.target.value)
                                 }
+                                onKeyDown={(e) => {
+                                  if (e.key === "ArrowDown") {
+                                    e.preventDefault();
+                                    const first = document.querySelector<HTMLButtonElement>("#nationality-dropdown-list button");
+                                    first?.focus();
+                                  }
+                                  if (e.key === "Escape") {
+                                    e.preventDefault();
+                                    setNationalityOpen(false);
+                                    setNationalitySearch("");
+                                    document.getElementById("create-manager-field-nationality-btn")?.focus();
+                                  }
+                                }}
                                 className="w-full bg-white/5 border border-white/10 text-white rounded-md px-3 py-2 text-sm outline-none focus:border-accent-400 transition-colors placeholder:text-gray-500"
                               />
                             </div>
-                            <div className="max-h-[min(20rem,calc(100vh-9rem))] overflow-y-auto overscroll-contain">
+                            <div id="nationality-dropdown-list" className="max-h-[min(20rem,calc(100vh-9rem))] overflow-y-auto overscroll-contain">
                               {filteredNationalities.length === 0 ? (
                                 <p className="px-3 py-2 text-xs text-gray-400">
                                   {t("menu.noResults")}
                                 </p>
                               ) : (
-                                filteredNationalities.map((nat) => (
-                                  <button
-                                    key={nat.code}
-                                    type="button"
-                                    onMouseDown={(event) => {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      logNationalityDebug("option selected", {
-                                        code: nat.code,
-                                        name: nat.name,
-                                      });
-                                      setFormData((prev) => ({
-                                        ...prev,
-                                        nationality: nat.code,
-                                      }));
-                                      setNationalityOpen(false);
-                                      setNationalitySearch("");
-                                      setFormErrors((prev) => ({
-                                        ...prev,
-                                        nationality: "",
-                                      }));
-                                    }}
-                                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
-                                      formData.nationality === nat.code
-                                        ? "bg-accent-400/10 text-accent-400"
-                                        : "text-gray-200 hover:bg-white/10"
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <CountryFlag
-                                        code={nat.code}
-                                        locale={i18n.language}
-                                        className="text-lg leading-none"
-                                      />
-                                      <span>{nat.name}</span>
-                                    </div>
-                                    {formData.nationality === nat.code && (
-                                      <Check className="w-4 h-4 text-accent-400" />
-                                    )}
-                                  </button>
-                                ))
+                                  <DropdownList
+                                  items={filteredNationalities}
+                                  selectedCode={formData.nationality}
+                                  locale={i18n.language}
+                                  onSelect={(code) => {
+                                    setFormData((prev) => ({ ...prev, nationality: code }));
+                                    setNationalityOpen(false);
+                                    setNationalitySearch("");
+                                    setFormErrors((prev) => ({ ...prev, nationality: "" }));
+                                  }}
+                                  onClose={() => {
+                                    setNationalityOpen(false);
+                                    setNationalitySearch("");
+                                  }}
+                                />
                               )}
                             </div>
                           </div>
@@ -1027,4 +1015,79 @@ const MenuItem = React.forwardRef<HTMLButtonElement, {
     </button>
   );
 });
+
+function DropdownList({
+  items,
+  selectedCode,
+  locale,
+  onSelect,
+  onClose,
+}: {
+  items: Array<{ code: string; name: string }>;
+  selectedCode: string;
+  locale: string;
+  onSelect: (code: string) => void;
+  onClose?: () => void;
+}) {
+  const [focusIdx, setFocusIdx] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setFocusIdx(0);
+  }, [items.length]);
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    const btns = listRef.current?.querySelectorAll<HTMLButtonElement>("button");
+    btns?.[focusIdx]?.focus();
+  }, [focusIdx, items.length]);
+
+  return (
+    <div ref={listRef} onKeyDown={(e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setFocusIdx((prev) => Math.min(prev + 1, items.length - 1));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setFocusIdx((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (items[focusIdx]) onSelect(items[focusIdx].code);
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onClose?.();
+        document.getElementById("create-manager-field-nationality-btn")?.focus();
+      }
+    }}>
+      {items.map((nat, i) => (
+        <button
+          key={nat.code}
+          type="button"
+          tabIndex={i === focusIdx ? 0 : -1}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            onSelect(nat.code);
+          }}
+          className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
+            selectedCode === nat.code
+              ? "bg-accent-400/10 text-accent-400"
+              : "text-gray-200 hover:bg-white/10"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <CountryFlag
+              code={nat.code}
+              locale={locale}
+              className="text-lg leading-none"
+            />
+            <span>{nat.name}</span>
+          </div>
+          {selectedCode === nat.code && (
+            <Check className="w-4 h-4 text-accent-400" />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
  
