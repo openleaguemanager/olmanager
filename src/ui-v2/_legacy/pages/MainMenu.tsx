@@ -535,7 +535,6 @@ export default function MainMenu() {
                         submit: "#create-manager-submit",
                       };
                       if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                        e.preventDefault();
                         const current = document.activeElement;
                         const fieldId = Object.entries(selectors).find(
                           ([, sel]) => current === document.querySelector(sel)
@@ -544,6 +543,8 @@ export default function MainMenu() {
                         const dir = e.key === "ArrowDown" ? "down" : e.key === "ArrowUp" ? "up" : e.key === "ArrowRight" ? "right" : "left";
                         const target = nav[fieldId]?.[dir];
                         if (!target) return;
+                        e.preventDefault();
+                        e.stopPropagation();
                         const el = document.querySelector<HTMLElement>(selectors[target]);
                         el?.focus();
                       }
