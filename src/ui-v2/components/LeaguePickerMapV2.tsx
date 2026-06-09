@@ -10,14 +10,27 @@ import { loadLeagueSelectionData, selectTeam } from "@/ui-v2/_legacy/components/
 import { buildActiveLineupIds } from "@/lib/squad/helpers";
 import { cn } from "@/ui-v2/lib/utils";
 
-const LEAGUE_CONFIG: Record<string, { color: string; label: string }> = {
-  LEC:   { color: "#0da8b8", label: "Europa" },
-  LCS:   { color: "#1e6fbf", label: "Norteamérica" },
-  LCK:   { color: "#6b3fd4", label: "Corea" },
-  LPL:   { color: "#cc2222", label: "China" },
-  LCP:   { color: "#d4820a", label: "Asia-Pacífico" },
-  CBLOL: { color: "#22a022", label: "Sudamérica" },
+const LEAGUE_KEYS = ["LEC", "LCS", "LCK", "LPL", "LCP", "CBLOL"] as const;
+
+const LEAGUE_COLORS: Record<string, string> = {
+  LEC: "#0da8b8",
+  LCS: "#1e6fbf",
+  LCK: "#6b3fd4",
+  LPL: "#cc2222",
+  LCP: "#d4820a",
+  CBLOL: "#22a022",
 };
+
+export function getLeagueConfig(t: (key: string) => string): Record<string, { color: string; label: string }> {
+  return {
+    LEC:   { color: LEAGUE_COLORS.LEC, label: t("leaguePicker.europe") },
+    LCS:   { color: LEAGUE_COLORS.LCS, label: t("leaguePicker.northAmerica") },
+    LCK:   { color: LEAGUE_COLORS.LCK, label: t("leaguePicker.korea") },
+    LPL:   { color: LEAGUE_COLORS.LPL, label: t("leaguePicker.china") },
+    LCP:   { color: LEAGUE_COLORS.LCP, label: t("leaguePicker.asiaPacific") },
+    CBLOL: { color: LEAGUE_COLORS.CBLOL, label: t("leaguePicker.southAmerica") },
+  };
+}
 
 const CTR: Record<number, string> = {};
 [28,44,52,84,124,188,192,212,214,222,308,320,332,340,388,484,558,591,659,662,670,780,840].forEach((i) => CTR[i]="LCS");
@@ -29,7 +42,7 @@ const CTR: Record<number, string> = {};
 
 function detectLeague(name: string): string | null {
   const u = name.toUpperCase();
-  return Object.keys(LEAGUE_CONFIG).find((k) => u.includes(k)) ?? null;
+  return LEAGUE_KEYS.find((k) => u.includes(k)) ?? null;
 }
 
 export default function LeaguePickerMapV2() {
@@ -164,7 +177,7 @@ export default function LeaguePickerMapV2() {
           .attr("d", path as any)
           .attr("fill", (d: any) => {
             const l = CTR[d.id as number];
-            return l ? (LEAGUE_CONFIG[l]?.color ?? "#888") + "88" : "rgba(255,255,255,0.04)";
+            return l ? (LEAGUE_COLORS[l] ?? "#888") + "88" : "rgba(255,255,255,0.04)";
           })
           .attr("stroke", "rgba(13,19,32,.6)")
           .attr("stroke-width", "0.3")
@@ -172,7 +185,7 @@ export default function LeaguePickerMapV2() {
           .style("transition", "filter .25s")
           .on("mouseenter", function (_ev: any, d: any) {
             const l = CTR[d.id as number];
-            if (l) d3.select(this).style("filter", `brightness(1.3) drop-shadow(0 0 6px ${LEAGUE_CONFIG[l]?.color ?? "#fff"})`);
+            if (l) d3.select(this).style("filter", `brightness(1.3) drop-shadow(0 0 6px ${LEAGUE_COLORS[l] ?? "#fff"})`);
           })
           .on("mouseleave", function () { d3.select(this).style("filter", null); })
           .on("click", (_ev: any, d: any) => {
@@ -195,7 +208,7 @@ export default function LeaguePickerMapV2() {
           .attr("x", width / 2).attr("y", height / 2)
           .attr("text-anchor", "middle").attr("fill", "rgba(255,80,80,.6)")
           .style("font-size", "14px")
-          .text("Error al cargar el mapa");
+          .text(t("leaguePicker.mapError"));
         setMapReady(true);
       });
 
@@ -258,7 +271,7 @@ export default function LeaguePickerMapV2() {
           <p className="font-heading text-lg font-black uppercase tracking-widest text-foreground">
             {t("teamSelect.selectLeague", "Seleccionar región")}
           </p>
-          <p className="text-xs text-muted-foreground/70">Hacé clic en una región del mapa</p>
+          <p className="text-xs text-muted-foreground/70">{t("leaguePicker.clickRegion")}</p>
         </div>
       </header>
 

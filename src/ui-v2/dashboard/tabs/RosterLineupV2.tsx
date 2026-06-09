@@ -152,8 +152,8 @@ export function RosterLineupV2({ roster, championMasteries = [], onNavigate, onS
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-1">
-                    <StatBox label="Energía" value={condition} accent="emerald" />
-                    <StatBox label="Moral" value={morale} accent="amber" />
+                    <StatBox label={t("common.condition")} value={condition} accent="emerald" />
+                    <StatBox label={t("common.morale")} value={morale} accent="amber" />
                   </div>
                 </div>
               </div>

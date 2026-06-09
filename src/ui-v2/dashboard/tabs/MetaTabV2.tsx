@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Search, User } from "lucide-react";
 
 import type { GameStateData } from "@/store/gameStore";
@@ -227,6 +228,7 @@ const SOLOQ_EMBLEM_URLS: Record<SoloQTier, string> = {
 };
 
 export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2Props) {
+  const { t } = useTranslation();
   const [submittingKey, setSubmittingKey] = useState<string | null>(null);
   const [metaRoleFilter, setMetaRoleFilter] = useState<"ALL" | UiRole>("ALL");
   const [delegating, setDelegating] = useState(false);
@@ -415,7 +417,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-              Patch Meta
+              {t("meta.patchMeta")}
             </CardTitle>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span>{formatStaffEffectPercent(staffEffects.metaDiscovery)} discovery</span>
@@ -427,11 +429,11 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  {patch?.current_patch_label || "Unknown Patch"}
+                  {patch?.current_patch_label || t("meta.unknownPatch")}
                 </p>
                 {patch?.last_patch_date && (
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    Updated {patch.last_patch_date}
+                    {t("meta.updated")} {patch.last_patch_date}
                   </p>
                 )}
               </div>
@@ -459,7 +461,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
                     : "border-border text-muted-foreground hover:border-muted-foreground/50",
                 )}
               >
-                All
+                {t("common.all")}
               </button>
               {(Object.keys(ROLE_ORDER) as UiRole[]).map((role) => (
                 <button
@@ -527,9 +529,9 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
         <Card className="flex-1 min-h-0">
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-              Discovery Stats
+              {t("meta.discoveryStats")}
             </CardTitle>
-            <span className="font-heading text-xs tabular-nums text-primary">{discoveredPct}% complete</span>
+            <span className="font-heading text-xs tabular-nums text-primary">{discoveredPct}% {t("meta.complete")}</span>
           </CardHeader>
           <CardContent>
             <div className="space-y-2.5">
@@ -569,7 +571,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
         <Card className="flex min-h-0 flex-col">
         <CardHeader className="flex-row items-center justify-between space-y-0 shrink-0">
           <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-            Mastery Training
+            {t("champions.masteryTrainingTitle")}
           </CardTitle>
           <button
             type="button"
@@ -577,12 +579,12 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
             disabled={delegating}
             className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-heading uppercase tracking-wider text-primary transition-all hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {delegating ? "Delegating..." : "Delegate to Coach"}
+            {delegating ? t("champions.delegating") : t("champions.delegateToCoach")}
           </button>
         </CardHeader>
         <CardContent className="flex-1 space-y-3 overflow-y-auto scrollbar-v2">
           {ownPlayers.length === 0 && (
-            <p className="py-8 text-center text-sm text-muted-foreground">No players on your team.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t("meta.noPlayers")}</p>
           )}
           {ownPlayers.map((player) => {
             const role = toUiRole(resolvePlayerCurrentLolRole(player, managerTeam));
@@ -686,11 +688,11 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
                       ? masteryMap.get(`${player.id}:${normalizeKey(target)}`) ?? 25
                       : 25;
                     const gainHint = expectedGainBadge(slotIndex, effectiveFocus);
-                    const slotLabels = ["High Priority", "Medium Priority", "Low Priority"];
+                    const slotLabels = [t("meta.priorityHigh"), t("meta.priorityMedium"), t("meta.priorityLow")];
                     const slotDescs = [
-                      "Maximum gain",
-                      "Moderate gain",
-                      "Minimal gain",
+                      t("meta.gainMaximum"),
+                      t("meta.gainModerate"),
+                      t("meta.gainMinimal"),
                     ];
 
                     return (
@@ -721,7 +723,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
                           }}
                           className="w-full rounded-md border border-border bg-muted px-2 py-1 text-xs text-foreground"
                         >
-                          <option value="">No target</option>
+                          <option value="">{t("champions.noTarget")}</option>
                           {sortedRoleChampions.map((champion) => {
                             const championKey = normalizeKey(champion);
                             const mastery = masteryMap.get(`${player.id}:${championKey}`) ?? 25;

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link, useMatches } from "react-router-dom";
 import { Search } from "lucide-react";
 import {
@@ -12,6 +13,7 @@ import {
 type Crumb = { label: string; to?: string };
 
 export function Topbar() {
+  const { t } = useTranslation();
   const matches = useMatches();
   const crumbs: Crumb[] = matches
     .filter((m) => (m.handle as { crumb?: string } | undefined)?.crumb)
@@ -45,7 +47,7 @@ export function Topbar() {
       <button
         type="button"
         className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-        aria-label="Search"
+        aria-label={t("common.search")}
       >
         <Search className="size-4" />
       </button>

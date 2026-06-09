@@ -103,7 +103,7 @@ export default function ChampionsGridV2({ champions, onChampionClick }: Champion
         </div>
 
         <span className="text-xs tabular-nums text-muted-foreground/60">
-          {filtered.length} campeones
+          {t("championsGrid.championCount", { count: filtered.length, defaultValue: "{{count}} champions" })}
         </span>
       </div>
 
@@ -174,14 +174,14 @@ export default function ChampionsGridV2({ champions, onChampionClick }: Champion
       {paginated.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16">
           <p className="font-heading text-sm uppercase tracking-wider text-muted-foreground">
-            Sin resultados
+            {t("championsGrid.noResults")}
           </p>
           <button
             type="button"
             onClick={() => { setSearch(""); setRoleFilter("ALL"); }}
             className="mt-2 text-xs text-primary hover:underline"
           >
-            Limpiar filtros
+            {t("championsGrid.clearFilters")}
           </button>
         </div>
       )}

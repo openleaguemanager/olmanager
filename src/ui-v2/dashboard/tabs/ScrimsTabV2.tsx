@@ -56,29 +56,26 @@ function scrimFocusLabel(t: ReturnType<typeof useTranslation>["t"], focus: Scrim
   return labels[focus];
 }
 
-function scrimFocusImpactText(focus: ScrimFocus | null): string {
-  if (!focus) return "Set a weekly direction so scrim decisions have clear impact.";
-  const map: Record<ScrimFocus, string> = {
-    DraftPrep: "Improves draft prep, ban reads, and composition plans.",
-    ChampionPool: "Expands viable picks and reduces comfort-pick dependency.",
-    EarlyGame: "Improves lane control, early tempo, and first rotations.",
-    Teamfighting: "Improves teamfight execution and 5v5 coordination.",
-    Macro: "Improves objective setup and map control.",
-    Mental: "Improves mental stability and consistency under pressure.",
-  };
-  return map[focus];
+function scrimFocusImpactText(t: ReturnType<typeof useTranslation>["t"], focus: ScrimFocus | null): string {
+  if (!focus) return t("scrims.noFocusImpactText");
+  const key = `scrims.impact.${focus}` as const;
+  return t(key);
 }
 
-function riskBand(opponentOvr: number, ownOvr: number, repGap: number): string {
-  if (opponentOvr >= 80) return "Alto";
-  if (opponentOvr >= 77) return "Medio";
-  return Math.max(opponentOvr - ownOvr, Math.round(repGap / 4)) >= 4 ? "Alto" : Math.max(opponentOvr - ownOvr, Math.round(repGap / 4)) >= 2 ? "Medio" : "Bajo";
+type RiskLevel = "high" | "medium" | "low";
+
+function riskLevel(opponentOvr: number, ownOvr: number, repGap: number): RiskLevel {
+  if (opponentOvr >= 80) return "high";
+  if (opponentOvr >= 77) return "medium";
+  return Math.max(opponentOvr - ownOvr, Math.round(repGap / 4)) >= 4 ? "high" : Math.max(opponentOvr - ownOvr, Math.round(repGap / 4)) >= 2 ? "medium" : "low";
 }
 
-function riskColor(risk: string): string {
-  if (risk === "Alto") return "text-red-400 border-red-500/30 bg-red-500/10";
-  if (risk === "Medio") return "text-amber-400 border-amber-500/30 bg-amber-500/10";
-  return "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+function riskColor(risk: RiskLevel): string {
+  switch (risk) {
+    case "high": return "text-red-400 border-red-500/30 bg-red-500/10";
+    case "medium": return "text-amber-400 border-amber-500/30 bg-amber-500/10";
+    case "low": return "text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+  }
 }
 
 function stateBorder(state: string): string {
@@ -158,7 +155,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
   })();
   const planSignals = deriveScrimPlanSignals(gameState, myTeam.id, weeklyContext);
   const estimatedRepGap = todayContext.opponentTeamId ? Math.max(0, planSignals.avgOpponentScrimReputation - weeklyContext.reputation) : 0;
-  const todayRisk = riskBand(planSignals.maxOpponentOvr, planSignals.ownOvr, estimatedRepGap);
+  const todayRisk = riskLevel(planSignals.maxOpponentOvr, planSignals.ownOvr, estimatedRepGap);
   const setupLocked = weeklyContext.setupLocked;
   const assistantControls = settings.scrim_review_mode === "assistant";
   const dailyBlockMeta = todayContext.report ? deriveDailyScrimBlockMeta(effectiveWeeklyScrimSlots(myTeam), gameState.clock.current_date, todayContext.report.slot_index) : null;
@@ -198,14 +195,14 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
   })();
 
   const decisionImpactTags: Record<DailyScrimAction, string[]> = {
-    ContinueToBlock2: ["Momentum +", "Fatigue -", "Volume +"],
-    OfferRest: ["Recovery +", "Fatigue +", "Volume -"],
-    PushThrough: ["Volume +", "Learning +", "Mental -"],
-    CancelScrims: ["Recovery +", "Risk -", "Volume -"],
-    VodReview: ["Analysis +", "Quality +", "Recovery -"],
-    MentalReset: ["Mental +", "Recovery +", "Technique -"],
-    TargetedDrills: ["Issue +", "Mechanics +", "Fatigue -"],
-    DayOff: ["Recovery +", "Mental +", "Volume -"],
+    ContinueToBlock2: [t("scrims.tags.momentumPlus"), t("scrims.tags.fatigueMinus"), t("scrims.tags.volumePlus")],
+    OfferRest: [t("scrims.tags.recoveryPlus"), t("scrims.tags.fatiguePlus"), t("scrims.tags.volumeMinus")],
+    PushThrough: [t("scrims.tags.volumePlus"), t("scrims.tags.learningPlus"), t("scrims.tags.mentalMinus")],
+    CancelScrims: [t("scrims.tags.recoveryPlus"), t("scrims.tags.riskMinus"), t("scrims.tags.volumeMinus")],
+    VodReview: [t("scrims.tags.analysisPlus"), t("scrims.tags.qualityPlus"), t("scrims.tags.recoveryMinus")],
+    MentalReset: [t("scrims.tags.mentalPlus"), t("scrims.tags.recoveryPlus"), t("scrims.tags.techniqueMinus")],
+    TargetedDrills: [t("scrims.tags.issuePlus"), t("scrims.tags.mechanicsPlus"), t("scrims.tags.fatigueMinus")],
+    DayOff: [t("scrims.tags.recoveryPlus"), t("scrims.tags.mentalPlus"), t("scrims.tags.volumeMinus")],
   };
 
   const handleSetWeeklyCapacity = async (slots: number) => {
@@ -332,7 +329,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                       <option key={f} value={f}>{scrimFocusLabel(t, f)}</option>
                     ))}
                   </select>
-                  {objective && <p className="text-xs text-muted-foreground">{scrimFocusImpactText(objective)}</p>}
+                  {objective && <p className="text-xs text-muted-foreground">{scrimFocusImpactText(t, objective)}</p>}
                 </div>
                 <div className="space-y-2">
                   <p className="font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("scrims.weeklyVolume")}</p>
@@ -358,7 +355,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
               </div>
               <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
                 <p className="text-xs text-muted-foreground">
-                  {setupLocked ? t("scrims.setupLocked") : assistantControls ? "Assistant Coach handling scrims." : t("scrims.setupUnlockWindow")}
+                  {setupLocked ? t("scrims.setupLocked") : assistantControls ? t("scrims.assistantHandling") : t("scrims.setupUnlockWindow")}
                 </p>
                 <button
                   type="button"
@@ -410,7 +407,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                 <div className="min-w-0">
                   <p className="text-xs text-muted-foreground">{t("scrims.delegation")}</p>
                   <p className="mt-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground/60">
-                    {settings.scrim_review_mode === "assistant" ? "Modo automático" : "Control manual"}
+                    {settings.scrim_review_mode === "assistant" ? t("scrims.autoMode") : t("scrims.manualControl")}
                   </p>
                 </div>
                 <button
@@ -423,7 +420,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                       : "border-border text-muted-foreground",
                   )}
                 >
-                  {settings.scrim_review_mode === "assistant" ? "Assistant" : "Manual"}
+                  {settings.scrim_review_mode === "assistant" ? t("scrims.assistantLabel") : t("scrims.manualLabel")}
                 </button>
               </div>
             </CardContent>
@@ -441,12 +438,12 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
               <div className="space-y-3">
                 {/* State badge */}
                 <div className="flex items-center gap-2">
-                  {todayState === "PlayedNeedsReview" && <Badge className="border-amber-500/30 bg-amber-500/10 text-amber-400">Pendiente revisión</Badge>}
-                  {todayState === "Reviewed" && <Badge className="border-emerald-500/30 bg-emerald-500/10 text-emerald-400">Revisado</Badge>}
-                  {todayState === "Planned" && <Badge className="border-primary/30 bg-primary/10 text-primary">Planificado</Badge>}
-                  {todayState === "Cancelled" && <Badge className="border-red-500/30 bg-red-500/10 text-red-400">Cancelado</Badge>}
+                  {todayState === "PlayedNeedsReview" && <Badge className="border-amber-500/30 bg-amber-500/10 text-amber-400">{t("scrims.pendingReview")}</Badge>}
+                  {todayState === "Reviewed" && <Badge className="border-emerald-500/30 bg-emerald-500/10 text-emerald-400">{t("scrims.reviewed")}</Badge>}
+                  {todayState === "Planned" && <Badge className="border-primary/30 bg-primary/10 text-primary">{t("scrims.planned")}</Badge>}
+                  {todayState === "Cancelled" && <Badge className="border-red-500/30 bg-red-500/10 text-red-400">{t("scrims.cancelled")}</Badge>}
                   {todayState !== "PlayedNeedsReview" && todayState !== "Reviewed" && todayState !== "Planned" && todayState !== "Cancelled" && (
-                    <Badge variant="outline" className="text-muted-foreground">Sin scrim</Badge>
+                    <Badge variant="outline" className="text-muted-foreground">{t("scrims.noScrim")}</Badge>
                   )}
                 </div>
 
@@ -458,7 +455,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                       <div className="mt-2 flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">{t("scrims.todayRisk")}:</span>
                         <span className={cn("rounded-md border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider", riskColor(todayRisk))}>
-                          {todayRisk}
+                          {t(`scrims.risk.${todayRisk}`)}
                         </span>
                       </div>
                     )}
@@ -469,7 +466,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                 {todayContext.state === "PlayedNeedsReview" && todayContext.report && reviewPhaseActive && (
                   <div className="space-y-2">
                     <p className="font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      {isFirstBlock ? (showCancelFollowups ? "Elegí seguimiento técnico" : "Decisión post-block 1") : "Cerrá la jornada"}
+                      {isFirstBlock ? (showCancelFollowups ? t("scrims.cancelFollowupTitle") : t("scrims.blockDecisionTitle")) : t("scrims.closeDayTitle")}
                     </p>
                     {decisionOptions.map((opt) => {
                       const meta = DECISION_META[opt.id];
@@ -538,7 +535,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="font-heading text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        Rachas
+                        {t("scrims.streaks")}
                       </span>
                       <span className="font-heading text-[10px] tabular-nums text-muted-foreground/60">
                         {t("scrims.played")}: {played}

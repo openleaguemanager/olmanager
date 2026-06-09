@@ -47,7 +47,7 @@ export function InboxTabV2({
   initialMessageId,
   onNavigate,
 }: Props) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const messages = gameState.messages ?? [];
   const allMessages = useMemo(
     () => messages.map(resolveMessage),
@@ -173,13 +173,13 @@ export function InboxTabV2({
           <div className="flex items-center gap-2">
             <InboxIcon className="size-5 text-primary" />
             <span className="font-heading text-base font-bold uppercase tracking-wider">
-              Bandeja
+              {t("inbox.title")}
             </span>
             <Badge variant="secondary" className="tabular-nums">
               {allMessages.length}
             </Badge>
             {unreadCount > 0 && (
-              <Badge className="tabular-nums">{unreadCount} sin leer</Badge>
+              <Badge className="tabular-nums">{t("inbox.unread", { count: unreadCount })}</Badge>
             )}
           </div>
 
@@ -191,7 +191,7 @@ export function InboxTabV2({
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar..."
+              placeholder={t("common.search")}
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
@@ -203,7 +203,7 @@ export function InboxTabV2({
             onClick={() => setSortOrder((s) => (s === "newest" ? "oldest" : "newest"))}
           >
             <ArrowDownUp className="size-3.5" />
-            {sortOrder === "newest" ? "Más nuevos" : "Más antiguos"}
+            {sortOrder === "newest" ? t("inbox.sortNewest") : t("inbox.sortOldest")}
           </Button>
 
           {/* Actions */}
@@ -214,7 +214,7 @@ export function InboxTabV2({
             disabled={unreadCount === 0}
           >
             <CheckCheck className="size-3.5" />
-            Marcar leído
+            {t("inbox.markAllRead")}
           </Button>
           <Button
             variant="outline"
@@ -223,7 +223,7 @@ export function InboxTabV2({
             className="text-destructive hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
-            Limpiar antiguos
+            {t("inbox.clearOld")}
           </Button>
         </CardContent>
       </Card>
@@ -233,12 +233,12 @@ export function InboxTabV2({
         <FilterChip
           active={filter === null}
           onClick={() => setFilter(null)}
-          label={`Todas (${allMessages.length})`}
+          label={t("inbox.all", { count: allMessages.length })}
         />
         <FilterChip
           active={filter === UNREAD_FILTER}
           onClick={() => setFilter(UNREAD_FILTER)}
-          label={`Sin leer (${unreadCount})`}
+          label={t("inbox.unread", { count: unreadCount })}
           accent
         />
         {categories.map((c) => (
@@ -256,7 +256,7 @@ export function InboxTabV2({
         <Card className="flex h-full min-h-0 flex-col overflow-hidden p-0">
           {filteredMessages.length === 0 ? (
             <div className="flex flex-1 items-center justify-center p-6 text-sm text-muted-foreground">
-              Sin mensajes
+              {t("inbox.noMessages")}
             </div>
           ) : (
             <ul className="flex-1 divide-y divide-border/40 overflow-y-auto">
@@ -285,7 +285,7 @@ export function InboxTabV2({
             />
           ) : (
             <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-              Selecciona un mensaje
+              {t("inbox.selectMessage")}
             </div>
           )}
         </Card>
@@ -412,11 +412,12 @@ function DetailPane({
   onClose: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
   const [openOptions, setOpenOptions] = useState<string | null>(null);
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
-        <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Cerrar">
+        <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={t("inbox.close")}>
           <ArrowLeft className="size-4" />
         </Button>
         <div className="flex-1" />
@@ -424,7 +425,7 @@ function DetailPane({
           variant="ghost"
           size="icon-sm"
           onClick={onDelete}
-          aria-label="Eliminar"
+          aria-label={t("inbox.deleteMessage")}
           className="text-destructive hover:text-destructive"
         >
           <Trash2 className="size-4" />

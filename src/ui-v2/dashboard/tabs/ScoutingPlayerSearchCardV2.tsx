@@ -197,7 +197,7 @@ export default function ScoutingPlayerSearchCardV2({
                     </td>
                     <td className="px-2 py-2.5 text-right">
                       {isScouting ? (
-                        <Badge variant="outline" className="text-[10px] text-primary">Scouting</Badge>
+                        <Badge variant="outline" className="text-[10px] text-primary">{t("scouting.scoutingBadge")}</Badge>
                       ) : availableScoutCount === 0 ? (
                         <span className="text-[10px] text-muted-foreground/60">{t("scouting.noScoutsFree")}</span>
                       ) : (
@@ -226,12 +226,12 @@ export default function ScoutingPlayerSearchCardV2({
         {totalPages > 1 && (
           <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
             <span className="text-[10px] text-muted-foreground">
-              {safePage * pageSize + 1}–{Math.min((safePage + 1) * pageSize, totalPlayers)} of {totalPlayers}
+              {t("scouting.showingRange", { from: safePage * pageSize + 1, to: Math.min((safePage + 1) * pageSize, totalPlayers), total: totalPlayers })}
             </span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                aria-label="Previous page"
+                aria-label={t("common.previousPage")}
                 disabled={safePage === 0}
                 onClick={onPreviousPage}
                 className="inline-flex size-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted disabled:opacity-30"
@@ -243,7 +243,7 @@ export default function ScoutingPlayerSearchCardV2({
               </span>
               <button
                 type="button"
-                aria-label="Next page"
+                aria-label={t("common.nextPage")}
                 disabled={safePage >= totalPages - 1}
                 onClick={onNextPage}
                 className="inline-flex size-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted disabled:opacity-30"

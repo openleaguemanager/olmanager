@@ -188,8 +188,8 @@ export default function PlayerProfileHeroCardV2({
                   <span>{teamName}</span>
                 )}
               </span>
-              {player.transfer_listed && <Badge className="border-red-500/30 bg-red-500/10 text-[10px] text-red-400">Transferible</Badge>}
-              {player.loan_listed && <Badge className="border-blue-500/30 bg-blue-500/10 text-[10px] text-blue-400">Cedible</Badge>}
+              {player.transfer_listed && <Badge className="border-red-500/30 bg-red-500/10 text-[10px] text-red-400">{t("playerProfile.transferListed")}</Badge>}
+              {player.loan_listed && <Badge className="border-blue-500/30 bg-blue-500/10 text-[10px] text-blue-400">{t("playerProfile.loanListed")}</Badge>}
             </div>
 
             {isOwnClub && (

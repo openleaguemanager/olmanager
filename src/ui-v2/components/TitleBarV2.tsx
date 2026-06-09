@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, Square, X } from "lucide-react";
 
 export function TitleBarV2() {
+  const { t } = useTranslation();
   const [maximized, setMaximized] = useState(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
 
@@ -54,9 +56,9 @@ export function TitleBarV2() {
     >
       {/* App title */}
       <div className="flex min-w-0 flex-1 items-center gap-2">
-        <img src="/logo.webp" alt="OLM" className="size-5 object-contain" />
+        <img src="/logo.webp" alt={t("titleBar.appLogoAlt")} className="size-5 object-contain" />
         <span className="font-heading text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Open League Manager
+          {t("titleBar.appName")}
         </span>
       </div>
 
@@ -66,7 +68,7 @@ export function TitleBarV2() {
           type="button"
           onClick={handleMinimize}
           className="flex h-9 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-zinc-800 hover:text-foreground"
-          aria-label="Minimize"
+          aria-label={t("titleBar.minimize")}
         >
           <Minus className="size-3.5" />
         </button>
@@ -74,7 +76,7 @@ export function TitleBarV2() {
           type="button"
           onClick={handleMaximize}
           className="flex h-9 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-zinc-800 hover:text-foreground"
-          aria-label={maximized ? "Restore" : "Maximize"}
+          aria-label={t(maximized ? "titleBar.restore" : "titleBar.maximize")}
         >
           {maximized ? <MinimizeIcon className="size-3.5" /> : <Square className="size-3" />}
         </button>
@@ -82,7 +84,7 @@ export function TitleBarV2() {
           type="button"
           onClick={handleClose}
           className="flex h-9 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-red-500 hover:text-white"
-          aria-label="Close"
+          aria-label={t("titleBar.close")}
         >
           <X className="size-3.5" />
         </button>

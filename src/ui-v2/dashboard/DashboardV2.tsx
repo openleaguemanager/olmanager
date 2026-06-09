@@ -357,9 +357,9 @@ export default function DashboardV2() {
   if (!hasActiveGame && probedNoGame) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background text-foreground">
-        <div className="text-lg font-medium">No active game</div>
+        <div className="text-lg font-medium">{t("dashboard.noActiveGame")}</div>
         <p className="text-sm text-muted-foreground">
-          Start a game from the legacy UI (set VITE_UI_V2=false), then come back.
+          {t("dashboard.noActiveGameDesc")}
         </p>
       </div>
     );

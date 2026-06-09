@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import i18n from "@/i18n";
 
 interface Props {
   children: ReactNode;
@@ -28,17 +29,17 @@ export default class ErrorBoundary extends Component<Props, State> {
         <div className="flex flex-1 items-center justify-center bg-background p-6">
           <div className="max-w-md text-center">
             <p className="mb-2 font-heading text-lg font-bold uppercase tracking-wider text-foreground">
-              Algo salió mal
+              {i18n.t("errorBoundary.somethingWentWrong")}
             </p>
             <p className="mb-4 text-sm text-muted-foreground">
-              Ocurrió un error inesperado. Presioná F5 para recargar la aplicación.
+              {i18n.t("errorBoundary.unexpectedError")}
             </p>
             <button
               type="button"
               onClick={() => window.location.reload()}
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Recargar (F5)
+              {i18n.t("errorBoundary.reload")}
             </button>
           </div>
         </div>
