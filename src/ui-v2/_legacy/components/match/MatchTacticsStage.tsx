@@ -22,7 +22,7 @@ export default function MatchTacticsStage({
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto bg-background p-4 md:p-6">
+    <div className="min-h-0 flex-1 overflow-y-auto scrollbar-v2 bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
