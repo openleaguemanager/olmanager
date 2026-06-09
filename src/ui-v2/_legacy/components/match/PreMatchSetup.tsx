@@ -156,7 +156,7 @@ export default function PreMatchSetup({
     <MatchScreenLayout
       headerClassName="bg-linear-to-r from-muted via-card to-muted"
       headerContentClassName="max-w-5xl py-6"
-      contentClassName="overflow-auto"
+      contentClassName="overflow-auto scrollbar-v2 bg-background"
       header={
         <>
           <div className="flex items-center justify-between mb-6">
