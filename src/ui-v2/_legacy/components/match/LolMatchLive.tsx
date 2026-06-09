@@ -51,7 +51,6 @@ const USE_RUST_SIM_V2 = true;
 const ICON_TOWER = "/lol-map-icons/icon_ui_tower_minimap.webp";
 const ICON_GOLD = "/lol-map-icons/gold.webp";
 const ICON_VOIDGRUB = "/lol-map-icons/grub.webp";
-import type { GameStateData } from "@/store/gameStore";
 const DEFAULT_DRAGON_ICON = "/lol-map-icons/dragon.webp";
 
 const TEAM_BRAND_MAP: Record<string, { tricode: string; logo: string | null }> = {
