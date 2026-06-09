@@ -516,11 +516,11 @@ export default function MainMenu() {
                     onKeyDown={(e) => {
                       const nav: Record<string, Record<string, string | null>> = {
                         nickname: { right: null, left: null, down: "firstName", up: null },
-                        firstName: { right: "lastName", left: null, down: "day", up: "lastName" },
+                        firstName: { right: "lastName", left: null, down: "day", up: "nickname" },
                         lastName: { right: null, left: "firstName", down: "day", up: "nickname" },
-                        day: { right: "month", left: null, down: "nationality", up: "lastName" },
-                        month: { right: "year", left: "day", down: "nationality", up: "lastName" },
-                        year: { right: null, left: "month", down: "nationality", up: "lastName" },
+                        day: { right: "month", left: null, down: "nationality", up: "firstName" },
+                        month: { right: "year", left: "day", down: "nationality", up: "firstName" },
+                        year: { right: null, left: "month", down: "nationality", up: "firstName" },
                         nationality: { right: null, left: null, down: "submit", up: "day" },
                         submit: { right: null, left: null, down: null, up: "nationality" },
                       };
