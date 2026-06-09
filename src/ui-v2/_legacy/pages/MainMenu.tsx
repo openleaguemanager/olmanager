@@ -420,10 +420,14 @@ export default function MainMenu() {
     requestAnimationFrame(() => {
       const panel = panelRef.current;
       if (!panel) return;
-      const focusable = panel.querySelector<HTMLElement>(
-        "input:not([type=hidden]):not([disabled]), button:not([disabled]), select, textarea, [tabindex]:not([tabindex='-1'])",
+      const input = panel.querySelector<HTMLElement>(
+        "input:not([type=hidden]):not([disabled])",
       );
-      focusable?.focus();
+      if (input) { input.focus(); return; }
+      const first = panel.querySelector<HTMLElement>(
+        "button:not([disabled]), select, textarea, [tabindex]:not([tabindex='-1'])",
+      );
+      first?.focus();
     });
   }, []);
 
@@ -513,7 +517,22 @@ export default function MainMenu() {
               <div className="pt-6">
                 {/* Step 1: Create Manager Form */}
                 {menuState === "create" && (
-                  <form onSubmit={handleStartCareer} className="flex flex-col">
+                  <form onSubmit={handleStartCareer} className="flex flex-col"
+                    onKeyDown={(e) => {
+                      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                        e.preventDefault();
+                        const focusable = Array.from(document.querySelectorAll<HTMLElement>(
+                          "#create-manager-field-nickname input, #create-manager-field-firstName input, #create-manager-field-lastName input, #create-manager-field-dob input, #create-manager-field-dob button, #create-manager-field-nationality-btn, #create-manager-submit"
+                        )                        ).filter(el => !(el as HTMLInputElement).disabled && el.tabIndex !== -1);
+                        const current = document.activeElement;
+                        const idx = focusable.indexOf(current as HTMLElement);
+                        const next = e.key === "ArrowDown"
+                          ? focusable[Math.min(idx + 1, focusable.length - 1)]
+                          : focusable[Math.max(idx - 1, 0)];
+                        next?.focus();
+                      }
+                    }}
+                  >
                     <div className="flex justify-between items-center pb-5">
                       <h2 className="text-2xl font-heading font-bold uppercase tracking-wider text-white drop-shadow">
                         {t("createManager.title")}
