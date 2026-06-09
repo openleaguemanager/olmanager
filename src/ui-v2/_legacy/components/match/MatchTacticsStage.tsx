@@ -38,7 +38,7 @@ export default function MatchTacticsStage({
             <button
               onClick={onSimulate}
               disabled={isSimulating}
-              className="px-4 py-2 rounded-lg bg-primary-700 hover:bg-primary-600 disabled:bg-primary-900/60 disabled:cursor-not-allowed text-white font-heading uppercase tracking-wider text-xs"
+              className="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-primary-foreground font-heading uppercase tracking-wider text-xs"
             >
               {isSimulating ? t("match.simulating") : t("match.simulate")}
             </button>
@@ -46,7 +46,7 @@ export default function MatchTacticsStage({
             <button
               onClick={onContinue}
               disabled={isSimulating}
-              className="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-500 disabled:bg-primary-900/60 disabled:cursor-not-allowed text-white font-heading uppercase tracking-wider text-xs"
+              className="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-primary-foreground font-heading uppercase tracking-wider text-xs"
             >
               {t("match.startLive")}
             </button>
@@ -54,7 +54,7 @@ export default function MatchTacticsStage({
         </div>
 
         {simulationFeedback ? (
-          <p className="mb-4 text-xs text-primary-800 dark:text-primary-200">
+          <p className="mb-4 text-xs text-primary">
             {simulationFeedback}
           </p>
         ) : null}
