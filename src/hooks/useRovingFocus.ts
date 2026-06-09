@@ -7,6 +7,8 @@ interface RovingFocusOptions {
   getItemLabel?: (index: number) => string;
   loop?: boolean;
   initialIndex?: number;
+  onEdgeUp?: () => void;
+  onEdgeDown?: () => void;
 }
 
 interface RovingFocusResult {
@@ -23,6 +25,8 @@ export function useRovingFocus({
   getItemLabel,
   loop = true,
   initialIndex = 0,
+  onEdgeUp,
+  onEdgeDown,
 }: RovingFocusOptions): RovingFocusResult {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const searchBuffer = useRef("");
@@ -41,9 +45,21 @@ export function useRovingFocus({
 
   const moveBy = useCallback(
     (delta: number) => {
-      setActiveIndex((prev) => clamp(prev + delta));
+      setActiveIndex((prev) => {
+        if (!loop && itemCount > 0) {
+          if (prev + delta < 0) {
+            onEdgeUp?.();
+            return prev;
+          }
+          if (prev + delta >= itemCount) {
+            onEdgeDown?.();
+            return prev;
+          }
+        }
+        return clamp(prev + delta);
+      });
     },
-    [clamp],
+    [clamp, loop, itemCount, onEdgeUp, onEdgeDown],
   );
 
   const handleKeyDown = useCallback(

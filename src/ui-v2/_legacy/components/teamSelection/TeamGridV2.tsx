@@ -19,6 +19,7 @@ export function TeamGridV2({
   const { activeIndex, handleKeyDown, getTabIndex } = useRovingFocus({
     itemCount: teams.length,
     columns: 2,
+    loop: false,
     onSelect: (i) => onSelectTeam(teams[i]?.id),
     getItemLabel: (i) => teams[i]?.name ?? "",
   });

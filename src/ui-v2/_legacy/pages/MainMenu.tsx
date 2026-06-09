@@ -757,7 +757,7 @@ export default function MainMenu() {
                               return
                             }
                             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-                              if (nationalityOpen) return;
+                              if (!nationalityOpen) return;
                               e.preventDefault();
                               const dir = e.key === "ArrowDown" ? 1 : -1;
                               const currentIdx = countriesList.findIndex(
