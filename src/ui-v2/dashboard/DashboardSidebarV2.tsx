@@ -92,15 +92,20 @@ export function DashboardSidebarV2({
     { tab: "Teams", label: t("dashboard.teams"), icon: Building2, badge: teamCount },
     { tab: "WorldStaff", label: t("dashboard.worldStaff", { defaultValue: "Staffs" }), icon: UserCog, badge: staffCount },
     { tab: "ChampionsWorld", label: t("dashboard.champions_world"), icon: Gamepad2 },
-    { tab: "Market", label: t("dashboard.market"), icon: Store },
   ], [t, playerCount, teamCount, staffCount]);
+
+  const market: Item[] = useMemo(() => [
+    { tab: "Market", label: t("dashboard.market"), icon: Store },
+    { tab: "Transfers", label: t("dashboard.transfers"), icon: TrendingUp },
+  ], [t]);
 
   const allNavItems = useMemo(() => {
     const items = [...top];
     if (!isUnemployed) items.push(...club);
+    items.push(...market);
     items.push(...world);
     return items;
-  }, [top, club, world, isUnemployed]);
+  }, [top, club, market, world, isUnemployed]);
 
   const initialNavIndex = useMemo(() => Math.max(0, allNavItems.findIndex((item) => item.tab === activeTab)), [allNavItems, activeTab]);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -168,8 +173,11 @@ export function DashboardSidebarV2({
           </>
         )}
 
+        <SectionLabel>{t("dashboard.sectionMarket", { defaultValue: "Market" })}</SectionLabel>
+        <Group items={market} flatIndex={top.length + (isUnemployed ? 0 : club.length)} activeTab={activeTab} onNavClick={onNavClick} itemRefs={itemRefs} getTabIndex={getTabIndex} />
+
         <SectionLabel>{t("dashboard.sectionWorld")}</SectionLabel>
-        <Group items={world} flatIndex={top.length + (isUnemployed ? 0 : club.length)} activeTab={activeTab} onNavClick={onNavClick} itemRefs={itemRefs} getTabIndex={getTabIndex} />
+        <Group items={world} flatIndex={top.length + (isUnemployed ? 0 : club.length) + market.length} activeTab={activeTab} onNavClick={onNavClick} itemRefs={itemRefs} getTabIndex={getTabIndex} />
       </nav>
 
       <Separator />
