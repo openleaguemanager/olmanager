@@ -20,14 +20,6 @@ interface Props {
   onSkipToNextDay: () => void;
 }
 
-const PHASE_LABELS: Record<string, string> = {
-  Morning: "Mañana",
-  ScrimBlock: "Scrims",
-  ReviewBlock: "Review",
-  TrainingBlock: "Entrenamiento",
-  Evening: "Tarde",
-};
-
 const PHASE_COLORS: Record<string, string> = {
   Morning: "text-amber-400",
   ScrimBlock: "text-blue-400",
@@ -66,7 +58,14 @@ export function DashboardHeaderV2({
     return () => window.removeEventListener("mousedown", close);
   }, [menuOpen]);
 
-  const phaseLabel = PHASE_LABELS[dayPhase] ?? dayPhase;
+  const phaseLabels: Record<string, string> = {
+    Morning: t("dashboard.phaseLabels.morning"),
+    ScrimBlock: t("dashboard.phaseLabels.scrimBlock"),
+    ReviewBlock: t("dashboard.phaseLabels.reviewBlock"),
+    TrainingBlock: t("dashboard.phaseLabels.trainingBlock"),
+    Evening: t("dashboard.phaseLabels.evening"),
+  };
+  const phaseLabel = phaseLabels[dayPhase] ?? dayPhase;
   const phaseColor = PHASE_COLORS[dayPhase] ?? "text-muted-foreground";
 
   function handleSelect(action: () => void) {
@@ -78,7 +77,7 @@ export function DashboardHeaderV2({
     <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-card px-4">
       {hasProfileHistory && (
         <>
-          <Button variant="ghost" size="icon-sm" onClick={onBack} aria-label="Back">
+          <Button variant="ghost" size="icon-sm" onClick={onBack} aria-label={t("common.back")}>
             <ArrowLeft className="size-4" />
           </Button>
           <Separator orientation="vertical" className="h-5" />

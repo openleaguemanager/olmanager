@@ -103,9 +103,9 @@ export function DashboardSidebarV2({
         )}
         <div className="min-w-0 flex-1">
           <div className="truncate text-xs uppercase tracking-widest text-muted-foreground">
-            Open League
+            {t("dashboard.brandTitle")}
           </div>
-          <div className="truncate font-heading text-base font-bold text-primary">Manager</div>
+          <div className="truncate font-heading text-base font-bold text-primary">{t("dashboard.brandSubtitle")}</div>
         </div>
       </div>
 

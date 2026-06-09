@@ -284,9 +284,9 @@ export function ManagerTabV2({ gameState }: ManagerTabV2Props) {
                   <tr className="border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground">
                     <th className="px-4 py-3 font-heading font-bold">{t("manager.club")}</th>
                     <th className="px-4 py-3 font-heading font-bold">{t("manager.period")}</th>
-                    <th className="px-3 py-3 text-center font-heading font-bold">PJ</th>
-                    <th className="px-3 py-3 text-center font-heading font-bold">G</th>
-                    <th className="px-3 py-3 text-center font-heading font-bold">P</th>
+                    <th className="px-3 py-3 text-center font-heading font-bold">{t("common.played")}</th>
+                    <th className="px-3 py-3 text-center font-heading font-bold">{t("manager.wins")}</th>
+                    <th className="px-3 py-3 text-center font-heading font-bold">{t("manager.losses")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
@@ -304,7 +304,7 @@ export function ManagerTabV2({ gameState }: ManagerTabV2Props) {
                 </tbody>
               </table>
             ) : (
-              <p className="px-4 py-6 text-center text-sm text-muted-foreground">Sin historial</p>
+              <p className="px-4 py-6 text-center text-sm text-muted-foreground">{t("manager.noHistory")}</p>
             )}
           </CardContent>
         </Card>
@@ -354,7 +354,7 @@ export function ManagerTabV2({ gameState }: ManagerTabV2Props) {
                   <div className="rounded-lg border border-border bg-muted/20 p-2.5 text-center">
                     <Trophy className="mx-auto mb-1 size-4 text-emerald-400" />
                     <p className="font-heading text-lg font-bold tabular-nums text-foreground">{avgOvr}</p>
-                    <p className="font-heading text-[9px] uppercase tracking-wider text-muted-foreground">OVR</p>
+                    <p className="font-heading text-[9px] uppercase tracking-wider text-muted-foreground">{t("common.ovr")}</p>
                   </div>
                 </div>
 

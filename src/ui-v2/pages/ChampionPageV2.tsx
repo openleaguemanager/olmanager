@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 import { invoke } from "@tauri-apps/api/core";
 import { Swords, Shield, Crosshair, Zap, TrendingUp, Crown, BarChart3, Activity } from "lucide-react";
 import { resolveChampionTile, resolveChampionSplash } from "@/lib/champions/championImages";
@@ -30,6 +32,7 @@ const ROLE_META: Record<string, { icon: typeof Shield; color: string; label: str
 };
 
 export default function ChampionPageV2({ championKey }: Props) {
+  const { t } = useTranslation();
   const [s, setS] = useState<Stats | null>(null);
   const splash = resolveChampionSplash(championKey);
   const tile = resolveChampionTile(championKey);
@@ -72,7 +75,7 @@ export default function ChampionPageV2({ championKey }: Props) {
                 {s && <Badge className="bg-white/20 text-white backdrop-blur">{s.total_games}g</Badge>}
               </div>
               <p className="mt-1 flex items-center gap-2 text-sm text-white/70">
-                <span className="font-heading text-xs uppercase tracking-widest">Campeón</span>
+                <span className="font-heading text-xs uppercase tracking-widest">{t("championPage.champion")}</span>
               </p>
             </div>
           </div>
@@ -102,12 +105,12 @@ export default function ChampionPageV2({ championKey }: Props) {
           {/* Performance grid */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[
-              { label: "Kills", val: s ? s.avg_kills.toFixed(1) : "—", icon: Swords, c: "text-red-400" },
-              { label: "Deaths", val: s ? s.avg_deaths.toFixed(1) : "—", icon: Activity, c: "text-amber-400" },
-              { label: "Assists", val: s ? s.avg_assists.toFixed(1) : "—", icon: TrendingUp, c: "text-emerald-400" },
-              { label: "Gold", val: s ? s.avg_gold.toLocaleString() : "—", icon: Crown, c: "text-yellow-400" },
-              { label: "Damage", val: s ? s.avg_damage.toLocaleString() : "—", icon: Swords, c: "text-orange-400" },
-              { label: "CS", val: s ? s.avg_cs.toFixed(0) : "—", icon: TrendingUp, c: "text-blue-400" },
+              { label: t("championPage.kills"), val: s ? s.avg_kills.toFixed(1) : "—", icon: Swords, c: "text-red-400" },
+              { label: t("championPage.deaths"), val: s ? s.avg_deaths.toFixed(1) : "—", icon: Activity, c: "text-amber-400" },
+              { label: t("championPage.assists"), val: s ? s.avg_assists.toFixed(1) : "—", icon: TrendingUp, c: "text-emerald-400" },
+              { label: t("championPage.gold"), val: s ? s.avg_gold.toLocaleString() : "—", icon: Crown, c: "text-yellow-400" },
+              { label: t("championPage.damage"), val: s ? s.avg_damage.toLocaleString() : "—", icon: Swords, c: "text-orange-400" },
+              { label: t("championPage.cs"), val: s ? s.avg_cs.toFixed(0) : "—", icon: TrendingUp, c: "text-blue-400" },
             ].map((st) => (
               <div key={st.label}
                 className="group relative overflow-hidden rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
@@ -130,7 +133,7 @@ export default function ChampionPageV2({ championKey }: Props) {
 
           {/* Role distribution */}
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="font-heading text-xs uppercase tracking-widest text-muted-foreground">Roles</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="font-heading text-xs uppercase tracking-widest text-muted-foreground">{t("championPage.roles")}</CardTitle></CardHeader>
             <CardContent>
               {s?.role_distribution && s.role_distribution.length > 0 ? (
                 <div className="flex flex-col gap-2">
@@ -154,15 +157,15 @@ export default function ChampionPageV2({ championKey }: Props) {
                   })}
                 </div>
               ) : (
-                <Empty icon={BarChart3} msg="Sin datos de roles" />
+                <Empty icon={BarChart3} msg={t("championPage.noRoles")} />
               )}
             </CardContent>
           </Card>
 
           {/* Matchups */}
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <MatchupBlock title="Mejor contra" items={s?.best_against} type="best" />
-            <MatchupBlock title="Peor contra" items={s?.worst_against} type="worst" />
+            <MatchupBlock title={t("championPage.bestAgainst")} items={s?.best_against} type="best" />
+            <MatchupBlock title={t("championPage.worstAgainst")} items={s?.worst_against} type="worst" />
           </div>
         </div>
 
@@ -170,7 +173,7 @@ export default function ChampionPageV2({ championKey }: Props) {
         <aside className="flex flex-col gap-5">
           {/* Top Players */}
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="font-heading text-xs uppercase tracking-widest text-muted-foreground">Top jugadores</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="font-heading text-xs uppercase tracking-widest text-muted-foreground">{t("championPage.topPlayers")}</CardTitle></CardHeader>
             <CardContent className="p-0">
               {s?.top_players && s.top_players.length > 0 ? (
                 <div className="divide-y divide-border/30">
@@ -195,7 +198,7 @@ export default function ChampionPageV2({ championKey }: Props) {
                   ))}
                 </div>
               ) : (
-                <p className="px-4 py-4 text-sm text-muted-foreground">Sin datos</p>
+                <p className="px-4 py-4 text-sm text-muted-foreground">{t("championPage.noData")}</p>
               )}
             </CardContent>
           </Card>
@@ -204,11 +207,11 @@ export default function ChampionPageV2({ championKey }: Props) {
           {s && (
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-border bg-card p-4 text-center">
-                <p className="font-heading text-[10px] uppercase tracking-widest text-muted-foreground">Visión</p>
+                <p className="font-heading text-[10px] uppercase tracking-widest text-muted-foreground">{t("championPage.vision")}</p>
                 <p className="font-heading text-2xl font-black tabular-nums text-purple-400">{s.avg_vision.toFixed(0)}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4 text-center">
-                <p className="font-heading text-[10px] uppercase tracking-widest text-muted-foreground">Duración</p>
+                <p className="font-heading text-[10px] uppercase tracking-widest text-muted-foreground">{t("championPage.duration")}</p>
                 <p className="font-heading text-2xl font-black tabular-nums text-foreground">{Math.round(s.avg_duration / 60)}m</p>
               </div>
             </div>
@@ -216,7 +219,7 @@ export default function ChampionPageV2({ championKey }: Props) {
 
           {/* Weekly History */}
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="font-heading text-xs uppercase tracking-widest text-muted-foreground">Semanal</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="font-heading text-xs uppercase tracking-widest text-muted-foreground">{t("championPage.weekly")}</CardTitle></CardHeader>
             <CardContent className="p-0">
               {s?.weekly_history && s.weekly_history.length > 0 ? (
                 <div className="divide-y divide-border/30">
@@ -236,7 +239,7 @@ export default function ChampionPageV2({ championKey }: Props) {
                   ))}
                 </div>
               ) : (
-                <p className="px-4 py-4 text-sm text-muted-foreground">Sin historial</p>
+                <p className="px-4 py-4 text-sm text-muted-foreground">{t("championPage.noHistory")}</p>
               )}
             </CardContent>
           </Card>
@@ -281,7 +284,7 @@ function MatchupBlock({ title, items, type }: {
             })}
           </div>
         ) : (
-          <p className="px-4 py-4 text-sm text-muted-foreground">Sin datos</p>
+          <p className="px-4 py-4 text-sm text-muted-foreground">{i18n.t("championPage.noData")}</p>
         )}
       </CardContent>
     </Card>

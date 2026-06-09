@@ -88,7 +88,7 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
         <div className="relative flex-1 min-w-40 max-w-xs">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground/50" />
           <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-            placeholder="Buscar equipo..."
+            placeholder={t("teams.searchPlaceholder")}
             className="h-8 w-full rounded-lg border border-border bg-muted/30 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-muted-foreground/40 focus:border-primary/50" />
         </div>
 
@@ -98,21 +98,21 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
           {leagues.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
         </select>
 
-        <span className="text-xs tabular-nums text-muted-foreground/60">{teamsData.length} equipos</span>
+        <span className="text-xs tabular-nums text-muted-foreground/60">{t("teams.nTeams", { count: teamsData.length })}</span>
       </div>
 
       {/* Sort row */}
       <div className="flex items-center gap-4 border-b border-border pb-2">
         <SortAsc className="size-3.5 text-muted-foreground/50" />
         {[
-          { key: "position" as SortKey, label: "Pos" },
-          { key: "name" as SortKey, label: "Equipo" },
-          { key: "ovr" as SortKey, label: "OVR" },
-          { key: "rep" as SortKey, label: "Rep" },
-          { key: "value" as SortKey, label: "Valor" },
-          { key: "wr" as SortKey, label: "WR" },
-          { key: "players" as SortKey, label: "Jug" },
-        ].map(({ key, label }) => {
+          { key: "position" as SortKey, labelKey: "teams.colPos" },
+          { key: "name" as SortKey, labelKey: "teams.colTeam" },
+          { key: "ovr" as SortKey, labelKey: "teams.colOvr" },
+          { key: "rep" as SortKey, labelKey: "teams.colRep" },
+          { key: "value" as SortKey, labelKey: "teams.colValue" },
+          { key: "wr" as SortKey, labelKey: "teams.colWr" },
+          { key: "players" as SortKey, labelKey: "teams.colPlayers" },
+        ].map(({ key, labelKey }) => {
           const active = sort === key;
           return (
             <button key={key} type="button" onClick={() => toggleSort(key)}
@@ -120,7 +120,7 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
                 "flex items-center gap-1 text-[11px] font-heading font-bold uppercase tracking-wider transition-colors",
                 active ? "text-primary" : "text-muted-foreground/50 hover:text-foreground",
               )}>
-              {label}
+              {t(labelKey)}
               {active && (asc ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />)}
             </button>
           );
@@ -171,11 +171,11 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
 
               {/* Stats */}
               <div className="grid grid-cols-5 gap-px bg-border">
-                <StatCell label="Plantilla" value={String(roster.length)} />
-                <StatCell label="OVR" value={String(avgOvr)} />
-                <StatCell label="Rep" value={String(team.reputation)} />
-                <StatCell label="Valor" value={formatVal(totalValue)} />
-                <StatCell label="Pts" value={standing ? String(standing.points) : "—"} />
+                <StatCell label={t("teams.statSquad")} value={String(roster.length)} />
+                <StatCell label={t("teams.statOvr")} value={String(avgOvr)} />
+                <StatCell label={t("teams.statRep")} value={String(team.reputation)} />
+                <StatCell label={t("teams.statValue")} value={formatVal(totalValue)} />
+                <StatCell label={t("teams.statPts")} value={standing ? String(standing.points) : "—"} />
               </div>
 
               {/* Bottom */}
@@ -198,7 +198,7 @@ export function TeamsTabV2({ gameState, onSelectTeam }: Props) {
         {pageData.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-16">
             <Filter className="size-8 text-muted-foreground/20" />
-            <p className="mt-2 text-sm text-muted-foreground">{search ? "No hay equipos que coincidan" : t("teams.noTeams")}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{search ? t("teams.noMatch") : t("teams.noTeams")}</p>
           </div>
         )}
       </div>

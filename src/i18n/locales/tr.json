@@ -161,7 +161,9 @@
     "noResults": "Sonuç bulunamadı",
     "importedDescription": "İçe aktarılmış dünya veritabanı",
     "invalidWorldDb": "Geçersiz dünya veritabanı dosyası: {{error}}",
-    "failedStartGame": "Oyun başlatılamadı: {{error}}"
+    "failedStartGame": "Oyun başlatılamadı: {{error}}",
+    "community": "Community",
+    "patchNotes": "What's New"
   },
   "createManager": {
     "title": "Koç Oluştur",
@@ -175,7 +177,8 @@
     "searchNationalities": "Uyrukları ara...",
     "chooseWorld": "Dünya Seç",
     "placeholderFirst": "örn. Lee",
-    "placeholderLast": "örn. Sang-hyeok"
+    "placeholderLast": "örn. Sang-hyeok",
+    "nickname": "Nickname"
   },
   "validation": {
     "required": "{{field}} alanı zorunludur",
@@ -238,7 +241,24 @@
       "urgentUnread": "{{count}} acil okunmamış mesaj",
       "matchTodayStartingXi": "Bugün maç var! İlk 5'ini belirle"
     },
-    "unemployedBanner": "Şu anda bir kulübünüz yok. Gelen kutunuza iş teklifleri gelebilir."
+    "unemployedBanner": "Şu anda bir kulübünüz yok. Gelen kutunuza iş teklifleri gelebilir.",
+    "scrims": "Scrims",
+    "worldStaff": "DB Staff",
+    "social": "Social",
+    "searchChampions": "Champions",
+    "brandSubtitle": "Manage your esports team",
+    "brandTitle": "OL Manager",
+    "competitions": "Competitions",
+    "noActiveGame": "No active game",
+    "noActiveGameDesc": "Start or load a game to continue.",
+    "save": "Save",
+    "phaseLabels": {
+      "morning": "Morning",
+      "scrimBlock": "Scrims",
+      "reviewBlock": "Review",
+      "trainingBlock": "Training",
+      "evening": "Evening"
+    }
   },
   "continueMenu": {
     "goToField": "Vadi'ye İn",
@@ -251,7 +271,8 @@
     "skipToMatchDay": "Maç Gününe Atla",
     "skipToMatchDayDesc": "Bir sonraki maça atla",
     "matchDayTitle": "Maç Günü",
-    "delegateWarning": "Maçı asistanınız yönetecek. Maça müdahale edemeyeceksiniz."
+    "delegateWarning": "Maçı asistanınız yönetecek. Maça müdahale edemeyeceksiniz.",
+    "skipToNextDay": "Skip to Next Day"
   },
   "champions": {
     "170": "170+",
@@ -281,7 +302,8 @@
     "worldTitle": "World Champions",
     "allChampions": "All Champions",
     "worldDescription": "Explore all League of Legends champions",
-    "totalChampions": "Total"
+    "totalChampions": "Total",
+    "searchPlaceholder": "Search champions..."
   },
   "exitConfirm": {
     "title": "Ana Menüye Çıkılsın mı?",
@@ -313,9 +335,21 @@
   },
   "home": {
     "nextMatch": "Sonraki Maç",
-    "nextOpponent": "Sıradaki Rakip",
+    "nextOpponent": "Sonraki Maç",
+    "nextMatchCard": {
+      "title": "Next Match",
+      "none": "No matches scheduled.",
+      "opponentForm": "Opponent Form",
+      "noHistory": "No recent history"
+    },
     "leaguePosition": "Lig Sıralaması",
-    "standings": "Puan Durumu",
+    "standings": {
+      "hash": "#",
+      "losses": "L",
+      "preseason": "Preseason — no standings yet",
+      "team": "Team",
+      "wins": "W"
+    },
     "noLeague": "Henüz lig verisi yok.",
     "squadOverview": "Kadro Özeti",
     "avgCondition": "Ortalama Kondisyon",
@@ -412,7 +446,58 @@
     "todayScrimOpen": "Open scrim slot",
     "todayScrimDetail": "Choose how to use today's scrim block.",
     "todayTraining": "Training focus",
-    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover.",
+    "todayScrimReviewVs": "Review vs {{team}}",
+    "todayScrimReview": "Post-scrim review",
+    "todayScrimReviewDetail": "Choose how to turn today's scrim into learning.",
+    "awayVenue": "Away",
+    "finances": {
+      "balance": "Balance",
+      "detail": "Financial Overview",
+      "seasonNet": "Season Net",
+      "title": "Finances",
+      "wageBudget": "Wage Budget"
+    },
+    "homeVenue": "Home",
+    "matchDay": "Match Day",
+    "messages": {
+      "inbox": "Inbox",
+      "title": "Messages"
+    },
+    "news": {
+      "title": "News",
+      "viewAll": "View All"
+    },
+    "phase": {
+      "evening": {
+        "title": "Evening",
+        "description": "Evening block",
+        "actionLabel": "View Details"
+      },
+      "morning": {
+        "title": "Morning",
+        "description": "Morning block",
+        "actionLabel": "View Details"
+      },
+      "reviewBlock": {
+        "title": "Review",
+        "description": "Review block",
+        "actionLabel": "Review Now"
+      },
+      "scrimBlock": {
+        "title": "Scrims",
+        "description": "Scrim block",
+        "actionLabel": "Start Scrims"
+      },
+      "trainingBlock": {
+        "title": "Training",
+        "description": "Training block",
+        "actionLabel": "Start Training"
+      }
+    },
+    "view": "View",
+    "viewCompetitions": "View Competitions",
+    "yourTeam": "Your Team"
   },
   "season": {
     "preseasonStatus": "Sezon Öncesi Durumu",
@@ -455,7 +540,13 @@
     "repWorldClass": "Dünya Klası",
     "repStrong": "Güçlü",
     "repAverage": "Ortalama",
-    "repDeveloping": "Gelişecek"
+    "repDeveloping": "Gelişecek",
+    "confirm": "Confirm",
+    "noLeaguesDesc": "No leagues found for this region",
+    "selectLeague": "Select League",
+    "selectLeagueSubtitle": "Choose the league you want to manage",
+    "selectTeam": "Select Team",
+    "teams": "Teams"
   },
   "youthAcademy": {
     "title": "Akademi",
@@ -496,7 +587,12 @@
     "promoting": "As takıma çıkarılıyor...",
     "promote": "As Takıma Çıkar",
     "academyPlayers": "akademi oyuncuları",
-    "academyPlayersStartingMayus": "Akademi Oyuncuları"
+    "academyPlayersStartingMayus": "Akademi Oyuncuları",
+    "hidden": "Hidden",
+    "highPotentialBadge": "High Potential",
+    "noStaffMatch": "No staff match your search",
+    "potentialHiddenHint": "Potential is hidden until scouted",
+    "searchPlaceholder": "Search academy players..."
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -697,7 +793,16 @@
       "technical": "Teknik",
       "mental": "Zihinsel",
       "goalkeeper": "Kaleci"
-    }
+    },
+    "fitness": "Fitness",
+    "action": "Action",
+    "backToMenu": "Back to Menu",
+    "create": "Create",
+    "loanListed": "CD",
+    "nextPage": "Next",
+    "previousPage": "Previous",
+    "saving": "Saving...",
+    "transferListed": "TR"
   },
   "teamSelection": {
     "title": "Kulübünüzü Seçin",
@@ -748,7 +853,11 @@
       "Possession": "Takımınızı topu sabırla dolaştırmaya, tempoyu kontrol etmeye ve daha temiz fırsatlar aramaya teşvik eder.",
       "Counter": "Takımınızı topu kazandıktan sonra hızla ileri çıkmaya ve rakip yerleşmeden boşluklara saldırmaya davet eder.",
       "HighPress": "Takımınızdan rakipleri daha erken kapatmasını, topu daha ileride kazanmasını ve rakipleri baskı altında tutmasını ister."
-    }
+    },
+    "activeLineup": "Active Lineup",
+    "allStarting": "All players in the starting lineup",
+    "benchSubstitutes": "Bench / Substitutes",
+    "noRoleAvailable": "No player available"
   },
   "tactics": {
     "formationStyle": "Diziliş ve Stil",
@@ -899,7 +1008,8 @@
       "variance": "değişkenlik",
       "tip": "İpucu: Eğer tutarlılık puanı düşükse güçlü tarafı + ormancı rotasyonunu + oyun zamanlamasını birbiriyle uyumlu hale getirin.",
       "autoSave": "Değişiklikler otomatik olarak kaydedilir"
-    }
+    },
+    "draftStrategy": "Draft Strategy"
   },
   "training": {
     "weeklySchedule": "Haftalık Program",
@@ -1037,7 +1147,9 @@
         "2": "Taşıyıcı Havuzu",
         "3": "Makro Laboratuvarı",
         "4": "Sıfırlanma (Reset) Bloğu"
-      }
+      },
+      "groupNamePlaceholder": "Group name...",
+      "newGroup": "New Group"
     },
     "scrims": {
       "title": "Haftalık Scrimler",
@@ -1047,8 +1159,43 @@
       "autoRandom": "Otomatik rastgele aktif",
       "noOpponent": "Rastgele",
       "randomResolved": "Rastgele -> {{team}}",
-      "opponentLogoAlt": "Rakip logosu"
-    }
+      "opponentLogoAlt": "Rakip logosu",
+      "slot": "Slot",
+      "planA": "Plan A",
+      "planB": "Plan B",
+      "planC": "Plan C",
+      "noFallback": "No fallback",
+      "pending": "Pending",
+      "weeklyObjective": "Weekly objective",
+      "weeklyObjectiveDescription": "Define what you want to learn this week. The objective guides reports and gives Plan A/B/C intent.",
+      "staffSuggestions": "Staff suggestions",
+      "objectives": {
+        "none": "No objective set",
+        "draftPrep": "Prepare draft vs next rival",
+        "championPool": "Expand champion pool",
+        "earlyGame": "Fix early game",
+        "teamfighting": "Improve teamfights",
+        "macro": "Polish macro and objectives",
+        "mental": "Stabilize mental"
+      },
+      "staff": {
+        "pickObjective": "Pick a weekly objective before touching rivals: without intent, volume only creates noise.",
+        "mentalReset": "Prioritize Mental Reset or VOD Review: the streak is already hurting learning quality.",
+        "reduceCancellations": "Reduce cancellations this week; scrim reputation is competitive infrastructure too.",
+        "moreVolumeForPool": "To expand champion pool you need at least 4 blocks; two scrims are not enough sample.",
+        "noPlannedOpponents": "The objective is right, but no rivals are locked: set at least Plan A so the week has direction.",
+        "draftPrepPlan": "Use Plan A/B/C against strong teams: you want to pressure draft, not farm cheap confidence.",
+        "strongerOpponents": "For this objective you need rivals that make you uncomfortable; find at least one block against a stronger team.",
+        "softerMentalWeek": "Mental week: do not open with every rival above your level. Mix in one controlled block to rebuild confidence.",
+        "addFallbacksForReputation": "Your planned rivals have better scrim reputation; add Plan B/C or you will eat avoidable rejections.",
+        "macroReview": "Mark a VOD Review block: if the issue is objective setup, more scrims without review repeat the mistake.",
+        "narrowFocus": "Average quality is low; keep the volume, but narrow the focus before adding more rivals.",
+        "keepPlan": "The current plan is healthy: keep the objective, choose demanding rivals, and review the first report before increasing volume."
+      },
+      "selectOpponent": "Select Opponent"
+    },
+    "daysPerWeek": "days/week",
+    "emptyRoster": "Empty roster"
   },
   "staff": {
     "myStaff": "Personellerim ({{count}})",
@@ -1063,7 +1210,8 @@
       "AssistantManager": "Asistan Koç",
       "Coach": "Koç",
       "Scout": "Gözlemci (Scout)",
-      "Physio": "Fizyoterapist"
+      "Physio": "Fizyoterapist",
+      "Owner": "Owner"
     },
     "attrs": {
       "coaching": "Koçluk",
@@ -1165,7 +1313,12 @@
     "contractRiskStable": "Stabil",
     "contractExpiresOn": "{{date}} tarihinde bitiyor",
     "atRiskWages": "€{{amount}}/yıl risk altında",
-    "noContractRisks": "Yakın zamanda sözleşme riski yok"
+    "noContractRisks": "Yakın zamanda sözleşme riski yok",
+    "esportsSponsor": "Esports Sponsor",
+    "mainHub": "Main Hub",
+    "playerWages": "Player Wages",
+    "staffWages": "Staff Wages",
+    "standardSponsor": "Standard Sponsor"
   },
   "inbox": {
     "title": "Gelen Kutusu",
@@ -1214,7 +1367,9 @@
       "Media": "Medya",
       "System": "Sistem",
       "JobOffer": "İş Teklifleri"
-    }
+    },
+    "all": "All",
+    "close": "Close"
   },
   "manager": {
     "managerOf": "{{team}} Baş Koçu",
@@ -1242,7 +1397,23 @@
     "fanBehind": "Taraftarlar takımın arkasında.",
     "fanMixed": "Taraftarların hisleri karışık.",
     "fanRestless": "Taraftarlar giderek huzursuzlaşıyor.",
-    "fanUnrest": "Taraftarlar huzursuz — protestolar muhtemel."
+    "fanUnrest": "Taraftarlar huzursuz — protestolar muhtemel.",
+    "bestFinish": "Best Finish",
+    "bestSeason": "Best Season",
+    "careerHighlights": "Career Highlights",
+    "changeAvatar": "Change Avatar",
+    "currentTeam": "Current Team",
+    "editProfile": "Edit Profile",
+    "leaguePosition": "League Position",
+    "noHistory": "No career history yet",
+    "noTeam": "No team assigned",
+    "players": "Players",
+    "recentResults": "Recent Results",
+    "saveError": "Error saving profile",
+    "seasons": "Seasons",
+    "staff": "Staff",
+    "teams": "Teams",
+    "winRate": "Win Rate"
   },
   "boardObjectives": {
     "objective": {
@@ -1344,7 +1515,8 @@
     "wageFeedbackBudgetDetail": "Yıllık {{wage}} işaret ediyorlar, ancak bu maaş bütçesini çok zorluyor.",
     "wageFeedbackRejectedHeadline": "Görüşmeler bozuldu.",
     "wageFeedbackRejectedDetail": "Birkaç tur boyunca ortak zemin bulunamadı, her iki taraf da geri çekiliyor.",
-    "transferFeedbackWageNegotiationDetail": "Kulüp ücretinizi kabul etti. Şimdi oyuncuyla şartları kararlaştırma zamanı."
+    "transferFeedbackWageNegotiationDetail": "Kulüp ücretinizi kabul etti. Şimdi oyuncuyla şartları kararlaştırma zamanı.",
+    "browseMarket": "Browse Market"
   },
   "schedule": {
     "noSchedule": "Lig fikstürü bulunmuyor.",
@@ -1366,7 +1538,12 @@
     "playoffs": "Playofflar",
     "round": "{{number}}. Tur",
     "season": "Sezon {{number}}",
-    "lastResult": "Son sonuç"
+    "lastResult": "Son sonuç",
+    "match": "Match",
+    "matchesForDate": "Matches for {{date}}",
+    "noFixtures": "No fixtures available",
+    "noMatchesOnDay": "No matches on this day",
+    "thisWeek": "This Week"
   },
   "players": {
     "searchPlaceholder": "İsme veya uyruğa göre ara...",
@@ -1375,7 +1552,22 @@
     "nPlayersFound": "{{count}} oyuncu bulundu",
     "noMatch": "Filtrelerinizle eşleşen oyuncu yok.",
     "showingFirst": "Toplam {{total}} oyuncudan ilk {{shown}} kadarı gösteriliyor. Daha fazlasını görmek için aramanızı daraltın.",
-    "showingRange": "{{total}} oyuncudan {{from}}–{{to}} arası gösteriliyor"
+    "showingRange": "{{total}} oyuncudan {{from}}–{{to}} arası gösteriliyor",
+    "allCompetitions": "All Competitions",
+    "clearFilters": "Clear Filters",
+    "colAge": "Age",
+    "colNation": "Nat",
+    "colOvr": "OVR",
+    "colPlayer": "Player",
+    "colPos": "Pos",
+    "colStatus": "Status",
+    "colTeam": "Team",
+    "colValue": "Value",
+    "loanListed": "Loan Listed",
+    "noTeam": "No team",
+    "notFound": "No players found",
+    "title": "Players",
+    "transferListed": "Transfer Listed"
   },
   "teams": {
     "yourTeam": "Takımınız",
@@ -1389,7 +1581,17 @@
     "playStyleBalanced": "Dengeli",
     "playStyleCounter": "Güçlenme (Scaling) & Avantaj",
     "playStyleDirect": "Erken çatışma (Skirmish)",
-    "winRateShort": "Kazanma Oranı (WR)"
+    "winRateShort": "Kazanma Oranı (WR)",
+    "nTeams": "{{count}} teams",
+    "nTeamsInLeague": "{{count}} teams in {{league}}",
+    "noMatch": "No teams match your search",
+    "noTeams": "No teams found",
+    "searchPlaceholder": "Search teams...",
+    "statOvr": "OVR",
+    "statPts": "Pts",
+    "statRep": "Rep",
+    "statSquad": "Squad",
+    "statValue": "Value"
   },
   "playersList": {
     "searchPlaceholder": "İsme veya uyruğa göre ara...",
@@ -1550,7 +1752,13 @@
     "championGames": "Oyun",
     "promoteToMain": "As takıma çıkar",
     "demoteToAcademy": "Akademiye düşür",
-    "rerollWarning": "Pozisyon değiştirmek özellikleri yeniden hesaplar ve oyuncunun OVR'sini değiştirebilir."
+    "rerollWarning": "Pozisyon değiştirmek özellikleri yeniden hesaplar ve oyuncunun OVR'sini değiştirebilir.",
+    "alsoPlays": "Also plays",
+    "editPosition": "Edit Position",
+    "loanListed": "Loan Listed",
+    "potentialResearchProgress": "Research progress ({{total}} stages)",
+    "startPotentialResearch": "Start Potential Research",
+    "transferListed": "Transfer Listed"
   },
   "teamProfile": {
     "clubInfo": "Takım Bilgisi",
@@ -1708,7 +1916,19 @@
     "academyPending": "Akademi satın alımı beklemede",
     "academyRosterCount": "Satın alınan kadroda {{count}} oyuncu var",
     "academyPipelineHint": "Altyapı havuzunu açmak için Akademi'den mevcut bir ERL takımı satın alın.",
-    "viewAcquisitionOptions": "Satın alma seçeneklerini gör"
+    "viewAcquisitionOptions": "Satın alma seçeneklerini gör",
+    "academyDescription": "Acquire an academy team to develop young talent and feed your first team with homegrown players.",
+    "academyPendingTitle": "No Academy",
+    "benefitCompare": "Compare",
+    "benefitCompareDesc": "Compare stats and find the best option",
+    "benefitDiscover": "Discover",
+    "benefitDiscoverDesc": "Discover hidden talent in the academy and market",
+    "benefitEvaluate": "Evaluate",
+    "benefitEvaluateDesc": "Discover each player's real potential",
+    "hireScoutCta": "Hire Scout",
+    "noScoutsDescription": "You have no scouts on your staff. Hire at least one from the Staff page to start evaluating players and discovering hidden talent.",
+    "noScoutsTitle": "No scouting team",
+    "scoutingBadge": "Scouted"
   },
   "match": {
     "live": "Canlı",
@@ -2207,7 +2427,29 @@
       "metaThreats": "Meta threats",
       "meta": "Meta",
       "masteryHighlights": "Mastery highlights"
-    }
+    },
+    "draftStrategy": "Draft Strategy",
+    "condition": "Condition",
+    "scrimPrep": {
+      "title": "Scrim prep carried into the match",
+      "summary": "Recent scrims gave this side a small {{focus}} execution signal. It affects timing and comfort, not a guaranteed result.",
+      "details": {
+        "opponentPrep": "Opponent prep +{{value}}",
+        "championComfort": "Champion comfort +{{value}}",
+        "focus": "Focus: {{focus}}"
+      },
+      "focus": {
+        "draftPrep": "draft prep",
+        "championPool": "champion pool",
+        "earlyGame": "early game",
+        "teamfighting": "teamfighting",
+        "macro": "macro",
+        "mental": "mental reset",
+        "general": "general prep"
+      }
+    },
+    "continue": "Continue",
+    "game": "Game"
   },
   "endOfSeason": {
     "seasonComplete": "Sezon Tamamlandı",
@@ -2696,7 +2938,31 @@
       },
       "scrimWeekly": {
         "subject": "Haftalık Scrim Personel Raporu",
-        "body": "Haftalık scrim raporu:\n\nOynanan: {{played}}\nGalibiyet: {{wins}}\nMağlubiyet: {{losses}}\nMevcut kaybetme serisi: {{lossStreak}}\n\nScrim gelişimi kaybedilen maçlarda bile uygulanır, ancak uzun mağlubiyet serileri morale zarar verir."
+        "body": "Haftalık scrim raporu:\n\nOynanan: {{played}}\nGalibiyet: {{wins}}\nMağlubiyet: {{losses}}\nMevcut kaybetme serisi: {{lossStreak}}\n\nScrim gelişimi kaybedilen maçlarda bile uygulanır, ancak uzun mağlubiyet serileri morale zarar verir.",
+        "focus": {
+          "draftPrep": "Draft prep",
+          "championPool": "Champion pool",
+          "earlyGame": "Early game",
+          "teamfighting": "Teamfighting",
+          "macro": "Macro",
+          "mental": "Mental"
+        },
+        "issues": {
+          "draftGap": "Draft gap",
+          "lanePressure": "Lane pressure",
+          "objectiveSetup": "Objective setup",
+          "teamfightExecution": "Teamfight execution",
+          "championComfort": "Champion comfort",
+          "tilt": "Tilt"
+        },
+        "recommendations": {
+          "lockPlans": "Lock Plan A/B/C earlier next week so the staff has usable prep data.",
+          "reduceCancellations": "Reduce cancellations next week; scrim reputation is part of your competitive infrastructure.",
+          "resetBeforeVolume": "Open next week with Mental Reset or VOD Review before adding more volume.",
+          "narrowFocus": "Keep the volume but narrow the focus around the recurring issue; quality is too noisy right now.",
+          "targetedDrills": "Schedule Targeted Drills for the recurring issue and keep the main prep block stable.",
+          "keepPlan": "Keep the current plan: it is producing useful reps without overloading the roster."
+        }
       },
       "patchNotes": {
         "subject": "Yama {{label}} Notları",
@@ -2716,13 +2982,45 @@
           "subject0": "Esportmaníacos, {{player}} oyuncusunu övüyor — masa hemfikir",
           "body0": "Esportmaníacos paneli bugünkü yayının önemli bir bölümünü {{team}} takımındaki {{player}} hakkında konuşarak geçirdi.\n\n\"Bu hafta eleştirilecek hiçbir şey yok. Çocuk resmen domine ediyor.\" Bu olumlu haber soyunma odasında özgüveni artırmalı.",
           "subject1": "Esportmaníacos: {{player}}, bu mevsim {{team}} takımını taşıyor",
-          "body1": "Esportmaníacos yorumcuları nadiren herhangi bir konuda aynı fikirde olur, ama {{player}} bugün tam not aldı: \"İstikrarlı, sağlam, form düşüşü yok. Şu anda ligin en iyi oyuncularından biri. {{team}} onu tutmak için elinden geleni yapmalı.\"\n\nMoral için de piyasa değeri için de iyi."
+          "body1": "Esportmaníacos yorumcuları nadiren herhangi bir konuda aynı fikirde olur, ama {{player}} bugün tam not aldı: \"İstikrarlı, sağlam, form düşüşü yok. Şu anda ligin en iyi oyuncularından biri. {{team}} onu tutmak için elinden geleni yapmalı.\"\n\nMoral için de piyasa değeri için de iyi.",
+          "subject2": "Esportmaníacos highlights {{player}}'s objective calls",
+          "body2": "The desk circled back to {{player}} after reviewing {{team}}'s latest map setups: \"This is the kind of player who makes the whole team look more ordered. Herald timer, dragon setup, reset timing; everything has intent.\"\n\nQuiet praise, but the sort that staff rooms notice.",
+          "subject3": "Esportmaníacos buys into the {{team}} project",
+          "body3": "Today's show had an unusual moment of agreement around {{team}}: \"You can see the work. The drafts make sense, the players know their jobs, and {{player}} is setting the tone in-game. This is not random form.\"\n\nThe clip is already moving through fan chats.",
+          "subject4": "Esportmaníacos: {{player}} looks stage-ready",
+          "body4": "Esportmaníacos praised {{player}} for turning pressure moments into clean decisions: \"Some players farm stats; this one wins the ugly minutes. If {{team}} need someone calm when the map gets weird, that's him.\"\n\nThat kind of narrative can settle a player before big matches.",
+          "subject5": "Esportmaníacos gives {{player}} credit for the turnaround",
+          "body5": "The panel framed {{player}} as one of the reasons {{team}}'s week looked cleaner: \"Less panic, better first moves, better discipline after losing tempo. You can tell someone is calling with confidence.\"\n\nStaff will enjoy hearing this one.",
+          "subject6": "Esportmaníacos praises {{player}}'s champion pool",
+          "body6": "A draft segment on Esportmaníacos turned into praise for {{player}}: \"The value is not one pick; it's the threat of five. {{team}} can enter draft with actual options because this player bends bans.\"\n\nGood timing if renewal talks are near.",
+          "subject7": "Esportmaníacos says {{player}} is raising the floor",
+          "body7": "The tertulia was impressed by how stable {{player}} has become for {{team}}: \"He may not be the loudest name every week, but the floor is high. Coaches love that. Teams win splits with players who don't donate games.\"\n\nSensible coverage, for once.",
+          "subject8": "Esportmaníacos calls {{player}} a playoff-level piece",
+          "body8": "Esportmaníacos spent a full block on playoff ceilings and landed on {{player}}: \"If {{team}} reaches playoffs, this is one of the players I trust in a best-of. He understands when to slow the map and when to flip tempo.\"\n\nUseful fuel for the room.",
+          "subject9": "Esportmaníacos: {{player}} finally gets his flowers",
+          "body9": "The panel admitted {{player}} had been underrated in the wider conversation: \"We spend too much time on the flashy names. This guy has been doing the boring winning stuff for {{team}} all split. Give him credit.\"\n\nA small media bump, but a deserved one."
         },
         "negative": {
           "subject0": "Esportmaníacos, {{player}} üzerine gidiyor — panel acımadı",
           "body0": "Esportmaníacos paneli bugün {{player}} konusunda kendini tutmadı: \"Çocuk tamamen kayboldu. Bu mevsim ona ne oldu? {{team}}, böyle performans gösteren bir oyuncuya güvenmeye devam edemez.\"\n\nBu tür haberler morali sert vurur. Oyuncuyla konuşmaya değer.",
           "subject1": "Esportmaníacos, {{team}} takımındaki {{player}} oyuncusunun istikrarını sorguluyor",
-          "body1": "Bugünkü Esportmaníacos yorumcu oturumu, {{player}} oyuncusunun son formunun tam bir analizine dönüştü. Karar: \"İstikrarsız. Düzen yok. Bazı günler üst seviyede, bazı günler tamamen görünmez. {{team}}, bu roldeki bir oyuncudan daha iyi çıktı hak ediyor.\"\n\nOyuncunun moralini takip edin."
+          "body1": "Bugünkü Esportmaníacos yorumcu oturumu, {{player}} oyuncusunun son formunun tam bir analizine dönüştü. Karar: \"İstikrarsız. Düzen yok. Bazı günler üst seviyede, bazı günler tamamen görünmez. {{team}}, bu roldeki bir oyuncudan daha iyi çıktı hak ediyor.\"\n\nOyuncunun moralini takip edin.",
+          "subject2": "Esportmaníacos worries about {{player}}'s early game",
+          "body2": "The desk clipped several early-game moments from {{player}} and the conclusion was blunt: \"You cannot start every map ten seconds late. If {{team}} want to play for objectives, this has to be cleaner.\"\n\nThe criticism is specific enough to stick.",
+          "subject3": "Esportmaníacos puts {{player}} under review",
+          "body3": "A VOD segment on Esportmaníacos turned uncomfortable for {{player}}: \"The mechanics are there, but the decision tree is messy. Some deaths look like communication problems, some look like impatience. Either way, {{team}} need answers.\"\n\nThe player may feel the heat this week.",
+          "subject4": "Esportmaníacos questions {{player}}'s draft value",
+          "body4": "Esportmaníacos focused on draft flexibility and {{player}} did not escape criticism: \"If you need two bans and a comfort pick just to get an even lane, the draft becomes expensive. {{team}} have to solve that.\"\n\nA tough angle before the next prep block.",
+          "subject5": "Esportmaníacos: {{player}} is losing key minutes",
+          "body5": "The panel argued that {{player}}'s problem is not the scoreboard but the timing: \"Minute eight, minute fourteen, third dragon setup; that's where the game is slipping. {{team}} need him present in those windows.\"\n\nMedia pressure is now attached to very concrete moments.",
+          "subject6": "Esportmaníacos calls out {{player}}'s map reads",
+          "body6": "A map-control debate ended with {{player}} taking the blame: \"This is not about one missed skillshot. The reads are late. When the play starts, {{team}} are already reacting instead of setting the terms.\"\n\nExpect fans to repeat that line all week.",
+          "subject7": "Esportmaníacos asks if {{team}} need a backup plan",
+          "body7": "The tertulia floated an awkward question around {{player}}: \"If this form continues, does {{team}} need to prepare another look? Nobody is saying bench him tomorrow, but you cannot ignore the trend.\"\n\nThat sort of speculation can unsettle a room fast.",
+          "subject8": "Esportmaníacos: {{player}} is forcing bad map states",
+          "body8": "Esportmaníacos reviewed {{player}}'s recent deaths and found a pattern: \"These are not heroic plays gone wrong. These are low-percentage moves that make {{team}} play the next two minutes with no map.\"\n\nWorth addressing before it becomes the week's storyline.",
+          "subject9": "Esportmaníacos cools the hype around {{player}}",
+          "body9": "The panel pushed back on the idea that {{player}} is still untouchable: \"Reputation is not current form. Right now {{team}} need more from him, especially when the draft gives resources to his side.\"\n\nA direct hit to the player's public stock."
         }
       },
       "allio": {
@@ -2737,21 +3035,73 @@
         "rivalInterest": {
           "subject": "Al Lío Podcast — {{player}}, {{rival}} ile anılıyor",
           "body0": "Eros son Al Lío bölümünü bomba gibi bir haberle açtı: \"{{rival}} takımının {{player}} için hamle yapmaya başladığı bilgisine sahibim. Analistleri haftalardır son serileri ve tekli dereceli verilerini inceliyor. Henüz resmi teklif yok ama işler hızla ısınıyor.\"\n\nTemasa geçerlerse tavrınız ne olacak?",
-          "body1": "Al Lío Podcast, {{player}} oyuncusunun artık {{rival}} için somut bir hedef olduğunu özel olarak bildirdi.\n\nEros'a göre oyuncu, son maç performanslarının ardından dikkat çekti. Henüz resmi teklif yok ama baskı hızla artıyor.\n\nTavrınız ne?"
-        }
+          "body1": "Al Lío Podcast, {{player}} oyuncusunun artık {{rival}} için somut bir hedef olduğunu özel olarak bildirdi.\n\nEros'a göre oyuncu, son maç performanslarının ardından dikkat çekti. Henüz resmi teklif yok ama baskı hızla artıyor.\n\nTavrınız ne?",
+          "body2": "Eros suggested on Al Lío that {{rival}} are testing the market for {{player}}: \"It is not an offer on the table, but when a club asks twice about the same player, it is no longer random.\"\n\nIt is worth deciding your stance before the rumour grows.",
+          "body3": "Al Lío Podcast has named {{player}} as a hot name for the next market.\n\nAccording to Eros, {{player}} fits several {{rival}} scenarios if they move pieces after the split. No formal contact is confirmed, but the interest exists.\n\nDo you block every conversation or listen?",
+          "body4": "Eros was careful, but clear: \"{{player}} is very liked at {{rival}}. I would not say it is close, but people are looking at numbers, VODs and contract situation.\"\n\nThe player's circle may start hearing noise.",
+          "body5": "The mercato section of Al Lío ended with {{player}} in the headlines: \"If {{rival}} want to make a statement, this is the profile that makes sense. Expensive, complicated, but it makes sense.\"\n\nThe question is how hard you want to resist.",
+          "body6": "Eros said several agents expect movement around {{player}}, and {{rival}} appear among the attentive teams.\n\n\"Sometimes these things do not start with an offer, they start with a call to know whether there is a door.\"\n\nYour answer will set the tone.",
+          "body7": "Al Lío Podcast linked {{player}} with {{rival}} after his latest stage performances.\n\nEros summed it up like this: \"When a player gains value this quickly, the phone moves even if the club says it is not selling.\"\n\nThe market is testing limits.",
+          "body8": "Eros included {{player}} on his list of names that could shake the league: \"I am not saying he leaves. I am saying that if {{rival}} call, the conversation will be uncomfortable for everyone.\"\n\nIt may be time to reinforce your public stance.",
+          "body9": "Al Lío's latest exclusive points to discreet monitoring from {{rival}} around {{player}}.\n\nAccording to Eros, the rival club does not want to rush, but sees the player as a high-impact piece if a window opens.\n\nWhat is the plan?"
+        },
+        "subject4": "Al Lío Podcast — Eros puts {{team}} on watch",
+        "body4": "Eros used the opening block of Al Lío to flag {{team}} as a team to watch: \"I am not saying something is signed, but I know there are people around the league asking what happens next with this roster. The mercato never sleeps.\"\n\nA little smoke, no confirmed fire yet.",
+        "subject5": "Al Lío Podcast — {{player}} extension talks get mentioned",
+        "body5": "Eros slipped a small note into the Al Lío rumour section: \"Keep an eye on {{player}}. When a player is performing and the contract calendar starts moving, calls happen. It does not mean he leaves, but it means the room gets noisy.\"\n\nWorth checking the player's situation before the story grows.",
+        "subject6": "Al Lío Podcast — scrim whispers around the league",
+        "body6": "Al Lío devoted a segment to scrim rumours, with Eros careful not to overclaim: \"The only thing I will say is that {{team}} are being talked about more than last week. Sometimes that means progress, sometimes it means chaos. We will see on stage.\"\n\nExternal noise is starting to build.",
+        "subject7": "Al Lío Podcast — buyout talk starts around {{player}}",
+        "body7": "Eros framed {{player}} as one of the names that could shape the next market: \"If the split keeps going like this, teams will ask. Maybe the answer is no, maybe the price is crazy, but the interest will exist.\"\n\nThe rumour mill has found a new angle.",
+        "subject8": "Al Lío Podcast — Eros teases a staff-side move",
+        "body8": "The latest Al Lío episode briefly moved away from players and into staff rumours: \"There are teams looking at analysts, assistants, people behind the scenes. Do not be surprised if {{team}} has to protect more than just its starting five.\"\n\nNot actionable yet, but relevant for long-term planning.",
+        "subject9": "Al Lío Podcast — Eros says {{team}}'s offseason could be loud",
+        "body9": "Eros closed Al Lío with a broader mercato warning: \"Some teams think they will have a quiet offseason and then the first call arrives. With {{team}}, I would prepare for movement, even if the official line is calm.\"\n\nThe smart play is to know your priorities early."
       },
       "yuste": {
         "up": {
           "subject0": "el_yuste — Yuste bile kabul ediyor: bu hafta izlenme arttı",
           "body0": "Yuste yayınında nadir görülen olumlu bir yorumla herkesi şaşırttı: \"Dürüst olayım — rakamlar bu hafta yükseldi ve bunun aksini iddia etmeyeceğim. Maçlar iyi olduğunda izleyici geliyor. Bu kadar basit.\"\n\nTüm sahne için olumlu bir an.",
           "subject1": "el_yuste — bu haftaki maçlar Yuste'yi gerçekten heyecanlandırdı",
-          "body1": "Her gün duyacağınız bir şey değil: Yuste sabah yayınında hevesliydi. \"Bu hafta hakkını verdi. Gerçek maçlar, ciddi bahisler, sonuna kadar kalan izleyiciler. Lig uğraştığında böyle olabilir.\"\n\nEsporda olmak için iyi bir hafta."
+          "body1": "Her gün duyacağınız bir şey değil: Yuste sabah yayınında hevesliydi. \"Bu hafta hakkını verdi. Gerçek maçlar, ciddi bahisler, sonuna kadar kalan izleyiciler. Lig uğraştığında böyle olabilir.\"\n\nEsporda olmak için iyi bir hafta.",
+          "subject2": "el_yuste — finally a matchday with intent",
+          "body2": "Yuste opened the stream surprisingly constructively: \"Today, yes. Today I saw teams playing with an idea, not five guys waiting for the opponent to happen. If this is the baseline, the league has a product.\"\n\nA good signal for public perception.",
+          "subject3": "el_yuste — Yuste admits the league has gained pace",
+          "body3": "The comment of the day came with less irony than usual: \"Do not sell me smoke, but the pace is up. Fewer dead pauses, better map closes, more reasons to stay watching.\"\n\nWhen even Yuste grants that, the scene notices.",
+          "subject4": "el_yuste — good audiences and fewer excuses",
+          "body4": "Yuste read the weekend numbers and went direct: \"When you do things halfway well, people show up. Maybe the problem was never that there was no audience; maybe you were not giving them reasons.\"\n\nPositive, with his usual edge.",
+          "subject5": "el_yuste — the competitive week saves the debate",
+          "body5": "In his morning review, Yuste highlighted that the competitive level helped the show: \"I do not need fireworks if the matches have real tension. Give me sensible draft and teams punishing mistakes. That keeps me there.\"\n\nThe clip is circulating well.",
+          "subject6": "el_yuste — even chat buys the narrative",
+          "body6": "Yuste laughed at seeing chat more optimistic than usual: \"Look, if even you are saying the matchday was good, they must have done something right. Write it down, because it does not always happen.\"\n\nGood atmosphere around the league.",
+          "subject7": "el_yuste — a matchday that needs no apology",
+          "body7": "Yuste summed up the matchday with a rare line from him: \"This did not need excuses. Good games, good endings, stories that matter. That is how you can sell a league.\"\n\nThis approval matters because he does not hand it out often.",
+          "subject8": "el_yuste — the product starts looking like a product",
+          "body8": "Yuste's assessment was dry, but positive: \"For once, broadcast, calendar and matches went in the same direction. It is not that hard when everyone rows together.\"\n\nA useful message for the league and the clubs.",
+          "subject9": "el_yuste — the league gives people something to discuss again",
+          "body9": "Yuste closed his block with a clear admission: \"This week people talked about the league because of the matches, not the drama around them. That is already a win. Small, but a win.\"\n\nGeneral perception improves."
         },
         "down": {
           "subject0": "el_yuste — lig izlenmeleri çakılıyor ve kimse umursamıyor",
           "body0": "Antonio Yuste sabah yayınını tam bir rant ile açtı: \"Rakamlar yalan söylemez. İzlenme haftadan haftaya düşüyor ve lig farklı sonuçlar bekleyerek aynı şeyleri yapmaya devam ediyor. Bir şey değişmezse herşey bitebilir.\"\n\nSadece arka plan gürültüsü — ama Yuste konuştuğunda topluluk dinler.",
           "subject1": "el_yuste — Yuste'ye göre lig bozuk",
-          "body1": "Yuste sabah yayınında ligin düşen etkileşimini analiz etmek için otuz dakika harcadı: \"Bunu aylardır söylüyorum. Ürün yeterince iyi değil. Format insanları sıkıyor, programlama momentumu öldürüyor. Veri net.\"\n\nSert, ama Yuste'nin kitlesi bunu ciddiye alıyor."
+          "body1": "Yuste sabah yayınında ligin düşen etkileşimini analiz etmek için otuz dakika harcadı: \"Bunu aylardır söylüyorum. Ürün yeterince iyi değil. Format insanları sıkıyor, programlama momentumu öldürüyor. Veri net.\"\n\nSert, ama Yuste'nin kitlesi bunu ciddiye alıyor.",
+          "subject2": "el_yuste — Yuste does not buy the league calendar",
+          "body2": "Yuste returned to the calendar with little interest in softening it: \"You cannot kill momentum and then ask why people do not come back. The audience owes you nothing.\"\n\nAnother criticism that may catch on.",
+          "subject3": "el_yuste — the league is losing story, according to Yuste",
+          "body3": "The morning stream was harsh on competitive narrative: \"There are interesting teams, there are good players, but nobody is packaging this so it matters. If there is no story, there is background noise.\"\n\nIt may sound unfair, but the community is discussing it.",
+          "subject4": "el_yuste — too many pauses, too little urgency",
+          "body4": "Yuste pointed at the viewer experience: \"The match can be good, but if you take me out of the stream between maps, I leave. It is not hate, it is basic human behaviour.\"\n\nThe criticism goes straight at the product.",
+          "subject5": "el_yuste — the format is under fire again",
+          "body5": "Yuste devoted a full block to the format: \"Not everything is fixed by renaming phases. The question is whether every match matters. If the answer is no, people notice.\"\n\nAnother hit to the league's public debate.",
+          "subject6": "el_yuste — Yuste asks for less makeup and more level",
+          "body6": "The line from the stream was blunt: \"You can put whatever overlay you want on it. If the level drops and the stories do not hook, the viewer goes somewhere else. Period.\"\n\nNegative noise for every club.",
+          "subject7": "el_yuste — the matchday runs out of clips",
+          "body7": "Yuste was especially acidic about the lack of memorable moments: \"The matchday ends and tell me what clip someone sends on WhatsApp. If you have to think that long, that is the problem.\"\n\nPublic conversation cools off.",
+          "subject8": "el_yuste — the scene needs self-criticism",
+          "body8": "Yuste asked for less automatic defence of the league: \"Loving the scene is not clapping everything. Sometimes loving it is saying this is not working before it is too late.\"\n\nAn uncomfortable but influential message.",
+          "subject9": "el_yuste — the data cools the optimism again",
+          "body9": "Yuste opened charts on stream and left a hard reading: \"Do not talk to me about feelings if the data is going down. You can have one good match, but the trend rules.\"\n\nThe audience debate is active again."
         }
       }
     },
@@ -2953,7 +3303,15 @@
       "targetedDrills": "Targeted Drills",
       "offerRest": "Offer rest",
       "dayOff": "Day off",
-      "pushThrough": "Push through"
+      "pushThrough": "Push through",
+      "cancelScrimsDesc": "Cancel the next block and switch to corrective work.",
+      "continueBlock2Desc": "Keep the plan and play the second block.",
+      "dayOffDesc": "Give the rest of the day off and recover.",
+      "mentalResetDesc": "Prioritize morale and reset tilt before next sessions.",
+      "offerRestDesc": "Offer rest after a good block to protect condition.",
+      "pushThroughDesc": "Push volume despite the setback to maximize reps.",
+      "targetedDrillsDesc": "Run focused drills on the detected issue.",
+      "vodReviewDesc": "Review VOD to extract concrete learning from mistakes."
     },
     "tag": {
       "momentumPlus": "Momentum +",
@@ -2973,7 +3331,60 @@
       "issuePlus": "Issue +",
       "mechanicsPlus": "Mechanics +"
     },
-    "weeklySetup": "Weekly setup"},
+    "weeklySetup": "Weekly setup",
+    "assistantCoach": "Assistant Coach",
+    "assistantHandling": "Assistant is handling scrims",
+    "assistantLabel": "Assistant",
+    "autoMode": "Auto",
+    "blockDecisionTitle": "Block Decision",
+    "cancelFollowupTitle": "Cancelled — choose follow-up",
+    "cancelled": "Cancelled",
+    "closeDayTitle": "Close day",
+    "delegation": "Delegation",
+    "finalizeSetup": "Finalize Setup",
+    "loadingContext": "Loading scrim context...",
+    "manualControl": "Manual",
+    "manualLabel": "Manual",
+    "noFocusImpactText": "No focus impact data",
+    "noRecentReports": "No recent reports",
+    "noScrim": "No scrim",
+    "pageDescription": "Manage your scrim block schedule and decisions.",
+    "pageKicker": "Scrim Block",
+    "pendingReview": "Pending Review",
+    "planned": "Planned",
+    "played": "Played",
+    "recentReports": "Recent Reports",
+    "reviewDecisionApplied": "Decision applied to scrim block",
+    "reviewed": "Reviewed",
+    "setupLocked": "Setup locked once block starts",
+    "setupUnlockWindow": "Setup may be changed before block begins",
+    "streaks": "Streaks",
+    "tags": {
+      "analysisPlus": "+Analysis",
+      "fatigueMinus": "-Fatigue",
+      "fatiguePlus": "+Fatigue",
+      "issuePlus": "+Issue",
+      "learningPlus": "+Learning",
+      "mechanicsPlus": "+Mechanics",
+      "mentalMinus": "-Mental",
+      "mentalPlus": "+Mental",
+      "momentumPlus": "+Momentum",
+      "qualityPlus": "+Quality",
+      "recoveryMinus": "-Recovery",
+      "recoveryPlus": "+Recovery",
+      "riskMinus": "-Risk",
+      "techniqueMinus": "-Technique",
+      "volumeMinus": "-Volume",
+      "volumePlus": "+Volume"
+    },
+    "todayBlock": "Today's Block",
+    "todayOpponent": "Today's Opponent",
+    "todayRisk": "Today's Risk",
+    "weekRecord": "Week Record",
+    "weeklyObjective": "Weekly Objective",
+    "weeklyReportInline": "Weekly Report",
+    "weeklyVolume": "Weekly Volume"
+  },
   "updater": {
     "title": "Update Available",
     "description": "A new version ({{version}}) is available. Your save games will be preserved.",
@@ -2997,6 +3408,160 @@
     "rounds": "tur",
     "youBought": "Satın aldınız",
     "youSold": "Sattınız",
-    "includedPlayers": "Teklife dahil"
+    "includedPlayers": "Teklife dahil",
+    "scrims.assistantCoach": "Assistant Coach",
+    "scrims.delegation": "Delegate scrim review",
+    "scrims.todayBlock": "Today's Block",
+    "scrims.weeklyReportInline": "Weekly Report",
+    "scrims.recentReports": "Recent Reports",
+    "scrims.noRecentReports": "No recent reports.",
+    "playerProfile.startPotentialResearch": "Research potential"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Name",
+    "country": "Country",
+    "age": "Age",
+    "enter": "Enter",
+    "signingIn": "Signing in...",
+    "createAccount": "Create Account",
+    "registering": "Creating account...",
+    "registerSuccess": "Account created. Check your email to confirm registration before signing in.",
+    "passwordMismatch": "Passwords do not match.",
+    "profileFieldsRequired": "Complete name, country and age to create the account.",
+    "ageInvalid": "Enter a valid age between 13 and 99.",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "profile": "Profile",
+    "signOut": "Sign Out",
+    "user": "User",
+    "userId": "User ID",
+    "createdAt": "Account Created",
+    "playtime": "Playtime",
+    "notAvailable": "Not available",
+    "changeAvatar": "Change Avatar",
+    "selectAvatar": "Select Avatar",
+    "avatarSaveError": "Could not save the avatar. Try again."
+  },
+  "social": {
+    "title": "Social",
+    "subtitle": "Community timeline",
+    "description": "No gameplay effects. Just teams, players, fans and meme accounts being normal online.",
+    "emptyTitle": "The timeline is quiet",
+    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis."
+  },
+  "championPage": {
+    "assists": "Assists",
+    "bestAgainst": "Best Against",
+    "champion": "Champion",
+    "cs": "CS",
+    "damage": "Damage",
+    "deaths": "Deaths",
+    "duration": "Duration",
+    "gold": "Gold",
+    "kills": "Kills",
+    "noData": "No data available",
+    "noHistory": "No match history",
+    "noRoles": "No roles played",
+    "roles": "Roles",
+    "topPlayers": "Top Players",
+    "vision": "Vision",
+    "weekly": "Weekly",
+    "worstAgainst": "Worst Against"
+  },
+  "championsGrid": {
+    "championCount": "{{count}} champions",
+    "clearFilters": "Clear Filters",
+    "noResults": "No results"
+  },
+  "competitions": {
+    "heroMatches": "Matches",
+    "heroSeason": "Season",
+    "heroTeams": "Teams",
+    "noPlayers": "No players found",
+    "noPlayersMatch": "No players match your search",
+    "noStandings": "No standings available",
+    "noTeams": "No teams found",
+    "noTeamsMatch": "No teams match your search",
+    "searchPlayer": "Search player...",
+    "searchTeam": "Search team...",
+    "selectPrompt": "Select a competition to view details",
+    "tableHeader": {
+      "diff": "Diff",
+      "losses": "L",
+      "mapsLost": "ML",
+      "mapsWon": "MW",
+      "ovr": "OVR",
+      "played": "Pld",
+      "player": "Player",
+      "pos": "#",
+      "pts": "Pts",
+      "role": "Role",
+      "team": "Team",
+      "wins": "W",
+      "wr": "WR%"
+    },
+    "title": "Competitions",
+    "viewPlayers": "Players",
+    "viewStandings": "Standings",
+    "viewTeams": "Teams"
+  },
+  "errorBoundary": {
+    "reload": "Reload",
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "leaguePicker": {
+    "asiaPacific": "Asia Pacific",
+    "china": "China",
+    "clickRegion": "Click a region to explore",
+    "europe": "Europe",
+    "korea": "Korea",
+    "mapError": "Failed to load world map",
+    "northAmerica": "North America",
+    "southAmerica": "South America"
+  },
+  "meta": {
+    "complete": "Complete",
+    "discoveryStats": "Discovery Stats",
+    "gainMaximum": "Maximum gain",
+    "gainMinimal": "Minimal gain",
+    "gainModerate": "Moderate gain",
+    "noPlayers": "No players found",
+    "patchMeta": "Patch Meta",
+    "priorityHigh": "High priority",
+    "priorityLow": "Low priority",
+    "priorityMedium": "Medium priority",
+    "unknownPatch": "Unknown patch",
+    "updated": "Updated"
+  },
+  "placeholder": {
+    "pendingDesign": "Pending design — coming soon"
+  },
+  "sidebar": {
+    "accountSettings": "Account Settings",
+    "backToTeam": "Back to {{teamName}}",
+    "betting": "Betting",
+    "bundesliga": "Bundesliga",
+    "leaguesInsider": "Leagues Insider",
+    "ligue1": "Ligue 1",
+    "liveMatches": "Live Matches",
+    "liveTransmissionSettings": "Live Transmission Settings",
+    "logout": "Logout",
+    "matchesHistory": "Match History",
+    "playersDatabase": "Players Database",
+    "premier": "Premier League",
+    "serieA": "Serie A",
+    "usernamePlaceholder": "{{username}}"
+  },
+  "titleBar": {
+    "appLogoAlt": "App logo",
+    "appName": "OL Manager",
+    "close": "Close",
+    "minimize": "Minimize"
   }
 }

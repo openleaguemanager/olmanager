@@ -114,11 +114,11 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                   {selectedLeague.name}
                 </h3>
                 <p className="flex items-center gap-3 text-sm text-white/70">
-                  <span>Temporada {selectedLeague.season}</span>
+                  <span>{t("competitions.heroSeason", { season: selectedLeague.season })}</span>
                   <span>·</span>
-                  <span>{selectedTeamIds.length} equipos</span>
+                  <span>{t("competitions.heroTeams", { count: selectedTeamIds.length })}</span>
                   <span>·</span>
-                  <span>{(selectedLeague.fixtures ?? []).length} partidos</span>
+                  <span>{t("competitions.heroMatches", { count: (selectedLeague.fixtures ?? []).length })}</span>
                 </p>
               </div>
             </div>
@@ -132,10 +132,10 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                   {v === "calendar" && <Calendar className="size-3.5" />}
                   {v === "teams" && <Building2 className="size-3.5" />}
                   {v === "players" && <Users className="size-3.5" />}
-                  {v === "standings" && "Clasificación"}
-                  {v === "calendar" && "Calendario"}
-                  {v === "teams" && `Equipos (${selectedTeamIds.length})`}
-                  {v === "players" && `Jugadores (${selectedPlayers.length})`}
+                  {v === "standings" && t("competitions.viewStandings")}
+                  {v === "calendar" && t("schedule.calendar")}
+                  {v === "teams" && t("competitions.viewTeams", { count: selectedTeamIds.length })}
+                  {v === "players" && t("competitions.viewPlayers", { count: selectedPlayers.length })}
                 </button>
               ))}
             </div>
@@ -153,16 +153,16 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                 <table className="w-full text-left">
                   <thead>
                     <tr className="border-b border-border bg-muted/30 text-[10px] uppercase tracking-widest text-muted-foreground">
-                      <th className="w-10 px-4 py-3 font-heading font-bold">#</th>
-                      <th className="px-4 py-3 font-heading font-bold">Equipo</th>
-                      <th className="px-3 py-3 text-center font-heading font-bold">PJ</th>
-                      <th className="px-3 py-3 text-center font-heading font-bold">G</th>
-                      <th className="px-3 py-3 text-center font-heading font-bold">P</th>
-                      <th className="hidden px-3 py-3 text-center font-heading font-bold md:table-cell">GM</th>
-                      <th className="hidden px-3 py-3 text-center font-heading font-bold md:table-cell">GP</th>
-                      <th className="px-3 py-3 text-center font-heading font-bold">D</th>
-                      <th className="px-4 py-3 text-center font-heading font-bold">Pts</th>
-                      <th className="hidden w-24 px-3 py-3 text-center font-heading font-bold lg:table-cell">WR</th>
+                      <th className="w-10 px-4 py-3 font-heading font-bold">{t("competitions.tableHeader.pos")}</th>
+                      <th className="px-4 py-3 font-heading font-bold">{t("competitions.tableHeader.team")}</th>
+                      <th className="px-3 py-3 text-center font-heading font-bold">{t("competitions.tableHeader.played")}</th>
+                      <th className="px-3 py-3 text-center font-heading font-bold">{t("competitions.tableHeader.wins")}</th>
+                      <th className="px-3 py-3 text-center font-heading font-bold">{t("competitions.tableHeader.losses")}</th>
+                      <th className="hidden px-3 py-3 text-center font-heading font-bold md:table-cell">{t("competitions.tableHeader.mapsWon")}</th>
+                      <th className="hidden px-3 py-3 text-center font-heading font-bold md:table-cell">{t("competitions.tableHeader.mapsLost")}</th>
+                      <th className="px-3 py-3 text-center font-heading font-bold">{t("competitions.tableHeader.diff")}</th>
+                      <th className="px-4 py-3 text-center font-heading font-bold">{t("competitions.tableHeader.pts")}</th>
+                      <th className="hidden w-24 px-3 py-3 text-center font-heading font-bold lg:table-cell">{t("competitions.tableHeader.wr")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/40">
@@ -210,7 +210,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                       );
                     })}
                     {sortedStandings.length === 0 && (
-                      <tr><td colSpan={10} className="py-12 text-center text-sm text-muted-foreground">Sin datos de clasificación</td></tr>
+                      <tr><td colSpan={10} className="py-12 text-center text-sm text-muted-foreground">{t("competitions.noStandings")}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -234,7 +234,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                   <div className="relative max-w-xs">
                     <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground/50" />
                     <input type="text" value={teamSearch} onChange={(e) => { setTeamSearch(e.target.value); setTeamPage(0); }}
-                      placeholder="Buscar equipo..." className="h-8 w-full rounded-lg border border-border bg-muted/30 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-muted-foreground/40" />
+                      placeholder={t("competitions.searchTeam")} className="h-8 w-full rounded-lg border border-border bg-muted/30 pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-muted-foreground/40" />
                   </div>
                 )}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -255,7 +255,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                   })}
                   {filteredTeams.length === 0 && (
                     <p className="col-span-full py-12 text-center text-sm text-muted-foreground">
-                      {teamSearch ? "No hay equipos que coincidan" : "No hay equipos en esta competición."}
+                      {teamSearch ? t("competitions.noTeamsMatch") : t("competitions.noTeams")}
                     </p>
                   )}
                 </div>
@@ -282,17 +282,17 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                   <div className="relative max-w-xs">
                     <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground/50" />
                     <input type="text" value={playerSearch} onChange={(e) => { setPlayerSearch(e.target.value); setPlayerPage(0); }}
-                      placeholder="Buscar jugador..." className="h-8 w-full rounded-lg border border-border bg-muted/30 pl-8 pr-3 text-xs text-foreground outline-none" />
+                      placeholder={t("competitions.searchPlayer")} className="h-8 w-full rounded-lg border border-border bg-muted/30 pl-8 pr-3 text-xs text-foreground outline-none" />
                   </div>
                 )}
                 <div className="overflow-hidden rounded-xl border border-border">
                   <table className="w-full text-left">
                     <thead>
                       <tr className="border-b border-border bg-muted/30 text-[10px] uppercase tracking-widest text-muted-foreground">
-                        <th className="px-4 py-3 font-heading font-bold">Jugador</th>
-                        <th className="px-4 py-3 font-heading font-bold">Rol</th>
-                        <th className="px-4 py-3 font-heading font-bold">Equipo</th>
-                        <th className="px-4 py-3 text-center font-heading font-bold">OVR</th>
+                        <th className="px-4 py-3 font-heading font-bold">{t("competitions.tableHeader.player")}</th>
+                        <th className="px-4 py-3 font-heading font-bold">{t("competitions.tableHeader.role")}</th>
+                        <th className="px-4 py-3 font-heading font-bold">{t("competitions.tableHeader.team")}</th>
+                        <th className="px-4 py-3 text-center font-heading font-bold">{t("competitions.tableHeader.ovr")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
@@ -324,7 +324,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                       })}
                       {filteredPlayers.length === 0 && (
                         <tr><td colSpan={4} className="py-12 text-center text-sm text-muted-foreground">
-                          {playerSearch ? "No hay jugadores que coincidan" : "No hay jugadores en esta competición."}
+                          {playerSearch ? t("competitions.noPlayersMatch") : t("competitions.noPlayers")}
                         </td></tr>
                       )}
                     </tbody>
@@ -351,7 +351,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
             <div className="text-center">
               <Globe className="mx-auto mb-3 size-12 text-muted-foreground/15" />
               <p className="font-heading text-sm uppercase tracking-wider text-muted-foreground/50">
-                Seleccioná una competición para ver detalles
+                {t("competitions.selectPrompt")}
               </p>
             </div>
           </div>

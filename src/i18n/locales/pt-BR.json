@@ -161,7 +161,9 @@
     "noResults": "Sem resultados",
     "importedDescription": "Banco de dados importado",
     "invalidWorldDb": "Arquivo de banco de dados de mundo inválido: {{error}}",
-    "failedStartGame": "Falha ao iniciar o jogo: {{error}}"
+    "failedStartGame": "Falha ao iniciar o jogo: {{error}}",
+    "community": "Community",
+    "patchNotes": "What's New"
   },
   "createManager": {
     "title": "Criar Head Coach",
@@ -175,7 +177,8 @@
     "searchNationalities": "Pesquisar nacionalidades...",
     "chooseWorld": "Escolher Mundo",
     "placeholderFirst": "ex: Jorge",
-    "placeholderLast": "ex: Jesus"
+    "placeholderLast": "ex: Jesus",
+    "nickname": "Nickname"
   },
   "validation": {
     "required": "{{field}} é obrigatório",
@@ -242,7 +245,21 @@
       "urgentUnread": "{{count}} mensagem(ns) urgente(s) não lida(s)",
       "matchTodayStartingXi": "Tem jogo hoje! Ajuste sua escalação titular"
     },
-    "unemployedBanner": "Você está atualmente sem clube. Ofertas de emprego podem chegar na sua caixa de entrada."
+    "unemployedBanner": "Você está atualmente sem clube. Ofertas de emprego podem chegar na sua caixa de entrada.",
+    "worldStaff": "DB Staff",
+    "brandSubtitle": "Manage your esports team",
+    "brandTitle": "OL Manager",
+    "competitions": "Competitions",
+    "noActiveGame": "No active game",
+    "noActiveGameDesc": "Start or load a game to continue.",
+    "save": "Save",
+    "phaseLabels": {
+      "morning": "Morning",
+      "scrimBlock": "Scrims",
+      "reviewBlock": "Review",
+      "trainingBlock": "Training",
+      "evening": "Evening"
+    }
   },
   "champions": {
     "170": "170+",
@@ -272,7 +289,8 @@
     "worldTitle": "Campeões do Mundo",
     "allChampions": "Todos os Campeões",
     "worldDescription": "Explore todos os campeões do League of Legends",
-    "totalChampions": "Total"
+    "totalChampions": "Total",
+    "searchPlaceholder": "Search champions..."
   },
   "continueMenu": {
     "goToField": "Ir para o Campo",
@@ -284,7 +302,8 @@
     "skipToMatchDay": "Pular para o Dia de Jogo",
     "skipToMatchDayDesc": "Avançar até a próxima partida",
     "matchDayTitle": "Dia de Jogo",
-    "delegateWarning": "Seu assistente comandará a partida. Você não poderá intervir."
+    "delegateWarning": "Seu assistente comandará a partida. Você não poderá intervir.",
+    "skipToNextDay": "Skip to Next Day"
   },
   "closeConfirm": {
     "title": "Alterações não salvas",
@@ -316,9 +335,21 @@
   },
   "home": {
     "nextMatch": "Próxima Partida",
-    "nextOpponent": "Próximo Adversário",
+    "nextOpponent": "Próxima Partida",
+    "nextMatchCard": {
+      "title": "Next Match",
+      "none": "No matches scheduled.",
+      "opponentForm": "Opponent Form",
+      "noHistory": "No recent history"
+    },
     "leaguePosition": "Posição na Liga",
-    "standings": "Classificação",
+    "standings": {
+      "hash": "#",
+      "losses": "L",
+      "preseason": "Preseason — no standings yet",
+      "team": "Team",
+      "wins": "W"
+    },
     "noLeague": "Nenhum dado da liga ainda.",
     "squadOverview": "Visão Geral do Elenco",
     "avgCondition": "Condição Média",
@@ -418,7 +449,55 @@
     "todayScrimOpen": "Open scrim slot",
     "todayScrimDetail": "Choose how to use today's scrim block.",
     "todayTraining": "Training focus",
-    "todayTrainingDetail": "No scrim locked ? use the day to train and recover."
+    "todayTrainingDetail": "No scrim locked ? use the day to train and recover.",
+    "awayVenue": "Away",
+    "finances": {
+      "balance": "Balance",
+      "detail": "Financial Overview",
+      "seasonNet": "Season Net",
+      "title": "Finances",
+      "wageBudget": "Wage Budget"
+    },
+    "homeVenue": "Home",
+    "matchDay": "Match Day",
+    "messages": {
+      "inbox": "Inbox",
+      "title": "Messages"
+    },
+    "news": {
+      "title": "News",
+      "viewAll": "View All"
+    },
+    "phase": {
+      "evening": {
+        "title": "Evening",
+        "description": "Evening block",
+        "actionLabel": "View Details"
+      },
+      "morning": {
+        "title": "Morning",
+        "description": "Morning block",
+        "actionLabel": "View Details"
+      },
+      "reviewBlock": {
+        "title": "Review",
+        "description": "Review block",
+        "actionLabel": "Review Now"
+      },
+      "scrimBlock": {
+        "title": "Scrims",
+        "description": "Scrim block",
+        "actionLabel": "Start Scrims"
+      },
+      "trainingBlock": {
+        "title": "Training",
+        "description": "Training block",
+        "actionLabel": "Start Training"
+      }
+    },
+    "view": "View",
+    "viewCompetitions": "View Competitions",
+    "yourTeam": "Your Team"
   },
   "season": {
     "preseasonStatus": "Status da pré-temporada",
@@ -461,7 +540,13 @@
     "repWorldClass": "Classe Mundial",
     "repStrong": "Forte",
     "repAverage": "Mediano",
-    "repDeveloping": "Em Desenvolvimento"
+    "repDeveloping": "Em Desenvolvimento",
+    "confirm": "Confirm",
+    "noLeaguesDesc": "No leagues found for this region",
+    "selectLeague": "Select League",
+    "selectLeagueSubtitle": "Choose the league you want to manage",
+    "selectTeam": "Select Team",
+    "teams": "Teams"
   },
   "youthAcademy": {
     "title": "Academy",
@@ -502,7 +587,12 @@
     "promoting": "Subindo...",
     "promote": "Subir",
     "academyPlayers": "jogadores do academy",
-    "academyPlayersStartingMayus": "Jogadores do academy"
+    "academyPlayersStartingMayus": "Jogadores do academy",
+    "hidden": "Hidden",
+    "highPotentialBadge": "High Potential",
+    "noStaffMatch": "No staff match your search",
+    "potentialHiddenHint": "Potential is hidden until scouted",
+    "searchPlaceholder": "Search academy players..."
   },
   "common": {
     "loading": "Carregando...",
@@ -703,7 +793,16 @@
       "technical": "Técnico",
       "mental": "Mental",
       "goalkeeper": "Top"
-    }
+    },
+    "fitness": "Fitness",
+    "action": "Action",
+    "backToMenu": "Back to Menu",
+    "create": "Create",
+    "loanListed": "CD",
+    "nextPage": "Next",
+    "previousPage": "Previous",
+    "saving": "Saving...",
+    "transferListed": "TR"
   },
   "teamSelection": {
     "title": "Escolha Seu Clube",
@@ -754,7 +853,11 @@
       "Possession": "Incentiva sua equipe a circular a bola com paciência, controlar o ritmo e buscar espaços com mais clareza.",
       "Counter": "Convida sua equipe a acelerar logo após recuperar a bola, atacando os espaços antes que o adversário se reorganize.",
       "HighPress": "Pede que sua equipe pressione mais cedo, recupere a bola em zonas altas e mantenha o adversário sob pressão."
-    }
+    },
+    "activeLineup": "Active Lineup",
+    "allStarting": "All players in the starting lineup",
+    "benchSubstitutes": "Bench / Substitutes",
+    "noRoleAvailable": "No player available"
   },
   "tactics": {
     "formationStyle": "Plano de Jogo & Estilo",
@@ -905,7 +1008,8 @@
       "variance": "variância",
       "tip": "Dica: se o score de coerência estiver baixo, alinhe lado forte + rota da selva + timing.",
       "autoSave": "As alterações são salvas automaticamente"
-    }
+    },
+    "draftStrategy": "Draft Strategy"
   },
   "training": {
     "weeklySchedule": "Calendário Semanal",
@@ -1043,7 +1147,9 @@
         "2": "Carry pool",
         "3": "Laboratório macro",
         "4": "Bloco reset"
-      }
+      },
+      "groupNamePlaceholder": "Group name...",
+      "newGroup": "New Group"
     },
     "scrims": {
       "title": "Scrims semanais",
@@ -1085,8 +1191,11 @@
         "macroReview": "Marque um bloco de VOD Review: se o problema é setup de objetivos, mais scrims sem revisão repetem o erro.",
         "narrowFocus": "A qualidade média está baixa; mantenha o volume, mas estreite o foco antes de adicionar mais rivais.",
         "keepPlan": "O plano atual está saudável: mantenha o objetivo, escolha rivais exigentes e revise o primeiro relatório antes de aumentar volume."
-      }
-    }
+      },
+      "selectOpponent": "Select Opponent"
+    },
+    "daysPerWeek": "days/week",
+    "emptyRoster": "Empty roster"
   },
   "staff": {
     "myStaff": "Minha Comissão ({{count}})",
@@ -1101,7 +1210,8 @@
       "AssistantManager": "Assistente Técnico",
       "Coach": "Treinador",
       "Scout": "Olheiro",
-      "Physio": "Fisioterapeuta"
+      "Physio": "Fisioterapeuta",
+      "Owner": "Owner"
     },
     "attrs": {
       "coaching": "Treinamento",
@@ -1203,7 +1313,12 @@
     "contractRiskStable": "Estável",
     "contractExpiresOn": "Expira em {{date}}",
     "atRiskWages": "€{{amount}}/ano em risco",
-    "noContractRisks": "Sem riscos contratuais iminentes"
+    "noContractRisks": "Sem riscos contratuais iminentes",
+    "esportsSponsor": "Esports Sponsor",
+    "mainHub": "Main Hub",
+    "playerWages": "Player Wages",
+    "staffWages": "Staff Wages",
+    "standardSponsor": "Standard Sponsor"
   },
   "inbox": {
     "title": "Caixa de Entrada",
@@ -1252,7 +1367,9 @@
       "Media": "Mídia",
       "System": "Sistema",
       "JobOffer": "Ofertas de emprego"
-    }
+    },
+    "all": "All",
+    "close": "Close"
   },
   "manager": {
     "managerOf": "Head Coach do {{team}}",
@@ -1280,7 +1397,23 @@
     "fanBehind": "A torcida está com o time.",
     "fanMixed": "O sentimento da torcida está dividido.",
     "fanRestless": "A torcida está ficando impaciente.",
-    "fanUnrest": "Agitação entre os torcedores — protestos prováveis."
+    "fanUnrest": "Agitação entre os torcedores — protestos prováveis.",
+    "bestFinish": "Best Finish",
+    "bestSeason": "Best Season",
+    "careerHighlights": "Career Highlights",
+    "changeAvatar": "Change Avatar",
+    "currentTeam": "Current Team",
+    "editProfile": "Edit Profile",
+    "leaguePosition": "League Position",
+    "noHistory": "No career history yet",
+    "noTeam": "No team assigned",
+    "players": "Players",
+    "recentResults": "Recent Results",
+    "saveError": "Error saving profile",
+    "seasons": "Seasons",
+    "staff": "Staff",
+    "teams": "Teams",
+    "winRate": "Win Rate"
   },
   "boardObjectives": {
     "objective": {
@@ -1382,7 +1515,8 @@
     "wageFeedbackBudgetDetail": "Eles sinalizam {{wage}} por ano, mas isso estica demais o orçamento salarial.",
     "wageFeedbackRejectedHeadline": "As conversas se romperam.",
     "wageFeedbackRejectedDetail": "Após várias rodadas sem acordo, ambos os lados desistem.",
-    "transferFeedbackWageNegotiationDetail": "O clube aceitou sua taxa. Agora é hora de acertar os termos com o jogador."
+    "transferFeedbackWageNegotiationDetail": "O clube aceitou sua taxa. Agora é hora de acertar os termos com o jogador.",
+    "browseMarket": "Browse Market"
   },
   "schedule": {
     "noSchedule": "Nenhum calendário de liga disponível.",
@@ -1404,7 +1538,12 @@
     "playoffs": "Playoffs",
     "round": "Rodada {{number}}",
     "season": "Temporada {{number}}",
-    "lastResult": "Último resultado"
+    "lastResult": "Último resultado",
+    "match": "Match",
+    "matchesForDate": "Matches for {{date}}",
+    "noFixtures": "No fixtures available",
+    "noMatchesOnDay": "No matches on this day",
+    "thisWeek": "This Week"
   },
   "players": {
     "searchPlaceholder": "Buscar por nome ou nacionalidade...",
@@ -1413,7 +1552,22 @@
     "nPlayersFound": "{{count}} jogador(es) encontrado(s)",
     "noMatch": "Nenhum jogador corresponde aos seus filtros.",
     "showingFirst": "Mostrando os primeiros {{shown}} de {{total}} jogadores. Refine sua busca para ver mais.",
-    "showingRange": "{{from}}–{{to}} de {{total}}"
+    "showingRange": "{{from}}–{{to}} de {{total}}",
+    "allCompetitions": "All Competitions",
+    "clearFilters": "Clear Filters",
+    "colAge": "Age",
+    "colNation": "Nat",
+    "colOvr": "OVR",
+    "colPlayer": "Player",
+    "colPos": "Pos",
+    "colStatus": "Status",
+    "colTeam": "Team",
+    "colValue": "Value",
+    "loanListed": "Loan Listed",
+    "noTeam": "No team",
+    "notFound": "No players found",
+    "title": "Players",
+    "transferListed": "Transfer Listed"
   },
   "teams": {
     "yourTeam": "Seu Time",
@@ -1427,7 +1581,17 @@
     "playStyleBalanced": "Equilibrado",
     "playStyleCounter": "Escalado e Counter",
     "playStyleDirect": "Lutas cedo (Skirmishs)",
-    "winRateShort": "WR"
+    "winRateShort": "WR",
+    "nTeams": "{{count}} teams",
+    "nTeamsInLeague": "{{count}} teams in {{league}}",
+    "noMatch": "No teams match your search",
+    "noTeams": "No teams found",
+    "searchPlaceholder": "Search teams...",
+    "statOvr": "OVR",
+    "statPts": "Pts",
+    "statRep": "Rep",
+    "statSquad": "Squad",
+    "statValue": "Value"
   },
   "playersList": {
     "searchPlaceholder": "Buscar por nome ou nacionalidade...",
@@ -1588,7 +1752,13 @@
     "championGames": "Partidas",
     "promoteToMain": "Promover ao time principal",
     "demoteToAcademy": "Rebaixar para o academy",
-    "rerollWarning": "Alterar a posição recalcula atributos e pode mudar o OVR dos jogadores."
+    "rerollWarning": "Alterar a posição recalcula atributos e pode mudar o OVR dos jogadores.",
+    "alsoPlays": "Also plays",
+    "editPosition": "Edit Position",
+    "loanListed": "Loan Listed",
+    "potentialResearchProgress": "Research progress ({{total}} stages)",
+    "startPotentialResearch": "Start Potential Research",
+    "transferListed": "Transfer Listed"
   },
   "teamProfile": {
     "clubInfo": "Informações do Clube",
@@ -2222,7 +2392,11 @@
       "metaThreats": "Meta threats",
       "meta": "Meta",
       "masteryHighlights": "Mastery highlights"
-    }
+    },
+    "draftStrategy": "Draft Strategy",
+    "condition": "Condition",
+    "continue": "Continue",
+    "game": "Game"
   },
   "endOfSeason": {
     "seasonComplete": "Temporada Encerrada",
@@ -2294,7 +2468,19 @@
     "academyPending": "Aquisição do academy pendente",
     "academyRosterCount": "{{count}} jogadores no elenco adquirido",
     "academyPipelineHint": "Adquira uma equipe ERL existente no Academy para desbloquear o pipeline.",
-    "viewAcquisitionOptions": "Ver opções de aquisição"
+    "viewAcquisitionOptions": "Ver opções de aquisição",
+    "academyDescription": "Acquire an academy team to develop young talent and feed your first team with homegrown players.",
+    "academyPendingTitle": "No Academy",
+    "benefitCompare": "Compare",
+    "benefitCompareDesc": "Compare stats and find the best option",
+    "benefitDiscover": "Discover",
+    "benefitDiscoverDesc": "Discover hidden talent in the academy and market",
+    "benefitEvaluate": "Evaluate",
+    "benefitEvaluateDesc": "Discover each player's real potential",
+    "hireScoutCta": "Hire Scout",
+    "noScoutsDescription": "You have no scouts on your staff. Hire at least one from the Staff page to start evaluating players and discovering hidden talent.",
+    "noScoutsTitle": "No scouting team",
+    "scoutingBadge": "Scouted"
   },
   "be": {
     "sender": {
@@ -3126,7 +3312,15 @@
       "targetedDrills": "Targeted Drills",
       "offerRest": "Offer rest",
       "dayOff": "Day off",
-      "pushThrough": "Push through"
+      "pushThrough": "Push through",
+      "cancelScrimsDesc": "Cancel the next block and switch to corrective work.",
+      "continueBlock2Desc": "Keep the plan and play the second block.",
+      "dayOffDesc": "Give the rest of the day off and recover.",
+      "mentalResetDesc": "Prioritize morale and reset tilt before next sessions.",
+      "offerRestDesc": "Offer rest after a good block to protect condition.",
+      "pushThroughDesc": "Push volume despite the setback to maximize reps.",
+      "targetedDrillsDesc": "Run focused drills on the detected issue.",
+      "vodReviewDesc": "Review VOD to extract concrete learning from mistakes."
     },
     "tag": {
       "momentumPlus": "Momentum +",
@@ -3146,7 +3340,59 @@
       "issuePlus": "Issue +",
       "mechanicsPlus": "Mechanics +"
     },
-    "weeklySetup": "Weekly setup"
+    "weeklySetup": "Weekly setup",
+    "assistantCoach": "Assistant Coach",
+    "assistantHandling": "Assistant is handling scrims",
+    "assistantLabel": "Assistant",
+    "autoMode": "Auto",
+    "blockDecisionTitle": "Block Decision",
+    "cancelFollowupTitle": "Cancelled — choose follow-up",
+    "cancelled": "Cancelled",
+    "closeDayTitle": "Close day",
+    "delegation": "Delegation",
+    "finalizeSetup": "Finalize Setup",
+    "loadingContext": "Loading scrim context...",
+    "manualControl": "Manual",
+    "manualLabel": "Manual",
+    "noFocusImpactText": "No focus impact data",
+    "noRecentReports": "No recent reports",
+    "noScrim": "No scrim",
+    "pageDescription": "Manage your scrim block schedule and decisions.",
+    "pageKicker": "Scrim Block",
+    "pendingReview": "Pending Review",
+    "planned": "Planned",
+    "played": "Played",
+    "recentReports": "Recent Reports",
+    "reviewDecisionApplied": "Decision applied to scrim block",
+    "reviewed": "Reviewed",
+    "setupLocked": "Setup locked once block starts",
+    "setupUnlockWindow": "Setup may be changed before block begins",
+    "streaks": "Streaks",
+    "tags": {
+      "analysisPlus": "+Analysis",
+      "fatigueMinus": "-Fatigue",
+      "fatiguePlus": "+Fatigue",
+      "issuePlus": "+Issue",
+      "learningPlus": "+Learning",
+      "mechanicsPlus": "+Mechanics",
+      "mentalMinus": "-Mental",
+      "mentalPlus": "+Mental",
+      "momentumPlus": "+Momentum",
+      "qualityPlus": "+Quality",
+      "recoveryMinus": "-Recovery",
+      "recoveryPlus": "+Recovery",
+      "riskMinus": "-Risk",
+      "techniqueMinus": "-Technique",
+      "volumeMinus": "-Volume",
+      "volumePlus": "+Volume"
+    },
+    "todayBlock": "Today's Block",
+    "todayOpponent": "Today's Opponent",
+    "todayRisk": "Today's Risk",
+    "weekRecord": "Week Record",
+    "weeklyObjective": "Weekly Objective",
+    "weeklyReportInline": "Weekly Report",
+    "weeklyVolume": "Weekly Volume"
   },
   "market": {
     "title": "Mercado de Transferências",
@@ -3162,6 +3408,160 @@
     "rounds": "rodada(s)",
     "youBought": "Você comprou",
     "youSold": "Você vendeu",
-    "includedPlayers": "Incluído na oferta"
+    "includedPlayers": "Incluído na oferta",
+    "scrims.assistantCoach": "Assistant Coach",
+    "scrims.delegation": "Delegate scrim review",
+    "scrims.todayBlock": "Today's Block",
+    "scrims.weeklyReportInline": "Weekly Report",
+    "scrims.recentReports": "Recent Reports",
+    "scrims.noRecentReports": "No recent reports.",
+    "playerProfile.startPotentialResearch": "Research potential"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Name",
+    "country": "Country",
+    "age": "Age",
+    "enter": "Enter",
+    "signingIn": "Signing in...",
+    "createAccount": "Create Account",
+    "registering": "Creating account...",
+    "registerSuccess": "Account created. Check your email to confirm registration before signing in.",
+    "passwordMismatch": "Passwords do not match.",
+    "profileFieldsRequired": "Complete name, country and age to create the account.",
+    "ageInvalid": "Enter a valid age between 13 and 99.",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "profile": "Profile",
+    "signOut": "Sign Out",
+    "user": "User",
+    "userId": "User ID",
+    "createdAt": "Account Created",
+    "playtime": "Playtime",
+    "notAvailable": "Not available",
+    "changeAvatar": "Change Avatar",
+    "selectAvatar": "Select Avatar",
+    "avatarSaveError": "Could not save the avatar. Try again."
+  },
+  "social": {
+    "title": "Social",
+    "subtitle": "Community timeline",
+    "description": "No gameplay effects. Just teams, players, fans and meme accounts being normal online.",
+    "emptyTitle": "The timeline is quiet",
+    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis."
+  },
+  "championPage": {
+    "assists": "Assists",
+    "bestAgainst": "Best Against",
+    "champion": "Champion",
+    "cs": "CS",
+    "damage": "Damage",
+    "deaths": "Deaths",
+    "duration": "Duration",
+    "gold": "Gold",
+    "kills": "Kills",
+    "noData": "No data available",
+    "noHistory": "No match history",
+    "noRoles": "No roles played",
+    "roles": "Roles",
+    "topPlayers": "Top Players",
+    "vision": "Vision",
+    "weekly": "Weekly",
+    "worstAgainst": "Worst Against"
+  },
+  "championsGrid": {
+    "championCount": "{{count}} champions",
+    "clearFilters": "Clear Filters",
+    "noResults": "No results"
+  },
+  "competitions": {
+    "heroMatches": "Matches",
+    "heroSeason": "Season",
+    "heroTeams": "Teams",
+    "noPlayers": "No players found",
+    "noPlayersMatch": "No players match your search",
+    "noStandings": "No standings available",
+    "noTeams": "No teams found",
+    "noTeamsMatch": "No teams match your search",
+    "searchPlayer": "Search player...",
+    "searchTeam": "Search team...",
+    "selectPrompt": "Select a competition to view details",
+    "tableHeader": {
+      "diff": "Diff",
+      "losses": "L",
+      "mapsLost": "ML",
+      "mapsWon": "MW",
+      "ovr": "OVR",
+      "played": "Pld",
+      "player": "Player",
+      "pos": "#",
+      "pts": "Pts",
+      "role": "Role",
+      "team": "Team",
+      "wins": "W",
+      "wr": "WR%"
+    },
+    "title": "Competitions",
+    "viewPlayers": "Players",
+    "viewStandings": "Standings",
+    "viewTeams": "Teams"
+  },
+  "errorBoundary": {
+    "reload": "Reload",
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "leaguePicker": {
+    "asiaPacific": "Asia Pacific",
+    "china": "China",
+    "clickRegion": "Click a region to explore",
+    "europe": "Europe",
+    "korea": "Korea",
+    "mapError": "Failed to load world map",
+    "northAmerica": "North America",
+    "southAmerica": "South America"
+  },
+  "meta": {
+    "complete": "Complete",
+    "discoveryStats": "Discovery Stats",
+    "gainMaximum": "Maximum gain",
+    "gainMinimal": "Minimal gain",
+    "gainModerate": "Moderate gain",
+    "noPlayers": "No players found",
+    "patchMeta": "Patch Meta",
+    "priorityHigh": "High priority",
+    "priorityLow": "Low priority",
+    "priorityMedium": "Medium priority",
+    "unknownPatch": "Unknown patch",
+    "updated": "Updated"
+  },
+  "placeholder": {
+    "pendingDesign": "Pending design — coming soon"
+  },
+  "sidebar": {
+    "accountSettings": "Account Settings",
+    "backToTeam": "Back to {{teamName}}",
+    "betting": "Betting",
+    "bundesliga": "Bundesliga",
+    "leaguesInsider": "Leagues Insider",
+    "ligue1": "Ligue 1",
+    "liveMatches": "Live Matches",
+    "liveTransmissionSettings": "Live Transmission Settings",
+    "logout": "Logout",
+    "matchesHistory": "Match History",
+    "playersDatabase": "Players Database",
+    "premier": "Premier League",
+    "serieA": "Serie A",
+    "usernamePlaceholder": "{{username}}"
+  },
+  "titleBar": {
+    "appLogoAlt": "App logo",
+    "appName": "OL Manager",
+    "close": "Close",
+    "minimize": "Minimize"
   }
 }

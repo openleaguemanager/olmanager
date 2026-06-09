@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import {
   ChevronLeft,
@@ -22,42 +23,44 @@ type NavItem = {
   children?: { to: string; label: string }[];
 };
 
-const NAV: NavItem[] = [
-  {
-    to: "/v2/live",
-    label: "Live Matches",
-    icon: Radio,
-    children: [
-      { to: "/v2/live/serie-a", label: "Serie A" },
-      { to: "/v2/live/premier", label: "Premier League" },
-      { to: "/v2/live/ligue-1", label: "Ligue 1" },
-      { to: "/v2/live/bundesliga", label: "Bundesliga" },
-    ],
-  },
-  { to: "/v2/history", label: "Matches History", icon: History },
-  { to: "/v2/insider", label: "Leagues Insider", icon: Newspaper },
-  { to: "/v2/players", label: "Players Database", icon: Users },
-  { to: "/v2/betting", label: "Betting", icon: CircleDollarSign },
-];
-
-const FOOTER: NavItem[] = [
-  { to: "/v2/settings/transmission", label: "Live Transmission Settings", icon: Tv },
-  { to: "/v2/settings/account", label: "Account Settings", icon: Settings },
-];
-
 export function Sidebar() {
+  const { t } = useTranslation();
+
+  const NAV: NavItem[] = [
+    {
+      to: "/v2/live",
+      label: t("sidebar.liveMatches"),
+      icon: Radio,
+      children: [
+        { to: "/v2/live/serie-a", label: t("sidebar.serieA") },
+        { to: "/v2/live/premier", label: t("sidebar.premier") },
+        { to: "/v2/live/ligue-1", label: t("sidebar.ligue1") },
+        { to: "/v2/live/bundesliga", label: t("sidebar.bundesliga") },
+      ],
+    },
+    { to: "/v2/history", label: t("sidebar.matchesHistory"), icon: History },
+    { to: "/v2/insider", label: t("sidebar.leaguesInsider"), icon: Newspaper },
+    { to: "/v2/players", label: t("sidebar.playersDatabase"), icon: Users },
+    { to: "/v2/betting", label: t("sidebar.betting"), icon: CircleDollarSign },
+  ];
+
+  const FOOTER: NavItem[] = [
+    { to: "/v2/settings/transmission", label: t("sidebar.liveTransmissionSettings"), icon: Tv },
+    { to: "/v2/settings/account", label: t("sidebar.accountSettings"), icon: Settings },
+  ];
+
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
       <div className="p-3">
         <Button className="w-full justify-start gap-2" size="lg">
           <ChevronLeft className="size-4" />
-          Back to AC Milan
+          {t("sidebar.backToTeam", { teamName: "AC Milan" })}
         </Button>
       </div>
 
       <div className="px-4 pb-4 pt-2 flex flex-col items-center text-center">
         <div className="size-14 rounded-full bg-muted ring-2 ring-primary" />
-        <div className="mt-2 text-sm font-medium">ScudettoMan</div>
+        <div className="mt-2 text-sm font-medium">{t("sidebar.usernamePlaceholder", { username: "ScudettoMan" })}</div>
         <div className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
           <Trophy className="size-3 text-primary" /> 32
         </div>
@@ -79,7 +82,7 @@ export function Sidebar() {
         ))}
         <button className="mt-1 flex w-full items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground">
           <LogOut className="size-4" />
-          Log Out
+          {t("sidebar.logout")}
         </button>
       </div>
     </aside>

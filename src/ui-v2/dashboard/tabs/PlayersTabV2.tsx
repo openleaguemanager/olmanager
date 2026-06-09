@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ChevronLeft,
   ChevronRight,
@@ -120,6 +121,7 @@ export function PlayersTabV2({
   onSelectPlayer,
   onSelectTeam,
 }: PlayersTabV2Props) {
+  const { t } = useTranslation();
   // ── Local state ──────────────────────────────────────────────
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -305,7 +307,7 @@ export function PlayersTabV2({
         <Card className="w-full max-w-md">
           <CardContent className="py-12 text-center">
             <p className="font-heading text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              No se encontraron jugadores
+              {t("players.notFound")}
             </p>
           </CardContent>
         </Card>
@@ -320,7 +322,7 @@ export function PlayersTabV2({
         {/* ── Header ──────────────────────────────────────────── */}
         <CardHeader className="shrink-0 space-y-4">
           <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-            Jugadores
+            {t("players.title")}
           </CardTitle>
 
           {/* Search + filters */}
@@ -330,7 +332,7 @@ export function PlayersTabV2({
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Buscar jugadores…"
+                placeholder={t("players.searchPlaceholder")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full rounded-lg border border-border bg-muted/30 py-1.5 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -369,11 +371,11 @@ export function PlayersTabV2({
             <div className="flex gap-1">
               {(
                 [
-                  ["all", "Todos"],
-                  ["transfer", "Traspaso"],
-                  ["loan", "Préstamo"],
+                  ["all", "players.filterAll"],
+                  ["transfer", "players.filterTransfer"],
+                  ["loan", "players.filterLoan"],
                 ] as [StatusFilter, string][]
-              ).map(([value, label]) => (
+              ).map(([value, labelKey]) => (
                 <button
                   key={value}
                   type="button"
@@ -389,7 +391,7 @@ export function PlayersTabV2({
                           : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground",
                   )}
                 >
-                  {label}
+                  {t(labelKey)}
                 </button>
               ))}
             </div>
@@ -403,7 +405,7 @@ export function PlayersTabV2({
                 "focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30",
               )}
             >
-              <option value="">Todas las competiciones</option>
+              <option value="">{t("players.allCompetitions")}</option>
               {leagues.map((l) => (
                 <option key={l.id} value={l.id}>
                   {l.name}
@@ -420,7 +422,7 @@ export function PlayersTabV2({
                 "focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30",
               )}
             >
-              <option value="">Todos los equipos</option>
+              <option value="">{t("players.allTeams")}</option>
               {teamsForDropdown.map((tm) => (
                 <option key={tm.id} value={tm.id}>
                   {tm.name}
@@ -437,14 +439,14 @@ export function PlayersTabV2({
           {sorted.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <p className="font-heading text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                No se encontraron jugadores
+                {t("players.notFound")}
               </p>
               <button
                 type="button"
                 onClick={clearFilters}
                 className="rounded-md border border-border px-3 py-1.5 font-heading text-xs font-bold uppercase tracking-wide text-primary transition-colors hover:bg-primary/10"
               >
-                Limpiar filtros
+                {t("players.clearFilters")}
               </button>
             </div>
           ) : (
@@ -455,56 +457,56 @@ export function PlayersTabV2({
                     <TableHead className="w-12" />
                     {/* Photo */}
                     <SortHead
-                      label="Pos"
+                      label={t("players.colPos")}
                       sortKey="pos"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="Jugador"
+                      label={t("players.colPlayer")}
                       sortKey="name"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="Edad"
+                      label={t("players.colAge")}
                       sortKey="age"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="Nacionalidad"
+                      label={t("players.colNation")}
                       sortKey="nationality"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="Equipo"
+                      label={t("players.colTeam")}
                       sortKey="team"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="Valor"
+                      label={t("players.colValue")}
                       sortKey="value"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="OVR"
+                      label={t("players.colOvr")}
                       sortKey="ovr"
                       current={sort.key}
                       dir={sort.dir}
                       onSort={handleSort}
                     />
                     <SortHead
-                      label="Estado"
+                      label={t("players.colStatus")}
                       sortKey="status"
                       current={sort.key}
                       dir={sort.dir}
@@ -606,7 +608,7 @@ export function PlayersTabV2({
                             </button>
                           ) : (
                             <span className="italic text-muted-foreground">
-                              Sin equipo
+                              {t("players.noTeam")}
                             </span>
                           )}
                         </TableCell>
@@ -640,7 +642,7 @@ export function PlayersTabV2({
                                 variant="outline"
                                 className="border-orange-500/30 bg-orange-500/10 text-orange-400"
                               >
-                                Traspaso
+                                {t("players.transferListed")}
                               </Badge>
                             )}
                             {player.loan_listed && (
@@ -648,7 +650,7 @@ export function PlayersTabV2({
                                 variant="outline"
                                 className="border-blue-500/30 bg-blue-500/10 text-blue-400"
                               >
-                                Préstamo
+                                {t("players.loanListed")}
                               </Badge>
                             )}
                           </div>
@@ -668,7 +670,7 @@ export function PlayersTabV2({
             <Separator />
             <div className="flex items-center justify-between px-4 py-3">
               <p className="font-heading text-xs font-bold tracking-wider text-muted-foreground tabular-nums">
-                {from}–{to} de {sorted.length}
+                {t("players.showingRange", { from, to, total: sorted.length })}
               </p>
               <div className="flex items-center gap-1">
                 <button

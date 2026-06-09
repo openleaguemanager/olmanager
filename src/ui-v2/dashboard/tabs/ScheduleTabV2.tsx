@@ -125,7 +125,7 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
               v === "calendar" && !isDesktop && "hidden md:inline-flex",
             )}>
             {v === "fixtures" ? <CalendarIcon className="size-3.5" /> : <CalendarDays className="size-3.5" />}
-            {v === "fixtures" ? "Partidos" : "Calendario"}
+            {v === "fixtures" ? t("schedule.matches") : t("schedule.calendar")}
           </button>
         ))}
       </div>
@@ -160,11 +160,11 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
                 <Card className="overflow-hidden animate-fade-in-up" data-fixture-date={selectedDayStr}>
                   <div className="border-b border-border bg-muted/30 px-5 py-3">
                     <h4 className="font-heading text-sm font-bold uppercase tracking-wider text-foreground">
-                      {dayFixtures.length > 0 ? getFixtureGroupLabel(dayFixtures[0]) : `Partidos del ${formatMatchDate(selectedDayStr)}`}
+                      {dayFixtures.length > 0 ? getFixtureGroupLabel(dayFixtures[0]) : t("schedule.matchesForDate", { date: formatMatchDate(selectedDayStr) })}
                     </h4>
                   </div>
                   {dayFixtures.length === 0 ? (
-                    <div className="px-5 py-8 text-center text-sm text-muted-foreground">No hay partidos este día.</div>
+                    <div className="px-5 py-8 text-center text-sm text-muted-foreground">{t("schedule.noMatchesOnDay")}</div>
                   ) : (
                     <div className="divide-y divide-border/40">
                       {dayFixtures.map((f) => {
@@ -347,7 +347,7 @@ function WeekScheduleCard({
   gameState: GameStateData;
   onDayClick?: (date: string) => void;
 }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const league = getActiveLeague(gameState);
   const teamId = gameState.manager.team_id;
@@ -382,7 +382,7 @@ function WeekScheduleCard({
     <Card className="h-full">
       <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
-          Esta semana
+          {t("schedule.thisWeek")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -441,7 +441,7 @@ function WeekScheduleCard({
                       <img src={oppLogo} alt="" className="size-7 object-contain" />
                     ) : (
                       <span className="font-heading text-[10px] font-bold text-primary">
-                        PARTIDO
+                        {t("schedule.match")}
                       </span>
                     )
                   ) : (
