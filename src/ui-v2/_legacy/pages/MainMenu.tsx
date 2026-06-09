@@ -420,14 +420,16 @@ export default function MainMenu() {
     requestAnimationFrame(() => {
       const panel = panelRef.current;
       if (!panel) return;
-      const input = panel.querySelector<HTMLElement>(
-        "input:not([type=hidden]):not([disabled])",
+      const all = panel.querySelectorAll<HTMLElement>(
+        "input:not([type=hidden]):not([disabled]), button:not([disabled]), select, textarea, [tabindex]:not([tabindex='-1'])",
       );
-      if (input) { input.focus(); return; }
-      const first = panel.querySelector<HTMLElement>(
-        "button:not([disabled]), select, textarea, [tabindex]:not([tabindex='-1'])",
-      );
-      first?.focus();
+      for (const el of all) {
+        const isCloseBtn = el.tagName === "BUTTON" && el.querySelector("svg.lucide-x");
+        if (!isCloseBtn) {
+          el.focus();
+          return;
+        }
+      }
     });
   }, []);
 
