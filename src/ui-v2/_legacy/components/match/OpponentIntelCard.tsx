@@ -5,7 +5,7 @@ export default function OpponentIntelCard({ intel }: { intel: OpponentIntelSnaps
   const { t } = useTranslation();
 
   return (
-    <section className="rounded-2xl border border-border bg-white/90 dark:bg-navy-800/70 p-5">
+    <section className="rounded-2xl border border-border bg-card p-5">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground font-heading">{t("match.opponentIntel.kicker", "Pre-match preparation")}</p>
@@ -13,7 +13,7 @@ export default function OpponentIntelCard({ intel }: { intel: OpponentIntelSnaps
         </div>
         <div className="text-right">
           <p className="text-xs text-muted-foreground">{t("match.opponentIntel.confidence", "Intel confidence")}</p>
-          <p className="font-heading font-bold text-sm text-primary-600 dark:text-primary-300">
+          <p className="font-heading font-bold text-sm text-primary">
             {intel.confidence.qualityLabel.toUpperCase()} · {intel.confidence.poolCoveragePct}%
           </p>
         </div>
@@ -24,10 +24,10 @@ export default function OpponentIntelCard({ intel }: { intel: OpponentIntelSnaps
           <h4 className="text-xs uppercase tracking-wider font-heading text-muted-foreground">{t("match.opponentIntel.rivalPoolByRole", "Rival champion pool by role")}</h4>
           {intel.playerPools.map((pool) => (
             <div key={`${pool.playerName}-${pool.role}`} className="rounded-xl border border-border p-3">
-              <p className="text-sm font-semibold text-foreground">{pool.playerName} <span className="text-xs text-gray-500">({pool.role})</span></p>
+              <p className="text-sm font-semibold text-foreground">{pool.playerName} <span className="text-xs text-muted-foreground">({pool.role})</span></p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {pool.champions.length === 0 ? (
-                  <span className="text-xs text-gray-500">{t("match.opponentIntel.noPoolYet", "No champion pool revealed yet.")}</span>
+                  <span className="text-xs text-muted-foreground">{t("match.opponentIntel.noPoolYet", "No champion pool revealed yet.")}</span>
                 ) : pool.champions.map((champion) => (
                   <span key={`${pool.playerName}-${champion.championId}`} className="text-xs px-2 py-1 rounded-lg bg-muted text-foreground">
                     {champion.championName} · {Math.round(champion.mastery)}%
@@ -45,7 +45,7 @@ export default function OpponentIntelCard({ intel }: { intel: OpponentIntelSnaps
               {intel.suggestedBans.map((ban) => (
                 <li key={`ban-${ban.championId}`} className="flex justify-between text-sm text-foreground">
                   <span>{ban.championName}</span>
-                  <span className="text-xs text-gray-500">{t("match.opponentIntel.threat", "Threat")} {ban.threatScore.toFixed(1)}</span>
+                  <span className="text-xs text-muted-foreground">{t("match.opponentIntel.threat", "Threat")} {ban.threatScore.toFixed(1)}</span>
                 </li>
               ))}
             </ul>
@@ -57,7 +57,7 @@ export default function OpponentIntelCard({ intel }: { intel: OpponentIntelSnaps
               {intel.metaThreats.map((champion) => (
                 <li key={`meta-${champion.championId}`} className="flex justify-between text-sm text-foreground">
                   <span>{champion.championName}</span>
-                  <span className="text-xs text-gray-500">{t("match.opponentIntel.meta", "Meta")} {champion.metaScore}</span>
+                  <span className="text-xs text-muted-foreground">{t("match.opponentIntel.meta", "Meta")} {champion.metaScore}</span>
                 </li>
               ))}
             </ul>
@@ -66,7 +66,7 @@ export default function OpponentIntelCard({ intel }: { intel: OpponentIntelSnaps
           <h4 className="text-xs uppercase tracking-wider font-heading text-muted-foreground">{t("match.opponentIntel.masteryHighlights", "Mastery highlights")}</h4>
           <div className="rounded-xl border border-border p-3 flex flex-wrap gap-2">
             {intel.masteryHighlights.map((champion) => (
-              <span key={`mastery-${champion.championId}`} className="text-xs px-2 py-1 rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+              <span key={`mastery-${champion.championId}`} className="text-xs px-2 py-1 rounded-lg bg-primary/10 text-primary">
                 {champion.championName} · {Math.round(champion.mastery)}%
               </span>
             ))}
