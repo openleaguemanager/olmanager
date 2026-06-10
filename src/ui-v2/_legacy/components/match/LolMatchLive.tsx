@@ -51,7 +51,6 @@ const USE_RUST_SIM_V2 = true;
 const ICON_TOWER = "/lol-map-icons/icon_ui_tower_minimap.webp";
 const ICON_GOLD = "/lol-map-icons/gold.webp";
 const ICON_VOIDGRUB = "/lol-map-icons/grub.webp";
-const ICON_LEC = "/lec-logo.svg";
 const DEFAULT_DRAGON_ICON = "/lol-map-icons/dragon.webp";
 
 const TEAM_BRAND_MAP: Record<string, { tricode: string; logo: string | null }> = {
@@ -795,6 +794,10 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
   const clock = `${Math.floor((state?.timeSec ?? 0) / 60)}:${Math.floor((state?.timeSec ?? 0) % 60).toString().padStart(2, "0")}`;
   const blueBrand = teamBrand(snapshot.home_team.name, gameState?.teams);
   const redBrand = teamBrand(snapshot.away_team.name, gameState?.teams);
+  const leagueLogo = gameState?.user_competition_id
+    ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)?.logo
+      ?? `/competitions-icons/${gameState.user_competition_id}.webp`
+    : "/competitions-icons/lec.webp";
   const dragonIcon = dragonIconForKind(dragon?.currentKind);
   const blueDragonIcons = dragonKillIconsBySide(
     state?.events,
@@ -960,7 +963,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
   void tick;
 
   return (
-    <div className="relative h-screen w-screen overflow-auto bg-[#050505] text-white">
+    <div className="relative min-h-0 flex-1 overflow-auto scrollbar-v2 bg-[#050505] text-white">
       <div className="flex h-full w-full flex-col items-center justify-start px-[5%] pt-[2.5%]">
         <div className="map-container flex w-full flex-[0_0_auto] flex-col items-center justify-center">
           <div className="relative mb-2 w-full px-2 pb-6 sm:px-4 sm:pb-9">
@@ -995,7 +998,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
 
               <div className="flex w-[24%] items-center justify-center gap-4">
                 <span className="text-4xl font-black italic leading-none text-white sm:text-5xl">{blueKills}</span>
-                <img src={ICON_LEC} className="h-7 w-7 object-contain opacity-95" alt={t("match.liveA11y.lecLogo")} loading="lazy" />
+                <img src={leagueLogo} className="h-7 w-7 object-contain opacity-95" alt={t("match.liveA11y.lecLogo")} loading="lazy" />
                 <span className="text-4xl font-black italic leading-none text-white sm:text-5xl">{redKills}</span>
               </div>
 
@@ -1114,13 +1117,7 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
                   <button className="rounded border border-cyan-500/30 bg-black/60 px-2 py-1 text-white/90" onClick={() => setRunning((v) => !v)}>
                     {running ? t("match.pause") : t("match.play")}
                   </button>
-                  <button
-                    className="rounded border border-amber-400/40 bg-amber-500/20 px-2 py-1 text-amber-200 disabled:opacity-50"
-                    onClick={requestSkipFromZero}
-                    disabled={isSkipping}
-                  >
-                    {isSkipping ? t("match.skipping", { defaultValue: "Skipping..." }) : t("match.skipMatch", { defaultValue: "Skip Match" })}
-                  </button>
+
                   <button className="col-span-2 rounded border border-cyan-500/30 bg-black/60 px-2 py-1 text-white/90" onClick={handleReset}>
                     {t("match.reset")}
                   </button>

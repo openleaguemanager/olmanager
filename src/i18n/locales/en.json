@@ -242,7 +242,7 @@
     "transfers": "Transfers",
     "players": "Players",
     "teams": "Teams",
-    "worldStaff": "DB Staff",
+    "worldStaff": "Staffs",
     "tournaments": "Tournaments",
     "champions_world": "Champions",
     "market": "Market",
@@ -275,8 +275,8 @@
       "matchTodayStartingXi": "Match today! Set your starting five"
     },
     "unemployedBanner": "You are currently without a club. Job offers may arrive in your inbox.",
-    "brandSubtitle": "Manage your esports team",
-    "brandTitle": "OL Manager",
+    "brandSubtitle": "Manager",
+    "brandTitle": "Open League",
     "competitions": "Competitions",
     "noActiveGame": "No active game",
     "noActiveGameDesc": "Start or load a game to continue.",
@@ -372,6 +372,7 @@
     },
     "leaguePosition": "League Position",
     "standings": {
+      "title": "Standings",
       "hash": "#",
       "losses": "L",
       "preseason": "Preseason — no standings yet",

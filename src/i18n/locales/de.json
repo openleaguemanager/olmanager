@@ -246,9 +246,9 @@
       "matchTodayStartingXi": "Heute ist Spieltag! Stelle deine Starter Five ein"
     },
     "unemployedBanner": "Sie sind derzeit ohne Verein. Jobangebote könnten in Ihrem Posteingang eintreffen.",
-    "worldStaff": "DB Staff",
-    "brandSubtitle": "Manage your esports team",
-    "brandTitle": "OL Manager",
+    "worldStaff": "Staffs",
+    "brandSubtitle": "Manager",
+    "brandTitle": "Open League",
     "competitions": "Competitions",
     "noActiveGame": "No active game",
     "noActiveGameDesc": "Start or load a game to continue.",
@@ -344,6 +344,7 @@
     },
     "leaguePosition": "Tabellenplatz",
     "standings": {
+      "title": "Tabelle",
       "hash": "#",
       "losses": "L",
       "preseason": "Preseason — no standings yet",

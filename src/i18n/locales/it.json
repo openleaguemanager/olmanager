@@ -102,9 +102,9 @@
       "matchTodayStartingXi": "C'è partita oggi! Imposta il tuo Cinque titolare"
     },
     "unemployedBanner": "Attualmente sei senza club. Le offerte di lavoro potrebbero arrivare nella tua casella di posta.",
-    "worldStaff": "DB Staff",
-    "brandSubtitle": "Manage your esports team",
-    "brandTitle": "OL Manager",
+    "worldStaff": "Staffs",
+    "brandSubtitle": "Manager",
+    "brandTitle": "Open League",
     "competitions": "Competitions",
     "noActiveGame": "No active game",
     "noActiveGameDesc": "Start or load a game to continue.",
@@ -200,6 +200,7 @@
     },
     "leaguePosition": "Posizione in classifica",
     "standings": {
+      "title": "Classifica",
       "hash": "#",
       "losses": "L",
       "preseason": "Preseason — no standings yet",

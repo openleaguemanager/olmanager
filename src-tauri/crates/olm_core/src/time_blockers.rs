@@ -307,7 +307,7 @@ fn minimum_main_roster_blocker(roster: &[&crate::domain::player::Player]) -> Opt
 fn main_role_coverage_blocker(roster: &[&crate::domain::player::Player]) -> Option<serde_json::Value> {
     let role_set: std::collections::HashSet<&'static str> = roster
         .iter()
-        .map(|player| role_to_string(&player.natural_position))
+        .map(|player| role_to_string(&player.position))
         .collect();
     let required_roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
     let missing_roles: Vec<&str> = required_roles
@@ -367,7 +367,7 @@ fn academy_role_coverage_blocker(
         .players
         .iter()
         .filter(|player| player.team_id.as_deref() == Some(academy_team_id.as_str()))
-        .map(|player| role_to_string(&player.natural_position))
+        .map(|player| role_to_string(&player.position))
         .collect();
     let required_roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
     let missing_roles: Vec<&str> = required_roles

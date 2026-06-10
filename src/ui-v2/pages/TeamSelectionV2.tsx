@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
@@ -38,6 +38,8 @@ export default function TeamSelectionV2() {
         setScreen("error");
       });
   }, []);
+
+  const activeCompetitions = useMemo(() => (leagueData?.competitions ?? []).filter((c) => !c.legacy), [leagueData]);
 
   const handleLeagueSelect = (id: string) => {
     setSelectedCompetitionId(id);
@@ -117,11 +119,19 @@ export default function TeamSelectionV2() {
     );
   }
 
-  const selectedCompetition = leagueData?.competitions.find((c) => c.id === selectedCompetitionId);
+  const selectedCompetition = activeCompetitions.find((c) => c.id === selectedCompetitionId);
   const isLeagueScreen = screen === "league" && leagueData;
 
+  const handleRootKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (isLeagueScreen) handleBackToMenu();
+      else handleBackToLeagues();
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col bg-background" onKeyDown={handleRootKeyDown} tabIndex={-1}>
       <header className="relative flex h-14 shrink-0 items-center border-b border-border bg-gradient-to-r from-primary/5 to-transparent px-6">
         <button type="button" onClick={isLeagueScreen ? handleBackToMenu : handleBackToLeagues}
           className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -149,7 +159,7 @@ export default function TeamSelectionV2() {
       </header>
 
       {isLeagueScreen ? (
-        <LeaguePickerV2 competitions={leagueData.competitions} onSelect={handleLeagueSelect} />
+        <LeaguePickerV2 competitions={activeCompetitions} onSelect={handleLeagueSelect} />
       ) : (
         <TeamGridV2 teams={selectedCompetition?.teams ?? []} onSelectTeam={setSelectedTeamId} selectedTeamId={selectedTeamId} />
       )}

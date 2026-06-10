@@ -150,7 +150,7 @@ export default function HalfTimeBreak({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-navy-900 dark:text-white flex flex-col transition-colors duration-300">
+    <div className="min-h-0 flex-1 overflow-y-auto bg-background text-foreground flex flex-col">
       {/* Header scoreboard */}
       <header className="bg-linear-to-r from-gray-200 via-white to-gray-200 dark:from-navy-800 dark:via-navy-900 dark:to-navy-800 border-b border-gray-200 dark:border-navy-700 px-4 py-4 transition-colors duration-300">
         <div className="max-w-5xl mx-auto relative">

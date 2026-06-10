@@ -31,6 +31,7 @@ import {
 import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import { Card, CardBody, CardHeader } from "@/ui-v2/_legacy/components/ui";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
+import { cn } from "@/ui-v2/lib/utils";
 
 interface TacticsTabProps {
   gameState: GameStateData;
@@ -243,7 +244,6 @@ const SUPPORT_ROAMING_OPTIONS: Array<LocalizedOption<SupportRoaming>> = [
 ];
 
 function positionToRole(position: string): DraftRole | null {
-  // position is already a LolRole ("TOP", "JUNGLE", "MID", "ADC", "SUPPORT")
   const normalized = position.toUpperCase().replace(/[^A-Z]/g, "");
   if (normalized === "TOP") return "TOP";
   if (normalized === "JUNGLE") return "JUNGLE";
@@ -262,8 +262,6 @@ function ImageWithFallback({ playerId, playerName, gameState }: { playerId: stri
       alt={playerName}
       className="h-10 w-10 shrink-0 rounded object-cover"
       onError={(e) => {
-        // Clear the handler before swapping so a missing fallback can't retrigger
-        // onError and spin in an infinite reload loop.
         const img = e.currentTarget;
         img.onerror = null;
         img.src = "/default/defaultplayer.webp";
@@ -272,6 +270,7 @@ function ImageWithFallback({ playerId, playerName, gameState }: { playerId: stri
     />
   );
 }
+
 function Section<T extends string>({
   title,
   options,
@@ -293,18 +292,19 @@ function Section<T extends string>({
             return (
               <button
                 key={option.value}
-                className={`rounded-xl border-2 px-3 py-3 text-left transition-all ${
+                className={cn(
+                  "rounded-xl border-2 px-3 py-3 text-left transition-all",
                   active
-                    ? "border-primary-500 bg-primary-50 dark:bg-primary-500/10 shadow-md shadow-primary-500/10"
-                    : "border-gray-200 dark:border-navy-600 hover:border-gray-300 dark:hover:border-navy-500"
-                }`}
+                    ? "border-primary bg-primary/10 shadow-md shadow-primary/10"
+                    : "border-border hover:border-muted-foreground/30",
+                )}
                 onClick={() => onChange(option.value)}
               >
-                <span className="mb-1 block text-base text-gray-700 dark:text-gray-200">{option.icon}</span>
-                <span className="block font-heading text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-100">
+                <span className="mb-1 block text-base text-muted-foreground">{option.icon}</span>
+                <span className="block font-heading text-sm font-bold uppercase tracking-wider text-foreground">
                   {option.label}
                 </span>
-                <span className="mt-1 block text-xs leading-tight text-gray-500 dark:text-gray-400">
+                <span className="mt-1 block text-xs leading-tight text-muted-foreground">
                   {option.description}
                 </span>
               </button>
@@ -421,7 +421,7 @@ export default function TacticsTab({
 
   if (!myTeam) {
     return (
-      <p className="text-gray-500 dark:text-gray-400">{t("common.noTeam")}</p>
+      <p className="text-muted-foreground">{t("common.noTeam")}</p>
     );
   }
 
@@ -452,59 +452,34 @@ export default function TacticsTab({
       <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[1.6fr_1fr]">
         <div className="flex flex-col gap-4">
           <details className="group">
-            <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-heading font-bold uppercase tracking-wider text-gray-700 transition-colors hover:bg-gray-50 dark:border-navy-600 dark:bg-navy-700 dark:text-gray-300 dark:hover:bg-navy-600 [&::-webkit-details-marker]:hidden">
+            <summary className={cn(
+              "flex cursor-pointer list-none items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-heading font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-muted [&::-webkit-details-marker]:hidden"
+            )}>
               <span className="flex-1">{t("tactics.lol.gamePlan")}</span>
               <svg
-                className="h-4 w-4 text-gray-400 transition-transform group-open:rotate-180"
+                className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180"
                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
               >
                 <path d="m6 9 6 6 6-6" />
               </svg>
             </summary>
-            <div className="mt-2 rounded-xl border border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-700 dark:border-navy-600 dark:bg-navy-700 dark:text-gray-200">
+            <div className="mt-2 rounded-xl border border-border bg-card p-4 text-sm leading-relaxed text-muted-foreground">
               {t("tactics.lol.gamePlanDescription")}
             </div>
           </details>
 
-          {/* Mobile coherence summary — hidden on desktop */}
           <Card accent="primary" className="xl:hidden">
             <CardHeader>{t("tactics.lol.impactAndCoherence")}</CardHeader>
             <CardBody className="p-4">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-navy-600 dark:bg-navy-900/50">
-                {(() => {
-                  const size = 64;
-                  const strokeWidth = 6;
-                  const radius = (size - strokeWidth) / 2;
-                  const circ = 2 * Math.PI * radius;
-                  const normalizedPct = Math.max(0, Math.min(100, ((coherenceScore + 2) / 4) * 100));
-                  const fillLen = (normalizedPct / 100) * circ;
-                  const scoreColor = coherenceScore >= 1 ? "#22c55e" : coherenceScore >= 0 ? "#eab308" : "#ef4444";
-                  const label = coherenceScore >= 1
-                    ? t("tactics.lol.coherence.high")
-                    : coherenceScore >= 0
-                      ? t("tactics.lol.coherence.medium")
-                      : t("tactics.lol.coherence.low");
-                  return (
-                    <div className="flex items-center gap-3">
-                      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0">
-                        <circle cx={size/2} cy={size/2} r={radius} fill="none" strokeWidth={strokeWidth} className="stroke-gray-200 dark:stroke-navy-600" />
-                        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={scoreColor} strokeWidth={strokeWidth}
-                          strokeDasharray={`${fillLen} ${circ - fillLen}`}
-                          strokeDashoffset={0}
-                          transform={`rotate(-90 ${size/2} ${size/2})`}
-                          className="transition-all duration-500"
-                        />
-                      </svg>
-                      <div>
-                        <p className="text-lg font-heading font-bold text-gray-900 dark:text-gray-100">{label}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-300">
-                          {t("tactics.lol.score")}: {coherenceScore > 0 ? "+" : ""}{coherenceScore.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
+              <CoherenceSummary
+                coherenceScore={coherenceScore}
+                coherence={coherence}
+                roleImpactRows={roleImpactRows}
+                roleMetaLabels={roleMetaLabels}
+                maxAbsModifier={maxAbsModifier}
+                gameState={gameState}
+                t={t}
+              />
             </CardBody>
           </Card>
 
@@ -585,155 +560,21 @@ export default function TacticsTab({
           <Card>
             <CardHeader>{t("tactics.lol.impactAndCoherence")}</CardHeader>
             <CardBody className="p-4">
-
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-navy-600 dark:bg-navy-900/50">
-            {(() => {
-              const size = 64;
-              const strokeWidth = 6;
-              const radius = (size - strokeWidth) / 2;
-              const circ = 2 * Math.PI * radius;
-              const normalizedPct = Math.max(0, Math.min(100, ((coherenceScore + 2) / 4) * 100));
-              const fillLen = (normalizedPct / 100) * circ;
-              const scoreColor = coherenceScore >= 1 ? "#22c55e" : coherenceScore >= 0 ? "#eab308" : "#ef4444";
-              const label = coherenceScore >= 1
-                ? t("tactics.lol.coherence.high")
-                : coherenceScore >= 0
-                  ? t("tactics.lol.coherence.medium")
-                  : t("tactics.lol.coherence.low");
-              return (
-                <div className="flex items-center gap-3">
-                  <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0">
-                    <circle cx={size/2} cy={size/2} r={radius} fill="none" strokeWidth={strokeWidth} className="stroke-gray-200 dark:stroke-navy-600" />
-                    <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={scoreColor} strokeWidth={strokeWidth}
-                      strokeDasharray={`${fillLen} ${circ - fillLen}`}
-                      strokeDashoffset={0}
-                      transform={`rotate(-90 ${size/2} ${size/2})`}
-                      className="transition-all duration-500"
-                    />
-                  </svg>
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      {t("tactics.lol.coherenceLabel")}
-                    </p>
-                    <p className="text-lg font-heading font-bold text-gray-900 dark:text-gray-100">{label}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-300">
-                      {t("tactics.lol.score")}: {coherenceScore > 0 ? "+" : ""}{coherenceScore.toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-
-          <div className="mt-3 space-y-2">
-            {coherence.map((item) => (
-              <div key={item.labelKey} className="flex items-start justify-between gap-2 text-xs">
-                <span className="text-gray-600 dark:text-gray-300">{t(item.labelKey)}</span>
-                <span
-                  className={`font-heading font-bold ${
-                    item.delta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
-                  }`}
-                >
-                  {item.delta > 0 ? "+" : ""}
-                  {item.delta.toFixed(2)}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 border-t border-gray-100 pt-3 dark:border-navy-700">
-            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              {t("tactics.lol.roleImpact")}
-            </p>
-            <div className="mt-2 space-y-2.5">
-              {roleImpactRows.map((row) => (
-                <div
-                  key={row.role}
-                  className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 dark:border-navy-600 dark:bg-navy-800/40"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-navy-700">
-                        <img
-                          src={ROLE_ICON_URLS[row.role]}
-                          alt={roleMetaLabels[row.role]}
-                          className="w-4 h-4 object-contain opacity-90"
-                          loading="lazy"
-                        />
-                      </div>
-
-                      {row.playerId ? (
-                        <ImageWithFallback
-                          playerId={row.playerId}
-                          playerName={row.playerName}
-                          gameState={gameState}
-                        />
-                      ) : (
-                        <div className="h-10 w-10 shrink-0 rounded bg-gray-100 dark:bg-navy-700/40" />
-                      )}
-
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-heading font-bold text-gray-900 dark:text-gray-100">
-                          {row.playerName}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-300">
-                          {Math.round(row.base)} OVR · {roleMetaLabels[row.role]}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0">
-                      <div className="flex items-center gap-1.5 justify-end">
-                        <div className="flex items-center gap-0.5">
-                          {/* Negative side */}
-                          <div className="w-12 h-1.5 bg-gray-200 dark:bg-navy-600 rounded-l-full overflow-hidden flex justify-end">
-                            {row.modifier < 0 && (
-                              <div
-                                className="h-full bg-rose-400 rounded-l-full transition-all duration-500"
-                                style={{ width: `${(Math.abs(row.modifier) / maxAbsModifier) * 100}%` }}
-                              />
-                            )}
-                          </div>
-                          {/* Center zero line */}
-                          <div className="w-0.5 h-3 bg-gray-300 dark:bg-navy-500 rounded-full shrink-0" />
-                          {/* Positive side */}
-                          <div className="w-12 h-1.5 bg-gray-200 dark:bg-navy-600 rounded-r-full overflow-hidden">
-                            {row.modifier >= 0 && (
-                              <div
-                                className="h-full bg-emerald-400 rounded-r-full transition-all duration-500"
-                                style={{ width: `${(row.modifier / maxAbsModifier) * 100}%` }}
-                              />
-                            )}
-                          </div>
-                        </div>
-                        <p
-                          className={`text-xl leading-none font-heading font-black ${
-                            row.modifier >= 0 ? "text-emerald-400" : "text-rose-400"
-                          }`}
-                        >
-                          {row.modifier >= 0 ? "+" : ""}
-                          {row.modifier.toFixed(1)}
-                        </p>
-                      </div>
-                      <p className="text-2xs text-gray-500 dark:text-gray-400">
-                        ±{row.variance.toFixed(1)} {t("tactics.lol.variance")}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-            {t("tactics.lol.tip")}
-          </p>
+              <CoherenceSummary
+                coherenceScore={coherenceScore}
+                coherence={coherence}
+                roleImpactRows={roleImpactRows}
+                roleMetaLabels={roleMetaLabels}
+                maxAbsModifier={maxAbsModifier}
+                gameState={gameState}
+                t={t}
+              />
             </CardBody>
           </Card>
         </aside>
       </div>
 
-      <p className="text-xs text-gray-500 dark:text-gray-400 px-1">
+      <p className="text-xs text-muted-foreground px-1">
         {saving
           ? t("common.saving")
           : t("tactics.lol.autoSave")}
@@ -742,4 +583,170 @@ export default function TacticsTab({
   );
 }
 
+function CoherenceSummary({
+  coherenceScore,
+  coherence,
+  roleImpactRows,
+  roleMetaLabels,
+  maxAbsModifier,
+  gameState,
+  t,
+}: {
+  coherenceScore: number;
+  coherence: ReturnType<typeof computeCoherenceBreakdown>;
+  roleImpactRows: Array<{
+    role: string;
+    playerId: string | null;
+    playerName: string;
+    base: number;
+    modifier: number;
+    variance: number;
+  }>;
+  roleMetaLabels: Record<string, string>;
+  maxAbsModifier: number;
+  gameState: GameStateData;
+  t: (key: string, fallback?: string) => string;
+}) {
+  const size = 64;
+  const strokeWidth = 6;
+  const radius = (size - strokeWidth) / 2;
+  const circ = 2 * Math.PI * radius;
+  const normalizedPct = Math.max(0, Math.min(100, ((coherenceScore + 2) / 4) * 100));
+  const fillLen = (normalizedPct / 100) * circ;
+  const scoreColor = coherenceScore >= 1 ? "#22c55e" : coherenceScore >= 0 ? "#eab308" : "#ef4444";
+  const label = coherenceScore >= 1
+    ? t("tactics.lol.coherence.high")
+    : coherenceScore >= 0
+      ? t("tactics.lol.coherence.medium")
+      : t("tactics.lol.coherence.low");
 
+  return (
+    <>
+      <div className="rounded-lg border border-border bg-muted p-3">
+        <div className="flex items-center gap-3">
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0">
+            <circle cx={size/2} cy={size/2} r={radius} fill="none" strokeWidth={strokeWidth} className="stroke-muted" />
+            <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={scoreColor} strokeWidth={strokeWidth}
+              strokeDasharray={`${fillLen} ${circ - fillLen}`}
+              strokeDashoffset={0}
+              transform={`rotate(-90 ${size/2} ${size/2})`}
+              className="transition-all duration-500"
+            />
+          </svg>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              {t("tactics.lol.coherenceLabel")}
+            </p>
+            <p className="text-lg font-heading font-bold text-foreground">{label}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("tactics.lol.score")}: {coherenceScore > 0 ? "+" : ""}{coherenceScore.toFixed(2)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {coherence.map((item) => (
+          <div key={item.labelKey} className="flex items-start justify-between gap-2 text-xs">
+            <span className="text-muted-foreground">{t(item.labelKey)}</span>
+            <span
+              className={cn(
+                "font-heading font-bold",
+                item.delta >= 0 ? "text-emerald-400" : "text-rose-400",
+              )}
+            >
+              {item.delta > 0 ? "+" : ""}
+              {item.delta.toFixed(2)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 border-t border-border pt-3">
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">
+          {t("tactics.lol.roleImpact")}
+        </p>
+        <div className="mt-2 space-y-2.5">
+          {roleImpactRows.map((row) => (
+            <div
+              key={row.role}
+              className="rounded-xl border border-border bg-card px-3 py-2.5"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted">
+                    <img
+                      src={ROLE_ICON_URLS[row.role as DraftRole]}
+                      alt={roleMetaLabels[row.role]}
+                      className="w-4 h-4 object-contain opacity-90"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  {row.playerId ? (
+                    <ImageWithFallback
+                      playerId={row.playerId}
+                      playerName={row.playerName}
+                      gameState={gameState}
+                    />
+                  ) : (
+                    <div className="h-10 w-10 shrink-0 rounded bg-muted" />
+                  )}
+
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-heading font-bold text-foreground">
+                      {row.playerName}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {Math.round(row.base)} OVR · {roleMetaLabels[row.role]}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <div className="flex items-center gap-1.5 justify-end">
+                    <div className="flex items-center gap-0.5">
+                      <div className="w-12 h-1.5 bg-muted rounded-l-full overflow-hidden flex justify-end">
+                        {row.modifier < 0 && (
+                          <div
+                            className="h-full bg-rose-400 rounded-l-full transition-all duration-500"
+                            style={{ width: `${(Math.abs(row.modifier) / maxAbsModifier) * 100}%` }}
+                          />
+                        )}
+                      </div>
+                      <div className="w-0.5 h-3 bg-muted rounded-full shrink-0" />
+                      <div className="w-12 h-1.5 bg-muted rounded-r-full overflow-hidden">
+                        {row.modifier >= 0 && (
+                          <div
+                            className="h-full bg-emerald-400 rounded-r-full transition-all duration-500"
+                            style={{ width: `${(row.modifier / maxAbsModifier) * 100}%` }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <p
+                      className={cn(
+                        "text-xl leading-none font-heading font-black",
+                        row.modifier >= 0 ? "text-emerald-400" : "text-rose-400",
+                      )}
+                    >
+                      {row.modifier >= 0 ? "+" : ""}
+                      {row.modifier.toFixed(1)}
+                    </p>
+                  </div>
+                  <p className="text-2xs text-muted-foreground">
+                    ±{row.variance.toFixed(1)} {t("tactics.lol.variance")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="mt-4 text-xs text-muted-foreground">
+        {t("tactics.lol.tip")}
+      </p>
+    </>
+  );
+}
