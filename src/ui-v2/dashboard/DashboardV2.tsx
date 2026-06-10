@@ -26,6 +26,7 @@ import {
   navigateDashboardProfiles,
   selectDashboardPlayer,
   selectDashboardTeam,
+  selectDashboardStaff,
   type DashboardNavigateContext,
 } from "@/lib/dashboard/profileNavigation";
 import { createDashboardTabContentModel } from "@/lib/dashboard/tabContentModel";
@@ -63,6 +64,7 @@ import { ChampionsWorldTabV2 } from "./tabs/ChampionsWorldTabV2";
 import { MetaTabV2 } from "./tabs/MetaTabV2";
 import ChampionPageV2 from "@/ui-v2/pages/ChampionPageV2";
 import PlayerProfileV2 from "@/ui-v2/pages/PlayerProfileV2";
+import StaffProfileV2 from "@/ui-v2/pages/StaffProfileV2";
 
 const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Home: "dashboard.home",
@@ -294,6 +296,9 @@ export default function DashboardV2() {
 
   const selectTeam = (id: string) =>
     setProfileNavigation((s) => selectDashboardTeam(s, id));
+
+  const selectStaff = (id: string) =>
+    setProfileNavigation((s) => selectDashboardStaff(s, id));
 
   const MODE_META: Record<MatchModeType, DashboardMatchModeMeta> = useMemo(
     () => ({
@@ -530,22 +535,26 @@ export default function DashboardV2() {
         ) : profileNavigation.activeTab === "Staff" &&
           !viewingChampionKey &&
           !profileNavigation.selectedPlayerId &&
-          !profileNavigation.selectedTeamId ? (
+          !profileNavigation.selectedTeamId &&
+          !profileNavigation.selectedStaffId ? (
           <div className="flex-1 overflow-y-auto scrollbar-v2">
             <StaffTabV2
               gameState={gameState}
               onGameUpdate={setGameState}
+              onSelectStaff={selectStaff}
             />
           </div>
         ) : profileNavigation.activeTab === "WorldStaff" &&
           !viewingChampionKey &&
           !profileNavigation.selectedPlayerId &&
-          !profileNavigation.selectedTeamId ? (
+          !profileNavigation.selectedTeamId &&
+          !profileNavigation.selectedStaffId ? (
           <div className="flex-1 overflow-y-auto scrollbar-v2">
             <StaffTabV2
               gameState={gameState}
               onGameUpdate={setGameState}
               mode="world"
+              onSelectStaff={selectStaff}
             />
           </div>
         ) : profileNavigation.activeTab === "Finances" &&
@@ -687,6 +696,16 @@ export default function DashboardV2() {
               teamId={profileNavigation.selectedTeamId}
               onClose={handleBack}
               onSelectPlayer={selectPlayer}
+            />
+          </div>
+        ) : profileNavigation.selectedStaffId && !viewingChampionKey ? (
+          <div className="flex-1 overflow-hidden">
+            <StaffProfileV2
+              gameState={gameState}
+              staffId={profileNavigation.selectedStaffId}
+              onClose={handleBack}
+              onGameUpdate={setGameState}
+              onSelectTeam={selectTeam}
             />
           </div>
         ) : viewingChampionKey ? (
