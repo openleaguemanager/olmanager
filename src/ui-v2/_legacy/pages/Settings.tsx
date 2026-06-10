@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate, useLocation, useBlocker } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore, AppSettings } from "@/store/settingsStore";
 import { useTheme } from "@/context/ThemeContext";
@@ -1304,10 +1305,39 @@ function ImportDataSection() {
   const [summary, setSummary] = useState<ImportSummary | null>(null);
   const [result, setResult] = useState<ImportSummary | null>(null);
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState<"idle" | "running" | "success" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "running" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ current: number; total: number; phase: string; status: string } | null>(null);
+
+  // Listen for import progress events from Tauri backend
+  useEffect(() => {
+    const unlisten = listen<{ current: number; total: number; phase: string; status: string }>(
+      "import-progress",
+      (event) => {
+        setProgress(event.payload);
+      },
+    );
+    return () => { unlisten.then((fn) => fn()); };
+  }, []);
+
+  // Warn when navigating away during import
+  const blocker = useBlocker(
+    useCallback(
+      ({ currentLocation, nextLocation }) =>
+        status === "running" && currentLocation.pathname !== nextLocation.pathname,
+      [status],
+    ),
+  );
+
+  // Warn when closing the window during import
+  useEffect(() => {
+    if (status !== "running") return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [status]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1327,6 +1357,7 @@ function ImportDataSection() {
     setBusy(true);
     setError(null);
     setResult(null);
+    setProgress(null);
     setStatus("running");
     try {
       const imported = await autoImportDatabase();
@@ -1343,9 +1374,44 @@ function ImportDataSection() {
 
   const isError = status === "error";
   const isSuccess = status === "success";
+  const progressPct = progress && progress.total > 0
+    ? Math.round((progress.current / progress.total) * 100)
+    : 0;
 
   return (
     <div className="flex flex-col gap-4 py-4">
+      {/* Blocker modal */}
+      {blocker.state === "blocked" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="rounded-xl border border-border bg-card p-6 shadow-xl max-w-sm mx-4">
+            <p className="font-heading text-sm font-bold text-foreground">
+              {t("settings.importWarningTitle", { defaultValue: "Importación en curso" })}
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("settings.importWarningDesc", {
+                defaultValue: "Si sales ahora se cancelará la descarga. ¿Estás seguro?",
+              })}
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => blocker.reset()}
+                className="rounded-lg border border-border px-4 py-2 text-xs font-heading font-bold uppercase tracking-wider text-foreground hover:bg-muted transition-colors"
+              >
+                {t("common.cancel", { defaultValue: "Cancelar" })}
+              </button>
+              <button
+                type="button"
+                onClick={() => blocker.proceed()}
+                className="rounded-lg bg-primary px-4 py-2 text-xs font-heading font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                {t("common.exit", { defaultValue: "Salir" })}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground">
@@ -1386,13 +1452,28 @@ function ImportDataSection() {
           }`}
         >
           {busy && (
-            <p className="flex items-center gap-2">
-              <RefreshCw className="w-3.5 h-3.5 animate-spin shrink-0" />
-              {t("settings.importRunning", {
-                defaultValue:
-                  "Descargando y descomprimiendo datos desde OLMDBManager…",
-              })}
-            </p>
+            <>
+              <p className="flex items-center gap-2">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin shrink-0" />
+                {progress?.status ?? t("settings.importRunning", {
+                  defaultValue: "Descargando y descomprimiendo datos desde OLMDBManager…",
+                })}
+              </p>
+              {progress && progress.total > 0 && (
+                <div className="mt-2">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/10">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all duration-300"
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
+                  <p className="mt-1 text-right text-[10px] tabular-nums text-muted-foreground/60">
+                    {progress.current}/{progress.total}
+                    {progress.phase === "download" && " bytes"}
+                  </p>
+                </div>
+              )}
+            </>
           )}
           {error && <p>{error}</p>}
           {result && isSuccess && (
