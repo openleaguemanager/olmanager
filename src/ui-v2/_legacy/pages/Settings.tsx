@@ -143,6 +143,10 @@ export default function Settings() {
     }
   };
 
+  const handleBack = () => {
+    navigate(returnTo);
+  };
+
   if (!loaded) {
     return (
       <div className="h-full bg-background flex items-center justify-center transition-colors">
@@ -1339,15 +1343,7 @@ function ImportDataSection() {
     };
   }, [status, t]);
 
-  const handleBack = () => {
-    if (status === "running" && !window.confirm(
-      t("settings.importWarningDesc", {
-        defaultValue: "Hay una importación en curso. Si sales se cancelará. ¿Estás seguro?",
-      })
-    )) return;
-    navigate(returnTo);
-  };
-
+  // Warn when closing the window during import
   useEffect(() => {
     let cancelled = false;
     getCatalogSummary()
