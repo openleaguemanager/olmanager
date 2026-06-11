@@ -239,6 +239,7 @@ export function DatePicker({ value, onChange, error, nextFieldId }: DatePickerPr
             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
               if (!monthOpen) return;
               e.preventDefault();
+              const dir = e.key === "ArrowDown" ? 1 : -1;
               const currentIdx = months.findIndex(
                 m => m.value === month || m.value.padStart(2, '0') === month
               );

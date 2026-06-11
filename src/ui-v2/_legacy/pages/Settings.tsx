@@ -4,14 +4,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore, AppSettings } from "@/store/settingsStore";
-import { useTheme } from "@/context/ThemeContext";
-import { ThemeToggle, Select } from "@/ui-v2/_legacy/components/ui";
+import { Select } from "@/ui-v2/_legacy/components/ui";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
-import { setUIVersion, useUIVersion, type UIVersion } from "@/ui-v2/uiVersion";
 import {
   ArrowLeft,
   Monitor,
-  Moon,
   Gamepad2,
   Save,
   Zap,
@@ -56,8 +53,6 @@ export default function Settings() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const { settings, loaded, loadSettings, updateSettings } = useSettingsStore();
-  const { theme, toggleTheme } = useTheme();
-  const uiVersion = useUIVersion();
   const {
     updateAvailable,
     updateInfo,
@@ -121,17 +116,6 @@ export default function Settings() {
 
   const handleUpdate = (partial: Partial<AppSettings>) => {
     updateSettings(partial);
-
-    // Sync theme with ThemeContext
-    if (partial.theme) {
-      const desired =
-        partial.theme === "system"
-          ? window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light"
-          : partial.theme;
-      if (desired !== theme) toggleTheme();
-    }
 
     // Sync language with i18n
     if (partial.language) {
@@ -962,7 +946,6 @@ export default function Settings() {
               {t("settings.title")}
             </h1>
           </div>
-          <ThemeToggle />
         </div>
       </header>
 
