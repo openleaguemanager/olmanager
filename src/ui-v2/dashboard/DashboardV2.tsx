@@ -104,26 +104,32 @@ const PATH_TAB_MAP: Record<string, string> = {
   "/competitions": "Competitions",
 };
 
-/// Maps internal tab names to Discord Rich Presence state keys.
-/// Only tabs with a distinct key are listed; everything else falls through to
-/// `"dashboard"`.
+/// Maps internal dashboard tab names to Discord Rich Presence state keys.
+/// Each distinct activity gets its own key for richer presence data.
 const TAB_TO_DISCORD_KEY: Record<string, string> = {
+  Home: "dashboard",
+  Inbox: "inbox",
+  News: "news",
+  Social: "social",
+  Manager: "dashboard",
   Squad: "squad",
-  Tactics: "squad",
-  Training: "squad",
-  Players: "squad",
-  Teams: "squad",
-  Staff: "squad",
-  WorldStaff: "squad",
-  Scouting: "squad",
-  Youth: "squad",
+  Tactics: "tactics",
+  Training: "training",
+  Scrims: "scrims",
+  Players: "players",
+  Teams: "teams",
+  Staff: "staff",
+  WorldStaff: "staff",
+  Scouting: "scouting",
+  Youth: "youth",
   Transfers: "transfers",
-  Market: "transfers",
-  Scrims: "match",
-  Schedule: "match",
-  Competitions: "match",
-  Tournaments: "match",
-  Finances: "dashboard",
+  Market: "market",
+  Finances: "finances",
+  Competitions: "competitions",
+  Tournaments: "competitions",
+  Schedule: "competitions",
+  Meta: "dashboard",
+  ChampionsWorld: "dashboard",
 };
 
 export default function DashboardV2() {
