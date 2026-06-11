@@ -8,15 +8,24 @@ use crate::discord_rpc::DiscordRpcState;
 
 /// Discord application ID.
 ///
-/// ## ⚠️ Before production
+/// ## Assets (imágenes)
 ///
-/// 1. Go to https://discord.com/developers/applications and create an
-///    application.
-/// 2. Copy the **Application ID** (a numeric string like `123456789012345678`).
-/// 3. Replace the placeholder below with that ID.
-/// 4. (Optional) Upload assets (logo, cover) under **Rich Presence → Art
-///    Assets** so `large_image` / `small_image` fields render correctly.
-const APP_ID: &str = "1495804489943351398";
+/// Para que aparezcan imágenes en el Rich Presence:
+///
+/// 1. Andá a https://discord.com/developers/applications/1514763311646900295/rich-presence/assets
+/// 2. Subí las imágenes que quieras usar (logo del juego, iconos, etc.)
+/// 3. Discord te asigna un **asset key** a cada imagen (ej: "olmanager_logo")
+/// 4. Poné ese key en `large_image` o `small_image` abajo en `state_key_to_payload()`
+///
+/// Ejemplo:
+/// ```rust
+/// "dashboard" => DiscordActivityPayload {
+///     large_image: Some("olmanager_logo"),
+///     large_text: Some("Open League Manager"),
+///     ..
+/// }
+/// ```
+const APP_ID: &str = "1514763311646900295";
 
 /// Serializable payload for Discord Rich Presence activity data.
 ///
