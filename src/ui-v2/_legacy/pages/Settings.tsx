@@ -4,7 +4,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore, AppSettings } from "@/store/settingsStore";
-import { Select } from "@/ui-v2/_legacy/components/ui";
+import { useTheme } from "@/context/ThemeContext";
+import { ThemeToggle, Select } from "@/ui-v2/_legacy/components/ui";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { setUIVersion, useUIVersion, type UIVersion } from "@/ui-v2/uiVersion";
 import {
@@ -28,11 +29,18 @@ import {
 import {
   autoImportDatabase,
   getCatalogSummary,
+  getImportCacheInfo,
+  importCachedExport,
+  importExportZip,
+  type ImportCacheInfo,
+  type ImportProgress,
   type ImportSummary,
 } from "@/lib/dataImport";
 import { useUpdater } from "@/hooks/useUpdater";
 import { APP_VERSION } from "@/lib/common/appInfo";
 import { APP_NAME } from "@/lib/common/appInfo";
+import { useGameStore } from "@/store/gameStore";
+import type { GameStateData } from "@/store/gameStore";
 
 const CURRENCY_OPTIONS = [
   { value: "EUR", label: "Euro (€)", symbol: "€" },
@@ -48,6 +56,7 @@ export default function Settings() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const { settings, loaded, loadSettings, updateSettings } = useSettingsStore();
+  const { theme, toggleTheme } = useTheme();
   const uiVersion = useUIVersion();
   const {
     updateAvailable,
@@ -113,6 +122,17 @@ export default function Settings() {
   const handleUpdate = (partial: Partial<AppSettings>) => {
     updateSettings(partial);
 
+    // Sync theme with ThemeContext
+    if (partial.theme) {
+      const desired =
+        partial.theme === "system"
+          ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
+          : partial.theme;
+      if (desired !== theme) toggleTheme();
+    }
+
     // Sync language with i18n
     if (partial.language) {
       i18n.changeLanguage(partial.language);
@@ -141,10 +161,6 @@ export default function Settings() {
     } catch (err) {
       console.error("Failed to export world:", err);
     }
-  };
-
-  const handleBack = () => {
-    navigate(returnTo);
   };
 
   if (!loaded) {
@@ -391,7 +407,7 @@ export default function Settings() {
               label={t("settings.debugTools", "Debug tools")}
               description={t(
                 "settings.debugToolsDesc",
-                "Enable internal tools like draft skip",
+                "Enable internal tools like draft skip and World Editor",
               )}
             >
               <div className="flex items-center gap-2">
@@ -558,7 +574,7 @@ export default function Settings() {
           {/* Header */}
           <div className="flex items-center gap-3 mb-8">
             <button
-              onClick={handleBack}
+              onClick={() => navigate(returnTo)}
               className="p-2 rounded-lg text-foreground/80 hover:text-foreground hover:bg-muted/50 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -825,7 +841,7 @@ export default function Settings() {
             label={t("settings.debugTools", "Debug tools")}
             description={t(
               "settings.debugToolsDesc",
-              "Enable internal tools like draft skip",
+              "Enable internal tools like draft skip and World Editor",
             )}
           >
             <div className="flex items-center gap-2">
@@ -1007,7 +1023,7 @@ export default function Settings() {
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
-              onClick={handleBack}
+              onClick={() => navigate(returnTo)}
               className="p-2 rounded-lg text-muted-foreground/70 hover:text-foreground/90 hover:text-foreground hover:bg-muted transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -1016,6 +1032,7 @@ export default function Settings() {
               {t("settings.title")}
             </h1>
           </div>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -1292,83 +1309,81 @@ function GameButton({
 
 function ImportDataSection() {
   const { t } = useTranslation();
+  const hasActiveGame = useGameStore((s) => s.hasActiveGame);
+  const setGameState = useGameStore((s) => s.setGameState);
   const [summary, setSummary] = useState<ImportSummary | null>(null);
   const [result, setResult] = useState<ImportSummary | null>(null);
+  const [cacheInfo, setCacheInfo] = useState<ImportCacheInfo | null>(null);
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState<"idle" | "running" | "success" | "error">("idle");
+  const [zipPath, setZipPath] = useState("");
+  const [progress, setProgress] = useState<ImportProgress | null>(null);
+  const [status, setStatus] = useState<"idle" | "running" | "success" | "error">(
+    "idle",
+  );
   const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState<{ current: number; total: number; phase: string; status: string } | null>(null);
 
-  // Listen for import progress events from Tauri backend
-  useEffect(() => {
-    let unlistenFn: (() => void) | null = null;
-    let cancelled = false;
-    listen<{ current: number; total: number; phase: string; status: string }>(
-      "import-progress",
-      (event) => {
-        if (!cancelled) setProgress(event.payload);
-      },
-    ).then((fn) => { unlistenFn = fn; });
-    return () => {
-      cancelled = true;
-      unlistenFn?.();
-    };
-  }, []);
-
-  // Warn when closing the window during import
-  useEffect(() => {
-    if (status !== "running") return;
-    const handler = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-    };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, [status]);
-
-  // Warn on browser back/forward during import
-  useEffect(() => {
-    if (status !== "running") return;
-    const handler = () => {
-      if (!window.confirm(t("settings.importWarningDesc", {
-        defaultValue: "Hay una importación en curso. Si sales se cancelará. ¿Estás seguro?",
-      }))) {
-        window.history.pushState(null, "", window.location.href);
-      }
-    };
-    window.addEventListener("popstate", handler);
-    // Push an extra state so back can be intercepted
-    window.history.pushState(null, "", window.location.href);
-    return () => {
-      window.removeEventListener("popstate", handler);
-    };
-  }, [status, t]);
-
-  // Warn when closing the window during import
   useEffect(() => {
     let cancelled = false;
-    getCatalogSummary()
-      .then((s) => {
-        if (!cancelled) setSummary(s);
+    Promise.all([getCatalogSummary(), getImportCacheInfo()])
+      .then(([s, cache]) => {
+        if (!cancelled) {
+          setSummary(s);
+          setCacheInfo(cache);
+        }
       })
       .catch(() => {
-        if (!cancelled) setSummary(null);
+        if (!cancelled) {
+          setSummary(null);
+          setCacheInfo(null);
+        }
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  async function handleAutoImport() {
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    listen<ImportProgress>("olm-import-progress", (event) => {
+      setProgress(event.payload);
+    })
+      .then((fn) => {
+        unlisten = fn;
+      })
+      .catch(() => {
+        unlisten = undefined;
+      });
+    return () => {
+      unlisten?.();
+    };
+  }, []);
+
+  async function runImport(action: () => Promise<ImportSummary>) {
     setBusy(true);
     setError(null);
     setResult(null);
     setProgress(null);
     setStatus("running");
     try {
-      const imported = await autoImportDatabase();
+      const imported = await action();
       setResult(imported);
       setSummary(imported);
+      getImportCacheInfo()
+        .then(setCacheInfo)
+        .catch(() => setCacheInfo(null));
       setStatus("success");
+      // The backend rehydrates the active game's staff from the freshly
+      // imported catalog, but the dashboard reads from the Zustand store, which
+      // was populated once when the game loaded. Re-fetch so the new staff
+      // (and players/teams) show up without restarting the app.
+      if (hasActiveGame) {
+        try {
+          const refreshed = await invoke<GameStateData>("get_active_game");
+          setGameState(refreshed);
+        } catch (refreshErr) {
+          console.error("[import] failed to refresh active game:", refreshErr);
+        }
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setStatus("error");
@@ -1377,15 +1392,48 @@ function ImportDataSection() {
     }
   }
 
+  async function handleAutoImport() {
+    await runImport(autoImportDatabase);
+  }
+
+  async function handleZipImport() {
+    const path = zipPath.trim();
+    if (!path) {
+      setError(t("settings.importZipPathRequired", { defaultValue: "Introduce la ruta del ZIP." }));
+      setStatus("error");
+      return;
+    }
+    await runImport(() => importExportZip(path));
+  }
+
+  async function handleCachedImport() {
+    if (!cacheInfo?.exists) {
+      setError(t("settings.importCacheMissing", { defaultValue: "Aún no hay un ZIP guardado." }));
+      setStatus("error");
+      return;
+    }
+    await runImport(importCachedExport);
+  }
+
   const isError = status === "error";
   const isSuccess = status === "success";
-  const progressPct = progress && progress.total > 0
-    ? Math.round((progress.current / progress.total) * 100)
-    : 0;
+  const progressTotal = progress?.total ?? null;
+  const progressPercent =
+    progressTotal && progressTotal > 0
+      ? Math.max(0, Math.min(100, Math.round(((progress?.processed ?? 0) / progressTotal) * 100)))
+      : null;
+  const currentProgressText =
+    progress?.message ??
+    t("settings.importRunning", {
+      defaultValue:
+        "Descargando y descomprimiendo datos desde OLMDBManager...",
+    });
+  const cacheSizeText = cacheInfo?.exists
+    ? `${(cacheInfo.size_bytes / 1_048_576).toFixed(1)} MB`
+    : null;
 
   return (
     <div className="flex flex-col gap-4 py-4">
-
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground">
@@ -1398,21 +1446,33 @@ function ImportDataSection() {
             })}
           </p>
         </div>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={handleAutoImport}
-          className="flex shrink-0 items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
-        >
-          {busy ? (
-            <RefreshCw className="w-4 h-4 animate-spin" />
-          ) : (
-            <Database className="w-4 h-4" />
-          )}
-          {busy
-            ? t("settings.importing", { defaultValue: "Importando…" })
-            : t("settings.import", { defaultValue: "Importar" })}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            disabled={busy || !cacheInfo?.exists}
+            onClick={handleCachedImport}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+            title={cacheInfo?.path}
+          >
+            <Save className="w-4 h-4" />
+            {t("settings.importCached", { defaultValue: "Usar último ZIP" })}
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={handleAutoImport}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-sm font-heading font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
+          >
+            {busy ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Database className="w-4 h-4" />
+            )}
+            {busy
+              ? t("settings.importing", { defaultValue: "Importando..." })
+              : t("settings.importOnline", { defaultValue: "Importar online" })}
+          </button>
+        </div>
       </div>
 
       {status !== "idle" && (
@@ -1426,29 +1486,20 @@ function ImportDataSection() {
           }`}
         >
           {busy && (
-            <>
+            <div className="space-y-2">
               <p className="flex items-center gap-2">
                 <RefreshCw className="w-3.5 h-3.5 animate-spin shrink-0" />
-                {progress?.status ?? t("settings.importRunning", {
-                  defaultValue: "Descargando y descomprimiendo datos desde OLMDBManager…",
-                })}
+                {currentProgressText}
               </p>
-              {progress && progress.total > 0 && (
-                <div className="mt-2">
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/10">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all duration-300"
-                      style={{ width: `${progressPct}%` }}
-                    />
-                  </div>
-                  <p className="mt-1 text-right text-[10px] tabular-nums text-muted-foreground/60">
-                    {progress.phase === "download"
-                      ? (progress.current === 0 ? "Descargando..." : "Descarga completa")
-                      : `${progress.current}/${progress.total}`}
-                  </p>
+              {progressPercent !== null && (
+                <div className="h-2 overflow-hidden rounded-full bg-background/70">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${progressPercent}%` }}
+                  />
                 </div>
               )}
-            </>
+            </div>
           )}
           {error && <p>{error}</p>}
           {result && isSuccess && (
@@ -1465,6 +1516,38 @@ function ImportDataSection() {
           )}
         </div>
       )}
+
+      <div className="grid gap-2 rounded-lg border border-border bg-muted/20 p-3 md:grid-cols-[1fr_auto]">
+        <input
+          value={zipPath}
+          disabled={busy}
+          onChange={(e) => setZipPath(e.target.value)}
+          placeholder={t("settings.importZipPath", {
+            defaultValue: "/ruta/a/olmanager_export.zip",
+          })}
+          className="min-w-0 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary disabled:opacity-50"
+        />
+        <button
+          type="button"
+          disabled={busy || !zipPath.trim()}
+          onClick={handleZipImport}
+          className="flex items-center justify-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-heading font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-muted disabled:opacity-50"
+        >
+          <Download className="w-4 h-4" />
+          {t("settings.importZip", { defaultValue: "Importar ZIP" })}
+        </button>
+      </div>
+
+      <p className="text-2xs uppercase tracking-wider text-muted-foreground">
+        {cacheInfo?.exists
+          ? t("settings.importCacheReady", {
+              defaultValue: "ZIP guardado: {{size}}",
+              size: cacheSizeText,
+            })
+          : t("settings.importCacheEmpty", {
+              defaultValue: "Sin ZIP guardado todavía. El primer import online lo creará.",
+            })}
+      </p>
 
       {summary && (summary.player_count > 0 || summary.team_count > 0) && (
         <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-muted/30 p-3">
@@ -1485,4 +1568,3 @@ function ImportStat({ label, value }: { label: string; value: number }) {
     </div>
   );
 }
-

@@ -4,6 +4,27 @@ All notable changes to OLManager will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses GPL-3.0 licensing inherited from the OpenFootManager lineage unless otherwise documented.
 
+## [0.3.4] - 2026-06-10
+
+### Added
+
+- Added clickable staff profiles: staff cards now open a dedicated profile view with attributes, role-based gameplay impact, photo, nationality, contract details and hire/release actions.
+- Added manual and cached OLMDBManager import options: import from a local `.zip` and re-import the last cached export, with import progress reporting and safe staging/rollback.
+
+### Changed
+
+- Staff are now shown by their esports nickname (e.g. "Zetz", "ZalFIRE"), falling back to the real name when no nickname is available.
+- World (MUNDO) sidebar counters now reflect the real competitive world, excluding seeded youth-academy teams and their generated players so the totals match the imported catalog.
+- Team roster now shows player OVR for every team, not only the user's own team.
+- Added migration v056 introducing a `nickname` column on the staff table; existing saves are backfilled from the imported catalog on load.
+
+### Fixed
+
+- Imported staff now appear correctly inside active games: fixed `wage: null` (and other null fields) dropping entire staff files during parsing, and the active game's staff are now rehydrated from the imported catalog.
+- The dashboard now refreshes the active game after an import, so newly imported players/teams/staff appear without restarting the app.
+- Fixed background competition schedule generation to use `user_competition_id` and executable-relative paths. Thanks @NicoRuedaA.
+- Replaced the legacy draft result screen with `DraftResultScreenV2` in match simulation. Thanks @NicoRuedaA.
+
 ## [0.3.1-1] - 2026-06-08
 
 ### Fixed

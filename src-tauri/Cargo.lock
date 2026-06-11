@@ -3189,7 +3189,7 @@ dependencies = [
 
 [[package]]
 name = "openleaguemanager"
-version = "0.3.1-1"
+version = "0.3.4"
 dependencies = [
  "base64 0.22.1",
  "chrono",
@@ -3206,6 +3206,7 @@ dependencies = [
  "tauri-plugin-opener",
  "tauri-plugin-updater",
  "thiserror 2.0.18",
+ "tokio",
  "ts-rs",
  "validator",
  "zip 2.4.2",

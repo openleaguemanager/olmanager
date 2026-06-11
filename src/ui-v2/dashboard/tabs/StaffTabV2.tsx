@@ -17,13 +17,15 @@ import {
   Users,
 } from "lucide-react";
 
-import type { GameStateData, StaffData } from "@/store/gameStore";
+import type { GameStateData } from "@/store/gameStore";
 import { hireStaff, releaseStaff } from "@/services/staffService";
 import {
   formatStaffEffectPercent,
   getLolStaffEffectsForTeam,
 } from "@/lib/teams/lolStaffEffects";
 import { resolveStaffPhoto } from "@/lib/players/playerPhotos";
+import { staffDisplayName } from "@/lib/staff/staffName";
+import { ATTR_LABEL_KEYS, bestAttr, ovrRating, getStaffImpactRows } from "@/lib/staff/staffStats";
 import { calcAge, getTeamName } from "@/lib/common/helpers";
 import { countryName } from "@/lib/common/countries";
 import { CountryFlag } from "@/ui-v2/_legacy/components/ui/CountryFlag";
@@ -34,6 +36,7 @@ interface StaffTabV2Props {
   gameState: GameStateData;
   onGameUpdate: (state: GameStateData) => void;
   mode?: "club" | "world";
+  onSelectStaff?: (id: string) => void;
 }
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
@@ -44,90 +47,9 @@ const ROLE_ICONS: Record<string, React.ReactNode> = {
   Owner: <Star className="size-4" />,
 };
 
-const ATTR_LABEL_KEYS = {
-  coaching: "staff.lolAttrs.coaching",
-  judgingAbility: "staff.lolAttrs.judgingAbility",
-  judgingPotential: "staff.lolAttrs.judgingPotential",
-  physiotherapy: "staff.lolAttrs.physiotherapy",
-} as const;
-
 type StaffAttrKey = keyof typeof ATTR_LABEL_KEYS;
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
-}
-
-function qualityMult(value: number, min: number, max: number): number {
-  return clamp(min + (clamp(value, 0, 100) / 100) * (max - min), min, max);
-}
-
-function bestAttr(s: StaffData): { key: string; value: number } {
-  const attrs = [
-    { key: "coaching", value: s.attributes.coaching },
-    { key: "judgingAbility", value: s.attributes.judging_ability },
-    { key: "judgingPotential", value: s.attributes.judging_potential },
-    { key: "physiotherapy", value: s.attributes.physiotherapy },
-  ];
-  return attrs.reduce((a, b) => (b.value > a.value ? b : a));
-}
-
-function ovrRating(s: StaffData): number {
-  const { coaching, judging_ability, judging_potential, physiotherapy } = s.attributes;
-  const weights: Record<string, [number, number, number, number]> = {
-    Coach: [0.7, 0.15, 0.1, 0.05],
-    AssistantManager: [0.35, 0.25, 0.25, 0.15],
-    Scout: [0.1, 0.45, 0.4, 0.05],
-    Physio: [0.15, 0.05, 0.05, 0.75],
-  };
-  const [cw, aw, pw, phw] = weights[s.role] ?? [0.25, 0.25, 0.25, 0.25];
-  return Math.round(coaching * cw + judging_ability * aw + judging_potential * pw + physiotherapy * phw);
-}
-
-function getStaffImpactRows(s: StaffData) {
-  const coaching = qualityMult(s.attributes.coaching, 0.88, 1.22);
-  const development = qualityMult(s.attributes.coaching, 0.92, 1.18);
-  const tactics = qualityMult(s.attributes.coaching, 0.94, 1.14);
-  const analysis = qualityMult(s.attributes.judging_ability, 0.94, 1.14);
-  const potential = qualityMult(s.attributes.judging_potential, 0.98, 1.16);
-  const recovery = qualityMult(s.attributes.physiotherapy, 1, 1.2);
-  const morale = qualityMult(
-    s.role === "Physio" ? s.attributes.physiotherapy : s.attributes.coaching,
-    0.96, 1.12,
-  );
-  const metaDiscovery = clamp(analysis * 0.75 + potential * 0.25, 0.9, 1.2);
-  const execution = clamp((tactics + analysis) / 2, 0.96, 1.1);
-
-  if (s.role === "Coach")
-    return [
-      { labelKey: "staff.lolImpact.development", value: development },
-      { labelKey: "staff.lolImpact.tactics", value: tactics },
-      { labelKey: "staff.lolImpact.execution", value: execution },
-    ];
-  if (s.role === "AssistantManager")
-    return [
-      { labelKey: "staff.lolImpact.development", value: coaching },
-      { labelKey: "staff.lolImpact.tactics", value: tactics },
-      { labelKey: "staff.lolImpact.analysis", value: analysis },
-    ];
-  if (s.role === "Scout")
-    return [
-      { labelKey: "staff.lolImpact.analysis", value: analysis },
-      { labelKey: "staff.lolImpact.draftAnalysis", value: execution },
-      { labelKey: "staff.lolImpact.futureMeta", value: metaDiscovery },
-    ];
-  if (s.role === "Physio")
-    return [
-      { labelKey: "staff.lolImpact.recovery", value: recovery },
-      { labelKey: "staff.lolImpact.tiltControl", value: morale },
-    ];
-  return [
-    { labelKey: "staff.lolImpact.development", value: development },
-    { labelKey: "staff.lolImpact.analysis", value: analysis },
-    { labelKey: "staff.lolImpact.recovery", value: recovery },
-  ];
-}
-
-export function StaffTabV2({ gameState, onGameUpdate, mode = "club" }: StaffTabV2Props) {
+export function StaffTabV2({ gameState, onGameUpdate, mode = "club", onSelectStaff }: StaffTabV2Props) {
   const { t, i18n } = useTranslation();
   const isWorldMode = mode === "world";
   const userTeamId = gameState.manager.team_id;
@@ -164,7 +86,8 @@ export function StaffTabV2({ gameState, onGameUpdate, mode = "club" }: StaffTabV
     if (competitionTeamIds && (!s.team_id || !competitionTeamIds.has(s.team_id))) return false;
     if (search.length >= 2) {
       const q = search.toLowerCase();
-      if (!`${s.first_name} ${s.last_name}`.toLowerCase().includes(q)) return false;
+      const haystack = `${staffDisplayName(s)} ${s.first_name} ${s.last_name}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
     }
     return true;
   });
@@ -380,11 +303,7 @@ export function StaffTabV2({ gameState, onGameUpdate, mode = "club" }: StaffTabV
               <Card
                 key={staff.id}
                 className="h-full cursor-pointer transition-all hover:ring-1 hover:ring-primary/30"
-                onClick={() => {
-                  if (actionLoading === staff.id) return;
-                  if (view === "mystaff") handleRelease(staff.id);
-                  else handleHire(staff.id);
-                }}
+                onClick={() => onSelectStaff?.(staff.id)}
               >
                 <CardContent className="flex gap-4">
                   {/* Avatar */}
@@ -392,7 +311,7 @@ export function StaffTabV2({ gameState, onGameUpdate, mode = "club" }: StaffTabV
                     {photo ? (
                       <img
                         src={photo}
-                        alt={`${staff.first_name} ${staff.last_name}`}
+                        alt={staffDisplayName(staff)}
                         className="size-full object-cover"
                       />
                     ) : (
@@ -404,7 +323,7 @@ export function StaffTabV2({ gameState, onGameUpdate, mode = "club" }: StaffTabV
                     {/* Name + OVR */}
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-heading text-sm font-bold uppercase tracking-wide text-foreground">
-                        {staff.first_name} {staff.last_name}
+                        {staffDisplayName(staff)}
                       </h3>
                       <Badge
                         variant={ovr >= 65 ? "default" : ovr >= 45 ? "secondary" : "outline"}
