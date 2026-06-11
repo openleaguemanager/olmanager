@@ -1,8 +1,10 @@
 mod application;
 mod commands;
+mod discord_rpc;
 pub mod error;
 use commands::*;
 
+use crate::discord_rpc::DiscordRpcState;
 use olm_core::sim_live::SimLiveStoreState;
 use olm_core::db::save_manager::SaveManager;
 use olm_core::state::StateManager;
@@ -126,6 +128,7 @@ pub fn run() {
             }
 
             app.manage(SaveManagerState(Mutex::new(save_manager)));
+            app.manage(DiscordRpcState::new());
 
             Ok(())
         })
@@ -240,6 +243,9 @@ pub fn run() {
             get_import_cache_info,
             get_catalog_summary,
             get_catalog,
+            init_discord_rpc,
+            update_discord_presence,
+            shutdown_discord_rpc,
             debug_log,
             debug_serde_test,
         ])
