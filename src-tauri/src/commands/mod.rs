@@ -1,4 +1,5 @@
 pub mod academy;
+pub mod discord;
 pub mod bug_report;
 pub mod club;
 pub mod competitions;
@@ -20,6 +21,7 @@ pub mod time;
 pub mod transfers;
 pub use academy::*;
 pub use bug_report::*;
+pub use discord::*;
 pub use club::*;
 pub use competitions::*;
 pub use contracts::*;

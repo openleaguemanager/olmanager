@@ -1,20 +1,22 @@
+use discord_rich_presence::activity::{Activity, Assets, Timestamps};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::State;
-use uuid::Uuid;
 
 use crate::discord_rpc::DiscordRpcState;
 
 /// Discord application ID.
 ///
-/// ## Imágenes en el Rich Presence
+/// ## ⚠️ Before production
 ///
-/// 1. Andá a https://discord.com/developers/applications/1514763311646900295/rich-presence/assets
-/// 2. Subí las imágenes (logo, iconos por estado, etc.)
-/// 3. Discord te asigna un **asset key** a cada imagen (ej: "logo", "squad_icon")
-/// 4. Poné ese key en `large_image` o `small_image` en `state_key_to_payload()`
-const APP_ID: &str = "1514763311646900295";
+/// 1. Go to https://discord.com/developers/applications and create an
+///    application.
+/// 2. Copy the **Application ID** (a numeric string like `123456789012345678`).
+/// 3. Replace the placeholder below with that ID.
+/// 4. (Optional) Upload assets (logo, cover) under **Rich Presence → Art
+///    Assets** so `large_image` / `small_image` fields render correctly.
+const APP_ID: &str = "1495804489943351398";
 
 /// Serializable payload for Discord Rich Presence activity data.
 ///
@@ -38,42 +40,93 @@ fn state_key_to_payload(key: &str) -> DiscordActivityPayload {
         .unwrap_or_default()
         .as_secs() as i64;
 
-    let base = |state: &str, details: &str| DiscordActivityPayload {
-        state: state.into(),
-        details: details.into(),
-        large_image: Some("logo".into()),
-        large_text: Some("Open League Manager".into()),
-        small_image: None,
-        small_text: None,
-        start_timestamp: Some(now),
-    };
-
     match key {
-        "dashboard" => base("Browsing Dashboard", "Managing the team"),
-        "squad" => base("Managing Squad", "Setting lineups and roles"),
-        "tactics" => base("Setting Tactics", "Planning match strategy"),
-        "training" => base("In Training", "Improving player skills"),
-        "scouting" => base("Scouting Players", "Searching for talent"),
-        "finances" => base("Managing Finances", "Balancing the books"),
-        "match" => base("In a Match", "Playing live!"),
-        "transfers" => base("Making Transfers", "Negotiating deals"),
-        "market" => base("In the Transfer Market", "Browsing available players"),
-        "players" => base("Viewing Players", "Reviewing player profiles"),
-        "teams" => base("Viewing Teams", "Scouting the competition"),
-        "staff" => base("Managing Staff", "Hiring and releasing"),
-        "competitions" => base("Viewing Competitions", "Checking standings and fixtures"),
-        "scrims" => base("Setting Up Scrims", "Organising practice matches"),
-        "youth" => base("Youth Academy", "Developing future stars"),
-        "inbox" => base("Checking Messages", "Reading the inbox"),
-        "social" => base("On Social Media", "Engaging with fans"),
-        "news" => base("Reading News", "Staying updated"),
-        "settings" => base("Configuring Settings", "Adjusting preferences"),
-        "main_menu" => base("In the Main Menu", "OLManager"),
-        _ => base("Playing", "Open League Manager"),
+        "dashboard" => DiscordActivityPayload {
+            state: "Browsing Dashboard".into(),
+            details: "OLManager".into(),
+            large_image: None,
+            large_text: None,
+            small_image: None,
+            small_text: None,
+            start_timestamp: Some(now),
+        },
+        "squad" => DiscordActivityPayload {
+            state: "Managing Squad".into(),
+            details: "OLManager".into(),
+            large_image: None,
+            large_text: None,
+            small_image: None,
+            small_text: None,
+            start_timestamp: Some(now),
+        },
+        "match" => DiscordActivityPayload {
+            state: "In a Match".into(),
+            details: "OLManager".into(),
+            large_image: None,
+            large_text: None,
+            small_image: None,
+            small_text: None,
+            start_timestamp: Some(now),
+        },
+        "transfers" => DiscordActivityPayload {
+            state: "Making Transfers".into(),
+            details: "OLManager".into(),
+            large_image: None,
+            large_text: None,
+            small_image: None,
+            small_text: None,
+            start_timestamp: Some(now),
+        },
+        "settings" => DiscordActivityPayload {
+            state: "Configuring Settings".into(),
+            details: "OLManager".into(),
+            large_image: None,
+            large_text: None,
+            small_image: None,
+            small_text: None,
+            start_timestamp: Some(now),
+        },
+        _ => DiscordActivityPayload {
+            state: "Playing".into(),
+            details: "OLManager".into(),
+            large_image: None,
+            large_text: None,
+            small_image: None,
+            small_text: None,
+            start_timestamp: Some(now),
+        },
     }
 }
 
+/// Converts a `DiscordActivityPayload` into a Discord `Activity` for `set_activity`.
+fn payload_to_activity(payload: &DiscordActivityPayload) -> Activity<'_> {
+    let mut activity = Activity::new()
+        .details(&payload.details)
+        .state(&payload.state);
 
+    if let Some(ts) = payload.start_timestamp {
+        activity = activity.timestamps(Timestamps::new().start(ts));
+    }
+
+    if payload.large_image.is_some() || payload.large_text.is_some() {
+        let mut assets = Assets::new();
+        if let Some(ref img) = payload.large_image {
+            assets = assets.large_image(img);
+        }
+        if let Some(ref txt) = payload.large_text {
+            assets = assets.large_text(txt);
+        }
+        if let Some(ref img) = payload.small_image {
+            assets = assets.small_image(img);
+        }
+        if let Some(ref txt) = payload.small_text {
+            assets = assets.small_text(txt);
+        }
+        activity = activity.assets(assets);
+    }
+
+    activity
+}
 
 /// Initializes the Discord RPC client and connects to Discord.
 ///
@@ -102,16 +155,8 @@ pub async fn init_discord_rpc(state: State<'_, DiscordRpcState>) -> Result<bool,
             if let Some(pending) = guard.pending_key.take() {
                 log::debug!("[discord] Applying pending presence key: {pending}");
                 let payload = state_key_to_payload(&pending);
-                let activity_json = build_activity_json(&payload);
-                let data = serde_json::json!({
-                    "cmd": "SET_ACTIVITY",
-                    "args": {
-                        "pid": std::process::id(),
-                        "activity": activity_json
-                    },
-                    "nonce": Uuid::new_v4().to_string()
-                });
-                if let Err(e) = client.send(data, 1) {
+                let activity = payload_to_activity(&payload);
+                if let Err(e) = client.set_activity(activity) {
                     log::warn!("[discord] Failed to apply pending activity: {e}");
                 }
             }
@@ -126,39 +171,7 @@ pub async fn init_discord_rpc(state: State<'_, DiscordRpcState>) -> Result<bool,
     }
 }
 
-/// Builds the JSON activity payload including `instance: true`, which is
-/// required by Discord for buttons to render on Rich Presence.
-fn build_activity_json(payload: &DiscordActivityPayload) -> serde_json::Value {
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs() as i64;
-
-    let mut activity = serde_json::json!({
-        "state": payload.state,
-        "details": payload.details,
-        "instance": true,
-        "timestamps": { "start": now },
-        "buttons": [
-            { "label": "Join Discord", "url": "https://discord.gg/24kEWCEm6s" },
-            { "label": "Play Now", "url": "https://webpage-silk-three.vercel.app" }
-        ]
-    });
-
-    if let Some(ref img) = payload.large_image {
-        activity["assets"] = serde_json::json!({
-            "large_image": img,
-            "large_text": payload.large_text,
-        });
-    }
-
-    activity
-}
-
 /// Updates the Discord Rich Presence with the activity mapped from a state key.
-///
-/// Uses raw IPC send instead of `client.set_activity()` so we can include
-/// `instance: true` in the payload — required by Discord for buttons to render.
 ///
 /// If the RPC client is not yet connected (`None`), the key is queued in
 /// `pending_key` so that `init_discord_rpc` can apply it as soon as the IPC
@@ -180,22 +193,11 @@ pub async fn update_discord_presence(
     };
 
     let payload = state_key_to_payload(&state_key);
-    let activity_json = build_activity_json(&payload);
-
-    let data = serde_json::json!({
-        "cmd": "SET_ACTIVITY",
-        "args": {
-            "pid": std::process::id(),
-            "activity": activity_json
-        },
-        "nonce": Uuid::new_v4().to_string()
-    });
+    let activity = payload_to_activity(&payload);
 
     client
-        .send(data, 1)
-        .map_err(|e| format!("Failed to send Discord activity: {}", e))?;
-
-    Ok(())
+        .set_activity(activity)
+        .map_err(|e| format!("Failed to set Discord activity: {}", e))
 }
 
 /// Shuts down the Discord RPC client gracefully.
@@ -298,24 +300,9 @@ mod tests {
         let cases = [
             ("dashboard", "Browsing Dashboard"),
             ("squad", "Managing Squad"),
-            ("tactics", "Setting Tactics"),
-            ("training", "In Training"),
-            ("scouting", "Scouting Players"),
-            ("finances", "Managing Finances"),
             ("match", "In a Match"),
             ("transfers", "Making Transfers"),
-            ("market", "In the Transfer Market"),
-            ("players", "Viewing Players"),
-            ("teams", "Viewing Teams"),
-            ("staff", "Managing Staff"),
-            ("competitions", "Viewing Competitions"),
-            ("scrims", "Setting Up Scrims"),
-            ("youth", "Youth Academy"),
-            ("inbox", "Checking Messages"),
-            ("social", "On Social Media"),
-            ("news", "Reading News"),
             ("settings", "Configuring Settings"),
-            ("main_menu", "In the Main Menu"),
         ];
         for (key, expected) in &cases {
             let payload = state_key_to_payload(key);
@@ -352,37 +339,5 @@ mod tests {
         let json = serde_json::to_value(&activity).unwrap();
         assert_eq!(json.get("state").and_then(|v| v.as_str()), Some("Managing Squad"));
         assert_eq!(json.get("details").and_then(|v| v.as_str()), Some("OLManager"));
-    }
-
-    // -----------------------------------------------------------------------
-    // Button serialisation tests
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_activity_includes_buttons() {
-        let payload = state_key_to_payload("dashboard");
-        let activity = payload_to_activity(&payload);
-        let json = serde_json::to_value(&activity).unwrap();
-        let buttons = json.get("buttons");
-        assert!(buttons.is_some(), "activity should have buttons");
-        if let Some(arr) = buttons.and_then(|v| v.as_array()) {
-            assert_eq!(arr.len(), 2, "should have exactly 2 buttons");
-            assert_eq!(
-                arr[0].get("label").and_then(|v| v.as_str()),
-                Some("Join Discord")
-            );
-            assert_eq!(
-                arr[0].get("url").and_then(|v| v.as_str()),
-                Some("https://discord.gg/24kEWCEm6s")
-            );
-            assert_eq!(
-                arr[1].get("label").and_then(|v| v.as_str()),
-                Some("Play Now")
-            );
-            assert_eq!(
-                arr[1].get("url").and_then(|v| v.as_str()),
-                Some("https://webpage-silk-three.vercel.app")
-            );
-        }
     }
 }
