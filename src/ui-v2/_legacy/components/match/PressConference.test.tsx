@@ -379,14 +379,12 @@ describe("PressConference LoL social content", () => {
 
   it("persists a scoped recent question history after rendering", async () => {
     render(
-      <ThemeProvider>
         <PressConference
           snapshot={makeObjectiveWinSnapshot()}
           gameState={makeGameState()}
           userSide="Home"
           onFinish={vi.fn()}
         />
-      </ThemeProvider>,
     );
 
     await waitFor(() => {

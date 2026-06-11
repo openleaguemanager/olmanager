@@ -242,6 +242,7 @@ export function DatePicker({ value, onChange, error, nextFieldId }: DatePickerPr
               const currentIdx = months.findIndex(
                 m => m.value === month || m.value.padStart(2, '0') === month
               );
+              const dir = e.key === "ArrowDown" ? 1 : -1;
               let nextIdx = currentIdx < 0 ? 0 : currentIdx + dir;
               if (nextIdx < 0) nextIdx = months.length - 1;
               if (nextIdx >= months.length) nextIdx = 0;
