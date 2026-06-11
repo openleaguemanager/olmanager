@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useUpdater } from "@/hooks/useUpdater";
+import { invoke } from "@tauri-apps/api/core";
 import UpdateModal from "@/ui-v2/_legacy/components/updater/UpdateModal";
 import DashboardV2 from "./dashboard/DashboardV2";
 import { TitleBarV2 } from "./components/TitleBarV2";
@@ -24,6 +25,18 @@ const SCALE_MAP: Record<string, string> = {
 
 const AUTO_CHECK_UPDATES = import.meta.env.PROD;
 
+/// Maps frontend routes to Discord Rich Presence state keys.
+/// Unmapped routes (main menu, team selection) do not update presence.
+const PATHNAME_TO_STATE_KEY: Record<string, string> = {
+  "/dashboard": "dashboard",
+  "/finanzas": "dashboard",
+  "/finances": "dashboard",
+  "/competiciones": "dashboard",
+  "/competitions": "dashboard",
+  "/match": "match",
+  "/settings": "settings",
+};
+
 const DASHBOARD_TAB_ROUTES = [
   "/finanzas",
   "/finances",
@@ -42,6 +55,16 @@ function LazyFallback() {
 function AppContent() {
   const location = useLocation();
   const showBugButton = ["/dashboard", "/match", "/select-team", ...DASHBOARD_TAB_ROUTES].includes(location.pathname);
+
+  // Update Discord Rich Presence on route change
+  useEffect(() => {
+    const stateKey = PATHNAME_TO_STATE_KEY[location.pathname];
+    if (stateKey) {
+      invoke("update_discord_presence", { stateKey }).catch(() => {
+        // Silently ignore — Discord may not be available
+      });
+    }
+  }, [location.pathname]);
 
   return (
     <>
@@ -173,6 +196,24 @@ export default function AppV2() {
       window.removeEventListener("mousedown", blockMouseBackForward, { capture: true });
       window.removeEventListener("mouseup", blockMouseBackForward, { capture: true });
       window.removeEventListener("keydown", blockKeyboardHistoryShortcuts, { capture: true });
+    };
+  }, []);
+
+  // --- Discord Rich Presence lifecycle ---
+  useEffect(() => {
+    // Attempt to initialise the RPC client on mount (gracefully degrades
+    // if Discord is not running).
+    invoke("init_discord_rpc").catch(() => {});
+
+    // Shut down the RPC client when the window is closed.
+    const handleBeforeUnload = () => {
+      invoke("shutdown_discord_rpc").catch(() => {});
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      invoke("shutdown_discord_rpc").catch(() => {});
     };
   }, []);
 
