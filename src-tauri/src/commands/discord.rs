@@ -1,4 +1,4 @@
-use discord_rich_presence::activity::{Activity, Assets, Timestamps};
+use discord_rich_presence::activity::{Activity, Assets, Button, Timestamps};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -8,24 +8,21 @@ use crate::discord_rpc::DiscordRpcState;
 
 /// Discord application ID.
 ///
-/// ## Assets (imágenes)
-///
-/// Para que aparezcan imágenes en el Rich Presence:
+/// ## Imágenes en el Rich Presence
 ///
 /// 1. Andá a https://discord.com/developers/applications/1514763311646900295/rich-presence/assets
-/// 2. Subí las imágenes que quieras usar (logo del juego, iconos, etc.)
-/// 3. Discord te asigna un **asset key** a cada imagen (ej: "olmanager_logo")
-/// 4. Poné ese key en `large_image` o `small_image` abajo en `state_key_to_payload()`
-///
-/// Ejemplo:
-/// ```rust
-/// "dashboard" => DiscordActivityPayload {
-///     large_image: Some("olmanager_logo"),
-///     large_text: Some("Open League Manager"),
-///     ..
-/// }
-/// ```
+/// 2. Subí las imágenes (logo, iconos por estado, etc.)
+/// 3. Discord te asigna un **asset key** a cada imagen (ej: "logo", "squad_icon")
+/// 4. Poné ese key en `large_image` o `small_image` en `state_key_to_payload()`
 const APP_ID: &str = "1514763311646900295";
+
+/// Retorna los botones que se muestran en el Rich Presence de Discord.
+fn discord_buttons() -> Vec<Button<'static>> {
+    vec![
+        Button::new("Join Discord", "https://discord.gg/24kEWCEm6s"),
+        Button::new("Play Now", "https://webpage-silk-three.vercel.app"),
+    ]
+}
 
 /// Serializable payload for Discord Rich Presence activity data.
 ///
@@ -49,61 +46,38 @@ fn state_key_to_payload(key: &str) -> DiscordActivityPayload {
         .unwrap_or_default()
         .as_secs() as i64;
 
+    let base = |state: &str, details: &str| DiscordActivityPayload {
+        state: state.into(),
+        details: details.into(),
+        large_image: Some("logo".into()),
+        large_text: Some("Open League Manager".into()),
+        small_image: None,
+        small_text: None,
+        start_timestamp: Some(now),
+    };
+
     match key {
-        "dashboard" => DiscordActivityPayload {
-            state: "Browsing Dashboard".into(),
-            details: "OLManager".into(),
-            large_image: None,
-            large_text: None,
-            small_image: None,
-            small_text: None,
-            start_timestamp: Some(now),
-        },
-        "squad" => DiscordActivityPayload {
-            state: "Managing Squad".into(),
-            details: "OLManager".into(),
-            large_image: None,
-            large_text: None,
-            small_image: None,
-            small_text: None,
-            start_timestamp: Some(now),
-        },
-        "match" => DiscordActivityPayload {
-            state: "In a Match".into(),
-            details: "OLManager".into(),
-            large_image: None,
-            large_text: None,
-            small_image: None,
-            small_text: None,
-            start_timestamp: Some(now),
-        },
-        "transfers" => DiscordActivityPayload {
-            state: "Making Transfers".into(),
-            details: "OLManager".into(),
-            large_image: None,
-            large_text: None,
-            small_image: None,
-            small_text: None,
-            start_timestamp: Some(now),
-        },
-        "settings" => DiscordActivityPayload {
-            state: "Configuring Settings".into(),
-            details: "OLManager".into(),
-            large_image: None,
-            large_text: None,
-            small_image: None,
-            small_text: None,
-            start_timestamp: Some(now),
-        },
-        _ => DiscordActivityPayload {
-            state: "Playing".into(),
-            details: "OLManager".into(),
-            large_image: None,
-            large_text: None,
-            small_image: None,
-            small_text: None,
-            start_timestamp: Some(now),
-        },
+        "dashboard" => base("Browsing Dashboard", "Managing the team"),
+        "squad" => base("Managing Squad", "Setting lineups and roles"),
+        "tactics" => base("Setting Tactics", "Planning match strategy"),
+        "training" => base("In Training", "Improving player skills"),
+        "scouting" => base("Scouting Players", "Searching for talent"),
+        "finances" => base("Managing Finances", "Balancing the books"),
+        "match" => base("In a Match", "Playing live!"),
+        "transfers" => base("Making Transfers", "Negotiating deals"),
+        "market" => base("In the Transfer Market", "Browsing available players"),
+        "players" => base("Viewing Players", "Reviewing player profiles"),
+        "teams" => base("Viewing Teams", "Scouting the competition"),
+        "staff" => base("Managing Staff", "Hiring and releasing"),
+        "competitions" => base("Viewing Competitions", "Checking standings and fixtures"),
+        "scrims" => base("Setting Up Scrims", "Organising practice matches"),
+        "youth" => base("Youth Academy", "Developing future stars"),
+        "inbox" => base("Checking Messages", "Reading the inbox"),
+        "social" => base("On Social Media", "Engaging with fans"),
+        "news" => base("Reading News", "Staying updated"),
+        "settings" => base("Configuring Settings", "Adjusting preferences"),
+        "main_menu" => base("In the Main Menu", "OLManager"),
+        _ => base("Playing", "Open League Manager"),
     }
 }
 
@@ -111,7 +85,8 @@ fn state_key_to_payload(key: &str) -> DiscordActivityPayload {
 fn payload_to_activity(payload: &DiscordActivityPayload) -> Activity<'_> {
     let mut activity = Activity::new()
         .details(&payload.details)
-        .state(&payload.state);
+        .state(&payload.state)
+        .buttons(discord_buttons());
 
     if let Some(ts) = payload.start_timestamp {
         activity = activity.timestamps(Timestamps::new().start(ts));
@@ -309,9 +284,24 @@ mod tests {
         let cases = [
             ("dashboard", "Browsing Dashboard"),
             ("squad", "Managing Squad"),
+            ("tactics", "Setting Tactics"),
+            ("training", "In Training"),
+            ("scouting", "Scouting Players"),
+            ("finances", "Managing Finances"),
             ("match", "In a Match"),
             ("transfers", "Making Transfers"),
+            ("market", "In the Transfer Market"),
+            ("players", "Viewing Players"),
+            ("teams", "Viewing Teams"),
+            ("staff", "Managing Staff"),
+            ("competitions", "Viewing Competitions"),
+            ("scrims", "Setting Up Scrims"),
+            ("youth", "Youth Academy"),
+            ("inbox", "Checking Messages"),
+            ("social", "On Social Media"),
+            ("news", "Reading News"),
             ("settings", "Configuring Settings"),
+            ("main_menu", "In the Main Menu"),
         ];
         for (key, expected) in &cases {
             let payload = state_key_to_payload(key);

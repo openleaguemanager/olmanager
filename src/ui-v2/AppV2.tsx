@@ -26,15 +26,17 @@ const SCALE_MAP: Record<string, string> = {
 const AUTO_CHECK_UPDATES = import.meta.env.PROD;
 
 /// Maps frontend routes to Discord Rich Presence state keys.
-/// Unmapped routes (main menu, team selection) do not update presence.
+/// Unmapped routes fall through to the `_` default in the backend.
 const PATHNAME_TO_STATE_KEY: Record<string, string> = {
   "/dashboard": "dashboard",
-  "/finanzas": "dashboard",
-  "/finances": "dashboard",
-  "/competiciones": "dashboard",
-  "/competitions": "dashboard",
+  "/finanzas": "finances",
+  "/finances": "finances",
+  "/competiciones": "competitions",
+  "/competitions": "competitions",
   "/match": "match",
   "/settings": "settings",
+  "/": "main_menu",
+  "/select-team": "main_menu",
 };
 
 const DASHBOARD_TAB_ROUTES = [
