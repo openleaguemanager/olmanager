@@ -314,7 +314,7 @@ export function DatePicker({ value, onChange, error, nextFieldId }: DatePickerPr
               }
             }}
           >
-            <div className="max-h-48 overflow-y-auto">
+            <div className="max-h-48 overflow-y-auto scrollbar-v2">
               {months.map((m, i) => (
                 <button
                   key={m.value}

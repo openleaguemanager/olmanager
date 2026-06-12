@@ -117,7 +117,14 @@ export function ScoutingTabV2({ gameState, onGameUpdate, onSelectPlayer, onNavig
                   <div className="flex items-start gap-3">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                       {(() => {
-                        const logo = academyTeam ? resolveTeamLogo(academyTeam.name) : null;
+                        const academyLogo = academyTeam
+                          ? (academyTeam.logo_url
+                            ?? academyTeam.academy?.branding?.current_logo_url
+                            ?? academyTeam.academy?.acquisition?.original_logo_url
+                            ?? academyTeam.academy?.source_identity?.original_logo_url
+                            ?? myTeam?.logo_url)
+                          : null;
+                        const logo = resolveTeamLogo(academyTeam?.name, academyLogo);
                         return logo ? (
                           <img src={logo} alt={academyTeam.name} className="size-7 object-contain" />
                         ) : (

@@ -124,7 +124,7 @@ export default function StaffProfileV2({
         <CardContent className="flex flex-wrap items-start gap-5">
           <div className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted text-muted-foreground">
             {photo ? (
-              <img src={photo} alt={staffDisplayName(staff)} className="size-full object-cover" />
+              <img src={photo} alt={staffDisplayName(staff)} className="size-full object-cover" onError={(e) => { e.currentTarget.src = "/default/defaultstaff.webp"; }} />
             ) : (
               roleIcon
             )}

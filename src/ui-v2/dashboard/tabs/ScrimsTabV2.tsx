@@ -265,12 +265,44 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
 
         {/* ── Sidebar ── */}
         <aside className="flex flex-col gap-4 xl:sticky xl:top-4 xl:self-start">
+          {/* Assistant coach */}
+          <Card>
+            <CardHeader className="space-y-0">
+              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-widest text-muted-foreground">
+                <Brain className="size-4" />
+                {t("scrims.assistantCoach")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 p-3">
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground">{t("scrims.delegation")}</p>
+                  <p className="mt-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground/60">
+                    {settings.scrim_review_mode === "assistant" ? t("scrims.autoMode") : t("scrims.manualControl")}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => updateSettings({ scrim_review_mode: settings.scrim_review_mode === "assistant" ? "manual" : "assistant" })}
+                  className={cn(
+                    "shrink-0 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                    settings.scrim_review_mode === "assistant"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-muted-foreground",
+                  )}
+                >
+                  {settings.scrim_review_mode === "assistant" ? t("scrims.assistantLabel") : t("scrims.manualLabel")}
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* ── Gauges ── */}
           <Card>
             <CardContent className="flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex gap-1.5">
+              <div className="flex w-full gap-1.5">
                 {/* Planned gauge */}
-                <div className="flex-1 rounded-lg border border-border bg-muted/30 px-2 py-2 text-center min-w-0">
+                <div className="flex-1 min-w-0 rounded-lg border border-border bg-muted/30 px-2 py-2 text-center">
                   <p className="font-heading text-base font-bold text-foreground tabular-nums">{plannedScrims}/{weeklyCapacity}</p>
                   <div className="mt-1 h-1 overflow-hidden rounded-full bg-muted">
                     <div
@@ -281,7 +313,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                   <p className="mt-1 font-heading text-[8px] uppercase tracking-wider text-muted-foreground">{t("scrims.planned")}</p>
                 </div>
                 {/* W/L gauge */}
-                <div className="flex-1 rounded-lg border border-border bg-muted/30 px-2 py-2 text-center min-w-0">
+                <div className="flex-1 min-w-0 rounded-lg border border-border bg-muted/30 px-2 py-2 text-center">
                   <p className="font-heading text-base font-bold tabular-nums">
                     <span className="text-emerald-400">{wins}</span>
                     <span className="text-muted-foreground/40">-</span>
@@ -298,7 +330,7 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
                   <p className="mt-1 font-heading text-[8px] uppercase tracking-wider text-muted-foreground">{t("scrims.weekRecord")}</p>
                 </div>
                 {/* Rep gauge */}
-                <div className="flex-1 rounded-lg border border-border bg-muted/30 px-2 py-2 text-center min-w-0">
+                <div className="flex-1 min-w-0 rounded-lg border border-border bg-muted/30 px-2 py-2 text-center">
                   <p className="font-heading text-base font-bold text-foreground tabular-nums">{weeklyContext.reputation}</p>
                   <div className="mt-1 h-1 overflow-hidden rounded-full bg-muted">
                     <div
@@ -390,38 +422,6 @@ export function ScrimsTabV2({ gameState, onGameUpdate }: ScrimsTabV2Props) {
               )}
             </CardContent>
           </Card>
-          {/* Assistant coach */}
-          <Card>
-            <CardHeader className="space-y-0">
-              <CardTitle className="flex items-center gap-2 font-heading text-sm uppercase tracking-widest text-muted-foreground">
-                <Brain className="size-4" />
-                {t("scrims.assistantCoach")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 p-3">
-                <div className="min-w-0">
-                  <p className="text-xs text-muted-foreground">{t("scrims.delegation")}</p>
-                  <p className="mt-0.5 font-heading text-[10px] uppercase tracking-wider text-muted-foreground/60">
-                    {settings.scrim_review_mode === "assistant" ? t("scrims.autoMode") : t("scrims.manualControl")}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => updateSettings({ scrim_review_mode: settings.scrim_review_mode === "assistant" ? "manual" : "assistant" })}
-                  className={cn(
-                    "shrink-0 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                    settings.scrim_review_mode === "assistant"
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border text-muted-foreground",
-                  )}
-                >
-                  {settings.scrim_review_mode === "assistant" ? t("scrims.assistantLabel") : t("scrims.manualLabel")}
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Today's block */}
           <Card className={stateBorder(todayState)}>
             <CardHeader className="space-y-0">

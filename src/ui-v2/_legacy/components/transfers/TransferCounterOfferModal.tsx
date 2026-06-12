@@ -127,7 +127,7 @@ export default function TransferCounterOfferModal({
               {selectedPlayerIds.length}/2 {t("transfers.playersSelected")}
             </span>
           </div>
-          <div className="space-y-1 max-h-48 overflow-y-auto">
+          <div className="space-y-1 max-h-48 overflow-y-auto scrollbar-v2">
             {userPlayers.map((p) => {
               const isSelected = selectedPlayerIds.includes(p.id);
               const age = calcAge(p.date_of_birth, currentDate);

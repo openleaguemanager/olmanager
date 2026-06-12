@@ -400,10 +400,10 @@ const TEAM_BRAND_MAP: Record<string, { tricode: string; logo: string | null }> =
   "sk gaming": { tricode: "SK", logo: "/teams-icons/sk-gaming.webp" },
   "movistar koi": { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
   "mad lions koi": { tricode: "MKOI", logo: "/teams-icons/mad-lions.webp" },
-  "team bds": { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.webp" },
+  "team bds": { tricode: "SHFT", logo: "/teams-icons/shifters.webp" },
   giantx: { tricode: "GX", logo: "/teams-icons/giantx-lec.webp" },
   heretics: { tricode: "HRTS", logo: "/teams-icons/team-heretics-lec.webp" },
-  shifters: { tricode: "SHFT", logo: "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.webp" },
+  shifters: { tricode: "SHFT", logo: "/teams-icons/shifters.webp" },
   "natus vincere": { tricode: "NAVI", logo: "/teams-icons/natus-vincere.webp" },
   "karmine corp": { tricode: "KC", logo: "/teams-icons/karmine-corp.webp" },
 };
@@ -954,8 +954,8 @@ export default function ChampionDraft({
     [redPlayers],
   );
 
-  const blueHeader = `${bluePlayerLabels[0] ?? "BLUE"} & ${bluePlayerLabels[1] ?? "STAFF"}`;
-  const redHeader = `${redPlayerLabels[0] ?? "RED"} & ${redPlayerLabels[1] ?? "STAFF"}`;
+  const blueHeader = "";
+  const redHeader = "";
 
   const roleMasteryForChampion = (side: Side, role: Role, championId: string): number => {
     const roleIndex = ROLE_ORDER.indexOf(role);
@@ -2633,13 +2633,13 @@ export default function ChampionDraft({
                 {redHeader}
               </p>
               <div className="flex gap-1 justify-end">
-                {redBanDisplay.map((championId, index) => {
+                  {redBanDisplay.map((championId, index) => {
                   const champion = championId ? championById.get(championId) : null;
                   return (
                     <button
                       key={`top-red-ban-${index}`}
                       disabled
-                      className="relative border border-border/50 bg-background overflow-hidden w-8 h-8"
+                      className="relative border border-border/50 bg-background overflow-hidden w-11 h-11"
                     >
                       {champion ? (
                         <img
