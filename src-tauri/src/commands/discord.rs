@@ -339,4 +339,36 @@ mod tests {
         assert_eq!(json.get("state").and_then(|v| v.as_str()), Some("Managing Squad"));
         assert_eq!(json.get("details").and_then(|v| v.as_str()), Some("OLManager"));
     }
+
+    // -----------------------------------------------------------------------
+    // Button serialisation tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_activity_includes_buttons() {
+        let payload = state_key_to_payload("dashboard");
+        let activity = payload_to_activity(&payload);
+        let json = serde_json::to_value(&activity).unwrap();
+        let buttons = json.get("buttons");
+        assert!(buttons.is_some(), "activity should have buttons");
+        if let Some(arr) = buttons.and_then(|v| v.as_array()) {
+            assert_eq!(arr.len(), 2, "should have exactly 2 buttons");
+            assert_eq!(
+                arr[0].get("label").and_then(|v| v.as_str()),
+                Some("Join Discord")
+            );
+            assert_eq!(
+                arr[0].get("url").and_then(|v| v.as_str()),
+                Some("https://discord.gg/24kEWCEm6s")
+            );
+            assert_eq!(
+                arr[1].get("label").and_then(|v| v.as_str()),
+                Some("Play Now")
+            );
+            assert_eq!(
+                arr[1].get("url").and_then(|v| v.as_str()),
+                Some("https://webpage-silk-three.vercel.app")
+            );
+        }
+    }
 }
