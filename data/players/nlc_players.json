@@ -764,6 +764,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-61df48a6",
       "match_name": "Ag0nyPain",
       "full_name": "Sorth Jeppe Nikolaj",
@@ -787,7 +789,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/82c7c3a5cfc0d649.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-6576b32a",
@@ -1256,6 +1258,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-970d7ba9",
       "match_name": "MadsF",
       "full_name": "Mads Færgemann",
@@ -1279,7 +1283,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/9b963562a34f0312.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-9fe1afb7",

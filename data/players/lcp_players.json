@@ -146,6 +146,33 @@
       "profile_image_url": "/player-photos/3fd9c74b.webp"
     },
     {
+      "career": [],
+      "contract_end": "2027-11-16",
+      "id": "player-16702d04",
+      "match_name": "Gloryy",
+      "full_name": "Lê Ngọc Vinh",
+      "position": "Mid",
+      "team_id": "team-494fc51a",
+      "nationality": "",
+      "date_of_birth": "2002-01-12",
+      "wage": 0,
+      "market_value": 0,
+      "potential_base": 0,
+      "attributes": {
+        "mechanics": 50,
+        "laning": 50,
+        "teamfighting": 50,
+        "macro_play": 50,
+        "consistency": 50,
+        "shotcalling": 50,
+        "champion_pool": 50,
+        "discipline": 50,
+        "mental_resilience": 50
+      },
+      "stats": {},
+      "profile_image_url": "/player-photos/a3d1b76cd590c04a.webp"
+    },
+    {
       "id": "player-269d6089",
       "wage": 0,
       "career": [],
@@ -761,7 +788,7 @@
       "match_name": "Aress",
       "loan_listed": false,
       "morale_core": {},
-      "contract_end": "",
+      "contract_end": "2026-11-16",
       "market_value": 0,
       "potential_base": 86,
       "transfer_listed": false,
@@ -770,9 +797,9 @@
       "alternate_positions": [],
       "position": "Mid",
       "nationality": "VN",
-      "date_of_birth": "2004-10-24",
+      "date_of_birth": "2004-09-24",
       "stats": {},
-      "profile_image_url": "/player-photos/949bdce5e934461a.webp"
+      "profile_image_url": "/player-photos/781318d21a1d5970.webp"
     },
     {
       "id": "player-96704a63",
@@ -798,7 +825,7 @@
       "match_name": "Kiaya",
       "loan_listed": false,
       "morale_core": {},
-      "contract_end": "",
+      "contract_end": "2026-11-16",
       "market_value": 0,
       "potential_base": 85,
       "transfer_listed": false,
@@ -809,7 +836,7 @@
       "nationality": "VN",
       "date_of_birth": "2001-05-17",
       "stats": {},
-      "profile_image_url": "/player-photos/b52b113210fde70d.webp"
+      "profile_image_url": "/player-photos/9ed32e8d64a89923.webp"
     },
     {
       "id": "player-a4d48840",
@@ -983,7 +1010,7 @@
       "match_name": "Draktharr",
       "loan_listed": false,
       "morale_core": {},
-      "contract_end": "",
+      "contract_end": "2027-11-16",
       "market_value": 0,
       "potential_base": 82,
       "transfer_listed": false,
@@ -994,7 +1021,7 @@
       "nationality": "VN",
       "date_of_birth": "2003-03-10",
       "stats": {},
-      "profile_image_url": "/player-photos/9391040bafeb6149.webp"
+      "profile_image_url": "/player-photos/2dd9c031dde0947f.webp"
     },
     {
       "id": "player-bf386435",
@@ -1233,6 +1260,7 @@
       },
       "match_name": "Taki",
       "loan_listed": false,
+      "contract_end": "2027-11-16",
       "potential_base": 81,
       "transfer_listed": false,
       "position": "Support",
@@ -1241,9 +1269,8 @@
       "date_of_birth": "2003-06-30",
       "wage": 0,
       "market_value": 0,
-      "contract_end": "",
       "stats": {},
-      "profile_image_url": "/player-photos/822781843ac55c02.webp"
+      "profile_image_url": "/player-photos/2f6d7dc6a46d33b8.webp"
     },
     {
       "id": "player-d38aac8c",
@@ -1382,6 +1409,43 @@
       "date_of_birth": "2003-10-22",
       "stats": {},
       "profile_image_url": "/player-photos/5781f49ce9e1ea66.webp"
+    },
+    {
+      "id": "player-eaf8e5f5",
+      "wage": 0,
+      "career": [],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "team-494fc51a",
+      "condition": 100,
+      "full_name": "Trần Quốc Hưng",
+      "attributes": {
+        "mechanics": 75,
+        "laning": 74,
+        "teamfighting": 75,
+        "macro_play": 74,
+        "consistency": 74,
+        "shotcalling": 74,
+        "champion_pool": 73,
+        "discipline": 74,
+        "mental_resilience": 75
+      },
+      "match_name": "Artemis",
+      "loan_listed": false,
+      "morale_core": {},
+      "contract_end": "2026-11-16",
+      "market_value": 0,
+      "potential_base": 80,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "alternate_positions": [],
+      "position": "ADC",
+      "nationality": "VN",
+      "date_of_birth": "2001-02-24",
+      "stats": {},
+      "profile_image_url": "/player-photos/58882f33cd7f65a7.webp"
     },
     {
       "id": "player-ec5c483a",

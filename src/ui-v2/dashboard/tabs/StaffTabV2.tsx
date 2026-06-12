@@ -184,7 +184,7 @@ export function StaffTabV2({ gameState, onGameUpdate, mode = "club", onSelectSta
         <select
           value={competitionFilter ?? ""}
           onChange={(e) => setCompetitionFilter(e.target.value || null)}
-          className="h-8 rounded-md border border-border bg-card px-2 text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground"
+          className="h-8 rounded-md border border-border bg-card pl-2 pr-8 text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground"
         >
           <option value="">{t("common.all")}</option>
           {leagueOptions.map((l) => (

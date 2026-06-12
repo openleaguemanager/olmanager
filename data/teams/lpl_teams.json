@@ -9,8 +9,8 @@
       "form": [],
       "name": "EDward Gaming",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#ffffff",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CN",
@@ -65,8 +65,8 @@
       "form": [],
       "name": "LGD Gaming",
       "colors": {
-        "primary": "#65a30d",
-        "secondary": "#a3e635"
+        "primary": "#FFFFFF",
+        "secondary": "#01378C"
       },
       "academy": null,
       "country": "CN",
@@ -121,8 +121,8 @@
       "form": [],
       "name": "Top Esports",
       "colors": {
-        "primary": "#7c3aed",
-        "secondary": "#a78bfa"
+        "primary": "#FF3D24",
+        "secondary": "#ededed"
       },
       "academy": null,
       "country": "CN",
@@ -177,8 +177,8 @@
       "form": [],
       "name": "Ultra Prime",
       "colors": {
-        "primary": "#0891b2",
-        "secondary": "#22d3ee"
+        "primary": "#643097",
+        "secondary": "#fafeff"
       },
       "academy": null,
       "country": "CN",
@@ -233,8 +233,8 @@
       "form": [],
       "name": "Anyone's Legend",
       "colors": {
-        "primary": "#65a30d",
-        "secondary": "#a3e635"
+        "primary": "#C32B2A",
+        "secondary": "#ffffff"
       },
       "academy": null,
       "country": "CN",
@@ -289,8 +289,8 @@
       "form": [],
       "name": "Weibo Gaming",
       "colors": {
-        "primary": "#e11d48",
-        "secondary": "#fb7185"
+        "primary": "#E70013",
+        "secondary": "#fafafa"
       },
       "academy": null,
       "country": "CN",
@@ -345,8 +345,8 @@
       "form": [],
       "name": "LNG Esports",
       "colors": {
-        "primary": "#d97706",
-        "secondary": "#fcd34d"
+        "primary": "#008EFB",
+        "secondary": "#fcfcfc"
       },
       "academy": null,
       "country": "CN",
@@ -401,8 +401,8 @@
       "form": [],
       "name": "Team WE",
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#E52125",
+        "secondary": "#f3f5f7"
       },
       "academy": null,
       "country": "CN",
@@ -457,8 +457,8 @@
       "form": [],
       "name": "Bilibili Gaming",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#34D0F5",
+        "secondary": "#f0f0f0"
       },
       "academy": null,
       "country": "CN",
@@ -513,8 +513,8 @@
       "form": [],
       "name": "TT Gaming",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#2097E5",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CN",
@@ -569,8 +569,8 @@
       "form": [],
       "name": "Invictus Gaming",
       "colors": {
-        "primary": "#059669",
-        "secondary": "#34d399"
+        "primary": "#f2f2f2",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CN",
@@ -625,8 +625,8 @@
       "form": [],
       "name": "JD Gaming",
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#C90E30",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CN",
@@ -681,8 +681,8 @@
       "form": [],
       "name": "Oh My God",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#FE9F35",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CN",
@@ -737,8 +737,8 @@
       "form": [],
       "name": "Ninjas in Pyjamas",
       "colors": {
-        "primary": "#e11d48",
-        "secondary": "#fb7185"
+        "primary": "#D8FF00",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CN",

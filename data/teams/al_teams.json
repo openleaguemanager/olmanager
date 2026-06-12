@@ -116,6 +116,10 @@
     },
     {
       "history": [],
+      "colors": {
+        "primary": "#6cd58c",
+        "secondary": "#dedede"
+      },
       "country": "EG",
       "id": "team-e175ded9",
       "name": "3BL Esports",
@@ -124,10 +128,6 @@
       "city": "",
       "stadium_name": "",
       "stadium_capacity": 0,
-      "colors": {
-        "primary": "#000000",
-        "secondary": "#ffffff"
-      },
       "facilities": {}
     }
   ]

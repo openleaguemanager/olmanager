@@ -10,8 +10,8 @@
       "name": "Natus Vincere",
       "tier": 2,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#FFEE00",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "UA",
@@ -67,8 +67,8 @@
       "name": "Shifters",
       "tier": 2,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#6A00E1",
+        "secondary": "#0B0715"
       },
       "academy": null,
       "country": "CH",
@@ -124,8 +124,8 @@
       "name": "G2 Esports",
       "tier": 1,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#000000",
+        "secondary": "#ED2025"
       },
       "academy": null,
       "country": "DE",
@@ -181,8 +181,8 @@
       "name": "Fnatic",
       "tier": 3,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#FF5900",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "GB",
@@ -238,8 +238,8 @@
       "name": "Team Vitality",
       "tier": 2,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#F5C933",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "FR",
@@ -295,8 +295,8 @@
       "name": "SK Gaming",
       "tier": 3,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#19005A",
+        "secondary": "#78F5FA"
       },
       "academy": null,
       "country": "DE",
@@ -352,8 +352,8 @@
       "name": "Team Heretics",
       "tier": 3,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#FFFFFF",
+        "secondary": "#030405"
       },
       "academy": null,
       "country": "ES",
@@ -409,8 +409,8 @@
       "name": "Karmine Corp",
       "tier": 1,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#0052FF",
+        "secondary": "#ffffff"
       },
       "academy": null,
       "country": "FR",
@@ -466,8 +466,8 @@
       "name": "Movistar KOI",
       "tier": 2,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#009EF7",
+        "secondary": "#edece8"
       },
       "academy": null,
       "country": "ES",
@@ -523,8 +523,8 @@
       "name": "GIANTX",
       "tier": 2,
       "colors": {
-        "primary": "#1e3a5f",
-        "secondary": "#60a5fa"
+        "primary": "#0057FF",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "ES",

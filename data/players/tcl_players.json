@@ -1359,7 +1359,9 @@
     },
     {
       "career": [],
+      "loan_listed": false,
       "contract_end": "2026-11-16",
+      "transfer_listed": false,
       "id": "player-f0e036fb",
       "match_name": "MonkaS",
       "full_name": "Mehmet Kaan Sönmez",
@@ -1382,7 +1384,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/92bb7a0a4c566888.webp"
+      "profile_image_url": null
     },
     {
       "wage": 39000,

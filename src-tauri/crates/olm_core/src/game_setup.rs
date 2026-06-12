@@ -466,12 +466,23 @@ pub fn default_initial_contract_end_for_start_year(start_year: i32) -> String {
 }
 
 pub fn apply_default_initial_contract_end(players: &mut [Player]) {
-    let default_initial_contract_end = default_initial_contract_end_for_start_year(2025);
+    let default_initial_contract_end = default_initial_contract_end_for_start_year(2026);
 
     for player in players.iter_mut() {
         if player.contract_end.as_deref().map(|s| s.trim()).unwrap_or("").is_empty() {
             player.contract_end = Some(default_initial_contract_end.clone());
         }
+    }
+}
+
+pub fn apply_default_market_values(players: &mut [Player]) {
+    for player in players.iter_mut() {
+        if player.market_value > 0 {
+            continue;
+        }
+        let ovr = potential::calculate_lol_ovr(player);
+        let potential = player.potential_base.max(ovr);
+        player.market_value = suggested_seed_market_value(ovr, potential, false);
     }
 }
 

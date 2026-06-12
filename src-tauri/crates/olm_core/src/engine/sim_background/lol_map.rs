@@ -143,6 +143,9 @@ pub struct LolUnitState {
     pub damage_dealt: f64,
     #[serde(default)]
     pub item_tier: u8,
+    /// Short-term energy (0-100). Affects damage dealt and received in fights.
+    #[serde(default = "default_condition")]
+    pub condition: u8,
 }
 
 fn default_unit_hp() -> f64 {
@@ -151,6 +154,10 @@ fn default_unit_hp() -> f64 {
 
 fn default_wave() -> f64 {
     1.0
+}
+
+fn default_condition() -> u8 {
+    100
 }
 
 fn default_level() -> u8 {
@@ -291,6 +298,7 @@ impl LolMapState {
                 gold: 500.0,
                 damage_dealt: 0.0,
                 item_tier: 0,
+                condition: player.condition,
             });
         }
 
@@ -319,6 +327,7 @@ impl LolMapState {
                 gold: 500.0,
                 damage_dealt: 0.0,
                 item_tier: 0,
+                condition: player.condition,
             });
         }
     }
@@ -579,12 +588,20 @@ impl LiveMatchState {
             }
             let Some(victim) = target else { continue };
 
+            // Condition scaling: tired players deal less damage and take more.
+            let attacker_cond = self.lol_map.units[i].condition as f64 / 100.0;
+            let attack_mult = 0.6 + attacker_cond * 0.4; // 0.6–1.0
+            let victim_cond = self.lol_map.units[victim].condition as f64 / 100.0;
+            let defense_mult = 1.4 - victim_cond * 0.4; // 1.0–1.4
+
             let scale = 1.0 + (level.saturating_sub(1) as f64) * 0.06 + items as f64 * 0.10;
             let damage = role_power(role)
                 * scale
                 * game_damage_scale(minute, self.config.late_game_damage_scale)
                 * rng.random_range(0.88..1.16)
-                * (1.0 - best_dist / 0.095).clamp(0.45, 1.0);
+                * (1.0 - best_dist / 0.095).clamp(0.45, 1.0)
+                * attack_mult
+                * defense_mult;
 
             incoming[victim] += damage;
             if let Some(attacker) = self.lol_map.units.get_mut(i) {
