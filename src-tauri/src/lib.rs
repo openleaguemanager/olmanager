@@ -242,6 +242,7 @@ pub fn run() {
             get_catalog_summary,
             get_catalog,
             debug_log,
+            update_manager_profile,
             debug_serde_test,
         ])
         .run(tauri::generate_context!())

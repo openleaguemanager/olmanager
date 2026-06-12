@@ -4,7 +4,7 @@ import primeLeaguePlayersData from "../../../data/players/prm_players.json";
 import { assetUrl } from "../assetUrl";
 
 const FALLBACK_PLAYER_PHOTO = "/default/defaultplayer.webp";
-const FALLBACK_STAFF_PHOTO = "/manager-icons/0.webp";
+const FALLBACK_STAFF_PHOTO = "/default/defaultstaff.webp";
 
 function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -63,5 +63,6 @@ export function resolvePlayerPhoto(
 }
 
 export function resolveStaffPhoto(profileImageUrl?: string | null): string | null {
-  return assetUrl(normalizeProfileImageUrl(profileImageUrl) ?? FALLBACK_STAFF_PHOTO);
+  if (profileImageUrl) return assetUrl(profileImageUrl);
+  return FALLBACK_STAFF_PHOTO;
 }

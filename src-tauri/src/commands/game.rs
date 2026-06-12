@@ -679,9 +679,7 @@ pub async fn get_champions() -> Result<Vec<olm_core::domain::champion::Champion>
         .into_iter()
         .enumerate()
         .map(|(i, entry)| {
-            let champion_name = entry.name.clone();
-            let image_splash = format!("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg",
-                champion_name.replace(' ', "").replace("'", ""));
+            let champion_key = entry.id.clone();
             olm_core::domain::champion::Champion {
                 id: (i + 1) as i64,
                 name: entry.name,
@@ -689,8 +687,8 @@ pub async fn get_champions() -> Result<Vec<olm_core::domain::champion::Champion>
                 roles_json: serde_json::to_string(&entry.tags).unwrap_or_default(),
                 counterpicks_json: None,
                 synergies_json: None,
-                image_tile_url: Some(format!("https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/{}", entry.image)),
-                image_splash_url: Some(image_splash),
+                image_tile_url: Some(format!("/champion-tiles/{}.webp", champion_key)),
+                image_splash_url: Some(format!("/champion-splash/{}.jpg", champion_key)),
             }
         })
         .collect();

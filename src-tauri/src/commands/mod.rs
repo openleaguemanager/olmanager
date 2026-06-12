@@ -43,3 +43,28 @@ pub fn debug_log(message: String) {
     println!("[JS DEBUG] {}", message);
 }
 
+#[tauri::command]
+pub fn update_manager_profile(
+    state: tauri::State<'_, olm_core::state::StateManager>,
+    nickname: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    dob: Option<String>,
+    nationality: Option<String>,
+    avatar_path: Option<String>,
+) -> Result<serde_json::Value, String> {
+    let mut game = state
+        .get_game(|g| g.clone())
+        .ok_or("No active game session".to_string())?;
+
+    if let Some(v) = first_name { game.manager.first_name = v; }
+    if let Some(v) = last_name { game.manager.last_name = v; }
+    if let Some(v) = nickname { game.manager.nickname = v; }
+    if let Some(v) = nationality { game.manager.nationality = v; }
+    if let Some(v) = dob { game.manager.date_of_birth = v; }
+    if let Some(v) = avatar_path { game.manager.avatar_path = Some(v); }
+
+    state.set_game(game.clone());
+    Ok(serde_json::to_value(&game).map_err(|e| e.to_string())?)
+}
+
