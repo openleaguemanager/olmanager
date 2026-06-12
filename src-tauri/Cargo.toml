@@ -41,6 +41,8 @@ dirs = "6"
 thiserror = "2"
 validator = { version = "0.19", features = ["derive"] }
 ts-rs = { version = "10", optional = true, features = ["serde-compat"] }
+discord-rich-presence = "1.1"
+uuid = { version = "1", features = ["v4"] }
 
 [features]
 typescript = ["ts-rs", "olm_core/typescript"]
