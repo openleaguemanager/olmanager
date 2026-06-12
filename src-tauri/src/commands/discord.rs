@@ -1,8 +1,8 @@
-use discord_rich_presence::activity::{Activity, Assets, Button, Timestamps};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::State;
+use uuid::Uuid;
 
 use crate::discord_rpc::DiscordRpcState;
 
@@ -15,14 +15,6 @@ use crate::discord_rpc::DiscordRpcState;
 /// 3. Discord te asigna un **asset key** a cada imagen (ej: "logo", "squad_icon")
 /// 4. Poné ese key en `large_image` o `small_image` en `state_key_to_payload()`
 const APP_ID: &str = "1514763311646900295";
-
-/// Retorna los botones que se muestran en el Rich Presence de Discord.
-fn discord_buttons() -> Vec<Button<'static>> {
-    vec![
-        Button::new("Join Discord", "https://discord.gg/24kEWCEm6s"),
-        Button::new("Play Now", "https://webpage-silk-three.vercel.app"),
-    ]
-}
 
 /// Serializable payload for Discord Rich Presence activity data.
 ///
@@ -81,32 +73,25 @@ fn state_key_to_payload(key: &str) -> DiscordActivityPayload {
     }
 }
 
-/// Converts a `DiscordActivityPayload` into a Discord `Activity` for `set_activity`.
-fn payload_to_activity(payload: &DiscordActivityPayload) -> Activity<'_> {
-    let mut activity = Activity::new()
-        .details(&payload.details)
-        .state(&payload.state)
-        .buttons(discord_buttons());
+/// Builds the JSON activity payload for Discord's SET_ACTIVITY IPC command.
+///
+/// Discord's local RPC protocol does NOT support custom buttons — only the
+/// `state`, `details`, `timestamps`, and `assets` fields are honoured.
+fn build_activity_json(payload: &DiscordActivityPayload) -> serde_json::Value {
+    let mut activity = serde_json::json!({
+        "state": payload.state,
+        "details": payload.details,
+        "timestamps": { "start": payload.start_timestamp.unwrap_or(0) },
+    });
 
-    if let Some(ts) = payload.start_timestamp {
-        activity = activity.timestamps(Timestamps::new().start(ts));
-    }
-
-    if payload.large_image.is_some() || payload.large_text.is_some() {
-        let mut assets = Assets::new();
-        if let Some(ref img) = payload.large_image {
-            assets = assets.large_image(img);
-        }
+    if let Some(ref img) = payload.large_image {
+        let mut assets = serde_json::json!({
+            "large_image": img,
+        });
         if let Some(ref txt) = payload.large_text {
-            assets = assets.large_text(txt);
+            assets["large_text"] = serde_json::json!(txt);
         }
-        if let Some(ref img) = payload.small_image {
-            assets = assets.small_image(img);
-        }
-        if let Some(ref txt) = payload.small_text {
-            assets = assets.small_text(txt);
-        }
-        activity = activity.assets(assets);
+        activity["assets"] = assets;
     }
 
     activity
@@ -139,8 +124,16 @@ pub async fn init_discord_rpc(state: State<'_, DiscordRpcState>) -> Result<bool,
             if let Some(pending) = guard.pending_key.take() {
                 log::debug!("[discord] Applying pending presence key: {pending}");
                 let payload = state_key_to_payload(&pending);
-                let activity = payload_to_activity(&payload);
-                if let Err(e) = client.set_activity(activity) {
+                let activity_json = build_activity_json(&payload);
+                let data = serde_json::json!({
+                    "cmd": "SET_ACTIVITY",
+                    "args": {
+                        "pid": std::process::id(),
+                        "activity": activity_json
+                    },
+                    "nonce": Uuid::new_v4().to_string()
+                });
+                if let Err(e) = client.send(data, 1) {
                     log::warn!("[discord] Failed to apply pending activity: {e}");
                 }
             }
@@ -157,12 +150,11 @@ pub async fn init_discord_rpc(state: State<'_, DiscordRpcState>) -> Result<bool,
 
 /// Updates the Discord Rich Presence with the activity mapped from a state key.
 ///
+/// Uses raw IPC send instead of `client.set_activity()`.
+///
 /// If the RPC client is not yet connected (`None`), the key is queued in
 /// `pending_key` so that `init_discord_rpc` can apply it as soon as the IPC
-/// connection is established — this eliminates the startup race window where
-/// route-change effects fire before `init` finishes.
-///
-/// Silently no-ops when Discord is truly unavailable (init already failed).
+/// connection is established.
 #[tauri::command]
 pub async fn update_discord_presence(
     state: State<'_, DiscordRpcState>,
@@ -171,17 +163,27 @@ pub async fn update_discord_presence(
     let mut guard = state.0.lock().map_err(|e| format!("Lock error: {}", e))?;
 
     let Some(client) = guard.client.as_mut() else {
-        // Client not ready yet — queue the key so init can drain it.
         guard.pending_key = Some(state_key);
         return Ok(());
     };
 
     let payload = state_key_to_payload(&state_key);
-    let activity = payload_to_activity(&payload);
+    let activity_json = build_activity_json(&payload);
+
+    let data = serde_json::json!({
+        "cmd": "SET_ACTIVITY",
+        "args": {
+            "pid": std::process::id(),
+            "activity": activity_json
+        },
+        "nonce": Uuid::new_v4().to_string()
+    });
 
     client
-        .set_activity(activity)
-        .map_err(|e| format!("Failed to set Discord activity: {}", e))
+        .send(data, 1)
+        .map_err(|e| format!("Failed to send Discord activity: {}", e))?;
+
+    Ok(())
 }
 
 /// Shuts down the Discord RPC client gracefully.
@@ -271,7 +273,6 @@ mod tests {
         assert!(json.get("state").is_some());
         assert!(json.get("details").is_some());
         assert!(json.get("start_timestamp").is_some());
-        // Optional fields may be null
         assert!(json.get("large_image").is_some());
     }
 
@@ -317,7 +318,6 @@ mod tests {
             .as_secs() as i64;
         let payload = state_key_to_payload("dashboard");
         let ts = payload.start_timestamp.unwrap_or(0);
-        // Allow up to 5 seconds of clock skew
         assert!(
             (now - ts).abs() <= 5,
             "timestamp should be close to current time (now={}, ts={})",
@@ -331,44 +331,14 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_payload_to_activity_creates_valid_activity() {
+    fn test_build_activity_json_includes_correct_fields() {
         let payload = state_key_to_payload("squad");
-        let activity = payload_to_activity(&payload);
-        // The activity should serialize to valid JSON
-        let json = serde_json::to_value(&activity).unwrap();
+        let json = build_activity_json(&payload);
         assert_eq!(json.get("state").and_then(|v| v.as_str()), Some("Managing Squad"));
         assert_eq!(json.get("details").and_then(|v| v.as_str()), Some("OLManager"));
-    }
-
-    // -----------------------------------------------------------------------
-    // Button serialisation tests
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_activity_includes_buttons() {
-        let payload = state_key_to_payload("dashboard");
-        let activity = payload_to_activity(&payload);
-        let json = serde_json::to_value(&activity).unwrap();
-        let buttons = json.get("buttons");
-        assert!(buttons.is_some(), "activity should have buttons");
-        if let Some(arr) = buttons.and_then(|v| v.as_array()) {
-            assert_eq!(arr.len(), 2, "should have exactly 2 buttons");
-            assert_eq!(
-                arr[0].get("label").and_then(|v| v.as_str()),
-                Some("Join Discord")
-            );
-            assert_eq!(
-                arr[0].get("url").and_then(|v| v.as_str()),
-                Some("https://discord.gg/24kEWCEm6s")
-            );
-            assert_eq!(
-                arr[1].get("label").and_then(|v| v.as_str()),
-                Some("Play Now")
-            );
-            assert_eq!(
-                arr[1].get("url").and_then(|v| v.as_str()),
-                Some("https://webpage-silk-three.vercel.app")
-            );
-        }
+        assert!(json.get("timestamps").is_some());
+        assert!(json.get("assets").is_some());
+        // Buttons are not supported via local RPC protocol
+        assert!(json.get("buttons").is_none(), "buttons are not supported via RPC");
     }
 }
