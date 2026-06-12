@@ -100,34 +100,6 @@ const PATH_TAB_MAP: Record<string, string> = {
   "/competitions": "Competitions",
 };
 
-/// Maps internal dashboard tab names to Discord Rich Presence state keys.
-/// Each distinct activity gets its own key for richer presence data.
-const TAB_TO_DISCORD_KEY: Record<string, string> = {
-  Home: "dashboard",
-  Inbox: "inbox",
-  News: "news",
-  Social: "social",
-  Manager: "dashboard",
-  Squad: "squad",
-  Tactics: "tactics",
-  Training: "training",
-  Scrims: "scrims",
-  Players: "players",
-  Teams: "teams",
-  Staff: "staff",
-  WorldStaff: "staff",
-  Scouting: "scouting",
-  Youth: "youth",
-  Transfers: "transfers",
-  Market: "market",
-  Finances: "finances",
-  Competitions: "competitions",
-  Tournaments: "competitions",
-  Schedule: "competitions",
-  Meta: "dashboard",
-  ChampionsWorld: "dashboard",
-};
-
 export default function DashboardV2() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -176,15 +148,6 @@ export default function DashboardV2() {
       s.activeTab === tab ? s : navigateDashboardProfiles(s, tab),
     );
   }, [location.pathname]);
-
-  // Update Discord Rich Presence when switching dashboard tabs.
-  useEffect(() => {
-    const activeTab = profileNavigation.activeTab;
-    const stateKey = TAB_TO_DISCORD_KEY[activeTab] ?? "dashboard";
-    invoke("update_discord_presence", { stateKey }).catch(() => {
-      // Silently ignore — Discord may not be available.
-    });
-  }, [profileNavigation.activeTab]);
 
   useEffect(() => {
     if (hasActiveGame) {
