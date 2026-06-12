@@ -47,7 +47,7 @@ fn resolve_default_world_editor_path(
 }
 
 fn enrich_world_for_editor(world: &mut olm_core::generator::WorldData) {
-    bootstrap_example_academy_pool_from_example(&mut world.teams, &mut world.players, "2025-01-01");
+    bootstrap_example_academy_pool_from_example(&mut world.teams, &mut world.players, "2026-01-01");
     remove_free_agents_shadowed_by_academy(&mut world.players, &world.teams);
     inject_seed_free_agents(&mut world.players);
 }

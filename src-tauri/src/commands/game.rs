@@ -127,7 +127,7 @@ fn assemble_world_from_modular_data(
     }
 
     // 2. Bootstrap academy seeds from ERL catalog (JSON or legacy .txt fallback)
-    let academy_bootstrap_date = "2025-01-01".to_string();
+    let academy_bootstrap_date = "2026-01-01".to_string();
     let pre_count = all_teams.len();
     game_setup::bootstrap_example_academy_pool_from_example(&mut all_teams, &mut all_players, &academy_bootstrap_date);
     let academy_count = all_teams.len() - pre_count;
@@ -210,7 +210,7 @@ pub async fn start_new_game_lightweight(
         return Err("Nationality is required.".to_string());
     }
 
-    let start_date = chrono::Utc.with_ymd_and_hms(2025, 1, 1, 0, 0, 0).unwrap();
+    let start_date = chrono::Utc.with_ymd_and_hms(2026, 1, 1, 0, 0, 0).unwrap();
 
     let birth_date = chrono::NaiveDate::parse_from_str(&dob, "%Y-%m-%d")
         .map_err(|_| "Invalid date of birth. Use YYYY-MM-DD format.".to_string())?;

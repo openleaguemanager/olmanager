@@ -466,7 +466,7 @@ pub fn default_initial_contract_end_for_start_year(start_year: i32) -> String {
 }
 
 pub fn apply_default_initial_contract_end(players: &mut [Player]) {
-    let default_initial_contract_end = default_initial_contract_end_for_start_year(2025);
+    let default_initial_contract_end = default_initial_contract_end_for_start_year(2026);
 
     for player in players.iter_mut() {
         if player.contract_end.as_deref().map(|s| s.trim()).unwrap_or("").is_empty() {

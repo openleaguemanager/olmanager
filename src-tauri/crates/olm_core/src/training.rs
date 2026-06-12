@@ -1379,7 +1379,7 @@ fn estimate_age(dob: &str) -> u32 {
     let birth_year: u32 = parts[0].parse().unwrap_or(2000);
     // Use a rough estimate — the game clock year would be ideal but
     // this is close enough for growth factor purposes.
-    let current_year: u32 = 2025;
+    let current_year: u32 = 2026;
     current_year.saturating_sub(birth_year)
 }
 
