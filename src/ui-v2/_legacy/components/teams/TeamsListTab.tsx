@@ -11,7 +11,7 @@ function teamLogoSrc(teamId: string, logoUrl?: string | null): string {
   if (logoUrl) return logoUrl;
   const slug = teamId.replace(/^[a-z0-9]+-/i, "");
   if (slug === "shifters") {
-    return "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png";
+    return "/teams-icons/shifters.webp";
   }
   return `/teams-icons/${slug}.webp`;
 }

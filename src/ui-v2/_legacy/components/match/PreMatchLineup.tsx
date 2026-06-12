@@ -5,6 +5,7 @@ import { Badge } from "@/ui-v2/_legacy/components/ui";
 import { ArrowUpDown, AlertTriangle, Wand2 } from "lucide-react";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import { calcOvr } from "@/lib/players/lolPlayerStats";
+import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
 
 export type LolRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
@@ -83,12 +84,12 @@ export function getStatVal(p: EnginePlayerData, key: string): number {
   return (p as unknown as Record<string, number>)[key] ?? 0;
 }
 
-const LOL_ROLE_ICON_URLS: Record<LolRole, string> = {
-  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
-  JUNGLE: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
-  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
-  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
-  SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+const LOL_ROLE_ICON_URLS: Record<string, string> = {
+  TOP: ROLE_ICON_PATHS.TOP,
+  JUNGLE: ROLE_ICON_PATHS.JUNGLE,
+  MID: ROLE_ICON_PATHS.MID,
+  ADC: ROLE_ICON_PATHS.ADC,
+  SUPPORT: ROLE_ICON_PATHS.SUPPORT,
 };
 
 interface PreMatchLineupProps {

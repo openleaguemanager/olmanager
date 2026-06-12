@@ -11,7 +11,7 @@ import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 function defaultTeamLogoSrc(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
   if (slug === "shifters") {
-    return "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png";
+    return "/teams-icons/shifters.webp";
   }
   return `/teams-icons/${slug}.webp`;
 }
@@ -105,7 +105,7 @@ export default function TeamProfileHeroCard({
               <img
                 src={logoSrc}
                 alt={`${team.name} logo`}
-                className="w-16 h-16 object-contain"
+                className="w-16 h-16 object-contain [filter:drop-shadow(0_4px_6px_rgba(0,0,0,0.8))]"
                 loading="lazy"
                 onError={() => {
                   if (logoSrc !== fallbackLogoSrc) {

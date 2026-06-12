@@ -32,6 +32,7 @@ import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import { Card, CardBody, CardHeader } from "@/ui-v2/_legacy/components/ui";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import { cn } from "@/ui-v2/lib/utils";
+import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
 
 interface TacticsTabProps {
   gameState: GameStateData;
@@ -54,14 +55,12 @@ const ROLE_META: Record<DraftRole, { nameKey: string; icon: string; defaultName:
   SUPPORT: { nameKey: "tactics.lol.roles.SUPPORT", icon: "🤝", defaultName: "Support" },
 };
 
-const ROLE_ICON_URLS: Record<DraftRole, string> = {
-  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
-  JUNGLE:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
-  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
-  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
-  SUPPORT:
-    "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+const ROLE_ICON_URLS: Record<string, string> = {
+  TOP: ROLE_ICON_PATHS.TOP,
+  JUNGLE: ROLE_ICON_PATHS.JUNGLE,
+  MID: ROLE_ICON_PATHS.MID,
+  ADC: ROLE_ICON_PATHS.ADC,
+  SUPPORT: ROLE_ICON_PATHS.SUPPORT,
 };
 
 type LocalizedOption<T extends string> = {

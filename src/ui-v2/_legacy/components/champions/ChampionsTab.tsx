@@ -168,12 +168,12 @@ function soloQTierClass(tier: SoloQTier): string {
 
 function soloQEmblemUrl(tier: SoloQTier): string {
   if (tier === "Challenger") {
-    return "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/challenger.png";
+    return "/ladder-icons/challenger.webp";
   }
   if (tier === "Grandmaster") {
-    return "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/grandmaster.png";
+    return "/ladder-icons/grandmaster.webp";
   }
-  return "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/master.png";
+  return "/ladder-icons/master.webp";
 }
 
 function soloQMasteryMultiplier(tier: SoloQTier): number {

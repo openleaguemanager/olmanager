@@ -10,7 +10,7 @@ import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 function teamLogoFromId(teamId: string): string {
   const slug = teamId.replace(/^lec-/, "");
   if (slug === "shifters") {
-    return "https://static.lolesports.com/teams/1765897071435_600px-Shifters_allmode.png";
+    return "/teams-icons/shifters.webp";
   }
   return `/team-logos/${slug}.png`;
 }
