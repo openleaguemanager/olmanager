@@ -832,7 +832,7 @@ fn deplete_match_stamina(game: &mut Game, team_id: &str, report: &crate::engine:
             if minutes >= 60 {
                 use rand::RngExt;
                 let mut rng = rand::rng();
-                if rng.random_bool(0.3) && player.fitness < 100 {
+                if rng.random_bool(0.5) && player.fitness < 100 {
                     player.fitness = player.fitness.saturating_add(1);
                 }
             }

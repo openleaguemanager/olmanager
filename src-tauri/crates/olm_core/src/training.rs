@@ -1075,14 +1075,17 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
             // Scrims best preserve fitness; recovery plans give a tiny boost.
             apply_fitness_change(&mut player.fitness, player_focus, intensity_mult);
 
-            // Apply condition: deplete from training, then recover
+            // Apply condition: deplete from training, then recover.
+            // Recalculate condition_rec AFTER depletion so the recovery factor
+            // reflects the player's actual post-training fatigue state.
             player.condition = player.condition.saturating_sub(condition_cost);
+            let post_training_condition_rec = recovery_factor_from_condition(player.condition);
             let stamina_factor = player.attributes.mental_resilience as f64 / 100.0;
             let recovery = (recovery_base
                 * (0.5 + stamina_factor * 0.5)
                 * age_rec
                 * morale_rec
-                * condition_rec
+                * post_training_condition_rec
                 * fitness_rec) as u8;
             player.condition = (player.condition + recovery).min(100);
         }
@@ -1092,8 +1095,10 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
     apply_scrim_morale(game, &scrim_outcome_by_team);
 
     crate::champions::ensure_patch_seed(&mut game.champion_patch);
-    let mut mastery_rng =
-        rand::rngs::StdRng::seed_from_u64(game.champion_patch.rng_seed);
+    let mut mastery_rng = rand::rngs::StdRng::seed_from_u64(crate::champions::derived_seed(
+        game.champion_patch.rng_seed,
+        &week_seed,
+    ));
     for (player_id, champion_id, gain, attempts) in mastery_training_ticks {
         let soloq_mult = crate::champions::mastery_gain_multiplier_for_player(game, &player_id);
         let effective_gain = gain * soloq_mult;
@@ -1155,7 +1160,7 @@ fn apply_fitness_change(fitness: &mut u8, focus: &TrainingFocus, intensity_mult:
         TrainingFocus::Scrims => {
             // Scrims are the closest MVP equivalent to high-load team practice.
             // Higher intensity → higher gain probability.
-            let gain_prob = 0.012 * intensity_mult; // 0.006–0.018 per session
+            let gain_prob = 0.025 * intensity_mult; // 0.0125–0.0375 per session
             let roll: f64 = rng.random_range(0.0..1.0);
             if roll < gain_prob && *fitness < 100 {
                 *fitness = fitness.saturating_add(1);
