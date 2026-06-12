@@ -109,14 +109,12 @@ export default function PlayerProfileContractCard({
                         icon={<Heart className="w-4 h-4" />}
                         label={t("common.condition")}
                         value={
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full ${condition >= 70 ? "bg-success-400" : condition >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
-                                        style={{ width: `${condition}%` }}
-                                    />
+                            <div className="flex items-center gap-1.5 flex-1 max-w-40">
+                                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                                    <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(to right, #f59e0b, #22c55e)' }} />
+                                    <div className="absolute inset-y-0 right-0 bg-muted transition-all duration-500" style={{ width: `${100 - condition}%` }} />
                                 </div>
-                                <span>{condition}%</span>
+                                <span className="font-heading text-xs font-bold tabular-nums">{condition}%</span>
                             </div>
                         }
                     />
@@ -124,14 +122,12 @@ export default function PlayerProfileContractCard({
                         icon={<Activity className="w-4 h-4" />}
                         label={t("common.fitness")}
                         value={
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full ${fitness >= 70 ? "bg-success-400" : fitness >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
-                                        style={{ width: `${fitness}%` }}
-                                    />
+                            <div className="flex items-center gap-1.5 flex-1 max-w-40">
+                                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                                    <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(to right, #f59e0b, #22c55e)' }} />
+                                    <div className="absolute inset-y-0 right-0 bg-muted transition-all duration-500" style={{ width: `${100 - fitness}%` }} />
                                 </div>
-                                <span>{fitness}%</span>
+                                <span className="font-heading text-xs font-bold tabular-nums">{fitness}%</span>
                             </div>
                         }
                     />
@@ -139,14 +135,12 @@ export default function PlayerProfileContractCard({
                         icon={<Activity className="w-4 h-4" />}
                         label={t("common.morale")}
                         value={
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full ${morale >= 70 ? "bg-success-400" : morale >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
-                                        style={{ width: `${morale}%` }}
-                                    />
+                            <div className="flex items-center gap-1.5 flex-1 max-w-40">
+                                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                                    <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(to right, #f59e0b, #22c55e)' }} />
+                                    <div className="absolute inset-y-0 right-0 bg-muted transition-all duration-500" style={{ width: `${100 - morale}%` }} />
                                 </div>
-                                <span>{morale}%</span>
+                                <span className="font-heading text-xs font-bold tabular-nums">{morale}%</span>
                             </div>
                         }
                     />

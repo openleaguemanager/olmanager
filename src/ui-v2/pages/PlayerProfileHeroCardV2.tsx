@@ -10,6 +10,7 @@ import { CountryFlag } from "@/ui-v2/_legacy/components/ui/CountryFlag";
 import { Card, CardContent } from "@/ui-v2/components/ui/card";
 import { cn } from "@/ui-v2/lib/utils";
 import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
+import { SOLOQ_EMBLEM_URLS, type SoloQTier } from "@/lib/players/soloq";
 
 type UiRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 
@@ -40,6 +41,7 @@ interface PlayerProfileHeroCardV2Props {
   onToggleLoanList?: () => void;
   t: (key: string, options?: Record<string, string | number>) => string;
   teamLogoUrl?: string | null;
+  soloqTier?: SoloQTier;
 }
 
 export default function PlayerProfileHeroCardV2({
@@ -69,6 +71,7 @@ export default function PlayerProfileHeroCardV2({
   t,
   language = "en",
   teamLogoUrl,
+  soloqTier,
 }: PlayerProfileHeroCardV2Props) {
   const role = primaryRole;
   const playerPhoto = resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url);
@@ -108,6 +111,15 @@ export default function PlayerProfileHeroCardV2({
                 ) : (
                   <div className="flex size-full items-center justify-center bg-muted text-muted-foreground/70">
                     <User className="size-10" />
+                  </div>
+                )}
+                {soloqTier && soloqTier !== "Unranked" && (
+                  <div className="absolute -bottom-2 -left-2 size-9 drop-shadow-lg">
+                    <img
+                      src={SOLOQ_EMBLEM_URLS[soloqTier]}
+                      alt={soloqTier}
+                      className="size-full object-contain"
+                    />
                   </div>
                 )}
               </div>
