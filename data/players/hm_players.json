@@ -51,6 +51,8 @@
         "mental_resilience": 57
       },
       "match_name": "Dunzi",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Jungle",
       "team_id": "team-da129d80",
       "nationality": "CZ",
@@ -60,7 +62,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/9db30963b625b60b.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-09a1d121",
@@ -225,6 +227,8 @@
         "mental_resilience": 60
       },
       "match_name": "SiroN1",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Support",
       "team_id": "team-c01f7ad8",
       "nationality": "PL",
@@ -234,7 +238,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/71a7587171305123.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
@@ -295,6 +299,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-22c50a94",
       "match_name": "Xavis",
       "full_name": "Tomáš Velička",
@@ -318,7 +324,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/f7f3e08e39e1a4be.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-22cdf4c9",
@@ -339,6 +345,8 @@
         "mental_resilience": 60
       },
       "match_name": "Baro",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Top",
       "team_id": "team-c01f7ad8",
       "nationality": "PL",
@@ -348,7 +356,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/8eeea3096e164b08.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-249e69f5",
@@ -431,6 +439,8 @@
         "mental_resilience": 58
       },
       "match_name": "JJirkos",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Support",
       "team_id": "team-df25d69f",
       "nationality": "CZ",
@@ -440,7 +450,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/862ac34677c50134.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-2cca45b8",
@@ -521,6 +531,8 @@
         "mental_resilience": 63
       },
       "match_name": "Drzemik",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "ADC",
       "team_id": "team-5bf73fd8",
       "nationality": "PL",
@@ -530,7 +542,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/aec2c81922e4ba8a.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-326e2caa",
@@ -702,6 +714,8 @@
         "mental_resilience": 63
       },
       "match_name": "Koresh",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Support",
       "team_id": "team-5bf73fd8",
       "nationality": "RU",
@@ -711,10 +725,12 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/bd545c581d373bfb.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-432d39e2",
       "match_name": "MrJackson",
       "full_name": "Mustafa Yilmaz",
@@ -738,7 +754,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/1983918a7ea32923.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-50f22dc7",
@@ -849,6 +865,8 @@
         "mental_resilience": 63
       },
       "match_name": "Didie",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Top",
       "team_id": "team-5bf73fd8",
       "nationality": "SK",
@@ -858,7 +876,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/332762bc5b445065.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
@@ -919,6 +937,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-6e2081ea",
       "match_name": "Barti",
       "full_name": "Bartek Piasecki",
@@ -942,7 +962,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/be770ed5c8f30a0a.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
@@ -1033,6 +1053,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-7cc302b4",
       "match_name": "Chimer",
       "full_name": "Josef Kovář",
@@ -1056,7 +1078,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/e55dcca3160d654f.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
@@ -1205,7 +1227,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/4321b73d38522d2b.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-904177c9",
@@ -1239,6 +1261,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-96bc3a10",
       "match_name": "Klopsik",
       "full_name": "Przemysław Janowski",
@@ -1262,10 +1286,12 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/9e53177537624cfe.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-977ce5d4",
       "match_name": "Fishireal",
       "full_name": "Jiří Zeman",
@@ -1289,7 +1315,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/d5eab5112451ff54.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-99d3171a",
@@ -1550,6 +1576,8 @@
         "mental_resilience": 56
       },
       "match_name": "Downed",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Mid",
       "team_id": "team-da129d80",
       "nationality": "SK",
@@ -1559,7 +1587,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/66eba99bf7b0b567.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-d007a835",
@@ -1730,6 +1758,8 @@
         "mental_resilience": 56
       },
       "match_name": "MyCash",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Top",
       "team_id": "team-df25d69f",
       "nationality": "CZ",
@@ -1739,7 +1769,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/d953ea27320d1ba2.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-e9867b5a",
@@ -1802,6 +1832,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-ef3c9acb",
       "match_name": "Nvidek",
       "full_name": "Mateusz Adamczyk",
@@ -1825,7 +1857,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/872aa2505faf0fed.webp"
+      "profile_image_url": null
     },
     {
       "career": [],

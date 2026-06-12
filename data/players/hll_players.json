@@ -37,7 +37,7 @@
       "nationality": "GR",
       "date_of_birth": "2003-09-18",
       "stats": {},
-      "profile_image_url": "/player-photos/46af571d8b7af316.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-0c105108",
@@ -104,7 +104,7 @@
       "nationality": "GR",
       "date_of_birth": "2007-08-18",
       "stats": {},
-      "profile_image_url": "/player-photos/7a2962baded879ca.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-2b8f258b",
@@ -215,7 +215,7 @@
       "nationality": "RS",
       "date_of_birth": "2003-03-25",
       "stats": {},
-      "profile_image_url": "/player-photos/ace020f1440a9390.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-4def1a81",
@@ -479,7 +479,7 @@
       "nationality": "GR",
       "date_of_birth": "2007-10-04",
       "stats": {},
-      "profile_image_url": "/player-photos/811a727b8ab5b385.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-81bb6359",
@@ -539,7 +539,7 @@
         "discipline": 64,
         "mental_resilience": 62
       },
-      "match_name": "Azu (Robert Jarcu)",
+      "match_name": "Azu",
       "loan_listed": false,
       "morale_core": {},
       "contract_end": "",
@@ -553,7 +553,7 @@
       "nationality": "RO",
       "date_of_birth": "2004-05-23",
       "stats": {},
-      "profile_image_url": "/player-photos/3bb7c2ad1fd31206.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-8717e0db",
@@ -620,7 +620,7 @@
       "nationality": "GR",
       "date_of_birth": "2005-06-03",
       "stats": {},
-      "profile_image_url": "/player-photos/1c05c98558a5f566.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-89b58605",
@@ -678,6 +678,8 @@
         "mental_resilience": 68
       },
       "match_name": "Speedy1",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Support",
       "team_id": "team-2e0c08a9",
       "nationality": "GR",
@@ -687,7 +689,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/27a21f08bbb442b5.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-939bf4aa",
@@ -939,7 +941,7 @@
       "nationality": "PT",
       "date_of_birth": "2004-05-18",
       "stats": {},
-      "profile_image_url": "/player-photos/93bf271cf2a60951.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-ad8acba1",
@@ -976,7 +978,7 @@
       "nationality": "TR",
       "date_of_birth": "2006-08-14",
       "stats": {},
-      "profile_image_url": "/player-photos/df4d0e076496e5e1.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-b4598e15",
@@ -1013,7 +1015,7 @@
       "nationality": "GR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/d2a830fb90ffea1d.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-be301281",
@@ -1050,7 +1052,7 @@
       "nationality": "GR",
       "date_of_birth": "2001-05-09",
       "stats": {},
-      "profile_image_url": "/player-photos/6165522871065075.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-c217cfa2",
@@ -1261,7 +1263,7 @@
       "nationality": "TR",
       "date_of_birth": "2003-10-16",
       "stats": {},
-      "profile_image_url": "/player-photos/0553d584e9ded143.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-da31c731",
@@ -1372,7 +1374,7 @@
       "nationality": "GR",
       "date_of_birth": "2002-01-08",
       "stats": {},
-      "profile_image_url": "/player-photos/9fc815ae4e5460a7.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-e4a6342d",

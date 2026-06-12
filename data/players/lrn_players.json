@@ -968,6 +968,53 @@
       "profile_image_url": "/player-photos/a7fdc8a0e93407ee.png"
     },
     {
+      "id": "player-e30bad71",
+      "wage": 92000,
+      "stats": {
+        "appearances": 0
+      },
+      "career": [],
+      "injury": null,
+      "morale": 100,
+      "fitness": 100,
+      "team_id": "lrn-lyon-academy",
+      "position": "Jungle",
+      "condition": 100,
+      "full_name": "Juan Diego Orozco Orozco",
+      "attributes": {
+        "mechanics": 65,
+        "laning": 65,
+        "teamfighting": 66,
+        "macro_play": 66,
+        "consistency": 63,
+        "shotcalling": 68,
+        "champion_pool": 63,
+        "discipline": 65,
+        "mental_resilience": 65
+      },
+      "match_name": "Mitir",
+      "loan_listed": false,
+      "morale_core": {},
+      "nationality": "Colombia",
+      "contract_end": "",
+      "market_value": 1380000,
+      "birth_country": null,
+      "date_of_birth": "2000-01-01",
+      "potential_base": 73,
+      "training_focus": null,
+      "transfer_listed": false,
+      "transfer_offers": [],
+      "champion_mastery": [],
+      "natural_position": "Mid",
+      "profile_image_url": "/player-photos/41686f45.webp",
+      "potential_revealed": null,
+      "alternate_positions": [],
+      "champion_training_target": null,
+      "champion_training_targets": [],
+      "potential_research_eta_days": null,
+      "potential_research_started_on": null
+    },
+    {
       "id": "player-64ba6568",
       "wage": 68000,
       "stats": {

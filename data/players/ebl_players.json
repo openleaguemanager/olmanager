@@ -95,7 +95,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/aa63b4116233a7c0.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-0cb1fcb0",
@@ -153,6 +153,8 @@
         "mental_resilience": 63
       },
       "match_name": "FloreNNNz",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Support",
       "team_id": "team-3359999b",
       "nationality": "BG",
@@ -162,7 +164,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/7b43953d7e98655f.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-10d0fa24",
@@ -199,7 +201,7 @@
       "nationality": "RS",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/51d9ad4ae7a94969.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-1274ebc8",
@@ -258,7 +260,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/8c669fb18fea7efa.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-184b4bb4",
@@ -295,7 +297,7 @@
       "nationality": "TR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/99617a86ad7bb922.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-23a8eb1a",
@@ -332,7 +334,7 @@
       "nationality": "BG",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/4c4b84027c5c7181.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-26720a69",
@@ -390,6 +392,8 @@
         "mental_resilience": 62
       },
       "match_name": "Justcan",
+      "loan_listed": false,
+      "transfer_listed": false,
       "position": "Support",
       "team_id": "team-aa50d684",
       "nationality": "TR",
@@ -399,7 +403,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/96ac9f58bd87eb2c.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-2c37e982",
@@ -436,7 +440,7 @@
       "nationality": "HR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/7617d29a1d728124.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-30f598ac",
@@ -535,7 +539,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/98d737aec4cedf54.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-3d233408",
@@ -572,7 +576,7 @@
       "nationality": "RS",
       "date_of_birth": "2006-06-19",
       "stats": {},
-      "profile_image_url": "/player-photos/78ae679d4958eba9.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-41572139",
@@ -609,7 +613,7 @@
       "nationality": "BG",
       "date_of_birth": "2009-02-10",
       "stats": {},
-      "profile_image_url": "/player-photos/9ec2af3b66b68558.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-429357ce",
@@ -646,7 +650,7 @@
       "nationality": "KR",
       "date_of_birth": "2003-12-19",
       "stats": {},
-      "profile_image_url": "/player-photos/d2615708d6f598ad.webp"
+      "profile_image_url": null
     },
     {
       "career": [],
@@ -740,7 +744,7 @@
       "nationality": "RS",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/24e123446a95d7e8.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-5fd405de",
@@ -777,7 +781,7 @@
       "nationality": "RS",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/ca8c9d405b596d2d.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-61b2b1ba",
@@ -843,7 +847,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/03b43fa14ba8fe9f.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-68c63be5",
@@ -917,7 +921,7 @@
       "nationality": "MK",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/4ed18976f94fede0.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-71491fba",
@@ -983,7 +987,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/af71cbd059d0fad0.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-793b651d",
@@ -1094,7 +1098,7 @@
       "nationality": "MK",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/669fe8dd2bffa7d4.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-7eb7b384",
@@ -1205,7 +1209,7 @@
       "nationality": "SK",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/b8f107e3bdeef087.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-89d836d2",
@@ -1242,7 +1246,7 @@
       "nationality": "HR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/7dfe367fe1665613.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-8ba0cead",
@@ -1279,7 +1283,7 @@
       "nationality": "HR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/0070f7a9bafefee3.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-8e44aeb5",
@@ -1390,7 +1394,7 @@
       "nationality": "HR",
       "date_of_birth": "2006-06-16",
       "stats": {},
-      "profile_image_url": "/player-photos/022ab238fbe353df.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-97c9ae0a",
@@ -1456,7 +1460,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/21fffaee482f0a9a.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-a7cb44fc",
@@ -1493,7 +1497,7 @@
       "nationality": "HR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/5dec29574d3e3f47.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-b1125bfa",
@@ -1567,7 +1571,7 @@
       "nationality": "RS",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/ad152bff6b1c7ab3.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-bf910d1d",
@@ -1671,7 +1675,7 @@
       "nationality": "GR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/189af624d688f5ff.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-c66563ef",
@@ -1745,7 +1749,7 @@
       "nationality": "HU",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/f769256c7a734dc6.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-e0fdf973",
@@ -1777,7 +1781,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/7caa8dc27622cf39.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-e7622951",
@@ -1809,7 +1813,7 @@
       "contract_end": "",
       "potential_base": 0,
       "stats": {},
-      "profile_image_url": "/player-photos/8d60d42c29f7de3c.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-f3b7db20",
@@ -1846,7 +1850,7 @@
       "nationality": "BG",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/bb035f0a7363aa6f.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-f8a5c3f7",
@@ -1883,7 +1887,7 @@
       "nationality": "HR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/6567aee892b5d197.webp"
+      "profile_image_url": null
     }
   ]
 }

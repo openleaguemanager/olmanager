@@ -9,8 +9,8 @@
       "form": [],
       "name": "Deep Cross Gaming",
       "colors": {
-        "primary": "#0891b2",
-        "secondary": "#22d3ee"
+        "primary": "#1E85F5",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "Taiwan",
@@ -59,8 +59,8 @@
       "form": [],
       "name": "MVK Esports",
       "colors": {
-        "primary": "#1a1a2e",
-        "secondary": "#e94560"
+        "primary": "#FD5A00",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "VN",
@@ -115,8 +115,8 @@
       "form": [],
       "name": "GAM Esports",
       "colors": {
-        "primary": "#d97706",
-        "secondary": "#fcd34d"
+        "primary": "#FFBE10",
+        "secondary": "#f3f3f1"
       },
       "academy": null,
       "country": "VN",
@@ -171,8 +171,8 @@
       "form": [],
       "name": "Team Secret Whales",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#ffffff",
+        "secondary": "#242f94"
       },
       "academy": null,
       "country": "SG",
@@ -227,8 +227,8 @@
       "form": [],
       "name": "DetonatioN FocusMe",
       "colors": {
-        "primary": "#dc2626",
-        "secondary": "#fbbf24"
+        "primary": "#2367FC",
+        "secondary": "#0a0a0a"
       },
       "academy": null,
       "country": "JP",
@@ -283,8 +283,8 @@
       "form": [],
       "name": "Ground Zero Gaming",
       "colors": {
-        "primary": "#7c3aed",
-        "secondary": "#a78bfa"
+        "primary": "#79E019",
+        "secondary": "#FFFFFF"
       },
       "academy": null,
       "country": "??",
@@ -333,8 +333,8 @@
       "form": [],
       "name": "CTBC Flying Oyster",
       "colors": {
-        "primary": "#059669",
-        "secondary": "#34d399"
+        "primary": "#FFD100",
+        "secondary": "#0D2141"
       },
       "academy": null,
       "country": "TW",

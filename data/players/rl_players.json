@@ -148,7 +148,7 @@
       "nationality": "FR",
       "date_of_birth": null,
       "stats": {},
-      "profile_image_url": "/player-photos/0aba2fed60ef2a01.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-122a8b8d",
@@ -498,6 +498,8 @@
     },
     {
       "career": [],
+      "loan_listed": false,
+      "transfer_listed": false,
       "id": "player-41e444c0",
       "match_name": "Opat04",
       "full_name": "Dan Suchomel",
@@ -521,7 +523,7 @@
         "mental_resilience": 50
       },
       "stats": {},
-      "profile_image_url": "/player-photos/9465d082510368c8.webp"
+      "profile_image_url": null
     },
     {
       "id": "player-4225b189",

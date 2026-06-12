@@ -9,7 +9,7 @@
       "form": [],
       "name": "Team Liquid",
       "colors": {
-        "primary": "#4B0082",
+        "primary": "#12233E",
         "secondary": "#FFFFFF"
       },
       "academy": null,
@@ -65,7 +65,7 @@
       "form": [],
       "name": "Cloud9",
       "colors": {
-        "primary": "#0054A6",
+        "primary": "#20AFE2",
         "secondary": "#FFFFFF"
       },
       "academy": null,
@@ -121,8 +121,8 @@
       "form": [],
       "name": "Dignitas",
       "colors": {
-        "primary": "#000000",
-        "secondary": "#FFFFFF"
+        "primary": "#FFCD01",
+        "secondary": "#050505"
       },
       "academy": null,
       "country": "US",
@@ -177,8 +177,8 @@
       "form": [],
       "name": "LYON",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#BBA17A",
+        "secondary": "#f5f5f5"
       },
       "academy": null,
       "country": "MX",
@@ -233,8 +233,8 @@
       "form": [],
       "name": "Disguised",
       "colors": {
-        "primary": "#dc2626",
-        "secondary": "#fbbf24"
+        "primary": "#FAB451",
+        "secondary": "#eeeded"
       },
       "academy": null,
       "country": "US",
@@ -289,8 +289,8 @@
       "form": [],
       "name": "Sentinels",
       "colors": {
-        "primary": "#CE1126",
-        "secondary": "#FFFFFF"
+        "primary": "#CD0037",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "US",
@@ -345,8 +345,8 @@
       "form": [],
       "name": "Shopify Rebellion",
       "colors": {
-        "primary": "#e11d48",
-        "secondary": "#fb7185"
+        "primary": "#FFFFFF",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "CA",
@@ -401,8 +401,8 @@
       "form": [],
       "name": "FlyQuest",
       "colors": {
-        "primary": "#00FF00",
-        "secondary": "#000000"
+        "primary": "#0B894A",
+        "secondary": "#fcfcfc"
       },
       "academy": null,
       "country": "US",

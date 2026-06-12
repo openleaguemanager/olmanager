@@ -9,8 +9,8 @@
       "form": [],
       "name": "Kiwoom DRX",
       "colors": {
-        "primary": "#000000",
-        "secondary": "#1c71d8"
+        "primary": "#1c71d8",
+        "secondary": "#e3e3e3"
       },
       "academy": null,
       "country": "South Korea",
@@ -65,8 +65,8 @@
       "form": [],
       "name": "KT Rolster",
       "colors": {
-        "primary": "#4f46e5",
-        "secondary": "#818cf8"
+        "primary": "#ED1C24",
+        "secondary": "#f7f7f7"
       },
       "academy": null,
       "country": "KR",
@@ -121,8 +121,8 @@
       "form": [],
       "name": "Gen.G Esports",
       "colors": {
-        "primary": "#cdab8f",
-        "secondary": "#986a44"
+        "primary": "#AA8A00",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "KR",
@@ -177,8 +177,8 @@
       "form": [],
       "name": "DN SOOPers",
       "colors": {
-        "primary": "#00A850",
-        "secondary": "#000000"
+        "primary": "#0B51EF",
+        "secondary": "#1E2031"
       },
       "academy": null,
       "country": "KR",
@@ -233,8 +233,8 @@
       "form": [],
       "name": "T1",
       "colors": {
-        "primary": "#dc2626",
-        "secondary": "#fbbf24"
+        "primary": "#E4002B",
+        "secondary": "#ffffff"
       },
       "academy": null,
       "country": "KR",
@@ -289,8 +289,8 @@
       "form": [],
       "name": "BNK FEARX",
       "colors": {
-        "primary": "#db2777",
-        "secondary": "#f472b6"
+        "primary": "#FFD100",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "KR",
@@ -345,8 +345,8 @@
       "form": [],
       "name": "Nongshim RedForce",
       "colors": {
-        "primary": "#e11d48",
-        "secondary": "#fb7185"
+        "primary": "#EC1B24",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "KR",
@@ -401,8 +401,8 @@
       "form": [],
       "name": "HANJIN BRION",
       "colors": {
-        "primary": "#7c3aed",
-        "secondary": "#a78bfa"
+        "primary": "#0A7993",
+        "secondary": "#DBDBEA"
       },
       "academy": null,
       "country": "KR",
@@ -457,8 +457,8 @@
       "form": [],
       "name": "Hanwha Life Esports",
       "colors": {
-        "primary": "#d97706",
-        "secondary": "#fcd34d"
+        "primary": "#F37421",
+        "secondary": "#f7f7f7"
       },
       "academy": null,
       "country": "KR",
@@ -513,8 +513,8 @@
       "form": [],
       "name": "Dplus KIA",
       "colors": {
-        "primary": "#e11d48",
-        "secondary": "#fb7185"
+        "primary": "#ffffff",
+        "secondary": "#000000"
       },
       "academy": null,
       "country": "KR",

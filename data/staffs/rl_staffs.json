@@ -1,0 +1,38 @@
+{
+  "name": "RL Staff",
+  "description": "RL - 2026 Season",
+  "staff": [
+    {
+      "id": "35df3638-71b7-4c51-8ee7-0e0879e1b8a5",
+      "first_name": "Kamil Zieliński",
+      "nickname": "Wichers",
+      "role": "Owner",
+      "team_id": "team-d772ad68",
+      "profile_image_url": "/staff-photos/409efebd769c53b3.webp"
+    },
+    {
+      "id": "5b9e79fd-fc12-44a3-b3b1-9643cfb9e26d",
+      "first_name": "Mateusz Rurarz",
+      "nickname": "Shoopiltee",
+      "role": "HeadCoach",
+      "team_id": "team-d772ad68",
+      "profile_image_url": "/staff-photos/3e1997536d58c0c5.webp"
+    },
+    {
+      "id": "887f8472-474e-4f3b-b636-928ccfb81aa7",
+      "first_name": "Zuzanna Mąka",
+      "nickname": "Chizuoku",
+      "role": "Analyst",
+      "team_id": "team-d772ad68",
+      "profile_image_url": null
+    },
+    {
+      "id": "c2ec8bc9-2898-44ea-a48d-38ea83c95a3c",
+      "first_name": "Jakub Wojciechowski",
+      "nickname": "Kiuske",
+      "role": "HeadCoach",
+      "team_id": "team-c5d360c2",
+      "profile_image_url": "/staff-photos/1eb4cccb90d9279e.webp"
+    }
+  ]
+}
