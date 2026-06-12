@@ -632,7 +632,7 @@ export function MetaTabV2({ gameState, onGameUpdate, onViewChampion }: MetaTabV2
                           onChange={(e) => {
                             void handleTrainingTargetChange(player.id, slotIndex, e.target.value);
                           }}
-                          className="w-full rounded-md border border-border bg-muted px-2 py-1 text-xs text-foreground"
+                          className="w-full rounded-md border border-border bg-muted pl-2 pr-8 py-1 text-xs text-foreground"
                         >
                           <option value="">{t("champions.noTarget")}</option>
                           {sortedRoleChampions.map((champion) => {

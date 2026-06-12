@@ -475,6 +475,17 @@ pub fn apply_default_initial_contract_end(players: &mut [Player]) {
     }
 }
 
+pub fn apply_default_market_values(players: &mut [Player]) {
+    for player in players.iter_mut() {
+        if player.market_value > 0 {
+            continue;
+        }
+        let ovr = potential::calculate_lol_ovr(player);
+        let potential = player.potential_base.max(ovr);
+        player.market_value = suggested_seed_market_value(ovr, potential, false);
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Free agent injection from seeds
 // ---------------------------------------------------------------------------

@@ -67,8 +67,9 @@ export default function ScrimPlanningCard({
   const options = useMemo(
     () => gameState.teams
       .filter((team) => team.id !== myTeam.id)
+      .filter((team) => team.competition_id === myTeam.competition_id)
       .sort((a, b) => (teamOvrById.get(b.id) ?? 0) - (teamOvrById.get(a.id) ?? 0) || a.name.localeCompare(b.name)),
-    [gameState.teams, myTeam.id, teamOvrById],
+    [gameState.teams, myTeam.id, myTeam.competition_id, teamOvrById],
   );
 
   const saveWeeklyScrimPlans = async (next: string[][]) => {

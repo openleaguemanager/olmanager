@@ -7,6 +7,7 @@ interface PlayerProfileV2Props {
   onClose: () => void;
   onGameUpdate?: (state: GameStateData) => void;
   onSelectPlayer?: (id: string, options?: PlayerSelectionOptions) => void;
+  onSelectTeam?: (id: string) => void;
   onViewChampion?: (championKey: string) => void;
 }
 
@@ -15,6 +16,7 @@ export default function PlayerProfileV2({
   playerId,
   onClose,
   onGameUpdate,
+  onSelectTeam,
   onViewChampion,
 }: PlayerProfileV2Props) {
   const player = gameState.players.find((p) => p.id === playerId);
@@ -28,6 +30,7 @@ export default function PlayerProfileV2({
         isOwnClub={player.team_id === gameState.manager.team_id}
         onClose={onClose}
         onGameUpdate={onGameUpdate}
+        onSelectTeam={onSelectTeam}
         onViewChampion={onViewChampion}
       />
     </div>

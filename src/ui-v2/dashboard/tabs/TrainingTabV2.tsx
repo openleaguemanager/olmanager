@@ -1039,8 +1039,8 @@ export function TrainingTabV2({
                                 setPlayerGroup(player.id, e.target.value)
                               }
                               disabled={isSaving}
-                              className={cn(
-                                "w-full max-w-[130px] rounded-md border bg-transparent px-2 py-1 font-heading text-xs uppercase tracking-wider text-foreground transition-colors",
+                                className={cn(
+                                  "w-full max-w-[130px] rounded-md border bg-transparent pl-2 pr-8 py-1 font-heading text-xs uppercase tracking-wider text-foreground transition-colors",
                                 "border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary",
                                 isSaving && "pointer-events-none opacity-50",
                               )}

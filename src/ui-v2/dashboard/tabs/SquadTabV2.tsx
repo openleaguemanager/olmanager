@@ -281,7 +281,7 @@ export function SquadTabV2({
                         <select
                           value=""
                           onChange={(e) => handleSlotChange(slot.index, e.target.value)}
-                          className="mt-1 w-full max-w-[200px] rounded-md border border-border bg-muted px-2 py-1 text-xs text-foreground"
+                          className="mt-1 w-full max-w-[200px] rounded-md border border-border bg-muted pl-2 pr-8 py-1 text-xs text-foreground"
                         >
                           <option value="">{t("squad.noRoleAvailable", { defaultValue: "Sin jugador" })}</option>
                           {roster
@@ -333,7 +333,7 @@ export function SquadTabV2({
                           value={player.id}
                           onChange={(e) => handleSlotChange(slot.index, e.target.value)}
                           disabled={savingSlot === String(slot.index)}
-                          className="max-w-[180px] rounded-md border border-border bg-muted px-2 py-0.5 text-xs text-foreground"
+                          className="max-w-[180px] rounded-md border border-border bg-muted pl-2 pr-8 py-0.5 text-xs text-foreground"
                         >
                           {roster
                             .sort((a, b) => {

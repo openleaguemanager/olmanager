@@ -142,6 +142,9 @@ fn assemble_world_from_modular_data(
     // 5. Apply default contract ends
     game_setup::apply_default_initial_contract_end(&mut all_players);
 
+    // 6. Recalculate market_value for players who have 0 (data issue in regional leagues)
+    game_setup::apply_default_market_values(&mut all_players);
+
     // DEBUG: count staff by team_id
     {
         use std::collections::HashMap;

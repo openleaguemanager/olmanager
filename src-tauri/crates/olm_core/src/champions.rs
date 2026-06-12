@@ -673,9 +673,78 @@ fn ensure_initial_patch_state(game: &mut Game) {
     game.champion_patch.patch_notes.clear();
 }
 
+fn seed_initial_discovery(game: &mut Game) {
+    if !game.champion_patch.discovered_champion_ids.is_empty() {
+        return;
+    }
+
+    let mut base_reveals = 15usize;
+
+    if let Some(manager_team_id) = game.manager.team_id.as_deref() {
+        let scouts: Vec<_> = game
+            .staff
+            .iter()
+            .filter(|staff| {
+                staff.team_id.as_deref() == Some(manager_team_id)
+                    && staff.role == StaffRole::Scout
+            })
+            .collect();
+
+        if !scouts.is_empty() {
+            let avg_scouting = scouts
+                .iter()
+                .map(|s| s.attributes.judging_ability as f64)
+                .sum::<f64>()
+                / scouts.len() as f64;
+            let avg_potential = scouts
+                .iter()
+                .map(|s| s.attributes.judging_potential as f64)
+                .sum::<f64>()
+                / scouts.len() as f64;
+
+            base_reveals += scouts.len() * 3;
+            base_reveals += (avg_scouting / 15.0).floor() as usize;
+            base_reveals += (avg_potential / 30.0).floor() as usize;
+        }
+    }
+
+    let mut all_keys: Vec<String> = game
+        .champion_patch
+        .hidden_meta
+        .iter()
+        .map(|entry| normalize_key(&entry.champion_id))
+        .collect();
+    all_keys.sort();
+    all_keys.dedup();
+
+    if all_keys.is_empty() {
+        return;
+    }
+
+    let seed_salt = format!("initial_discovery:{}", game.champion_patch.rng_seed);
+    let mut rng = StdRng::seed_from_u64(derived_seed(
+        game.champion_patch.rng_seed,
+        &seed_salt,
+    ));
+
+    let reveal_count = base_reveals.min(all_keys.len());
+    let mut indices: Vec<usize> = (0..all_keys.len()).collect();
+    for _ in 0..reveal_count {
+        if indices.is_empty() {
+            break;
+        }
+        let pick = rng.random_range(0..indices.len());
+        let chosen_idx = indices.swap_remove(pick);
+        game.champion_patch
+            .discovered_champion_ids
+            .push(all_keys[chosen_idx].clone());
+    }
+}
+
 pub fn bootstrap_champion_state(game: &mut Game) {
     bootstrap_seed_masteries(game);
     ensure_initial_patch_state(game);
+    seed_initial_discovery(game);
 }
 
 pub fn set_player_training_target(

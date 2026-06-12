@@ -697,6 +697,18 @@ pub fn set_weekly_scrims(
     let known_team_ids: std::collections::HashSet<String> =
         game.teams.iter().map(|team| team.id.clone()).collect();
 
+    let my_competition_id: Option<String> = game
+        .teams
+        .iter()
+        .find(|t| t.id == manager_team_id)
+        .and_then(|t| t.competition_id.clone());
+    let same_competition_team_ids: std::collections::HashSet<String> = game
+        .teams
+        .iter()
+        .filter(|t| t.competition_id == my_competition_id)
+        .map(|t| t.id.clone())
+        .collect();
+
     if let Some(team) = game.teams.iter_mut().find(|t| t.id == manager_team_id) {
         let slot_days = scrim_slot_weekdays(effective_scrim_slots(
             team.scrim_weekly_slots,
@@ -735,6 +747,9 @@ pub fn set_weekly_scrims(
                 continue;
             }
             if !known_team_ids.contains(&candidate) {
+                continue;
+            }
+            if !same_competition_team_ids.contains(&candidate) {
                 continue;
             }
             next_slots[index] = candidate;
@@ -777,6 +792,18 @@ pub fn set_weekly_scrim_plans(
     let known_team_ids: std::collections::HashSet<String> =
         game.teams.iter().map(|team| team.id.clone()).collect();
 
+    let my_competition_id: Option<String> = game
+        .teams
+        .iter()
+        .find(|t| t.id == manager_team_id)
+        .and_then(|t| t.competition_id.clone());
+    let same_competition_team_ids: std::collections::HashSet<String> = game
+        .teams
+        .iter()
+        .filter(|t| t.competition_id == my_competition_id)
+        .map(|t| t.id.clone())
+        .collect();
+
     if let Some(team) = game.teams.iter_mut().find(|t| t.id == manager_team_id) {
         let slot_days = scrim_slot_weekdays(effective_scrim_slots(
             team.scrim_weekly_slots,
@@ -815,6 +842,7 @@ pub fn set_weekly_scrim_plans(
                 .filter(|candidate| !candidate.is_empty())
                 .filter(|candidate| candidate != &team.id)
                 .filter(|candidate| known_team_ids.contains(candidate))
+                .filter(|candidate| same_competition_team_ids.contains(candidate))
                 .filter(|candidate| seen.insert(candidate.clone()))
                 .take(3)
                 .collect();
@@ -932,11 +960,24 @@ pub fn auto_configure_weekly_scrim_setup(state: State<'_, StateManager>) -> Resu
     let known_team_ids: std::collections::HashSet<String> =
         game.teams.iter().map(|team| team.id.clone()).collect();
 
+    let my_competition_id: Option<String> = game
+        .teams
+        .iter()
+        .find(|t| t.id == manager_team_id)
+        .and_then(|t| t.competition_id.clone());
+    let same_competition_team_ids: std::collections::HashSet<String> = game
+        .teams
+        .iter()
+        .filter(|t| t.competition_id == my_competition_id)
+        .map(|t| t.id.clone())
+        .collect();
+
     let own_ovr = estimate_team_lol_ovr(&game, &manager_team_id);
     let mut rivals_by_strength: Vec<(String, u8)> = game
         .teams
         .iter()
         .filter(|team| team.id != manager_team_id)
+        .filter(|team| same_competition_team_ids.contains(&team.id))
         .map(|team| (team.id.clone(), estimate_team_lol_ovr(&game, &team.id)))
         .filter(|(id, _)| known_team_ids.contains(id))
         .collect();

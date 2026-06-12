@@ -686,6 +686,7 @@ export default function DashboardV2() {
               }
               onGameUpdate={setGameState}
               onSelectPlayer={selectPlayer}
+              onSelectTeam={selectTeam}
               onViewChampion={(k) => setViewingChampionKey(k)}
             />
           </div>

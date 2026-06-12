@@ -16,8 +16,9 @@ use tauri::State;
 use olm_core::state::StateManager;
 
 use olm_core::game_setup::{
-    apply_seed_potential_defaults, bootstrap_example_academy_pool_from_example,
-    inject_seed_free_agents, remove_free_agents_shadowed_by_academy,
+    apply_default_market_values, apply_seed_potential_defaults,
+    bootstrap_example_academy_pool_from_example, inject_seed_free_agents,
+    remove_free_agents_shadowed_by_academy,
 };
 
 fn resolve_default_world_editor_path(
@@ -224,6 +225,7 @@ pub fn load_world_editor_database(
     if !has_explicit_potential_base {
         apply_seed_potential_defaults(&mut world.players);
     }
+    apply_default_market_values(&mut world.players);
     enrich_world_for_editor(&mut world);
     Ok(world)
 }
