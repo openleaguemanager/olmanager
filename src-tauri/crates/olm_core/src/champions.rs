@@ -745,6 +745,19 @@ pub fn bootstrap_champion_state(game: &mut Game) {
     bootstrap_seed_masteries(game);
     ensure_initial_patch_state(game);
     seed_initial_discovery(game);
+
+    // Populate soloq_lp for all players so the frontend reads instant data
+    // even on initial game load (not only after the first day advance).
+    let day_index = days_between(game.clock.start_date, game.clock.current_date);
+    let player_ids: Vec<String> = game.players.iter().map(|p| p.id.clone()).collect();
+    for player_id in &player_ids {
+        let idx = game.players.iter().position(|p| &p.id == player_id).unwrap();
+        let lp = {
+            let player = &game.players[idx];
+            (soloq_points_at(game, player, day_index) - SOLOQ_POINTS_BASELINE).max(0.0)
+        };
+        game.players[idx].soloq_lp = lp;
+    }
 }
 
 pub fn set_player_training_target(
@@ -1558,6 +1571,19 @@ pub fn process_daily_champion_system(game: &mut Game) {
     bootstrap_champion_state(game);
     apply_mastery_decay(game);
 
+    // Cache SoloQ LP in each player so the frontend can read it synchronously
+    // from gameState.players instead of issuing a separate IPC invoke.
+    let day_index = days_between(game.clock.start_date, game.clock.current_date);
+    let player_ids: Vec<String> = game.players.iter().map(|p| p.id.clone()).collect();
+    for player_id in &player_ids {
+        let idx = game.players.iter().position(|p| &p.id == player_id).unwrap();
+        let lp = {
+            let player = &game.players[idx];
+            (soloq_points_at(game, player, day_index) - SOLOQ_POINTS_BASELINE).max(0.0)
+        };
+        game.players[idx].soloq_lp = lp;
+    }
+
     if should_roll_patch(game, &game.champion_patch) {
         apply_patch(game);
     }
@@ -1607,15 +1633,19 @@ pub fn load_champion_catalog_from_path(path: &Path) -> Vec<crate::domain::champi
     list.champions
         .into_iter()
         .enumerate()
-        .map(|(i, entry)| crate::domain::champion::Champion {
-            id: (i + 1) as i64,
-            name: entry.name.clone(),
-            champion_key: entry.id,
-            roles_json: serde_json::to_string(&entry.tags).unwrap_or_default(),
-            counterpicks_json: None,
-            synergies_json: None,
-            image_tile_url: Some(format!("https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/{}", entry.image)),
-            image_splash_url: Some(format!("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}", entry.name.replace(' ', "").replace("'", "") + "_0.jpg")),
+        .map(|(i, entry)| {
+            let champion_key = entry.id.clone();
+            let name = entry.name.clone();
+            crate::domain::champion::Champion {
+                id: (i + 1) as i64,
+                name,
+                champion_key,
+                roles_json: serde_json::to_string(&entry.tags).unwrap_or_default(),
+                counterpicks_json: None,
+                synergies_json: None,
+                image_tile_url: Some(format!("/champion-tiles/{}.webp", entry.id)),
+                image_splash_url: Some(format!("/champion-splash/{}.jpg", entry.id)),
+            }
         })
         .collect()
 }

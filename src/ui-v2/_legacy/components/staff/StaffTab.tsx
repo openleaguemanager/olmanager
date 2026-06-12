@@ -367,7 +367,7 @@ export default function StaffTab({ gameState, onGameUpdate, mode = "club" }: Sta
                     <div
                       className={`w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center ${roleColor} bg-gray-100 dark:bg-navy-700`}
                     >
-                      {photo ? <img src={photo} alt={staffDisplayName(staff)} className="w-full h-full object-cover" loading="lazy" /> : roleIcon}
+                      {photo ? <img src={photo} alt={staffDisplayName(staff)} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.currentTarget.src = "/default/defaultstaff.webp"; }} /> : roleIcon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

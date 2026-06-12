@@ -21,6 +21,7 @@ use olm_core::domain::player::Player;
 use olm_core::domain::staff::Staff;
 use olm_core::domain::team::Team;
 use olm_core::game::Game;
+use olm_core::game_setup;
 use olm_core::generator::definitions::StaffDataFile;
 use olm_core::state::StateManager;
 use serde_json::Value;
@@ -39,12 +40,14 @@ const IMPORT_RESPONSE_TIMEOUT: Duration = Duration::from_secs(45);
 const IMPORT_READ_TIMEOUT: Duration = Duration::from_secs(45);
 const IMPORT_PROGRESS_EVENT: &str = "olm-import-progress";
 
-const PUBLIC_PHOTO_DIRS: [&str; 5] = [
+const PUBLIC_PHOTO_DIRS: [&str; 7] = [
     "player-photos",
     "teams-icons",
     "competitions-icons",
     "staff-photos",
     "staff-icons",
+    "manager-icons",
+    "default",
 ];
 
 #[derive(Debug, Default, serde::Serialize)]
@@ -952,6 +955,8 @@ pub fn rehydrate_game_from_catalog(app_handle: &tauri::AppHandle, game: &mut Gam
     let catalog_players = collect_runtime_players(app_handle);
     let players_reassigned = reassign_stale_player_teams(game, &catalog_players);
     let players = merge_missing_players(game, catalog_players);
+
+    game_setup::apply_default_market_values(&mut game.players);
 
     let staff = merge_missing_staff(game, collect_runtime_staff(app_handle));
 

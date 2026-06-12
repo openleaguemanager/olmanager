@@ -11,7 +11,9 @@ import { useAdvanceTime, type MatchModeType } from "@/hooks/useAdvanceTime";
 import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import { isAcademyTeam } from "@/store/academySelectors";
 import TeamProfileV2 from "@/ui-v2/pages/TeamProfileV2";
-import { resolveStaffPhoto } from "@/lib/players/playerPhotos";
+import { assetUrl } from "@/lib/assetUrl";
+import { DEFAULT_MANAGER_ICON_PATH } from "@/lib/common/managerAvatars";
+
 import {
   formatDateFull,
   isSeasonComplete as isLeagueSeasonComplete,
@@ -51,6 +53,7 @@ import { TeamsTabV2 } from "./tabs/TeamsTabV2";
 import { StaffTabV2 } from "./tabs/StaffTabV2";
 import { FinancesTabV2 } from "./tabs/FinancesTabV2";
 import { ScrimsTabV2 } from "./tabs/ScrimsTabV2";
+import { SoloqTabV2 } from "./tabs/SoloqTabV2";
 import { ScoutingTabV2 } from "./tabs/ScoutingTabV2";
 import { TransfersTabV2 } from "./tabs/TransfersTabV2";
 import { NewsTabV2 } from "./tabs/NewsTabV2";
@@ -74,6 +77,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   Tactics: "dashboard.tactics",
   Training: "dashboard.training",
   Scrims: "dashboard.scrims",
+  Soloq: "dashboard.soloq",
   Meta: "dashboard.meta",
   Staff: "dashboard.staff",
   Finances: "dashboard.finances",
@@ -375,7 +379,7 @@ export default function DashboardV2() {
     ? gameState.manager.nickname?.trim() ||
       `${gameState.manager.first_name} ${gameState.manager.last_name}`
     : managerName;
-  const managerAvatar = useMemo(() => resolveStaffPhoto(gameState?.manager?.avatar_path), [gameState?.manager?.avatar_path]);
+  const managerAvatar = useMemo(() => gameState?.manager?.avatar_path ? assetUrl(gameState.manager.avatar_path) : assetUrl(DEFAULT_MANAGER_ICON_PATH), [gameState?.manager?.avatar_path]);
   const teamLogo = useMemo(() => resolveTeamLogo(myTeamName, myTeam?.logo_url), [myTeamName, myTeam?.logo_url]);
   const hasProfileHistory = hasDashboardProfileHistory(profileNavigation);
   const activeTabLabel = TAB_TRANSLATION_KEYS[profileNavigation.activeTab]
@@ -536,6 +540,7 @@ export default function DashboardV2() {
             <TrainingTabV2
               gameState={gameState}
               onGameUpdate={setGameState}
+              onSelectPlayer={selectPlayer}
             />
           </div>
         ) : profileNavigation.activeTab === "Tactics" &&
@@ -613,6 +618,17 @@ export default function DashboardV2() {
             <ScrimsTabV2
               gameState={gameState}
               onGameUpdate={setGameState}
+            />
+          </div>
+        ) : profileNavigation.activeTab === "Soloq" &&
+          !viewingChampionKey &&
+          !profileNavigation.selectedPlayerId &&
+          !profileNavigation.selectedTeamId ? (
+          <div className="flex-1 overflow-y-auto scrollbar-v2">
+            <SoloqTabV2
+              gameState={gameState}
+              onGameUpdate={setGameState}
+              onSelectPlayer={selectPlayer}
             />
           </div>
         ) : profileNavigation.activeTab === "Scouting" &&
@@ -709,7 +725,6 @@ export default function DashboardV2() {
           <div className="flex-1 overflow-y-auto scrollbar-v2">
             <MetaTabV2
               gameState={gameState}
-              onGameUpdate={setGameState}
               onViewChampion={(k) => setViewingChampionKey(k)}
             />
           </div>

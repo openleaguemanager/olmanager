@@ -8,7 +8,7 @@ interface PlayerProfileAttributesCardV2Props {
   attrGroups: PlayerAttributeGroup[];
   canViewAttributes: boolean;
   title: string;
-  averageLabel: string;
+  averageLabel?: string;
   hiddenTitle: string;
   hiddenBody: string;
 }
@@ -17,10 +17,11 @@ export default function PlayerProfileAttributesCardV2({
   attrGroups,
   canViewAttributes,
   title,
-  averageLabel,
   hiddenTitle,
   hiddenBody,
 }: PlayerProfileAttributesCardV2Props) {
+  const maxAttrs = Math.max(...attrGroups.map((g) => g.attrs.length));
+
   return (
     <Card>
       <CardHeader className="space-y-0">
@@ -30,45 +31,54 @@ export default function PlayerProfileAttributesCardV2({
       </CardHeader>
       <CardContent>
         {canViewAttributes ? (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {attrGroups.map((group) => (
-              <div key={group.label}>
-                <h4 className="mb-2 border-b border-border/60 pb-1.5 font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="flex flex-col gap-4">
+            {/* Headers row */}
+            <div className="grid grid-cols-3 gap-5">
+              {attrGroups.map((group) => (
+                <h4 key={group.label} className="border-b border-border/60 pb-1.5 font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   {group.label}
                 </h4>
-                <div className="-mx-1.5 mb-1.5 flex items-center gap-2 rounded bg-muted/50 px-1.5">
-                  <span className="w-20 font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
-                    {averageLabel}
-                  </span>
-                  <div className="flex-1" />
-                  <span className="w-7 text-right font-heading text-xs font-bold tabular-nums text-foreground">
-                    {group.average ?? "??"}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  {group.attrs.map((attr) => (
-                    <div key={attr.name} className="flex items-center gap-2">
-                      <span className="w-20 text-xs text-muted-foreground/70">{attr.name}</span>
-                      {attr.value !== null ? (
+              ))}
+            </div>
+
+            {/* Attribute rows — synced across columns by index */}
+            {Array.from({ length: maxAttrs }).map((_, rowIdx) => (
+              <div key={rowIdx} className="grid grid-cols-3 gap-5">
+                {attrGroups.map((group) => {
+                  const attr = group.attrs[rowIdx];
+                  return (
+                    <div key={group.label + rowIdx} className="flex items-center gap-2 min-h-8">
+                      {attr ? (
                         <>
-                          <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                            <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${attr.value}%` }} />
-                          </div>
-                          <span className={cn("w-7 text-right font-heading text-xs font-bold tabular-nums", getAttributeColorClass(attr.value))}>
-                            {attr.value}
-                          </span>
+                          <span className="w-[88px] shrink-0 text-xs text-muted-foreground/70 leading-tight">{attr.name}</span>
+                          {attr.value !== null ? (
+                            <>
+                              <div className="relative h-2 flex-1 overflow-hidden rounded-full">
+                                <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(to right, #f59e0b, #22c55e)' }} />
+                                <div
+                                  className="absolute inset-y-0 right-0 bg-muted transition-all duration-500"
+                                  style={{ width: `${100 - attr.value}%` }}
+                                />
+                              </div>
+                              <span className={cn("w-7 shrink-0 text-right font-heading text-xs font-bold tabular-nums", getAttributeColorClass(attr.value))}>
+                                {attr.value}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                                <div className="h-full w-1/3 rounded-full bg-muted-foreground/20" />
+                              </div>
+                              <span className="w-7 shrink-0 text-right font-heading text-xs font-bold tabular-nums text-muted-foreground/70">??</span>
+                            </>
+                          )}
                         </>
                       ) : (
-                        <>
-                          <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                            <div className="h-full w-1/3 rounded-full bg-muted-foreground/20" />
-                          </div>
-                          <span className="w-7 text-right font-heading text-xs font-bold tabular-nums text-muted-foreground/70">??</span>
-                        </>
+                        <span className="text-xs text-muted-foreground/30">—</span>
                       )}
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
             ))}
           </div>
@@ -79,21 +89,36 @@ export default function PlayerProfileAttributesCardV2({
             </div>
             <p className="text-sm font-medium text-muted-foreground">{hiddenTitle}</p>
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground/70">{hiddenBody}</p>
-            <div className="mt-6 grid grid-cols-1 gap-6 text-left md:grid-cols-3">
-              {attrGroups.map((group) => (
-                <div key={group.label}>
-                  <h4 className="mb-2 font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+            <div className="mt-6 flex flex-col gap-4 text-left">
+              {/* Headers row */}
+              <div className="grid grid-cols-3 gap-5">
+                {attrGroups.map((group) => (
+                  <h4 key={group.label} className="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
                     {group.label}
                   </h4>
-                  {group.attrs.map((attr) => (
-                    <div key={attr.name} className="mb-1.5 flex items-center gap-3">
-                      <span className="w-24 text-xs text-muted-foreground/70">{attr.name}</span>
-                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                        <div className="h-full w-1/3 rounded-full bg-muted-foreground/20" />
+                ))}
+              </div>
+
+              {Array.from({ length: maxAttrs }).map((_, rowIdx) => (
+                <div key={rowIdx} className="grid grid-cols-3 gap-5">
+                  {attrGroups.map((group) => {
+                    const attr = group.attrs[rowIdx];
+                    return (
+                      <div key={group.label + rowIdx} className="flex items-center gap-3 min-h-8">
+                        {attr ? (
+                          <>
+                            <span className="w-24 shrink-0 text-xs text-muted-foreground/70 leading-tight">{attr.name}</span>
+                            <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                              <div className="h-full w-1/3 rounded-full bg-muted-foreground/20" />
+                            </div>
+                            <span className="w-6 shrink-0 text-right text-xs text-muted-foreground/70">??</span>
+                          </>
+                        ) : (
+                          <span className="text-xs text-muted-foreground/30">—</span>
+                        )}
                       </div>
-                      <span className="w-6 text-right text-xs text-muted-foreground/70">??</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ))}
             </div>

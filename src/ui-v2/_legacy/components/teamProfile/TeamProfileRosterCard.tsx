@@ -6,9 +6,10 @@ import {
 import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import type { PlayerData } from "@/store/gameStore";
 import { Card, CardBody, CardHeader, CountryFlag, ProgressBar } from "@/ui-v2/_legacy/components/ui";
-import { getLolRoleForPlayer, type LolRole } from "@/ui-v2/_legacy/components/squad/SquadTab.helpers";
+import { getLolRoleForPlayer } from "@/ui-v2/_legacy/components/squad/SquadTab.helpers";
 import type { TeamProfileTranslate } from "@/ui-v2/_legacy/components/teamProfile/TeamProfile.types";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
+import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
 
 interface TeamProfileRosterCardProps {
   roster: PlayerData[];
@@ -27,12 +28,12 @@ export default function TeamProfileRosterCard({
   t,
   onSelectPlayer,
 }: TeamProfileRosterCardProps) {
-  const LOL_ROLE_ICON_URLS: Record<LolRole, string> = {
-    TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
-    JUNGLE: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
-    MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
-    ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
-    SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+  const LOL_ROLE_ICON_URLS: Record<string, string> = {
+    TOP: ROLE_ICON_PATHS.TOP,
+    JUNGLE: ROLE_ICON_PATHS.JUNGLE,
+    MID: ROLE_ICON_PATHS.MID,
+    ADC: ROLE_ICON_PATHS.ADC,
+    SUPPORT: ROLE_ICON_PATHS.SUPPORT,
   };
 
   return (

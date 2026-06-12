@@ -101,6 +101,11 @@ pub struct Player {
     /// Computed by olm_core::potential::calculate_lol_ovr and serialized to frontend.
     #[serde(default)]
     pub lol_ovr: u8,
+    /// Cached SoloQ LP — populated daily by process_daily_champion_system.
+    /// The frontend reads this field directly from gameState.players
+    /// instead of issuing a separate IPC invoke for the global ranking.
+    #[serde(default)]
+    pub soloq_lp: f64,
 }
 
 /// Footedness is deprecated - LoL roles are lane-agnostic
@@ -625,6 +630,7 @@ impl Player {
             champion_training_targets: Vec::new(),
             can_be_transferred_until: None,
             lol_ovr: 0,
+            soloq_lp: 0.0,
         }
     }
 }

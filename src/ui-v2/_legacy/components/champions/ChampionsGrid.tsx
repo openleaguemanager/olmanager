@@ -5,6 +5,7 @@ import type { ChampionData } from "@/store/types";
 import { Card, CardBody } from "@/ui-v2/_legacy/components/ui";
 import { resolveChampionTile } from "@/lib/champions/championImages";
 import championsSeed from "../../../../../assets/simulation/champions.json";
+import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
 
 type ChampionRolesMap = Record<string, string[]>;
 const CHAMPION_ROLES: ChampionRolesMap =
@@ -20,12 +21,12 @@ type DraftRole = "TOP" | "JUNGLE" | "MID" | "ADC" | "SUPPORT";
 const LOL_ROLE_ORDER: DraftRole[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 const PAGE_SIZE = 30;
 
-const LOL_ROLE_ICON_URLS: Record<DraftRole, string> = {
-  TOP: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png",
-  JUNGLE: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png",
-  MID: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png",
-  ADC: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png",
-  SUPPORT: "https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png",
+const LOL_ROLE_ICON_URLS: Record<string, string> = {
+  TOP: ROLE_ICON_PATHS.TOP,
+  JUNGLE: ROLE_ICON_PATHS.JUNGLE,
+  MID: ROLE_ICON_PATHS.MID,
+  ADC: ROLE_ICON_PATHS.ADC,
+  SUPPORT: ROLE_ICON_PATHS.SUPPORT,
 };
 
 const ROLE_BADGE_STYLES: Record<DraftRole, string> = {

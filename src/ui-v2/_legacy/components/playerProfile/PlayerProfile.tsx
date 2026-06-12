@@ -46,6 +46,7 @@ import { startPotentialResearch } from "@/services/playerService";
 import { demoteMainPlayerToAcademy, promoteAcademyPlayer } from "@/services/academyService";
 import { findAcademyTeamForParent } from "@/store/academySelectors";
 import { fallbackChampionForRole, resolvePlayerLolRole } from "@/lib/players/lolIdentity";
+import { tierFromLp, type SoloQTier } from "@/lib/players/soloq";
 import {
   makeTransferBid,
   releasePlayerContract,
@@ -351,6 +352,7 @@ export default function PlayerProfile({
       unknown: t("common.unknown"),
     },
   );
+  const soloqTier: SoloQTier = tierFromLp(player.soloq_lp);
   const managerTeamId = gameState.manager.team_id;
   const managerTeam = gameState.teams.find((t) => t.id === managerTeamId) ?? null;
   const managerAcademyTeam = findAcademyTeamForParent(gameState.teams, managerTeamId);
@@ -903,6 +905,7 @@ export default function PlayerProfile({
         annualSuffix={annualSuffix}
         language={i18n.language}
         isOwnClub={actualIsOwnClub || !onGameUpdate}
+        soloqTier={soloqTier}
         scoutAvailability={scoutAvailability}
         scoutStatus={scoutStatus}
         scoutError={scoutError}

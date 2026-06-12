@@ -596,6 +596,18 @@ pub async fn load_game(
         game.staff.len()
     );
 
+    // Repopulate competition_configs from current manifests. Saves created
+    // before the ScheduleConfig -> CompetitionManifest migration lose their
+    // legacy-shaped entries during lenient deserialization; rebuilding here
+    // (as new-game setup does) keeps the config set correct and complete.
+    for manifest in crate::commands::competitions::scan_competitions(&app_handle)
+        .into_iter()
+        .filter(|manifest| !manifest.legacy)
+    {
+        game.competition_configs
+            .insert(manifest.id.clone(), manifest);
+    }
+
     // Bootstrap champion state so the Champions tab has data
     info!("[cmd] load_game: bootstrapping champion state...");
     olm_core::champions::bootstrap_champion_state(&mut game);
@@ -667,9 +679,7 @@ pub async fn get_champions() -> Result<Vec<olm_core::domain::champion::Champion>
         .into_iter()
         .enumerate()
         .map(|(i, entry)| {
-            let champion_name = entry.name.clone();
-            let image_splash = format!("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{}_0.jpg",
-                champion_name.replace(' ', "").replace("'", ""));
+            let champion_key = entry.id.clone();
             olm_core::domain::champion::Champion {
                 id: (i + 1) as i64,
                 name: entry.name,
@@ -677,8 +687,8 @@ pub async fn get_champions() -> Result<Vec<olm_core::domain::champion::Champion>
                 roles_json: serde_json::to_string(&entry.tags).unwrap_or_default(),
                 counterpicks_json: None,
                 synergies_json: None,
-                image_tile_url: Some(format!("https://ddragon.leagueoflegends.com/cdn/16.10.1/img/champion/{}", entry.image)),
-                image_splash_url: Some(image_splash),
+                image_tile_url: Some(format!("/champion-tiles/{}.webp", champion_key)),
+                image_splash_url: Some(format!("/champion-splash/{}.jpg", champion_key)),
             }
         })
         .collect();

@@ -240,7 +240,12 @@ export function YouthTabV2({ gameState, onSelectPlayer, onSelectTeam, onGameUpda
         <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           {academyTeam ? (
             (() => {
-              const logo = resolveTeamLogo(academyTeam.name);
+              const academyLogo = academyTeam.logo_url
+                ?? academyTeam.academy?.branding?.current_logo_url
+                ?? academyTeam.academy?.acquisition?.original_logo_url
+                ?? academyTeam.academy?.source_identity?.original_logo_url
+                ?? myTeam?.logo_url;
+              const logo = resolveTeamLogo(academyTeam.name, academyLogo);
               return logo ? (
                 <img src={logo} alt={academyTeam.name} className="size-8 object-contain" />
               ) : (

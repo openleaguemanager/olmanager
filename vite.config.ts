@@ -106,7 +106,7 @@ export default defineConfig(async ({ mode }) => {
           "**/public/player-photos/**",
           "**/public/teams-icons/**",
           "**/public/competitions-icons/**",
-          "**/public/staff-icons/**",
+          "**/public/staff-photos/**",
           "**/data/**",
         ],
       },

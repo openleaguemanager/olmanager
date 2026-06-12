@@ -373,6 +373,7 @@ export interface PlayerData {
   champion_training_target?: string | null;
   champion_training_targets?: string[];
   lol_ovr?: number;
+  soloq_lp?: number;
 }
 
 export interface ScrimSlotResultData {

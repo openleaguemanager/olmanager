@@ -313,6 +313,7 @@ export function StaffTabV2({ gameState, onGameUpdate, mode = "club", onSelectSta
                         src={photo}
                         alt={staffDisplayName(staff)}
                         className="size-full object-cover"
+                        onError={(e) => { e.currentTarget.src = "/default/defaultstaff.webp"; }}
                       />
                     ) : (
                       roleIcon

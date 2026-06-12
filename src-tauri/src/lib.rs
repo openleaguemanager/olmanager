@@ -248,6 +248,7 @@ pub fn run() {
             update_discord_presence,
             shutdown_discord_rpc,
             debug_log,
+            update_manager_profile,
             debug_serde_test,
         ])
         .run(tauri::generate_context!())
