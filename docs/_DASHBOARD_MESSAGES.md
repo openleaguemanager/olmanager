@@ -126,23 +126,23 @@ Separate store for reusable sender definitions:
 
 ```json
 {
-  "id": "director_of_football",
-  "name": "Director of Football",
-  "name_key": "be.sender.directorOfFootball",
-  "role": "Director of Football",
-  "role_key": "be.role.directorOfFootball",
+  "id": "general_manager",
+  "name": "General Manager",
+  "name_key": "be.sender.generalManager",
+  "role": "General Manager",
+  "role_key": "be.role.generalManager",
   "icon": "director.jpg"
 }
 ```
 
-Used by templates via `"sender": "director_of_football"` and by inline messages via `with_sender()`.
+Used by templates via `"sender": "general_manager"` and by inline messages via `with_sender()`.
 
 ### Helper: `with_sender()`
 
 Applies sender name, role, and icon from the senders store to any `InboxMessage`:
 
 ```rust
-crate::messages::with_sender(msg, "director_of_football", vec![("player", &name)])
+crate::messages::with_sender(msg, "general_manager", vec![("player", &name)])
 ```
 
 ## Data Format
@@ -237,10 +237,10 @@ For template-based messages, the Rust `build_message()` resolves translations in
 | `season_schedule` | `season/` | board |
 | `match_preview` | `match_preview/` | assistant_coach |
 | `match_result` | `match_result/` | assistant_coach |
-| `transfer_complete` | `transfer/` | director_of_football |
-| `transfer_offer` | `transfer/` | director_of_football |
-| `contract_terminated` | `transfer/` | director_of_football |
-| `contract_expired` | `contract/` | director_of_football |
+| `transfer_complete` | `transfer/` | general_manager |
+| `transfer_offer` | `transfer/` | general_manager |
+| `contract_terminated` | `transfer/` | general_manager |
+| `contract_expired` | `contract/` | general_manager |
 | `delegated_renewal` | `contract/` | assistant_coach |
 | `academy_acquired` | `academy/` | assistant_coach |
 | `academy_player_moved` | `academy/` | assistant_coach |
@@ -256,11 +256,11 @@ For template-based messages, the Rust `build_message()` resolves translations in
 | `low_morale` | `player_event/` | player_relations |
 | `bench_complaint` | `player_event/` | player_relations |
 | `happy_player` | `player_event/` | player_relations |
-| `contract_concern` | `player_event/` | director_of_football |
+| `contract_concern` | `player_event/` | general_manager |
 | `media_story` | `media/` (20 files) | press |
 | `podcast` | `podcast/` (10 files) | al_lio |
 | `stream` | `stream/` (20 files) | yuste |
-| `rival_interest` | `rival_interest/` (10 files) | director_of_football |
+| `rival_interest` | `rival_interest/` (10 files) | general_manager |
 
 ## Services
 
