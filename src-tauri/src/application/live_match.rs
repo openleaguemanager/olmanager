@@ -305,6 +305,7 @@ pub fn finish_live_match(
     state: &StateManager,
     lol_report: Option<LolSimMatchReportInput>,
     locale: Option<&str>,
+    data_base: Option<&std::path::Path>,
 ) -> Result<FinishLiveMatchResponse, String> {
     info!("[cmd] finish_live_match");
     let session = state.take_live_match().ok_or("No active live match")?;
@@ -345,7 +346,7 @@ pub fn finish_live_match(
         state.append_stats_state(capture);
     }
 
-    olm_core::social::generate_match_social_posts(&mut game, fixture_index, &report, locale);
+    olm_core::social::generate_match_social_posts(&mut game, fixture_index, &report, locale, data_base);
 
     let round_summary = build_round_summary_dto(&game, round_matchday, &round_previous_standings);
 

@@ -1,6 +1,7 @@
 use crate::domain::social::SocialTemplate;
 use crate::domain::team::Team;
 use serde::{Deserialize, Serialize};
+use std::path::Path;
 use std::sync::OnceLock;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
@@ -83,6 +84,8 @@ struct MatchTemplateConditions {
     featured_player_id: Option<String>,
     #[serde(default)]
     requires_player_name: Option<bool>,
+    #[serde(default)]
+    matchup_team_ids: Option<Vec<String>>,
 }
 
 fn default_weight() -> u32 {
@@ -228,6 +231,15 @@ fn shared_condition_matches(
     if let Some(required_player_id) = conditions.featured_player_id.as_deref() {
         if context.featured_player_id != Some(required_player_id) {
             return false;
+        }
+    }
+
+    if let Some(matchup_ids) = conditions.matchup_team_ids.as_ref() {
+        let teams = [context.winner.id.as_str(), context.loser.id.as_str()];
+        for required_id in matchup_ids {
+            if !teams.contains(&required_id.as_str()) {
+                return false;
+            }
         }
     }
 
@@ -516,7 +528,12 @@ pub fn select_match_template_for_language(
     }
 }
 
-pub fn default_social_templates() -> Vec<SocialTemplate> {
+pub fn default_social_templates(data_base: Option<&Path>) -> Vec<SocialTemplate> {
+    if let Some(base) = data_base {
+        if let Some(templates) = crate::social_data::load_social_templates(base) {
+            return templates;
+        }
+    }
     templates_pack()
         .templates
         .iter()

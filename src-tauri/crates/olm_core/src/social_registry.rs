@@ -60,10 +60,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Manu 𓃵𓃶".to_string(),
             handle: "@Cabramaravilla".to_string(),
             author_type: SocialAuthorType::Analyst,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1822062871280316416/mMjRmAqk_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "analyst_manu")),
             favorite_team_ids: vec![],
             active: true,
         },
@@ -95,10 +92,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "CATXALOTE".to_string(),
             handle: "@CATXALOTE_".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2017380010730958848/I1Gb1auf_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_fnc_catxalote")),
             favorite_team_ids: vec!["lec-fnatic".to_string()],
             active: true,
         },
@@ -108,10 +102,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Jordi LMK".to_string(),
             handle: "@DefNotJordi".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1962971737420681217/qYol_jIG_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_fnc_jordi_lmk")),
             favorite_team_ids: vec!["lec-fnatic".to_string()],
             active: true,
         },
@@ -121,10 +112,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Shiro".to_string(),
             handle: "@shirolamperouge".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2015213064635756544/EpDpDNAe_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_fnc_shiro")),
             favorite_team_ids: vec!["lec-fnatic".to_string()],
             active: true,
         },
@@ -134,10 +122,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "X Bouzys".to_string(),
             handle: "@Bouzyslol".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2051038688486846464/D_qsL79v_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_lec_bouzys")),
             favorite_team_ids: vec!["lec-fnatic".to_string()],
             active: true,
         },
@@ -148,10 +133,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "DvD💿".to_string(),
             handle: "@ElDvD_".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1927128075919048705/Mq6ojmid_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_g2_dvd")),
             favorite_team_ids: vec!["lec-g2-esports".to_string()],
             active: true,
         },
@@ -161,10 +143,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Demons".to_string(),
             handle: "@DemonsGxd".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1984574321311039488/jGvTtwVt_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_g2_demons")),
             favorite_team_ids: vec!["lec-g2-esports".to_string()],
             active: true,
         },
@@ -174,10 +153,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Lawliet".to_string(),
             handle: "@Lawliet_108".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2033616345951309828/HlCslRCV_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_g2_lawliet")),
             favorite_team_ids: vec!["lec-g2-esports".to_string()],
             active: true,
         },
@@ -188,10 +164,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "fezzysucks".to_string(),
             handle: "@fezzysucks".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2038725180067872769/Yj903mHv_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_th_fezzysucks")),
             favorite_team_ids: vec!["lec-team-heretics-lec".to_string()],
             active: true,
         },
@@ -201,10 +174,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "serranito 𒉭".to_string(),
             handle: "@serraanitoo_".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2039032258238246912/GnpsabQ0_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_th_serranito")),
             favorite_team_ids: vec!["lec-team-heretics-lec".to_string()],
             active: true,
         },
@@ -214,10 +184,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "xTittan".to_string(),
             handle: "@xTittan_".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2025602667918098432/zEp_mH85_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_th_xtittan")),
             favorite_team_ids: vec!["lec-team-heretics-lec".to_string()],
             active: true,
         },
@@ -228,10 +195,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "KOI MrParrot 🍓".to_string(),
             handle: "@MrParrot23".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1951905715049660416/tMjeJKe2_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_koi_mrparrot")),
             favorite_team_ids: vec!["lec-mad-lions".to_string()],
             active: true,
         },
@@ -241,10 +205,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Vivi 🌷🍓".to_string(),
             handle: "@_itsviivi".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2023016120228450304/2yUnq-9R_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_koi_vivi")),
             favorite_team_ids: vec!["lec-mad-lions".to_string()],
             active: true,
         },
@@ -254,10 +215,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "A L O".to_string(),
             handle: "@Alex_ATM7".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2020143406228369408/FWUQ2R-m_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_koi_alo")),
             favorite_team_ids: vec!["lec-mad-lions".to_string()],
             active: true,
         },
@@ -268,10 +226,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "🍋ARV🍋".to_string(),
             handle: "@arv_gs".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1953119555577876482/hEUYzh4P_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_vit_arv")),
             favorite_team_ids: vec!["lec-team-vitality".to_string()],
             active: true,
         },
@@ -281,10 +236,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Rocket".to_string(),
             handle: "@VIT_Rocket".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1724000262468063232/6QilZYA4_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_vit_rocket")),
             favorite_team_ids: vec!["lec-team-vitality".to_string()],
             active: true,
         },
@@ -294,10 +246,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Ezo".to_string(),
             handle: "@ezolebosss".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1993799046167715842/M3-f9hhy_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_vit_ezo")),
             favorite_team_ids: vec!["lec-team-vitality".to_string()],
             active: true,
         },
@@ -308,10 +257,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "KC Luna🌙".to_string(),
             handle: "@busiolover".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2008977895725637632/DkELBco__400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_kc_luna")),
             favorite_team_ids: vec!["lec-karmine-corp".to_string()],
             active: true,
         },
@@ -321,10 +267,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Kharasu".to_string(),
             handle: "@Kharasu17".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1977454762011328512/DoAAL6zj_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_kc_kharasu")),
             favorite_team_ids: vec!["lec-karmine-corp".to_string()],
             active: true,
         },
@@ -334,10 +277,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "𝘒𝘊𝘉𝘚 𝘝𝘪𝘤𝘰 🪐".to_string(),
             handle: "@Vicotrew".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1964748221370023936/lLPV-Cpb_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_kc_vico")),
             favorite_team_ids: vec!["lec-karmine-corp".to_string()],
             active: true,
         },
@@ -348,10 +288,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "NAVI Dropick".to_string(),
             handle: "@Dropick5".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1973784041376665605/-QE-_RWl_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_navi_dropick")),
             favorite_team_ids: vec!["lec-natus-vincere".to_string()],
             active: true,
         },
@@ -361,10 +298,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "NaviFanpage".to_string(),
             handle: "@fanpagenavi".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1979119609937534977/40NFOnvc_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_navi_fanpage")),
             favorite_team_ids: vec!["lec-natus-vincere".to_string()],
             active: true,
         },
@@ -375,10 +309,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "SHFT Mrityu".to_string(),
             handle: "@SHFT_Mrityu".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2040141559115436032/1NmjJJGg_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_shf_mrityu")),
             favorite_team_ids: vec!["lec-shifters".to_string()],
             active: true,
         },
@@ -388,10 +319,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "?Purplxxd?".to_string(),
             handle: "@Purplxxd".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2032309514394091523/1MfSoMDD_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_shf_purplxxd")),
             favorite_team_ids: vec!["lec-shifters".to_string()],
             active: true,
         },
@@ -402,10 +330,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "SK Coriolis".to_string(),
             handle: "@Cori0lis".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2043793635905298432/5gEMeO1a_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_sk_coriolis")),
             favorite_team_ids: vec!["lec-sk-gaming".to_string()],
             active: true,
         },
@@ -415,10 +340,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "SK_Estafadores".to_string(),
             handle: "@SK_Estafadores".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2051740831426498560/-O3k77UX_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_sk_estafadores")),
             favorite_team_ids: vec!["lec-sk-gaming".to_string()],
             active: true,
         },
@@ -429,10 +351,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "Mr. Warrin".to_string(),
             handle: "@MisterWarrin".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/2014461924163854337/JvH9XaWh_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_gx_warrin")),
             favorite_team_ids: vec!["lec-giantx-lec".to_string()],
             active: true,
         },
@@ -442,10 +361,7 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "GX CMunii".to_string(),
             handle: "@CMuniifeo".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1952296908539539456/fuggQ3VS_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_gx_cmunii")),
             favorite_team_ids: vec!["lec-giantx-lec".to_string()],
             active: true,
         },
@@ -455,13 +371,9 @@ pub fn default_social_accounts() -> Vec<SocialAccount> {
             display_name: "GXlover Fexix".to_string(),
             handle: "@Ffexix".to_string(),
             author_type: SocialAuthorType::Fan,
-            profile_image_url: Some(
-                "https://pbs.twimg.com/profile_images/1966129545704034304/STyr7Aki_400x400.jpg"
-                    .to_string(),
-            ),
+            profile_image_url: Some(format!("/social-avatars/{}.webp", "fan_gx_fexix")),
             favorite_team_ids: vec!["lec-giantx-lec".to_string()],
             active: true,
         },
     ]
 }
-

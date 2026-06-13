@@ -1,419 +1,3444 @@
 {
   "templates": [
     {
-      "id": "team-global-es",
+      "id": "team-banter-es-1",
       "language": "es",
       "slot": "TeamBanter",
       "weight": 5,
       "variants": [
         "GG {loser_short_name}. Buen partido y seguimos sumando. {score}",
         "Victoria importante. Gracias a todos los que nos apoyaron hoy. #Vamos{winner_short_name}",
-        "Cerramos la serie con calma, buen macro y mucha confianza. {score}"
+        "Cerramos la serie con calma, buen macro y mucha confianza. {score}",
+        "Partido sólido de principio a fin. {score} y seguimos.",
+        "Gran trabajo en equipo. {score} es el resultado del esfuerzo.",
+        "Seguimos invictos. {score} contra {loser_short_name}."
       ],
-      "tags": ["match", "team", "global"]
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
     },
     {
-      "id": "fan-global-es",
+      "id": "team-banter-stomp-es-1",
       "language": "es",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "Partido muy serio de {winner_short_name}. Cuando juegan asi, da gusto verlos.",
-        "{winner_short_name} gano y el chat ya esta hablando de playoffs. Un dia normal.",
-        "No fue perfecto, pero el {score} cuenta igual. Tres mapas de tension y buen League."
+        "Clean sweep. {score} y no fue ni close.",
+        "Demolición total. {score} en {winner_short_name}.",
+        "Eso fue un clinic. {score} sin respuestas.",
+        "No dejamos nada. {score} y a la siguiente.",
+        "Dominio absoluto. {score} refleja lo que pasó."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
     },
     {
-      "id": "analyst-global-es",
+      "id": "team-banter-close-es-1",
       "language": "es",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "La clave fue simple: {winner_name} controlo objetivos y obligo a {loser_short_name} a jugar siempre tarde.",
-        "{winner_short_name} no necesito hacer nada raro. Buena preparacion, buen tempo y ejecucion limpia.",
-        "Si ganas {winner_objectives} objetivos, normalmente el mapa termina jugando para ti. Hoy se vio claro."
+        "Tensión hasta el final. {score} pero lo conseguimos.",
+        "Mi corazón no aguanta estos {score}.",
+        "Sufrimos pero ganamos. {score} y a la siguiente.",
+        "Partido reñido. {score} pero el equipo supo aguantar.",
+        "Eso fue un partido de infarto. {score} y seguimos."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
     },
     {
-      "id": "player-global-es",
-      "language": "es",
-      "slot": "PlayerReaction",
-      "weight": 5,
-      "conditions": { "requires_player_name": true },
-      "variants": [
-        "GGs. Buen trabajo del equipo, seguimos enfocados.",
-        "Contento por la victoria. Gracias por el apoyo, nos vemos en el siguiente partido.",
-        "Hoy salio el plan. Orgulloso del equipo y del trabajo de la semana."
-      ],
-      "tags": ["player", "reaction", "global"]
-    },
-
-    {
-      "id": "team-global-en",
+      "id": "team-banter-en-1",
       "language": "en",
       "slot": "TeamBanter",
       "weight": 5,
       "variants": [
         "GG {loser_short_name}. Clean series, clean comms, clean finish. {score}",
         "Big win today. Thank you for showing up with us. #Go{winner_short_name}",
-        "We take the {score} and keep moving. One step at a time."
+        "We take the {score} and keep moving. One step at a time.",
+        "Solid game from start to finish. {score} and we keep going.",
+        "Great team effort. {score} reflects the hard work.",
+        "Still undefeated. {score} against {loser_short_name}."
       ],
-      "tags": ["match", "team", "global"]
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
     },
     {
-      "id": "fan-global-en",
+      "id": "team-banter-stomp-en-1",
       "language": "en",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "That was a very serious game from {winner_short_name}. Good League is still good League.",
-        "{winner_short_name} won and the timeline is already talking playoffs. Classic.",
-        "Not perfect, but a {score} is a {score}. Take the win and review the chaos later."
+        "Clean sweep. {score} and it wasn't even close.",
+        "Total demolition. {score} for {winner_short_name}.",
+        "That was a clinic. {score} with no answers.",
+        "We left nothing on the table. {score} and on to the next.",
+        "Absolute dominance. {score} reflects what happened."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
     },
     {
-      "id": "analyst-global-en",
+      "id": "team-banter-close-en-1",
       "language": "en",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "The difference was map control. {winner_name} kept tempo and made {loser_short_name} answer late.",
-        "Nothing flashy needed from {winner_short_name}. Good prep, good timing, clean execution.",
-        "When you secure {winner_objectives} objectives, the map usually starts playing for you. Clear today."
+        "Tension until the very end. {score} but we got it.",
+        "My heart can't handle these {score}.",
+        "We suffered but we won. {score} and on to the next.",
+        "Close game. {score} but the team held on.",
+        "That was a heart-stopping match. {score} and we keep going."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
     },
     {
-      "id": "player-global-en",
-      "language": "en",
-      "slot": "PlayerReaction",
-      "weight": 5,
-      "conditions": { "requires_player_name": true },
-      "variants": [
-        "GGs. Proud of the team, back to work tomorrow.",
-        "Happy with the win. Thanks for the support, see you next match.",
-        "Plan worked today. We keep building."
-      ],
-      "tags": ["player", "reaction", "global"]
-    },
-
-    {
-      "id": "team-global-fr",
+      "id": "team-banter-fr-1",
       "language": "fr",
       "slot": "TeamBanter",
       "weight": 5,
       "variants": [
-        "GG {loser_short_name}. Serie propre, communication propre, fin propre. {score}",
+        "GG {loser_short_name}. Série propre, communication propre, fin propre. {score}",
         "Grosse victoire aujourd'hui. Merci pour le soutien. #Go{winner_short_name}",
-        "On prend le {score} et on continue. Match apres match."
+        "On prend le {score} et on continue. Match après match.",
+        "Match solide du début à la fin. {score} et on continue.",
+        "Excellent travail d'équipe. {score} est le résultat de l'effort.",
+        "Toujours invaincus. {score} contre {loser_short_name}."
       ],
-      "tags": ["match", "team", "global"]
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
     },
     {
-      "id": "fan-global-fr",
+      "id": "team-banter-stomp-fr-1",
       "language": "fr",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "Match tres serieux de {winner_short_name}. Quand ils jouent comme ca, c'est un plaisir.",
-        "{winner_short_name} gagne et la timeline parle deja des playoffs. Classique.",
-        "Pas parfait, mais un {score} reste un {score}. On prend et on respire."
+        "Clean sweep. {score} et ce n'était même pas close.",
+        "Démolition totale. {score} pour {winner_short_name}.",
+        "C'était une leçon. {score} sans réponse.",
+        "On n'a rien laissé. {score} et au suivant.",
+        "Domination absolue. {score} reflète ce qui s'est passé."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
     },
     {
-      "id": "analyst-global-fr",
+      "id": "team-banter-close-fr-1",
       "language": "fr",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "La difference etait le controle de carte. {winner_name} a garde le tempo et force {loser_short_name} a repondre tard.",
-        "Pas besoin de magie pour {winner_short_name}. Preparation solide, timings propres, execution nette.",
-        "Avec {winner_objectives} objectifs, la carte finit souvent par jouer pour toi. C'etait clair aujourd'hui."
+        "Tension jusqu'au bout. {score} mais on l'a eu.",
+        "Mon cœur ne supporte pas ces {score}.",
+        "On a souffert mais on a gagné. {score} et au suivant.",
+        "Match serré. {score} mais l'équipe a tenu.",
+        "C'était un match de fou. {score} et on continue."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
     },
     {
-      "id": "player-global-fr",
-      "language": "fr",
-      "slot": "PlayerReaction",
-      "weight": 5,
-      "conditions": { "requires_player_name": true },
-      "variants": [
-        "GGs. Fier de l'equipe, on retourne travailler demain.",
-        "Content de la victoire. Merci pour le soutien, a bientot pour le prochain match.",
-        "Le plan a fonctionne aujourd'hui. On continue de construire."
-      ],
-      "tags": ["player", "reaction", "global"]
-    },
-
-    {
-      "id": "team-global-de",
+      "id": "team-banter-de-1",
       "language": "de",
       "slot": "TeamBanter",
       "weight": 5,
       "variants": [
         "GG {loser_short_name}. Saubere Serie, klare Calls, guter Abschluss. {score}",
-        "Wichtiger Sieg heute. Danke fuer euren Support. #Go{winner_short_name}",
-        "Wir nehmen das {score} und machen weiter. Schritt fuer Schritt."
+        "Wichtiger Sieg heute. Danke für euren Support. #Go{winner_short_name}",
+        "Wir nehmen das {score} und machen weiter. Schritt für Schritt.",
+        "Solides Spiel von Anfang bis Ende. {score} und weiter.",
+        "Großartige Teamleistung. {score} ist das Ergebnis der Arbeit.",
+        "Weiter ungeschlagen. {score} gegen {loser_short_name}."
       ],
-      "tags": ["match", "team", "global"]
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
     },
     {
-      "id": "fan-global-de",
+      "id": "team-banter-stomp-de-1",
       "language": "de",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "Sehr solides Spiel von {winner_short_name}. So macht League Spass.",
-        "{winner_short_name} gewinnt und die Timeline redet schon ueber Playoffs. Klassiker.",
-        "Nicht perfekt, aber ein {score} bleibt ein {score}. Mitnehmen und weiter."
+        "Clean sweep. {score} und es war nicht einmal knapp.",
+        "Totale Demolierung. {score} für {winner_short_name}.",
+        "Das war eine Lehrstunde. {score} ohne Antworten.",
+        "Wir haben nichts zurückgelassen. {score} und weiter.",
+        "Absolute Dominanz. {score} spiegelt das Geschehen wider."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
     },
     {
-      "id": "analyst-global-de",
+      "id": "team-banter-close-de-1",
       "language": "de",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
+      "slot": "TeamBanter",
+      "weight": 3,
       "variants": [
-        "Der Unterschied war Map Control. {winner_name} hielt das Tempo und zwang {loser_short_name} zu spaeten Antworten.",
-        "{winner_short_name} brauchte nichts Spektakulaeres. Gute Vorbereitung, gutes Timing, saubere Ausfuehrung.",
-        "Mit {winner_objectives} Objectives spielt die Map meistens fuer dich. Heute war das sehr klar."
+        "Spannung bis zum Ende. {score} aber wir haben es geschafft.",
+        "Mein Herz hält diese {score} nicht aus.",
+        "Wir haben gelitten, aber gewonnen. {score} und weiter.",
+        "Knappes Spiel. {score} aber das Team hat durchgehalten.",
+        "Das war ein Herzschlag-Finale. {score} und wir machen weiter."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
     },
     {
-      "id": "player-global-de",
-      "language": "de",
-      "slot": "PlayerReaction",
-      "weight": 5,
-      "conditions": { "requires_player_name": true },
-      "variants": [
-        "GGs. Stolz auf das Team, morgen geht die Arbeit weiter.",
-        "Freue mich ueber den Sieg. Danke fuer den Support, bis zum naechsten Match.",
-        "Der Plan hat heute funktioniert. Wir bauen weiter darauf auf."
-      ],
-      "tags": ["player", "reaction", "global"]
-    },
-
-    {
-      "id": "team-global-it",
+      "id": "team-banter-it-1",
       "language": "it",
       "slot": "TeamBanter",
       "weight": 5,
       "variants": [
         "GG {loser_short_name}. Serie pulita, comunicazione chiara, chiusura solida. {score}",
         "Vittoria importante oggi. Grazie per il supporto. #Go{winner_short_name}",
-        "Prendiamo il {score} e continuiamo. Una partita alla volta."
+        "Prendiamo il {score} e continuiamo. Una partita alla volta.",
+        "Partita solida dall'inizio alla fine. {score} e continuiamo.",
+        "Grande lavoro di squadra. {score} è il risultato dell'impegno.",
+        "Restiamo invincibili. {score} contro {loser_short_name}."
       ],
-      "tags": ["match", "team", "global"]
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
     },
     {
-      "id": "fan-global-it",
+      "id": "team-banter-stomp-it-1",
+      "language": "it",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} e non è stato nemmeno close.",
+        "Demolizione totale. {score} per {winner_short_name}.",
+        "Quella è stata una lezione. {score} senza risposte.",
+        "Non abbiamo lasciato nulla. {score} e avanti.",
+        "Dominio assoluto. {score} riflette ciò che è successo."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "team-banter-close-it-1",
+      "language": "it",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Tensione fino alla fine. {score} ma ce l'abbiamo fatta.",
+        "Il mio cuore non regge questi {score}.",
+        "Abbiamo sofferto ma vinto. {score} e avanti.",
+        "Partita tirata. {score} ma la squadra ha resistito.",
+        "Quella è stata una partita da infarto. {score} e continuiamo."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "team-banter-pt-1",
+      "language": "pt",
+      "slot": "TeamBanter",
+      "weight": 5,
+      "variants": [
+        "GG {loser_short_name}. Série limpa, comunicação clara e boa finalização. {score}",
+        "Vitória importante hoje. Obrigado pelo apoio. #Go{winner_short_name}",
+        "Levamos o {score} e seguimos. Um jogo de cada vez.",
+        "Jogo sólido do início ao fim. {score} e seguimos.",
+        "Grande trabalho de equipa. {score} é o resultado do esforço.",
+        "Seguimos invictos. {score} contra {loser_short_name}."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
+    },
+    {
+      "id": "team-banter-stomp-pt-1",
+      "language": "pt",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} e nem foi close.",
+        "Demolição total. {score} em {winner_short_name}.",
+        "Foi uma lição. {score} sem respostas.",
+        "Não deixámos nada. {score} e para a próxima.",
+        "Domínio absoluto. {score} reflecte o que aconteceu."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "team-banter-close-pt-1",
+      "language": "pt",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Tensão até ao fim. {score} mas conseguimos.",
+        "O meu coração não aguenta estes {score}.",
+        "Sofremos mas ganhámos. {score} e para a próxima.",
+        "Jogo renhido. {score} mas a equipa aguentou.",
+        "Foi um jogo de infarto. {score} e seguimos."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "team-banter-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "TeamBanter",
+      "weight": 5,
+      "variants": [
+        "GG {loser_short_name}. Série limpa, comunicação clara e finalização sólida. {score}",
+        "Vitória importante hoje. Obrigado pelo apoio. #Go{winner_short_name}",
+        "Levamos o {score} e seguimos em frente. Um jogo por vez.",
+        "Jogo sólido do início ao fim. {score} e seguimos.",
+        "Grande trabalho em equipe. {score} é o resultado do esforço.",
+        "Seguimos invictos. {score} contra {loser_short_name}."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
+    },
+    {
+      "id": "team-banter-stomp-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} e nem foi close.",
+        "Demolição total. {score} em {winner_short_name}.",
+        "Foi uma aula. {score} sem respostas.",
+        "Não deixamos nada. {score} e vamos para o próximo.",
+        "Domínio absoluto. {score} reflete o que aconteceu."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "team-banter-close-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Tensão até o fim. {score} mas conseguimos.",
+        "Meu coração não aguenta esses {score}.",
+        "Sofremos mas ganhamos. {score} e vamos para o próximo.",
+        "Jogo apertado. {score} mas o time aguentou.",
+        "Foi um jogo de infarto. {score} e seguimos."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "team-banter-tr-1",
+      "language": "tr",
+      "slot": "TeamBanter",
+      "weight": 5,
+      "variants": [
+        "GG {loser_short_name}. Temiz seri, net iletişim, sağlam kapanış. {score}",
+        "Bugün önemli bir galibiyet aldık. Destek için teşekkürler. #Go{winner_short_name}",
+        "{score} sonucunu alıyoruz ve devam ediyoruz. Maç maç ilerliyoruz.",
+        "Baştan sona sağlam bir oyun. {score} ve devam ediyoruz.",
+        "Harika bir takım çalışması. {score} emeğin sonucu.",
+        "Yenilgisiz devam ediyoruz. {score} karşı {loser_short_name}."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "global"
+      ]
+    },
+    {
+      "id": "team-banter-stomp-tr-1",
+      "language": "tr",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} ve yakın bile değildi.",
+        "Tam bir yıkım. {score} için {winner_short_name}.",
+        "Bu bir ders oldu. {score} ve cevap yok.",
+        "Hiçbir şey bırakmadık. {score} ve sıradaki.",
+        "Mutlak hakimiyet. {score} olanları yansıtıyor."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "team-banter-close-tr-1",
+      "language": "tr",
+      "slot": "TeamBanter",
+      "weight": 3,
+      "variants": [
+        "Sonuna kadar gerilim. {score} ama başardık.",
+        "Kalbim bu {score} kaldıramıyor.",
+        "Çektik ama kazandık. {score} ve devam.",
+        "Kıran kırana maç. {score} ama takım dayandı.",
+        "Bu kalp krizi geçirten bir maçtı. {score} ve devam ediyoruz."
+      ],
+      "tags": [
+        "match",
+        "team",
+        "close"
+      ],
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-opinion-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Partido muy serio de {winner_short_name}. Cuando juegan así, da gusto verlos.",
+        "{winner_short_name} ganó y el chat ya está hablando de playoffs. Un día normal.",
+        "No fue perfecto, pero el {score} cuenta igual. Tres mapas de tensión y buen League.",
+        "{winner_short_name} vs {loser_short_name} siempre es un espectáculo.",
+        "La comunidad de {winner_short_name} está en llamas. {score} es oro.",
+        "Desde cuando {winner_short_name} juega tan limpio? {score} y me quedo impresionado."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "¿CÓMO PASÓ ESTO? {score} y no fue ni close.",
+        "{winner_short_name} acaba de hacer una masacre. {score}",
+        "Esto no fue un partido, fue una ejecución. {score}",
+        "Necesitamos hablar de {loser_short_name}. {score} es preocupante.",
+        "Estoy en shock. {score} y aún no lo procesé."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "Mi corazón no aguanta estos partidos. {score} y estoy en el hospital.",
+        "{winner_short_name} ganó pero sufrí más que en la vida real.",
+        "Esto es demasiado. {score} y aún tiemblo.",
+        "Partido de locos. {score} y no recuerdo respirar.",
+        "El League competitivo no debería ser así de estresante. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "El clásico nunca decepciona. {score}",
+        "Rivalry time. La rivalidad continúa.",
+        "G2 vs FNC. Siempre es especial.",
+        "El match que todos esperan. {score}",
+        "La rivalidad más intensa de Europa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. La rivalidad continúa.",
+        "GX vs TH. Siempre intenso.",
+        "El match que todos esperan. {score}",
+        "Rivalry time. {score}",
+        "La rivalidad más intensa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Otra vez estos. Odio este matchup.",
+        "Espero que pierdan. No me importa quién.",
+        "El peor partido de la semana.",
+        "No puedo ver esto. Es tan feo.",
+        "¿Por qué siempre tienen que enfrentarse?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-es-1",
+      "language": "es",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Odio este partido. Cada vez que juegan es un desastre.",
+        "Espero que ambos pierdan. Es lo que se merecen.",
+        "No hay nada más feo que este matchup.",
+        "¿Cuándo se van a eliminar a estos dos de la liga?",
+        "No puedo ver esto. Es vergonzoso."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "That was a very serious game from {winner_short_name}. Good League is still good League.",
+        "{winner_short_name} won and the timeline is already talking playoffs. Classic.",
+        "Not perfect, but a {score} is a {score}. Take the win and review the chaos later.",
+        "{winner_short_name} vs {loser_short_name} is always a spectacle.",
+        "The {winner_short_name} community is on fire. {score} is gold.",
+        "Since when does {winner_short_name} play this clean? {score} and I'm impressed."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "HOW DID THIS HAPPEN? {score} and it wasn't even close.",
+        "{winner_short_name} just committed a massacre. {score}",
+        "This wasn't a game, it was an execution. {score}",
+        "We need to talk about {loser_short_name}. {score} is concerning.",
+        "I'm in shock. {score} and I still haven't processed it."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "My heart can't handle these games. {score} and I'm in the hospital.",
+        "{winner_short_name} won but I suffered more than in real life.",
+        "This is too much. {score} and I'm still shaking.",
+        "Insane game. {score} and I don't remember breathing.",
+        "Competitive League shouldn't be this stressful. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "The classic never disappoints. {score}",
+        "Rivalry time. The rivalry continues.",
+        "G2 vs FNC. It's always special.",
+        "The match everyone waits for. {score}",
+        "The most intense rivalry in Europe. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. The rivalry continues.",
+        "GX vs TH. Always intense.",
+        "The match everyone waits for. {score}",
+        "Rivalry time. {score}",
+        "The most intense rivalry. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "These guys again. I hate this matchup.",
+        "I hope they lose. I don't care who.",
+        "The worst match of the week.",
+        "I can't watch this. It's so ugly.",
+        "Why do they always have to face each other?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-en-1",
+      "language": "en",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "I hate this match. Every time they play it's a disaster.",
+        "I hope they both lose. It's what they deserve.",
+        "There's nothing uglier than this matchup.",
+        "When are these two getting removed from the league?",
+        "I can't watch this. It's embarrassing."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Match très sérieux de {winner_short_name}. Quand ils jouent comme ça, c'est un plaisir.",
+        "{winner_short_name} gagne et la timeline parle déjà des playoffs. Classique.",
+        "Pas parfait, mais un {score} reste un {score}. On prend et on respire.",
+        "{winner_short_name} vs {loser_short_name} est toujours un spectacle.",
+        "La communauté de {winner_short_name} est en feu. {score} c'est de l'or.",
+        "Depuis quand {winner_short_name} joue aussi propre ? {score} et je suis impressionné."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "COMMENT EST-CE ARRIVÉ ? {score} et ce n'était même pas close.",
+        "{winner_short_name} vient de commettre un massacre. {score}",
+        "Ce n'était pas un match, c'était une exécution. {score}",
+        "On doit parler de {loser_short_name}. {score} est inquiétant.",
+        "Je suis choqué. {score} et je ne l'ai toujours pas digéré."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "Mon cœur ne supporte pas ces matchs. {score} et je suis à l'hôpital.",
+        "{winner_short_name} a gagné mais j'ai plus souffert que dans la vraie vie.",
+        "C'est trop. {score} et je tremble encore.",
+        "Match de fou. {score} et je ne me souviens pas avoir respiré.",
+        "Le League compétitif ne devrait pas être aussi stressant. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Le classique ne déçoit jamais. {score}",
+        "Rivalry time. La rivalité continue.",
+        "G2 vs FNC. C'est toujours spécial.",
+        "Le match que tout le monde attend. {score}",
+        "La rivalité la plus intense d'Europe. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. La rivalité continue.",
+        "GX vs TH. Toujours intense.",
+        "Le match que tout le monde attend. {score}",
+        "Rivalry time. {score}",
+        "La rivalité la plus intense. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Encore eux. Je déteste ce matchup.",
+        "J'espère qu'ils perdent. Je m'en fiche de qui.",
+        "Le pire match de la semaine.",
+        "Je ne peux pas regarder ça. C'est tellement moche.",
+        "Pourquoi doivent-ils toujours s'affronter ?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-fr-1",
+      "language": "fr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Je déteste ce match. Chaque fois qu'ils jouent, c'est un désastre.",
+        "J'espère qu'ils perdent tous les deux. C'est ce qu'ils méritent.",
+        "Il n'y a rien de plus moche que ce matchup.",
+        "Quand est-ce que ces deux-là vont être retirés de la ligue ?",
+        "Je ne peux pas regarder ça. C'est gênant."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Sehr solides Spiel von {winner_short_name}. So macht League Spaß.",
+        "{winner_short_name} gewinnt und die Timeline redet schon über Playoffs. Klassiker.",
+        "Nicht perfekt, aber ein {score} bleibt ein {score}. Mitnehmen und weiter.",
+        "{winner_short_name} vs {loser_short_name} ist immer ein Spektakel.",
+        "Die Community von {winner_short_name} brennt. {score} ist Gold.",
+        "Seit wann spielt {winner_short_name} so sauber? {score} und ich bin beeindruckt."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "WIE IST DAS PASSIERT? {score} und es war nicht einmal knapp.",
+        "{winner_short_name} hat gerade ein Massaker veranstaltet. {score}",
+        "Das war kein Spiel, das war eine Hinrichtung. {score}",
+        "Wir müssen über {loser_short_name} reden. {score} ist besorgniserregend.",
+        "Ich bin schockiert. {score} und ich habe es noch nicht verarbeitet."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "Mein Herz hält diese Spiele nicht aus. {score} und ich bin im Krankenhaus.",
+        "{winner_short_name} hat gewonnen, aber ich habe mehr gelitten als im echten Leben.",
+        "Das ist zu viel. {score} und ich zittere noch.",
+        "Wahnsinniges Spiel. {score} und ich erinnere mich nicht, geatmet zu haben.",
+        "Kompetitives League sollte nicht so stressig sein. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Der Klassiker enttäuscht nie. {score}",
+        "Rivalry time. Die Rivalität geht weiter.",
+        "G2 vs FNC. Es ist immer etwas Besonderes.",
+        "Das Match, auf das alle warten. {score}",
+        "Die intensivste Rivalität Europas. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. Die Rivalität geht weiter.",
+        "GX vs TH. Immer intensiv.",
+        "Das Match, auf das alle warten. {score}",
+        "Rivalry time. {score}",
+        "Die intensivste Rivalität. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Schon wieder die. Ich hasse dieses Matchup.",
+        "Ich hoffe, sie verlieren. Mir egal, wer.",
+        "Das schlechteste Match der Woche.",
+        "Ich kann das nicht anschauen. So hässlich.",
+        "Warum müssen sie sich immer gegenüberstehen?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-de-1",
+      "language": "de",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Ich hasse dieses Match. Jedes Mal, wenn sie spielen, ist es eine Katastrophe.",
+        "Ich hoffe, beide verlieren. Das haben sie verdient.",
+        "Es gibt nichts Hässlicheres als dieses Matchup.",
+        "Wann werden diese beiden aus der Liga entfernt?",
+        "Ich kann das nicht anschauen. Es ist peinlich."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 5,
-      "author_id": "fan_random_lec",
       "variants": [
-        "Partita molto seria di {winner_short_name}. Quando giocano cosi, e bello guardarli.",
-        "{winner_short_name} vince e la timeline parla gia di playoff. Classico.",
-        "Non perfetto, ma un {score} resta un {score}. Si prende e si va avanti."
+        "Partita molto seria di {winner_short_name}. Quando giocano così, è bello guardarli.",
+        "{winner_short_name} vince e la timeline parla già di playoff. Classico.",
+        "Non perfetto, ma un {score} resta un {score}. Si prende e si va avanti.",
+        "{winner_short_name} vs {loser_short_name} è sempre uno spettacolo.",
+        "La community di {winner_short_name} è in fiamme. {score} è oro.",
+        "Da quando {winner_short_name} gioca così pulito? {score} e sono impressionato."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
     },
     {
-      "id": "analyst-global-it",
+      "id": "fan-opinion-stomp-it-1",
+      "language": "it",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "COME È SUCCESSO? {score} e non è stato nemmeno close.",
+        "{winner_short_name} ha appena commesso un massacro. {score}",
+        "Non è stata una partita, è stata un'esecuzione. {score}",
+        "Dobbiamo parlare di {loser_short_name}. {score} è preoccupante.",
+        "Sono scioccato. {score} e non l'ho ancora elaborato."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-it-1",
+      "language": "it",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "Il mio cuore non regge queste partite. {score} e sono in ospedale.",
+        "{winner_short_name} ha vinto ma ho sofferto più che nella vita reale.",
+        "È troppo. {score} e tremo ancora.",
+        "Partita pazzesca. {score} e non ricordo di aver respirato.",
+        "Il League competitivo non dovrebbe essere così stressante. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-it-1",
+      "language": "it",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Il classico non delude mai. {score}",
+        "Rivalry time. La rivalità continua.",
+        "G2 vs FNC. È sempre speciale.",
+        "Il match che tutti aspettano. {score}",
+        "La rivalità più intensa d'Europa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-it-1",
+      "language": "it",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. La rivalità continua.",
+        "GX vs TH. Sempre intenso.",
+        "Il match che tutti aspettano. {score}",
+        "Rivalry time. {score}",
+        "La rivalità più intensa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-it-1",
+      "language": "it",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Di nuovo loro. Odio questo matchup.",
+        "Spero che perdano. Non mi importa chi.",
+        "La partita peggiore della settimana.",
+        "Non riesco a guardarlo. È così brutto.",
+        "Perché devono sempre affrontarsi?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-it-1",
+      "language": "it",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Odio questa partita. Ogni volta che giocano è un disastro.",
+        "Spero che perdano entrambi. È quello che meritano.",
+        "Non c'è niente di più brutto di questo matchup.",
+        "Quando elimineranno questi due dalla lega?",
+        "Non riesco a guardarlo. È imbarazzante."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Jogo muito sério de {winner_short_name}. Quando jogam assim, é bom de ver.",
+        "{winner_short_name} ganhou e a timeline já fala de playoffs. Clássico.",
+        "Não foi perfeito, mas um {score} é um {score}. Aceita e segue.",
+        "{winner_short_name} vs {loser_short_name} é sempre um espectáculo.",
+        "A comunidade de {winner_short_name} está em chamas. {score} é ouro.",
+        "Desde quando é que {winner_short_name} joga tão limpo? {score} e fiquei impressionado."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "COMO É QUE ISTO ACONTECEU? {score} e nem foi close.",
+        "{winner_short_name} acabou de cometer uma massacre. {score}",
+        "Isto não foi um jogo, foi uma execução. {score}",
+        "Precisamos de falar de {loser_short_name}. {score} é preocupante.",
+        "Estou em choque. {score} e ainda não processei."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "O meu coração não aguenta estes jogos. {score} e estou no hospital.",
+        "{winner_short_name} ganhou mas sofri mais do que na vida real.",
+        "Isto é demais. {score} e ainda estou a tremer.",
+        "Jogo de loucos. {score} e não me lembro de respirar.",
+        "O League competitivo não devia ser assim tão stressante. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "O clássico nunca desilude. {score}",
+        "Rivalry time. A rivalidade continua.",
+        "G2 vs FNC. É sempre especial.",
+        "O match que todos esperam. {score}",
+        "A rivalidade mais intensa da Europa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. A rivalidade continua.",
+        "GX vs TH. Sempre intenso.",
+        "O match que todos esperam. {score}",
+        "Rivalry time. {score}",
+        "A rivalidade mais intensa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Outra vez estes. Odeio este matchup.",
+        "Espero que percam. Não me importa quem.",
+        "O pior jogo da semana.",
+        "Não consigo ver isto. É tão feio.",
+        "Porque é que têm sempre de se enfrentar?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-pt-1",
+      "language": "pt",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Odeio este jogo. Sempre que jogam é um desastre.",
+        "Espero que ambos percam. É o que merecem.",
+        "Não há nada mais feio do que este matchup.",
+        "Quando é que vão eliminar estes dois da liga?",
+        "Não consigo ver isto. É vergonhoso."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Jogo muito sério da {winner_short_name}. Quando joga assim, é bom demais assistir.",
+        "{winner_short_name} venceu e a timeline já está falando de playoffs. Clássico.",
+        "Não foi perfeito, mas um {score} é um {score}. Pega a win e revisa depois.",
+        "{winner_short_name} vs {loser_short_name} é sempre um espetáculo.",
+        "A comunidade da {winner_short_name} está em chamas. {score} é ouro.",
+        "Desde quando a {winner_short_name} joga tão limpo? {score} e fiquei impressionado."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "COMO ISSO ACONTECEU? {score} e nem foi close.",
+        "{winner_short_name} acabou de cometer um massacre. {score}",
+        "Isso não foi um jogo, foi uma execução. {score}",
+        "Precisamos falar de {loser_short_name}. {score} é preocupante.",
+        "Estou em choque. {score} e ainda não processei."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "Meu coração não aguenta esses jogos. {score} e estou no hospital.",
+        "{winner_short_name} ganhou mas sofri mais do que na vida real.",
+        "Isso é demais. {score} e ainda estou tremendo.",
+        "Jogo de loucos. {score} e não me lembro de respirar.",
+        "O League competitivo não deveria ser tão estressante. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "O clássico nunca decepciona. {score}",
+        "Rivalry time. A rivalidade continua.",
+        "G2 vs FNC. É sempre especial.",
+        "A partida que todos esperam. {score}",
+        "A rivalidade mais intensa da Europa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. A rivalidade continua.",
+        "GX vs TH. Sempre intenso.",
+        "A partida que todos esperam. {score}",
+        "Rivalry time. {score}",
+        "A rivalidade mais intensa. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Esses de novo. Odeio esse matchup.",
+        "Espero que percam. Não me importa quem.",
+        "O pior jogo da semana.",
+        "Não consigo ver isso. É tão feio.",
+        "Por que eles sempre têm que se enfrentar?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Odeio esse jogo. Toda vez que jogam é um desastre.",
+        "Espero que ambos percam. É o que merecem.",
+        "Não há nada mais feio do que esse matchup.",
+        "Quando vão eliminar esses dois da liga?",
+        "Não consigo ver isso. É vergonhoso."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "fan-opinion-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "{winner_short_name} tarafından çok ciddi bir oyun. Böyle oynadıklarında izlemek keyifli.",
+        "{winner_short_name} kazandı ve timeline şimdiden playoff konuşuyor. Klasik.",
+        "Mükemmel değildi ama {score} yine de {score}. Galibiyeti al, sonra analiz et.",
+        "{winner_short_name} vs {loser_short_name} her zaman bir şölen.",
+        "{winner_short_name} topluluğu alev alev. {score} altın değerinde.",
+        "{winner_short_name} ne zamandan beri bu kadar temiz oynuyor? {score} ve etkilendim."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "global"
+      ],
+      "author_id": "fan_random_lec"
+    },
+    {
+      "id": "fan-opinion-stomp-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "BU NASIL OLDU? {score} ve yakın bile değildi.",
+        "{winner_short_name} az önce bir katliam yaptı. {score}",
+        "Bu bir oyun değildi, bir infazdı. {score}",
+        "{loser_short_name} hakkında konuşmalıyız. {score} endişe verici.",
+        "Şoktayım. {score} ve hâlâ sindiremedim."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "stomp"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "fan-opinion-close-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 3,
+      "variants": [
+        "Kalbim bu maçları kaldıramıyor. {score} ve hastanedeyim.",
+        "{winner_short_name} kazandı ama gerçek hayattan daha çok çektim.",
+        "Bu çok fazla. {score} ve hâlâ titriyorum.",
+        "Çılgın maç. {score} ve nefes aldığımı hatırlamıyorum.",
+        "Rekabetçi League bu kadar stresli olmamalı. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "close"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "fan-rivalry-g2-fnc-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Klasik hiç hayal kırıklığına uğratmaz. {score}",
+        "Rivalry time. Rekabet devam ediyor.",
+        "G2 vs FNC. Her zaman özel.",
+        "Herkesin beklediği maç. {score}",
+        "Avrupa'nın en yoğun rekabeti. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "fan-rivalry-gx-th-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Derby time. Rekabet devam ediyor.",
+        "GX vs TH. Her zaman yoğun.",
+        "Herkesin beklediği maç. {score}",
+        "Rivalry time. {score}",
+        "En yoğun rekabet. {score}"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-giantx-lec",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-koi-th-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Yine bunlar. Bu matchup'tan nefret ediyorum.",
+        "Umarım kaybederler. Kim olduğu umurumda değil.",
+        "Haftanın en kötü maçı.",
+        "Bunu izleyemiyorum. Çok çirkin.",
+        "Neden hep birbirlerine karşı oynamak zorundalar?"
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "fan-hate-kc-vit-tr-1",
+      "language": "tr",
+      "slot": "FanOpinion",
+      "weight": 5,
+      "variants": [
+        "Bu maçtan nefret ediyorum. Her oynadıklarında bir felaket.",
+        "Umarım ikisi de kaybeder. Hak ettikleri bu.",
+        "Bu matchup'tan daha çirkin bir şey yok.",
+        "Bu ikisi ligden ne zaman atılacak?",
+        "Bunu izleyemiyorum. Utanç verici."
+      ],
+      "tags": [
+        "fan",
+        "match",
+        "hate"
+      ],
+      "author_id": "fan_random_lec",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-es-1",
+      "language": "es",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "La clave fue simple: {winner_name} controló objetivos y obligó a {loser_short_name} a jugar siempre tarde.",
+        "{winner_short_name} no necesitó hacer nada raro. Buena preparación, buen tempo y ejecución limpia.",
+        "Si ganas {winner_objectives} objetivos, normalmente el mapa termina jugando para ti. Hoy se vio claro.",
+        "El macro de {winner_short_name} fue superior. {score} refleja el control.",
+        "{winner_short_name} supo leer el mapa y {loser_short_name} no reaccionó a tiempo.",
+        "La diferencia fue en los detalles. {winner_short_name} ejecutó mejor."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-es-1",
+      "language": "es",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Eso fue un clinic. {winner_name} jugó su propio juego y {loser_short_name} nunca apareció.",
+        "No hay mucho que analizar. {winner_short_name} fue superior en todo.",
+        "{loser_short_name} necesita revisar todo. {score} es preocupante.",
+        "Esto no fue competencia. {winner_short_name} demostró un nivel diferente.",
+        "El gap es real. {score} y la diferencia fue abismal."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-es-1",
+      "language": "es",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Partido reñido. {winner_short_name} supo aguantar la presión.",
+        "La diferencia fueron los detalles. {score} pero podría haber sido al revés.",
+        "{winner_short_name} vs {loser_short_name} siempre da esto. Partido de infarto.",
+        "El macro decidió. {winner_short_name} controló los momentos clave.",
+        "Esto es lo que hace grande al League. {score} y tensión hasta el final."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-es-1",
+      "language": "es",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "El clásico. {score} y la rivalidad sigue viva.",
+        "G2 vs FNC nunca decepciona. {score} y análisis para rato.",
+        "La rivalidad más intensa de Europa. {score} y sigue.",
+        "El match que todos esperaban. {score} y no defraudó.",
+        "La rivalidad continúa. {score} y el próximo será mejor."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-es-1",
+      "language": "es",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Este matchup siempre es un desastre. {score} y confirmado.",
+        "No hay nada que analizar. {winner_short_name} ganó y punto.",
+        "El peor partido de la semana. {score} y no hay más.",
+        "Espero que no se vuelvan a enfrentar. {score} y no quiero ver más.",
+        "Nada bueno sale de este matchup. {score} y lo confirmó."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-es-1",
+      "language": "es",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Este matchup siempre es un desastre. {score} y confirmado.",
+        "No hay nada que analizar. {winner_short_name} ganó y punto.",
+        "El peor partido de la semana. {score} y no hay más.",
+        "Espero que no se vuelvan a enfrentar. {score} y no quiero ver más.",
+        "Nada bueno sale de este matchup. {score} y lo confirmó."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-en-1",
+      "language": "en",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "The difference was simple: {winner_name} controlled objectives and forced {loser_short_name} to play catch-up.",
+        "{winner_short_name} didn't need anything flashy. Good prep, good tempo, clean execution.",
+        "When you secure {winner_objectives} objectives, the map usually starts playing for you. Clear today.",
+        "The macro from {winner_short_name} was superior. {score} reflects the control.",
+        "{winner_short_name} read the map well and {loser_short_name} didn't react in time.",
+        "The difference was in the details. {winner_short_name} executed better."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-en-1",
+      "language": "en",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "That was a clinic. {winner_name} played their own game and {loser_short_name} never showed up.",
+        "Not much to analyze. {winner_short_name} was superior in every way.",
+        "{loser_short_name} needs to review everything. {score} is concerning.",
+        "This wasn't competition. {winner_short_name} showed a different level.",
+        "The gap is real. {score} and the difference was abysmal."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-en-1",
+      "language": "en",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Close game. {winner_short_name} knew how to handle the pressure.",
+        "The difference was in the details. {score} but it could have gone the other way.",
+        "{winner_short_name} vs {loser_short_name} always delivers this. Heart-stopping match.",
+        "Macro decided it. {winner_short_name} controlled the key moments.",
+        "This is what makes League great. {score} and tension until the end."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-en-1",
+      "language": "en",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "The classic. {score} and the rivalry stays alive.",
+        "G2 vs FNC never disappoints. {score} and analysis for days.",
+        "The most intense rivalry in Europe. {score} and it continues.",
+        "The match everyone was waiting for. {score} and it delivered.",
+        "The rivalry continues. {score} and the next one will be better."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-en-1",
+      "language": "en",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "This matchup is always a disaster. {score} and confirmed.",
+        "Nothing to analyze. {winner_short_name} won and that's it.",
+        "The worst match of the week. {score} and nothing more.",
+        "I hope they never face each other again. {score} and I don't want to see more.",
+        "Nothing good comes from this matchup. {score} and it confirmed it."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-en-1",
+      "language": "en",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "This matchup is always a disaster. {score} and confirmed.",
+        "Nothing to analyze. {winner_short_name} won and that's it.",
+        "The worst match of the week. {score} and nothing more.",
+        "I hope they never face each other again. {score} and I don't want to see more.",
+        "Nothing good comes from this matchup. {score} and it confirmed it."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-fr-1",
+      "language": "fr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "La clé était simple : {winner_name} a contrôlé les objectifs et a forcé {loser_short_name} à jouer en retard.",
+        "{winner_short_name} n'a pas eu besoin de paillettes. Bonne préparation, bon tempo, exécution nette.",
+        "Quand tu sécurises {winner_objectives} objectifs, la carte finit souvent par jouer pour toi. Clair aujourd'hui.",
+        "Le macro de {winner_short_name} était supérieur. {score} reflète le contrôle.",
+        "{winner_short_name} a bien lu la carte et {loser_short_name} n'a pas réagi à temps.",
+        "La différence était dans les détails. {winner_short_name} a mieux exécuté."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-fr-1",
+      "language": "fr",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "C'était une leçon. {winner_name} a joué son propre jeu et {loser_short_name} n'est jamais apparu.",
+        "Pas grand-chose à analyser. {winner_short_name} était supérieur en tout.",
+        "{loser_short_name} doit tout revoir. {score} est inquiétant.",
+        "Ce n'était pas de la compétition. {winner_short_name} a montré un autre niveau.",
+        "L'écart est réel. {score} et la différence était abyssale."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-fr-1",
+      "language": "fr",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Match serré. {winner_short_name} a su tenir la pression.",
+        "La différence était dans les détails. {score} mais ça aurait pu être l'inverse.",
+        "{winner_short_name} vs {loser_short_name} donne toujours ça. Match de fou.",
+        "Le macro a décidé. {winner_short_name} a contrôlé les moments clés.",
+        "C'est ce qui rend League grand. {score} et tension jusqu'au bout."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-fr-1",
+      "language": "fr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Le classique. {score} et la rivalité reste vivante.",
+        "G2 vs FNC ne déçoit jamais. {score} et analyse pour longtemps.",
+        "La rivalité la plus intense d'Europe. {score} et ça continue.",
+        "Le match que tout le monde attendait. {score} et il a tenu ses promesses.",
+        "La rivalité continue. {score} et le prochain sera meilleur."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-fr-1",
+      "language": "fr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Ce matchup est toujours un désastre. {score} et confirmé.",
+        "Rien à analyser. {winner_short_name} a gagné et c'est tout.",
+        "Le pire match de la semaine. {score} et rien de plus.",
+        "J'espère qu'ils ne se reverront plus. {score} et je ne veux plus voir ça.",
+        "Rien de bon ne vient de ce matchup. {score} et ça l'a confirmé."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-fr-1",
+      "language": "fr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Ce matchup est toujours un désastre. {score} et confirmé.",
+        "Rien à analyser. {winner_short_name} a gagné et c'est tout.",
+        "Le pire match de la semaine. {score} et rien de plus.",
+        "J'espère qu'ils ne se reverront plus. {score} et je ne veux plus voir ça.",
+        "Rien de bon ne vient de ce matchup. {score} et ça l'a confirmé."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-de-1",
+      "language": "de",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Der Unterschied war einfach: {winner_name} kontrollierte die Objectives und zwang {loser_short_name} zum Nachziehen.",
+        "{winner_short_name} brauchte nichts Spektakuläres. Gute Vorbereitung, gutes Tempo, saubere Ausführung.",
+        "Wenn du {winner_objectives} Objectives sicherst, spielt die Map meistens für dich. Heute sehr klar.",
+        "Das Macro von {winner_short_name} war überlegen. {score} spiegelt die Kontrolle wider.",
+        "{winner_short_name} hat die Map gut gelesen und {loser_short_name} hat nicht rechtzeitig reagiert.",
+        "Der Unterschied lag in den Details. {winner_short_name} hat besser ausgeführt."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-de-1",
+      "language": "de",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Das war eine Lehrstunde. {winner_name} hat sein eigenes Spiel gespielt und {loser_short_name} ist nie aufgetaucht.",
+        "Nicht viel zu analysieren. {winner_short_name} war in jeder Hinsicht überlegen.",
+        "{loser_short_name} muss alles überdenken. {score} ist besorgniserregend.",
+        "Das war kein Wettbewerb. {winner_short_name} hat ein anderes Niveau gezeigt.",
+        "Die Lücke ist real. {score} und der Unterschied war abgründig."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-de-1",
+      "language": "de",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Knappes Spiel. {winner_short_name} wusste mit dem Druck umzugehen.",
+        "Der Unterschied lag in den Details. {score} aber es hätte auch andersrum gehen können.",
+        "{winner_short_name} vs {loser_short_name} liefert das immer. Herzschlag-Finale.",
+        "Macro hat entschieden. {winner_short_name} kontrollierte die Schlüsselmomente.",
+        "Das ist es, was League groß macht. {score} und Spannung bis zum Ende."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-de-1",
+      "language": "de",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Der Klassiker. {score} und die Rivalität bleibt lebendig.",
+        "G2 vs FNC enttäuscht nie. {score} und Analyse für Tage.",
+        "Die intensivste Rivalität Europas. {score} und es geht weiter.",
+        "Das Match, auf das alle gewartet haben. {score} und es hat geliefert.",
+        "Die Rivalität geht weiter. {score} und das nächste wird besser."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-de-1",
+      "language": "de",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Dieses Matchup ist immer eine Katastrophe. {score} und bestätigt.",
+        "Nichts zu analysieren. {winner_short_name} hat gewonnen und das war's.",
+        "Das schlechteste Match der Woche. {score} und nichts mehr.",
+        "Ich hoffe, sie treffen sich nie wieder. {score} und ich will nicht mehr sehen.",
+        "Nichts Gutes kommt aus diesem Matchup. {score} und es hat es bestätigt."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-de-1",
+      "language": "de",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Dieses Matchup ist immer eine Katastrophe. {score} und bestätigt.",
+        "Nichts zu analysieren. {winner_short_name} hat gewonnen und das war's.",
+        "Das schlechteste Match der Woche. {score} und nichts mehr.",
+        "Ich hoffe, sie treffen sich nie wieder. {score} und ich will nicht mehr sehen.",
+        "Nichts Gutes kommt aus diesem Matchup. {score} und es hat es bestätigt."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 5,
-      "author_id": "analyst_manu",
       "variants": [
-        "La differenza e stata il controllo della mappa. {winner_name} ha tenuto il tempo e costretto {loser_short_name} a rispondere tardi.",
-        "Niente magie per {winner_short_name}. Preparazione solida, timing buoni, esecuzione pulita.",
-        "Con {winner_objectives} obiettivi, spesso la mappa inizia a giocare per te. Oggi si e visto."
+        "La chiave era semplice: {winner_name} ha controllato gli obiettivi e ha costretto {loser_short_name} a giocare in ritardo.",
+        "{winner_short_name} non ha avuto bisogno di nulla di strano. Buona preparazione, buon tempo, esecuzione pulita.",
+        "Quando vinci {winner_objectives} obiettivi, la mappa finisce spesso per giocare per te. Oggi si è visto chiaro.",
+        "Il macro di {winner_short_name} era superiore. {score} riflette il controllo.",
+        "{winner_short_name} ha saputo leggere la mappa e {loser_short_name} non ha reagito in tempo.",
+        "La differenza era nei dettagli. {winner_short_name} ha eseguito meglio."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
     },
     {
-      "id": "player-global-it",
+      "id": "analyst-stomp-it-1",
+      "language": "it",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Quella è stata una lezione. {winner_name} ha giocato il suo gioco e {loser_short_name} non è mai apparso.",
+        "Non c'è molto da analizzare. {winner_short_name} era superiore in tutto.",
+        "{loser_short_name} deve rivedere tutto. {score} è preoccupante.",
+        "Non era competizione. {winner_short_name} ha mostrato un livello diverso.",
+        "Il divario è reale. {score} e la differenza era abissale."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-it-1",
+      "language": "it",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Partita tirata. {winner_short_name} ha saputo gestire la pressione.",
+        "La differenza era nei dettagli. {score} ma poteva andare anche al contrario.",
+        "{winner_short_name} vs {loser_short_name} lo dà sempre. Partita da infarto.",
+        "Il macro ha deciso. {winner_short_name} ha controllato i momenti chiave.",
+        "Questo è ciò che rende grande il League. {score} e tensione fino alla fine."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-it-1",
+      "language": "it",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Il classico. {score} e la rivalità resta viva.",
+        "G2 vs FNC non delude mai. {score} e analisi per giorni.",
+        "La rivalità più intensa d'Europa. {score} e continua.",
+        "Il match che tutti aspettavano. {score} e non ha deluso.",
+        "La rivalità continua. {score} e il prossimo sarà migliore."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-it-1",
+      "language": "it",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Questo matchup è sempre un disastro. {score} e confermato.",
+        "Niente da analizzare. {winner_short_name} ha vinto e basta.",
+        "La partita peggiore della settimana. {score} e niente altro.",
+        "Spero che non si rivedano mai più. {score} e non voglio vederne altre.",
+        "Niente di buono viene da questo matchup. {score} e lo ha confermato."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-it-1",
+      "language": "it",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Questo matchup è sempre un disastro. {score} e confermato.",
+        "Niente da analizzare. {winner_short_name} ha vinto e basta.",
+        "La partita peggiore della settimana. {score} e niente altro.",
+        "Spero che non si rivedano mai più. {score} e non voglio vederne altre.",
+        "Niente di buono viene da questo matchup. {score} e lo ha confermato."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-pt-1",
+      "language": "pt",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "A chave foi simples: {winner_name} controlou objetivos e obrigou {loser_short_name} a jogar sempre em atraso.",
+        "{winner_short_name} não precisou de nada de especial. Boa preparação, bom ritmo e execução limpa.",
+        "Se ganhas {winner_objectives} objetivos, normalmente o mapa acaba por jogar para ti. Hoje foi claro.",
+        "O macro de {winner_short_name} foi superior. {score} reflecte o controlo.",
+        "{winner_short_name} soube ler o mapa e {loser_short_name} não reagiu a tempo.",
+        "A diferença foi nos detalhes. {winner_short_name} executou melhor."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-pt-1",
+      "language": "pt",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Foi uma aula. {winner_name} jogou o seu próprio jogo e {loser_short_name} nunca apareceu.",
+        "Não há muito a analisar. {winner_short_name} foi superior em tudo.",
+        "{loser_short_name} precisa de rever tudo. {score} é preocupante.",
+        "Isto não foi competição. {winner_short_name} mostrou um nível diferente.",
+        "O gap é real. {score} e a diferença foi abismal."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-pt-1",
+      "language": "pt",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Jogo renhido. {winner_short_name} soube aguentar a pressão.",
+        "A diferença foi nos detalhes. {score} mas podia ter sido o contrário.",
+        "{winner_short_name} vs {loser_short_name} dá sempre isto. Jogo de infarto.",
+        "O macro decidiu. {winner_short_name} controlou os momentos chave.",
+        "Isto é o que torna o League grande. {score} e tensão até ao fim."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-pt-1",
+      "language": "pt",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "O clássico. {score} e a rivalidade continua viva.",
+        "G2 vs FNC nunca desilude. {score} e análise para dias.",
+        "A rivalidade mais intensa da Europa. {score} e continua.",
+        "O match que todos esperavam. {score} e não defraudou.",
+        "A rivalidade continua. {score} e o próximo será melhor."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-pt-1",
+      "language": "pt",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Este matchup é sempre um desastre. {score} e confirmado.",
+        "Nada a analisar. {winner_short_name} ganhou e pronto.",
+        "O pior jogo da semana. {score} e não há mais.",
+        "Espero que nunca mais se enfrentem. {score} e não quero ver mais.",
+        "Nada de bom sai deste matchup. {score} e confirmou-o."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-pt-1",
+      "language": "pt",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Este matchup é sempre um desastre. {score} e confirmado.",
+        "Nada a analisar. {winner_short_name} ganhou e pronto.",
+        "O pior jogo da semana. {score} e não há mais.",
+        "Espero que nunca mais se enfrentem. {score} e não quero ver mais.",
+        "Nada de bom sai deste matchup. {score} e confirmou-o."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "A chave foi simples: {winner_name} controlou objetivos e forçou {loser_short_name} a jogar em desvantagem.",
+        "{winner_short_name} não precisou de nada de especial. Boa preparação, bom ritmo e execução limpa.",
+        "Quando você garante {winner_objectives} objetivos, o mapa normalmente começa a jogar para você. Hoje ficou claro.",
+        "O macro da {winner_short_name} foi superior. {score} reflete o controle.",
+        "{winner_short_name} leu o mapa bem e {loser_short_name} não reagiu a tempo.",
+        "A diferença foi nos detalhes. {winner_short_name} executou melhor."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Foi uma aula. {winner_name} jogou o próprio jogo e {loser_short_name} nunca apareceu.",
+        "Não tem muito o que analisar. {winner_short_name} foi superior em tudo.",
+        "{loser_short_name} precisa rever tudo. {score} é preocupante.",
+        "Isso não foi competição. {winner_short_name} mostrou um nível diferente.",
+        "O gap é real. {score} e a diferença foi abismal."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Jogo apertado. {winner_short_name} soube aguentar a pressão.",
+        "A diferença foi nos detalhes. {score} mas podia ter sido o contrário.",
+        "{winner_short_name} vs {loser_short_name} sempre entrega isso. Jogo de infarto.",
+        "O macro decidiu. {winner_short_name} controlou os momentos chave.",
+        "Isso é o que torna o League grande. {score} e tensão até o fim."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "O clássico. {score} e a rivalidade continua viva.",
+        "G2 vs FNC nunca decepciona. {score} e análise para dias.",
+        "A rivalidade mais intensa da Europa. {score} e continua.",
+        "A partida que todos esperavam. {score} e não decepcionou.",
+        "A rivalidade continua. {score} e a próxima será melhor."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Esse matchup é sempre um desastre. {score} e confirmado.",
+        "Nada para analisar. {winner_short_name} ganhou e acabou.",
+        "O pior jogo da semana. {score} e não tem mais.",
+        "Espero que nunca mais se enfrentem. {score} e não quero ver mais.",
+        "Nada de bom sai desse matchup. {score} e confirmou."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Esse matchup é sempre um desastre. {score} e confirmado.",
+        "Nada para analisar. {winner_short_name} ganhou e acabou.",
+        "O pior jogo da semana. {score} e não tem mais.",
+        "Espero que nunca mais se enfrentem. {score} e não quero ver mais.",
+        "Nada de bom sai desse matchup. {score} e confirmou."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "analyst-global-tr-1",
+      "language": "tr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Fark basitti: {winner_name} objektifleri kontrol etti ve {loser_short_name} her zaman geriden oynamaya zorladı.",
+        "{winner_short_name} ekstra bir şey yapmak zorunda kalmadı. İyi hazırlık, iyi tempo, temiz uygulama.",
+        "{winner_objectives} objektif aldığında harita genelde senin için oynamaya başlar. Bugün netti.",
+        "{winner_short_name} makrosu üstündü. {score} kontrolü yansıtıyor.",
+        "{winner_short_name} haritayı iyi okudu ve {loser_short_name} zamanında tepki vermedi.",
+        "Fark detaylardaydı. {winner_short_name} daha iyi uyguladı."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "global"
+      ],
+      "author_id": "analyst_manu"
+    },
+    {
+      "id": "analyst-stomp-tr-1",
+      "language": "tr",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Bu bir ders oldu. {winner_name} kendi oyununu oynadı ve {loser_short_name} hiç ortaya çıkmadı.",
+        "Analiz edecek pek bir şey yok. {winner_short_name} her yönüyle üstündü.",
+        "{loser_short_name} her şeyi gözden geçirmeli. {score} endişe verici.",
+        "Bu rekabet değildi. {winner_short_name} farklı bir seviye gösterdi.",
+        "Fark gerçek. {score} ve fark uçurumdu."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "stomp"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "analyst-close-tr-1",
+      "language": "tr",
+      "slot": "AnalystTake",
+      "weight": 3,
+      "variants": [
+        "Kıran kırana maç. {winner_short_name} baskıya dayanmayı bildi.",
+        "Fark detaylardaydı. {score} ama tersi de olabilirdi.",
+        "{winner_short_name} vs {loser_short_name} her zaman bunu verir. Kalp krizi maçı.",
+        "Makro karar verdi. {winner_short_name} kritik anları kontrol etti.",
+        "League'yi büyük yapan bu. {score} ve sonuna kadar gerilim."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "close"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "analyst-rivalry-g2-fnc-tr-1",
+      "language": "tr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Klasik. {score} ve rekabet canlı kalıyor.",
+        "G2 vs FNC hiç hayal kırıklığına uğratmaz. {score} ve günlerce analiz.",
+        "Avrupa'nın en yoğun rekabeti. {score} ve devam ediyor.",
+        "Herkesin beklediği maç. {score} ve vaat ettiğini verdi.",
+        "Rekabet devam ediyor. {score} ve sonraki daha iyi olacak."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "rivalry"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-g2-esports",
+          "lec-fnatic"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-koi-th-tr-1",
+      "language": "tr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Bu matchup her zaman bir felaket. {score} ve onaylandı.",
+        "Analiz edecek bir şey yok. {winner_short_name} kazandı ve bu kadar.",
+        "Haftanın en kötü maçı. {score} ve başka bir şey yok.",
+        "Umarım bir daha karşılaşmazlar. {score} ve daha fazla izlemek istemiyorum.",
+        "Bu matchup'tan iyi bir şey çıkmaz. {score} ve bunu doğruladı."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-mad-lions",
+          "lec-team-heretics-lec"
+        ]
+      }
+    },
+    {
+      "id": "analyst-hate-kc-vit-tr-1",
+      "language": "tr",
+      "slot": "AnalystTake",
+      "weight": 5,
+      "variants": [
+        "Bu matchup her zaman bir felaket. {score} ve onaylandı.",
+        "Analiz edecek bir şey yok. {winner_short_name} kazandı ve bu kadar.",
+        "Haftanın en kötü maçı. {score} ve başka bir şey yok.",
+        "Umarım bir daha karşılaşmazlar. {score} ve daha fazla izlemek istemiyorum.",
+        "Bu matchup'tan iyi bir şey çıkmaz. {score} ve bunu doğruladı."
+      ],
+      "tags": [
+        "analysis",
+        "match",
+        "hate"
+      ],
+      "author_id": "analyst_manu",
+      "conditions": {
+        "matchup_team_ids": [
+          "lec-karmine-corp",
+          "lec-team-vitality"
+        ]
+      }
+    },
+    {
+      "id": "player-reaction-es-1",
+      "language": "es",
+      "slot": "PlayerReaction",
+      "weight": 5,
+      "variants": [
+        "GGs. Buen trabajo del equipo, seguimos enfocados.",
+        "Contento por la victoria. Gracias por el apoyo, nos vemos en el siguiente partido.",
+        "Hoy salió el plan. Orgulloso del equipo y del trabajo de la semana.",
+        "Gran partido. {score} y seguimos trabajando.",
+        "Feliz por el resultado. {winner_short_name} sigue firme.",
+        "El equipo respondió. {score} y a la siguiente."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "global"
+      ],
+      "conditions": {
+        "requires_player_name": true
+      }
+    },
+    {
+      "id": "player-reaction-stomp-es-1",
+      "language": "es",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} y no fue ni close.",
+        "Demolición total. {score} en {winner_short_name}.",
+        "Eso fue un clinic. {score} sin respuestas.",
+        "No dejamos nada. {score} y a la siguiente.",
+        "Dominio absoluto. {score} refleja lo que pasó."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "player-reaction-close-es-1",
+      "language": "es",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Tensión hasta el final. {score} pero lo conseguimos.",
+        "Mi corazón no aguanta estos {score}.",
+        "Sufrimos pero ganamos. {score} y a la siguiente.",
+        "Partido reñido. {score} pero el equipo supo aguantar.",
+        "Eso fue un partido de infarto. {score} y seguimos."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "player-reaction-en-1",
+      "language": "en",
+      "slot": "PlayerReaction",
+      "weight": 5,
+      "variants": [
+        "GGs. Proud of the team, back to work tomorrow.",
+        "Happy with the win. Thanks for the support, see you next match.",
+        "Plan worked today. We keep building.",
+        "Great game. {score} and we keep working.",
+        "Happy with the result. {winner_short_name} stays strong.",
+        "The team delivered. {score} and on to the next."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "global"
+      ],
+      "conditions": {
+        "requires_player_name": true
+      }
+    },
+    {
+      "id": "player-reaction-stomp-en-1",
+      "language": "en",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} and it wasn't even close.",
+        "Total demolition. {score} for {winner_short_name}.",
+        "That was a clinic. {score} with no answers.",
+        "We left nothing on the table. {score} and on to the next.",
+        "Absolute dominance. {score} reflects what happened."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "player-reaction-close-en-1",
+      "language": "en",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Tension until the very end. {score} but we got it.",
+        "My heart can't handle these {score}.",
+        "We suffered but we won. {score} and on to the next.",
+        "Close game. {score} but the team held on.",
+        "That was a heart-stopping match. {score} and we keep going."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "player-reaction-fr-1",
+      "language": "fr",
+      "slot": "PlayerReaction",
+      "weight": 5,
+      "variants": [
+        "GGs. Fier de l'équipe, on retourne travailler demain.",
+        "Content de la victoire. Merci pour le soutien, à bientôt pour le prochain match.",
+        "Le plan a fonctionné aujourd'hui. On continue de construire.",
+        "Beau match. {score} et on continue de travailler.",
+        "Heureux du résultat. {winner_short_name} reste solide.",
+        "L'équipe a répondu. {score} et au suivant."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "global"
+      ],
+      "conditions": {
+        "requires_player_name": true
+      }
+    },
+    {
+      "id": "player-reaction-stomp-fr-1",
+      "language": "fr",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} et ce n'était même pas close.",
+        "Démolition totale. {score} pour {winner_short_name}.",
+        "C'était une leçon. {score} sans réponse.",
+        "On n'a rien laissé. {score} et au suivant.",
+        "Domination absolue. {score} reflète ce qui s'est passé."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "player-reaction-close-fr-1",
+      "language": "fr",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Tension jusqu'au bout. {score} mais on l'a eu.",
+        "Mon cœur ne supporte pas ces {score}.",
+        "On a souffert mais on a gagné. {score} et au suivant.",
+        "Match serré. {score} mais l'équipe a tenu.",
+        "C'était un match de fou. {score} et on continue."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "player-reaction-de-1",
+      "language": "de",
+      "slot": "PlayerReaction",
+      "weight": 5,
+      "variants": [
+        "GGs. Stolz auf das Team, morgen geht die Arbeit weiter.",
+        "Freue mich über den Sieg. Danke für den Support, bis zum nächsten Match.",
+        "Der Plan hat heute funktioniert. Wir bauen weiter darauf auf.",
+        "Tolles Spiel. {score} und wir arbeiten weiter.",
+        "Glücklich mit dem Ergebnis. {winner_short_name} bleibt stark.",
+        "Das Team hat geliefert. {score} und weiter."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "global"
+      ],
+      "conditions": {
+        "requires_player_name": true
+      }
+    },
+    {
+      "id": "player-reaction-stomp-de-1",
+      "language": "de",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} und es war nicht einmal knapp.",
+        "Totale Demolierung. {score} für {winner_short_name}.",
+        "Das war eine Lehrstunde. {score} ohne Antworten.",
+        "Wir haben nichts zurückgelassen. {score} und weiter.",
+        "Absolute Dominanz. {score} spiegelt das Geschehen wider."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "player-reaction-close-de-1",
+      "language": "de",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Spannung bis zum Ende. {score} aber wir haben es geschafft.",
+        "Mein Herz hält diese {score} nicht aus.",
+        "Wir haben gelitten, aber gewonnen. {score} und weiter.",
+        "Knappes Spiel. {score} aber das Team hat durchgehalten.",
+        "Das war ein Herzschlag-Finale. {score} und wir machen weiter."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
+    },
+    {
+      "id": "player-reaction-it-1",
       "language": "it",
       "slot": "PlayerReaction",
       "weight": 5,
-      "conditions": { "requires_player_name": true },
       "variants": [
         "GGs. Orgoglioso del team, domani si torna al lavoro.",
         "Felice per la vittoria. Grazie per il supporto, ci vediamo al prossimo match.",
-        "Il piano ha funzionato oggi. Continuiamo a costruire."
+        "Il piano ha funzionato oggi. Continuiamo a costruire.",
+        "Grande partita. {score} e continuiamo a lavorare.",
+        "Felice per il risultato. {winner_short_name} resta solido.",
+        "Il team ha risposto. {score} e avanti."
       ],
-      "tags": ["player", "reaction", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "global"
+      ],
+      "conditions": {
+        "requires_player_name": true
+      }
     },
-
     {
-      "id": "team-global-pt",
-      "language": "pt",
-      "slot": "TeamBanter",
-      "weight": 5,
+      "id": "player-reaction-stomp-it-1",
+      "language": "it",
+      "slot": "PlayerReaction",
+      "weight": 3,
       "variants": [
-        "GG {loser_short_name}. Serie limpa, comunicacao clara e boa finalizacao. {score}",
-        "Vitoria importante hoje. Obrigado pelo apoio. #Go{winner_short_name}",
-        "Levamos o {score} e seguimos. Um jogo de cada vez."
+        "Clean sweep. {score} e non è stato nemmeno close.",
+        "Demolizione totale. {score} per {winner_short_name}.",
+        "Quella è stata una lezione. {score} senza risposte.",
+        "Non abbiamo lasciato nulla. {score} e avanti.",
+        "Dominio assoluto. {score} riflette ciò che è successo."
       ],
-      "tags": ["match", "team", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
     },
     {
-      "id": "fan-global-pt",
-      "language": "pt",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "id": "player-reaction-close-it-1",
+      "language": "it",
+      "slot": "PlayerReaction",
+      "weight": 3,
       "variants": [
-        "Jogo muito serio de {winner_short_name}. Quando jogam assim, e bom de ver.",
-        "{winner_short_name} ganhou e a timeline ja fala de playoffs. Classico.",
-        "Nao foi perfeito, mas um {score} e um {score}. Aceita e segue."
+        "Tensione fino alla fine. {score} ma ce l'abbiamo fatta.",
+        "Il mio cuore non regge questi {score}.",
+        "Abbiamo sofferto ma vinto. {score} e avanti.",
+        "Partita tirata. {score} ma la squadra ha resistito.",
+        "Quella è stata una partita da infarto. {score} e continuiamo."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
     },
     {
-      "id": "analyst-global-pt",
-      "language": "pt",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
-      "variants": [
-        "A diferenca foi o controlo do mapa. {winner_name} manteve o ritmo e obrigou {loser_short_name} a responder tarde.",
-        "{winner_short_name} nao precisou de inventar. Boa preparacao, bons tempos e execucao limpa.",
-        "Com {winner_objectives} objetivos, o mapa normalmente passa a jogar contigo. Hoje foi claro."
-      ],
-      "tags": ["analysis", "match", "global"]
-    },
-    {
-      "id": "player-global-pt",
+      "id": "player-reaction-pt-1",
       "language": "pt",
       "slot": "PlayerReaction",
       "weight": 5,
-      "conditions": { "requires_player_name": true },
       "variants": [
-        "GGs. Orgulhoso da equipa, amanha voltamos ao trabalho.",
-        "Feliz pela vitoria. Obrigado pelo apoio, ate ao proximo jogo.",
-        "O plano funcionou hoje. Continuamos a construir."
+        "GGs. Orgulhoso da equipa, amanhã voltamos ao trabalho.",
+        "Feliz pela vitória. Obrigado pelo apoio, até ao próximo jogo.",
+        "O plano funcionou hoje. Continuamos a construir.",
+        "Grande jogo. {score} e continuamos a trabalhar.",
+        "Feliz pelo resultado. {winner_short_name} mantém-se firme.",
+        "A equipa respondeu. {score} e para a próxima."
       ],
-      "tags": ["player", "reaction", "global"]
-    },
-
-    {
-      "id": "team-global-pt-br",
-      "language": "pt-BR",
-      "slot": "TeamBanter",
-      "weight": 5,
-      "variants": [
-        "GG {loser_short_name}. Serie limpa, comunicacao clara e finalizacao solida. {score}",
-        "Vitoria importante hoje. Obrigado pelo apoio. #Go{winner_short_name}",
-        "Levamos o {score} e seguimos em frente. Um jogo por vez."
+      "tags": [
+        "player",
+        "reaction",
+        "global"
       ],
-      "tags": ["match", "team", "global"]
+      "conditions": {
+        "requires_player_name": true
+      }
     },
     {
-      "id": "fan-global-pt-br",
-      "language": "pt-BR",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "id": "player-reaction-stomp-pt-1",
+      "language": "pt",
+      "slot": "PlayerReaction",
+      "weight": 3,
       "variants": [
-        "Jogo muito serio da {winner_short_name}. Quando joga assim, e bom demais assistir.",
-        "{winner_short_name} venceu e a timeline ja esta falando de playoffs. Classico.",
-        "Nao foi perfeito, mas um {score} e um {score}. Pega a win e revisa depois."
+        "Clean sweep. {score} e nem foi close.",
+        "Demolição total. {score} em {winner_short_name}.",
+        "Foi uma lição. {score} sem respostas.",
+        "Não deixámos nada. {score} e para a próxima.",
+        "Domínio absoluto. {score} reflecte o que aconteceu."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
     },
     {
-      "id": "analyst-global-pt-br",
-      "language": "pt-BR",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
+      "id": "player-reaction-close-pt-1",
+      "language": "pt",
+      "slot": "PlayerReaction",
+      "weight": 3,
       "variants": [
-        "A diferenca foi o controle de mapa. {winner_name} manteve o ritmo e fez {loser_short_name} responder atrasado.",
-        "{winner_short_name} nao precisou inventar. Boa preparacao, bons tempos e execucao limpa.",
-        "Com {winner_objectives} objetivos, o mapa normalmente comeca a jogar por voce. Hoje ficou claro."
+        "Tensão até ao fim. {score} mas conseguimos.",
+        "O meu coração não aguenta estes {score}.",
+        "Sofremos mas ganhámos. {score} e para a próxima.",
+        "Jogo renhido. {score} mas a equipa aguentou.",
+        "Foi um jogo de infarto. {score} e seguimos."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
     },
     {
-      "id": "player-global-pt-br",
+      "id": "player-reaction-pt-BR-1",
       "language": "pt-BR",
       "slot": "PlayerReaction",
       "weight": 5,
-      "conditions": { "requires_player_name": true },
       "variants": [
-        "GGs. Orgulhoso do time, amanha voltamos ao trabalho.",
-        "Feliz pela vitoria. Obrigado pelo apoio, vejo voces no proximo jogo.",
-        "O plano funcionou hoje. Seguimos construindo."
+        "GGs. Orgulhoso do time, amanhã voltamos ao trabalho.",
+        "Feliz pela vitória. Obrigado pelo apoio, vejo vocês no próximo jogo.",
+        "O plano funcionou hoje. Seguimos construindo.",
+        "Grande jogo. {score} e seguimos trabalhando.",
+        "Feliz pelo resultado. {winner_short_name} segue firme.",
+        "O time entregou. {score} e vamos para o próximo."
       ],
-      "tags": ["player", "reaction", "global"]
-    },
-
-    {
-      "id": "team-global-tr",
-      "language": "tr",
-      "slot": "TeamBanter",
-      "weight": 5,
-      "variants": [
-        "GG {loser_short_name}. Temiz seri, net iletisim, saglam kapanis. {score}",
-        "Bugun onemli bir galibiyet aldik. Destek icin tesekkurler. #Go{winner_short_name}",
-        "{score} sonucunu aliyoruz ve devam ediyoruz. Mac mac ilerliyoruz."
+      "tags": [
+        "player",
+        "reaction",
+        "global"
       ],
-      "tags": ["match", "team", "global"]
+      "conditions": {
+        "requires_player_name": true
+      }
     },
     {
-      "id": "fan-global-tr",
-      "language": "tr",
-      "slot": "FanOpinion",
-      "weight": 5,
-      "author_id": "fan_random_lec",
+      "id": "player-reaction-stomp-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "PlayerReaction",
+      "weight": 3,
       "variants": [
-        "{winner_short_name} tarafindan cok ciddi bir oyun. Boyle oynadiklarinda izlemek keyifli.",
-        "{winner_short_name} kazandi ve timeline simdiden playoff konusuyor. Klasik.",
-        "Mukemmel degildi ama {score} yine de {score}. Galibiyeti al, sonra analiz et."
+        "Clean sweep. {score} e nem foi close.",
+        "Demolição total. {score} em {winner_short_name}.",
+        "Foi uma aula. {score} sem respostas.",
+        "Não deixamos nada. {score} e vamos para o próximo.",
+        "Domínio absoluto. {score} reflete o que aconteceu."
       ],
-      "tags": ["fan", "match", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
     },
     {
-      "id": "analyst-global-tr",
-      "language": "tr",
-      "slot": "AnalystTake",
-      "weight": 5,
-      "author_id": "analyst_manu",
+      "id": "player-reaction-close-pt-BR-1",
+      "language": "pt-BR",
+      "slot": "PlayerReaction",
+      "weight": 3,
       "variants": [
-        "Fark harita kontroluydu. {winner_name} tempoyu tuttu ve {loser_short_name} tarafini gec cevap vermeye zorladi.",
-        "{winner_short_name} ekstra bir sey yapmak zorunda kalmadi. Iyi hazirlik, iyi zamanlama, temiz uygulama.",
-        "{winner_objectives} objektif aldiginda harita genelde senin icin oynamaya baslar. Bugun netti."
+        "Tensão até o fim. {score} mas conseguimos.",
+        "Meu coração não aguenta esses {score}.",
+        "Sofremos mas ganhamos. {score} e vamos para o próximo.",
+        "Jogo apertado. {score} mas o time aguentou.",
+        "Foi um jogo de infarto. {score} e seguimos."
       ],
-      "tags": ["analysis", "match", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
     },
     {
-      "id": "player-global-tr",
+      "id": "player-reaction-tr-1",
       "language": "tr",
       "slot": "PlayerReaction",
       "weight": 5,
-      "conditions": { "requires_player_name": true },
       "variants": [
-        "GGs. Takimla gurur duyuyorum, yarin calismaya devam.",
-        "Galibiyet icin mutluyum. Destek icin tesekkurler, sonraki macta gorusuruz.",
-        "Plan bugun calisti. Uzerine koymaya devam ediyoruz."
+        "GGs. Takımla gurur duyuyorum, yarın çalışmaya devam.",
+        "Galibiyet için mutluyum. Destek için teşekkürler, sonraki maçta görüşürüz.",
+        "Plan bugün çalıştı. Üzerine koymaya devam ediyoruz.",
+        "Harika oyun. {score} ve çalışmaya devam ediyoruz.",
+        "Sonuçtan memnunum. {winner_short_name} güçlü duruyor.",
+        "Takım karşılık verdi. {score} ve sıradaki."
       ],
-      "tags": ["player", "reaction", "global"]
+      "tags": [
+        "player",
+        "reaction",
+        "global"
+      ],
+      "conditions": {
+        "requires_player_name": true
+      }
+    },
+    {
+      "id": "player-reaction-stomp-tr-1",
+      "language": "tr",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Clean sweep. {score} ve yakın bile değildi.",
+        "Tam bir yıkım. {score} için {winner_short_name}.",
+        "Bu bir ders oldu. {score} ve cevap yok.",
+        "Hiçbir şey bırakmadık. {score} ve sıradaki.",
+        "Mutlak hakimiyet. {score} olanları yansıtıyor."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "stomp"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": true
+      }
+    },
+    {
+      "id": "player-reaction-close-tr-1",
+      "language": "tr",
+      "slot": "PlayerReaction",
+      "weight": 3,
+      "variants": [
+        "Sonuna kadar gerilim. {score} ama başardık.",
+        "Kalbim bu {score} kaldıramıyor.",
+        "Çektik ama kazandık. {score} ve devam.",
+        "Kıran kırana maç. {score} ama takım dayandı.",
+        "Bu kalp krizi geçirten bir maçtı. {score} ve devam ediyoruz."
+      ],
+      "tags": [
+        "player",
+        "reaction",
+        "close"
+      ],
+      "conditions": {
+        "requires_player_name": true,
+        "requires_stomp": false
+      }
     }
   ]
 }
