@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   User,
   Loader2,
+  RefreshCw,
 } from "lucide-react";
 
 import type { GameStateData, PlayerSelectionOptions } from "@/store/gameStore";
@@ -77,6 +78,7 @@ export function SquadTabV2({
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [search, setSearch] = useState("");
   const [savingSlot, setSavingSlot] = useState<string | null>(null);
+  const [swappingSlot, setSwappingSlot] = useState<number | null>(null);
 
   const handleToggleTransfer = useCallback(async (playerId: string) => {
     try {
@@ -308,8 +310,10 @@ export function SquadTabV2({
                 const morale = player.morale;
                 const annualWage = player.wage;
 
-                return (
-                  <div key={slot.role} onClick={(e) => { if (!(e.target as HTMLElement).closest("select,button")) onSelectPlayer(player.id); }} className="flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/30">
+                  return (
+                    <div key={slot.role} onClick={(e) => { if (!(e.target as HTMLElement).closest("select,button")) onSelectPlayer(player.id); }} className={cn("flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/30",
+                      condition < 30 && "border-l-2 border-l-red-500/60 bg-red-500/5"
+                    )}>
                     <div className="flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted/50">
                       <img src={ROLE_ICON_URLS[slot.role]} alt={roleLabel} className="size-4 object-contain opacity-80" />
                     </div>
@@ -323,6 +327,11 @@ export function SquadTabV2({
                         </button>
                         {outOfPosition && (
                           <span className="shrink-0 text-amber-400" title={t("squad.outOfPositionTooltip", { defaultValue: "Fuera de rol" })}>
+                            <AlertTriangle className="size-4" />
+                          </span>
+                        )}
+                        {condition < 30 && (
+                          <span className="shrink-0 text-red-400" title={t("squad.lowConditionTooltip", { defaultValue: "Energía crítica — necesita descanso" })}>
                             <AlertTriangle className="size-4" />
                           </span>
                         )}
@@ -404,6 +413,22 @@ export function SquadTabV2({
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">/año</p>
                     </div>
                     <div className="flex items-center gap-1">
+                      {condition < 30 && (
+                        <button type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Auto-select the best bench player for this role
+                            const replacement = benchPlayers
+                              .filter((bp) => resolvePlayerLolRole(bp) === slot.role)
+                              .sort((a, b) => calculateLolOvr(b) - calculateLolOvr(a))[0];
+                            if (replacement) handleSlotChange(slot.index, replacement.id);
+                          }}
+                          title={t("squad.quickSwap", { defaultValue: "Cambiar por suplente" })}
+                          className="flex size-7 items-center justify-center rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-400 transition-colors hover:bg-amber-500/20"
+                        >
+                          <RefreshCw className="size-3.5" />
+                        </button>
+                      )}
                       <button type="button" onClick={(e) => { e.stopPropagation(); handleToggleTransfer(player.id); }}
                         title={player.transfer_listed ? t("squad.removeFromTransferList", { defaultValue: "Remove from transfers list" }) : t("squad.addToTransferList", { defaultValue: "Add to transfers list" })}
                         className={cn("flex size-7 items-center justify-center rounded-md border transition-colors",
