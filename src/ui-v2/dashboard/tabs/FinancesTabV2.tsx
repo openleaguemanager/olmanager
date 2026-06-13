@@ -68,11 +68,11 @@ function formatCurrencyAmountParam(value: number): string {
 }
 
 function getFacilityUpgradeCost(level: number): number {
-  return level * 250_000;
+  return (level + 1) * 250_000;
 }
 
 function getMainHubExpansionCost(level: number): number {
-  return level * 500_000;
+  return (level + 1) * 500_000;
 }
 
 type SortKey = "name" | "position" | "wage" | "value" | "contract";
