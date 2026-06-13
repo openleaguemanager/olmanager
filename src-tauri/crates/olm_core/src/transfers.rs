@@ -2718,12 +2718,13 @@ pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, 
                 "You terminated {}'s contract. The player is now a free agent. Termination cost: €{}.",
                 player_name, penalty
             ),
-            "Director of Football".to_string(),
+            "General Manager".to_string(),
             today,
         )
         .with_category(crate::domain::message::MessageCategory::Contract)
-        .with_priority(crate::domain::message::MessagePriority::High),
-        "director_of_football",
+        .with_priority(crate::domain::message::MessagePriority::High)
+        .with_sender_i18n("be.sender.generalManager", "be.role.generalManager"),
+        "general_manager",
         vec![("player", &player_name)],
     );
     game.messages.push(message);

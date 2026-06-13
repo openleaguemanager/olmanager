@@ -302,7 +302,7 @@ fn transfer_message_millions() {
         "Should format millions: {}",
         msg.body
     );
-    assert_eq!(msg.sender_role, "Director of Football");
+    assert_eq!(msg.sender_role, "General Manager");
 }
 
 #[test]

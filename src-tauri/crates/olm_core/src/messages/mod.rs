@@ -309,13 +309,13 @@ pub fn transfer_complete_message(player_name: &str, fee: u64, date: &str) -> Inb
     )
     .with_category(MessageCategory::Transfer)
     .with_priority(MessagePriority::Normal)
-    .with_sender_role("Director of Football")
+    .with_sender_role("General Manager")
     .with_i18n(
         "be.msg.transferComplete.subject",
         "be.msg.transferComplete.body",
         params(&[("player", player_name), ("fee", &fee_display)]),
     )
-    .with_sender_i18n("be.sender.directorOfFootball", "be.role.directorOfFootball")
+    .with_sender_i18n("be.sender.generalManager", "be.role.generalManager")
 }
 
 pub fn incoming_transfer_offer_message(
@@ -340,12 +340,12 @@ pub fn incoming_transfer_offer_message(
             "{} have submitted an offer of {} for {}. Review the bid in the Transfers tab to accept or reject it.",
             buying_team_name, fee_display, player_name
         ),
-        "Director of Football".to_string(),
+        "General Manager".to_string(),
         date.to_string(),
     )
     .with_category(MessageCategory::Transfer)
     .with_priority(MessagePriority::High)
-    .with_sender_role("Director of Football")
+    .with_sender_role("General Manager")
     .with_action(action(
         "view_transfers",
         "Review Offer",
@@ -367,6 +367,6 @@ pub fn incoming_transfer_offer_message(
             ("player", player_name),
         ]),
     )
-    .with_sender_i18n("be.sender.directorOfFootball", "be.role.directorOfFootball")
+    .with_sender_i18n("be.sender.generalManager", "be.role.generalManager")
 }
 
