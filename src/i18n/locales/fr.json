@@ -1390,8 +1390,8 @@
       "System": "Système",
       "JobOffer": "Offres d'emploi"
     },
-    "all": "All",
-    "close": "Close"
+    "all": "Tous",
+    "close": "Fermer"
   },
   "manager": {
     "managerOf": "Head Coach de {{team}}",
@@ -1991,7 +1991,7 @@
       "redBans": "Bans Rouge",
       "redPicks": "Picks Rouge",
       "startMatch": "Lancer la partie",
-      "finalizeDraft": "Finaliser le draft",
+      "finalizeDraft": "Finaliser la draft",
       "loadingChampions": "Chargement des champions...",
       "loadError": "Erreur lors du chargement des champions",
       "noChampionsForFilters": "Aucun champion disponible avec les filtres actuels.",
@@ -2214,7 +2214,7 @@
       "goldDiffOverTime": "Différence d'or au fil du temps",
       "keyTimeline": "Chronologie clé",
       "stats": {
-        "gold": "Or",
+        "gold": "Gold",
         "towers": "Tourelles",
         "dragons": "Dragons",
         "barons": "Barons",
@@ -2234,7 +2234,7 @@
     },
     "liveA11y": {
       "towerIcon": "Tourelle",
-      "goldIcon": "Or",
+      "goldIcon": "Gold",
       "lecLogo": "Logo de la ligue",
       "dragonIcon": "Dragon",
       "voidgrubIcon": "Voidgrub",
@@ -2677,7 +2677,7 @@
         "actionAdjust": "Ajuster l'Entraînement"
       },
       "event": {
-        "ack": "Understood",
+        "ack": "Compris",
         "respond": "Respond"
       },
       "playerEvent": {
@@ -3593,7 +3593,7 @@
   "titleBar": {
     "appLogoAlt": "App logo",
     "appName": "OL Manager",
-    "close": "Close",
-    "minimize": "Minimize"
+    "close": "Fermer",
+    "minimize": "Réduire"
   }
 }
