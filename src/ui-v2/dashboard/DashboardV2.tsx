@@ -212,6 +212,8 @@ export default function DashboardV2() {
       .catch(() => setProbedNoGame(true));
   }, [hasActiveGame, setGameState, setGameActive]);
 
+  const [championLoadError, setChampionLoadError] = useState(false);
+
   // Load champions once game state is available
   useEffect(() => {
     if (!gameState) return;
@@ -221,8 +223,10 @@ export default function DashboardV2() {
       try {
         const champions = await invoke<unknown[]>("get_champions");
         useGameStore.getState().setGameState({ ...gameState, champions } as GameStateData);
+        setChampionLoadError(false);
       } catch (err) {
         console.error("[DashboardV2] Failed to load champions:", err);
+        setChampionLoadError(true);
       }
     };
     loadChampions();
