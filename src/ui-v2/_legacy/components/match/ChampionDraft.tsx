@@ -2011,6 +2011,18 @@ export default function ChampionDraft({
   ]);
 
   // ---------------------------------------------------------------------------
+  // Coach resolution (must be before assistantCoachTips useMemo)
+  // ---------------------------------------------------------------------------
+  const assistantCoach = gameState?.staff.find(
+    (staff) => staff.team_id === userTeamId && staff.role === "AssistantManager",
+  );
+  const coachName =
+    assistantCoach && (assistantCoach.first_name || assistantCoach.last_name)
+      ? `${assistantCoach.first_name ?? ""} ${assistantCoach.last_name ?? ""}`.trim()
+      : t("match.draft.assistantCoach");
+  const coachImage = assistantCoach?.profile_image_url ?? ASSISTANT_COACH_PLACEHOLDER;
+
+  // ---------------------------------------------------------------------------
   // Dynamic Draft Tips - Assistant Coach & Player Suggestions
   // ---------------------------------------------------------------------------
   const assistantCoachTips = useMemo<DraftAdviceTip[]>(() => {
@@ -2049,7 +2061,6 @@ export default function ChampionDraft({
       });
     };
 
-    const userTeamId = controlledSide === "blue" ? snapshot.home_team.id : snapshot.away_team.id;
     const ownPicksList = controlledSide === "blue" ? bluePicks : redPicks;
     const enemyPicksList = controlledSide === "blue" ? redPicks : bluePicks;
     const ownCoveredRoles = new Set<Role>();
@@ -2059,15 +2070,7 @@ export default function ChampionDraft({
     });
     const availableChampions = champions.filter((champion) => !usedChampionIds.has(champion.id));
 
-    const assistantCoach = gameState.staff.find(
-      (staff) => staff.team_id === userTeamId && staff.role === "AssistantManager",
-    );
     const coachSkill = assistantCoach?.attributes?.coaching ?? 60;
-    const coachName =
-      assistantCoach && (assistantCoach.first_name || assistantCoach.last_name)
-        ? `${assistantCoach.first_name ?? ""} ${assistantCoach.last_name ?? ""}`.trim()
-        : t("match.draft.assistantCoach");
-    const coachImage = assistantCoach?.profile_image_url ?? ASSISTANT_COACH_PLACEHOLDER;
 
     const addCoachTip = (type: "ban" | "pick" | "warn", text: string, champion?: ChampionData) => {
       tips.push({

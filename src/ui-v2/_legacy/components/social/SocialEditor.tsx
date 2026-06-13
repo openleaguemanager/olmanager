@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import type { GameStateData, PlayerData, TeamData } from "@/store/gameStore";
 import type { SocialAccountData, SocialAuthorType, SocialTemplateData } from "@/store/types";
+import { assetUrl } from "@/lib/assetUrl";
 import {
   getSocialAccounts,
   getSocialTemplates,
@@ -838,7 +839,7 @@ function AccountEditor({
             </select>
           </Field>
           <Field label="URL de avatar">
-            <input value={account.profile_image_url ?? ""} onChange={(event) => onUpdate((current) => ({ ...current, profile_image_url: event.target.value || null }))} placeholder="https://..." className={FIELD_CLASS} />
+            <input value={account.profile_image_url ?? ""} onChange={(event) => onUpdate((current) => ({ ...current, profile_image_url: event.target.value || null }))} placeholder="/social-avatars/ejemplo.webp" className={FIELD_CLASS} />
           </Field>
           <Field label="Estado">
             <select value={account.active ? "active" : "inactive"} onChange={(event) => onUpdate((current) => ({ ...current, active: event.target.value === "active" }))} className={FIELD_CLASS}>
@@ -881,12 +882,13 @@ function AccountEditor({
 
 function AvatarPreview({ account, large = false }: { account: SocialAccountData; large?: boolean }) {
   const size = large ? "h-14 w-14" : "h-10 w-10";
+  const src = assetUrl(account.profile_image_url);
   return (
     <span className={`relative flex ${size} shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-primary to-primary/70 font-heading text-xs font-bold text-white`}>
       {account.display_name.slice(0, 2).toUpperCase()}
-      {account.profile_image_url ? (
+      {src ? (
         <img
-          src={account.profile_image_url}
+          src={src}
           alt={account.display_name}
           className="absolute inset-0 h-full w-full object-cover"
           onError={(event) => {
