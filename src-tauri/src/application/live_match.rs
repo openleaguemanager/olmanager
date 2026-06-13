@@ -50,6 +50,49 @@ fn validate_user_team_role_coverage(game: &Game) -> Result<(), String> {
     }
 }
 
+/// Checks that a specific team (opponent) has at least one player assigned to
+/// each of the five required LoL roles.  If the opponent roster is incomplete
+/// the match cannot proceed.
+fn validate_team_role_coverage(game: &Game, team_id: &str) -> Result<(), String> {
+    let role_set: std::collections::HashSet<&'static str> = game
+        .players
+        .iter()
+        .filter(|player| player.team_id.as_deref() == Some(team_id))
+        .map(|player| role_to_string(&player.natural_position))
+        .collect();
+    let required_roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
+    let missing_roles: Vec<&str> = required_roles
+        .iter()
+        .copied()
+        .filter(|role| !role_set.contains(role))
+        .collect();
+
+    if missing_roles.is_empty() {
+        Ok(())
+    } else {
+        Err(format!(
+            "Opponent team role coverage incomplete: missing {}. The AI cannot field a full lineup.",
+            missing_roles.join(", ")
+        ))
+    }
+}
+
+fn missing_roles_for_team(game: &Game, team_id: &str) -> Vec<String> {
+    let role_set: std::collections::HashSet<String> = game
+        .players
+        .iter()
+        .filter(|player| player.team_id.as_deref() == Some(team_id))
+        .map(|player| role_to_string(&player.natural_position).to_string())
+        .collect();
+    let required_roles = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
+    required_roles
+        .iter()
+        .copied()
+        .map(|r| r.to_string())
+        .filter(|role| !role_set.contains(role))
+        .collect()
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FinishLiveMatchResponse {
     pub game: Game,
@@ -373,6 +416,22 @@ pub fn start_live_match(
         .ok_or("No active game session")?;
 
     validate_user_team_role_coverage(&game)?;
+
+    // Also validate the opponent roster – an AI team without a full lineup
+    // would make the match unwinnable or buggy.
+    let user_team_id = game.manager.team_id.as_deref();
+    if let Some(league) = game.leagues.first() {
+        if let Some(fixture) = league.fixtures.get(fixture_index) {
+            let opp_team_id = if fixture.home_team_id == user_team_id.unwrap_or_default() {
+                Some(&fixture.away_team_id)
+            } else {
+                Some(&fixture.home_team_id)
+            };
+            if let Some(opp_id) = opp_team_id {
+                validate_team_role_coverage(&game, opp_id)?;
+            }
+        }
+    }
 
     let match_mode = match mode {
         "spectator" => MatchMode::Spectator,
