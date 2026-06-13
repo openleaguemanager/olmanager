@@ -856,7 +856,10 @@ pub fn process_scrim_block(game: &mut Game, weekday_num: u32) -> bool {
 /// weekly schedule) give full condition recovery with no training cost.
 /// Scrims focus can gain extra efficiency from stronger weekly scrim opponents.
 /// `weekday_num` is 0=Mon .. 6=Sun (chrono Weekday::num_days_from_monday()).
-pub fn process_training(game: &mut Game, weekday_num: u32) {
+/// `is_matchday` — when true, skips attribute-gain training and applies only
+/// a partial condition recovery so condition does not steadily drain to 0 %
+/// over the course of a split.
+pub fn process_training(game: &mut Game, weekday_num: u32, is_matchday: bool) {
     let manager_team_id = game.manager.team_id.clone();
     let rival_player_ids: Vec<String> = game
         .players
@@ -949,7 +952,7 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
                 .unwrap_or(&plan.default_focus);
 
             // On rest days or recovery-focused plans: no training cost
-            let condition_cost: u8 = if !is_training_day {
+            let condition_cost: u8 = if !is_training_day || is_matchday {
                 0
             } else {
                 match (player_focus, &plan.intensity) {
@@ -961,14 +964,18 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
             };
 
             // Recovery amount: rest days get boosted recovery (like mental reset days)
-            let recovery_base: f64 = if !is_training_day {
+            // On matchdays we apply a partial recovery (≈60 % of a rest day) so that
+            // condition does not steadily drain to 0 % over the course of a split.
+            let recovery_base: f64 = if is_matchday {
+                4.2 * plan.bonus.physio_mult * plan.medical_facility_mult
+            } else if !is_training_day {
                 7.0 * plan.bonus.physio_mult * plan.medical_facility_mult
             } else {
                 match player_focus {
                     TrainingFocus::MentalResetRecovery => {
                         9.0 * plan.bonus.physio_mult * plan.medical_facility_mult
                     }
-                    _ => 3.0 * plan.bonus.physio_mult * plan.medical_facility_mult,
+                    _ => 5.0 * plan.bonus.physio_mult * plan.medical_facility_mult,
                 }
             };
 
@@ -981,8 +988,8 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
             let condition_rec = recovery_factor_from_condition(player.condition);
             let fitness_rec = recovery_factor_from_fitness(player.fitness);
 
-            // On rest days: only recovery, no attribute gains
-            if !is_training_day {
+            // On rest days or matchdays: only recovery, no attribute gains
+            if !is_training_day || is_matchday {
                 let stamina_factor = player.attributes.mental_resilience as f64 / 100.0;
                 let recovery = (recovery_base
                     * (0.5 + stamina_factor * 0.5)
