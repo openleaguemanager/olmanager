@@ -80,6 +80,20 @@ export function SquadTabV2({
   const [savingSlot, setSavingSlot] = useState<string | null>(null);
   const [swappingSlot, setSwappingSlot] = useState<number | null>(null);
 
+  const roleSubIds: string[] = myTeam.role_sub_ids ?? [];
+
+  const handleSetRoleSub = useCallback(async (roleIndex: number, playerId: string) => {
+    const newSubs = [...roleSubIds];
+    while (newSubs.length < 5) newSubs.push("");
+    newSubs[roleIndex] = playerId;
+    try {
+      const updated = await invoke<GameStateData>("set_role_subs", { subIds: newSubs });
+      onGameUpdate(updated);
+    } catch (err) {
+      console.error("[SquadTab] Failed to set role sub:", err);
+    }
+  }, [roleSubIds, onGameUpdate]);
+
   const handleToggleTransfer = useCallback(async (playerId: string) => {
     try {
       const updated = await invoke<GameStateData>("toggle_transfer_list", { playerId });
@@ -417,8 +431,10 @@ export function SquadTabV2({
                         <button type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Auto-select the best bench player for this role
-                            const replacement = benchPlayers
+                            // Prefer the designated sub for this role; fall back to best OVR bench player
+                            const designatedSubId = roleSubIds[slot.index];
+                            const designatedSub = designatedSubId ? benchPlayers.find((bp) => bp.id === designatedSubId) : null;
+                            const replacement = designatedSub ?? benchPlayers
                               .filter((bp) => resolvePlayerLolRole(bp) === slot.role)
                               .sort((a, b) => calculateLolOvr(b) - calculateLolOvr(a))[0];
                             if (replacement) handleSlotChange(slot.index, replacement.id);
@@ -446,6 +462,42 @@ export function SquadTabV2({
                       <button type="button" onClick={() => onSelectPlayer(player.id)} className="shrink-0 text-muted-foreground/50 hover:text-primary">
                         <ChevronRight className="size-4" />
                       </button>
+                    </div>
+                    {/* Sub slot for this role */}
+                    <div className="mt-1 ml-11 flex items-center gap-2">
+                      {(() => {
+                        const subId = roleSubIds[slot.index];
+                        const sub = subId ? roster.find((p) => p.id === subId) : null;
+                        return (
+                          <>
+                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60 w-6">SUB</span>
+                            <select
+                              value={subId ?? ""}
+                              onChange={(e) => handleSetRoleSub(slot.index, e.target.value)}
+                              className="max-w-[160px] rounded-md border border-border/60 bg-muted/40 pl-1.5 pr-6 py-0.5 text-[11px] text-foreground"
+                            >
+                              <option value="">{t("squad.noSub", { defaultValue: "Sin suplente" })}</option>
+                              {benchPlayers
+                                .filter((bp) => !activeLineupIds.includes(bp.id))
+                                .sort((a, b) => {
+                                  const aMatch = resolvePlayerLolRole(a) === slot.role ? 0 : 1;
+                                  const bMatch = resolvePlayerLolRole(b) === slot.role ? 0 : 1;
+                                  return aMatch - bMatch || calculateLolOvr(b) - calculateLolOvr(a);
+                                })
+                                .map((bp) => (
+                                  <option key={bp.id} value={bp.id}>
+                                    {bp.match_name} — {resolvePlayerLolRole(bp)} ({calculateLolOvr(bp)})
+                                  </option>
+                                ))}
+                            </select>
+                            {sub && sub.condition < 30 && (
+                              <span className="text-[10px] text-red-400" title={t("squad.subLowCondition", { defaultValue: "Suplente también tiene la energía baja" })}>
+                                <AlertTriangle className="size-3" />
+                              </span>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 );
