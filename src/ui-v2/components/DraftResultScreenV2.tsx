@@ -185,8 +185,10 @@ export default function DraftResultScreenV2({
   const redTeam = sideTeam(snapshot, "red");
   const blueTri = teamTriCode(blueTeam.name, teams);
   const redTri = teamTriCode(redTeam.name, teams);
-  const blueLogo = resolveTeamLogo(blueTeam.name);
-  const redLogo = resolveTeamLogo(redTeam.name);
+  const blueTeamData = teams?.find((t) => t.id === blueTeam.id);
+  const redTeamData = teams?.find((t) => t.id === redTeam.id);
+  const blueLogo = resolveTeamLogo(blueTeam.name, blueTeamData?.logo_url);
+  const redLogo = resolveTeamLogo(redTeam.name, redTeamData?.logo_url);
 
   const controlledWon = selectedResult.winnerSide === controlledSide;
   const controlledPrepInsight = buildLolScrimPrepInsight(
