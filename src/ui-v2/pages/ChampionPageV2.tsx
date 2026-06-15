@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
 import { invoke } from "@tauri-apps/api/core";
-import { Swords, Shield, Crosshair, Zap, TrendingUp, Crown, BarChart3, Activity } from "lucide-react";
+import { Swords, Shield, Crosshair, Zap, TrendingUp, Crown, BarChart3, Activity, ArrowLeft } from "lucide-react";
 import { resolveChampionTile, resolveChampionSplash } from "@/lib/champions/championImages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
@@ -31,7 +31,7 @@ const ROLE_META: Record<string, { icon: typeof Shield; color: string; label: str
   SUPPORT: { icon: Shield, color: "text-purple-400", label: "SUP" },
 };
 
-export default function ChampionPageV2({ championKey }: Props) {
+export default function ChampionPageV2({ championKey, onClose }: Props) {
   const { t } = useTranslation();
   const [s, setS] = useState<Stats | null>(null);
   const splash = resolveChampionSplash(championKey);
@@ -55,6 +55,15 @@ export default function ChampionPageV2({ championKey }: Props) {
         {/* Gradient layers */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-transparent" />
+
+        {/* Back button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute left-4 top-4 z-20 flex size-9 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white/80 backdrop-blur transition-all hover:bg-black/70 hover:text-white"
+        >
+          <ArrowLeft className="size-4" />
+        </button>
 
         {/* Watermark name */}
         <div className="pointer-events-none absolute -right-8 -top-8 select-none text-[18vw] font-heading font-black uppercase leading-none text-white/5 md:-right-12 md:-top-12 md:text-[16vw]">
