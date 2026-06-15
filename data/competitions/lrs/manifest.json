@@ -6,6 +6,7 @@
   "country": "LATAM",
   "tier": 2,
   "logo": "/competitions-icons/6023fe1fcc171e97.png",
+  "active": true,
   "teams_file": "teams/lrs_teams.json",
   "players_file": "players/lrs_players.json",
   "staff_file": null,

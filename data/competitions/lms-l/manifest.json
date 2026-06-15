@@ -6,6 +6,7 @@
   "country": "LMS",
   "tier": 1,
   "logo": "/competitions-icons/b3a4ae63f06967cf.png",
+  "active": false,
   "teams_file": "teams/lms-l_teams.json",
   "players_file": "players/lms-l_players.json",
   "staff_file": null,

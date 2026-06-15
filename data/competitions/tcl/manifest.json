@@ -6,6 +6,7 @@
   "country": "TR",
   "tier": 2,
   "logo": "/competitions-icons/d47d97a818cf8ab8.webp",
+  "active": true,
   "teams_file": "teams/tcl_teams.json",
   "players_file": "players/tcl_players.json",
   "staff_file": null,

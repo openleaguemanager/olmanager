@@ -6,6 +6,7 @@
   "country": "ES",
   "tier": 2,
   "logo": "/competitions-icons/c5a06181749cd742.webp",
+  "active": true,
   "teams_file": "teams/les_teams.json",
   "players_file": "players/les_players.json",
   "staff_file": null,

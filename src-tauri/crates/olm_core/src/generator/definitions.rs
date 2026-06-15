@@ -50,6 +50,9 @@ pub struct CompetitionManifest {
     /// Legacy competitions are hidden from selection and skipped during world assembly.
     #[serde(default)]
     pub legacy: bool,
+    /// True for competitions that should appear in the league selection and in-game tabs.
+    #[serde(default)]
+    pub active: bool,
 }
 
 fn default_teams_file() -> String {
@@ -160,6 +163,8 @@ pub struct CompetitionSummary {
     pub tier: u8,
     #[serde(default)]
     pub legacy: bool,
+    #[serde(default)]
+    pub active: bool,
     pub team_count: u32,
     pub teams: Vec<TeamSummary>,
 }

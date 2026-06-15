@@ -55,6 +55,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Movistar KOI FÃ©nix Arena",
       "stadium_capacity": 1500
     },
@@ -111,6 +112,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Team Heretics Arena",
       "stadium_capacity": 1500
     },
@@ -167,6 +169,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Barcelona Esports Arena",
       "stadium_capacity": 1500
     },
@@ -223,6 +226,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Falke Esports Arena",
       "stadium_capacity": 1500
     },
@@ -279,6 +283,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "UCAM Esports Arena",
       "stadium_capacity": 1500
     },
@@ -288,6 +293,7 @@
       "id": "team-854f6893",
       "name": "GiantX Itero",
       "short_name": "GXI",
+      "active": true,
       "country": "",
       "city": "",
       "stadium_name": "",
@@ -351,6 +357,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LUA Gaming Arena",
       "stadium_capacity": 1500
     },
@@ -360,6 +367,7 @@
       "id": "team-ac846213",
       "name": "UB Alma Mater",
       "short_name": "UAM",
+      "active": true,
       "country": "",
       "city": "",
       "stadium_name": "",

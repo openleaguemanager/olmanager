@@ -6,6 +6,7 @@
   "country": "US",
   "tier": 2,
   "logo": null,
+  "active": false,
   "teams_file": "teams/nacl-l_teams.json",
   "players_file": "players/nacl-l_players.json",
   "staff_file": null,

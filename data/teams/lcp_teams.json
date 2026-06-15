@@ -49,6 +49,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 2500
     },
@@ -105,6 +106,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "MVK Arena",
       "stadium_capacity": 2500
     },
@@ -161,6 +163,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "GE Arena",
       "stadium_capacity": 2500
     },
@@ -217,6 +220,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "TSW Arena",
       "stadium_capacity": 2500
     },
@@ -273,6 +277,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "DF Arena",
       "stadium_capacity": 2500
     },
@@ -323,6 +328,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 2500
     },
@@ -379,6 +385,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "CFO Arena",
       "stadium_capacity": 2500
     },
@@ -435,6 +442,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "SoftBank Hawks Arena",
       "stadium_capacity": 2500
     }

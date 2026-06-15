@@ -6,6 +6,7 @@
   "country": "PCS",
   "tier": 2,
   "logo": "/competitions-icons/9b80a9c9554b74d6.png",
+  "active": true,
   "teams_file": "teams/pcs_teams.json",
   "players_file": "players/pcs_players.json",
   "staff_file": null,

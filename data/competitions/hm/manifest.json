@@ -6,6 +6,7 @@
   "country": "CZ",
   "tier": 2,
   "logo": "/competitions-icons/200cbec793f7f67c.png",
+  "active": true,
   "teams_file": "teams/hm_teams.json",
   "players_file": "players/hm_players.json",
   "staff_file": null,

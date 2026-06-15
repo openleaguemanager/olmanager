@@ -55,6 +55,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "TL Arena",
       "stadium_capacity": 0
     },
@@ -111,6 +112,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "C9 Arena",
       "stadium_capacity": 2500
     },
@@ -167,6 +169,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Dignitas Arena",
       "stadium_capacity": 0
     },
@@ -223,6 +226,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LYO Arena",
       "stadium_capacity": 2500
     },
@@ -279,6 +283,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "DIS Arena",
       "stadium_capacity": 2500
     },
@@ -335,6 +340,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "High",
+      "active": true,
       "stadium_name": "Sentinels Arena",
       "stadium_capacity": 0
     },
@@ -391,6 +397,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "SR Arena",
       "stadium_capacity": 2500
     },
@@ -447,6 +454,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "FlyQuest Arena",
       "stadium_capacity": 0
     }

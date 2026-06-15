@@ -6,6 +6,7 @@
   "country": "NA",
   "tier": 1,
   "logo": "/competitions-icons/lcs.webp",
+  "active": true,
   "teams_file": "teams/lcs_teams.json",
   "players_file": "players/lcs_players.json",
   "staff_file": null,

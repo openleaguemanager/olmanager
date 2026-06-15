@@ -55,6 +55,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": false,
       "stadium_name": "A One Man Army Arena",
       "stadium_capacity": 1500
     }

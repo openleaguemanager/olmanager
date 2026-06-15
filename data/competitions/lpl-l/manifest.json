@@ -6,6 +6,7 @@
   "country": "CN",
   "tier": 1,
   "logo": "/competitions-icons/8b31482180e238d5.webp",
+  "active": false,
   "teams_file": "teams/lpl-l_teams.json",
   "players_file": "players/lpl-l_players.json",
   "staff_file": null,

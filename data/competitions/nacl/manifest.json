@@ -6,6 +6,7 @@
   "country": "US",
   "tier": 2,
   "logo": "/competitions-icons/d79472a321c5034a.webp",
+  "active": true,
   "teams_file": "teams/nacl_teams.json",
   "players_file": "players/nacl_players.json",
   "staff_file": null,

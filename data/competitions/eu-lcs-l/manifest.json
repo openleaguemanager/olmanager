@@ -6,6 +6,7 @@
   "country": null,
   "tier": 1,
   "logo": "/competitions-icons/1cd42c582587d057.webp",
+  "active": false,
   "teams_file": "teams/eu-lcs-l_teams.json",
   "players_file": "players/eu-lcs-l_players.json",
   "staff_file": null,

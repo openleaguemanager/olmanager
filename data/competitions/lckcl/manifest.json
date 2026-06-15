@@ -6,6 +6,7 @@
   "country": "KR",
   "tier": 2,
   "logo": "/competitions-icons/83c1c207b2dfde6b.webp",
+  "active": true,
   "teams_file": "teams/lckcl_teams.json",
   "players_file": "players/lckcl_players.json",
   "staff_file": null,

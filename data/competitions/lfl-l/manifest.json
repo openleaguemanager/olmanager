@@ -6,6 +6,7 @@
   "country": "FR",
   "tier": 2,
   "logo": null,
+  "active": false,
   "teams_file": "teams/lfl-l_teams.json",
   "players_file": "players/lfl-l_players.json",
   "staff_file": null,

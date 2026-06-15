@@ -6,6 +6,7 @@
   "country": "FR",
   "tier": 2,
   "logo": "/competitions-icons/82c14bb68fd59053.webp",
+  "active": true,
   "teams_file": "teams/lfl_teams.json",
   "players_file": "players/lfl_players.json",
   "staff_file": null,

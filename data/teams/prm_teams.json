@@ -55,6 +55,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Unicorns of Love Sexy Edition Arena",
       "stadium_capacity": 1500
     },
@@ -111,6 +112,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Eintracht Spandau Arena",
       "stadium_capacity": 1500
     },
@@ -167,6 +169,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "E WIE EINFACH E-SPORTS Arena",
       "stadium_capacity": 1500
     },
@@ -223,6 +226,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Team Orange Gaming Arena",
       "stadium_capacity": 1500
     },
@@ -279,6 +283,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "G2 Nord Arena",
       "stadium_capacity": 1500
     },
@@ -335,6 +340,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Eintracht Frankfurt Arena",
       "stadium_capacity": 1500
     },
@@ -349,6 +355,7 @@
       "id": "team-8c9a2d4b",
       "name": "VfB Stuttgart eSports",
       "short_name": "VFB",
+      "active": true,
       "logo_url": "/teams-icons/b695ec10e517f343.webp",
       "stadium_name": "",
       "stadium_capacity": 0,
@@ -407,6 +414,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Berlin International Gaming Arena",
       "stadium_capacity": 1500
     },
@@ -463,6 +471,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "ROSSMANN Centaurs Arena",
       "stadium_capacity": 1500
     },
@@ -519,6 +528,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Kaufland Hangry Knights Arena",
       "stadium_capacity": 1500
     }

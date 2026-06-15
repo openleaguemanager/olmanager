@@ -55,6 +55,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "VKS Arena",
       "stadium_capacity": 2500
     },
@@ -111,6 +112,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "RC Arena",
       "stadium_capacity": 2500
     },
@@ -167,6 +169,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LOS Arena",
       "stadium_capacity": 0
     },
@@ -223,6 +226,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LEV Arena",
       "stadium_capacity": 2500
     },
@@ -279,6 +283,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "PG Arena",
       "stadium_capacity": 2500
     },
@@ -335,6 +340,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LOUD Arena",
       "stadium_capacity": 0
     },
@@ -391,6 +397,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "High",
+      "active": true,
       "stadium_name": "FURIA Arena",
       "stadium_capacity": 0
     },
@@ -447,6 +454,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "Fluxo Arena",
       "stadium_capacity": 2500
     }

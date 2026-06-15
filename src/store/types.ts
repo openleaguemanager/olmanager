@@ -717,6 +717,7 @@ export interface CompetitionSummary {
   logo: string | null;
   tier: number;
   legacy: boolean;
+  active: boolean;
   team_count: number;
   teams: TeamSummary[];
 }

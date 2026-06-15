@@ -6,6 +6,7 @@
   "country": "RS",
   "tier": 2,
   "logo": "/competitions-icons/ed414dcd2fcada06.webp",
+  "active": true,
   "teams_file": "teams/ebl_teams.json",
   "players_file": "players/ebl_players.json",
   "staff_file": null,
