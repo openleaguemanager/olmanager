@@ -26,6 +26,10 @@ pub struct League {
     pub league_kind: LeagueKind,
     #[serde(default)]
     pub split_index: usize,
+    #[serde(default)]
+    pub tier: u8,
+    #[serde(default)]
+    pub active: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -203,6 +207,8 @@ impl League {
             logo: None,
             league_kind: LeagueKind::Main,
             split_index: 0,
+            tier: 0,
+            active: false,
         }
     }
 

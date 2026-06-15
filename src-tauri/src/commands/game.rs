@@ -396,6 +396,8 @@ pub async fn select_team(
 
         league.competition_id = Some(cid.clone());
         league.logo = manifest.logo.clone();
+        league.tier = manifest.tier.unwrap_or(0);
+        league.active = !manifest.legacy;
         all_leagues.push(league);
     }
 

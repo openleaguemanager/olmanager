@@ -34,7 +34,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
   const [visible, setVisible] = useState(false);
   useEffect(() => setVisible(true), []);
 
-  const leagues = useMemo(() => gameState.leagues ?? [], [gameState.leagues]);
+  const leagues = useMemo(() => (gameState.leagues ?? []).filter((l) => l.tier === 1 && l.active !== false), [gameState.leagues]);
   const selectedLeague = selectedCid ? leagues.find((l) => (l.competition_id ?? l.id) === selectedCid) ?? null : null;
   const selectedTeamIds = selectedCid ? gameState.teams.filter((t) => t.competition_id === selectedCid).map((t) => t.id) : [];
   const selectedPlayers = selectedTeamIds.length > 0 ? gameState.players.filter((p) => p.team_id != null && selectedTeamIds.includes(p.team_id)) : [];
