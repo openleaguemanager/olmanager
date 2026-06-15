@@ -408,7 +408,7 @@ export function SoloqTabV2({ gameState, onGameUpdate, onSelectPlayer }: SoloqTab
             <div
               key={player.id}
               className="cursor-pointer rounded-xl border border-border bg-muted/20 p-3 transition-all hover:border-muted-foreground/30"
-              onClick={() => onSelectPlayer?.(player.id)}
+              onClick={(e) => { if (!(e.target as HTMLElement).closest("select,button")) onSelectPlayer?.(player.id); }}
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">

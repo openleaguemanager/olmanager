@@ -14,8 +14,6 @@ import type { StoredFixtureDraftResult } from "@/lib/schedule/helpers";
 interface Props { gameState: GameStateData; onSelectTeam?: (id: string) => void }
 type View = "standings" | "calendar" | "teams" | "players";
 
-const TIER_1 = new Set(["lec", "lcs", "lck", "lpl", "lcp", "cblol"]);
-
 const REGION_GRADIENT: Record<string, string> = {
   lec: "from-blue-600 to-blue-900", lcs: "from-red-600 to-red-900",
   lck: "from-green-600 to-green-900", lpl: "from-amber-600 to-amber-900",
@@ -36,7 +34,7 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
   const [visible, setVisible] = useState(false);
   useEffect(() => setVisible(true), []);
 
-  const leagues = useMemo(() => (gameState.leagues ?? []).filter((l) => TIER_1.has(l.competition_id ?? l.id)), [gameState.leagues]);
+  const leagues = useMemo(() => (gameState.leagues ?? []).filter((l) => l.tier === 1 && l.active === true), [gameState.leagues]);
   const selectedLeague = selectedCid ? leagues.find((l) => (l.competition_id ?? l.id) === selectedCid) ?? null : null;
   const selectedTeamIds = selectedCid ? gameState.teams.filter((t) => t.competition_id === selectedCid).map((t) => t.id) : [];
   const selectedPlayers = selectedTeamIds.length > 0 ? gameState.players.filter((p) => p.team_id != null && selectedTeamIds.includes(p.team_id)) : [];

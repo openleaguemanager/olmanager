@@ -1,4 +1,4 @@
-use chrono::Datelike;
+use chrono::{Datelike, NaiveDate};
 use crate::domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
 use crate::domain::player::{Player, PlayerAttributes};
 use crate::domain::team::{
@@ -467,9 +467,14 @@ pub fn default_initial_contract_end_for_start_year(start_year: i32) -> String {
 
 pub fn apply_default_initial_contract_end(players: &mut [Player]) {
     let default_initial_contract_end = default_initial_contract_end_for_start_year(2026);
+    let min_start = NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
 
     for player in players.iter_mut() {
-        if player.contract_end.as_deref().map(|s| s.trim()).unwrap_or("").is_empty() {
+        let current = player
+            .contract_end
+            .as_deref()
+            .and_then(|s| NaiveDate::parse_from_str(s.trim(), "%Y-%m-%d").ok());
+        if current.is_none() || current.is_some_and(|d| d < min_start) {
             player.contract_end = Some(default_initial_contract_end.clone());
         }
     }

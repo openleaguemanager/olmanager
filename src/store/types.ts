@@ -758,6 +758,8 @@ export interface LeagueData {
   competition_id?: string | null;
   logo?: string | null;
   league_kind?: "Main" | "Academy";
+  tier?: number;
+  active?: boolean;
 }
 
 export type SeasonPhase = "Preseason" | "InSeason" | "PostSeason";
