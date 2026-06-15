@@ -8,7 +8,7 @@ use chrono::{Datelike, Months, NaiveDate};
 use crate::domain::message::{InboxMessage, MessageCategory, MessagePriority};
 use crate::domain::negotiation::{NegotiationFeedback, NegotiationMood};
 use crate::domain::player::{ContractRenewalState, Player, RenewalSessionOutcome, RenewalSessionStatus};
-use crate::domain::team::{Team, TeamKind};
+use crate::domain::team::Team;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -453,10 +453,7 @@ pub fn process_contract_expiries(game: &mut Game) {
         .filter_map(|(index, player)| {
             let days_remaining =
                 contract_days_remaining(player.contract_end.as_deref(), current_date)?;
-            let is_academy = player.team_id.as_deref().is_some_and(|tid| {
-                game.teams.iter().any(|t| t.id == tid && t.team_kind == TeamKind::Academy)
-            });
-            if player.team_id.is_some() && !is_academy && days_remaining <= 0 {
+            if player.team_id.is_some() && days_remaining <= 0 {
                 Some(index)
             } else {
                 None

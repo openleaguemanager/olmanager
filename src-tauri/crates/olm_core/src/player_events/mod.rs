@@ -39,10 +39,6 @@ pub fn generate_contract_concern_messages(game: &mut Game, apply_morale_pressure
         if player.team_id.as_deref() != Some(&user_team_id) {
             continue;
         }
-        // Skip academy players — their contract lifecycle is handled separately.
-        if game.teams.iter().any(|t| t.id == user_team_id && t.team_kind == crate::domain::team::TeamKind::Academy) {
-            continue;
-        }
 
         let Some(stage) = contract_warning_stage(player.contract_end.as_deref(), current_date)
         else {
