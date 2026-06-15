@@ -1,6 +1,7 @@
 use log::info;
 use tauri::State;
 
+use olm_core::end_of_season::EndOfSeasonSummary;
 use olm_core::generator::definitions::CompetitionManifest;
 use olm_core::state::StateManager;
 
@@ -86,16 +87,44 @@ pub fn advance_to_next_season(state: State<'_, StateManager>) -> Result<serde_js
             info!(
                 "[cmd] advance_to_next_season: split complete, advancing to next split"
             );
+            // Build a meaningful summary from current standings before advancing
+            let pre_advance_league = game.active_league().cloned();
+            let pre_advance_standings = pre_advance_league
+                .as_ref()
+                .map(|l| l.sorted_standings())
+                .unwrap_or_default();
+            let pre_advance_user_team_id = game.manager.team_id.clone();
+            let pre_advance_user_pos = pre_advance_user_team_id
+                .as_deref()
+                .and_then(|tid| pre_advance_standings.iter().position(|s| s.team_id == tid))
+                .map(|i| i + 1)
+                .unwrap_or(0);
+            let pre_advance_user_st = pre_advance_user_pos
+                .checked_sub(1)
+                .and_then(|i| pre_advance_standings.get(i));
+            let pre_advance_champion = pre_advance_standings.first();
+            let pre_advance_champion_name = pre_advance_champion
+                .and_then(|c| game.teams.iter().find(|t| t.id == c.team_id))
+                .map(|t| t.name.clone())
+                .unwrap_or_default();
+
             // Increment split, then generate its schedule
             if let Some(l) = game.active_league_mut() {
                 l.split_index += 1;
             }
             olm_core::end_of_season::process_end_of_split(&mut game, manifest);
-            // Return a minimal summary — no awards/history/reset on mid-year splits
-            let league = game.active_league().cloned();
-            olm_core::end_of_season::EndOfSeasonSummary {
-                season: league.as_ref().map(|l| l.season).unwrap_or(0),
-                league_name: league.as_ref().map(|l| l.name.clone()).unwrap_or_default(),
+            EndOfSeasonSummary {
+                season: pre_advance_league.as_ref().map(|l| l.season).unwrap_or(0),
+                league_name: pre_advance_league.as_ref().map(|l| l.name.clone()).unwrap_or_default(),
+                champion_id: pre_advance_champion.map(|c| c.team_id.clone()).unwrap_or_default(),
+                champion_name: pre_advance_champion_name,
+                user_position: pre_advance_user_pos as u32,
+                user_points: pre_advance_user_st.map(|s| s.points).unwrap_or(0),
+                user_won: pre_advance_user_st.map(|s| s.won).unwrap_or(0),
+                user_lost: pre_advance_user_st.map(|s| s.lost).unwrap_or(0),
+                user_maps_won: pre_advance_user_st.map(|s| s.maps_won).unwrap_or(0),
+                user_maps_lost: pre_advance_user_st.map(|s| s.maps_lost).unwrap_or(0),
+                total_teams: pre_advance_standings.len() as u32,
                 ..Default::default()
             }
         }
