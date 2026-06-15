@@ -1332,7 +1332,12 @@ export default function MatchSimulation() {
     // Keep the canonical fixture home/away snapshot intact. `snapshotForResult` can be
     // side-swapped to render the user's selected LoL side, and storing that swapped
     // shape as the base snapshot corrupts subsequent home/away series win tracking.
-    setSnapshot(mergeRuntimeEventsIntoSnapshot(snapshot ?? snapshotForResult, finalRuntimeState.events));
+    const merged = mergeRuntimeEventsIntoSnapshot(snapshot ?? snapshotForResult, finalRuntimeState.events);
+    setSnapshot({
+      ...merged,
+      home_score: finalRuntimeState.winner === "blue" ? 1 : finalRuntimeState.winner === "red" ? 0 : (merged.home_score ?? 0),
+      away_score: finalRuntimeState.winner === "red" ? 1 : finalRuntimeState.winner === "blue" ? 0 : (merged.away_score ?? 0),
+    });
 
     const runtimeBasedResult = buildDraftResultFromRuntime({
       runtime: finalRuntimeState,
