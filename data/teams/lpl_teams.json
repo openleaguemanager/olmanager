@@ -55,6 +55,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "EG Arena",
       "stadium_capacity": 2500
     },
@@ -111,6 +112,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LG Arena",
       "stadium_capacity": 2500
     },
@@ -167,6 +169,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "TES Arena",
       "stadium_capacity": 2500
     },
@@ -223,6 +226,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "UP Arena",
       "stadium_capacity": 2500
     },
@@ -279,6 +283,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "AL Arena",
       "stadium_capacity": 2500
     },
@@ -335,6 +340,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "WBG Arena",
       "stadium_capacity": 2500
     },
@@ -391,6 +397,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "LE Arena",
       "stadium_capacity": 2500
     },
@@ -447,6 +454,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "TW Arena",
       "stadium_capacity": 2500
     },
@@ -503,6 +511,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "BLG Arena",
       "stadium_capacity": 2500
     },
@@ -559,6 +568,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "TG Arena",
       "stadium_capacity": 2500
     },
@@ -615,6 +625,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "IG Arena",
       "stadium_capacity": 2500
     },
@@ -671,6 +682,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "JDG Arena",
       "stadium_capacity": 2500
     },
@@ -727,6 +739,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "OMG Arena",
       "stadium_capacity": 2500
     },
@@ -783,6 +796,7 @@
       "training_schedule": "Balanced",
       "scrim_weekly_slots": 5,
       "training_intensity": "Medium",
+      "active": true,
       "stadium_name": "NIP Arena",
       "stadium_capacity": 2500
     }

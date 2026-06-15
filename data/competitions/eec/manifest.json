@@ -6,6 +6,7 @@
   "country": "Europe",
   "tier": 2,
   "logo": "/competitions-icons/12e47febbe46154a.png",
+  "active": true,
   "teams_file": "teams/eec_teams.json",
   "players_file": "players/eec_players.json",
   "staff_file": null,

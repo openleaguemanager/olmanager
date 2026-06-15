@@ -6,6 +6,7 @@
   "country": "MX",
   "tier": 2,
   "logo": "/competitions-icons/1db57fd707344fb7.webp",
+  "active": true,
   "teams_file": "teams/lrn_teams.json",
   "players_file": "players/lrn_players.json",
   "staff_file": null,

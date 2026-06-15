@@ -6,6 +6,7 @@
   "country": "DE",
   "tier": 2,
   "logo": "/competitions-icons/9ec30098c9439838.webp",
+  "active": true,
   "teams_file": "teams/prm_teams.json",
   "players_file": "players/prm_players.json",
   "staff_file": null,

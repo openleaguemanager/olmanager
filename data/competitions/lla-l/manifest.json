@@ -6,6 +6,7 @@
   "country": "CL",
   "tier": 1,
   "logo": "/competitions-icons/aed4e4a1eabca6a5.webp",
+  "active": false,
   "teams_file": "teams/lla-l_teams.json",
   "players_file": "players/lla-l_players.json",
   "staff_file": null,

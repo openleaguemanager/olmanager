@@ -6,6 +6,7 @@
   "country": "VN",
   "tier": 2,
   "logo": "/competitions-icons/ade2af9e81d204b3.webp",
+  "active": true,
   "teams_file": "teams/vcs_teams.json",
   "players_file": "players/vcs_players.json",
   "staff_file": null,

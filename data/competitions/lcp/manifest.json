@@ -6,6 +6,7 @@
   "country": "AP",
   "tier": 1,
   "logo": "/competitions-icons/lcp.webp",
+  "active": true,
   "teams_file": "teams/lcp_teams.json",
   "players_file": "players/lcp_players.json",
   "staff_file": null,

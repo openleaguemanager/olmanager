@@ -41,7 +41,7 @@ export default function TeamSelectionV2() {
   }, []);
 
   const activeCompetitions = useMemo(() => {
-    const filtered = (leagueData?.competitions ?? []).filter((c) => !c.legacy);
+    const filtered = (leagueData?.competitions ?? []).filter((c) => c.active);
     console.log("[LeagueDebug] FILTERED:", filtered.map(c => ({ id: c.id, name: c.name, legacy: c.legacy })));
     return filtered;
   }, [leagueData]);

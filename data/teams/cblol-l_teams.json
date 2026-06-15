@@ -10,6 +10,7 @@
       "data.country": "BR",
       "name": "Rensga eSports",
       "short_name": "RNS",
+      "active": false,
       "city": "",
       "stadium_name": "",
       "stadium_capacity": 0,

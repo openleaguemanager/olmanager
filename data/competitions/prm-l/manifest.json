@@ -6,6 +6,7 @@
   "country": "DE",
   "tier": 2,
   "logo": null,
+  "active": false,
   "teams_file": "teams/prm-l_teams.json",
   "players_file": "players/prm-l_players.json",
   "staff_file": null,

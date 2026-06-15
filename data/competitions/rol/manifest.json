@@ -6,6 +6,7 @@
   "country": "LU",
   "tier": 2,
   "logo": "/competitions-icons/5a18f08c99ec9339.webp",
+  "active": true,
   "teams_file": "teams/rol_teams.json",
   "players_file": "players/rol_players.json",
   "staff_file": null,

@@ -6,6 +6,7 @@
   "country": "BR",
   "tier": 1,
   "logo": "/competitions-icons/1a6d3110c773d644.webp",
+  "active": false,
   "teams_file": "teams/cblol-l_teams.json",
   "players_file": "players/cblol-l_players.json",
   "staff_file": null,

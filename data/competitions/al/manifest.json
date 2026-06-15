@@ -6,6 +6,7 @@
   "country": "SA",
   "tier": 2,
   "logo": "/competitions-icons/eed3791d2ec9e36b.webp",
+  "active": true,
   "teams_file": "teams/al_teams.json",
   "players_file": "players/al_players.json",
   "staff_file": null,

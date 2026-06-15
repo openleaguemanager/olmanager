@@ -260,6 +260,7 @@ fn competition_summary(
         logo: manifest.logo,
         tier: manifest.tier.unwrap_or(0),
         legacy: manifest.legacy,
+        active: manifest.active,
         team_count: manifest.schedule.team_count,
         teams: team_summaries,
     })
@@ -279,7 +280,7 @@ pub fn build_league_selection(data_base: &Path) -> LeagueSelectionData {
 
     let filtered_manifests: Vec<_> = manifests
         .into_iter()
-        .filter(|m| !m.legacy && m.tier.unwrap_or(1) == 1)
+        .filter(|m| m.active && !m.legacy && m.tier.unwrap_or(1) == 1)
         .collect();
 
     for m in &filtered_manifests {

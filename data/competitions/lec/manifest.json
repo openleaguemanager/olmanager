@@ -6,6 +6,7 @@
   "country": "EU",
   "tier": 1,
   "logo": "/competitions-icons/lec.webp",
+  "active": true,
   "teams_file": "teams/lec_teams.json",
   "players_file": "players/lec_players.json",
   "staff_file": null,

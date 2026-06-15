@@ -30,6 +30,7 @@
       "scrim_weekly_slots": 5,
       "name": "Dark Passage",
       "short_name": "DP",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
@@ -67,6 +68,7 @@
       "scrim_weekly_slots": 5,
       "name": "BoostGate Esports",
       "short_name": "BGT",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
@@ -101,6 +103,7 @@
       "scrim_weekly_slots": 5,
       "name": "Ozarox Esports",
       "short_name": "OZO",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
@@ -138,6 +141,7 @@
       "scrim_weekly_slots": 5,
       "name": "PCIFIC Esports",
       "short_name": "PCF",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0
     },
@@ -168,6 +172,7 @@
       "scrim_weekly_slots": 5,
       "name": "SU Esports",
       "short_name": "SU",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
@@ -201,6 +206,7 @@
       "transfer_budget": 50000,
       "name": "Bushido Wildcats",
       "short_name": "BW",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
@@ -236,6 +242,7 @@
       "scrim_weekly_slots": 5,
       "name": "Misa Esports",
       "short_name": "MISA",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
@@ -270,6 +277,7 @@
       "scrim_weekly_slots": 5,
       "name": "Team Phoenix",
       "short_name": "PHX",
+      "active": true,
       "stadium_name": "",
       "stadium_capacity": 0,
       "colors": {
