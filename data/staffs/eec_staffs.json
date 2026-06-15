@@ -1,0 +1,86 @@
+{
+  "name": "EEC Staff",
+  "description": "EEC - 2026 Season",
+  "staff": [
+    {
+      "id": "39bab7ea-7deb-4ad0-9158-b07492adc01b",
+      "first_name": "Mario Lombardi",
+      "nickname": "Balleeno",
+      "role": "HeadCoach",
+      "team_id": "team-88bed990",
+      "profile_image_url": "/staff-photos/6e3e07ad5947dc2a.webp"
+    },
+    {
+      "id": "42c0d26b-b9de-4ef1-b2f8-fd602dae5973",
+      "first_name": "Nicolai-Daniel Uwadia",
+      "nickname": "Chrislai",
+      "role": "Assistant",
+      "team_id": "team-17a78639",
+      "profile_image_url": "/staff-photos/cba97645265a0ffa.webp"
+    },
+    {
+      "id": "6b065c36-dd7c-4359-af70-2829123a7b0c",
+      "first_name": "Georgia Tsompanopoulou",
+      "nickname": "Qyomi",
+      "role": "Assistant",
+      "team_id": "team-3b78a7d2",
+      "profile_image_url": "/staff-photos/4836913e27d9a738.webp"
+    },
+    {
+      "id": "74955b86-7ca7-4ac1-80e2-988d405598db",
+      "first_name": "Tim Blume",
+      "nickname": "Unkraut",
+      "role": "HeadCoach",
+      "team_id": "team-8d2d693f",
+      "profile_image_url": "/staff-photos/df44caf052e87c99.webp"
+    },
+    {
+      "id": "8e5c4046-fb5b-4aac-b115-d80ba85b56e0",
+      "first_name": "Arturo Pavón",
+      "nickname": "Godlaik",
+      "role": "Assistant",
+      "team_id": "team-727ebaea",
+      "profile_image_url": null
+    },
+    {
+      "id": "93089a73-060b-4a4e-85dd-a4dea335f2cc",
+      "first_name": "Andrija Jovanović (Андрија Јовановић)",
+      "nickname": "klowny",
+      "role": "HeadCoach",
+      "team_id": "team-727ebaea",
+      "profile_image_url": "/staff-photos/d7893318618fc937.webp"
+    },
+    {
+      "id": "bd54b26d-b4e6-40ba-87e3-8d0be363b90f",
+      "first_name": "Alexander Bachmann",
+      "nickname": "Hollow",
+      "role": "Assistant",
+      "team_id": "team-8d2d693f",
+      "profile_image_url": "/staff-photos/f762b2ba5acc1f92.webp"
+    },
+    {
+      "id": "e343cbb2-4e71-459e-be55-379cbc2f4082",
+      "first_name": "Frank Biondo",
+      "nickname": "RdHausFoX",
+      "role": "HeadCoach",
+      "team_id": "team-3b78a7d2",
+      "profile_image_url": null
+    },
+    {
+      "id": "e8ab8e2f-1b5a-437c-b662-8809d0bb6c10",
+      "first_name": "Valentin Ho-Coui-Youn",
+      "nickname": "Oneƒor",
+      "role": "HeadCoach",
+      "team_id": "team-d81f5f95",
+      "profile_image_url": "/staff-photos/0db9e67e77f156d0.webp"
+    },
+    {
+      "id": "fdb90982-fb98-4b71-b60e-23b4d79a658e",
+      "first_name": "Adam Emtestam",
+      "nickname": "Emest",
+      "role": "HeadCoach",
+      "team_id": "team-17a78639",
+      "profile_image_url": "/staff-photos/51f17133b437e5f8.webp"
+    }
+  ]
+}
