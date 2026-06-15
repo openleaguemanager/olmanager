@@ -14,40 +14,15 @@ pub fn check_season_complete(state: State<'_, StateManager>) -> Result<bool, Str
     Ok(olm_core::end_of_season::is_season_complete(&game))
 }
 
-/// Try to load the competition manifest from disk.
+/// Try to load the competition manifest from the globally-resolved resource dir.
 fn resolve_competition_manifest(
     game: &olm_core::game::Game,
 ) -> Option<CompetitionManifest> {
     let competition_id = game.user_competition_id.as_deref()?;
-
-    let exe_dir = std::env::current_exe().ok()?.parent()?.to_path_buf();
-    let relative_paths = [
-        exe_dir.join("data").join("competitions").join(competition_id).join("manifest.json"),
-        exe_dir.join("src-tauri").join("data").join("competitions").join(competition_id).join("manifest.json"),
-    ];
-    for p in &relative_paths {
-        if let Ok(json) = std::fs::read_to_string(p) {
-            if let Ok(manifest) = serde_json::from_str::<CompetitionManifest>(&json) {
-                return Some(manifest);
-            }
-        }
-    }
-
-    if let Ok(cwd) = std::env::current_dir() {
-        let cwd_paths = [
-            cwd.join("data").join("competitions").join(competition_id).join("manifest.json"),
-            cwd.join("src-tauri").join("data").join("competitions").join(competition_id).join("manifest.json"),
-        ];
-        for p in &cwd_paths {
-            if let Ok(json) = std::fs::read_to_string(p) {
-                if let Ok(manifest) = serde_json::from_str::<CompetitionManifest>(&json) {
-                    return Some(manifest);
-                }
-            }
-        }
-    }
-
-    None
+    let data_dir = olm_core::state::RESOURCE_DATA_DIR.get()?;
+    let path = data_dir.join("competitions").join(competition_id).join("manifest.json");
+    let json = std::fs::read_to_string(path).ok()?;
+    serde_json::from_str::<CompetitionManifest>(&json).ok()
 }
 
 #[tauri::command]
