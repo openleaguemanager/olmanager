@@ -1808,7 +1808,11 @@
     "subtitle": "Community timeline",
     "description": "No gameplay effects. Just teams, players, fans and meme accounts being normal online.",
     "emptyTitle": "The timeline is quiet",
-    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis."
+    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis.",
+    "comingSoonTitle": "Social Feed Coming Soon",
+    "comingSoonBody": "The social feed is currently available for <strong>LEC</strong> only.",
+    "comingSoonSub": "More leagues will be supported in a future update.",
+    "currentlyPlaying": "Currently playing:"
   },
   "playerProfile": {
     "contractInfo": "Contract & Info",

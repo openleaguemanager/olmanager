@@ -87,8 +87,9 @@ fn finish_live_match_internal(
     state: &StateManager,
     lol_report: Option<LolSimMatchReportInput>,
     locale: Option<&str>,
+    data_base: Option<&std::path::Path>,
 ) -> Result<FinishLiveMatchResponse, String> {
-    finish_live_match_service(state, lol_report, locale)
+    finish_live_match_service(state, lol_report, locale, data_base)
 }
 
 fn apply_team_talk_internal(
@@ -143,8 +144,9 @@ pub fn finish_live_match(
     state: State<'_, StateManager>,
     lol_report: Option<LolSimMatchReportInput>,
 ) -> Result<FinishLiveMatchResponse, String> {
-    let settings = crate::commands::settings::get_settings(app_handle).unwrap_or_default();
-    finish_live_match_internal(&state, lol_report, Some(settings.language.as_str()))
+    let settings = crate::commands::settings::get_settings(app_handle.clone()).unwrap_or_default();
+    let data_base = crate::commands::competitions::resolve_data_base(&app_handle);
+    finish_live_match_internal(&state, lol_report, Some(settings.language.as_str()), data_base.as_deref())
 }
 
 #[tauri::command]

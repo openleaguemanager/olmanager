@@ -4,11 +4,9 @@ import { useTranslation } from "react-i18next";
 import type { GameStateData, PlayerData, SocialPostData, TeamData } from "@/store/gameStore";
 import { Badge } from "@/ui-v2/_legacy/components/ui";
 import { formatDateShort } from "@/lib/common/helpers";
-import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
-import { resolveTeamLogo } from "@/lib/teams/teamLogos";
+import { assetUrl } from "@/lib/assetUrl";
+import { resolveSocialAvatar } from "@/lib/social/resolveSocialAvatar";
 import { createManagerSocialPost, relocalizeSocialFeed } from "@/services/socialService";
-import SocialEditor from "@/ui-v2/_legacy/components/social/SocialEditor";
-
 interface SocialTabProps {
   gameState: GameStateData;
   onGameUpdate: (state: GameStateData) => void;
@@ -33,28 +31,11 @@ const SENTIMENT_VARIANT: Record<string, "primary" | "accent" | "success" | "dang
   Copium: "primary",
 };
 
-const HANDLE_OVERRIDES: Record<string, { name: string; handle: string; avatar: string | null }> = {
-  "@DefinitelyObjective": {
-    name: "Manu 𓃵𓃶",
-    handle: "@Cabramaravilla",
-    avatar: "https://pbs.twimg.com/profile_images/1822062871280316416/mMjRmAqk_400x400.jpg",
-  },
-  "@Cabramaravilla": {
-    name: "Manu 𓃵𓃶",
-    handle: "@Cabramaravilla",
-    avatar: "https://pbs.twimg.com/profile_images/1822062871280316416/mMjRmAqk_400x400.jpg",
-  },
-};
-
 function displayAuthorName(post: SocialPostData): string {
-  const override = HANDLE_OVERRIDES[post.author_handle];
-  if (override) return override.name;
   return post.author_name;
 }
 
 function displayAuthorHandle(post: SocialPostData): string {
-  const override = HANDLE_OVERRIDES[post.author_handle];
-  if (override) return override.handle;
   return post.author_handle;
 }
 
@@ -80,66 +61,6 @@ function authorRing(post: SocialPostData): string {
   }
 }
 
-function defaultTeamLogoSrc(teamId: string): string {
-  const slug = teamId.replace(/^lec-/, "");
-  if (slug === "shifters") {
-    return "/teams-icons/shifters.webp";
-  }
-  return `/teams-icons/${slug}.webp`;
-}
-
-function academyLogoFromMetadata(team: TeamData): string | null {
-  const academy = team.academy as
-    | {
-        branding?: { current_logo_url?: string | null };
-        acquisition?: { original_logo_url?: string | null };
-        source_identity?: { original_logo_url?: string | null };
-        current_logo_url?: string | null;
-        original_logo_url?: string | null;
-      }
-    | null
-    | undefined;
-
-  return (
-    academy?.branding?.current_logo_url ??
-    academy?.acquisition?.original_logo_url ??
-    academy?.source_identity?.original_logo_url ??
-    academy?.current_logo_url ??
-    academy?.original_logo_url ??
-    null
-  );
-}
-
-function teamLogoSrc(team: TeamData): string {
-  return resolveTeamLogo(team.name) ?? defaultTeamLogoSrc(team.id) ?? academyLogoFromMetadata(team) ?? "";
-}
-
-function findPostTeam(post: SocialPostData, teams: TeamData[]): TeamData | null {
-  const normalizedHandle = post.author_handle.replace(/^@/, "").toLowerCase();
-  const byHandle = teams.find((team) => {
-    const teamHandle = team.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "")
-      .slice(0, 15);
-    const shortHandle = team.short_name
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "")
-      .slice(0, 15);
-    return normalizedHandle === teamHandle || normalizedHandle === shortHandle;
-  });
-  if (byHandle) return byHandle;
-
-  const firstTeamId = post.team_ids[0];
-  if (!firstTeamId) return null;
-  return teams.find((team) => team.id === firstTeamId) ?? null;
-}
-
-function findPostPlayer(post: SocialPostData, players: PlayerData[]): PlayerData | null {
-  const firstPlayerId = post.player_ids[0];
-  if (!firstPlayerId) return null;
-  return players.find((player) => player.id === firstPlayerId) ?? null;
-}
-
 function verifiedMeta(post: SocialPostData): { color: string; title: string } | null {
   if (post.author_type === "Team") {
     return { color: "text-amber-400", title: "Golden verified team" };
@@ -161,24 +82,16 @@ function Avatar({
   players: PlayerData[];
   accounts: GameStateData["social_accounts"];
 }) {
-  const team = post.author_type === "Team" ? findPostTeam(post, teams) : null;
-  const player = post.author_type === "Player" ? findPostPlayer(post, players) : null;
-  const override = HANDLE_OVERRIDES[post.author_handle];
-  const accountAvatar =
-    accounts?.find((account) => account.handle.toLowerCase() === post.author_handle.toLowerCase())
-      ?.profile_image_url ?? null;
-  const src =
-    override?.avatar ??
-    accountAvatar ??
-    (team
-      ? teamLogoSrc(team)
-      : player
-        ? resolvePlayerPhoto(player.id, player.match_name, player.profile_image_url)
-        : null);
+  const rawSrc = resolveSocialAvatar(
+    post,
+    accounts ?? [],
+    teams,
+    players,
+  );
+  const src = assetUrl(rawSrc);
 
   return (
     <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br ${authorRing(post)} font-heading text-sm font-bold text-white`}>
-      <span>{displayAuthorName(post).slice(0, 2).toUpperCase()}</span>
       {src ? (
         <img
           src={src}
@@ -189,7 +102,9 @@ function Avatar({
             event.currentTarget.style.display = "none";
           }}
         />
-      ) : null}
+      ) : (
+        <span>{displayAuthorName(post).slice(0, 2).toUpperCase()}</span>
+      )}
     </div>
   );
 }
@@ -201,7 +116,6 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
   const [composerText, setComposerText] = useState("");
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
-  const [showEditor, setShowEditor] = useState(false);
   const lastLocalizedLanguageRef = useRef<string>("");
   const posts = useMemo(
     () =>
@@ -279,7 +193,7 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
   }
 
   return (
-    <div className={`mx-auto overflow-hidden rounded-2xl border border-border bg-card shadow-sm border-border bg-card ${showEditor ? "max-w-6xl" : "max-w-2xl"}`}>
+    <div className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-border bg-card shadow-sm border-border bg-card">
       <div className="sticky top-0 z-10 border-b border-border bg-card/90 px-5 py-4 backdrop-blur border-border bg-card/90">
         <h2 className="font-heading text-xl font-bold text-foreground text-foreground">
           {t("social.title", { defaultValue: "Social" })}
@@ -287,24 +201,6 @@ export default function SocialTab({ gameState, onGameUpdate }: SocialTabProps) {
         <p className="text-sm text-muted-foreground dark:text-muted-foreground/70">
           {t("social.subtitle", { defaultValue: "Community timeline" })}
         </p>
-
-        <div className="mt-3 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              if (showEditor) {
-                setShowEditor(false);
-              } else {
-                setShowEditor(true);
-              }
-            }}
-            className="rounded-full border border-border/70 px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted border-border dark:text-muted-foreground/50 hover:bg-muted"
-          >
-            {showEditor ? "Ocultar editor" : "Abrir editor social"}
-          </button>
-        </div>
-
-        {showEditor ? <SocialEditor gameState={gameState} onGameUpdate={onGameUpdate} /> : null}
 
         <div className="mt-3 rounded-xl border border-border bg-card p-3 border-border bg-muted/50">
           <textarea

@@ -4,11 +4,29 @@ use crate::domain::team::Team;
 use crate::engine::report::{MatchReport, PlayerMatchStats};
 
 use crate::game::Game;
+use crate::social_data::{load_match_texts, MatchTexts};
 use crate::social_registry::{default_social_accounts, social_author};
 use crate::social_templates::{
     MatchTemplateContext, MatchTemplateSlot, SelectedMatchTemplate, default_social_templates,
     select_match_template_for_language,
 };
+use std::path::Path;
+use std::sync::OnceLock;
+
+static MATCH_TEXTS: OnceLock<MatchTexts> = OnceLock::new();
+
+fn cached_match_texts(data_base: Option<&Path>) -> Option<&'static MatchTexts> {
+    if let Some(texts) = MATCH_TEXTS.get() {
+        return Some(texts);
+    }
+    if let Some(base) = data_base {
+        if let Some(texts) = load_match_texts(base) {
+            let _ = MATCH_TEXTS.set(texts);
+            return MATCH_TEXTS.get();
+        }
+    }
+    None
+}
 
 fn social_handle(name: &str) -> String {
     let handle: String = name
@@ -75,6 +93,24 @@ fn scale_engagement(values: (u32, u32, u32), factor: f64) -> (u32, u32, u32) {
     (scale(values.0), scale(values.1), scale(values.2))
 }
 
+fn sentiment_from_tags(tags: &[String], is_winner: bool) -> SocialSentiment {
+    let tag_set: std::collections::HashSet<String> =
+        tags.iter().map(|t| t.to_lowercase()).collect();
+    if tag_set.contains("stomp") {
+        return if is_winner { SocialSentiment::Hype } else { SocialSentiment::Meltdown };
+    }
+    if tag_set.contains("close") {
+        return SocialSentiment::Worried;
+    }
+    if tag_set.contains("hate") {
+        return SocialSentiment::Angry;
+    }
+    if tag_set.contains("rivalry") {
+        return if is_winner { SocialSentiment::Hype } else { SocialSentiment::Worried };
+    }
+    if is_winner { SocialSentiment::Calm } else { SocialSentiment::Worried }
+}
+
 fn pick_team_fan_account<'a>(
     game: &'a Game,
     team_id: &str,
@@ -118,7 +154,25 @@ fn team_fan_reaction_text(
     opponent_short_name: &str,
     score: &str,
     seed: &str,
+    data_base: Option<&Path>,
 ) -> String {
+    if let Some(texts) = cached_match_texts(data_base) {
+        let map = if won {
+            &texts.fan_reaction_won
+        } else {
+            &texts.fan_reaction_lost
+        };
+        if let Some(options) = map.get(language).or_else(|| map.get("en")) {
+            if !options.is_empty() {
+                let idx = variant_index(seed, options.len());
+                return options[idx]
+                    .replace("{team}", team_short_name)
+                    .replace("{opponent}", opponent_short_name)
+                    .replace("{score}", score);
+            }
+        }
+    }
+
     let options: &[&str] = match (language, won) {
         ("es", true) => &[
             "{team} gano y se noto en el mapa. Muy buena serie contra {opponent}. {score}",
@@ -148,7 +202,21 @@ fn team_fan_reaction_text(
         .replace("{score}", score)
 }
 
-fn bouzys_vs_fnatic_text(language: &str, winner_short_name: &str, seed: &str) -> String {
+fn bouzys_vs_fnatic_text(
+    language: &str,
+    winner_short_name: &str,
+    seed: &str,
+    data_base: Option<&Path>,
+) -> String {
+    if let Some(texts) = cached_match_texts(data_base) {
+        if let Some(options) = texts.bouzys_vs_fnatic.get(language).or_else(|| texts.bouzys_vs_fnatic.get("en")) {
+            if !options.is_empty() {
+                let idx = variant_index(seed, options.len());
+                return options[idx].replace("{winner}", winner_short_name);
+            }
+        }
+    }
+
     let options: &[&str] = match language {
         "es" => &[
             "Hoy soy {winner} Bouzys. Gracias por bajar a Fnatic, cine total.",
@@ -191,18 +259,69 @@ fn team_loser_post_text(
     opponent_short_name: &str,
     score: &str,
     seed: &str,
+    stomp: bool,
+    data_base: Option<&Path>,
 ) -> String {
-    let options: &[&str] = match language {
-        "es" => &[
-            "No fue nuestro mejor dia. Revisamos y volvemos mas fuertes. {score}",
-            "Resultado duro para {team}. Gracias por el apoyo.",
-            "GG {opponent}. Hoy no salio, pero seguimos trabajando.",
-        ],
-        _ => &[
-            "Not our best day. We review and come back stronger. {score}",
-            "Tough result for {team}. Thank you for the support.",
-            "GG {opponent}. Not our day, but we keep working.",
-        ],
+    if let Some(texts) = cached_match_texts(data_base) {
+        let map = if stomp {
+            &texts.team_loser_stomp
+        } else {
+            &texts.team_loser_close
+        };
+        if let Some(options) = map.get(language).or_else(|| map.get("en")) {
+            if !options.is_empty() {
+                let idx = variant_index(seed, options.len());
+                return options[idx]
+                    .replace("{team}", team_short_name)
+                    .replace("{opponent}", opponent_short_name)
+                    .replace("{score}", score);
+            }
+        }
+        if let Some(options) = texts.team_loser.get(language).or_else(|| texts.team_loser.get("en")) {
+            if !options.is_empty() {
+                let idx = variant_index(seed, options.len());
+                return options[idx]
+                    .replace("{team}", team_short_name)
+                    .replace("{opponent}", opponent_short_name)
+                    .replace("{score}", score);
+            }
+        }
+    }
+
+    let options: &[&str] = if stomp {
+        match language {
+            "es" => &[
+                "No fue nuestro mejor dia. {score} y duele.",
+                "Resultado duro para {team}. Necesitamos revisar TODO.",
+                "GG {opponent}. Hoy no salio nada. {score}",
+                "{score}. No hay palabras para esto. A levantarse.",
+                "Dia para olvidar. {score} y a seguir.",
+            ],
+            _ => &[
+                "Not our best day. {score} and it hurts.",
+                "Tough result for {team}. We need to review EVERYTHING.",
+                "GG {opponent}. Nothing worked today. {score}",
+                "{score}. No words for this. Back to the grind.",
+                "A day to forget. {score} and we move on.",
+            ],
+        }
+    } else {
+        match language {
+            "es" => &[
+                "Tensión hasta el final. {score} y nos duele.",
+                "Casi. {score} pero no fue suficiente.",
+                "Partido reñido. {score} y seguimos luchando.",
+                "GG {opponent}. {score} y nos vamos con la cabeza alta.",
+                "Estuvimos cerca. {score} y la próxima es nuestra.",
+            ],
+            _ => &[
+                "Tension until the end. {score} and it hurts.",
+                "So close. {score} but not enough.",
+                "Close game. {score} and we keep fighting.",
+                "GG {opponent}. {score} and we leave with our heads high.",
+                "We were close. {score} and next one is ours.",
+            ],
+        }
     };
 
     options[variant_index(seed, options.len())]
@@ -216,8 +335,9 @@ pub fn generate_match_social_posts(
     fixture_index: usize,
     report: &MatchReport,
     locale: Option<&str>,
+    data_base: Option<&Path>,
 ) {
-    ensure_social_registry_defaults(game);
+    ensure_social_registry_defaults(game, data_base);
 
     let Some(league) = game.active_league() else {
         return;
@@ -290,7 +410,7 @@ pub fn generate_match_social_posts(
         SocialAuthorType::Team,
         team_template.text,
         SocialPostCategory::Banter,
-        SocialSentiment::Hype,
+        sentiment_from_tags(&team_template.tags, true),
     )
     .with_engagement(likes, reposts, replies)
     .with_tags(if team_template.tags.is_empty() {
@@ -303,21 +423,24 @@ pub fn generate_match_social_posts(
 
     let (loss_likes, loss_reposts, loss_replies) =
         engagement(75, loser.reputation, false, &format!("{}-team-loss", seed));
+    let loser_team_text = team_loser_post_text(
+        &language,
+        &loser.short_name,
+        &winner.short_name,
+        &score,
+        &seed,
+        stomp,
+        data_base,
+    );
     let loser_team_post = SocialPost::new(
         format!("social_{}_team_loser", fixture.id),
         date.clone(),
         loser.name.clone(),
         social_handle(&loser.name),
         SocialAuthorType::Team,
-        team_loser_post_text(
-            &language,
-            &loser.short_name,
-            &winner.short_name,
-            &score,
-            &seed,
-        ),
+        loser_team_text,
         SocialPostCategory::MatchResult,
-        SocialSentiment::Worried,
+        sentiment_from_tags(&[], false),
     )
     .with_engagement(loss_likes, loss_reposts, loss_replies)
     .with_tags(vec![
@@ -362,11 +485,7 @@ pub fn generate_match_social_posts(
             .unwrap_or(SocialAuthorType::Fan),
         fan_template.text,
         SocialPostCategory::FanOpinion,
-        if stomp {
-            SocialSentiment::Meltdown
-        } else {
-            SocialSentiment::Hype
-        },
+        sentiment_from_tags(&fan_template.tags, true),
     )
     .with_engagement(likes, reposts, replies)
     .with_tags(if fan_template.tags.is_empty() {
@@ -406,7 +525,7 @@ pub fn generate_match_social_posts(
             .unwrap_or(SocialAuthorType::Analyst),
         analyst_template.text,
         SocialPostCategory::MediaTake,
-        SocialSentiment::Calm,
+        sentiment_from_tags(&analyst_template.tags, true),
     )
     .with_engagement(likes, reposts, replies)
     .with_tags(if analyst_template.tags.is_empty() {
@@ -445,9 +564,10 @@ pub fn generate_match_social_posts(
                 &loser.short_name,
                 &score,
                 &format!("{}-fan-win", seed),
+                data_base,
             ),
             SocialPostCategory::FanOpinion,
-            SocialSentiment::Hype,
+            sentiment_from_tags(&[], true),
         )
         .with_engagement(likes, reposts, replies)
         .with_tags(vec!["fan".to_string(), "team-win".to_string()])
@@ -481,9 +601,10 @@ pub fn generate_match_social_posts(
                 &winner.short_name,
                 &score,
                 &format!("{}-fan-loss", seed),
+                data_base,
             ),
             SocialPostCategory::FanOpinion,
-            SocialSentiment::Worried,
+            sentiment_from_tags(&[], false),
         )
         .with_engagement(likes, reposts, replies)
         .with_tags(vec!["fan".to_string(), "team-loss".to_string()])
@@ -519,7 +640,7 @@ pub fn generate_match_social_posts(
             SocialAuthorType::Player,
             player_template.text,
             SocialPostCategory::PlayerReaction,
-            SocialSentiment::Hype,
+            sentiment_from_tags(&player_template.tags, true),
         )
         .with_engagement(likes, reposts, replies)
         .with_tags(if player_template.tags.is_empty() {
@@ -548,9 +669,9 @@ pub fn generate_match_social_posts(
             },
             "@Bouzyslol".to_string(),
             SocialAuthorType::Fan,
-            bouzys_vs_fnatic_text(&language, &winner.short_name, &format!("{}-bouzys", seed)),
+            bouzys_vs_fnatic_text(&language, &winner.short_name, &format!("{}-bouzys", seed), data_base),
             SocialPostCategory::FanOpinion,
-            SocialSentiment::Hype,
+            sentiment_from_tags(&[], true),
         )
         .with_engagement(likes, reposts, replies)
         .with_tags(vec![
@@ -604,8 +725,12 @@ fn kill_difference_for_winner(fixture: &Fixture, report: &MatchReport) -> u16 {
     winner_kills.saturating_sub(loser_kills)
 }
 
-pub fn publish_manager_post(game: &mut Game, raw_text: &str) -> Result<SocialPost, String> {
-    ensure_social_registry_defaults(game);
+pub fn publish_manager_post(
+    game: &mut Game,
+    raw_text: &str,
+    data_base: Option<&Path>,
+) -> Result<SocialPost, String> {
+    ensure_social_registry_defaults(game, data_base);
 
     let text = raw_text.trim();
     if text.is_empty() {
@@ -639,8 +764,9 @@ pub fn publish_manager_post(game: &mut Game, raw_text: &str) -> Result<SocialPos
     Ok(post)
 }
 
-pub fn ensure_social_registry_defaults(game: &mut Game) {
-    let defaults = default_social_accounts();
+pub fn ensure_social_registry_defaults(game: &mut Game, data_base: Option<&Path>) {
+    let json_accounts = data_base.and_then(crate::social_data::load_social_accounts);
+    let defaults = json_accounts.unwrap_or_else(default_social_accounts);
     if game.social_accounts.is_empty() {
         game.social_accounts = defaults;
     } else {
@@ -650,10 +776,16 @@ pub fn ensure_social_registry_defaults(game: &mut Game) {
                 .iter_mut()
                 .find(|account| account.handle.eq_ignore_ascii_case(&default_account.handle))
             {
-                if existing.profile_image_url.is_none()
-                    && default_account.profile_image_url.is_some()
-                {
-                    existing.profile_image_url = default_account.profile_image_url.clone();
+                // Preserve user-edited fields but update Twitter URLs to local paths
+                if let Some(ref default_url) = default_account.profile_image_url {
+                    if existing
+                        .profile_image_url
+                        .as_ref()
+                        .map(|url| url.contains("pbs.twimg.com"))
+                        .unwrap_or(true)
+                    {
+                        existing.profile_image_url = Some(default_url.clone());
+                    }
                 }
                 if existing.favorite_team_ids.is_empty()
                     && !default_account.favorite_team_ids.is_empty()
@@ -666,12 +798,12 @@ pub fn ensure_social_registry_defaults(game: &mut Game) {
         }
     }
     if game.social_templates.is_empty() {
-        game.social_templates = default_social_templates();
+        game.social_templates = default_social_templates(data_base);
     }
 }
 
-pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
-    ensure_social_registry_defaults(game);
+pub fn relocalize_social_posts(game: &mut Game, locale: &str, data_base: Option<&Path>) {
+    ensure_social_registry_defaults(game, data_base);
     let Some(league) = game.active_league() else {
         return;
     };
@@ -786,6 +918,8 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
                 &winner.short_name,
                 &score,
                 &seed,
+                stomp,
+                data_base,
             )
         } else if post.id.ends_with("_fan") {
             select_match_template_for_language(
@@ -811,6 +945,7 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
                 &loser.short_name,
                 &score,
                 &seed,
+                data_base,
             )
         } else if post.id.ends_with("_fan_loser_team") {
             team_fan_reaction_text(
@@ -820,6 +955,7 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
                 &winner.short_name,
                 &score,
                 &seed,
+                data_base,
             )
         } else if post.id.ends_with("_fan_bouzys_fnatic") {
             if language.eq_ignore_ascii_case("es") {
@@ -827,7 +963,7 @@ pub fn relocalize_social_posts(game: &mut Game, locale: &str) {
             } else {
                 post.author_name = "X Bouzys".to_string();
             }
-            bouzys_vs_fnatic_text(&language, &winner.short_name, &format!("{}-bouzys", seed))
+            bouzys_vs_fnatic_text(&language, &winner.short_name, &format!("{}-bouzys", seed), data_base)
         } else if post.id.contains("_player_") {
             select_match_template_for_language(
                 &templates,

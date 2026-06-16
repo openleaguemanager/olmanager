@@ -96,7 +96,7 @@ pub fn dispatch(command: &str, args: &Value, game: &mut Game) -> Result<Dispatch
         }
         "relocalize_social_feed" => {
             let lang = optional_string_arg(args, &["language", "locale"]).unwrap_or_else(|| "en".to_string());
-            crate::social::relocalize_social_posts(game, &lang);
+            crate::social::relocalize_social_posts(game, &lang, None);
             Ok(DispatchResult::GameModified(json!(game)))
         }
 

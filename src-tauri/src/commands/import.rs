@@ -40,7 +40,7 @@ const IMPORT_RESPONSE_TIMEOUT: Duration = Duration::from_secs(45);
 const IMPORT_READ_TIMEOUT: Duration = Duration::from_secs(45);
 const IMPORT_PROGRESS_EVENT: &str = "olm-import-progress";
 
-const PUBLIC_PHOTO_DIRS: [&str; 7] = [
+const PUBLIC_PHOTO_DIRS: [&str; 8] = [
     "player-photos",
     "teams-icons",
     "competitions-icons",
@@ -48,6 +48,7 @@ const PUBLIC_PHOTO_DIRS: [&str; 7] = [
     "staff-icons",
     "manager-icons",
     "default",
+    "social-avatars",
 ];
 
 #[derive(Debug, Default, serde::Serialize)]

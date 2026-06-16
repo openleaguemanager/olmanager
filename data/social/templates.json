@@ -5,6 +5,8 @@
       "language": "es",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Buen partido y seguimos sumando. {score}",
         "Victoria importante. Gracias a todos los que nos apoyaron hoy. #Vamos{winner_short_name}",
@@ -17,13 +19,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-es-1",
       "language": "es",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} y no fue ni close.",
         "Demolición total. {score} en {winner_short_name}.",
@@ -36,15 +41,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-es-1",
       "language": "es",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Tensión hasta el final. {score} pero lo conseguimos.",
         "Mi corazón no aguanta estos {score}.",
@@ -57,15 +62,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-en-1",
       "language": "en",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Clean series, clean comms, clean finish. {score}",
         "Big win today. Thank you for showing up with us. #Go{winner_short_name}",
@@ -78,13 +83,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-en-1",
       "language": "en",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} and it wasn't even close.",
         "Total demolition. {score} for {winner_short_name}.",
@@ -97,15 +105,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-en-1",
       "language": "en",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Tension until the very end. {score} but we got it.",
         "My heart can't handle these {score}.",
@@ -118,15 +126,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-fr-1",
       "language": "fr",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Série propre, communication propre, fin propre. {score}",
         "Grosse victoire aujourd'hui. Merci pour le soutien. #Go{winner_short_name}",
@@ -139,13 +147,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-fr-1",
       "language": "fr",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} et ce n'était même pas close.",
         "Démolition totale. {score} pour {winner_short_name}.",
@@ -158,15 +169,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-fr-1",
       "language": "fr",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Tension jusqu'au bout. {score} mais on l'a eu.",
         "Mon cœur ne supporte pas ces {score}.",
@@ -179,15 +190,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-de-1",
       "language": "de",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Saubere Serie, klare Calls, guter Abschluss. {score}",
         "Wichtiger Sieg heute. Danke für euren Support. #Go{winner_short_name}",
@@ -200,13 +211,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-de-1",
       "language": "de",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} und es war nicht einmal knapp.",
         "Totale Demolierung. {score} für {winner_short_name}.",
@@ -219,15 +233,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-de-1",
       "language": "de",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Spannung bis zum Ende. {score} aber wir haben es geschafft.",
         "Mein Herz hält diese {score} nicht aus.",
@@ -240,15 +254,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-it-1",
       "language": "it",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Serie pulita, comunicazione chiara, chiusura solida. {score}",
         "Vittoria importante oggi. Grazie per il supporto. #Go{winner_short_name}",
@@ -261,13 +275,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-it-1",
       "language": "it",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} e non è stato nemmeno close.",
         "Demolizione totale. {score} per {winner_short_name}.",
@@ -280,15 +297,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-it-1",
       "language": "it",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Tensione fino alla fine. {score} ma ce l'abbiamo fatta.",
         "Il mio cuore non regge questi {score}.",
@@ -301,15 +318,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-pt-1",
       "language": "pt",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Série limpa, comunicação clara e boa finalização. {score}",
         "Vitória importante hoje. Obrigado pelo apoio. #Go{winner_short_name}",
@@ -322,13 +339,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-pt-1",
       "language": "pt",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} e nem foi close.",
         "Demolição total. {score} em {winner_short_name}.",
@@ -341,15 +361,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-pt-1",
       "language": "pt",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Tensão até ao fim. {score} mas conseguimos.",
         "O meu coração não aguenta estes {score}.",
@@ -362,15 +382,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-pt-BR-1",
       "language": "pt-BR",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Série limpa, comunicação clara e finalização sólida. {score}",
         "Vitória importante hoje. Obrigado pelo apoio. #Go{winner_short_name}",
@@ -383,13 +403,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-pt-BR-1",
       "language": "pt-BR",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} e nem foi close.",
         "Demolição total. {score} em {winner_short_name}.",
@@ -402,15 +425,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-pt-BR-1",
       "language": "pt-BR",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Tensão até o fim. {score} mas conseguimos.",
         "Meu coração não aguenta esses {score}.",
@@ -423,15 +446,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "team-banter-tr-1",
       "language": "tr",
       "slot": "TeamBanter",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": null,
       "variants": [
         "GG {loser_short_name}. Temiz seri, net iletişim, sağlam kapanış. {score}",
         "Bugün önemli bir galibiyet aldık. Destek için teşekkürler. #Go{winner_short_name}",
@@ -444,13 +467,16 @@
         "match",
         "team",
         "global"
-      ]
+      ],
+      "active": true
     },
     {
       "id": "team-banter-stomp-tr-1",
       "language": "tr",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} ve yakın bile değildi.",
         "Tam bir yıkım. {score} için {winner_short_name}.",
@@ -463,15 +489,15 @@
         "team",
         "stomp"
       ],
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "team-banter-close-tr-1",
       "language": "tr",
       "slot": "TeamBanter",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Sonuna kadar gerilim. {score} ama başardık.",
         "Kalbim bu {score} kaldıramıyor.",
@@ -484,15 +510,15 @@
         "team",
         "close"
       ],
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "Partido muy serio de {winner_short_name}. Cuando juegan así, da gusto verlos.",
         "{winner_short_name} ganó y el chat ya está hablando de playoffs. Un día normal.",
@@ -506,13 +532,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "¿CÓMO PASÓ ESTO? {score} y no fue ni close.",
         "{winner_short_name} acaba de hacer una masacre. {score}",
@@ -525,16 +553,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Mi corazón no aguanta estos partidos. {score} y estoy en el hospital.",
         "{winner_short_name} ganó pero sufrí más que en la vida real.",
@@ -547,16 +574,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "El clásico nunca decepciona. {score}",
         "Rivalry time. La rivalidad continúa.",
@@ -569,19 +595,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. La rivalidad continúa.",
         "GX vs TH. Siempre intenso.",
@@ -594,19 +616,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Otra vez estos. Odio este matchup.",
         "Espero que pierdan. No me importa quién.",
@@ -619,19 +637,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-es-1",
       "language": "es",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Odio este partido. Cada vez que juegan es un desastre.",
         "Espero que ambos pierdan. Es lo que se merecen.",
@@ -644,19 +658,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "That was a very serious game from {winner_short_name}. Good League is still good League.",
         "{winner_short_name} won and the timeline is already talking playoffs. Classic.",
@@ -670,13 +680,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "HOW DID THIS HAPPEN? {score} and it wasn't even close.",
         "{winner_short_name} just committed a massacre. {score}",
@@ -689,16 +701,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "My heart can't handle these games. {score} and I'm in the hospital.",
         "{winner_short_name} won but I suffered more than in real life.",
@@ -711,16 +722,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "The classic never disappoints. {score}",
         "Rivalry time. The rivalry continues.",
@@ -733,19 +743,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. The rivalry continues.",
         "GX vs TH. Always intense.",
@@ -758,19 +764,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "These guys again. I hate this matchup.",
         "I hope they lose. I don't care who.",
@@ -783,19 +785,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-en-1",
       "language": "en",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "I hate this match. Every time they play it's a disaster.",
         "I hope they both lose. It's what they deserve.",
@@ -808,19 +806,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "Match très sérieux de {winner_short_name}. Quand ils jouent comme ça, c'est un plaisir.",
         "{winner_short_name} gagne et la timeline parle déjà des playoffs. Classique.",
@@ -834,13 +828,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "COMMENT EST-CE ARRIVÉ ? {score} et ce n'était même pas close.",
         "{winner_short_name} vient de commettre un massacre. {score}",
@@ -853,16 +849,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Mon cœur ne supporte pas ces matchs. {score} et je suis à l'hôpital.",
         "{winner_short_name} a gagné mais j'ai plus souffert que dans la vraie vie.",
@@ -875,16 +870,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Le classique ne déçoit jamais. {score}",
         "Rivalry time. La rivalité continue.",
@@ -897,19 +891,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. La rivalité continue.",
         "GX vs TH. Toujours intense.",
@@ -922,19 +912,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Encore eux. Je déteste ce matchup.",
         "J'espère qu'ils perdent. Je m'en fiche de qui.",
@@ -947,19 +933,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-fr-1",
       "language": "fr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Je déteste ce match. Chaque fois qu'ils jouent, c'est un désastre.",
         "J'espère qu'ils perdent tous les deux. C'est ce qu'ils méritent.",
@@ -972,19 +954,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "Sehr solides Spiel von {winner_short_name}. So macht League Spaß.",
         "{winner_short_name} gewinnt und die Timeline redet schon über Playoffs. Klassiker.",
@@ -998,13 +976,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "WIE IST DAS PASSIERT? {score} und es war nicht einmal knapp.",
         "{winner_short_name} hat gerade ein Massaker veranstaltet. {score}",
@@ -1017,16 +997,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Mein Herz hält diese Spiele nicht aus. {score} und ich bin im Krankenhaus.",
         "{winner_short_name} hat gewonnen, aber ich habe mehr gelitten als im echten Leben.",
@@ -1039,16 +1018,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Der Klassiker enttäuscht nie. {score}",
         "Rivalry time. Die Rivalität geht weiter.",
@@ -1061,19 +1039,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. Die Rivalität geht weiter.",
         "GX vs TH. Immer intensiv.",
@@ -1086,19 +1060,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Schon wieder die. Ich hasse dieses Matchup.",
         "Ich hoffe, sie verlieren. Mir egal, wer.",
@@ -1111,19 +1081,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-de-1",
       "language": "de",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Ich hasse dieses Match. Jedes Mal, wenn sie spielen, ist es eine Katastrophe.",
         "Ich hoffe, beide verlieren. Das haben sie verdient.",
@@ -1136,19 +1102,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "Partita molto seria di {winner_short_name}. Quando giocano così, è bello guardarli.",
         "{winner_short_name} vince e la timeline parla già di playoff. Classico.",
@@ -1162,13 +1124,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "COME È SUCCESSO? {score} e non è stato nemmeno close.",
         "{winner_short_name} ha appena commesso un massacro. {score}",
@@ -1181,16 +1145,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Il mio cuore non regge queste partite. {score} e sono in ospedale.",
         "{winner_short_name} ha vinto ma ho sofferto più che nella vita reale.",
@@ -1203,16 +1166,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Il classico non delude mai. {score}",
         "Rivalry time. La rivalità continua.",
@@ -1225,19 +1187,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. La rivalità continua.",
         "GX vs TH. Sempre intenso.",
@@ -1250,19 +1208,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Di nuovo loro. Odio questo matchup.",
         "Spero che perdano. Non mi importa chi.",
@@ -1275,19 +1229,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-it-1",
       "language": "it",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Odio questa partita. Ogni volta che giocano è un disastro.",
         "Spero che perdano entrambi. È quello che meritano.",
@@ -1300,19 +1250,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "Jogo muito sério de {winner_short_name}. Quando jogam assim, é bom de ver.",
         "{winner_short_name} ganhou e a timeline já fala de playoffs. Clássico.",
@@ -1326,13 +1272,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "COMO É QUE ISTO ACONTECEU? {score} e nem foi close.",
         "{winner_short_name} acabou de cometer uma massacre. {score}",
@@ -1345,16 +1293,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "O meu coração não aguenta estes jogos. {score} e estou no hospital.",
         "{winner_short_name} ganhou mas sofri mais do que na vida real.",
@@ -1367,16 +1314,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "O clássico nunca desilude. {score}",
         "Rivalry time. A rivalidade continua.",
@@ -1389,19 +1335,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. A rivalidade continua.",
         "GX vs TH. Sempre intenso.",
@@ -1414,19 +1356,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Outra vez estes. Odeio este matchup.",
         "Espero que percam. Não me importa quem.",
@@ -1439,19 +1377,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-pt-1",
       "language": "pt",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Odeio este jogo. Sempre que jogam é um desastre.",
         "Espero que ambos percam. É o que merecem.",
@@ -1464,19 +1398,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "Jogo muito sério da {winner_short_name}. Quando joga assim, é bom demais assistir.",
         "{winner_short_name} venceu e a timeline já está falando de playoffs. Clássico.",
@@ -1490,13 +1420,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "COMO ISSO ACONTECEU? {score} e nem foi close.",
         "{winner_short_name} acabou de cometer um massacre. {score}",
@@ -1509,16 +1441,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Meu coração não aguenta esses jogos. {score} e estou no hospital.",
         "{winner_short_name} ganhou mas sofri mais do que na vida real.",
@@ -1531,16 +1462,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "O clássico nunca decepciona. {score}",
         "Rivalry time. A rivalidade continua.",
@@ -1553,19 +1483,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. A rivalidade continua.",
         "GX vs TH. Sempre intenso.",
@@ -1578,19 +1504,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Esses de novo. Odeio esse matchup.",
         "Espero que percam. Não me importa quem.",
@@ -1603,19 +1525,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-pt-BR-1",
       "language": "pt-BR",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Odeio esse jogo. Toda vez que jogam é um desastre.",
         "Espero que ambos percam. É o que merecem.",
@@ -1628,19 +1546,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": null,
       "variants": [
         "{winner_short_name} tarafından çok ciddi bir oyun. Böyle oynadıklarında izlemek keyifli.",
         "{winner_short_name} kazandı ve timeline şimdiden playoff konuşuyor. Klasik.",
@@ -1654,13 +1568,15 @@
         "match",
         "global"
       ],
-      "author_id": "fan_random_lec"
+      "active": true
     },
     {
       "id": "fan-opinion-stomp-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "BU NASIL OLDU? {score} ve yakın bile değildi.",
         "{winner_short_name} az önce bir katliam yaptı. {score}",
@@ -1673,16 +1589,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "fan-opinion-close-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 3,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Kalbim bu maçları kaldıramıyor. {score} ve hastanedeyim.",
         "{winner_short_name} kazandı ama gerçek hayattan daha çok çektim.",
@@ -1695,16 +1610,15 @@
         "match",
         "close"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-g2-fnc-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Klasik hiç hayal kırıklığına uğratmaz. {score}",
         "Rivalry time. Rekabet devam ediyor.",
@@ -1717,19 +1631,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-rivalry-gx-th-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-giantx-lec\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Derby time. Rekabet devam ediyor.",
         "GX vs TH. Her zaman yoğun.",
@@ -1742,19 +1652,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-giantx-lec",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-koi-th-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Yine bunlar. Bu matchup'tan nefret ediyorum.",
         "Umarım kaybederler. Kim olduğu umurumda değil.",
@@ -1767,19 +1673,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "fan-hate-kc-vit-tr-1",
       "language": "tr",
       "slot": "FanOpinion",
       "weight": 5,
+      "author_id": "fan_random_lec",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Bu maçtan nefret ediyorum. Her oynadıklarında bir felaket.",
         "Umarım ikisi de kaybeder. Hak ettikleri bu.",
@@ -1792,19 +1694,15 @@
         "match",
         "hate"
       ],
-      "author_id": "fan_random_lec",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-es-1",
       "language": "es",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "La clave fue simple: {winner_name} controló objetivos y obligó a {loser_short_name} a jugar siempre tarde.",
         "{winner_short_name} no necesitó hacer nada raro. Buena preparación, buen tempo y ejecución limpia.",
@@ -1818,13 +1716,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-es-1",
       "language": "es",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Eso fue un clinic. {winner_name} jugó su propio juego y {loser_short_name} nunca apareció.",
         "No hay mucho que analizar. {winner_short_name} fue superior en todo.",
@@ -1837,16 +1737,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-es-1",
       "language": "es",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Partido reñido. {winner_short_name} supo aguantar la presión.",
         "La diferencia fueron los detalles. {score} pero podría haber sido al revés.",
@@ -1859,16 +1758,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-es-1",
       "language": "es",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "El clásico. {score} y la rivalidad sigue viva.",
         "G2 vs FNC nunca decepciona. {score} y análisis para rato.",
@@ -1881,19 +1779,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-es-1",
       "language": "es",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Este matchup siempre es un desastre. {score} y confirmado.",
         "No hay nada que analizar. {winner_short_name} ganó y punto.",
@@ -1906,19 +1800,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-es-1",
       "language": "es",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Este matchup siempre es un desastre. {score} y confirmado.",
         "No hay nada que analizar. {winner_short_name} ganó y punto.",
@@ -1931,19 +1821,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-en-1",
       "language": "en",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "The difference was simple: {winner_name} controlled objectives and forced {loser_short_name} to play catch-up.",
         "{winner_short_name} didn't need anything flashy. Good prep, good tempo, clean execution.",
@@ -1957,13 +1843,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-en-1",
       "language": "en",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "That was a clinic. {winner_name} played their own game and {loser_short_name} never showed up.",
         "Not much to analyze. {winner_short_name} was superior in every way.",
@@ -1976,16 +1864,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-en-1",
       "language": "en",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Close game. {winner_short_name} knew how to handle the pressure.",
         "The difference was in the details. {score} but it could have gone the other way.",
@@ -1998,16 +1885,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-en-1",
       "language": "en",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "The classic. {score} and the rivalry stays alive.",
         "G2 vs FNC never disappoints. {score} and analysis for days.",
@@ -2020,19 +1906,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-en-1",
       "language": "en",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "This matchup is always a disaster. {score} and confirmed.",
         "Nothing to analyze. {winner_short_name} won and that's it.",
@@ -2045,19 +1927,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-en-1",
       "language": "en",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "This matchup is always a disaster. {score} and confirmed.",
         "Nothing to analyze. {winner_short_name} won and that's it.",
@@ -2070,19 +1948,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-fr-1",
       "language": "fr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "La clé était simple : {winner_name} a contrôlé les objectifs et a forcé {loser_short_name} à jouer en retard.",
         "{winner_short_name} n'a pas eu besoin de paillettes. Bonne préparation, bon tempo, exécution nette.",
@@ -2096,13 +1970,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-fr-1",
       "language": "fr",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "C'était une leçon. {winner_name} a joué son propre jeu et {loser_short_name} n'est jamais apparu.",
         "Pas grand-chose à analyser. {winner_short_name} était supérieur en tout.",
@@ -2115,16 +1991,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-fr-1",
       "language": "fr",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Match serré. {winner_short_name} a su tenir la pression.",
         "La différence était dans les détails. {score} mais ça aurait pu être l'inverse.",
@@ -2137,16 +2012,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-fr-1",
       "language": "fr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Le classique. {score} et la rivalité reste vivante.",
         "G2 vs FNC ne déçoit jamais. {score} et analyse pour longtemps.",
@@ -2159,19 +2033,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-fr-1",
       "language": "fr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Ce matchup est toujours un désastre. {score} et confirmé.",
         "Rien à analyser. {winner_short_name} a gagné et c'est tout.",
@@ -2184,19 +2054,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-fr-1",
       "language": "fr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Ce matchup est toujours un désastre. {score} et confirmé.",
         "Rien à analyser. {winner_short_name} a gagné et c'est tout.",
@@ -2209,19 +2075,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-de-1",
       "language": "de",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "Der Unterschied war einfach: {winner_name} kontrollierte die Objectives und zwang {loser_short_name} zum Nachziehen.",
         "{winner_short_name} brauchte nichts Spektakuläres. Gute Vorbereitung, gutes Tempo, saubere Ausführung.",
@@ -2235,13 +2097,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-de-1",
       "language": "de",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Das war eine Lehrstunde. {winner_name} hat sein eigenes Spiel gespielt und {loser_short_name} ist nie aufgetaucht.",
         "Nicht viel zu analysieren. {winner_short_name} war in jeder Hinsicht überlegen.",
@@ -2254,16 +2118,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-de-1",
       "language": "de",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Knappes Spiel. {winner_short_name} wusste mit dem Druck umzugehen.",
         "Der Unterschied lag in den Details. {score} aber es hätte auch andersrum gehen können.",
@@ -2276,16 +2139,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-de-1",
       "language": "de",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Der Klassiker. {score} und die Rivalität bleibt lebendig.",
         "G2 vs FNC enttäuscht nie. {score} und Analyse für Tage.",
@@ -2298,19 +2160,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-de-1",
       "language": "de",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Dieses Matchup ist immer eine Katastrophe. {score} und bestätigt.",
         "Nichts zu analysieren. {winner_short_name} hat gewonnen und das war's.",
@@ -2323,19 +2181,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-de-1",
       "language": "de",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Dieses Matchup ist immer eine Katastrophe. {score} und bestätigt.",
         "Nichts zu analysieren. {winner_short_name} hat gewonnen und das war's.",
@@ -2348,19 +2202,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "La chiave era semplice: {winner_name} ha controllato gli obiettivi e ha costretto {loser_short_name} a giocare in ritardo.",
         "{winner_short_name} non ha avuto bisogno di nulla di strano. Buona preparazione, buon tempo, esecuzione pulita.",
@@ -2374,13 +2224,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Quella è stata una lezione. {winner_name} ha giocato il suo gioco e {loser_short_name} non è mai apparso.",
         "Non c'è molto da analizzare. {winner_short_name} era superiore in tutto.",
@@ -2393,16 +2245,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Partita tirata. {winner_short_name} ha saputo gestire la pressione.",
         "La differenza era nei dettagli. {score} ma poteva andare anche al contrario.",
@@ -2415,16 +2266,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Il classico. {score} e la rivalità resta viva.",
         "G2 vs FNC non delude mai. {score} e analisi per giorni.",
@@ -2437,19 +2287,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Questo matchup è sempre un disastro. {score} e confermato.",
         "Niente da analizzare. {winner_short_name} ha vinto e basta.",
@@ -2462,19 +2308,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-it-1",
       "language": "it",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Questo matchup è sempre un disastro. {score} e confermato.",
         "Niente da analizzare. {winner_short_name} ha vinto e basta.",
@@ -2487,19 +2329,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-pt-1",
       "language": "pt",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "A chave foi simples: {winner_name} controlou objetivos e obrigou {loser_short_name} a jogar sempre em atraso.",
         "{winner_short_name} não precisou de nada de especial. Boa preparação, bom ritmo e execução limpa.",
@@ -2513,13 +2351,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-pt-1",
       "language": "pt",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Foi uma aula. {winner_name} jogou o seu próprio jogo e {loser_short_name} nunca apareceu.",
         "Não há muito a analisar. {winner_short_name} foi superior em tudo.",
@@ -2532,16 +2372,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-pt-1",
       "language": "pt",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Jogo renhido. {winner_short_name} soube aguentar a pressão.",
         "A diferença foi nos detalhes. {score} mas podia ter sido o contrário.",
@@ -2554,16 +2393,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-pt-1",
       "language": "pt",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "O clássico. {score} e a rivalidade continua viva.",
         "G2 vs FNC nunca desilude. {score} e análise para dias.",
@@ -2576,19 +2414,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-pt-1",
       "language": "pt",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Este matchup é sempre um desastre. {score} e confirmado.",
         "Nada a analisar. {winner_short_name} ganhou e pronto.",
@@ -2601,19 +2435,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-pt-1",
       "language": "pt",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Este matchup é sempre um desastre. {score} e confirmado.",
         "Nada a analisar. {winner_short_name} ganhou e pronto.",
@@ -2626,19 +2456,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-pt-BR-1",
       "language": "pt-BR",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "A chave foi simples: {winner_name} controlou objetivos e forçou {loser_short_name} a jogar em desvantagem.",
         "{winner_short_name} não precisou de nada de especial. Boa preparação, bom ritmo e execução limpa.",
@@ -2652,13 +2478,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-pt-BR-1",
       "language": "pt-BR",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Foi uma aula. {winner_name} jogou o próprio jogo e {loser_short_name} nunca apareceu.",
         "Não tem muito o que analisar. {winner_short_name} foi superior em tudo.",
@@ -2671,16 +2499,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-pt-BR-1",
       "language": "pt-BR",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Jogo apertado. {winner_short_name} soube aguentar a pressão.",
         "A diferença foi nos detalhes. {score} mas podia ter sido o contrário.",
@@ -2693,16 +2520,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-pt-BR-1",
       "language": "pt-BR",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "O clássico. {score} e a rivalidade continua viva.",
         "G2 vs FNC nunca decepciona. {score} e análise para dias.",
@@ -2715,19 +2541,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-pt-BR-1",
       "language": "pt-BR",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Esse matchup é sempre um desastre. {score} e confirmado.",
         "Nada para analisar. {winner_short_name} ganhou e acabou.",
@@ -2740,19 +2562,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-pt-BR-1",
       "language": "pt-BR",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Esse matchup é sempre um desastre. {score} e confirmado.",
         "Nada para analisar. {winner_short_name} ganhou e acabou.",
@@ -2765,19 +2583,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-global-tr-1",
       "language": "tr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": null,
       "variants": [
         "Fark basitti: {winner_name} objektifleri kontrol etti ve {loser_short_name} her zaman geriden oynamaya zorladı.",
         "{winner_short_name} ekstra bir şey yapmak zorunda kalmadı. İyi hazırlık, iyi tempo, temiz uygulama.",
@@ -2791,13 +2605,15 @@
         "match",
         "global"
       ],
-      "author_id": "analyst_manu"
+      "active": true
     },
     {
       "id": "analyst-stomp-tr-1",
       "language": "tr",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":true}",
       "variants": [
         "Bu bir ders oldu. {winner_name} kendi oyununu oynadı ve {loser_short_name} hiç ortaya çıkmadı.",
         "Analiz edecek pek bir şey yok. {winner_short_name} her yönüyle üstündü.",
@@ -2810,16 +2626,15 @@
         "match",
         "stomp"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "analyst-close-tr-1",
       "language": "tr",
       "slot": "AnalystTake",
       "weight": 3,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"requires_stomp\":false}",
       "variants": [
         "Kıran kırana maç. {winner_short_name} baskıya dayanmayı bildi.",
         "Fark detaylardaydı. {score} ama tersi de olabilirdi.",
@@ -2832,16 +2647,15 @@
         "match",
         "close"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "analyst-rivalry-g2-fnc-tr-1",
       "language": "tr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-g2-esports\",\"lec-fnatic\"]}",
       "variants": [
         "Klasik. {score} ve rekabet canlı kalıyor.",
         "G2 vs FNC hiç hayal kırıklığına uğratmaz. {score} ve günlerce analiz.",
@@ -2854,19 +2668,15 @@
         "match",
         "rivalry"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-g2-esports",
-          "lec-fnatic"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-koi-th-tr-1",
       "language": "tr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-mad-lions\",\"lec-team-heretics-lec\"]}",
       "variants": [
         "Bu matchup her zaman bir felaket. {score} ve onaylandı.",
         "Analiz edecek bir şey yok. {winner_short_name} kazandı ve bu kadar.",
@@ -2879,19 +2689,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-mad-lions",
-          "lec-team-heretics-lec"
-        ]
-      }
+      "active": true
     },
     {
       "id": "analyst-hate-kc-vit-tr-1",
       "language": "tr",
       "slot": "AnalystTake",
       "weight": 5,
+      "author_id": "analyst_manu",
+      "conditions_json": "{\"matchup_team_ids\":[\"lec-karmine-corp\",\"lec-team-vitality\"]}",
       "variants": [
         "Bu matchup her zaman bir felaket. {score} ve onaylandı.",
         "Analiz edecek bir şey yok. {winner_short_name} kazandı ve bu kadar.",
@@ -2904,19 +2710,15 @@
         "match",
         "hate"
       ],
-      "author_id": "analyst_manu",
-      "conditions": {
-        "matchup_team_ids": [
-          "lec-karmine-corp",
-          "lec-team-vitality"
-        ]
-      }
+      "active": true
     },
     {
       "id": "player-reaction-es-1",
       "language": "es",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Buen trabajo del equipo, seguimos enfocados.",
         "Contento por la victoria. Gracias por el apoyo, nos vemos en el siguiente partido.",
@@ -2930,15 +2732,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-es-1",
       "language": "es",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} y no fue ni close.",
         "Demolición total. {score} en {winner_short_name}.",
@@ -2951,16 +2753,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-es-1",
       "language": "es",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Tensión hasta el final. {score} pero lo conseguimos.",
         "Mi corazón no aguanta estos {score}.",
@@ -2973,16 +2774,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-en-1",
       "language": "en",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Proud of the team, back to work tomorrow.",
         "Happy with the win. Thanks for the support, see you next match.",
@@ -2996,15 +2796,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-en-1",
       "language": "en",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} and it wasn't even close.",
         "Total demolition. {score} for {winner_short_name}.",
@@ -3017,16 +2817,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-en-1",
       "language": "en",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Tension until the very end. {score} but we got it.",
         "My heart can't handle these {score}.",
@@ -3039,16 +2838,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-fr-1",
       "language": "fr",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Fier de l'équipe, on retourne travailler demain.",
         "Content de la victoire. Merci pour le soutien, à bientôt pour le prochain match.",
@@ -3062,15 +2860,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-fr-1",
       "language": "fr",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} et ce n'était même pas close.",
         "Démolition totale. {score} pour {winner_short_name}.",
@@ -3083,16 +2881,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-fr-1",
       "language": "fr",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Tension jusqu'au bout. {score} mais on l'a eu.",
         "Mon cœur ne supporte pas ces {score}.",
@@ -3105,16 +2902,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-de-1",
       "language": "de",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Stolz auf das Team, morgen geht die Arbeit weiter.",
         "Freue mich über den Sieg. Danke für den Support, bis zum nächsten Match.",
@@ -3128,15 +2924,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-de-1",
       "language": "de",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} und es war nicht einmal knapp.",
         "Totale Demolierung. {score} für {winner_short_name}.",
@@ -3149,16 +2945,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-de-1",
       "language": "de",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Spannung bis zum Ende. {score} aber wir haben es geschafft.",
         "Mein Herz hält diese {score} nicht aus.",
@@ -3171,16 +2966,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-it-1",
       "language": "it",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Orgoglioso del team, domani si torna al lavoro.",
         "Felice per la vittoria. Grazie per il supporto, ci vediamo al prossimo match.",
@@ -3194,15 +2988,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-it-1",
       "language": "it",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} e non è stato nemmeno close.",
         "Demolizione totale. {score} per {winner_short_name}.",
@@ -3215,16 +3009,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-it-1",
       "language": "it",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Tensione fino alla fine. {score} ma ce l'abbiamo fatta.",
         "Il mio cuore non regge questi {score}.",
@@ -3237,16 +3030,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-pt-1",
       "language": "pt",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Orgulhoso da equipa, amanhã voltamos ao trabalho.",
         "Feliz pela vitória. Obrigado pelo apoio, até ao próximo jogo.",
@@ -3260,15 +3052,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-pt-1",
       "language": "pt",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} e nem foi close.",
         "Demolição total. {score} em {winner_short_name}.",
@@ -3281,16 +3073,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-pt-1",
       "language": "pt",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Tensão até ao fim. {score} mas conseguimos.",
         "O meu coração não aguenta estes {score}.",
@@ -3303,16 +3094,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-pt-BR-1",
       "language": "pt-BR",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Orgulhoso do time, amanhã voltamos ao trabalho.",
         "Feliz pela vitória. Obrigado pelo apoio, vejo vocês no próximo jogo.",
@@ -3326,15 +3116,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-pt-BR-1",
       "language": "pt-BR",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} e nem foi close.",
         "Demolição total. {score} em {winner_short_name}.",
@@ -3347,16 +3137,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-pt-BR-1",
       "language": "pt-BR",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Tensão até o fim. {score} mas conseguimos.",
         "Meu coração não aguenta esses {score}.",
@@ -3369,16 +3158,15 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     },
     {
       "id": "player-reaction-tr-1",
       "language": "tr",
       "slot": "PlayerReaction",
       "weight": 5,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true}",
       "variants": [
         "GGs. Takımla gurur duyuyorum, yarın çalışmaya devam.",
         "Galibiyet için mutluyum. Destek için teşekkürler, sonraki maçta görüşürüz.",
@@ -3392,15 +3180,15 @@
         "reaction",
         "global"
       ],
-      "conditions": {
-        "requires_player_name": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-stomp-tr-1",
       "language": "tr",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":true}",
       "variants": [
         "Clean sweep. {score} ve yakın bile değildi.",
         "Tam bir yıkım. {score} için {winner_short_name}.",
@@ -3413,16 +3201,15 @@
         "reaction",
         "stomp"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": true
-      }
+      "active": true
     },
     {
       "id": "player-reaction-close-tr-1",
       "language": "tr",
       "slot": "PlayerReaction",
       "weight": 3,
+      "author_id": null,
+      "conditions_json": "{\"requires_player_name\":true,\"requires_stomp\":false}",
       "variants": [
         "Sonuna kadar gerilim. {score} ama başardık.",
         "Kalbim bu {score} kaldıramıyor.",
@@ -3435,10 +3222,7 @@
         "reaction",
         "close"
       ],
-      "conditions": {
-        "requires_player_name": true,
-        "requires_stomp": false
-      }
+      "active": true
     }
   ]
 }
