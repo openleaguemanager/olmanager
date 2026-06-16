@@ -80,9 +80,9 @@ export const JUNGLE_CAMPS_LAYOUT: JungleCampPoint[] = [
 ];
 
 export const JUNGLE_CAMP_ICON_PATH: Record<JungleCampIcon, string> = {
-  blue: "/lol-map-icons/blue.png",
-  red: "/lol-map-icons/red.png",
-  camp: "/lol-map-icons/camp.png",
+  blue: "/lol-map-icons/blue.webp",
+  red: "/lol-map-icons/red.webp",
+  camp: "/lol-map-icons/camp.webp",
 };
 
 // Coordinates normalized from map_references.png (1200x1200).
@@ -130,26 +130,26 @@ export const NEUTRAL_OBJECTIVES_LAYOUT: NeutralObjectivePoint[] = [
 ];
 
 export const STRUCTURE_ICON_PATH: Record<StructureIcon, string> = {
-  tower_blue: "/lol-map-icons/tower_blue.png",
-  tower_red: "/lol-map-icons/tower_red.png",
-  inhibitor_blue: "/lol-map-icons/inhibitor_blue.png",
-  inhibitor_red: "/lol-map-icons/inhibitor_red.png",
-  nexus_blue: "/lol-map-icons/nexus_blue.png",
-  nexus_red: "/lol-map-icons/nexus_red.png",
+  tower_blue: "/lol-map-icons/tower_blue.webp",
+  tower_red: "/lol-map-icons/tower_red.webp",
+  inhibitor_blue: "/lol-map-icons/inhibitor_blue.webp",
+  inhibitor_red: "/lol-map-icons/inhibitor_red.webp",
+  nexus_blue: "/lol-map-icons/nexus_blue.webp",
+  nexus_red: "/lol-map-icons/nexus_red.webp",
 };
 
 export const NEUTRAL_OBJECTIVE_ICON_PATH: Record<NeutralObjectiveIcon, string> = {
-  dragon: "/lol-map-icons/dragon.png",
-  dragon_infernal: "/lol-map-icons/dragon_infernal.png",
-  dragon_ocean: "/lol-map-icons/dragon_ocean.png",
-  dragon_mountain: "/lol-map-icons/dragon_mountain.png",
-  dragon_cloud: "/lol-map-icons/dragon_cloud.png",
-  dragon_hextech: "/lol-map-icons/dragon_hextech.png",
-  dragon_chemtech: "/lol-map-icons/dragon_chemtech.png",
-  dragon_elder: "/lol-map-icons/dragon_elder.png",
-  baron: "/lol-map-icons/baron.png",
-  grub: "/lol-map-icons/grub.png",
-  riftherald: "/lol-map-icons/riftherald.png",
+  dragon: "/lol-map-icons/dragon.webp",
+  dragon_infernal: "/lol-map-icons/dragon_infernal.webp",
+  dragon_ocean: "/lol-map-icons/dragon_ocean.webp",
+  dragon_mountain: "/lol-map-icons/dragon_mountain.webp",
+  dragon_cloud: "/lol-map-icons/dragon_cloud.webp",
+  dragon_hextech: "/lol-map-icons/dragon_hextech.webp",
+  dragon_chemtech: "/lol-map-icons/dragon_chemtech.webp",
+  dragon_elder: "/lol-map-icons/dragon_elder.webp",
+  baron: "/lol-map-icons/baron.webp",
+  grub: "/lol-map-icons/grub.webp",
+  riftherald: "/lol-map-icons/riftherald.webp",
 };
 
 // Initial editable wall guides (normalized 0..1). These are calibration helpers.
