@@ -3483,7 +3483,11 @@
     "subtitle": "Community timeline",
     "description": "No gameplay effects. Just teams, players, fans and meme accounts being normal online.",
     "emptyTitle": "The timeline is quiet",
-    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis."
+    "emptyBody": "Play matches and the community will start posting banter, hot takes, and questionable analysis.",
+    "comingSoonTitle": "Social Feed - Em breve",
+    "comingSoonBody": "O feed social está atualmente disponível apenas para a <strong>LEC</strong>.",
+    "comingSoonSub": "Mais ligas serão suportadas em uma futura atualização.",
+    "currentlyPlaying": "Liga atual:"
   },
   "championPage": {
     "assists": "Assists",

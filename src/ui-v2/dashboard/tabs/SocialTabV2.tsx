@@ -2,6 +2,7 @@ import type { GameStateData } from "@/store/gameStore";
 import { useActiveLeague } from "@/store/gameStore";
 import SocialTab from "@/ui-v2/_legacy/components/social/SocialTab";
 import { Clock, MessageSquare } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SocialTabV2Props {
   gameState: GameStateData;
@@ -9,6 +10,7 @@ interface SocialTabV2Props {
 }
 
 export function SocialTabV2({ gameState, onGameUpdate }: SocialTabV2Props) {
+  const { t } = useTranslation();
   const activeLeague = useActiveLeague(gameState);
   const isLEC = activeLeague?.competition_id === "lec";
 
@@ -20,18 +22,19 @@ export function SocialTabV2({ gameState, onGameUpdate }: SocialTabV2Props) {
         </div>
         <div className="max-w-md space-y-2">
           <h2 className="font-heading text-xl font-bold uppercase tracking-wide text-zinc-900">
-            Social Feed Coming Soon
+            {t("social.comingSoonTitle")}
           </h2>
-          <p className="text-sm text-zinc-500">
-            The social feed is currently available for <strong className="text-orange-600">LEC</strong> only.
-          </p>
+          <p
+            className="text-sm text-zinc-500"
+            dangerouslySetInnerHTML={{ __html: t("social.comingSoonBody") }}
+          />
           <p className="text-sm text-zinc-400">
-            More leagues will be supported in a future update.
+            {t("social.comingSoonSub")}
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-full bg-zinc-100 px-4 py-2 text-xs font-medium text-zinc-500">
           <Clock className="h-4 w-4" />
-          <span>Currently playing: {activeLeague?.name ?? "Unknown League"}</span>
+          <span>{t("social.currentlyPlaying")} {activeLeague?.name ?? "Unknown League"}</span>
         </div>
       </div>
     );
