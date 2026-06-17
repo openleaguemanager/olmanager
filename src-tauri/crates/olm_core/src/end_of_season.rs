@@ -8,6 +8,7 @@ use crate::finances::{
 };
 use crate::game::Game;
 use crate::generator::definitions::CompetitionManifest;
+use crate::roster_stability::{RosterStabilityReason, repair_league};
 use crate::schedule::{
     append_fixtures, generate_preseason_friendlies, generate_schedule_from_config,
 };
@@ -723,8 +724,9 @@ fn process_end_of_season_inner(
     // 9. Renew contracts for players who finished the season with a team
     renew_contracts_for_retained_players(game);
 
-    // 10. Assign free agents to teams with insufficient rosters
-    replenish_depleted_rosters(game);
+    // 10. Repair depleted rosters via the roster stability seam (replaces old
+    //     replenish_depleted_rosters). Handles all schedulable AI main teams.
+    let _ = repair_league(game, RosterStabilityReason::SeasonTransition);
 
     summary
 }
@@ -800,120 +802,6 @@ fn renew_contracts_for_retained_players(game: &mut Game) {
 
         player.contract_end = Some(contract_end.format("%Y-%m-%d").to_string());
         player.wage = wage;
-    }
-}
-
-/// Assign free agents to teams that have fewer than 5 players.
-/// This ensures every team can field a roster for the new season.
-fn replenish_depleted_rosters(game: &mut Game) {
-    let current_date = game.clock.current_date.date_naive();
-    let next_season_year = current_date.year() + 1;
-
-    let team_ids: Vec<String> = game.teams.iter().map(|t| t.id.clone()).collect();
-
-    for team_id in team_ids {
-        let roster_count = game
-            .players
-            .iter()
-            .filter(|p| p.team_id.as_ref().map(|id| id.as_str()) == Some(team_id.as_str()))
-            .count();
-
-        if roster_count >= 5 {
-            continue;
-        }
-
-        let Some(team_name) = game
-            .teams
-            .iter()
-            .find(|t| t.id == team_id)
-            .map(|t| t.name.clone())
-        else {
-            continue;
-        };
-
-        let needed = 5usize.saturating_sub(roster_count);
-
-        for _ in 0..needed {
-            let available_agent = game.players.iter_mut().find(|p| {
-                p.team_id.is_none()
-                    && p.contract_end.is_none()
-                    && p.wage == 0
-                    && !p.was_released
-                    && p.transfer_offers.is_empty()
-            });
-
-            let Some(agent) = available_agent else {
-                break;
-            };
-
-            let agent_id = agent.id.clone();
-            let wage;
-            let contract_years;
-            {
-                let Some(team) = game.teams.iter().find(|t| t.id == team_id) else {
-                    break;
-                };
-                wage = crate::contracts::expected_wage(agent, team, current_date);
-                contract_years = 1;
-            }
-
-            agent.team_id = Some(team_id.clone());
-            agent.wage = wage;
-            agent.contract_end = Some(
-                current_date
-                    .checked_add_months(chrono::Months::new(contract_years * 12))
-                    .unwrap_or_else(|| {
-                        chrono::NaiveDate::from_ymd_opt(next_season_year, 11, 30).unwrap()
-                    })
-                    .format("%Y-%m-%d")
-                    .to_string(),
-            );
-            agent.transfer_listed = false;
-            agent.loan_listed = false;
-
-            let agent_name = agent.match_name.clone();
-            let mut params = std::collections::HashMap::new();
-            params.insert("player".to_string(), agent_name.clone());
-            params.insert("years".to_string(), contract_years.to_string());
-            params.insert("team".to_string(), team_name.clone());
-            params.insert("wage".to_string(), wage.to_string());
-            let msg = crate::domain::message::InboxMessage::new(
-                format!("free_agent_signed_{}_{}", agent_id, team_id),
-                format!("{} signs with {}", agent_name, team_name),
-                format!(
-                    "Free agent {} has signed a {}-year contract with {} at €{}/year.",
-                    agent_name, contract_years, team_name, wage
-                ),
-                "Team Management".to_string(),
-                current_date.format("%Y-%m-%d").to_string(),
-            )
-            .with_category(crate::domain::message::MessageCategory::Transfer)
-            .with_priority(crate::domain::message::MessagePriority::Normal)
-            .with_i18n(
-                "be.msg.freeAgentSigned.subject",
-                "be.msg.freeAgentSigned.body",
-                params,
-            );
-            game.messages.push(msg);
-
-            let user_team_id = game.manager.team_id.clone().unwrap_or_default();
-            let is_user_involved = team_id == user_team_id;
-            crate::transfers::record_transfer(
-                game,
-                &agent_id,
-                "",
-                &team_id,
-                0,
-                wage,
-                contract_years as u8,
-                is_user_involved,
-                is_user_involved,
-                false,
-                None,
-                0,
-                &[],
-            );
-        }
     }
 }
 

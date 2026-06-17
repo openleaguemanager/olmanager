@@ -29,6 +29,7 @@ pub mod player_identity;
 pub mod player_rating;
 pub mod potential;
 pub mod random_events;
+pub mod roster_stability;
 pub mod schedule;
 pub mod scouting;
 pub mod scrim_flow;

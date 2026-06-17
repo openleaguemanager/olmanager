@@ -15,6 +15,7 @@ use olm_core::domain::stats::StatsState;
 use olm_core::clock::GameClock;
 use olm_core::game::Game;
 use olm_core::game_setup;
+use olm_core::roster_stability;
 use olm_core::state::StateManager;
 
 use crate::SaveManagerState;
@@ -631,6 +632,31 @@ pub async fn load_game(
         game.champion_masteries.len()
     );
 
+    // Run load migration repair: ensure all AI teams are match eligible
+    // after catalog rehydration and OVR refresh. Only persists when actions occur
+    // to avoid unnecessary save mutations on clean loads.
+    match roster_stability::repair_league(
+        &mut game,
+        roster_stability::RosterStabilityReason::LoadMigration,
+    ) {
+        Ok(reports) => {
+            let total_actions: usize = reports.iter().map(|r| r.actions.len()).sum();
+            if total_actions > 0 {
+                info!(
+                    "[cmd] load_game: load migration repaired {} team(s) with {} action(s)",
+                    reports.len(),
+                    total_actions
+                );
+            }
+        }
+        Err(e) => {
+            warn!(
+                "[cmd] load_game: load migration repair failed for team {}: {}",
+                e.team_id, e
+            );
+        }
+    }
+
     info!("[cmd] load_game: setting state");
     let mgr_name = game.manager.display_name();
     state.set_save_id(save_id);
@@ -677,6 +703,33 @@ pub async fn get_active_game(
         game.champion_patch.hidden_meta.len(),
         game.champion_masteries.len()
     );
+
+    // Run load migration repair after catalog rehydration and OVR refresh.
+    // Only persists to state when the report contains actual repair actions.
+    match roster_stability::repair_league(
+        &mut game,
+        roster_stability::RosterStabilityReason::LoadMigration,
+    ) {
+        Ok(reports) => {
+            let total_actions: usize = reports.iter().map(|r| r.actions.len()).sum();
+            if total_actions > 0 {
+                log::info!(
+                    "[cmd] get_active_game: load migration repaired {} team(s) with {} action(s)",
+                    reports.len(),
+                    total_actions
+                );
+                state.set_game(game.clone());
+            }
+        }
+        Err(e) => {
+            log::warn!(
+                "[cmd] get_active_game: load migration repair failed for team {}: {}",
+                e.team_id,
+                e
+            );
+        }
+    }
+
     Ok(game)
 }
 

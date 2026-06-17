@@ -7,6 +7,7 @@ use olm_core::engine::report::{MatchReport, MatchReportEndReason, PlayerMatchSta
 use olm_core::engine::types::{Side, Zone};
 use olm_core::game::Game;
 use olm_core::live_match_manager::{self, MatchMode};
+use olm_core::roster_stability;
 use olm_core::state::StateManager;
 use serde::{Deserialize, Serialize};
 
@@ -369,11 +370,38 @@ pub fn start_live_match(
         "[cmd] start_live_match: fixture={}, mode={}, extra_time={}",
         fixture_index, mode, allows_extra_time
     );
-    let game = state
+    let mut game = state
         .get_game(|g| g.clone())
         .ok_or("No active game session")?;
 
     validate_user_team_role_coverage(&game)?;
+
+    // Pre-match: ensure both teams are match eligible before building engine teams.
+    // For the user team, repair_team is a no-op (skips non-schedulable teams).
+    // For the AI opponent, repair fills missing roles, reconciles lineups, etc.
+    let match_team_ids: Vec<String> = {
+        let league = game.active_league()
+            .ok_or("No active league for start_live_match")?;
+        let fixture = league.fixtures.get(fixture_index)
+            .ok_or_else(|| format!("Fixture index {fixture_index} out of range"))?;
+        vec![fixture.home_team_id.clone(), fixture.away_team_id.clone()]
+    };
+    for team_id in &match_team_ids {
+        if !team_id.is_empty() {
+            roster_stability::repair_team(
+                &mut game,
+                team_id,
+                roster_stability::RosterStabilityReason::PreMatch,
+            )
+            .map_err(|e| {
+                format!(
+                    "Team {team_id} roster is invalid and could not be repaired: {e}"
+                )
+            })?;
+        }
+    }
+    // Sync repaired game back to state so live_match_manager uses current data
+    state.set_game(game.clone());
 
     let match_mode = match mode {
         "spectator" => MatchMode::Spectator,

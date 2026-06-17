@@ -659,7 +659,32 @@ fn simulate_background_league(
 
 /// Simulate all background leagues (game.leagues[1..]) for today.
 /// This is a no-op when there is only the active league.
+/// Before simulation, runs repair_league to ensure all AI teams are match eligible.
 fn process_background_leagues(game: &mut Game, today: &str) {
+    // Before background simulation, ensure all AI teams are match eligible.
+    // If repair fails, log the warning — the game continues without crashing.
+    match crate::roster_stability::repair_league(
+        game,
+        crate::roster_stability::RosterStabilityReason::BackgroundSimulation,
+    ) {
+        Ok(reports) => {
+            let total_actions: usize = reports.iter().map(|r| r.actions.len()).sum();
+            if total_actions > 0 {
+                info!(
+                    "[turn] background simulation: repaired {} team(s) with {} action(s)",
+                    reports.len(),
+                    total_actions
+                );
+            }
+        }
+        Err(e) => {
+            info!(
+                "[turn] background simulation repair failed for team {}: {}",
+                e.team_id, e
+            );
+        }
+    }
+
     let season = game.clock.current_date.year() as u32;
     for i in 1..game.leagues.len() {
         let league = &mut game.leagues[i];
@@ -1248,18 +1273,32 @@ where
         .teams
         .iter()
         .find(|t| t.id == home_team_id)
-        .map(|t| t.name.as_str())
-        .unwrap_or("?");
+        .map(|t| t.name.clone())
+        .unwrap_or_else(|| "?".to_string());
     let away_name = game
         .teams
         .iter()
         .find(|t| t.id == away_team_id)
-        .map(|t| t.name.as_str())
-        .unwrap_or("?");
+        .map(|t| t.name.clone())
+        .unwrap_or_else(|| "?".to_string());
     debug!(
         "[turn] simulate_single_match: {} vs {} (fixture #{})",
         home_name, away_name, idx
     );
+
+    // Pre-match: ensure both teams are match eligible before engine team building.
+    // For user teams, repair_team is a no-op (skips non-schedulable teams).
+    for team_id in [&home_team_id, &away_team_id] {
+        if let Err(e) = crate::roster_stability::repair_team(
+            game,
+            team_id,
+            crate::roster_stability::RosterStabilityReason::PreMatch,
+        ) {
+            info!(
+                "[turn] pre-match repair failed for team {team_id}: {e}"
+            );
+        }
+    }
 
     let home_data = build_engine_team(game, &home_team_id);
     let away_data = build_engine_team(game, &away_team_id);
