@@ -371,7 +371,7 @@ mod tests {
     use crate::domain::league::{Fixture, FixtureStatus, League, LeagueKind, MatchType, StandingEntry};
     use crate::domain::manager::Manager;
     use crate::domain::player::{Player, PlayerAttributes};
-    use crate::domain::staff::{StaffAttributes, StaffRole};
+    use crate::domain::staff::{Staff, StaffAttributes, StaffRole};
     use crate::domain::team::Team;
     use crate::clock::GameClock;
     use crate::game::BoardObjective;
@@ -512,6 +512,10 @@ mod tests {
             ],
             competition_id: None,
             league_kind: LeagueKind::Main,
+            logo: None,
+            split_index: 0,
+            tier: 0,
+            active: false,
         };
 
         let mut game = Game::new(

@@ -21,7 +21,7 @@ use crate::domain::stats::StatsState;
 use crate::domain::team::{Team, TeamKind, TeamSeasonRecord};
 use crate::engine::LolRole as EngineLolRole;
 use log::{debug, info};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use uuid::Uuid;
 
 fn params(pairs: &[(&str, &str)]) -> HashMap<String, String> {
@@ -42,6 +42,14 @@ pub use round_summary::{
 /// Process a single day advance.
 pub fn process_day(game: &mut Game) {
     process_day_with_capture(game, &mut |_| {});
+}
+
+fn snapshot_transfer_listed_player_ids(game: &Game) -> HashSet<String> {
+    game.players
+        .iter()
+        .filter(|player| player.transfer_listed)
+        .map(|player| player.id.clone())
+        .collect()
 }
 
 pub fn process_day_with_capture<F>(game: &mut Game, on_capture: &mut F)
@@ -81,6 +89,11 @@ where
     random_events::check_random_events(game);
     scouting::process_scouting(game);
     transfers::generate_incoming_transfer_offers(game);
+    crate::ai_team_agent::process_ai_team_agents(game);
+    let previously_transfer_listed = snapshot_transfer_listed_player_ids(game);
+    crate::ai_player_agent::process_ai_player_agents(game);
+    crate::ai_team_agent::resolve_conflicts(game, &previously_transfer_listed);
+    news::generate_ai_transfer_news(game);
     maybe_simulate_parallel_academy_leagues(game);
     process_background_leagues(game, &today);
     maybe_push_weekly_academy_report(game, &today);
@@ -120,6 +133,11 @@ pub fn finish_live_match_day(game: &mut Game) {
     random_events::check_random_events(game);
     scouting::process_scouting(game);
     transfers::generate_incoming_transfer_offers(game);
+    crate::ai_team_agent::process_ai_team_agents(game);
+    let previously_transfer_listed = snapshot_transfer_listed_player_ids(game);
+    crate::ai_player_agent::process_ai_player_agents(game);
+    crate::ai_team_agent::resolve_conflicts(game, &previously_transfer_listed);
+    news::generate_ai_transfer_news(game);
     maybe_simulate_parallel_academy_leagues(game);
     process_background_leagues(game, &today);
     maybe_push_weekly_academy_report(game, &today);
@@ -881,6 +899,7 @@ fn maybe_simulate_parallel_academy_leagues(game: &mut Game) {
         }
     }
 }
+
 fn maybe_schedule_playoffs(game: &mut Game) {
     let Some(league) = game.leagues.first_mut() else {
         return;
@@ -1618,7 +1637,7 @@ mod tests {
         let season = 2025;
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(&mut game.teams, &game.players, league, &today_str, season);
+        simulate_background_league(&mut game.teams, &mut game.players, league, &today_str, season);
 
         // The fixture should now be Completed with a result
         let fixture = &league.fixtures[0];
@@ -1636,7 +1655,7 @@ mod tests {
         let season = 2025;
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(&mut game.teams, &game.players, league, &today_str, season);
+        simulate_background_league(&mut game.teams, &mut game.players, league, &today_str, season);
 
         // Both teams should have played=1
         let home_entry = league
@@ -1666,10 +1685,11 @@ mod tests {
         let (mut game, today_str) = bg_test_game(today);
         let season = 2025;
 
+        let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &game.players,
-            game.active_league_mut().unwrap(),
+            &mut game.players,
+            league,
             &today_str,
             season,
         );
@@ -1698,10 +1718,11 @@ mod tests {
             .map(|p| (p.id.clone(), p.stats.clone()))
             .collect();
 
+        let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &game.players,
-            game.active_league_mut().unwrap(),
+            &mut game.players,
+            league,
             &today_str,
             season,
         );
@@ -1727,10 +1748,11 @@ mod tests {
         let before_msgs = game.messages.len();
         let before_news = game.news.len();
 
+        let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &game.players,
-            game.active_league_mut().unwrap(),
+            &mut game.players,
+            league,
             &today_str,
             season,
         );
@@ -1767,10 +1789,11 @@ mod tests {
             });
         }
 
+        let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &game.players,
-            game.active_league_mut().unwrap(),
+            &mut game.players,
+            league,
             "2025-06-15",
             season,
         );
@@ -1881,4 +1904,3 @@ mod tests {
         assert_eq!(game.leagues[1].fixtures[0].status, FixtureStatus::Scheduled);
     }
 }
-

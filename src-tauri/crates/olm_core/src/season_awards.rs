@@ -164,7 +164,7 @@ mod tests {
     use super::compute_season_awards;
     use chrono::{TimeZone, Utc};
     use crate::domain::manager::Manager;
-    use crate::domain::player::{Player, PlayerAttributes, PlayerSeasonStats};
+    use crate::domain::player::{LolRole, Player, PlayerAttributes, PlayerSeasonStats};
 
     use crate::domain::team::Team;
 

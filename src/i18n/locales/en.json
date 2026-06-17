@@ -3376,7 +3376,7 @@
         "body": "{{to}} have completed the signing of {{player}} from {{from}} for {{fee}}."
       },
       "freeAgentSigned": {
-        "subject": "{{player}} signs with {{team}}",
+        "headline": "{{player}} signs with {{team}}",
         "body": "Free agent {{player}} has signed a {{years}}-year contract with {{team}} at €{{wage}}/year."
       }
     }

@@ -1,4 +1,4 @@
-use ofm_core::news::{
+use olm_core::news::{
     league_roundup_article, season_preview_article, standings_update_article,
     title_race_storyline_article, unbeaten_streak_storyline_article, weekly_digest_article,
 };

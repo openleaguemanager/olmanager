@@ -265,25 +265,15 @@ mod tests {
 
     fn attrs(value: u8) -> PlayerAttributes {
         PlayerAttributes {
-            pace: value,
-            mental_resilience: value,
-            strength: value,
-            champion_pool: value,
-            passing: value,
-            laning: value,
-            tackling: value,
             mechanics: value,
-            defending: value,
-            positioning: value,
+            laning: value,
+            teamfighting: value,
             macro_play: value,
             consistency: value,
-            discipline: value,
-            aggression: value,
-            teamfighting: value,
             shotcalling: value,
-            handling: value,
-            reflexes: value,
-            aerial: value,
+            champion_pool: value,
+            discipline: value,
+            mental_resilience: value,
         }
     }
 

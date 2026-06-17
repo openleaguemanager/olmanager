@@ -1661,25 +1661,15 @@ mod tests {
 
     fn attrs() -> PlayerAttributes {
         PlayerAttributes {
-            pace: 60,
-            mental_resilience: 60,
-            strength: 60,
-            champion_pool: 60,
-            passing: 60,
-            laning: 60,
-            tackling: 60,
             mechanics: 60,
-            defending: 60,
-            positioning: 60,
+            laning: 60,
+            teamfighting: 60,
             macro_play: 60,
             consistency: 60,
-            discipline: 60,
-            aggression: 60,
-            teamfighting: 60,
             shotcalling: 60,
-            handling: 20,
-            reflexes: 20,
-            aerial: 20,
+            champion_pool: 60,
+            discipline: 60,
+            mental_resilience: 60,
         }
     }
 

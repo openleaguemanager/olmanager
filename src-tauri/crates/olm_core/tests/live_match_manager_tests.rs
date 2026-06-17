@@ -1,12 +1,12 @@
 use chrono::{TimeZone, Utc};
-use domain::league::{Fixture, MatchType, FixtureStatus, League, StandingEntry};
-use domain::manager::Manager;
-use domain::player::{Player, PlayerAttributes};
-use domain::stats::LolRole;
-use domain::team::Team;
-use ofm_core::clock::GameClock;
-use ofm_core::game::Game;
-use ofm_core::live_match_manager::{self, MatchMode};
+use olm_core::domain::league::{Fixture, MatchType, FixtureStatus, League, StandingEntry};
+use olm_core::domain::manager::Manager;
+use olm_core::domain::player::{Player, PlayerAttributes};
+use olm_core::domain::stats::LolRole;
+use olm_core::domain::team::Team;
+use olm_core::clock::GameClock;
+use olm_core::game::Game;
+use olm_core::live_match_manager::{self, MatchMode};
 
 // ---------------------------------------------------------------------------
 // Test helpers

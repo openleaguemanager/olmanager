@@ -1,4 +1,4 @@
-use ofm_core::scrim_flow::{
+use olm_core::scrim_flow::{
     DailyScrimFlowEvent as E, DailyScrimFlowState as S, ScrimResultQuality as Q,
     transition_daily_scrim_flow,
 };

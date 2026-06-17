@@ -3198,7 +3198,7 @@
         "body": "{{to}}, {{player}} transferini {{fee}} karşılığında {{from}} takımından tamamladı."
       },
       "freeAgentSigned": {
-        "subject": "{{player}}, {{team}} ile anlaştı",
+        "headline": "{{player}}, {{team}} ile anlaştı",
         "body": "Boşta oyuncu {{player}}, {{team}} ile {{years}} yıllık sözleşme imzaladı. Maaş: €{{wage}}/yıl."
       }
     }

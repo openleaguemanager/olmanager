@@ -882,6 +882,39 @@ fn simulate_ai_free_agent_signings(game: &mut Game, user_team_id: &str) {
     }
 }
 
+/// Public wrapper for the Team Agent to purchase a free agent for a specific
+/// role. Returns `true` if a signing was executed.
+pub fn ai_agent_purchase(game: &mut Game, team_id: &str, role: &str) -> bool {
+    let Some(team) = game.teams.iter().find(|t| t.id == team_id) else {
+        return false;
+    };
+    let budget_cap = team.transfer_budget.min(team.finance);
+    if budget_cap <= 25_000 {
+        return false;
+    }
+
+    let candidate = game
+        .players
+        .iter()
+        .filter(|player| player.team_id.is_none())
+        .filter(|player| lol_role_to_string(&player.natural_position) == role)
+        .filter_map(|player| {
+            let asking_price = (player.market_value as i64).max(25_000) / 5;
+            (asking_price > 0 && asking_price <= budget_cap).then_some((
+                player.id.clone(),
+                asking_price as u64,
+                player.market_value,
+            ))
+        })
+        .max_by_key(|(_, fee, _)| *fee);
+
+    if let Some((player_id, fee, _market_value)) = candidate {
+        execute_free_agent_signing(game, &player_id, team_id, fee).is_ok()
+    } else {
+        false
+    }
+}
+
 fn simulate_ai_club_to_club_transfers(game: &mut Game, user_team_id: &str) {
     let current_date = game.clock.current_date.date_naive();
 
@@ -2739,7 +2772,7 @@ pub fn release_player_contract(game: &mut Game, player_id: &str) -> Result<i64, 
     Ok(penalty)
 }
 
-fn lol_role_to_string(role: &LolRole) -> &'static str {
+pub(crate) fn lol_role_to_string(role: &LolRole) -> &'static str {
     match role {
         LolRole::Top => "TOP",
         LolRole::Jungle => "JUNGLE",
