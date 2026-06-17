@@ -2,7 +2,7 @@ use crate::domain::player::{Player, PlayerTrait};
 use crate::domain::team::Team;
 use crate::game::Game;
 use chrono::{Datelike, NaiveDate};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 // ---------------------------------------------------------------------------
 // Retention scoring weights (design: retention = Σ(weight × factor))
@@ -586,7 +586,7 @@ pub fn process_ai_team_agents(game: &mut Game) {
 
 /// Resolve conflicts between Player Agent and Team Agent decisions.
 ///
-/// For each transfer-listed player who is under contract:
+/// For each player newly transfer-listed by Player Agent who is under contract:
 /// - If retention_score >= RENEWAL_THRESHOLD → cancel the transfer listing
 /// - If the player is the ONLY player at their role on the team AND
 ///   contract extends > 12 months from today → cancel the transfer listing
@@ -594,7 +594,7 @@ pub fn process_ai_team_agents(game: &mut Game) {
 /// Spec OR-03: Under-contract → Team Agent overrides Player Agent.
 /// Spec OR-04: Free agents (no contract / expired) → Player Agent decision is final;
 ///             this function skips them implicitly.
-pub fn resolve_conflicts(game: &mut Game) {
+pub fn resolve_conflicts(game: &mut Game, previously_transfer_listed: &HashSet<String>) {
     use crate::domain::stats::LolRole;
     use std::collections::HashMap;
 
@@ -615,7 +615,10 @@ pub fn resolve_conflicts(game: &mut Game) {
 
     let mut override_ids: Vec<String> = Vec::new();
 
-    for player in players.iter().filter(|p| p.transfer_listed) {
+    for player in players
+        .iter()
+        .filter(|p| p.transfer_listed && !previously_transfer_listed.contains(&p.id))
+    {
         // Only under-contract players (OR-03)
         let contract_end = match player.contract_end.as_deref() {
             Some(s) => match NaiveDate::parse_from_str(s, "%Y-%m-%d").ok() {
@@ -632,6 +635,9 @@ pub fn resolve_conflicts(game: &mut Game) {
             Some(t) => t,
             None => continue,
         };
+        if team.team_kind != crate::domain::team::TeamKind::Main || team.manager_id.is_some() {
+            continue;
+        }
 
         let r_score = retention_score(player, team, today);
 
@@ -1492,12 +1498,62 @@ mod tests {
         // Set lol_ovr after Game::new refresh
         game.players[0].lol_ovr = 95;
 
-        resolve_conflicts(&mut game);
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
 
         let p = game.players.iter().find(|p| p.id == "p1").unwrap();
         assert!(
             !p.transfer_listed,
             "high retention player should have transfer_listed reset by Team Agent"
+        );
+    }
+
+    #[test]
+    fn test_resolve_conflicts_does_not_clear_human_managed_team_listing() {
+        let mut game = make_full_game_for_conflict(
+            vec![make_player(
+                "p_human", "HumanStar", "human_team", LolRole::Mid,
+                95, 8.5, 60_000,
+                Some("2028-06-15"),
+                "2002-01-01", vec![PlayerTrait::HyperCarry],
+            )],
+            vec!["human_team"],
+        );
+        game.teams[0].manager_id = Some("human_manager".to_string());
+        game.players[0].transfer_listed = true;
+        game.players[0].lol_ovr = 95;
+
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
+
+        let player = game.players.iter().find(|p| p.id == "p_human").unwrap();
+        assert!(
+            player.transfer_listed,
+            "human-managed team listings must not be cleared by AI conflict resolution"
+        );
+    }
+
+    #[test]
+    fn test_resolve_conflicts_does_not_clear_preexisting_transfer_listing() {
+        let mut game = make_full_game_for_conflict(
+            vec![make_player(
+                "p_preexisting", "PreListedStar", "ai_default", LolRole::Mid,
+                95, 8.5, 60_000,
+                Some("2028-06-15"),
+                "2002-01-01", vec![PlayerTrait::HyperCarry],
+            )],
+            vec!["ai_default"],
+        );
+        game.players[0].transfer_listed = true;
+        game.players[0].lol_ovr = 95;
+
+        let previously_transfer_listed = std::collections::HashSet::from(["p_preexisting".to_string()]);
+        resolve_conflicts(&mut game, &previously_transfer_listed);
+
+        let player = game.players.iter().find(|p| p.id == "p_preexisting").unwrap();
+        assert!(
+            player.transfer_listed,
+            "pre-existing or Team-Agent-created listings must remain listed"
         );
     }
 
@@ -1518,7 +1574,8 @@ mod tests {
         game.players[0].transfer_listed = true;
         game.players[0].lol_ovr = 45;
 
-        resolve_conflicts(&mut game);
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
 
         let p = game.players.iter().find(|p| p.id == "p2").unwrap();
         assert!(
@@ -1548,7 +1605,8 @@ mod tests {
         game.players[0].transfer_listed = true;
         game.players[0].lol_ovr = 80;
 
-        resolve_conflicts(&mut game);
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
 
         let p = game.players.iter().find(|p| p.id == "p3").unwrap();
         assert!(
@@ -1573,7 +1631,8 @@ mod tests {
         game.players[0].transfer_listed = true;
         game.players[0].lol_ovr = 80;
 
-        resolve_conflicts(&mut game);
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
 
         let p = game.players.iter().find(|p| p.id == "p4").unwrap();
         assert!(
@@ -1624,7 +1683,8 @@ mod tests {
             }
         }
 
-        resolve_conflicts(&mut game);
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
 
         let p5 = game.players.iter().find(|p| p.id == "p5").unwrap();
         assert!(
@@ -1666,7 +1726,8 @@ mod tests {
             }
         }
 
-        resolve_conflicts(&mut game);
+        let previously_transfer_listed = std::collections::HashSet::new();
+        resolve_conflicts(&mut game, &previously_transfer_listed);
 
         let p8 = game.players.iter().find(|p| p.id == "p8").unwrap();
         assert!(
@@ -1847,10 +1908,24 @@ mod tests {
         support.morale_core.manager_trust = 15;
         support.wage = 20_000; // underpaid → triggers transfer request
 
-        // Now run agents
+        // Now run agents. Snapshot after Team Agent so conflict resolution only
+        // clears transfer requests that Player Agent created in this cycle.
         crate::ai_team_agent::process_ai_team_agents(&mut game);
+        let previously_transfer_listed: std::collections::HashSet<String> = game.players
+            .iter()
+            .filter(|p| p.transfer_listed)
+            .map(|p| p.id.clone())
+            .collect();
         crate::ai_player_agent::process_ai_player_agents(&mut game);
-        crate::ai_team_agent::resolve_conflicts(&mut game);
+
+        let support_after_player_agent = game.players.iter()
+            .find(|p| p.natural_position == LolRole::Support).unwrap();
+        assert!(
+            support_after_player_agent.transfer_listed,
+            "precondition: Player Agent should request a transfer before conflict resolution"
+        );
+
+        crate::ai_team_agent::resolve_conflicts(&mut game, &previously_transfer_listed);
 
         // Support player should NOT be transfer_listed (critical depth overrides)
         let support_after = game.players.iter()
@@ -1969,8 +2044,13 @@ mod tests {
 
         // ... run agents
         crate::ai_team_agent::process_ai_team_agents(&mut game1);
+        let previously_transfer_listed1: std::collections::HashSet<String> = game1.players
+            .iter()
+            .filter(|p| p.transfer_listed)
+            .map(|p| p.id.clone())
+            .collect();
         crate::ai_player_agent::process_ai_player_agents(&mut game1);
-        crate::ai_team_agent::resolve_conflicts(&mut game1);
+        crate::ai_team_agent::resolve_conflicts(&mut game1, &previously_transfer_listed1);
 
         let result1: Vec<(String, bool, Option<String>)> = game1.players
             .iter()
@@ -1986,8 +2066,13 @@ mod tests {
         game2.players[4].lol_ovr = 75;
 
         crate::ai_team_agent::process_ai_team_agents(&mut game2);
+        let previously_transfer_listed2: std::collections::HashSet<String> = game2.players
+            .iter()
+            .filter(|p| p.transfer_listed)
+            .map(|p| p.id.clone())
+            .collect();
         crate::ai_player_agent::process_ai_player_agents(&mut game2);
-        crate::ai_team_agent::resolve_conflicts(&mut game2);
+        crate::ai_team_agent::resolve_conflicts(&mut game2, &previously_transfer_listed2);
 
         let result2: Vec<(String, bool, Option<String>)> = game2.players
             .iter()

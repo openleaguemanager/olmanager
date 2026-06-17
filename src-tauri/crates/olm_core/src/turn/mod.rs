@@ -21,7 +21,7 @@ use crate::domain::stats::StatsState;
 use crate::domain::team::{Team, TeamKind, TeamSeasonRecord};
 use crate::engine::LolRole as EngineLolRole;
 use log::{debug, info};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use uuid::Uuid;
 
 fn params(pairs: &[(&str, &str)]) -> HashMap<String, String> {
@@ -42,6 +42,14 @@ pub use round_summary::{
 /// Process a single day advance.
 pub fn process_day(game: &mut Game) {
     process_day_with_capture(game, &mut |_| {});
+}
+
+fn snapshot_transfer_listed_player_ids(game: &Game) -> HashSet<String> {
+    game.players
+        .iter()
+        .filter(|player| player.transfer_listed)
+        .map(|player| player.id.clone())
+        .collect()
 }
 
 pub fn process_day_with_capture<F>(game: &mut Game, on_capture: &mut F)
@@ -82,8 +90,9 @@ where
     scouting::process_scouting(game);
     transfers::generate_incoming_transfer_offers(game);
     crate::ai_team_agent::process_ai_team_agents(game);
+    let previously_transfer_listed = snapshot_transfer_listed_player_ids(game);
     crate::ai_player_agent::process_ai_player_agents(game);
-    crate::ai_team_agent::resolve_conflicts(game);
+    crate::ai_team_agent::resolve_conflicts(game, &previously_transfer_listed);
     news::generate_ai_transfer_news(game);
     maybe_simulate_parallel_academy_leagues(game);
     process_background_leagues(game, &today);
@@ -125,8 +134,9 @@ pub fn finish_live_match_day(game: &mut Game) {
     scouting::process_scouting(game);
     transfers::generate_incoming_transfer_offers(game);
     crate::ai_team_agent::process_ai_team_agents(game);
+    let previously_transfer_listed = snapshot_transfer_listed_player_ids(game);
     crate::ai_player_agent::process_ai_player_agents(game);
-    crate::ai_team_agent::resolve_conflicts(game);
+    crate::ai_team_agent::resolve_conflicts(game, &previously_transfer_listed);
     news::generate_ai_transfer_news(game);
     maybe_simulate_parallel_academy_leagues(game);
     process_background_leagues(game, &today);
@@ -1894,4 +1904,3 @@ mod tests {
         assert_eq!(game.leagues[1].fixtures[0].status, FixtureStatus::Scheduled);
     }
 }
-
