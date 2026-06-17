@@ -23,6 +23,10 @@ const SATISFACTION_LOW: f64 = 0.35;
 /// Satisfaction at or above this → completely happy (Silent).
 const SATISFACTION_HIGH: f64 = 0.70;
 
+/// Satisfaction below this on a contender → truly miserable threshold.
+/// Between [0.20, SATISFACTION_LOW) the contender suppresses transfer requests.
+const TRULY_MISERABLE: f64 = 0.20;
+
 /// Contract months remaining below this → renewal demand trigger.
 const RENEWAL_CONTRACT_MONTHS: f64 = 6.0;
 
@@ -270,7 +274,7 @@ fn decide_action_inner(
     // --- Very low satisfaction → transfer request (PA-04) ---
     if satisfaction < SATISFACTION_LOW {
         // PA-03: Contender teams suppress unless truly miserable
-        if is_contender && satisfaction >= 0.20 {
+        if is_contender && satisfaction >= TRULY_MISERABLE {
             if contract_short {
                 return PlayerAgentDecision::RequestRenewal;
             }
@@ -793,7 +797,8 @@ mod tests {
             ambition
         );
 
-        // p1 is the moderately unhappy one: morale 35, trust 30
+        // p1 is very unhappy (morale 20, trust 15) + underpaid + HyperCarry
+        // on a contender → should be suppressed (not RequestTransfer)
         let p1 = game.players.iter().find(|p| p.id == "p1").unwrap();
         let satisfaction = compute_satisfaction(p1, t, &game);
         let decision = decide_action(satisfaction, p1, t, &game);
