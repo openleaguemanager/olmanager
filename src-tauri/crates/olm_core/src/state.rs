@@ -164,18 +164,13 @@ mod tests {
     use chrono::{TimeZone, Utc};
     use crate::domain::league::{Fixture, MatchType, FixtureStatus, League, StandingEntry};
     use crate::domain::manager::Manager;
-    use crate::domain::player::{Player, PlayerAttributes};
+    use crate::domain::player::{LolRole, Player, PlayerAttributes};
     use crate::domain::team::Team;
 
-    fn default_attrs(pos: Position) -> PlayerAttributes {
-        let group = pos.to_group_position();
-        let is_gk = matches!(group, Position::Goalkeeper);
-        let is_def = matches!(group, Position::Defender);
-        let is_fwd = matches!(group, LolRole::Mid);
-
+    fn default_attrs() -> PlayerAttributes {
         PlayerAttributes {
-            mechanics: if is_gk { 30 } else { 65 },
-            laning: if is_gk { 30 } else { 65 },
+            mechanics: 65,
+            laning: 65,
             teamfighting: 65,
             macro_play: 65,
             consistency: 65,
@@ -186,15 +181,15 @@ mod tests {
         }
     }
 
-    fn make_player(id: &str, name: &str, team_id: &str, position: Position) -> Player {
+    fn make_player(id: &str, name: &str, team_id: &str, role: LolRole) -> Player {
         let mut player = Player::new(
             id.to_string(),
             name.to_string(),
             format!("Full {}", name),
             "1995-01-01".to_string(),
             "GB".to_string(),
-            position.clone(),
-            default_attrs(position),
+            role,
+            default_attrs(),
         );
         player.team_id = Some(team_id.to_string());
         player.morale = 70;
@@ -219,19 +214,19 @@ mod tests {
 
         for idx in 0..2 {
             players.push(make_player(
-                &format!("{}_gk{}", team_id, idx),
-                &format!("GK{}", idx),
+                &format!("{}_support{}", team_id, idx),
+                &format!("Support{}", idx),
                 team_id,
-                Position::Goalkeeper,
+                LolRole::Support,
             ));
         }
 
         for idx in 0..7 {
             players.push(make_player(
-                &format!("{}_def{}", team_id, idx),
-                &format!("Def{}", idx),
+                &format!("{}_top{}", team_id, idx),
+                &format!("Top{}", idx),
                 team_id,
-                Position::Defender,
+                LolRole::Top,
             ));
         }
 
@@ -240,16 +235,16 @@ mod tests {
                 &format!("{}_mid{}", team_id, idx),
                 &format!("Mid{}", idx),
                 team_id,
-                Position::Midfielder,
+                LolRole::Mid,
             ));
         }
 
         for idx in 0..6 {
             players.push(make_player(
-                &format!("{}_fwd{}", team_id, idx),
-                &format!("Fwd{}", idx),
+                &format!("{}_jungle{}", team_id, idx),
+                &format!("Jungle{}", idx),
                 team_id,
-                LolRole::Mid,
+                LolRole::Jungle,
             ));
         }
 
@@ -295,6 +290,11 @@ mod tests {
                 StandingEntry::new("team1".to_string()),
                 StandingEntry::new("team2".to_string()),
             ],
+            logo: None,
+            league_kind: crate::domain::league::LeagueKind::Main,
+            split_index: 0,
+            tier: 0,
+            active: false,
         };
 
         let mut game = Game::new(clock, manager, vec![team1, team2], players, vec![], vec![]);

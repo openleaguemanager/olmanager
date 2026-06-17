@@ -228,7 +228,7 @@ mod tests {
     use crate::game::Game;
     use chrono::{TimeZone, Utc};
     use crate::domain::manager::Manager;
-    use crate::domain::player::{Player, PlayerAttributes};
+    use crate::domain::player::{LolRole, Player, PlayerAttributes};
     use crate::domain::team::Team;
 
     fn attrs(stat: u8) -> PlayerAttributes {
@@ -252,7 +252,7 @@ mod tests {
             name.to_string(),
             "2001-01-01".to_string(),
             "GB".to_string(),
-            Position::Midfielder,
+            LolRole::Mid,
             attrs(stat),
         );
         player.team_id = Some(team_id.to_string());

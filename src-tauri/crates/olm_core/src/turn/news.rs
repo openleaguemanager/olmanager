@@ -405,7 +405,7 @@ mod tests {
     use crate::domain::manager::Manager;
     use crate::domain::message::{MessageCategory, MessagePriority};
     use crate::domain::news::NewsCategory;
-    use crate::domain::player::{Player, PlayerAttributes};
+    use crate::domain::player::{LolRole, Player, PlayerAttributes};
     use crate::domain::team::Team;
     use crate::engine::{KillDetail, MatchReport, MatchReportEndReason, Side, TeamStats};
     use std::collections::HashMap;
@@ -549,6 +549,11 @@ mod tests {
                 ),
             ],
             standings: vec![alpha, beta, gamma],
+            logo: None,
+            league_kind: crate::domain::league::LeagueKind::Main,
+            split_index: 0,
+            tier: 0,
+            active: false,
         }];
 
         game

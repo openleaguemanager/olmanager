@@ -1,15 +1,15 @@
 use chrono::{TimeZone, Utc};
-use domain::manager::Manager;
-use domain::player::{ContractRenewalState, Player, PlayerAttributes, RenewalSessionStatus};
-use domain::staff::{Staff, StaffAttributes, StaffRole};
-use domain::stats::LolRole;
-use domain::team::Team;
-use ofm_core::clock::GameClock;
-use ofm_core::contracts::{
+use olm_core::domain::manager::Manager;
+use olm_core::domain::player::{ContractRenewalState, Player, PlayerAttributes, RenewalSessionStatus};
+use olm_core::domain::staff::{Staff, StaffAttributes, StaffRole};
+use olm_core::domain::stats::LolRole;
+use olm_core::domain::team::Team;
+use olm_core::clock::GameClock;
+use olm_core::contracts::{
     DelegatedRenewalOptions, DelegatedRenewalResultStatus, RenewalDecision, RenewalOffer,
     delegate_renewals, evaluate_renewal_offer, propose_renewal,
 };
-use ofm_core::game::Game;
+use olm_core::game::Game;
 
 fn default_attrs() -> PlayerAttributes {
     PlayerAttributes {

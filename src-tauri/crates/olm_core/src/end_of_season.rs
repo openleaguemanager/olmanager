@@ -809,7 +809,7 @@ fn renew_contracts_for_retained_players(game: &mut Game) {
 mod tests {
     use super::*;
     use crate::clock::GameClock;
-    use crate::generator::definitions::{ScheduleConfig, SeasonStart, SplitConfig};
+    use crate::generator::definitions::{CompetitionManifest, SeasonStart, SplitConfig};
 
     fn make_team(id: &str) -> crate::domain::team::Team {
         let team = crate::domain::team::Team::new(
@@ -848,18 +848,36 @@ mod tests {
         }
     }
 
-    fn sample_schedule_config() -> ScheduleConfig {
-        ScheduleConfig {
-            format: "single_round_robin".to_string(),
-            team_count: 2,
-            splits: vec![SplitConfig {
-                name: "Spring".to_string(),
-                season_start: SeasonStart { month: 1, day: 15 },
-                superweek_offsets: vec![0],
-                best_of: 1,
-                playoffs: None,
-            }],
-            preseason_friendlies: 0,
+    fn sample_schedule_config() -> CompetitionManifest {
+        CompetitionManifest {
+            id: "lck".to_string(),
+            name: "LCK".to_string(),
+            region: "KR".to_string(),
+            schedule: crate::generator::definitions::ScheduleConfig {
+                format: "single_round_robin".to_string(),
+                team_count: 2,
+                splits: vec![SplitConfig {
+                    name: "Spring".to_string(),
+                    season_start: SeasonStart { month: 1, day: 15 },
+                    superweek_offsets: vec![0],
+                    best_of: 1,
+                    playoffs: None,
+                }],
+                preseason_friendlies: 0,
+            },
+            teams_file: "teams.json".to_string(),
+            players_file: "players.json".to_string(),
+            staff_file: None,
+            championships_file: None,
+            full_name: None,
+            country: None,
+            tier: None,
+            logo: None,
+            erls: vec![],
+            reputation: None,
+            nearby_country_codes: vec![],
+            legacy: false,
+            active: true,
         }
     }
 

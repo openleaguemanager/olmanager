@@ -1,4 +1,4 @@
-use ofm_core::random_events::{
+use olm_core::random_events::{
     build_fan_petition_from_narrative, build_media_story_from_narrative,
 };
 

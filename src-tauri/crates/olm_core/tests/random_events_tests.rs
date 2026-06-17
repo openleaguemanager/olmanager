@@ -1,16 +1,16 @@
 use chrono::{TimeZone, Utc};
-use domain::league::{Fixture, FixtureStatus, League, MatchResult, MatchType, StandingEntry};
-use domain::manager::Manager;
-use domain::message::{
+use olm_core::domain::league::{Fixture, FixtureStatus, League, MatchResult, MatchType, StandingEntry};
+use olm_core::domain::manager::Manager;
+use olm_core::domain::message::{
     ActionOption, ActionType, InboxMessage, MessageAction, MessageCategory, MessageContext,
     MessagePriority,
 };
-use domain::player::{Player, PlayerAttributes};
-use domain::stats::LolRole;
-use domain::team::{SponsorshipBonusCriterion, Team};
-use ofm_core::clock::GameClock;
-use ofm_core::game::Game;
-use ofm_core::random_events::{apply_event_response, check_random_events, rival_interest_weight};
+use olm_core::domain::player::{Player, PlayerAttributes};
+use olm_core::domain::stats::LolRole;
+use olm_core::domain::team::{SponsorshipBonusCriterion, Team};
+use olm_core::clock::GameClock;
+use olm_core::game::Game;
+use olm_core::random_events::{apply_event_response, check_random_events, rival_interest_weight};
 use std::collections::HashMap;
 
 // ---------------------------------------------------------------------------

@@ -1,16 +1,16 @@
 use chrono::{TimeZone, Utc};
-use domain::manager::Manager;
-use domain::player::LolRole;
-use domain::player::{Player, PlayerAttributes};
-use domain::staff::{Staff, StaffAttributes, StaffRole};
-use domain::team::{
+use olm_core::domain::manager::Manager;
+use olm_core::domain::player::LolRole;
+use olm_core::domain::player::{Player, PlayerAttributes};
+use olm_core::domain::staff::{Staff, StaffAttributes, StaffRole};
+use olm_core::domain::team::{
     PostScrimDecision, ScrimChampionPick, ScrimFocus, ScrimIssue, ScrimReport, ScrimStatus, Team,
     TrainingFocus, TrainingIntensity, TrainingSchedule,
 };
-use ofm_core::champions::{ChampionMasteryEntry, ChampionMetaEntry};
-use ofm_core::clock::GameClock;
-use ofm_core::game::Game;
-use ofm_core::training;
+use olm_core::champions::{ChampionMasteryEntry, ChampionMetaEntry};
+use olm_core::clock::GameClock;
+use olm_core::game::Game;
+use olm_core::training;
 
 // ---------------------------------------------------------------------------
 // Test helpers

@@ -1,4 +1,4 @@
-use ofm_core::messages;
+use olm_core::messages;
 
 // ---------------------------------------------------------------------------
 // welcome_message

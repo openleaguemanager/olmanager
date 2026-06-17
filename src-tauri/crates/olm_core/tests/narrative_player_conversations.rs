@@ -1,4 +1,4 @@
-use ofm_core::player_events::build_player_conversation_from_narrative;
+use olm_core::player_events::build_player_conversation_from_narrative;
 
 #[test]
 fn low_morale_conversation_uses_lol_competitive_registry_copy_and_effect_id() {

@@ -1,4 +1,4 @@
-use ofm_core::narrative::{
+use olm_core::narrative::{
     NarrativeContentPack, NarrativeSelector, load_default_content_pack, validate_content_pack,
 };
 
