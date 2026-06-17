@@ -21,6 +21,37 @@ const WAGE_SOFT_CAP_MULTIPLIER: f64 = 1.10;
 const TEAMS_PER_DAY: usize = 3;
 
 // ---------------------------------------------------------------------------
+// Threshold constants (spec-driven, single source of truth for tuning)
+// ---------------------------------------------------------------------------
+
+/// Retention score threshold: players at or above this get a renewal offer.
+const RENEWAL_THRESHOLD: f64 = 0.70;
+
+/// Underperformer detection: players below these thresholds are skipped for renewal.
+const UNDERPERFORMER_RATING: f32 = 6.0;
+const UNDERPERFORMER_OVR: u8 = 65;
+
+/// High-performer bypass: players above these thresholds get a renewal offer
+/// regardless of retention score, provided their contract is short (< 18 months).
+const HIGH_PERFORMER_RATING: f32 = 7.5;
+const HIGH_PERFORMER_OVR: u8 = 80;
+
+// Deadweight score weights
+const DW_OVR_WEIGHT: f64 = 0.40;
+const DW_WAGE_WEIGHT: f64 = 0.35;
+const DW_CONTRACT_WEIGHT: f64 = 0.25;
+
+/// Sale thresholds: players meeting these criteria are transfer-listed.
+const SALE_AGE_THRESHOLD: u8 = 28;
+const SALE_RATING_THRESHOLD: f32 = 6.5;
+
+/// Fraction of top wages used for sale eligibility (top 25 %).
+const TOP_WAGE_QUARTILE: f64 = 0.25;
+
+/// Deadweight score threshold: players scoring at or above this are transfer-listed.
+const DEADWEIGHT_THRESHOLD: f64 = 0.60;
+
+// ---------------------------------------------------------------------------
 // Helpers (extracted for REFACTOR)
 // ---------------------------------------------------------------------------
 
@@ -194,7 +225,7 @@ pub fn assess_roster(team: &Team, players: &[Player], today: NaiveDate) -> Roste
 
     let renewal_candidates: Vec<String> = retention_scores
         .iter()
-        .filter(|(_, score)| *score >= 0.7)
+        .filter(|(_, score)| *score >= RENEWAL_THRESHOLD)
         .map(|(id, _)| id.clone())
         .collect();
 
@@ -251,7 +282,7 @@ pub fn evaluate_renewals(team: &Team, players: &mut [Player], report: &RosterRep
 
         // Spec TA-02: Skip underperformer
         let is_underperformer =
-            player.stats.avg_rating < 6.0 || player.lol_ovr < 65;
+            player.stats.avg_rating < UNDERPERFORMER_RATING || player.lol_ovr < UNDERPERFORMER_OVR;
         if is_underperformer {
             continue;
         }
@@ -275,11 +306,11 @@ pub fn evaluate_renewals(team: &Team, players: &mut [Player], report: &RosterRep
         }
 
         // Spec TA-02: Renew high performer
-        let is_high_performer = player.stats.avg_rating > 7.5
-            && player.lol_ovr > 80
+        let is_high_performer = player.stats.avg_rating > HIGH_PERFORMER_RATING
+            && player.lol_ovr > HIGH_PERFORMER_OVR
             && contract_security(player.contract_end.as_deref(), today) < 0.5; // < ~18 months
 
-        if score >= 0.7 || is_high_performer {
+        if score >= RENEWAL_THRESHOLD || is_high_performer {
             if player.morale_core.renewal_state.is_none() {
                 player.morale_core.renewal_state = Some(ContractRenewalState {
                     status: RenewalSessionStatus::Open,
@@ -291,6 +322,186 @@ pub fn evaluate_renewals(team: &Team, players: &mut [Player], report: &RosterRep
                 }
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Deadweight score computation
+// ---------------------------------------------------------------------------
+
+/// Compute a deadweight score (0..1) indicating how much of a burden
+/// this player is on the team's finances relative to their contribution.
+/// High score = candidate for sale.
+/// Factors: low lol_ovr, high wage, short contract.
+fn compute_deadweight_score(player: &Player, today: NaiveDate) -> f64 {
+    // Normalise lol_ovr: lower = more deadweight (invert)
+    let ovr_factor = 1.0 - (f64::from(player.lol_ovr) / 99.0);
+
+    // Wage factor: higher wage relative to reasonable baseline = more deadweight
+    let wage_factor = (f64::from(player.wage) / 100_000.0).min(1.0);
+
+    // Contract factor: shorter remaining = more deadweight
+    let contract_factor = match player.contract_end.as_deref() {
+        Some(end_str) => {
+            if let Ok(end) = NaiveDate::parse_from_str(end_str, "%Y-%m-%d") {
+                let months_remaining =
+                    (end.signed_duration_since(today).num_days() as f64 / 30.44).max(0.0);
+                // 0 months → 1.0 (deadweight), 24+ months → 0.0
+                1.0 - (months_remaining / 24.0).clamp(0.0, 1.0)
+            } else {
+                1.0
+            }
+        }
+        None => 1.0,
+    };
+
+    ovr_factor * DW_OVR_WEIGHT + wage_factor * DW_WAGE_WEIGHT + contract_factor * DW_CONTRACT_WEIGHT
+}
+
+// ---------------------------------------------------------------------------
+// Selling decisions
+// ---------------------------------------------------------------------------
+
+/// Evaluate which players on a team should be put on the transfer list.
+/// Sets `player.transfer_listed = true` for eligible players.
+///
+/// Spec TA-03: age > 28 + top-25% wage + avg_rating < 6.5 + contract_end > 12 months.
+/// Also marks players with high deadweight score.
+/// Edge cases: new signings protected, injured/out-of-form players protected.
+pub fn evaluate_sales(team: &Team, players: &mut [Player], today: NaiveDate) {
+    // Compute top-25% wage threshold for this team
+    let mut wages: Vec<u32> = players
+        .iter()
+        .filter(|p| p.team_id.as_deref() == Some(&team.id))
+        .map(|p| p.wage)
+        .collect();
+    wages.sort_unstable_by(|a, b| b.cmp(a));
+    let top_25_threshold = if wages.is_empty() {
+        u32::MAX
+    } else {
+        let idx = ((wages.len().saturating_sub(1)) as f64 * TOP_WAGE_QUARTILE) as usize;
+        wages[idx]
+    };
+
+    let mut processed: std::collections::HashSet<String> = std::collections::HashSet::new();
+
+    for player in players.iter_mut() {
+        if player.team_id.as_deref() != Some(&team.id) {
+            continue;
+        }
+
+        // No-deadlock guard
+        if !processed.insert(player.id.clone()) {
+            continue;
+        }
+
+        // Edge case: new signing (protected from immediate sale)
+        if let Some(ref date_str) = player.can_be_transferred_until {
+            if let Ok(date) = NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+                if date > today {
+                    continue;
+                }
+            }
+        }
+
+        // Edge case: injured / out of form (condition < 40)
+        if player.condition < 40 {
+            continue;
+        }
+
+        // Spec TA-03 explicit criteria
+        let age = player_age(&player.date_of_birth, today);
+        let contract_months_remaining = match player.contract_end.as_deref() {
+            Some(end_str) => {
+                if let Ok(end) = NaiveDate::parse_from_str(end_str, "%Y-%m-%d") {
+                    (end.signed_duration_since(today).num_days() as f64 / 30.44).max(0.0)
+                } else {
+                    0.0
+                }
+            }
+            None => 0.0,
+        };
+
+        let meets_sale_criteria = age > SALE_AGE_THRESHOLD
+            && player.wage >= top_25_threshold
+            && player.stats.avg_rating < SALE_RATING_THRESHOLD
+            && contract_months_remaining > 12.0;
+
+        // Deadweight score (design: low lol_ovr + high wage + short contract)
+        let deadweight = compute_deadweight_score(player, today);
+        let is_deadweight = deadweight > DEADWEIGHT_THRESHOLD;
+
+        if meets_sale_criteria || is_deadweight {
+            player.transfer_listed = true;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Buying decisions
+// ---------------------------------------------------------------------------
+
+/// Evaluate whether a team should purchase players to fill roster gaps.
+/// Checks transfer budget, role gaps from the report, and wage budget headroom.
+/// Takes `team_id` to avoid borrow conflicts with `&mut Game`.
+pub fn evaluate_purchases(team_id: &str, game: &mut Game, report: &RosterReport) {
+    use crate::domain::season::TransferWindowStatus;
+
+    // Look up team
+    let (transfer_budget, wage_budget) = match game.teams.iter().find(|t| t.id == team_id) {
+        Some(t) => (t.transfer_budget, t.wage_budget),
+        None => return,
+    };
+
+    // Zero budget check — TA-05 budget respect
+    if transfer_budget == 0 {
+        return;
+    }
+
+    // Respect league transfer windows
+    let transfer_open = matches!(
+        game.season_context.transfer_window.status,
+        TransferWindowStatus::Open | TransferWindowStatus::DeadlineDay
+    );
+    if !transfer_open {
+        return;
+    }
+
+    // No role gaps — nothing to buy
+    if report.role_gaps.is_empty() {
+        return;
+    }
+
+    // Check wage budget headroom
+    let soft_cap_wage = (wage_budget as f64 * WAGE_SOFT_CAP_MULTIPLIER) as i64;
+    let current_wage_bill: i64 = game
+        .players
+        .iter()
+        .filter(|p| p.team_id.as_deref() == Some(team_id))
+        .map(|p| i64::from(p.wage))
+        .sum();
+
+    // Compute cheapest available free agent wage + estimate for headroom
+    let cheapest_fa_wage = game
+        .players
+        .iter()
+        .filter(|p| p.team_id.is_none())
+        .map(|p| p.wage)
+        .min()
+        .unwrap_or(0);
+
+    let projected_bill = current_wage_bill + i64::from(cheapest_fa_wage);
+    if projected_bill > soft_cap_wage {
+        return; // no wage budget headroom
+    }
+
+    // For each role gap, try to purchase an affordable free agent
+    for role in &report.role_gaps {
+        if *role == crate::domain::stats::LolRole::Unknown {
+            continue;
+        }
+        let role_str = crate::transfers::lol_role_to_string(role);
+        crate::transfers::ai_agent_purchase(game, team_id, role_str);
     }
 }
 
@@ -332,16 +543,14 @@ fn select_ai_teams_for_today(game: &Game) -> Vec<String> {
 }
 
 /// Public entry point called from turn/mod.rs.
-/// Processes up to 3 AI teams per day: assess roster + evaluate renewals.
+/// Processes up to 3 AI teams per day: assess roster, renewals, sales, purchases.
 pub fn process_ai_team_agents(game: &mut Game) {
     let today = game.clock.current_date.date_naive();
 
     let team_ids = select_ai_teams_for_today(game);
 
+    // --- Phase 1: Renewals + Sales (borrow team + players mutably) ---
     for team_id in &team_ids {
-        // Borrow team from game — the borrow checker allows
-        // simultaneous &game.teams + &mut game.players since they
-        // are distinct struct fields.
         let team = match game.teams.iter().find(|t| t.id == *team_id) {
             Some(t) => t,
             None => continue,
@@ -352,8 +561,22 @@ pub fn process_ai_team_agents(game: &mut Game) {
         // Apply renewal decisions (mutable borrow of game.players)
         evaluate_renewals(team, &mut game.players, &report, today);
 
-        // Stub: evaluate_sales (PR 2), evaluate_purchases (PR 2)
-        // No-ops for now.
+        // Apply sale decisions (mutable borrow of game.players)
+        evaluate_sales(team, &mut game.players, today);
+    }
+
+    // --- Phase 2: Purchases (need &mut Game for transfers module) ---
+    // Separate loop so the &Team borrow from game.teams ends before &mut Game.
+    for team_id in &team_ids {
+        let report = {
+            let team = match game.teams.iter().find(|t| t.id == *team_id) {
+                Some(t) => t,
+                None => continue,
+            };
+            assess_roster(team, &game.players, today)
+        }; // team borrow ends here
+
+        evaluate_purchases(team_id, &mut *game, &report);
     }
 }
 
@@ -737,10 +960,387 @@ mod tests {
     }
 
     #[test]
+    fn test_process_ai_team_agents_full_integration() {
+        use crate::domain::player::LolRole;
+        use crate::domain::season::TransferWindowStatus;
+        use crate::domain::team::TeamKind;
+        use crate::clock::GameClock;
+        use crate::domain::manager::Manager;
+        use chrono::{TimeZone, Utc};
+
+        let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
+        let manager = Manager::new(
+            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
+            "1980-01-01".to_string(), "GB".to_string(),
+        );
+
+        // AI team with budget + a role gap (no Support)
+        let mut team = make_team("ai_team", "AI Team");
+        team.team_kind = TeamKind::Main;
+        team.manager_id = None;
+        team.transfer_budget = 500_000;
+        team.wage_budget = 500_000;
+
+        let base_players = vec![
+            make_player("p1", "Top", "ai_team", LolRole::Top, 80, 7.0, 40_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player("p2", "Jg", "ai_team", LolRole::Jungle, 75, 6.8, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player("p3", "Mid", "ai_team", LolRole::Mid, 85, 8.5, 50_000, Some("2026-09-15"), "2002-01-01", vec![]), // high performer, short contract
+            make_player("p4", "Adc", "ai_team", LolRole::Adc, 78, 7.2, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            // Expendable veteran on high wage who should get transfer_listed
+            make_player("p5", "Vet", "ai_team", LolRole::Top, 60, 5.5, 120_000, Some("2028-06-15"), "1995-01-01", vec![]),
+        ];
+
+        let mut game = Game::new(clock, manager, vec![team], base_players, vec![], vec![]);
+        game.season_context.transfer_window.status = TransferWindowStatus::Open;
+
+        // Add a free agent Support
+        let mut fa = make_player(
+            "fa1", "FreeSupp", "none", LolRole::Support,
+            70, 6.5, 30_000, None, "2001-01-01", vec![],
+        );
+        fa.market_value = 100_000;
+        fa.team_id = None;
+        game.players.push(fa);
+
+        // Override lol_ovr values that Game::new resets
+        game.players[0].lol_ovr = 80;
+        game.players[1].lol_ovr = 75;
+        game.players[2].lol_ovr = 85;
+        game.players[3].lol_ovr = 78;
+        game.players[4].lol_ovr = 60;
+
+        process_ai_team_agents(&mut game);
+
+        // 1. High performer (p3) should get renewal state
+        let p3 = game.players.iter().find(|p| p.id == "p3").unwrap();
+        assert!(
+            p3.morale_core.renewal_state.is_some(),
+            "high performer should get renewal offer"
+        );
+
+        // 2. Expendable veteran (p5) should be transfer_listed
+        let p5 = game.players.iter().find(|p| p.id == "p5").unwrap();
+        assert!(
+            p5.transfer_listed,
+            "expendable veteran should be transfer listed"
+        );
+
+        // 3. The team should not crash — full integration runs without panics
+        //    and game state is internally consistent
+        if let Some(team) = game.teams.iter().find(|t| t.id == "ai_team") {
+            assert!(team.transfer_budget >= 0, "budget should not go negative");
+        }
+    }
+
+    #[test]
     fn test_player_age_computation() {
         let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
         assert_eq!(player_age("2000-01-01", today), 26);
         assert_eq!(player_age("1995-06-15", today), 31);
         assert_eq!(player_age("2020-06-15", today), 6);
+    }
+
+    #[test]
+    fn test_compute_deadweight_score_high_ovr_low_wage() {
+        let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
+        let player = make_player(
+            "p1", "Star", "t1", LolRole::Mid,
+            99, 8.0, 50_000, Some("2028-06-15"), "2000-01-01", vec![],
+        );
+        let score = compute_deadweight_score(&player, today);
+        assert!(
+            score < 0.3,
+            "star player with long contract should have low deadweight score, got {score}"
+        );
+    }
+
+    #[test]
+    fn test_compute_deadweight_score_low_ovr_high_wage() {
+        let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
+        let player = make_player(
+            "p2", "Bust", "t1", LolRole::Top,
+            40, 5.0, 200_000, Some("2026-09-15"), "1995-01-01", vec![],
+        );
+        let score = compute_deadweight_score(&player, today);
+        assert!(
+            score > 0.6,
+            "bust player with high wage should have high deadweight score, got {score}"
+        );
+    }
+
+    #[test]
+    fn test_compute_deadweight_score_no_contract() {
+        let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
+        let player = make_player(
+            "p3", "Expiring", "t1", LolRole::Support,
+            60, 6.0, 80_000, None, "1998-01-01", vec![],
+        );
+        let score = compute_deadweight_score(&player, today);
+        assert!(
+            score > 0.4,
+            "player with no contract should have moderate deadweight score, got {score}"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — Sell decisions
+    // -----------------------------------------------------------------------
+
+    /// Helper: compute top-25% wage threshold for a team's players.
+    fn top_25_wage_threshold(team_id: &str, players: &[Player]) -> u32 {
+        let mut wages: Vec<u32> = players
+            .iter()
+            .filter(|p| p.team_id.as_deref() == Some(team_id))
+            .map(|p| p.wage)
+            .collect();
+        wages.sort_unstable_by(|a, b| b.cmp(a));
+        if wages.is_empty() {
+            return 0;
+        }
+        let idx = ((wages.len().saturating_sub(1)) as f64 * TOP_WAGE_QUARTILE) as usize;
+        wages[idx]
+    }
+
+    #[test]
+    fn test_evaluate_sales_transfer_list_expendable_veteran() {
+        let team = make_team("t1", "Test Team");
+        let today = test_date();
+
+        // Player: age 30 (>28), avg_rating 5.5 (<6.5), contract until 2028 (>12 months)
+        let mut players = vec![
+            make_player(
+                "p1", "Veteran", "t1", LolRole::Top,
+                65, 5.5, 120_000, // top wage
+                Some("2028-06-15"), // >12 months
+                "1996-01-01", // age 30
+                vec![],
+            ),
+            // Second player, lower wage, so p1 is top 25%
+            make_player(
+                "p2", "Youngster", "t1", LolRole::Mid,
+                80, 7.5, 30_000,
+                Some("2027-06-15"),
+                "2002-01-01",
+                vec![],
+            ),
+        ];
+        // Override lol_ovr
+        players[0].lol_ovr = 65;
+        players[1].lol_ovr = 80;
+
+        evaluate_sales(&team, &mut players, today);
+
+        // p1 meets TA-03 criteria → should be transfer_listed
+        assert!(
+            players[0].transfer_listed,
+            "expendable veteran should be transfer_listed"
+        );
+        // p2 is young, performing, low wage → should NOT be transfer_listed
+        assert!(
+            !players[1].transfer_listed,
+            "young performer should NOT be transfer_listed"
+        );
+    }
+
+    #[test]
+    fn test_evaluate_sales_new_signing_not_sold() {
+        let team = make_team("t1", "Test Team");
+        let today = test_date();
+
+        let mut players = vec![
+            make_player(
+                "p1", "RecentSigning", "t1", LolRole::Jungle,
+                70, 6.0, 100_000,
+                Some("2028-06-15"),
+                "1995-01-01", // age 31
+                vec![],
+            ),
+        ];
+        players[0].lol_ovr = 70;
+        // Protected from transfer until future date
+        players[0].can_be_transferred_until = Some("2026-12-01".to_string());
+
+        evaluate_sales(&team, &mut players, today);
+
+        assert!(
+            !players[0].transfer_listed,
+            "new signing should NOT be sold even if they meet sale criteria"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2 — Buy decisions
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_evaluate_purchases_initiates_when_budget_and_gap_exist() {
+        // Integration-level: set up a team with budget + role gap + free agent
+        // and verify a purchase happens through the transfers module.
+        use crate::domain::player::LolRole;
+        use crate::domain::season::TransferWindowStatus;
+        use crate::domain::team::TeamKind;
+        use crate::clock::GameClock;
+        use crate::domain::manager::Manager;
+        use chrono::{TimeZone, Utc};
+
+        let today = test_date();
+        let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
+        let manager = Manager::new(
+            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
+            "1980-01-01".to_string(), "GB".to_string(),
+        );
+
+        let mut team = make_team("t1", "Test Team");
+        team.team_kind = TeamKind::Main;
+        team.transfer_budget = 500_000;
+        team.wage_budget = 500_000;
+        team.finance = 500_000;
+
+        // Team has 4 roles — no Support → gap
+        let base_players = vec![
+            make_player("p1", "Top", "t1", LolRole::Top, 80, 7.0, 40_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player("p2", "Jg", "t1", LolRole::Jungle, 75, 6.8, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player("p3", "Mid", "t1", LolRole::Mid, 85, 7.5, 50_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player("p4", "Adc", "t1", LolRole::Adc, 78, 7.2, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
+        ];
+
+        let mut game = Game::new(clock, manager, vec![team], base_players, vec![], vec![]);
+        game.season_context.transfer_window.status = TransferWindowStatus::Open;
+
+        // Add a free agent Support with low market_value to guarantee purchase
+        let mut fa = make_player(
+            "fa1", "FreeSupp", "none", LolRole::Support,
+            70, 6.5, 30_000,
+            None, "2001-01-01", vec![],
+        );
+        fa.market_value = 100_000;
+        fa.team_id = None;
+        game.players.push(fa);
+
+        // Build report & execute purchase
+        let report = assess_roster(
+            game.teams.iter().find(|t| t.id == "t1").unwrap(),
+            &game.players,
+            today,
+        );
+
+        assert!(
+            report.role_gaps.contains(&LolRole::Support),
+            "precondition: Support should be a gap"
+        );
+
+        evaluate_purchases("t1", &mut game, &report);
+
+        // After purchase, team should have exactly one Support player
+        let support_count = game.players
+            .iter()
+            .filter(|p| p.team_id.as_deref() == Some("t1") && p.natural_position == LolRole::Support)
+            .count();
+        assert_eq!(
+            support_count, 1,
+            "team should have acquired a Support free agent, got {support_count}"
+        );
+    }
+
+    #[test]
+    fn test_evaluate_purchases_no_budget_no_purchase_attempts() {
+        use crate::domain::season::TransferWindowStatus;
+        use crate::domain::team::TeamKind;
+        use crate::clock::GameClock;
+        use crate::domain::manager::Manager;
+        use chrono::{TimeZone, Utc};
+
+        let today = test_date();
+        let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
+        let manager = Manager::new(
+            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
+            "1980-01-01".to_string(), "GB".to_string(),
+        );
+
+        let mut team = make_team("t1", "Broke Team");
+        team.team_kind = TeamKind::Main;
+        team.transfer_budget = 0; // zero budget
+
+        let players = vec![
+            make_player("p1", "OnlyPlayer", "t1", LolRole::Top, 70, 6.5, 30_000, Some("2027-06-15"), "2000-01-01", vec![]),
+        ];
+
+        let mut game = Game::new(clock, manager, vec![team], players, vec![], vec![]);
+        game.season_context.transfer_window.status = TransferWindowStatus::Open;
+
+        let report = assess_roster(
+            game.teams.iter().find(|t| t.id == "t1").unwrap(),
+            &game.players,
+            today,
+        );
+
+        // Even with gaps, zero budget must prevent purchases (TA-05)
+        evaluate_purchases("t1", &mut game, &report);
+        // No panic = function handled zero budget gracefully
+        // The game state should be unchanged
+        assert_eq!(
+            game.players.iter().filter(|p| p.team_id.as_deref() == Some("t1")).count(),
+            1,
+            "no new players should be added with zero budget"
+        );
+    }
+
+    #[test]
+    fn test_evaluate_sales_no_deadlock_duplicate_player_skipped() {
+        let team = make_team("t1", "Test Team");
+        let today = test_date();
+
+        // Two players with same ID but different wage — only the first
+        // should be processed; the duplicate should be skipped.
+        let mut players = vec![
+            make_player(
+                "p1", "Star", "t1", LolRole::Top,
+                60, 6.0, 120_000,
+                Some("2028-06-15"),
+                "1995-01-01", // age 31, >28
+                vec![],
+            ),
+            make_player(
+                "p1", "Clone", "t1", LolRole::Top,
+                60, 6.0, 120_000,
+                Some("2028-06-15"),
+                "1995-01-01",
+                vec![],
+            ),
+        ];
+        players[0].lol_ovr = 60;
+        players[1].lol_ovr = 60;
+
+        evaluate_sales(&team, &mut players, today);
+
+        // First occurrence should be processed
+        assert!(players[0].transfer_listed, "first occurrence should be evaluated");
+        // Duplicate should be skipped (deadlock guard)
+        assert!(!players[1].transfer_listed, "duplicate should be skipped");
+    }
+
+    #[test]
+    fn test_evaluate_sales_injured_player_not_sold() {
+        let team = make_team("t1", "Test Team");
+        let today = test_date();
+
+        let mut players = vec![
+            make_player(
+                "p1", "InjuredStar", "t1", LolRole::Adc,
+                75, 6.0, 100_000,
+                Some("2028-06-15"),
+                "1995-01-01", // age 31
+                vec![],
+            ),
+        ];
+        players[0].lol_ovr = 75;
+        players[0].condition = 30; // injured/poor form
+
+        evaluate_sales(&team, &mut players, today);
+
+        assert!(
+            !players[0].transfer_listed,
+            "injured player should NOT be sold"
+        );
     }
 }
