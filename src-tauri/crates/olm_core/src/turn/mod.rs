@@ -83,6 +83,7 @@ where
     transfers::generate_incoming_transfer_offers(game);
     crate::ai_team_agent::process_ai_team_agents(game);
     crate::ai_player_agent::process_ai_player_agents(game);
+    crate::ai_team_agent::resolve_conflicts(game);
     news::generate_ai_transfer_news(game);
     maybe_simulate_parallel_academy_leagues(game);
     process_background_leagues(game, &today);
@@ -125,6 +126,7 @@ pub fn finish_live_match_day(game: &mut Game) {
     transfers::generate_incoming_transfer_offers(game);
     crate::ai_team_agent::process_ai_team_agents(game);
     crate::ai_player_agent::process_ai_player_agents(game);
+    crate::ai_team_agent::resolve_conflicts(game);
     news::generate_ai_transfer_news(game);
     maybe_simulate_parallel_academy_leagues(game);
     process_background_leagues(game, &today);

@@ -155,6 +155,12 @@ pub fn evaluate_team(
     })
 }
 
+/// Ensure a team has a match-eligible roster by repairing any gaps.
+///
+/// Agent sits ABOVE this — `roster_stability` is the safety net for edge cases
+/// the agent misses (mass departures, initial setup, corrupted saves, etc.).
+/// The AI agent system (`ai_team_agent`, `ai_player_agent`) should prevent most
+/// roster issues; this function catches whatever slips through.
 pub fn repair_team(
     game: &mut Game,
     team_id: &str,
@@ -204,6 +210,11 @@ pub fn repair_team(
     })
 }
 
+/// Ensure ALL AI teams are match-eligible by repairing roster gaps across the league.
+///
+/// Agent sits ABOVE this — `roster_stability` is the safety net for edge cases
+/// the agent misses. Called before background league simulation to guarantee
+/// every AI team has a valid lineup.
 pub fn repair_league(
     game: &mut Game,
     reason: RosterStabilityReason,
