@@ -1,5 +1,6 @@
 use crate::finances::{calc_annual_wages, record_transaction, BudgetImpact, FinanceTransactionInput};
 use crate::game::Game;
+use crate::roster_stability::{RosterStabilityReason, repair_team};
 use chrono::{Datelike, NaiveDate};
 use crate::domain::negotiation::{NegotiationFeedback, NegotiationMood};
 use crate::domain::player::{PlayerOfferItem, TransferOfferStatus, WageNegotiationStatus};
@@ -3024,6 +3025,11 @@ fn execute_transfer_with_payer(
         clear_player_from_active_lineup(t, player_id);
         reconcile_lol_active_lineup(t, &players_snapshot);
     }
+
+    // After transfer-out, repair non-player AI selling teams whose roster may
+    // have fallen below the match-eligibility threshold. Academy teams are
+    // skipped internally by is_schedulable_ai_main_team.
+    let _ = repair_team(game, from_team_id, RosterStabilityReason::TransferOut);
 
     if should_generate_major_transfer_news(&player_snapshot, fee) {
         let article_id = format!(

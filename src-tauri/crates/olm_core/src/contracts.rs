@@ -4,6 +4,7 @@ use crate::contract_wage_policy::{
 };
 use crate::delegated_renewals::delegate_renewals as delegate_renewals_service;
 use crate::game::Game;
+use crate::roster_stability::{RosterStabilityReason, repair_team};
 use chrono::{Datelike, Months, NaiveDate};
 use crate::domain::message::{InboxMessage, MessageCategory, MessagePriority};
 use crate::domain::negotiation::{NegotiationFeedback, NegotiationMood};
@@ -461,6 +462,8 @@ pub fn process_contract_expiries(game: &mut Game) {
         })
         .collect();
 
+    let mut affected_team_ids: Vec<String> = Vec::new();
+
     for player_index in expired_player_indices {
         let player_id = game.players[player_index].id.clone();
         let player_name = game.players[player_index].match_name.clone();
@@ -489,7 +492,20 @@ pub fn process_contract_expiries(game: &mut Game) {
                 &team_name,
                 &today,
             ));
+
+            if !affected_team_ids.contains(&team_id.to_string()) {
+                affected_team_ids.push(team_id.to_string());
+            }
         }
+    }
+
+    // After releasing expired players, repair non-player AI teams affected by
+    // the expirations. User-managed teams are skipped internally by repair_team
+    // (is_schedulable_ai_main_team returns false when manager_id is Some).
+    let mut sorted_ids = affected_team_ids.clone();
+    sorted_ids.sort();
+    for team_id in sorted_ids {
+        let _ = repair_team(game, &team_id, RosterStabilityReason::ContractExpired);
     }
 }
 
