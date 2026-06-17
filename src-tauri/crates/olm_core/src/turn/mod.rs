@@ -561,7 +561,7 @@ fn register_parallel_result(
 /// the borrow checker permits simultaneous mutable access.
 fn simulate_background_league(
     teams: &mut [Team],
-    players: &mut [Player],
+    players: &[Player],
     league: &mut League,
     today: &str,
     season: u32,
@@ -611,7 +611,7 @@ fn simulate_background_league(
     }
 
     // Store results and update standings
-    for ((fixture_index, home_team_id, away_team_id, home_wins, away_wins), report) in
+    for ((fixture_index, home_team_id, away_team_id, home_wins, away_wins), _report) in
         simulated_results.iter().zip(match_reports.iter())
     {
         if let Some(fixture) = league.fixtures.get_mut(*fixture_index) {
@@ -629,15 +629,6 @@ fn simulate_background_league(
             *away_wins,
         ));
 
-        // Apply basic player stats without news/messages (light mode)
-        for player in players.iter_mut() {
-            if let Some(ps) = report.player_stats.get(&player.id) {
-                player.stats.appearances += 1;
-                player.stats.kills += u32::from(ps.kills);
-                player.stats.assists += u32::from(ps.assists);
-                player.stats.minutes_played += ps.duration_seconds / 60;
-            }
-        }
     }
 
     for (home_team_id, away_team_id, home_wins, away_wins) in &completed_fixtures {
@@ -706,7 +697,7 @@ fn process_background_leagues(game: &mut Game, today: &str) {
     let season = game.clock.current_date.year() as u32;
     for i in 1..game.leagues.len() {
         let league = &mut game.leagues[i];
-        simulate_background_league(&mut game.teams, &mut game.players, league, today, season);
+        simulate_background_league(&mut game.teams, &game.players, league, today, season);
     }
 }
 
@@ -1688,7 +1679,7 @@ mod tests {
         let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &mut game.players,
+            &game.players,
             league,
             &today_str,
             season,
@@ -1721,7 +1712,7 @@ mod tests {
         let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &mut game.players,
+            &game.players,
             league,
             &today_str,
             season,
@@ -1751,7 +1742,7 @@ mod tests {
         let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &mut game.players,
+            &game.players,
             league,
             &today_str,
             season,
@@ -1792,7 +1783,7 @@ mod tests {
         let league = game.leagues.first_mut().unwrap();
         simulate_background_league(
             &mut game.teams,
-            &mut game.players,
+            &game.players,
             league,
             "2025-06-15",
             season,
@@ -1813,18 +1804,18 @@ mod tests {
         let today = "2025-06-15";
         let (mut base_game, _) = bg_test_game(today);
 
-        // Add a second background league with a due fixture
-        let bg2_league = League::new(
-            "bg-league-2".to_string(),
-            "BG League 2".to_string(),
-            2025,
-            &["team1".to_string(), "team2".to_string()],
-            None,
-        );
-        base_game.leagues.push(bg2_league);
-        if let Some(league) = base_game.leagues.last_mut() {
+        // Add two background leagues with due fixtures. process_background_leagues
+        // intentionally skips index 0 because that is the user-active league.
+        for index in 1..=2 {
+            let mut league = League::new(
+                format!("bg-league-{index}"),
+                format!("BG League {index}"),
+                2025,
+                &["team1".to_string(), "team2".to_string()],
+                None,
+            );
             league.fixtures.push(Fixture {
-                id: "fix-bg2".to_string(),
+                id: format!("fix-bg{index}"),
                 matchday: 1,
                 date: today.to_string(),
                 home_team_id: "team1".to_string(),
@@ -1834,6 +1825,7 @@ mod tests {
                 status: FixtureStatus::Scheduled,
                 result: None,
             });
+            base_game.leagues.push(league);
         }
 
         process_background_leagues(&mut base_game, today);
