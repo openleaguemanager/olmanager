@@ -1,4 +1,5 @@
 pub mod academy;
+pub mod ai_player_agent;
 pub mod ai_team_agent;
 pub mod db;
 pub mod domain;
