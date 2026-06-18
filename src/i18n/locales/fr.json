@@ -2677,8 +2677,8 @@
         "actionAdjust": "Ajuster l'Entraînement"
       },
       "event": {
-        "ack": "Understood",
-        "respond": "Respond"
+        "ack": "Compris",
+        "respond": "Répondre"
       },
       "playerEvent": {
         "respond": "Répondre",
