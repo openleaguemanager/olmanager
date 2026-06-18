@@ -146,6 +146,9 @@ fn resolve_message_action_internal(
         .get_game(|g| g.clone())
         .ok_or("No active game session".to_string())?;
 
+    // Treat empty string as None — the frontend sends "" when no option is chosen
+    let option_id = option_id.filter(|s| !s.is_empty());
+
     // Try to apply player conversation or random event response
     let (effect, effect_i18n_key, effect_i18n_params) = if let Some(opt) = option_id {
         // Try player events first, then random events
