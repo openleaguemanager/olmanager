@@ -27,7 +27,6 @@ import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import { resolvePlayerCurrentLolRole } from "@/lib/players/lolIdentity";
 import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
-import { countryName } from "@/lib/common/countries";
 import { resolveSeasonContext } from "@/lib/season/seasonContext";
 import { getAnnualWageBill, getTransferBudgetSummary } from "@/lib/finances/finance";
 import {
@@ -657,10 +656,16 @@ export function TransfersTabV2({
                   <TableHead className="w-10 cursor-pointer select-none text-center" onClick={() => toggleSort("position")}>
                     <span className="inline-flex items-center gap-1">{t("common.position")}{renderSortIcon("position")}</span>
                   </TableHead>
-                  <TableHead className="min-w-[200px] cursor-pointer select-none" onClick={() => toggleSort("name")}>
+                  <TableHead className="w-44 cursor-pointer select-none" onClick={() => toggleSort("name")}>
                     <span className="inline-flex items-center gap-1">{t("common.player")}{renderSortIcon("name")}</span>
                   </TableHead>
-                  <TableHead className="w-16 cursor-pointer select-none text-right" onClick={() => toggleSort("age")}>
+                  <TableHead className="w-20 cursor-pointer select-none text-center" onClick={() => toggleSort("nationality")}>
+                    <span className="inline-flex items-center gap-1 justify-center">{t("common.nationality")}{renderSortIcon("nationality")}</span>
+                  </TableHead>
+                  <TableHead className="w-20 cursor-pointer select-none text-right" onClick={() => toggleSort("soloq")}>
+                    <span className="inline-flex items-center gap-1 justify-end">{t("common.soloq")}{renderSortIcon("soloq")}</span>
+                  </TableHead>
+                  <TableHead className="w-14 cursor-pointer select-none text-right" onClick={() => toggleSort("age")}>
                     <span className="inline-flex items-center gap-1 justify-end">{t("common.age")}{renderSortIcon("age")}</span>
                   </TableHead>
                   <TableHead className="w-40 cursor-pointer select-none" onClick={() => toggleSort("team")}>
@@ -709,25 +714,28 @@ export function TransfersTabV2({
                         />
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2">
                           <img
                             src={photo ?? "/default/defaultplayer.webp"}
                             alt={player.match_name}
-                            className="size-9 rounded-full bg-muted object-cover shrink-0"
+                            className="size-8 rounded-full bg-muted object-cover shrink-0"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               if (target.src.endsWith("defaultplayer.webp")) return;
                               target.src = "/default/defaultplayer.webp";
                             }}
                           />
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold text-foreground truncate">{player.match_name || player.full_name}</p>
-                            <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <CountryFlag code={player.nationality} locale={i18n.language} className="text-xs leading-none" />
-                              <span className="truncate">{countryName(player.nationality, i18n.language)}</span>
-                            </p>
-                          </div>
+                          <span className="text-sm font-semibold text-foreground truncate">{player.match_name || player.full_name}</span>
                         </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <CountryFlag code={player.nationality} locale={i18n.language} className="text-xs leading-none" />
+                          <span className="text-xs text-muted-foreground">{player.nationality}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-sm text-muted-foreground">
+                        {player.soloq_lp ? `${player.soloq_lp.toLocaleString()} LP` : "—"}
                       </TableCell>
                       <TableCell className="text-right tabular-nums text-sm text-muted-foreground">{age}</TableCell>
                       <TableCell>

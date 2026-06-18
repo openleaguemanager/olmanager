@@ -197,7 +197,7 @@ export function filterTransferPlayers(
   });
 }
 
-export type TransferSortKey = "value" | "wage" | "ovr" | "name" | "position" | "age" | "team" | "status";
+export type TransferSortKey = "value" | "wage" | "ovr" | "name" | "position" | "age" | "team" | "status" | "nationality" | "soloq";
 export type TransferSortDirection = "asc" | "desc";
 
 export interface TransferSortState {
@@ -244,6 +244,10 @@ export function sortTransferPlayers(
         };
         return (statusVal(b) - statusVal(a)) * factor;
       }
+      case "nationality":
+        return (a.nationality ?? "").localeCompare(b.nationality ?? "") * factor;
+      case "soloq":
+        return ((a.soloq_lp ?? 0) - (b.soloq_lp ?? 0)) * factor;
       default:
         return 0;
     }
