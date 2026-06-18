@@ -1511,6 +1511,14 @@ pub fn weekly_scrim_setup_lock_state(
     }
     let days = scrim_slot_weekdays_u8(team.scrim_weekly_slots);
     let first_scrim_weekday = days.into_iter().min().unwrap_or(2);
+
+    let has_any_plan = team.weekly_scrim_plan_team_ids.iter().any(|plan| !plan.is_empty());
+    if !has_any_plan {
+        // Allow configuration at any time when no scrims have been planned yet
+        // (e.g. first day of the game or start of a new split)
+        return (false, None);
+    }
+
     if current_weekday > first_scrim_weekday
         || (current_weekday == first_scrim_weekday && day_phase != crate::game::DayPhase::Morning)
     {
