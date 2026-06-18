@@ -109,16 +109,7 @@ const TABS: { id: TransferTabView; labelKey: string; icon: React.ReactNode }[] =
 
 const POSITIONS = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"] as const;
 
-const SORT_COLUMNS: { key: TransferSortKey; labelKey: string }[] = [
-  { key: "position", labelKey: "common.position" },
-  { key: "name", labelKey: "common.player" },
-  { key: "age", labelKey: "common.age" },
-  { key: "team", labelKey: "common.team" },
-  { key: "value", labelKey: "common.value" },
-  { key: "wage", labelKey: "common.wage" },
-  { key: "ovr", labelKey: "common.ovr" },
-  { key: "status", labelKey: "common.status" },
-];
+
 
 export function TransfersTabV2({
   gameState,
@@ -663,25 +654,36 @@ export function TransfersTabV2({
             <Table>
               <TableHeader>
                 <TableRow>
-                  {SORT_COLUMNS.map((col) => (
-                    <TableHead
-                      key={col.key}
-                      className="cursor-pointer select-none"
-                      onClick={() => toggleSort(col.key)}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        {t(col.labelKey)}
-                        {renderSortIcon(col.key)}
-                      </span>
-                    </TableHead>
-                  ))}
+                  <TableHead className="w-10 cursor-pointer select-none text-center" onClick={() => toggleSort("position")}>
+                    <span className="inline-flex items-center gap-1">{t("common.position")}{renderSortIcon("position")}</span>
+                  </TableHead>
+                  <TableHead className="min-w-[200px] cursor-pointer select-none" onClick={() => toggleSort("name")}>
+                    <span className="inline-flex items-center gap-1">{t("common.player")}{renderSortIcon("name")}</span>
+                  </TableHead>
+                  <TableHead className="w-16 cursor-pointer select-none text-right" onClick={() => toggleSort("age")}>
+                    <span className="inline-flex items-center gap-1 justify-end">{t("common.age")}{renderSortIcon("age")}</span>
+                  </TableHead>
+                  <TableHead className="w-40 cursor-pointer select-none" onClick={() => toggleSort("team")}>
+                    <span className="inline-flex items-center gap-1">{t("common.team")}{renderSortIcon("team")}</span>
+                  </TableHead>
+                  <TableHead className="w-24 cursor-pointer select-none text-right" onClick={() => toggleSort("value")}>
+                    <span className="inline-flex items-center gap-1 justify-end">{t("common.value")}{renderSortIcon("value")}</span>
+                  </TableHead>
+                  <TableHead className="w-24 cursor-pointer select-none text-right" onClick={() => toggleSort("wage")}>
+                    <span className="inline-flex items-center gap-1 justify-end">{t("common.wage")}{renderSortIcon("wage")}</span>
+                  </TableHead>
+                  <TableHead className="w-16 cursor-pointer select-none text-center" onClick={() => toggleSort("ovr")}>
+                    <span className="inline-flex items-center gap-1 justify-center">{t("common.ovr")}{renderSortIcon("ovr")}</span>
+                  </TableHead>
+                  <TableHead className="w-24 cursor-pointer select-none text-center" onClick={() => toggleSort("status")}>
+                    <span className="inline-flex items-center gap-1 justify-center">{t("common.status")}{renderSortIcon("status")}</span>
+                  </TableHead>
                   {view === "offers" && (
-                    <TableHead className="text-center">{t("transfers.offers")}</TableHead>
+                    <TableHead className="w-40 text-center">{t("transfers.offers")}</TableHead>
                   )}
                   {(view === "market" || view === "erl" || view === "loans") && (
-                    <TableHead className="text-center">{t("common.actions")}</TableHead>
+                    <TableHead className="w-24 text-center">{t("common.actions")}</TableHead>
                   )}
-                  
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -698,41 +700,41 @@ export function TransfersTabV2({
                       onClick={() => onSelectPlayer(player.id)}
                       className="cursor-pointer"
                     >
-                      <TableCell>
+                      <TableCell className="text-center">
                         <img
                           src={ROLE_ICON_PATHS[lolRole as keyof typeof ROLE_ICON_PATHS] ?? ROLE_ICON_PATHS.TOP}
                           alt={lolRole}
-                          className="size-5 object-contain"
+                          className="size-5 object-contain mx-auto"
                           title={lolRole}
                         />
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
                           <img
                             src={photo ?? "/default/defaultplayer.webp"}
                             alt={player.match_name}
-                            className="size-8 rounded-full bg-muted object-cover"
+                            className="size-9 rounded-full bg-muted object-cover shrink-0"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               if (target.src.endsWith("defaultplayer.webp")) return;
                               target.src = "/default/defaultplayer.webp";
                             }}
                           />
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{player.match_name || player.full_name}</p>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-foreground truncate">{player.match_name || player.full_name}</p>
                             <p className="flex items-center gap-1 text-xs text-muted-foreground">
                               <CountryFlag code={player.nationality} locale={i18n.language} className="text-xs leading-none" />
-                              <span>{countryName(player.nationality, i18n.language)}</span>
+                              <span className="truncate">{countryName(player.nationality, i18n.language)}</span>
                             </p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="tabular-nums text-sm text-muted-foreground">{age}</TableCell>
+                      <TableCell className="text-right tabular-nums text-sm text-muted-foreground">{age}</TableCell>
                       <TableCell>
                         {player.team_id ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); onSelectTeam(player.team_id!); }}
-                            className="text-left text-sm font-medium text-foreground transition-colors hover:text-primary"
+                            className="text-left text-sm font-medium text-foreground transition-colors hover:text-primary truncate block max-w-[140px]"
                           >
                             {getTeamName(gameState.teams, player.team_id!)}
                           </button>
@@ -740,13 +742,13 @@ export function TransfersTabV2({
                           <span className="text-sm italic text-muted-foreground/60">{t("common.freeAgent")}</span>
                         )}
                       </TableCell>
-                      <TableCell className="tabular-nums text-sm text-muted-foreground">
+                      <TableCell className="text-right tabular-nums text-sm text-muted-foreground">
                         {formatVal(player.market_value)}
                       </TableCell>
-                      <TableCell className="tabular-nums text-sm text-muted-foreground">
+                      <TableCell className="text-right tabular-nums text-sm text-muted-foreground">
                         {formatVal(player.wage)}/yr
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         <span
                           className={cn(
                             "font-heading text-base font-bold tabular-nums",
@@ -774,9 +776,9 @@ export function TransfersTabV2({
                         <TableCell className="text-center">
                           <button
                             onClick={(e) => { e.stopPropagation(); openBidNegotiation(player); }}
-                            className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-heading uppercase tracking-wider text-primary transition-all hover:bg-primary/20"
+                            className="inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-heading font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-primary/90"
                           >
-                            <Gavel className="size-2.5" /> {t("transfers.bid")}
+                            <Gavel className="size-3" /> {t("transfers.bid")}
                           </button>
                         </TableCell>
                       )}
