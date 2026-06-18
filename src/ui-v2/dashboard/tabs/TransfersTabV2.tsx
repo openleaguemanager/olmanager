@@ -111,11 +111,11 @@ const POSITIONS = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"] as const;
 
 
 
-function soloqTier(lp: number | undefined): { label: string; color: string } {
-  if (!lp || lp <= 0) return { label: "Unranked", color: "text-muted-foreground" };
-  if (lp >= 1300) return { label: "Challenger", color: "text-yellow-300" };
-  if (lp >= 800) return { label: "Grandmaster", color: "text-rose-400" };
-  return { label: "Master", color: "text-purple-400" };
+function soloqTierImage(lp: number | undefined): string {
+  if (!lp || lp <= 0) return "/ladder-icons/unranked.webp";
+  if (lp >= 1300) return "/ladder-icons/challenger.webp";
+  if (lp >= 800) return "/ladder-icons/grandmaster.webp";
+  return "/ladder-icons/master.webp";
 }
 
 export function TransfersTabV2({
@@ -744,16 +744,27 @@ export function TransfersTabV2({
                       </TableCell>
                       <TableCell className="text-right">
                         {player.soloq_lp ? (
-                          <div className="flex flex-col items-end gap-0.5">
-                            <span className={cn("text-xs font-bold tracking-wide", soloqTier(player.soloq_lp).color)}>
-                              {soloqTier(player.soloq_lp).label}
-                            </span>
-                            <span className="tabular-nums text-[10px] text-muted-foreground">
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="tabular-nums text-xs text-muted-foreground">
                               {Math.round(player.soloq_lp).toLocaleString()} LP
                             </span>
+                            <img
+                              src={soloqTierImage(player.soloq_lp)}
+                              alt=""
+                              className="size-7 object-contain"
+                              loading="lazy"
+                            />
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground">—</span>
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="text-xs text-muted-foreground">—</span>
+                            <img
+                              src="/ladder-icons/unranked.webp"
+                              alt=""
+                              className="size-7 object-contain opacity-50"
+                              loading="lazy"
+                            />
+                          </div>
                         )}
                       </TableCell>
                       <TableCell className="text-right tabular-nums text-sm text-muted-foreground">{age}</TableCell>
