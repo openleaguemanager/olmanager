@@ -2969,8 +2969,8 @@
         "body2": "The club has organized a charity initiative in partnership with a local foundation.\n\n{{team}} continues to build strong ties with the community. The board is pleased with the positive image."
       },
       "moodReport": {
-        "subject": "Dressing Room Report — Mood: {{mood}}",
-        "body": "Here is your weekly dressing room report:\n\n• Overall mood: {{mood}} (avg morale: {{avgMorale}})\n• Players in high spirits (80+): {{highCount}}\n• Players with low morale (<40): {{lowCount}}\n• Total squad: {{total}}"
+        "subject": "Informe de Vestuario — Ánimo: {{mood}}",
+        "body": "Este es tu informe semanal del vestuario:\n\n• Ánimo general: {{mood}} (moral media: {{avgMorale}})\n• Jugadores con alto ánimo (80+): {{highCount}}\n• Jugadores con baja moral (<40): {{lowCount}}\n• Total del plantel: {{total}}"
       },
       "boardConfidence": {
         "subject": "Board Meeting — Results Under Scrutiny",
