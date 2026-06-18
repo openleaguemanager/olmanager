@@ -281,7 +281,6 @@ const META_CHAMPION_SCORES: Record<string, number> = {
 
 const ROLE_ORDER: Role[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 const ASSISTANT_COACH_PLACEHOLDER = "";
-const LEC_LOGO_URL = "/lec-logo.svg";
 const EMPTY_LOCKED_CHAMPION_IDS: string[] = [];
 const ROLE_ICON_URLS: Record<Role, string> = ROLE_ICON_PATHS;
 
@@ -733,6 +732,12 @@ export default function ChampionDraft({
   gameState,
 }: ChampionDraftProps) {
   const { t } = useTranslation();
+
+  const leagueLogo = gameState?.user_competition_id
+    ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)?.logo
+      ?? `/competitions-icons/${gameState.user_competition_id}.webp`
+    : "/competitions-icons/lec.webp";
+
   const debugToolsEnabled = useSettingsStore(
     (state) => state.settings.debug_tools_enabled,
   );
@@ -2757,7 +2762,7 @@ export default function ChampionDraft({
               {!isCompactLayout ? (
                 <div className="size-10 overflow-hidden rounded-md mt-1">
                   <img
-                    src={LEC_LOGO_URL}
+                    src={leagueLogo}
                     alt={t("match.draft.leagueLogoAlt")}
                     className="size-full object-cover"
                   />
