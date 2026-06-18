@@ -700,18 +700,6 @@ export function TransfersTabV2({
                     >
                       <TableCell>
                         <img
-                          src={photo ?? "/default/defaultplayer.webp"}
-                          alt={player.match_name}
-                          className="size-8 rounded-full bg-muted object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            if (target.src.endsWith("defaultplayer.webp")) return;
-                            target.src = "/default/defaultplayer.webp";
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <img
                           src={ROLE_ICON_PATHS[lolRole as keyof typeof ROLE_ICON_PATHS] ?? ROLE_ICON_PATHS.TOP}
                           alt={lolRole}
                           className="size-5 object-contain"
@@ -719,11 +707,25 @@ export function TransfersTabV2({
                         />
                       </TableCell>
                       <TableCell>
-                        <p className="text-sm font-medium text-foreground">{player.match_name || player.full_name}</p>
-                        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <CountryFlag code={player.nationality} locale={i18n.language} className="text-xs leading-none" />
-                          <span>{countryName(player.nationality, i18n.language)}</span>
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={photo ?? "/default/defaultplayer.webp"}
+                            alt={player.match_name}
+                            className="size-8 rounded-full bg-muted object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              if (target.src.endsWith("defaultplayer.webp")) return;
+                              target.src = "/default/defaultplayer.webp";
+                            }}
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{player.match_name || player.full_name}</p>
+                            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <CountryFlag code={player.nationality} locale={i18n.language} className="text-xs leading-none" />
+                              <span>{countryName(player.nationality, i18n.language)}</span>
+                            </p>
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell className="tabular-nums text-sm text-muted-foreground">{age}</TableCell>
                       <TableCell>
