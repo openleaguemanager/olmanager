@@ -95,6 +95,7 @@ export function InboxTabV2({
 
   async function handleSelect(id: string) {
     setSelectedId(id);
+    setEffect(null);
     const msg = allMessages.find((m) => m.id === id);
     if (msg && !msg.read) {
       try {
@@ -280,7 +281,7 @@ export function InboxTabV2({
               lang={i18n.language}
               effect={effect}
               onAction={(actionId, optionId) => handleAction(selectedMessage.id, actionId, optionId)}
-              onClose={() => setSelectedId(null)}
+              onClose={() => { setSelectedId(null); setEffect(null); }}
               onDelete={() => handleDelete(selectedMessage.id)}
             />
           ) : (
