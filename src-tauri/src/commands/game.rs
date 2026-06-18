@@ -515,7 +515,10 @@ pub async fn select_team(
     let team_names: Vec<String> = game
         .teams
         .iter()
-        .filter(|team| team.team_kind != TeamKind::Academy)
+        .filter(|team| {
+            team.team_kind != TeamKind::Academy
+                && team.competition_id.as_deref() == user_cid
+        })
         .map(|team| team.name.clone())
         .collect();
     game.news.push(olm_core::news::season_preview_article(
