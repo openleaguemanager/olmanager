@@ -5,7 +5,7 @@
   "identifier": "com.openleaguemanager.olmanager",
   "build": {
     "beforeDevCommand": "node scripts/sync-data.mjs && npm run dev",
-    "devUrl": "http://localhost:1420",
+    "devUrl": "http://127.0.0.1:1420",
     "beforeBuildCommand": "npm run build && node scripts/sync-data.mjs",
     "frontendDist": "../dist"
   },
