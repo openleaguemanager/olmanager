@@ -7,6 +7,10 @@ pub(super) fn competition_label(match_type: &MatchType) -> String {
         MatchType::Friendly => "Friendly".to_string(),
         MatchType::PreseasonTournament => "PreseasonTournament".to_string(),
         MatchType::Playoffs => "Playoffs".to_string(),
+        MatchType::TournamentGroup => "Tournament Group".to_string(),
+        MatchType::TournamentPlayIn => "Tournament Play-In".to_string(),
+        MatchType::TournamentSwiss => "Tournament Swiss".to_string(),
+        MatchType::TournamentKnockout => "Tournament Knockout".to_string(),
     }
 }
 

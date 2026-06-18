@@ -2,6 +2,7 @@ use crate::domain::league::{FixtureStatus, League, MatchType};
 use crate::domain::message::*;
 use crate::domain::player::PlayerSeasonStats;
 use crate::domain::team::{FinancialTransactionKind, TeamSeasonRecord};
+use crate::domain::tournament_state::ScheduledTournament;
 use crate::finances::{
     push_board_financial_health_mail, push_prize_payout_mail, record_transaction, BudgetImpact,
     FinanceTransactionInput,
@@ -13,6 +14,7 @@ use crate::schedule::{
     append_fixtures, generate_preseason_friendlies, generate_schedule_from_config,
 };
 use crate::season_awards::compute_season_awards;
+use crate::tournament_qualification::{qualify_teams_for_tournament, TournamentFormat};
 use chrono::{Datelike, TimeZone, Utc};
 use std::collections::HashMap;
 
@@ -188,7 +190,7 @@ pub fn process_end_of_split(game: &mut Game, manifest: &CompetitionManifest) {
 pub fn process_background_seasons(game: &mut Game, manifests: &HashMap<String, CompetitionManifest>) {
     // First pass: identify complete bg leagues (avoiding borrow conflicts)
     let complete_indices: Vec<usize> = (1..game.leagues.len())
-        .filter(|i| is_league_complete(&game.leagues[*i]))
+        .filter(|i| !game.leagues[*i].is_tournament && is_league_complete(&game.leagues[*i]))
         .collect();
 
     for i in complete_indices {
@@ -802,6 +804,228 @@ fn renew_contracts_for_retained_players(game: &mut Game) {
 
         player.contract_end = Some(contract_end.format("%Y-%m-%d").to_string());
         player.wage = wage;
+    }
+}
+
+/// Assign free agents to teams that have fewer than 5 players.
+/// This ensures every team can field a roster for the new season.
+fn replenish_depleted_rosters(game: &mut Game) {
+    let current_date = game.clock.current_date.date_naive();
+    let next_season_year = current_date.year() + 1;
+
+    let team_ids: Vec<String> = game.teams.iter().map(|t| t.id.clone()).collect();
+
+    for team_id in team_ids {
+        let roster_count = game
+            .players
+            .iter()
+            .filter(|p| p.team_id.as_ref().map(|id| id.as_str()) == Some(team_id.as_str()))
+            .count();
+
+        if roster_count >= 5 {
+            continue;
+        }
+
+        let Some(team_name) = game
+            .teams
+            .iter()
+            .find(|t| t.id == team_id)
+            .map(|t| t.name.clone())
+        else {
+            continue;
+        };
+
+        let needed = 5usize.saturating_sub(roster_count);
+
+        for _ in 0..needed {
+            let available_agent = game.players.iter_mut().find(|p| {
+                p.team_id.is_none()
+                    && p.contract_end.is_none()
+                    && p.wage == 0
+                    && !p.was_released
+                    && p.transfer_offers.is_empty()
+            });
+
+            let Some(agent) = available_agent else {
+                break;
+            };
+
+            let agent_id = agent.id.clone();
+            let wage;
+            let contract_years;
+            {
+                let Some(team) = game.teams.iter().find(|t| t.id == team_id) else {
+                    break;
+                };
+                wage = crate::contracts::expected_wage(agent, team, current_date);
+                contract_years = 1;
+            }
+
+            agent.team_id = Some(team_id.clone());
+            agent.wage = wage;
+            agent.contract_end = Some(
+                current_date
+                    .checked_add_months(chrono::Months::new(contract_years * 12))
+                    .unwrap_or_else(|| {
+                        chrono::NaiveDate::from_ymd_opt(next_season_year, 11, 30).unwrap()
+                    })
+                    .format("%Y-%m-%d")
+                    .to_string(),
+            );
+            agent.transfer_listed = false;
+            agent.loan_listed = false;
+
+            let agent_name = agent.match_name.clone();
+            let mut params = std::collections::HashMap::new();
+            params.insert("player".to_string(), agent_name.clone());
+            params.insert("years".to_string(), contract_years.to_string());
+            params.insert("team".to_string(), team_name.clone());
+            params.insert("wage".to_string(), wage.to_string());
+            let msg = crate::domain::message::InboxMessage::new(
+                format!("free_agent_signed_{}_{}", agent_id, team_id),
+                format!("{} signs with {}", agent_name, team_name),
+                format!(
+                    "Free agent {} has signed a {}-year contract with {} at €{}/year.",
+                    agent_name, contract_years, team_name, wage
+                ),
+                "Team Management".to_string(),
+                current_date.format("%Y-%m-%d").to_string(),
+            )
+            .with_category(crate::domain::message::MessageCategory::Transfer)
+            .with_priority(crate::domain::message::MessagePriority::Normal)
+            .with_i18n(
+                "be.msg.freeAgentSigned.subject",
+                "be.msg.freeAgentSigned.body",
+                params,
+            );
+            game.messages.push(msg);
+
+            let user_team_id = game.manager.team_id.clone().unwrap_or_default();
+            let is_user_involved = team_id == user_team_id;
+            crate::transfers::record_transfer(
+                game,
+                &agent_id,
+                "",
+                &team_id,
+                0,
+                wage,
+                contract_years as u8,
+                is_user_involved,
+                is_user_involved,
+                false,
+                None,
+                0,
+                &[],
+            );
+        }
+    }
+}
+
+/// Determine which tournament (if any) should be injected after a given split.
+/// Returns the tournament format and competition_id string.
+fn tournament_for_split(split_index: usize, total_splits: usize) -> Option<(TournamentFormat, String)> {
+    if total_splits == 1 {
+        // Single split year: no tournament injection between splits
+        return None;
+    }
+    if split_index == 0 && total_splits >= 2 {
+        // After first split → First Stand
+        Some((TournamentFormat::Fst2026, "fst".to_string()))
+    } else if split_index == 1 && total_splits >= 3 {
+        // After second split → MSI
+        Some((TournamentFormat::Msi2026, "msi".to_string()))
+    } else if split_index + 1 >= total_splits {
+        // After last split → Worlds
+        Some((TournamentFormat::Worlds2026, "worlds".to_string()))
+    } else {
+        None
+    }
+}
+
+/// Calculate the start date for a tournament based on the current split end.
+/// Returns split_end_date + 14 days.
+/// If no fixtures exist in the active league, falls back to next_split_start - 21 days.
+pub fn calculate_tournament_start_date(
+    game: &Game,
+    manifest: &CompetitionManifest,
+) -> Option<String> {
+    let active_league = game.active_league()?;
+    let split_index = active_league.split_index;
+
+    // Try last fixture date + 14 days
+    let last_fixture_date = active_league
+        .fixtures
+        .iter()
+        .filter(|f| f.counts_for_league_standings() && f.status == FixtureStatus::Completed)
+        .map(|f| f.date.as_str())
+        .max();
+
+    if let Some(date_str) = last_fixture_date {
+        if let Ok(date) = chrono::NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+            let start = date + chrono::Days::new(14);
+            return Some(start.format("%Y-%m-%d").to_string());
+        }
+    }
+
+    // Fallback: next split season_start - 21 days
+    let next_split = manifest.schedule.splits.get(split_index + 1)?;
+    let next_start = chrono::NaiveDate::from_ymd_opt(
+        active_league.season as i32,
+        next_split.season_start.month,
+        next_split.season_start.day,
+    )?;
+    let start = next_start - chrono::Days::new(21);
+    Some(start.format("%Y-%m-%d").to_string())
+}
+
+/// Build a `ScheduledTournament` for the next split without injecting fixtures.
+/// Returns `None` if no tournament applies for this split window.
+pub fn schedule_tournament_for_next_split(
+    game: &Game,
+    manifest: &CompetitionManifest,
+) -> Option<ScheduledTournament> {
+    let active_league = game.active_league()?;
+    let split_index = active_league.split_index;
+    let total_splits = manifest.schedule.splits.len();
+    let (format, competition_id) = tournament_for_split(split_index, total_splits)?;
+
+    let qualified = qualify_teams_for_tournament(game, format);
+    if qualified.is_empty() {
+        log::info!(
+            "[end_of_season] no teams qualified for {:?} (split {}), skipping scheduling",
+            format,
+            split_index
+        );
+        return None;
+    }
+
+    let start_date = calculate_tournament_start_date(game, manifest)?;
+    Some(ScheduledTournament {
+        competition_id,
+        start_date,
+        format,
+        qualified_teams: qualified,
+    })
+}
+
+/// Clear the active tournament context when the tournament has finished.
+/// Should be called after the last tournament fixture is completed.
+pub fn clear_active_tournament_if_finished(game: &mut Game) {
+    let Some(cid) = game.active_tournament_id.clone() else { return };
+    let Some(league) = game.leagues.iter().find(|l| l.competition_id.as_deref() == Some(&cid)) else {
+        // Tournament league no longer exists; clear context
+        game.active_tournament_id = None;
+        game.tournament_queuing = false;
+        return;
+    };
+    let all_completed = league.fixtures.iter().all(|f| f.status == FixtureStatus::Completed);
+    if all_completed && !league.fixtures.is_empty() {
+        game.active_tournament_id = None;
+        game.tournament_queuing = false;
+        log::info!(
+            "[end_of_season] tournament {} finished, clearing active_tournament_id",
+            cid
+        );
     }
 }
 

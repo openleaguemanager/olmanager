@@ -116,6 +116,10 @@ pub(crate) fn parse_fixture_competition(s: &str) -> MatchType {
         "Friendly" => MatchType::Friendly,
         "PreseasonTournament" => MatchType::PreseasonTournament,
         "Playoffs" => MatchType::Playoffs,
+        "TournamentGroup" => MatchType::TournamentGroup,
+        "TournamentPlayIn" => MatchType::TournamentPlayIn,
+        "TournamentSwiss" => MatchType::TournamentSwiss,
+        "TournamentKnockout" => MatchType::TournamentKnockout,
         _ => MatchType::League,
     }
 }

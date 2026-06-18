@@ -51,6 +51,10 @@ pub fn advance_to_next_season(state: State<'_, StateManager>) -> Result<serde_js
             info!(
                 "[cmd] advance_to_next_season: season complete, running full end-of-season"
             );
+            // Schedule tournament for next split window instead of injecting immediately
+            if let Some(scheduled) = olm_core::end_of_season::schedule_tournament_for_next_split(&game, manifest) {
+                game.scheduled_tournaments.push(scheduled);
+            }
             let summary = olm_core::end_of_season::process_end_of_season_with_config(
                 &mut game, Some(manifest),
             );
@@ -82,6 +86,11 @@ pub fn advance_to_next_season(state: State<'_, StateManager>) -> Result<serde_js
                 .and_then(|c| game.teams.iter().find(|t| t.id == c.team_id))
                 .map(|t| t.name.clone())
                 .unwrap_or_default();
+
+            // Schedule tournament between splits (FST or MSI)
+            if let Some(scheduled) = olm_core::end_of_season::schedule_tournament_for_next_split(&game, manifest) {
+                game.scheduled_tournaments.push(scheduled);
+            }
 
             // Increment split, then generate its schedule
             if let Some(l) = game.active_league_mut() {

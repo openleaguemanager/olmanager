@@ -290,11 +290,7 @@ mod tests {
                 StandingEntry::new("team1".to_string()),
                 StandingEntry::new("team2".to_string()),
             ],
-            logo: None,
-            league_kind: crate::domain::league::LeagueKind::Main,
-            split_index: 0,
-            tier: 0,
-            active: false,
+            ..Default::default()
         };
 
         let mut game = Game::new(clock, manager, vec![team1, team2], players, vec![], vec![]);

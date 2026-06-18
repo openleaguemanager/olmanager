@@ -15,6 +15,7 @@ import {
 import ScheduleCalendarView from "@/ui-v2/_legacy/components/schedule/ScheduleCalendarView";
 import DraftResultScreenV2 from "@/ui-v2/components/DraftResultScreenV2";
 import PlayoffBracketBoard from "@/ui-v2/_legacy/components/playoffs/PlayoffBracketBoard";
+import { TournamentBracketV2 } from "./TournamentBracketV2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { Badge } from "@/ui-v2/components/ui/badge";
 import { cn } from "@/ui-v2/lib/utils";
@@ -46,14 +47,20 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
 
   const [fixtureResultView, setFixtureResultView] = useState<StoredFixtureDraftResult | null>(null);
   const [selectedDayStr, setSelectedDayStr] = useState<string | null>(null);
-  const league = gameState.user_competition_id
-    ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)
-    : gameState.leagues[0];
+  const league = gameState.active_tournament_id
+    ? gameState.leagues.find((l) => l.competition_id === gameState.active_tournament_id)
+    : gameState.user_competition_id
+      ? gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id)
+      : gameState.leagues[0];
   const userTeamId = gameState.manager.team_id;
 
   const getFixtureGroupKey = (f: FixtureData): string => {
     if (f.match_type === "League") return `league-${f.matchday}`;
     if (f.match_type === "Playoffs") return `playoffs-${f.matchday}`;
+    if (f.match_type === "TournamentGroup") return `group-${f.matchday}`;
+    if (f.match_type === "TournamentPlayIn") return `playin-${f.matchday}`;
+    if (f.match_type === "TournamentSwiss") return `swiss-${f.matchday}`;
+    if (f.match_type === "TournamentKnockout") return `ko-${f.matchday}`;
     return `${f.match_type}-${f.date}`;
   };
 
@@ -64,6 +71,10 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
       const round = Number.isFinite(playoffStart) ? f.matchday - (playoffStart ?? 0) + 1 : f.matchday;
       return `${t("schedule.playoffs")} · ${t("schedule.round", { number: round })} — ${formatMatchDate(f.date)}`;
     }
+    if (f.match_type === "TournamentGroup") return `Group Stage · ${t("schedule.round", { number: f.matchday })} — ${formatMatchDate(f.date)}`;
+    if (f.match_type === "TournamentPlayIn") return `Play-In · ${t("schedule.round", { number: f.matchday })} — ${formatMatchDate(f.date)}`;
+    if (f.match_type === "TournamentSwiss") return `Swiss · ${t("schedule.round", { number: f.matchday })} — ${formatMatchDate(f.date)}`;
+    if (f.match_type === "TournamentKnockout") return `Knockout · ${t("schedule.round", { number: f.matchday })} — ${formatMatchDate(f.date)}`;
     if (f.match_type === "PreseasonTournament") return `${t("season.preseasonTournament")} — ${formatMatchDate(f.date)}`;
     return `${t("season.friendly")} — ${formatMatchDate(f.date)}`;
   };
@@ -129,6 +140,39 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
           </button>
         ))}
       </div>
+
+      {/* Next tournament match indicator */}
+      {(() => {
+        const userTeamId = gameState.manager.team_id;
+        const nextTournamentFixture = (() => {
+          if (!gameState.active_tournament_id) return null;
+          const tLeague = gameState.leagues.find((l) => l.competition_id === gameState.active_tournament_id);
+          if (!tLeague) return null;
+          const today = String(gameState.clock.current_date).slice(0, 10);
+          return tLeague.fixtures
+            .filter((f) => f.status === "Scheduled" && f.date >= today && (f.home_team_id === userTeamId || f.away_team_id === userTeamId))
+            .sort((a, b) => a.date.localeCompare(b.date))[0] ?? null;
+        })();
+        if (!nextTournamentFixture) return null;
+        return (
+          <Card className="border-primary/30 bg-primary/5 animate-fade-in-up">
+            <CardHeader className="px-5 py-3">
+              <CardTitle className="font-heading text-xs font-bold uppercase tracking-wider text-primary">
+                Next Tournament Match
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-3">
+              <div className="flex items-center gap-3 text-sm">
+                <span className="font-semibold">{getTeamName(gameState.teams, nextTournamentFixture.home_team_id)}</span>
+                <span className="text-muted-foreground">vs</span>
+                <span className="font-semibold">{getTeamName(gameState.teams, nextTournamentFixture.away_team_id)}</span>
+                <Badge variant="outline" className="ml-auto text-[10px]">BO{nextTournamentFixture.best_of ?? 1}</Badge>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">{formatMatchDate(nextTournamentFixture.date)}</p>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Calendar view */}
       {view === "calendar" && (
@@ -224,6 +268,13 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
               onSelectTeam={onSelectTeam}
               title={`${t("schedule.playoffs")} · Bracket`}
             />
+            </div>
+          )}
+
+          {/* Tournament bracket */}
+          {league.competition_id && ["fst", "msi", "worlds"].includes(league.competition_id) && (
+            <div className={cn(visible && "animate-fade-in-up")}>
+              <TournamentBracketV2 gameState={gameState} leagueId={league.competition_id} />
             </div>
           )}
 
@@ -334,6 +385,9 @@ export function ScheduleTabV2({ gameState, onSelectTeam }: Props) {
 
 function getActiveLeague(gameState: GameStateData) {
   if (!gameState.leagues?.length) return null;
+  if (gameState.active_tournament_id) {
+    return gameState.leagues.find((l) => l.competition_id === gameState.active_tournament_id) ?? null;
+  }
   if (gameState.user_competition_id) {
     return gameState.leagues.find((l) => l.competition_id === gameState.user_competition_id) ?? gameState.leagues[0];
   }

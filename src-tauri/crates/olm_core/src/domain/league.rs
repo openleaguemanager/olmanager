@@ -1,3 +1,4 @@
+use crate::domain::tournament_state::TournamentState;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "typescript")]
 use ts_rs::TS;
@@ -30,6 +31,10 @@ pub struct League {
     pub tier: u8,
     #[serde(default)]
     pub active: bool,
+    #[serde(default)]
+    pub is_tournament: bool,
+    #[serde(default)]
+    pub tournament_state: Option<TournamentState>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -41,6 +46,10 @@ pub enum MatchType {
     Friendly,
     PreseasonTournament,
     Playoffs,
+    TournamentGroup,
+    TournamentPlayIn,
+    TournamentSwiss,
+    TournamentKnockout,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -209,6 +218,8 @@ impl League {
             split_index: 0,
             tier: 0,
             active: false,
+            is_tournament: false,
+            tournament_state: None,
         }
     }
 
@@ -391,5 +402,50 @@ mod tests {
         assert_eq!(a_result.home_wins, 2);
         assert_eq!(b_result.home_wins, 1);
         assert_ne!(a_result, b_result, "cross-competition results must be independent");
+    }
+
+    /// Verify that new MatchType tournament variants serialize and deserialize correctly.
+    #[test]
+    fn test_match_type_tournament_variants_serde() {
+        let variants = vec![
+            MatchType::TournamentGroup,
+            MatchType::TournamentPlayIn,
+            MatchType::TournamentSwiss,
+            MatchType::TournamentKnockout,
+        ];
+        for variant in variants {
+            let json = serde_json::to_string(&variant).unwrap();
+            let deserialized: MatchType = serde_json::from_str(&json).unwrap();
+            assert_eq!(variant, deserialized);
+        }
+    }
+
+    /// Verify that tournament match types do NOT count for league standings.
+    #[test]
+    fn test_tournament_match_types_not_count_for_standings() {
+        let tournament_types = vec![
+            MatchType::TournamentGroup,
+            MatchType::TournamentPlayIn,
+            MatchType::TournamentSwiss,
+            MatchType::TournamentKnockout,
+        ];
+        for mt in tournament_types {
+            let fixture = Fixture {
+                id: "fix-1".to_string(),
+                matchday: 1,
+                date: "2025-01-01".to_string(),
+                home_team_id: "a".to_string(),
+                away_team_id: "b".to_string(),
+                match_type: mt,
+                best_of: 5,
+                status: FixtureStatus::Scheduled,
+                result: None,
+            };
+            assert!(
+                !fixture.counts_for_league_standings(),
+                "{:?} should not count for league standings",
+                fixture.match_type
+            );
+        }
     }
 }

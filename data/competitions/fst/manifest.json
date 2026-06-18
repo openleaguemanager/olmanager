@@ -1,0 +1,19 @@
+{
+  "id": "fst",
+  "name": "First Stand",
+  "full_name": "First Stand Tournament 2026",
+  "region": "International",
+  "tier": 1,
+  "logo": "/competitions-icons/fst.webp",
+  "active": true,
+  "teams_file": "teams/fst_teams.json",
+  "players_file": "players/fst_players.json",
+  "staff_file": null,
+  "schedule": {
+    "format": "fst_2026",
+    "team_count": 8,
+    "splits": [],
+    "preseason_friendlies": 0
+  },
+  "tournament_format": "fst_2026"
+}

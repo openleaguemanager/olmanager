@@ -10,6 +10,7 @@ interface Props {
   currentDate: string;
   hasProfileHistory: boolean;
   isAdvancing: boolean;
+  isSkippingSplit?: boolean;
   isSaving: boolean;
   saveFlash: boolean;
   hasMatchToday: boolean;
@@ -20,6 +21,7 @@ interface Props {
   onContinue: () => void;
   onSkipToMatchDay: () => void;
   onSkipToNextDay: () => void;
+  onDebugSkipSplit: () => void;
   onNavigate: (tab: string) => void;
 }
 
@@ -36,6 +38,7 @@ export function DashboardHeaderV2({
   currentDate,
   hasProfileHistory,
   isAdvancing,
+  isSkippingSplit,
   isSaving,
   saveFlash,
   hasMatchToday,
@@ -46,6 +49,7 @@ export function DashboardHeaderV2({
   onContinue,
   onSkipToMatchDay,
   onSkipToNextDay,
+  onDebugSkipSplit,
   onNavigate,
 }: Props) {
   const { t } = useTranslation();
@@ -133,8 +137,8 @@ export function DashboardHeaderV2({
         </Button>
 
         <div className="relative flex" ref={menuRef}>
-          <Button onClick={() => onContinue()} disabled={isAdvancing} size="sm" className="h-7 gap-1.5 rounded-r-none text-xs">
-            {isAdvancing ? (
+          <Button onClick={() => onContinue()} disabled={isAdvancing || isSkippingSplit} size="sm" className="h-7 gap-1.5 rounded-r-none text-xs">
+            {isAdvancing || isSkippingSplit ? (
               <Loader2 className="size-3.5 animate-spin" />
             ) : hasMatchToday ? (
               <Swords className="size-3.5" />
@@ -151,7 +155,7 @@ export function DashboardHeaderV2({
             variant="outline"
             size="sm"
             onClick={() => setMenuOpen(!menuOpen)}
-            disabled={isAdvancing}
+            disabled={isAdvancing || isSkippingSplit}
             className="h-7 rounded-l-none border-l-0 px-1.5"
           >
             <ChevronDown className="size-3" />
@@ -181,6 +185,14 @@ export function DashboardHeaderV2({
               >
                 <ChevronRight className="size-3.5 text-blue-400" />
                 <span className="font-medium text-foreground">{t("continueMenu.skipToNextDay", { defaultValue: "Siguiente día" })}</span>
+              </button>
+              <div className="border-t border-border" />
+              <button
+                onClick={() => handleSelect(onDebugSkipSplit)}
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-xs transition-colors hover:bg-muted"
+              >
+                <SkipForward className="size-3.5 text-red-400" />
+                <span className="font-medium text-red-400">[DEBUG] Skip Split</span>
               </button>
               <div className="border-t border-border" />
               <button

@@ -1,0 +1,19 @@
+{
+  "id": "worlds",
+  "name": "Worlds",
+  "full_name": "League of Legends World Championship 2026",
+  "region": "International",
+  "tier": 1,
+  "logo": "/competitions-icons/worlds.webp",
+  "active": true,
+  "teams_file": "teams/worlds_teams.json",
+  "players_file": "players/worlds_players.json",
+  "staff_file": null,
+  "schedule": {
+    "format": "worlds_2026",
+    "team_count": 19,
+    "splits": [],
+    "preseason_friendlies": 0
+  },
+  "tournament_format": "worlds_2026"
+}

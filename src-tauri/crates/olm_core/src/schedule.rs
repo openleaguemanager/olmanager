@@ -1,6 +1,7 @@
 use chrono::{DateTime, Duration, TimeZone, Utc};
 use crate::domain::league::{Fixture, FixtureStatus, League, MatchType};
 use crate::generator::definitions::CompetitionManifest;
+use std::collections::HashSet;
 use uuid::Uuid;
 
 fn build_fixture(
@@ -552,6 +553,243 @@ pub fn append_fixtures(league: &mut League, mut additional_fixtures: Vec<Fixture
     });
 }
 
+// ---------------------------------------------------------------------------
+// Tournament round-by-round generators
+// ---------------------------------------------------------------------------
+
+pub fn generate_gsl_opening(
+    teams: &[String],
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    assert!(teams.len() >= 4, "GSL opening requires at least 4 teams");
+    let s = teams;
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![
+        build_fixture(matchday, date_str.clone(), s[0].clone(), s[3].clone(), MatchType::TournamentGroup, 5),
+        build_fixture(matchday, date_str.clone(), s[1].clone(), s[2].clone(), MatchType::TournamentGroup, 5),
+    ]
+}
+
+pub fn generate_gsl_winners_match(
+    winners: &[String],
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    assert!(winners.len() >= 2, "GSL winners match requires at least 2 teams");
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![build_fixture(
+        matchday,
+        date_str,
+        winners[0].clone(),
+        winners[1].clone(),
+        MatchType::TournamentGroup,
+        5,
+    )]
+}
+
+pub fn generate_gsl_losers_match(
+    losers: &[String],
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    assert!(losers.len() >= 2, "GSL losers match requires at least 2 teams");
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![build_fixture(
+        matchday,
+        date_str,
+        losers[0].clone(),
+        losers[1].clone(),
+        MatchType::TournamentGroup,
+        5,
+    )]
+}
+
+pub fn generate_gsl_decider(
+    wb_loser: &str,
+    lb_winner: &str,
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![build_fixture(
+        matchday,
+        date_str,
+        wb_loser.to_string(),
+        lb_winner.to_string(),
+        MatchType::TournamentGroup,
+        5,
+    )]
+}
+
+pub fn generate_knockout_round(
+    teams: &[String],
+    _round_idx: u32,
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    let n = teams.len();
+    assert!(n >= 2 && n % 2 == 0, "Knockout round requires an even number of teams >= 2");
+    let date_str = date.format("%Y-%m-%d").to_string();
+    (0..n / 2)
+        .map(|i| {
+            build_fixture(
+                matchday,
+                date_str.clone(),
+                teams[i].clone(),
+                teams[n - 1 - i].clone(),
+                MatchType::TournamentKnockout,
+                5,
+            )
+        })
+        .collect()
+}
+
+pub fn generate_play_in_opening(
+    teams: &[String],
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    assert!(teams.len() >= 4, "Play-In opening requires at least 4 teams");
+    let s = teams;
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![
+        build_fixture(matchday, date_str.clone(), s[0].clone(), s[3].clone(), MatchType::TournamentPlayIn, 5),
+        build_fixture(matchday, date_str.clone(), s[1].clone(), s[2].clone(), MatchType::TournamentPlayIn, 5),
+    ]
+}
+
+pub fn generate_play_in_winners_match(
+    winners: &[String],
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    assert!(winners.len() >= 2, "Play-In winners match requires at least 2 teams");
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![build_fixture(
+        matchday,
+        date_str,
+        winners[0].clone(),
+        winners[1].clone(),
+        MatchType::TournamentPlayIn,
+        5,
+    )]
+}
+
+pub fn generate_play_in_losers_match(
+    losers: &[String],
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    assert!(losers.len() >= 2, "Play-In losers match requires at least 2 teams");
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![build_fixture(
+        matchday,
+        date_str,
+        losers[0].clone(),
+        losers[1].clone(),
+        MatchType::TournamentPlayIn,
+        5,
+    )]
+}
+
+pub fn generate_play_in_decider(
+    wb_loser: &str,
+    lb_winner: &str,
+    date: DateTime<Utc>,
+    matchday: u32,
+) -> Vec<Fixture> {
+    let date_str = date.format("%Y-%m-%d").to_string();
+    vec![build_fixture(
+        matchday,
+        date_str,
+        wb_loser.to_string(),
+        lb_winner.to_string(),
+        MatchType::TournamentPlayIn,
+        5,
+    )]
+}
+
+pub fn generate_swiss_round(
+    teams: &[String],
+    records: &[crate::domain::tournament_state::SwissRecord],
+    round_idx: u32,
+    date: DateTime<Utc>,
+    matchday: u32,
+    rematch_set: &HashSet<(String, String)>,
+) -> Vec<Fixture> {
+    let n = teams.len();
+    assert!(
+        n >= 2 && n % 2 == 0,
+        "Swiss round requires an even number of teams >= 2"
+    );
+
+    let best_of = if round_idx < 2 { 1 } else { 3 };
+    let date_str = date.format("%Y-%m-%d").to_string();
+
+    // Sort by wins desc, then losses asc, then original seed (position in teams slice)
+    let mut sorted = records.to_vec();
+    sorted.sort_by(|a, b| {
+        let a_seed = teams.iter().position(|t| t == &a.team_id).unwrap_or(999);
+        let b_seed = teams.iter().position(|t| t == &b.team_id).unwrap_or(999);
+        b.wins
+            .cmp(&a.wins)
+            .then(a.losses.cmp(&b.losses))
+            .then(a_seed.cmp(&b_seed))
+    });
+
+    let mut paired = HashSet::new();
+    let mut pairings: Vec<(String, String)> = Vec::new();
+
+    for i in 0..sorted.len() {
+        if paired.contains(&sorted[i].team_id) {
+            continue;
+        }
+        let mut found = false;
+        for j in (i + 1)..sorted.len() {
+            if paired.contains(&sorted[j].team_id) {
+                continue;
+            }
+            let mut pair = vec![sorted[i].team_id.clone(), sorted[j].team_id.clone()];
+            pair.sort();
+            if rematch_set.contains(&(pair[0].clone(), pair[1].clone())) {
+                continue;
+            }
+            pairings.push((sorted[i].team_id.clone(), sorted[j].team_id.clone()));
+            paired.insert(sorted[i].team_id.clone());
+            paired.insert(sorted[j].team_id.clone());
+            found = true;
+            break;
+        }
+        if !found {
+            // Fallback: pair with next available even if rematch
+            for j in (i + 1)..sorted.len() {
+                if paired.contains(&sorted[j].team_id) {
+                    continue;
+                }
+                pairings.push((sorted[i].team_id.clone(), sorted[j].team_id.clone()));
+                paired.insert(sorted[i].team_id.clone());
+                paired.insert(sorted[j].team_id.clone());
+                break;
+            }
+        }
+    }
+
+    pairings
+        .into_iter()
+        .map(|(home, away)| {
+            build_fixture(
+                matchday,
+                date_str.clone(),
+                home,
+                away,
+                MatchType::TournamentSwiss,
+                best_of,
+            )
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -676,6 +914,79 @@ mod tests {
         assert_eq!(fixtures[0].away_team_id, "team_4");
         assert_eq!(fixtures[1].home_team_id, "team_2");
         assert_eq!(fixtures[1].away_team_id, "team_3");
+    }
+
+    #[test]
+    fn generate_swiss_round_pairs_by_record_no_rematches() {
+        let teams: Vec<String> = (0..16).map(|i| format!("team_{}", i)).collect();
+        let records: Vec<crate::domain::tournament_state::SwissRecord> = teams
+            .iter()
+            .map(|t| crate::domain::tournament_state::SwissRecord {
+                team_id: t.clone(),
+                wins: 0,
+                losses: 0,
+                buchholz: 0,
+            })
+            .collect();
+        let start = Utc.with_ymd_and_hms(2026, 5, 1, 0, 0, 0).unwrap();
+        let rematch_set = std::collections::HashSet::new();
+        let fixtures = generate_swiss_round(&teams, &records, 0, start, 1, &rematch_set);
+        assert_eq!(fixtures.len(), 8);
+        assert!(fixtures.iter().all(|f| f.best_of == 1));
+        assert!(fixtures.iter().all(|f| f.match_type == MatchType::TournamentSwiss));
+
+        let mut pair_set = std::collections::HashSet::new();
+        for f in &fixtures {
+            let mut pair = vec![f.home_team_id.clone(), f.away_team_id.clone()];
+            pair.sort();
+            assert!(!pair_set.contains(&(pair[0].clone(), pair[1].clone())));
+            pair_set.insert((pair[0].clone(), pair[1].clone()));
+        }
+    }
+
+    #[test]
+    fn generate_swiss_round_avoids_rematches() {
+        let teams: Vec<String> = (0..4).map(|i| format!("team_{}", i)).collect();
+        let records: Vec<crate::domain::tournament_state::SwissRecord> = teams
+            .iter()
+            .map(|t| crate::domain::tournament_state::SwissRecord {
+                team_id: t.clone(),
+                wins: 0,
+                losses: 0,
+                buchholz: 0,
+            })
+            .collect();
+        let start = Utc.with_ymd_and_hms(2026, 5, 1, 0, 0, 0).unwrap();
+        let mut rematch_set = std::collections::HashSet::new();
+        rematch_set.insert(("team_0".to_string(), "team_1".to_string()));
+        let fixtures = generate_swiss_round(&teams, &records, 1, start, 2, &rematch_set);
+        assert_eq!(fixtures.len(), 2);
+        for f in &fixtures {
+            let mut pair = vec![f.home_team_id.clone(), f.away_team_id.clone()];
+            pair.sort();
+            assert!(
+                !rematch_set.contains(&(pair[0].clone(), pair[1].clone())),
+                "rematch detected"
+            );
+        }
+    }
+
+    #[test]
+    fn generate_swiss_round_bo3_after_round_2() {
+        let teams: Vec<String> = (0..16).map(|i| format!("team_{}", i)).collect();
+        let records: Vec<crate::domain::tournament_state::SwissRecord> = teams
+            .iter()
+            .map(|t| crate::domain::tournament_state::SwissRecord {
+                team_id: t.clone(),
+                wins: 0,
+                losses: 0,
+                buchholz: 0,
+            })
+            .collect();
+        let start = Utc.with_ymd_and_hms(2026, 5, 1, 0, 0, 0).unwrap();
+        let rematch_set = std::collections::HashSet::new();
+        let fixtures = generate_swiss_round(&teams, &records, 2, start, 1, &rematch_set);
+        assert!(fixtures.iter().all(|f| f.best_of == 3));
     }
 }
 

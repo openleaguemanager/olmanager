@@ -1,0 +1,19 @@
+{
+  "id": "msi",
+  "name": "MSI",
+  "full_name": "Mid-Season Invitational 2026",
+  "region": "International",
+  "tier": 1,
+  "logo": "/competitions-icons/msi.webp",
+  "active": true,
+  "teams_file": "teams/msi_teams.json",
+  "players_file": "players/msi_players.json",
+  "staff_file": null,
+  "schedule": {
+    "format": "msi_2026",
+    "team_count": 11,
+    "splits": [],
+    "preseason_friendlies": 0
+  },
+  "tournament_format": "msi_2026"
+}

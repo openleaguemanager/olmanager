@@ -13,6 +13,10 @@ fn match_type_to_string(match_type: &MatchType) -> String {
         MatchType::Friendly => "Friendly".to_string(),
         MatchType::PreseasonTournament => "PreseasonTournament".to_string(),
         MatchType::Playoffs => "Playoffs".to_string(),
+        MatchType::TournamentGroup => "TournamentGroup".to_string(),
+        MatchType::TournamentPlayIn => "TournamentPlayIn".to_string(),
+        MatchType::TournamentSwiss => "TournamentSwiss".to_string(),
+        MatchType::TournamentKnockout => "TournamentKnockout".to_string(),
     }
 }
 
@@ -21,6 +25,10 @@ fn parse_match_type(value: &str) -> MatchType {
         "Friendly" => MatchType::Friendly,
         "PreseasonTournament" => MatchType::PreseasonTournament,
         "Playoffs" => MatchType::Playoffs,
+        "TournamentGroup" => MatchType::TournamentGroup,
+        "TournamentPlayIn" => MatchType::TournamentPlayIn,
+        "TournamentSwiss" => MatchType::TournamentSwiss,
+        "TournamentKnockout" => MatchType::TournamentKnockout,
         _ => MatchType::League,
     }
 }

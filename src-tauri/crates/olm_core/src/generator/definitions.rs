@@ -53,6 +53,11 @@ pub struct CompetitionManifest {
     /// True for competitions that should appear in the league selection and in-game tabs.
     #[serde(default)]
     pub active: bool,
+    /// Optional tournament format identifier (e.g. "fst_2026", "msi_2026", "worlds_2026").
+    /// When present, this manifest describes an international tournament rather than a
+    /// regional round-robin league.
+    #[serde(default)]
+    pub tournament_format: Option<String>,
 }
 
 fn default_teams_file() -> String {
@@ -207,5 +212,45 @@ pub struct WorldDatabaseInfo {
     pub source: String,
     /// Filesystem path (empty for built-in random)
     pub path: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_manifest_with_tournament_format_deserializes() {
+        let json = r#"{
+            "id": "fst",
+            "name": "First Stand",
+            "region": "International",
+            "schedule": {
+                "format": "fst_2026",
+                "team_count": 8,
+                "splits": [],
+                "preseason_friendlies": 0
+            },
+            "tournament_format": "fst_2026"
+        }"#;
+        let manifest: CompetitionManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.tournament_format, Some("fst_2026".to_string()));
+    }
+
+    #[test]
+    fn test_manifest_without_tournament_format_defaults_to_none() {
+        let json = r#"{
+            "id": "lec",
+            "name": "LEC",
+            "region": "LEC",
+            "schedule": {
+                "format": "single_round_robin",
+                "team_count": 10,
+                "splits": [],
+                "preseason_friendlies": 3
+            }
+        }"#;
+        let manifest: CompetitionManifest = serde_json::from_str(json).unwrap();
+        assert!(manifest.tournament_format.is_none());
+    }
 }
 

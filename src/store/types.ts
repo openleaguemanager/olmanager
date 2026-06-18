@@ -625,7 +625,7 @@ export interface FixtureData {
   date: string;
   home_team_id: string;
   away_team_id: string;
-  match_type: "League" | "Friendly" | "PreseasonTournament" | "Playoffs";
+  match_type: "League" | "Friendly" | "PreseasonTournament" | "Playoffs" | "TournamentGroup" | "TournamentPlayIn" | "TournamentSwiss" | "TournamentKnockout";
   best_of?: number;
   status: "Scheduled" | "InProgress" | "Completed";
   result: MatchResult | null;
@@ -750,6 +750,34 @@ export function compareStandingsByLolScore(left: StandingData, right: StandingDa
   );
 }
 
+export interface SwissRecordData {
+  team_id: string;
+  wins: number;
+  losses: number;
+  buchholz: number;
+}
+
+export interface GslGroupStateData {
+  teams: string[];
+  opening_winners: string[];
+  opening_losers: string[];
+  winners_match_winner?: string | null;
+  losers_match_winner?: string | null;
+  decider_winner?: string | null;
+  advanced_teams: string[];
+}
+
+export interface TournamentStateData {
+  format: string;
+  current_phase: "Group" | "PlayIn" | "Swiss" | "Knockout" | "Complete";
+  current_round: number;
+  swiss_records: SwissRecordData[];
+  gsl_groups: GslGroupStateData[];
+  advancing_teams: string[];
+  start_date: string;
+  is_complete: boolean;
+}
+
 export interface LeagueData {
   id: string;
   name: string;
@@ -761,6 +789,7 @@ export interface LeagueData {
   league_kind?: "Main" | "Academy";
   tier?: number;
   active?: boolean;
+  tournament_state?: TournamentStateData | null;
 }
 
 export type SeasonPhase = "Preseason" | "InSeason" | "PostSeason";
@@ -924,6 +953,8 @@ export interface GameStateData {
   /** Multi-league support. The first element is the player's active league. */
   leagues: LeagueData[];
   user_competition_id?: string | null;
+  active_tournament_id?: string | null;
+  tournament_queuing?: boolean;
   academy_league?: LeagueData | null;
   scouting_assignments: ScoutingAssignment[];
   board_objectives: BoardObjective[];

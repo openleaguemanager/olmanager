@@ -136,7 +136,7 @@ pub fn apply_match_report_with_capture<F>(
     let mut counts_for_standings = false;
 
     // Update fixture status, standings
-    if let Some(league) = game.active_league_mut() {
+    if let Some(league) = game.active_simulation_league_mut() {
         let fixture = &mut league.fixtures[fixture_index];
         fixture.status = FixtureStatus::Completed;
         counts_for_standings = fixture.counts_for_league_standings();
@@ -224,7 +224,7 @@ pub fn apply_match_report_with_capture<F>(
         && let Some(user_team_id) = &game.manager.team_id
         && (*user_team_id == home_team_id || *user_team_id == away_team_id)
     {
-        let fixture = &game.active_league().unwrap().fixtures[fixture_index];
+        let fixture = &game.active_simulation_league().unwrap().fixtures[fixture_index];
         let res = fixture.result.as_ref().unwrap();
         let home_name = game
             .teams
@@ -267,7 +267,7 @@ fn build_stats_state_capture(
     away_team_id: &str,
     report: &crate::engine::MatchReport,
 ) -> StatsState {
-    let Some(league) = game.active_league() else {
+    let Some(league) = game.active_simulation_league() else {
         return StatsState::default();
     };
     let Some(fixture) = league.fixtures.get(fixture_index) else {

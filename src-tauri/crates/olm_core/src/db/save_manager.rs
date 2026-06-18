@@ -448,6 +448,8 @@ mod tests {
             social_templates: vec![],
             leagues: vec![],
             user_competition_id: None,
+            active_tournament_id: None,
+            tournament_queuing: false,
             scouting_assignments: vec![],
             board_objectives: vec![],
             season_context: crate::domain::season::SeasonContext::default(),
@@ -457,6 +459,7 @@ mod tests {
             stats_state: Default::default(),
             competition_configs: std::collections::HashMap::new(),
             transfer_history: Default::default(),
+            scheduled_tournaments: vec![],
         }
     }
 
@@ -512,10 +515,7 @@ mod tests {
             ],
             competition_id: None,
             league_kind: LeagueKind::Main,
-            logo: None,
-            split_index: 0,
-            tier: 0,
-            active: false,
+            ..Default::default()
         };
 
         let mut game = Game::new(

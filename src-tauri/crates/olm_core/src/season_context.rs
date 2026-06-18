@@ -194,11 +194,7 @@ mod tests {
                 StandingEntry::new("team1".to_string()),
                 StandingEntry::new("team2".to_string()),
             ],
-            logo: None,
-            league_kind: LeagueKind::Main,
-            split_index: 0,
-            tier: 0,
-            active: false,
+            ..Default::default()
         };
         let game = make_game((2026, 7, 10), Some(league));
 
@@ -228,11 +224,7 @@ mod tests {
                 StandingEntry::new("team1".to_string()),
                 StandingEntry::new("team2".to_string()),
             ],
-            logo: None,
-            league_kind: LeagueKind::Main,
-            split_index: 0,
-            tier: 0,
-            active: false,
+..Default::default()
         };
         let game = make_game((2026, 8, 1), Some(league));
 
@@ -261,11 +253,7 @@ mod tests {
                 1,
             )],
             standings: vec![alpha, beta],
-            logo: None,
-            league_kind: LeagueKind::Main,
-            split_index: 0,
-            tier: 0,
-            active: false,
+..Default::default()
         };
         let game = make_game((2026, 8, 5), Some(league));
 
@@ -292,11 +280,7 @@ mod tests {
                 make_fixture("fx2", "2026-08-08", FixtureStatus::Completed, 2),
             ],
             standings: vec![alpha, beta],
-            logo: None,
-            league_kind: LeagueKind::Main,
-            split_index: 0,
-            tier: 0,
-            active: false,
+..Default::default()
         };
         let game = make_game((2026, 8, 9), Some(league));
 
@@ -306,4 +290,5 @@ mod tests {
         assert_eq!(context.season_end.as_deref(), Some("2026-08-08"));
     }
 }
+
 

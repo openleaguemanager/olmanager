@@ -606,11 +606,7 @@ mod tests {
                 ),
             ],
             standings: vec![alpha, beta, gamma],
-            logo: None,
-            league_kind: crate::domain::league::LeagueKind::Main,
-            split_index: 0,
-            tier: 0,
-            active: false,
+            ..Default::default()
         }];
 
         game

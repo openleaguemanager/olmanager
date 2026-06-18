@@ -250,6 +250,7 @@ pub fn run() {
             debug_log,
             update_manager_profile,
             debug_serde_test,
+            debug_skip_split,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

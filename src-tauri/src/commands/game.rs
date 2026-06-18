@@ -336,7 +336,7 @@ pub async fn select_team(
     let all_manifests = crate::commands::competitions::scan_competitions(&app_handle);
     let mut all_leagues: Vec<olm_core::domain::league::League> = Vec::new();
 
-    for manifest in all_manifests.iter().filter(|m| !m.legacy) {
+    for manifest in all_manifests.iter().filter(|m| !m.legacy && m.tournament_format.is_none()) {
         let cid = &manifest.id;
         let team_ids: Vec<String> = game.teams.iter()
             .filter(|team| team.team_kind != TeamKind::Academy && team.competition_id.as_deref() == Some(cid.as_str()))

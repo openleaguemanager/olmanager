@@ -150,6 +150,7 @@ export default function DashboardV2() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveFlash, setSaveFlash] = useState(false);
+  const [isSkippingSplit, setIsSkippingSplit] = useState(false);
   const [profileNavigation, setProfileNavigation] = useState(() =>
     createDashboardProfileNavigationState(PATH_TAB_MAP[location.pathname] ?? "Home"),
   );
@@ -282,13 +283,30 @@ export default function DashboardV2() {
       await invoke("save_game");
       markClean();
       setSaveFlash(true);
-      setTimeout(() => setSaveFlash(false), 2000);
+      setTimeout(() => setSaveFlash(false), 1500);
     } catch (err) {
-      console.error("Failed to save:", err);
+      console.error("Save failed:", err);
     } finally {
       setIsSaving(false);
     }
   }, [markClean]);
+
+  const handleDebugSkipSplit = async () => {
+    if (!window.confirm("[DEBUG] This will complete all remaining fixtures, make your team win everything, and advance to the next split/season. Continue?")) {
+      return;
+    }
+    setIsSkippingSplit(true);
+    try {
+      const result = await invoke<{ success: boolean; game: typeof gameState; summary?: unknown }>("debug_skip_split");
+      if (result && result.game) {
+        setGameState(result.game);
+      }
+    } catch (err) {
+      console.error("debug_skip_split failed:", err);
+    } finally {
+      setIsSkippingSplit(false);
+    }
+  };
 
   const handleExitToMenu = async () => {
     if (isExitingToMenu) return;
@@ -481,6 +499,7 @@ export default function DashboardV2() {
           currentDate={currentDate}
           hasProfileHistory={hasProfileHistory}
           isAdvancing={isAdvancing}
+          isSkippingSplit={isSkippingSplit}
           isSaving={isSaving}
           saveFlash={saveFlash}
           hasMatchToday={hasMatchToday}
@@ -491,6 +510,7 @@ export default function DashboardV2() {
           onContinue={handleContinue}
           onSkipToMatchDay={handleSkipToMatchDay}
           onSkipToNextDay={handleSkipToNextDay}
+          onDebugSkipSplit={handleDebugSkipSplit}
           onNavigate={handleNavigate}
         />
 

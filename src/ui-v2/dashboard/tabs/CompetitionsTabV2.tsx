@@ -34,9 +34,16 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
   const [visible, setVisible] = useState(false);
   useEffect(() => setVisible(true), []);
 
+  const TOURNAMENT_IDS = ["fst", "msi", "worlds"];
+  const isTournament = (league: LeagueData) => TOURNAMENT_IDS.includes(league.competition_id ?? league.id);
+
   const leagues = useMemo(() => (gameState.leagues ?? []).filter((l) => l.tier === 1 && l.active === true), [gameState.leagues]);
   const selectedLeague = selectedCid ? leagues.find((l) => (l.competition_id ?? l.id) === selectedCid) ?? null : null;
-  const selectedTeamIds = selectedCid ? gameState.teams.filter((t) => t.competition_id === selectedCid).map((t) => t.id) : [];
+  const selectedTeamIds = selectedCid
+    ? selectedLeague && isTournament(selectedLeague)
+      ? selectedLeague.standings.map((s) => s.team_id)
+      : gameState.teams.filter((t) => t.competition_id === selectedCid).map((t) => t.id)
+    : [];
   const selectedPlayers = selectedTeamIds.length > 0 ? gameState.players.filter((p) => p.team_id != null && selectedTeamIds.includes(p.team_id)) : [];
   const sortedStandings = selectedLeague ? [...selectedLeague.standings].sort(compareStandingsByLolScore) : [];
   const calendarFixtures = selectedLeague ? selectedLeague.fixtures ?? [] : leagues.flatMap((l) => l.fixtures ?? []);
@@ -86,7 +93,9 @@ export function CompetitionsTabV2({ gameState, onSelectTeam }: Props) {
                 </div>
                 <div>
                   <p className={cn("font-heading text-xs font-bold uppercase tracking-wide", sel ? "text-primary" : "text-foreground")}>{league.name}</p>
-                  <p className="text-[10px] text-muted-foreground/60">S{league.season} · {played}/{fixtures.length}</p>
+                  <p className="text-[10px] text-muted-foreground/60">
+                    {isTournament(league) ? "International" : `S${league.season}`} · {played}/{fixtures.length}
+                  </p>
                 </div>
               </button>
             );
