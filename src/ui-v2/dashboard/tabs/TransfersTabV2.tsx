@@ -113,15 +113,9 @@ const POSITIONS = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"] as const;
 
 function soloqTier(lp: number | undefined): { label: string; color: string } {
   if (!lp || lp <= 0) return { label: "Unranked", color: "text-muted-foreground" };
-  if (lp < 400) return { label: "Iron", color: "text-stone-400" };
-  if (lp < 800) return { label: "Bronze", color: "text-amber-700" };
-  if (lp < 1200) return { label: "Silver", color: "text-slate-300" };
-  if (lp < 1600) return { label: "Gold", color: "text-yellow-400" };
-  if (lp < 2000) return { label: "Platinum", color: "text-emerald-400" };
-  if (lp < 2400) return { label: "Diamond", color: "text-cyan-400" };
-  if (lp < 2800) return { label: "Master", color: "text-purple-400" };
-  if (lp < 3200) return { label: "Grandmaster", color: "text-rose-400" };
-  return { label: "Challenger", color: "text-yellow-300" };
+  if (lp >= 1300) return { label: "Challenger", color: "text-yellow-300" };
+  if (lp >= 800) return { label: "Grandmaster", color: "text-rose-400" };
+  return { label: "Master", color: "text-purple-400" };
 }
 
 export function TransfersTabV2({
@@ -751,11 +745,11 @@ export function TransfersTabV2({
                       <TableCell className="text-right">
                         {player.soloq_lp ? (
                           <div className="flex flex-col items-end gap-0.5">
-                            <span className={cn("text-xs font-bold", soloqTier(player.soloq_lp).color)}>
+                            <span className={cn("text-xs font-bold tracking-wide", soloqTier(player.soloq_lp).color)}>
                               {soloqTier(player.soloq_lp).label}
                             </span>
-                            <span className="tabular-nums text-xs text-muted-foreground">
-                              {player.soloq_lp.toLocaleString()} LP
+                            <span className="tabular-nums text-[10px] text-muted-foreground">
+                              {Math.round(player.soloq_lp).toLocaleString()} LP
                             </span>
                           </div>
                         ) : (
