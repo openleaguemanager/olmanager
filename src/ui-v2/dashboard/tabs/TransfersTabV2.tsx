@@ -27,6 +27,7 @@ import { calculateLolOvr } from "@/lib/players/lolPlayerStats";
 import { resolvePlayerPhoto } from "@/lib/players/playerPhotos";
 import { resolvePlayerCurrentLolRole } from "@/lib/players/lolIdentity";
 import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
+import { countryName } from "@/lib/common/countries";
 import { resolveSeasonContext } from "@/lib/season/seasonContext";
 import { getAnnualWageBill, getTransferBudgetSummary } from "@/lib/finances/finance";
 import {
@@ -109,6 +110,19 @@ const TABS: { id: TransferTabView; labelKey: string; icon: React.ReactNode }[] =
 const POSITIONS = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"] as const;
 
 
+
+function soloqTier(lp: number | undefined): { label: string; color: string } {
+  if (!lp || lp <= 0) return { label: "Unranked", color: "text-muted-foreground" };
+  if (lp < 400) return { label: "Iron", color: "text-stone-400" };
+  if (lp < 800) return { label: "Bronze", color: "text-amber-700" };
+  if (lp < 1200) return { label: "Silver", color: "text-slate-300" };
+  if (lp < 1600) return { label: "Gold", color: "text-yellow-400" };
+  if (lp < 2000) return { label: "Platinum", color: "text-emerald-400" };
+  if (lp < 2400) return { label: "Diamond", color: "text-cyan-400" };
+  if (lp < 2800) return { label: "Master", color: "text-purple-400" };
+  if (lp < 3200) return { label: "Grandmaster", color: "text-rose-400" };
+  return { label: "Challenger", color: "text-yellow-300" };
+}
 
 export function TransfersTabV2({
   gameState,
@@ -728,14 +742,25 @@ export function TransfersTabV2({
                           <span className="text-sm font-semibold text-foreground truncate">{player.match_name || player.full_name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-1">
+                      <TableCell className="text-left">
+                        <div className="flex items-center gap-1.5">
                           <CountryFlag code={player.nationality} locale={i18n.language} className="text-xs leading-none" />
-                          <span className="text-xs text-muted-foreground">{player.nationality}</span>
+                          <span className="text-xs text-muted-foreground truncate">{countryName(player.nationality, i18n.language)}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right tabular-nums text-sm text-muted-foreground">
-                        {player.soloq_lp ? `${player.soloq_lp.toLocaleString()} LP` : "—"}
+                      <TableCell className="text-right">
+                        {player.soloq_lp ? (
+                          <div className="flex flex-col items-end gap-0.5">
+                            <span className={cn("text-xs font-bold", soloqTier(player.soloq_lp).color)}>
+                              {soloqTier(player.soloq_lp).label}
+                            </span>
+                            <span className="tabular-nums text-xs text-muted-foreground">
+                              {player.soloq_lp.toLocaleString()} LP
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
                       </TableCell>
                       <TableCell className="text-right tabular-nums text-sm text-muted-foreground">{age}</TableCell>
                       <TableCell>

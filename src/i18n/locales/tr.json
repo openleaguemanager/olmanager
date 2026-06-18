@@ -649,6 +649,7 @@
     "actions": "Aksiyonlar",
     "position": "Pozisyon",
     "nationality": "Uyruk",
+    "soloq": "SoloQ",
     "contract": "Sözleşme",
     "renewContract": "Sözleşme Yenile",
     "status": "Durum",

@@ -649,6 +649,7 @@
     "actions": "Actions",
     "position": "Position",
     "nationality": "Nationalité",
+    "soloq": "SoloQ",
     "contract": "Contrat",
     "renewContract": "Renouveler le contrat",
     "status": "Statut",
