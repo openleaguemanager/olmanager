@@ -509,36 +509,6 @@ pub fn build_media_story_from_narrative(
     )
 }
 
-pub(super) fn international_callup_message(
-    msg_id: &str,
-    player_name: &str,
-    nationality: &str,
-    date: &str,
-) -> InboxMessage {
-    InboxMessage::new(
-        msg_id.to_string(),
-        format!("International Call-Up — {}", player_name),
-        format!(
-            "{} has been called up to the {} national team for an upcoming international window.\n\n\
-            This is a great honor for the player and reflects well on the club. \
-            They'll be in good spirits when they return, though keep an eye on their fatigue levels.",
-            player_name, nationality
-        ),
-        "International Liaison".to_string(),
-        date.to_string(),
-    )
-    .with_category(MessageCategory::LeagueInfo)
-    .with_priority(MessagePriority::Normal)
-    .with_sender_role("International Liaison")
-    .with_action(action("ack", "Acknowledged", "be.msg.event.ack", ActionType::Acknowledge))
-    .with_i18n(
-        "be.msg.intlCallup.subject",
-        "be.msg.intlCallup.body",
-        params(&[("player", player_name), ("nationality", nationality)]),
-    )
-    .with_sender_i18n("be.sender.intlLiaison", "be.role.intlLiaison")
-}
-
 pub(super) fn allio_podcast_message(
     msg_id: &str,
     team_name: &str,

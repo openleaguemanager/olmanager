@@ -118,51 +118,7 @@ pub fn check_random_events(game: &mut Game) {
         }
     }
 
-    // --- 3. International call-up (5% chance per day, only if match in next 7 days) ---
-    {
-        let upcoming_match = game.active_league().and_then(|l| {
-            let current = game.clock.current_date;
-            l.fixtures.iter().find(|f| {
-                f.status == crate::domain::league::FixtureStatus::Scheduled
-                    && (f.home_team_id == user_team_id || f.away_team_id == user_team_id)
-                    && {
-                        if let Ok(d) = chrono::NaiveDate::parse_from_str(&f.date, "%Y-%m-%d") {
-                            let diff = (d - current.date_naive()).num_days();
-                            (1..=7).contains(&diff)
-                        } else {
-                            false
-                        }
-                    }
-            })
-        });
-
-        if upcoming_match.is_some() && rng.random_range(0..50) == 0 {
-            let eligible: Vec<&crate::domain::player::Player> = game
-                .players
-                .iter()
-                .filter(|p| p.team_id.as_deref() == Some(&user_team_id))
-                .collect();
-            if !eligible.is_empty() {
-                let player = eligible[rng.random_range(0..eligible.len())];
-                let msg_id = format!("intl_callup_{}_{}", player.id, today);
-                if !existing_ids.contains(&msg_id) {
-                    new_messages.push(message_builders::international_callup_message(
-                        &msg_id,
-                        &player.match_name,
-                        &player.nationality,
-                        &today,
-                    ));
-                    // Morale boost for being called up
-                    let pid = player.id.clone();
-                    if let Some(p) = game.players.iter_mut().find(|p| p.id == pid) {
-                        p.morale = (p.morale as i16 + rng.random_range(3..=8)).clamp(10, 100) as u8;
-                    }
-                }
-            }
-        }
-    }
-
-    // --- 4. Community event / club milestone (1% chance per day) ---
+    // --- 3. Community event / club milestone (1% chance per day) ---
     {
         let msg_id = format!("community_{}", today);
         if !existing_ids.contains(&msg_id) && rng.random_range(0..100) == 0 {
