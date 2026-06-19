@@ -38,6 +38,7 @@ import {
 import { computeRoleModifiers, ROLE_ORDER, type DraftRole } from "@/lib/teams/lolTactics";
 import { getLolStaffEffectsForTeam } from "@/lib/teams/lolStaffEffects";
 import { buildLolScrimPrepPayload } from "@/lib/scrims/lolScrimPrep";
+import { mapRuntimeWinnerToCanonicalScores } from "@/ui-v2/_legacy/pages/MatchSimulation.resultMapping";
 
 // ---------------------------------------------------------------------------
 // Multi-stage Match Day Orchestrator
@@ -1333,10 +1334,14 @@ export default function MatchSimulation() {
     // side-swapped to render the user's selected LoL side, and storing that swapped
     // shape as the base snapshot corrupts subsequent home/away series win tracking.
     const merged = mergeRuntimeEventsIntoSnapshot(snapshot ?? snapshotForResult, finalRuntimeState.events);
+    const canonicalScores = mapRuntimeWinnerToCanonicalScores({
+      canonicalSnapshot: merged,
+      snapshotForResult,
+      winner: finalRuntimeState.winner,
+    });
     setSnapshot({
       ...merged,
-      home_score: finalRuntimeState.winner === "blue" ? 1 : finalRuntimeState.winner === "red" ? 0 : (merged.home_score ?? 0),
-      away_score: finalRuntimeState.winner === "red" ? 1 : finalRuntimeState.winner === "blue" ? 0 : (merged.away_score ?? 0),
+      ...canonicalScores,
     });
 
     const runtimeBasedResult = buildDraftResultFromRuntime({
@@ -1960,5 +1965,4 @@ export default function MatchSimulation() {
     );
   }
 }
-
 
