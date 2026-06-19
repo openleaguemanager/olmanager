@@ -300,6 +300,9 @@ mod tests {
             competition_id: None,
             logo: None,
             league_kind: LeagueKind::Main,
+            split_index: 0,
+            tier: 0,
+            active: false,
             fixtures: vec![Fixture {
                 id: "fixture-1".to_string(),
                 matchday: 1,
@@ -618,6 +621,9 @@ mod tests {
             competition_id: None,
             logo: None,
             league_kind: LeagueKind::Main,
+            split_index: 0,
+            tier: 0,
+            active: false,
             fixtures: vec![
                 olm_core::domain::league::Fixture {
                     id: "fix1".to_string(),

@@ -7,6 +7,7 @@ import { Eye, Gamepad2 } from "lucide-react";
 import { useGameStore } from "@/store/gameStore";
 import type { GameStateData, PlayerSelectionOptions } from "@/store/gameStore";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useBugReportStore } from "@/store/bugReportStore";
 import { useAdvanceTime, type MatchModeType } from "@/hooks/useAdvanceTime";
 import { resolveTeamLogo } from "@/lib/teams/teamLogos";
 import { isAcademyTeam } from "@/store/academySelectors";
@@ -189,6 +190,12 @@ export default function DashboardV2() {
       // Silently ignore — Discord may not be available.
     });
   }, [profileNavigation.activeTab]);
+
+  // Update bug-report context so reports know the actual dashboard tab.
+  const setCurrentDashboardTab = useBugReportStore((s) => s.setCurrentDashboardTab);
+  useEffect(() => {
+    setCurrentDashboardTab(profileNavigation.activeTab);
+  }, [profileNavigation.activeTab, setCurrentDashboardTab]);
 
   useEffect(() => {
     if (hasActiveGame) {
@@ -726,6 +733,7 @@ export default function DashboardV2() {
             <MetaTabV2
               gameState={gameState}
               onViewChampion={(k) => setViewingChampionKey(k)}
+              onGameUpdate={setGameState}
             />
           </div>
         ) : profileNavigation.selectedPlayerId && !viewingChampionKey && !profileNavigation.selectedTeamId ? (

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useBugReportStore } from "@/store/bugReportStore";
 import { useUpdater } from "@/hooks/useUpdater";
 import { invoke } from "@tauri-apps/api/core";
 import UpdateModal from "@/ui-v2/_legacy/components/updater/UpdateModal";
@@ -54,9 +55,24 @@ function LazyFallback() {
   );
 }
 
-function AppContent() {
+const DASHBOARD_ROUTES = ["/dashboard", ...DASHBOARD_TAB_ROUTES];
+
+export function AppContent() {
   const location = useLocation();
+  const setCurrentRoute = useBugReportStore((s) => s.setCurrentRoute);
+  const setCurrentDashboardTab = useBugReportStore((s) => s.setCurrentDashboardTab);
   const showBugButton = ["/dashboard", "/match", "/select-team", ...DASHBOARD_TAB_ROUTES].includes(location.pathname);
+
+  // Keep bug-report context in sync with the current route.
+  // Dashboard tabs are only meaningful while on a dashboard route; clear the
+  // value on other routes so bug reports from /match or /select-team do not
+  // carry a stale dashboard tab from a previous visit.
+  useEffect(() => {
+    setCurrentRoute(location.pathname);
+    if (!DASHBOARD_ROUTES.includes(location.pathname)) {
+      setCurrentDashboardTab("");
+    }
+  }, [location.pathname, setCurrentRoute, setCurrentDashboardTab]);
 
   // Update Discord Rich Presence on route change
   useEffect(() => {

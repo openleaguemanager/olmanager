@@ -1,7 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import DraftResultScreen, { buildGoldAdvantageChartPoints, type DraftResultSeriesGame } from "@/ui-v2/_legacy/components/match/DraftResultScreen";
+import DraftResultScreenV2, {
+  buildGoldAdvantageChartPoints,
+  type DraftResultSeriesGame,
+} from "@/ui-v2/components/DraftResultScreenV2";
 import type { DraftMatchResult } from "@/ui-v2/_legacy/components/match/draftResultSimulator";
 import type { MatchSnapshot } from "@/ui-v2/_legacy/components/match/types";
 
@@ -13,12 +16,22 @@ vi.mock("react-i18next", () => ({
       }
 
       if (options && typeof options === "object" && "defaultValue" in options) {
-        return String(options.defaultValue ?? key).replace(/{{(\w+)}}/g, (_, name) => String(options[name] ?? ""));
+        return String(options.defaultValue ?? key).replace(/{{(\w+)}}/g, (_, name) =>
+          String(options[name] ?? ""),
+        );
       }
 
       return key;
     },
   }),
+}));
+
+vi.mock("@/lib/teams/teamLogos", () => ({
+  resolveTeamLogo: () => null,
+}));
+
+vi.mock("@/lib/players/playerPhotos", () => ({
+  resolvePlayerPhoto: () => null,
 }));
 
 function createResult(overrides: Partial<DraftMatchResult> = {}): DraftMatchResult {
@@ -80,7 +93,7 @@ const snapshot = {
   away_team: { id: "team-2", name: "Beta FC", players: [] },
 } as unknown as MatchSnapshot;
 
-describe("DraftResultScreen", () => {
+describe("DraftResultScreenV2", () => {
   it("renders game tabs and switches displayed game result", () => {
     const gameOne = createResult({
       blueKills: 22,
@@ -122,7 +135,7 @@ describe("DraftResultScreen", () => {
     ];
 
     render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={snapshot}
         controlledSide="blue"
         result={gameTwo}
@@ -137,11 +150,13 @@ describe("DraftResultScreen", () => {
 
     expect(screen.getByRole("button", { name: "Game 1" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Game 2" })).toBeInTheDocument();
-    expect(screen.getAllByText("Alpha Jungle").length).toBeGreaterThan(0);
+    // Game 2 is selected by default and shows its score
+    expect(screen.getAllByText("9").length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("button", { name: "Game 1" }));
 
-    expect(screen.getAllByText("Alpha Mid").length).toBeGreaterThan(0);
+    // Game 1 score should now be visible
+    expect(screen.getAllByText("22").length).toBeGreaterThan(0);
   });
 
   it("shows the next game label while a Bo3 series is unfinished", () => {
@@ -150,7 +165,7 @@ describe("DraftResultScreen", () => {
     const onContinue = vi.fn();
 
     render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={snapshot}
         controlledSide="blue"
         result={gameTwo}
@@ -173,13 +188,11 @@ describe("DraftResultScreen", () => {
     const gameOne = createResult({ winnerSide: "blue" });
 
     render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={snapshot}
         controlledSide="blue"
         result={gameOne}
-        seriesGames={[
-          { gameIndex: 1, result: gameOne, winnerSide: gameOne.winnerSide },
-        ]}
+        seriesGames={[{ gameIndex: 1, result: gameOne, winnerSide: gameOne.winnerSide }]}
         seriesLength={3}
         seriesGameIndex={2}
         userSeriesWins={2}
@@ -201,7 +214,7 @@ describe("DraftResultScreen", () => {
     const gameThree = createResult({ winnerSide: "blue" });
 
     render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={snapshot}
         controlledSide="blue"
         result={gameThree}
@@ -228,7 +241,7 @@ describe("DraftResultScreen", () => {
     const gameThree = createResult({ winnerSide: "blue" });
 
     render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={snapshot}
         controlledSide="blue"
         result={gameThree}
@@ -260,7 +273,7 @@ describe("DraftResultScreen", () => {
     });
 
     const { container } = render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={snapshot}
         controlledSide="blue"
         result={result}
@@ -268,7 +281,9 @@ describe("DraftResultScreen", () => {
       />,
     );
 
-    expect(screen.getAllByLabelText("match.draftResult.goldAdvantage (+ AF, - BF)").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByLabelText("match.draftResult.goldAdvantage (+ AF, - BF)").length,
+    ).toBeGreaterThan(0);
     expect(screen.getByText("+ AF")).toBeInTheDocument();
     expect(screen.getByText("- BF")).toBeInTheDocument();
 
@@ -321,7 +336,7 @@ describe("DraftResultScreen", () => {
 
   it("shows scrim prep influence when the runtime snapshot carried prep signal", () => {
     render(
-      <DraftResultScreen
+      <DraftResultScreenV2
         snapshot={{
           ...snapshot,
           lol_scrim_prep: {
