@@ -8,6 +8,7 @@ import DashboardModalFrame from "@/ui-v2/_legacy/components/dashboard/DashboardM
 
 interface ContextData {
   appVersion: string;
+  route: string;
   activeTab: string;
   currentDate: string;
   dayPhase: string;

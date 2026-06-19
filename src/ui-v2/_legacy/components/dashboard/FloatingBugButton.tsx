@@ -3,30 +3,35 @@ import { useState, type JSX } from "react";
 
 import ReportBugModal from "@/ui-v2/_legacy/components/dashboard/ReportBugModal";
 import { useGameStore } from "@/store/gameStore";
+import { useBugReportStore } from "@/store/bugReportStore";
 import { APP_VERSION } from "@/lib/common/appInfo";
 import { getManagerTeamName } from "@/ui-v2/_legacy/components/dashboard/dashboardHelpers";
 
 export default function FloatingBugButton(): JSX.Element | null {
   const gameState = useGameStore((s) => s.gameState);
+  const { currentRoute, currentDashboardTab } = useBugReportStore();
   const [show, setShow] = useState(false);
 
   if (!gameState) return null;
 
   return (
     <>
-      <button
-        onClick={() => setShow(true)}
-        className="fixed bottom-6 right-6 z-[9999] flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl active:scale-95"
-        title="Reportar Bug"
-      >
-        <Bug className="h-5 w-5" />
-      </button>
+      {!show && (
+        <button
+          onClick={() => setShow(true)}
+          className="fixed bottom-6 right-6 z-[9999] flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl active:scale-95"
+          title="Reportar Bug"
+        >
+          <Bug className="h-5 w-5" />
+        </button>
+      )}
 
       {show && (
         <ReportBugModal
           context={{
             appVersion: APP_VERSION,
-            activeTab: "",
+            route: currentRoute,
+            activeTab: currentDashboardTab,
             currentDate: gameState.clock.current_date,
             dayPhase: gameState.day_phase ?? "Unknown",
             teamName: getManagerTeamName(gameState) ?? "Unknown",

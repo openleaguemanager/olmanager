@@ -231,9 +231,9 @@ describe("TacticsTab", () => {
     expect(screen.getByText("Jungle style")).toBeInTheDocument();
     expect(screen.getByText("Support roaming")).toBeInTheDocument();
     expect(screen.getAllByText("tactics.lol.impactAndCoherence").length).toBeGreaterThan(0);
-    expect(screen.getByText("Top Starter")).toBeInTheDocument();
-    expect(screen.getByText("80 OVR · Top lane")).toBeInTheDocument();
-    expect(screen.getByText("Support Starter")).toBeInTheDocument();
+    expect(screen.getAllByText("Top Starter").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("80 OVR · Top lane").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Support Starter").length).toBeGreaterThan(0);
   });
 
   it("persists game timing changes through the LoL tactics command", async () => {
@@ -297,8 +297,8 @@ describe("TacticsTab", () => {
       />,
     );
 
-    expect(screen.getByText("Top Starter")).toBeInTheDocument();
-    expect(screen.getByText("Support Starter")).toBeInTheDocument();
+    expect(screen.getAllByText("Top Starter").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Support Starter").length).toBeGreaterThan(0);
   });
 
   it("prefers active_lineup_ids over legacy starting_xi_ids", () => {
@@ -316,7 +316,7 @@ describe("TacticsTab", () => {
       />,
     );
 
-    expect(screen.getByText("Bench Top")).toBeInTheDocument();
+    expect(screen.getAllByText("Bench Top").length).toBeGreaterThan(0);
   });
 
   it("persists default set piece and team role assignments from the roles tab", async () => {

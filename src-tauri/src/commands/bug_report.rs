@@ -5,6 +5,22 @@ use tauri::Manager as TauriManager;
 use zip::write::FileOptions;
 use zip::ZipWriter;
 
+/// Return the last `max_len` bytes of `s`, adjusted to start at a valid UTF-8
+/// character boundary so the returned slice is always valid Unicode.
+fn safe_tail(s: &str, max_len: usize) -> &str {
+    if s.len() <= max_len {
+        return s;
+    }
+
+    // Find the first byte index at or after (len - max_len) that is a char
+    // boundary. The loop must terminate because s.len() itself is a boundary.
+    let mut start = s.len() - max_len;
+    while start < s.len() && !s.is_char_boundary(start) {
+        start += 1;
+    }
+    &s[start..]
+}
+
 /// Export a bug report ZIP to the user's Desktop.
 ///
 /// # Arguments
@@ -45,9 +61,7 @@ pub fn export_bug_report(
                         if f.read_to_string(&mut content).is_ok() {
                             let log_name = entry.file_name().to_string_lossy().to_string();
                             combined.push_str(&format!("\n\n===== {} =====\n", log_name));
-                            let len = content.len();
-                            let start = if len > 50_000 { len - 50_000 } else { 0 };
-                            combined.push_str(&content[start..]);
+                            combined.push_str(safe_tail(&content, 50_000));
                         }
                     }
                 }
@@ -89,4 +103,39 @@ pub fn export_bug_report(
     info!("[cmd] export_bug_report: done at {}", zip_path.display());
 
     Ok(zip_path.to_string_lossy().to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::safe_tail;
+
+    #[test]
+    fn safe_tail_returns_full_string_when_below_max() {
+        assert_eq!(safe_tail("hello", 10), "hello");
+    }
+
+    #[test]
+    fn safe_tail_trims_ascii_to_last_bytes() {
+        let text = "abcdefghijklmnopqrstuvwxyz";
+        assert_eq!(safe_tail(text, 5), "vwxyz");
+    }
+
+    #[test]
+    fn safe_tail_does_not_split_multi_byte_characters() {
+        // "αβγδε" is 10 bytes in UTF-8 (2 bytes each). A naive byte slice of
+        // the last 3 bytes would start in the middle of "δ" and panic.
+        let text = "αβγδε";
+        assert_eq!(safe_tail(text, 3), "ε");
+    }
+
+    #[test]
+    fn safe_tail_handles_empty_string() {
+        assert_eq!(safe_tail("", 10), "");
+    }
+
+    #[test]
+    fn safe_tail_handles_exact_length() {
+        let text = "abcde";
+        assert_eq!(safe_tail(text, 5), text);
+    }
 }

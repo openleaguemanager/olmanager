@@ -60,6 +60,8 @@ export default defineConfig(async () => {
       globals: true,
       include: ["src/**/*.test.{ts,tsx}"],
       setupFiles: ["src/test-setup.ts"],
+      // @ts-expect-error process is a nodejs global
+      forbidOnly: Boolean(process.env.CI),
       coverage: {
         exclude: ["src/i18n/locales/**", "src/**/*.test.{ts,tsx}", "src/test-setup.ts"],
       },

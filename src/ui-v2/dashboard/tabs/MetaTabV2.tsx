@@ -10,6 +10,7 @@ import {
 import { normalizeChampionKey } from "@/lib/champions/championIds";
 import { resolveChampionTile } from "@/lib/champions/championImages";
 import { ROLE_ICON_PATHS } from "@/lib/players/roleIcons";
+import { delegateChampionTraining } from "@/services/playerService";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui-v2/components/ui/card";
 import { cn } from "@/ui-v2/lib/utils";
@@ -17,6 +18,7 @@ import { cn } from "@/ui-v2/lib/utils";
 interface MetaTabV2Props {
   gameState: GameStateData;
   onViewChampion: (championKey: string) => void;
+  onGameUpdate?: (state: GameStateData) => void;
 }
 
 type UiRole = "Top" | "Jungle" | "Mid" | "ADC" | "Support";
@@ -60,13 +62,32 @@ const TIER_BADGE_CLASS: Record<string, string> = {
   D: "bg-red-500 text-white",
 };
 
-export function MetaTabV2({ gameState, onViewChampion }: MetaTabV2Props) {
+export function MetaTabV2({ gameState, onViewChampion, onGameUpdate }: MetaTabV2Props) {
   const { t } = useTranslation();
   const [metaRoleFilter, setMetaRoleFilter] = useState<"ALL" | UiRole>("ALL");
+  const [delegating, setDelegating] = useState(false);
 
   const managerTeamId = gameState.manager.team_id;
   const patch = gameState.champion_patch;
   const staffEffects = getLolStaffEffectsForTeam(gameState, managerTeamId);
+
+  const ownPlayers = useMemo(
+    () =>
+      gameState.players
+        .filter((player) => player.team_id === managerTeamId)
+        .sort((a, b) => a.match_name.localeCompare(b.match_name)),
+    [gameState.players, managerTeamId],
+  );
+
+  async function handleDelegateTraining() {
+    setDelegating(true);
+    try {
+      const updated = await delegateChampionTraining();
+      onGameUpdate?.(updated);
+    } finally {
+      setDelegating(false);
+    }
+  }
 
   const discoveredSet = useMemo(
     () => new Set((patch?.discovered_champion_ids ?? []).map(normalizeKey)),
@@ -279,6 +300,56 @@ export function MetaTabV2({ gameState, onViewChampion }: MetaTabV2Props) {
                 );
               })}
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="flex min-h-0 flex-1 flex-col">
+          <CardHeader className="flex-row items-center justify-between space-y-0 shrink-0">
+            <CardTitle className="font-heading text-sm uppercase tracking-widest text-muted-foreground">
+              {t("champions.masteryTrainingTitle")}
+            </CardTitle>
+            <button
+              type="button"
+              onClick={handleDelegateTraining}
+              disabled={delegating}
+              className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-heading uppercase tracking-wider text-primary transition-all hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {delegating ? t("champions.delegating") : t("champions.delegateToCoach")}
+            </button>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto scrollbar-v2">
+            {ownPlayers.length === 0 ? (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                {t("meta.noPlayers", { defaultValue: "No players on your team." })}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {ownPlayers.map((player) => {
+                  const legacyTarget = player.champion_training_target
+                    ? [player.champion_training_target]
+                    : [];
+                  const targets = Array.from(
+                    new Set([...legacyTarget, ...(player.champion_training_targets ?? [])]),
+                  ).filter((value): value is string => typeof value === "string" && value.length > 0);
+
+                  return (
+                    <div
+                      key={player.id}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/20 px-3 py-2"
+                    >
+                      <span className="truncate text-sm font-semibold text-foreground">
+                        {player.match_name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {targets.length === 0
+                          ? t("champions.noTarget")
+                          : targets.map(championDisplayName).join(", ")}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
     </div>

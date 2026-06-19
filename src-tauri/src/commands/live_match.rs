@@ -557,6 +557,9 @@ mod tests {
             competition_id: None,
             logo: None,
             league_kind: LeagueKind::Main,
+            split_index: 0,
+            tier: 0,
+            active: false,
             fixtures: vec![
                 Fixture {
                     id: "fix1".to_string(),
@@ -663,7 +666,7 @@ mod tests {
         state.set_live_match(session);
 
         let response =
-            finish_live_match_internal(&state, None, None).expect("finish live match response");
+            finish_live_match_internal(&state, None, None, None).expect("finish live match response");
 
         let round_summary = response.round_summary.expect("round summary response");
         assert!(round_summary.is_complete);
