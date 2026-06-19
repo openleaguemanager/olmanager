@@ -69,9 +69,13 @@ where
         info!("[turn] process_day {}: matchday", today);
         simulate_matchday_with_capture(game, &today, on_capture);
         maybe_schedule_playoffs(game);
+        // Apply partial condition recovery even on matchdays so that player
+        // condition does not steadily drain to 0 % over the course of a split.
+        let weekday_num = game.clock.current_date.weekday().num_days_from_monday();
+        training::process_training(game, weekday_num, true);
     } else {
         let weekday_num = game.clock.current_date.weekday().num_days_from_monday();
-        training::process_training(game, weekday_num);
+        training::process_training(game, weekday_num, false);
         training::check_squad_fitness_warnings(game);
     }
 
@@ -144,6 +148,11 @@ pub fn finish_live_match_day(game: &mut Game) {
     news::generate_weekly_digest_news(game, &today);
     news::generate_pre_match_messages(game, &today);
 
+    // Apply partial condition recovery (matchday rate) so live-match
+    // days also restore some condition instead of only draining it.
+    let weekday_num = game.clock.current_date.weekday().num_days_from_monday();
+    training::process_training(game, weekday_num, true);
+
     crate::firing::check_manager_firing(game);
     crate::job_offers::check_job_offers(game);
     potential::process_potential_research(game);
@@ -153,7 +162,6 @@ pub fn finish_live_match_day(game: &mut Game) {
     game.day_phase = crate::game::DayPhase::Morning;
     crate::season_context::refresh_game_context(game);
 }
-
 // ---------------------------------------------------------------------------
 // Domain → Engine type conversion
 // ---------------------------------------------------------------------------
