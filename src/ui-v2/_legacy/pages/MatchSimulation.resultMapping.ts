@@ -1,18 +1,17 @@
 import type { MatchSnapshot } from "@/ui-v2/_legacy/components/match/types";
-import type { TeamId } from "@/ui-v2/_legacy/components/match/lol-prototype/engine/types";
 
 interface MapRuntimeWinnerToCanonicalScoresParams {
   canonicalSnapshot: MatchSnapshot;
   snapshotForResult: MatchSnapshot;
-  winner: TeamId | null;
+  winnerSide: "blue" | "red" | null;
 }
 
 export function mapRuntimeWinnerToCanonicalScores({
   canonicalSnapshot,
   snapshotForResult,
-  winner,
+  winnerSide,
 }: MapRuntimeWinnerToCanonicalScoresParams): Pick<MatchSnapshot, "home_score" | "away_score"> {
-  if (!winner) {
+  if (!winnerSide) {
     return {
       home_score: canonicalSnapshot.home_score ?? 0,
       away_score: canonicalSnapshot.away_score ?? 0,
@@ -20,7 +19,7 @@ export function mapRuntimeWinnerToCanonicalScores({
   }
 
   const winnerTeamId =
-    winner === "blue" ? snapshotForResult.home_team.id : snapshotForResult.away_team.id;
+    winnerSide === "blue" ? snapshotForResult.home_team.id : snapshotForResult.away_team.id;
 
   return {
     home_score: canonicalSnapshot.home_team.id === winnerTeamId ? 1 : 0,

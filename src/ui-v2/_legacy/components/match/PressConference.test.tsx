@@ -34,9 +34,14 @@ vi.mock("react-i18next", () => ({
         "content.lol.social.responses.demandReset.label": "Demand reset",
         "content.lol.social.responses.demandReset.text":
           "We have to reset standards immediately; pressure is part of playing at this level.",
+        "content.lol.social.responses.takeResponsibility.label": "Take responsibility",
+        "content.lol.social.responses.takeResponsibility.text":
+          "We own this result. The team will review it and come back stronger.",
         "content.lol.social.responses.stayMeasured.label": "Stay measured",
         "content.lol.social.responses.stayMeasured.text":
           "One result does not define our form. We review it and move forward.",
+        "content.lol.social.questions.mentalResetAfterLoss.text":
+          "This loss stings. How do you reset the squad mentally before the next match?",
         "match.pressConference": "Press Conference",
         "match.pressSubtitle": "Post-match media for Fnatic",
         "match.nextQuestion": "Next Question",
@@ -427,4 +432,153 @@ describe("PressConference LoL social content", () => {
       ]),
     );
   });
+
+  it("uses explicit winnerSide/context to frame questions as a win even when snapshot scores are 0-0", () => {
+    const questions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({ home_score: 0, away_score: 0, events: [] }),
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "blue",
+      winnerSide: "blue",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.length).toBeGreaterThan(0);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("underperformance"))).toBe(true);
+  });
+
+  it("keeps result screen and press context aligned when winnerSide matches the displayed result", () => {
+    const snapshot = makeSnapshot({ home_score: 0, away_score: 1 });
+    const pressQuestions = buildPressConferenceQuestions({
+      snapshot,
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "red",
+      winnerSide: "red",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(pressQuestions.length).toBeGreaterThan(0);
+    expect(pressQuestions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+    expect(pressQuestions.every((question) => !question.id.toLowerCase().includes("underperformance"))).toBe(true);
+  });
+
+  it("recognises a win when the canonical home team controls red side and wins red", () => {
+    const snapshot = makeSnapshot({ home_score: 0, away_score: 1 });
+    const questions = buildPressConferenceQuestions({
+      snapshot,
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "red",
+      winnerSide: "red",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.length).toBeGreaterThan(0);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("underperformance"))).toBe(true);
+  });
+
+  it("excludes win-framed questions from loss contexts", () => {
+    const lossQuestions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({ home_score: 1, away_score: 0 }),
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "red",
+      winnerSide: "blue",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(lossQuestions.length).toBeGreaterThan(0);
+    expect(lossQuestions.every((question) => !question.id.toLowerCase().includes("win"))).toBe(true);
+    expect(lossQuestions.every((question) => !question.id.toLowerCase().includes("objective-domination"))).toBe(true);
+    expect(lossQuestions.every((question) => !question.id.toLowerCase().includes("clean-win"))).toBe(true);
+  });
+
+  it("attributes Home-side events to the user when canonical Home controls red", () => {
+    const questions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({
+        home_score: 1,
+        away_score: 0,
+        events: [
+          { minute: 10, event_type: "Dragon", side: "Home", zone: "River", player_id: "adc1", secondary_player_id: null },
+          { minute: 14, event_type: "Baron", side: "Home", zone: "River", player_id: "sup1", secondary_player_id: null },
+        ],
+      }),
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "red",
+      winnerSide: "red",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.map((question) => question.id)).toContain("clean-win-objectives");
+    expect(questions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+  });
+
+  it("attributes Away-side events to the user when canonical Away controls blue", () => {
+    const questions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({
+        home_score: 0,
+        away_score: 1,
+        events: [
+          { minute: 10, event_type: "Dragon", side: "Away", zone: "River", player_id: "enemy1", secondary_player_id: null },
+          { minute: 14, event_type: "Baron", side: "Away", zone: "River", player_id: "enemy1", secondary_player_id: null },
+        ],
+      }),
+      gameState: makeGameState(),
+      userSide: "Away",
+      controlledSide: "blue",
+      winnerSide: "blue",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.map((question) => question.id)).toContain("clean-win-objectives");
+    expect(questions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+  });
+
+  it("does not misattribute enemy objectives to the user under controlled-side swaps", () => {
+    const questions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({
+        home_score: 1,
+        away_score: 0,
+        events: [
+          { minute: 10, event_type: "Dragon", side: "Away", zone: "River", player_id: "enemy1", secondary_player_id: null },
+          { minute: 14, event_type: "Baron", side: "Away", zone: "River", player_id: "enemy1", secondary_player_id: null },
+        ],
+      }),
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "red",
+      winnerSide: "red",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.map((question) => question.id)).not.toContain("clean-win-objectives");
+  });
+
+  it("regression: live red win is framed as a user win when canonical Home controls red", () => {
+    const questions = buildPressConferenceQuestions({
+      snapshot: makeSnapshot({ home_score: 1, away_score: 0 }),
+      gameState: makeGameState(),
+      userSide: "Home",
+      controlledSide: "red",
+      winnerSide: "red",
+      t: (key: string) => key,
+      random: () => 0,
+    });
+
+    expect(questions.length).toBeGreaterThan(0);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("loss"))).toBe(true);
+    expect(questions.every((question) => !question.id.toLowerCase().includes("underperformance"))).toBe(true);
+  });
+
 });
