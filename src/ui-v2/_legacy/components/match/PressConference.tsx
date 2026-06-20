@@ -12,6 +12,12 @@ interface PressConferenceProps {
   snapshot: MatchSnapshot;
   gameState: GameStateData;
   userSide: "Home" | "Away";
+  /** The user's actual in-game side (blue/red). */
+  controlledSide?: "blue" | "red";
+  /** The actual winning side (blue/red). */
+  winnerSide?: "blue" | "red";
+  /** Optional explicit result override. */
+  userResult?: "win" | "loss";
   onFinish: () => void;
   onGameUpdate?: (game: GameStateData) => void;
 }
@@ -62,6 +68,9 @@ export default function PressConference({
   snapshot,
   gameState,
   userSide,
+  controlledSide,
+  winnerSide,
+  userResult,
   onFinish,
   onGameUpdate,
 }: PressConferenceProps) {
@@ -71,6 +80,9 @@ export default function PressConference({
       snapshot,
       userSide,
       gameState,
+      controlledSide,
+      winnerSide,
+      userResult,
       t,
       recentQuestionIds: readRecentPressQuestionIds(),
     }),

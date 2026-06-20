@@ -2,7 +2,7 @@ import type { TFunction } from "i18next";
 
 import { SOCIAL_CONTENT_PACK } from "@/content/lol/social/content";
 import { extractMatchContext, type CompatibleMatchSummary } from "@/content/lol/social/matchContext";
-import { DEFAULT_LEAGUE_ID, registrySide, type UserSide } from "@/content/lol/social/shared";
+import { DEFAULT_LEAGUE_ID, registrySide, type RegistrySide, type UserSide } from "@/content/lol/social/shared";
 import {
   filterEligibleOutlets,
   filterEligiblePersonas,
@@ -68,14 +68,25 @@ interface BuildPressConferenceQuestionsParams {
   t: TFunction | ((key: string) => string);
   random?: () => number;
   recentQuestionIds?: string[];
+  /** The user's actual in-game side (blue/red). Defaults to registrySide(userSide). */
+  controlledSide?: RegistrySide;
+  /** The actual winning side (blue/red). When omitted it is inferred from snapshot scores. */
+  winnerSide?: RegistrySide;
+  /** Optional explicit result override. Takes precedence over winnerSide inference. */
+  userResult?: "win" | "loss";
 }
 
 const PRESS_CONFERENCE_QUESTION_TARGET = 3;
 
-function countEvents(events: MatchEvent[], side: UserSide, names: string[]): number {
+function eventRegistrySide(eventSide: MatchEvent["side"], homeIsBlue: boolean): RegistrySide {
+  if (eventSide === "Home") return homeIsBlue ? "blue" : "red";
+  return homeIsBlue ? "red" : "blue";
+}
+
+function countEvents(events: MatchEvent[], side: RegistrySide, names: string[], homeIsBlue: boolean): number {
   const normalized = new Set(names.map((name) => name.toLowerCase()));
   return events.filter(
-    (event) => event.side === side && normalized.has(event.event_type.toLowerCase()),
+    (event) => eventRegistrySide(event.side, homeIsBlue) === side && normalized.has(event.event_type.toLowerCase()),
   ).length;
 }
 
@@ -116,42 +127,61 @@ function eventTypeToTimelineType(eventType: string): string {
   }
 }
 
-function snapshotToSummary(snapshot: MatchSnapshot, userSide: UserSide): CompatibleMatchSummary {
-  const enemySide = userSide === "Home" ? "Away" : "Home";
+function otherRegistrySide(side: RegistrySide): RegistrySide {
+  return side === "blue" ? "red" : "blue";
+}
+
+function snapshotToSummary(
+  snapshot: MatchSnapshot,
+  userSide: UserSide,
+  controlledSide?: RegistrySide,
+  forcedWinnerSide?: RegistrySide,
+): CompatibleMatchSummary {
   const userTeam = userSide === "Home" ? snapshot.home_team : snapshot.away_team;
   const enemyTeam = userSide === "Home" ? snapshot.away_team : snapshot.home_team;
-  const userRegistrySide = registrySide(userSide);
-  const enemyRegistrySide = registrySide(enemySide);
-  const userKills = countEvents(snapshot.events, userSide, ["Kill", "FirstBlood", "Goal", "PenaltyGoal"]);
-  const enemyKills = countEvents(snapshot.events, enemySide, ["Kill", "FirstBlood", "Goal", "PenaltyGoal"]);
+  const userRegistrySide = controlledSide ?? registrySide(userSide);
+  const enemyRegistrySide = otherRegistrySide(userRegistrySide);
+
+  // Determine which canonical team is playing blue side. When controlledSide is
+  // supplied we can map Home/Away events to the correct blue/red side even if
+  // the active snapshot was side-swapped.
+  const blueTeamId = userSide === "Home"
+    ? (userRegistrySide === "blue" ? snapshot.home_team.id : snapshot.away_team.id)
+    : (userRegistrySide === "blue" ? snapshot.away_team.id : snapshot.home_team.id);
+  const homeIsBlue = snapshot.home_team.id === blueTeamId;
+
+  const userKills = countEvents(snapshot.events, userRegistrySide, ["Kill", "FirstBlood", "Goal", "PenaltyGoal"], homeIsBlue);
+  const enemyKills = countEvents(snapshot.events, enemyRegistrySide, ["Kill", "FirstBlood", "Goal", "PenaltyGoal"], homeIsBlue);
 
   const userRegistrySideData: DraftTeamObjectives = {
-    voidgrubs: countEvents(snapshot.events, userSide, ["VoidGrub", "VoidGrubs"]),
-    dragons: countEvents(snapshot.events, userSide, ["Dragon"]),
-    dragonSoul: countEvents(snapshot.events, userSide, ["DragonSoul"]) > 0,
-    elderDragons: countEvents(snapshot.events, userSide, ["ElderDragon"]),
-    heralds: countEvents(snapshot.events, userSide, ["Herald"]),
-    barons: countEvents(snapshot.events, userSide, ["Baron"]),
-    towers: countEvents(snapshot.events, userSide, ["Tower"]),
-    inhibitors: countEvents(snapshot.events, userSide, ["Inhibitor"]),
+    voidgrubs: countEvents(snapshot.events, userRegistrySide, ["VoidGrub", "VoidGrubs"], homeIsBlue),
+    dragons: countEvents(snapshot.events, userRegistrySide, ["Dragon"], homeIsBlue),
+    dragonSoul: countEvents(snapshot.events, userRegistrySide, ["DragonSoul"], homeIsBlue) > 0,
+    elderDragons: countEvents(snapshot.events, userRegistrySide, ["ElderDragon"], homeIsBlue),
+    heralds: countEvents(snapshot.events, userRegistrySide, ["Herald"], homeIsBlue),
+    barons: countEvents(snapshot.events, userRegistrySide, ["Baron"], homeIsBlue),
+    towers: countEvents(snapshot.events, userRegistrySide, ["Tower"], homeIsBlue),
+    inhibitors: countEvents(snapshot.events, userRegistrySide, ["Inhibitor"], homeIsBlue),
   };
 
   const enemyRegistrySideData: DraftTeamObjectives = {
-    voidgrubs: countEvents(snapshot.events, enemySide, ["VoidGrub", "VoidGrubs"]),
-    dragons: countEvents(snapshot.events, enemySide, ["Dragon"]),
-    dragonSoul: countEvents(snapshot.events, enemySide, ["DragonSoul"]) > 0,
-    elderDragons: countEvents(snapshot.events, enemySide, ["ElderDragon"]),
-    heralds: countEvents(snapshot.events, enemySide, ["Herald"]),
-    barons: countEvents(snapshot.events, enemySide, ["Baron"]),
-    towers: countEvents(snapshot.events, enemySide, ["Tower"]),
-    inhibitors: countEvents(snapshot.events, enemySide, ["Inhibitor"]),
+    voidgrubs: countEvents(snapshot.events, enemyRegistrySide, ["VoidGrub", "VoidGrubs"], homeIsBlue),
+    dragons: countEvents(snapshot.events, enemyRegistrySide, ["Dragon"], homeIsBlue),
+    dragonSoul: countEvents(snapshot.events, enemyRegistrySide, ["DragonSoul"], homeIsBlue) > 0,
+    elderDragons: countEvents(snapshot.events, enemyRegistrySide, ["ElderDragon"], homeIsBlue),
+    heralds: countEvents(snapshot.events, enemyRegistrySide, ["Herald"], homeIsBlue),
+    barons: countEvents(snapshot.events, enemyRegistrySide, ["Baron"], homeIsBlue),
+    towers: countEvents(snapshot.events, enemyRegistrySide, ["Tower"], homeIsBlue),
+    inhibitors: countEvents(snapshot.events, enemyRegistrySide, ["Inhibitor"], homeIsBlue),
   };
 
+  const inferredWinnerSide =
+    (userSide === "Home" ? snapshot.home_score > snapshot.away_score : snapshot.away_score > snapshot.home_score)
+      ? userRegistrySide
+      : enemyRegistrySide;
+
   return {
-    winnerSide:
-      (userSide === "Home" ? snapshot.home_score > snapshot.away_score : snapshot.away_score > snapshot.home_score)
-        ? userRegistrySide
-        : enemyRegistrySide,
+    winnerSide: forcedWinnerSide ?? inferredWinnerSide,
     blueKills: userRegistrySide === "blue" ? userKills : enemyKills,
     redKills: userRegistrySide === "red" ? userKills : enemyKills,
     objectives: {
@@ -181,7 +211,7 @@ function snapshotToSummary(snapshot: MatchSnapshot, userSide: UserSide): Compati
     ],
     timelineEvents: snapshot.events.map((event) => ({
       minute: event.minute,
-      side: registrySide(event.side),
+      side: eventRegistrySide(event.side, homeIsBlue),
       type: eventTypeToTimelineType(event.event_type),
     })),
   };
@@ -315,49 +345,83 @@ export function buildPressConferenceQuestions({
   t,
   random = Math.random,
   recentQuestionIds = [],
+  controlledSide,
+  winnerSide,
+  userResult,
 }: BuildPressConferenceQuestionsParams): PressQuestion[] {
   const userLeague = gameState.user_competition_id
     ? gameState.leagues?.find((l) => l.competition_id === gameState.user_competition_id)
     : undefined;
   const leagueId = userLeague?.id ?? gameState.leagues?.[0]?.id ?? DEFAULT_LEAGUE_ID;
+
+  const effectiveUserSide = controlledSide ?? registrySide(userSide);
+  const inferredWinnerSide =
+    userResult === "win"
+      ? effectiveUserSide
+      : userResult === "loss"
+        ? otherRegistrySide(effectiveUserSide)
+        : undefined;
+  const effectiveWinnerSide = winnerSide ?? inferredWinnerSide;
+
+  const summary = snapshotToSummary(snapshot, userSide, effectiveUserSide, effectiveWinnerSide);
   const context = extractMatchContext({
-    match: snapshotToSummary(snapshot, userSide),
-    userSide: registrySide(userSide),
+    match: summary,
+    userSide: effectiveUserSide,
     leagueId,
   });
+  const result = context.facts.result as "win" | "loss";
   const candidates = buildCandidates({
     questions: SOCIAL_CONTENT_PACK.questions,
     leagueId,
     contextTags: context.tags,
     contextFacts: context.facts,
   });
-  const coherentCandidates = candidates.filter((candidate) => isQuestionCoherentWithResult(candidate, context.facts.result as "win" | "loss"));
+  const coherentCandidates = candidates.filter((candidate) => isQuestionCoherentWithResult(candidate, result));
   const selectedCandidates = selectPressConferenceCandidates(coherentCandidates, random, recentQuestionIds);
 
-  const fallbackResponses: PressResponse[] = [
-    {
-      id: "credit-preparation",
-      tone: t("content.lol.social.responses.creditPreparation.label"),
-      text: t("content.lol.social.responses.creditPreparation.text"),
-      effectId: "press_squad_morale_small_up",
-      target: "squad",
-    },
-    {
-      id: "stay-measured",
-      tone: t("content.lol.social.responses.stayMeasured.label"),
-      text: t("content.lol.social.responses.stayMeasured.text"),
-      effectId: "press_no_effect",
-      target: "none",
-    },
-  ];
+  const fallbackResponses: PressResponse[] = result === "win"
+    ? [
+        {
+          id: "credit-preparation",
+          tone: t("content.lol.social.responses.creditPreparation.label"),
+          text: t("content.lol.social.responses.creditPreparation.text"),
+          effectId: "press_squad_morale_small_up",
+          target: "squad",
+        },
+        {
+          id: "stay-measured",
+          tone: t("content.lol.social.responses.stayMeasured.label"),
+          text: t("content.lol.social.responses.stayMeasured.text"),
+          effectId: "press_no_effect",
+          target: "none",
+        },
+      ]
+    : [
+        {
+          id: "take-responsibility",
+          tone: t("content.lol.social.responses.takeResponsibility.label"),
+          text: t("content.lol.social.responses.takeResponsibility.text"),
+          effectId: "press_squad_morale_small_up",
+          target: "squad",
+        },
+        {
+          id: "stay-measured",
+          tone: t("content.lol.social.responses.stayMeasured.label"),
+          text: t("content.lol.social.responses.stayMeasured.text"),
+          effectId: "press_no_effect",
+          target: "none",
+        },
+      ];
 
   if (selectedCandidates.length === 0) {
     return [
       {
-        id: "fallback-post-match",
+        id: `fallback-post-match-${result}`,
         journalist: "Verified Analyst",
         outlet: "Rift Desk",
-        question: t("content.lol.social.questions.cleanWinObjectives.text"),
+        question: result === "win"
+          ? t("content.lol.social.questions.cleanWinObjectives.text")
+          : t("content.lol.social.questions.mentalResetAfterLoss.text"),
         responses: fallbackResponses,
       },
     ];

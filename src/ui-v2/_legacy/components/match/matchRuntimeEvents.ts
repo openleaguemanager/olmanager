@@ -3,9 +3,26 @@ import type { MatchEvent, MatchSnapshot } from "@/ui-v2/_legacy/components/match
 
 type RuntimeEvent = NonNullable<LolSimV1RuntimeState["events"]>[number];
 
-function runtimeEventSide(event: RuntimeEvent): MatchEvent["side"] {
+function runtimeEventSide(
+  event: RuntimeEvent,
+  blueTeamId?: string,
+  homeTeamId?: string,
+): MatchEvent["side"] {
   const text = (event.text ?? "").toUpperCase();
   const firstSideToken = text.match(/\b(BLUE|HOME|RED|AWAY)\b/)?.[1];
+
+  if (!firstSideToken) return "Home";
+
+  // Runtime BLUE/RED refers to in-game sides. When the caller supplies the
+  // active blue team ID, map those tokens to canonical Home/Away so that
+  // side-swapped snapshots still attribute events to the correct fixture side.
+  if (blueTeamId && homeTeamId && (firstSideToken === "BLUE" || firstSideToken === "RED")) {
+    const blueIsHome = blueTeamId === homeTeamId;
+    if (firstSideToken === "BLUE") return blueIsHome ? "Home" : "Away";
+    return blueIsHome ? "Away" : "Home";
+  }
+
+  // Legacy fallback for HOME/AWAY or when the mapping context is unavailable.
   if (firstSideToken === "RED" || firstSideToken === "AWAY") return "Away";
   return "Home";
 }
@@ -57,11 +74,15 @@ function eventKey(event: MatchEvent): string {
  * post-match systems. Runtime events only expose timestamp/type/text today, so
  * side and semantic event type are derived from the broadcast text locally here.
  */
-export function mapRuntimeEventsToMatchEvents(events: LolSimV1RuntimeState["events"] | undefined): MatchEvent[] {
+export function mapRuntimeEventsToMatchEvents(
+  events: LolSimV1RuntimeState["events"] | undefined,
+  blueTeamId?: string,
+  homeTeamId?: string,
+): MatchEvent[] {
   return (events ?? []).map((event) => ({
     minute: Math.max(0, Math.floor((event.t ?? 0) / 60)),
     event_type: runtimeEventType(event),
-    side: runtimeEventSide(event),
+    side: runtimeEventSide(event, blueTeamId, homeTeamId),
     zone: "mid",
     player_id: null,
     secondary_player_id: null,
@@ -85,9 +106,13 @@ export function mergeMatchEvents(existingEvents: MatchEvent[] | undefined, incom
 export function mergeRuntimeEventsIntoSnapshot(
   snapshot: MatchSnapshot,
   runtimeEvents: LolSimV1RuntimeState["events"] | undefined,
+  blueTeamId?: string,
 ): MatchSnapshot {
   return {
     ...snapshot,
-    events: mergeMatchEvents(snapshot.events, mapRuntimeEventsToMatchEvents(runtimeEvents)),
+    events: mergeMatchEvents(
+      snapshot.events,
+      mapRuntimeEventsToMatchEvents(runtimeEvents, blueTeamId, snapshot.home_team.id),
+    ),
   };
 }

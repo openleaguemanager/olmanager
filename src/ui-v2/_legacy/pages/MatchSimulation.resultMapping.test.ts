@@ -3,45 +3,6 @@ import { describe, expect, it } from "vitest";
 import { mapRuntimeWinnerToCanonicalScores } from "@/ui-v2/_legacy/pages/MatchSimulation.resultMapping";
 import type { MatchSnapshot } from "@/ui-v2/_legacy/components/match/types";
 
-function makePlayer(id: string, name: string, position = "ADC") {
-  return {
-    id,
-    name,
-    position,
-    condition: 90,
-    fitness: 90,
-    mechanics: 70,
-    laning: 70,
-    teamfighting: 70,
-    macro_play: 70,
-    consistency: 70,
-    shotcalling: 60,
-    champion_pool: 70,
-    discipline: 70,
-    mental_resilience: 70,
-    pace: 70,
-    stamina: 70,
-    strength: 60,
-    agility: 70,
-    passing: 70,
-    shooting: 70,
-    tackling: 40,
-    dribbling: 70,
-    defending: 40,
-    positioning: 70,
-    vision: 70,
-    decisions: 70,
-    composure: 70,
-    aggression: 50,
-    teamwork: 70,
-    leadership: 60,
-    handling: 20,
-    reflexes: 20,
-    aerial: 50,
-    traits: [],
-  };
-}
-
 function makeSnapshot(overrides: Partial<MatchSnapshot> = {}): MatchSnapshot {
   return {
     phase: "FullTime",
@@ -51,21 +12,21 @@ function makeSnapshot(overrides: Partial<MatchSnapshot> = {}): MatchSnapshot {
     possession: "Home",
     ball_zone: "Midfield",
     home_team: {
-      id: "fnc",
-      name: "Fnatic",
+      id: "home-team",
+      name: "Home Team",
       draft_strategy: "Objective control",
-      players: [makePlayer("fnc-adc", "FNC ADC")],
+      players: [],
     },
     away_team: {
-      id: "g2",
-      name: "G2 Esports",
+      id: "away-team",
+      name: "Away Team",
       draft_strategy: "Skirmish",
-      players: [makePlayer("g2-adc", "G2 ADC")],
+      players: [],
     },
     home_bench: [],
     away_bench: [],
-    home_possession_pct: 50,
-    away_possession_pct: 50,
+    home_possession_pct: 55,
+    away_possession_pct: 45,
     events: [],
     home_subs_made: 0,
     away_subs_made: 0,
@@ -82,33 +43,58 @@ function makeSnapshot(overrides: Partial<MatchSnapshot> = {}): MatchSnapshot {
 }
 
 describe("mapRuntimeWinnerToCanonicalScores", () => {
-  it("maps a red runtime win back to the canonical home team when the user controls red", () => {
-    const canonicalSnapshot = makeSnapshot();
-    const snapshotForResult = makeSnapshot({
-      home_team: canonicalSnapshot.away_team,
-      away_team: canonicalSnapshot.home_team,
-      home_bench: canonicalSnapshot.away_bench,
-      away_bench: canonicalSnapshot.home_bench,
+  it("returns existing scores when winnerSide is null", () => {
+    const snapshot = makeSnapshot({ home_score: 0, away_score: 0 });
+    const scores = mapRuntimeWinnerToCanonicalScores({
+      canonicalSnapshot: snapshot,
+      snapshotForResult: snapshot,
+      winnerSide: null,
     });
+
+    expect(scores).toEqual({ home_score: 0, away_score: 0 });
+  });
+
+  it("maps blue winner to the home team in the result snapshot", () => {
+    const canonicalSnapshot = makeSnapshot({ home_score: 0, away_score: 0 });
+    const snapshotForResult = makeSnapshot({ home_score: 0, away_score: 0 });
 
     const scores = mapRuntimeWinnerToCanonicalScores({
       canonicalSnapshot,
       snapshotForResult,
-      winner: "red",
+      winnerSide: "blue",
     });
 
     expect(scores).toEqual({ home_score: 1, away_score: 0 });
   });
 
-  it("preserves canonical fallback scores when runtime has no winner", () => {
-    const canonicalSnapshot = makeSnapshot({ home_score: 2, away_score: 1 });
+  it("maps red winner to the away team in the result snapshot", () => {
+    const canonicalSnapshot = makeSnapshot({ home_score: 0, away_score: 0 });
+    const snapshotForResult = makeSnapshot({ home_score: 0, away_score: 0 });
 
     const scores = mapRuntimeWinnerToCanonicalScores({
       canonicalSnapshot,
-      snapshotForResult: canonicalSnapshot,
-      winner: null,
+      snapshotForResult,
+      winnerSide: "red",
     });
 
-    expect(scores).toEqual({ home_score: 2, away_score: 1 });
+    expect(scores).toEqual({ home_score: 0, away_score: 1 });
+  });
+
+  it("maps winners back to canonical sides when the result snapshot is side-swapped", () => {
+    const canonicalSnapshot = makeSnapshot({ home_score: 0, away_score: 0 });
+    // Side-swapped result snapshot: home_team is the original away team.
+    const snapshotForResult = makeSnapshot({
+      home_team: { id: "away-team", name: "Away Team", draft_strategy: "Skirmish", players: [] },
+      away_team: { id: "home-team", name: "Home Team", draft_strategy: "Objective control", players: [] },
+    });
+
+    const scores = mapRuntimeWinnerToCanonicalScores({
+      canonicalSnapshot,
+      snapshotForResult,
+      winnerSide: "blue",
+    });
+
+    // Blue side in the swapped snapshot is the original away team, so canonical away_score wins.
+    expect(scores).toEqual({ home_score: 0, away_score: 1 });
   });
 });

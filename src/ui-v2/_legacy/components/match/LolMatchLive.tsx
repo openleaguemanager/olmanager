@@ -32,6 +32,7 @@ export interface ChampionSelectionByPlayer {
 interface Props {
   snapshot: MatchSnapshot;
   gameState: GameStateData | null;
+  blueTeamId?: string;
   championSelections?: ChampionSelectionByPlayer | null;
   onSnapshotUpdate: (snap: MatchSnapshot) => void;
   onImportantEvent: (evt: MatchEvent) => void;
@@ -374,7 +375,7 @@ function sideFromActorLabel(
   return match.team === "red" ? "red" : "blue";
 }
 
-export default function LolMatchLive({ gameState, snapshot, championSelections, onSnapshotUpdate, onImportantEvent, onFullTime }: Props) {
+export default function LolMatchLive({ gameState, snapshot, blueTeamId, championSelections, onSnapshotUpdate, onImportantEvent, onFullTime }: Props) {
   const { t } = useTranslation();
   const walls = useMemo(() => getWalls(), []);
   const nav = useMemo(() => new NavGrid(walls), [walls]);
@@ -719,10 +720,13 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
 
       if (state.winner && !finishedRef.current) {
         finishedRef.current = true;
+        const effectiveBlueTeamId = blueTeamId ?? snapshot.home_team.id;
+        const homeIsBlue = snapshot.home_team.id === effectiveBlueTeamId;
+        const homeWon = (homeIsBlue && state.winner === "blue") || (!homeIsBlue && state.winner === "red");
         const evt: MatchEvent = {
           minute: Math.floor(state.timeSec / 60),
           event_type: "NexusDestroyed",
-          side: state.winner === "blue" ? "Home" : "Away",
+          side: homeWon ? "Home" : "Away",
           zone: "Midfield",
           player_id: null,
           secondary_player_id: null,
@@ -732,10 +736,10 @@ export default function LolMatchLive({ gameState, snapshot, championSelections, 
           ...snapshot,
           phase: "Finished",
           current_minute: Math.floor(state.timeSec / 60),
-          home_score: state.winner === "blue" ? 1 : 0,
-          away_score: state.winner === "red" ? 1 : 0,
+          home_score: homeWon ? 1 : 0,
+          away_score: homeWon ? 0 : 1,
           events: mergeMatchEvents(snapshot.events, [
-            ...mapRuntimeEventsToMatchEvents(state.events),
+            ...mapRuntimeEventsToMatchEvents(state.events, effectiveBlueTeamId, snapshot.home_team.id),
             evt,
           ]),
         });

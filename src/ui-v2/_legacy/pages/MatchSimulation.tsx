@@ -791,6 +791,7 @@ export default function MatchSimulation() {
   const [finalRuntimeState, setFinalRuntimeState] = useState<LolSimV1RuntimeState | null>(null);
   const [draftPayload, setDraftPayload] = useState<ChampionDraftResultPayload | null>(null);
   const [draftResultSimulation, setDraftResultSimulation] = useState<DraftMatchResult | null>(null);
+  const [finalDraftResult, setFinalDraftResult] = useState<DraftMatchResult | null>(null);
   const [championSelections, setChampionSelections] = useState<ChampionSelectionByPlayer | null>(null);
   const [seriesGameIndex, setSeriesGameIndex] = useState(0);
   const [seriesHomeWins, setSeriesHomeWins] = useState(0);
@@ -1164,6 +1165,16 @@ export default function MatchSimulation() {
     return swapSnapshotSides(snapshot);
   }, [managerTeamId, snapshot, swapSnapshotSides, userSelectedSide]);
 
+  const blueTeamId = useMemo(() => {
+    if (!snapshot) return null;
+    if (!managerTeamId) return snapshot.home_team.id;
+
+    const isUserHome = managerTeamId === snapshot.home_team.id;
+    const shouldBeBlue = userSelectedSide === "blue";
+    const notSwapped = (isUserHome && shouldBeBlue) || (!isUserHome && !shouldBeBlue);
+    return notSwapped ? snapshot.home_team.id : snapshot.away_team.id;
+  }, [managerTeamId, snapshot, userSelectedSide]);
+
   const renderSnapshot = activeSnapshot ?? snapshot;
   const renderSnapshotWithTactics = useMemo(() => {
     if (!renderSnapshot || !gameState) return renderSnapshot;
@@ -1304,11 +1315,15 @@ export default function MatchSimulation() {
     }
   }, [hasFinalizedMatch, setGameState]);
 
-  const handleFullTime = useCallback((finalRuntimeState: LolSimV1RuntimeState, meta?: { source: "live" | "skip" }) => {
+  const handleFullTime = useCallback((finalRuntimeState: LolSimV1RuntimeState, meta?: { source: "live" | "skip"; precomputedResult?: DraftMatchResult }) => {
     console.info("[MatchSimulation] handleFullTime");
     const source = meta?.source ?? "live";
     setFinalRuntimeState(finalRuntimeState);
-    const mappedEvents = mapRuntimeEventsToMatchEvents(finalRuntimeState.events);
+    const mappedEvents = mapRuntimeEventsToMatchEvents(
+      finalRuntimeState.events,
+      blueTeamId ?? undefined,
+      snapshot?.home_team.id,
+    );
     setImportantEvents(mappedEvents);
 
     const safeDraftPayload = normalizeDraftPayload(draftPayload, championSelections, renderSnapshotWithTactics ?? null);
@@ -1330,31 +1345,23 @@ export default function MatchSimulation() {
       return;
     }
 
-    // Keep the canonical fixture home/away snapshot intact. `snapshotForResult` can be
-    // side-swapped to render the user's selected LoL side, and storing that swapped
-    // shape as the base snapshot corrupts subsequent home/away series win tracking.
-    const merged = mergeRuntimeEventsIntoSnapshot(snapshot ?? snapshotForResult, finalRuntimeState.events);
-    const canonicalScores = mapRuntimeWinnerToCanonicalScores({
-      canonicalSnapshot: merged,
-      snapshotForResult,
-      winner: finalRuntimeState.winner,
-    });
-    setSnapshot({
-      ...merged,
-      ...canonicalScores,
-    });
-
+    // Determine the single source of truth for the post-match result before any
+    // snapshot/screen/persistence/press updates. Live uses the runtime result;
+    // skip/delegate reuse the deterministic draft simulator result. When a result
+    // was already computed (delegate mode) we pass it through so we never simulate
+    // twice with different seeds.
     const runtimeBasedResult = buildDraftResultFromRuntime({
       runtime: finalRuntimeState,
       snapshot: snapshotForResult,
       championSelections,
     });
 
-    let resultToPersist = runtimeBasedResult;
+    let finalResult: DraftMatchResult = runtimeBasedResult;
 
-    let simulatedForSkip: DraftMatchResult | null = null;
-
-    if (source === "skip" && safeDraftPayload && renderSnapshotWithTactics && gameState) {
+    if (meta?.precomputedResult) {
+      finalResult = meta.precomputedResult;
+      setDraftResultSimulation(meta.precomputedResult);
+    } else if (source === "skip" && safeDraftPayload && renderSnapshotWithTactics && gameState) {
       try {
         const simulated = simulateDraftMatchResult({
           snapshot: renderSnapshotWithTactics,
@@ -1362,9 +1369,8 @@ export default function MatchSimulation() {
           draft: safeDraftPayload,
           seedSalt: `${currentFixture?.id ?? "fixture"}-g${seriesGameIndex + 1}`,
         });
+        finalResult = simulated;
         setDraftResultSimulation(simulated);
-        resultToPersist = simulated;
-        simulatedForSkip = simulated;
       } catch (error) {
         console.error("[MatchSimulation] draftResultFallback:failed", error);
         setDraftResultSimulation(null);
@@ -1372,6 +1378,28 @@ export default function MatchSimulation() {
     } else {
       setDraftResultSimulation(null);
     }
+
+    // Preserve the runtime/simulated result so the press conference can use the
+    // actual blue/red winner in live mode (where draftResultSimulation is null).
+    setFinalDraftResult(finalResult);
+
+    // Keep the canonical fixture home/away snapshot intact. `snapshotForResult` can be
+    // side-swapped to render the user's selected LoL side, and storing that swapped
+    // shape as the base snapshot corrupts subsequent home/away series win tracking.
+    const merged = mergeRuntimeEventsIntoSnapshot(
+      snapshot ?? snapshotForResult,
+      finalRuntimeState.events,
+      blueTeamId ?? undefined,
+    );
+    const canonicalScores = mapRuntimeWinnerToCanonicalScores({
+      canonicalSnapshot: merged,
+      snapshotForResult,
+      winnerSide: finalResult.winnerSide,
+    });
+    setSnapshot({
+      ...merged,
+      ...canonicalScores,
+    });
 
     const targetSeriesWins = getTargetSeriesWins(seriesLength);
     let homeSeriesWins = seriesHomeWins;
@@ -1395,7 +1423,7 @@ export default function MatchSimulation() {
       );
 
       const winnerTeamId =
-        resultToPersist.winnerSide === "blue"
+        finalResult.winnerSide === "blue"
           ? snapshotForResult.home_team.id
           : snapshotForResult.away_team.id;
 
@@ -1479,8 +1507,8 @@ export default function MatchSimulation() {
       const currentSeriesGameIndex = getNextSeriesGameIndex(Array.from(nextSeriesGamesByIndex.values()));
       nextSeriesGamesByIndex.set(currentSeriesGameIndex, {
         gameIndex: currentSeriesGameIndex,
-        result: resultToPersist,
-        winnerSide: resultToPersist.winnerSide,
+        result: finalResult,
+        winnerSide: finalResult.winnerSide,
       });
       const nextSeriesGames = Array.from(nextSeriesGamesByIndex.values()).sort(
         (left, right) => left.gameIndex - right.gameIndex,
@@ -1491,7 +1519,7 @@ export default function MatchSimulation() {
       persistFixtureDraftResult(currentFixture.id, {
         snapshot: snapshotForResult,
         controlledSide: userSelectedSide,
-        result: resultToPersist,
+        result: finalResult,
         seriesGames: nextSeriesGames,
         seriesLength,
         seriesGameIndex: currentSeriesGameIndex,
@@ -1508,27 +1536,25 @@ export default function MatchSimulation() {
       }
     }
 
-    const runtimeForFinalize = simulatedForSkip
-      ? {
-        ...finalRuntimeState,
-        winner: simulatedForSkip.winnerSide,
-        timeSec: simulatedForSkip.durationMinutes * 60,
-        stats: {
-          ...(finalRuntimeState.stats ?? {
-            blue: { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 },
-            red: { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 },
-          }),
-          blue: {
-            ...(finalRuntimeState.stats?.blue ?? { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 }),
-            kills: simulatedForSkip.blueKills,
-          },
-          red: {
-            ...(finalRuntimeState.stats?.red ?? { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 }),
-            kills: simulatedForSkip.redKills,
-          },
+    const runtimeForFinalize = {
+      ...finalRuntimeState,
+      winner: finalResult.winnerSide,
+      timeSec: finalResult.durationMinutes * 60,
+      stats: {
+        ...(finalRuntimeState.stats ?? {
+          blue: { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 },
+          red: { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 },
+        }),
+        blue: {
+          ...(finalRuntimeState.stats?.blue ?? { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 }),
+          kills: finalResult.blueKills,
         },
-      }
-      : finalRuntimeState;
+        red: {
+          ...(finalRuntimeState.stats?.red ?? { kills: 0, towers: 0, dragons: 0, barons: 0, gold: 0 }),
+          kills: finalResult.redKills,
+        },
+      },
+    };
 
     if (seriesComplete) {
       void (async () => {
@@ -1542,6 +1568,7 @@ export default function MatchSimulation() {
 
     setStage("draft_result");
   }, [
+    blueTeamId,
     championSelections,
     currentFixture?.id,
     currentFixture?.away_team_id,
@@ -1617,7 +1644,7 @@ export default function MatchSimulation() {
           speed: PARALLEL_SIM_SPEED,
         };
 
-        handleFullTime(predictiveState, { source: "skip" });
+        handleFullTime(predictiveState, { source: "skip", precomputedResult: simulated });
       } catch (error) {
         console.error("[MatchSimulation] delegateSimulateFromTactics:failed", error);
         setSimulationFeedback(
@@ -1924,6 +1951,7 @@ export default function MatchSimulation() {
           key={stage}
           gameState={gameState}
           snapshot={renderSnapshotWithTactics ?? snapshot}
+          blueTeamId={blueTeamId ?? undefined}
           championSelections={championSelections}
           onSnapshotUpdate={handleSnapshotUpdate}
           onImportantEvent={handleImportantEvent}
@@ -1934,9 +1962,11 @@ export default function MatchSimulation() {
     case "press":
       return (
         <PressConference
-          snapshot={finalRuntimeState ? mergeRuntimeEventsIntoSnapshot(snapshot, finalRuntimeState.events) : snapshot}
+          snapshot={finalRuntimeState ? mergeRuntimeEventsIntoSnapshot(snapshot, finalRuntimeState.events, blueTeamId ?? undefined) : snapshot}
           gameState={gameState}
           userSide={userSide || "Home"}
+          controlledSide={userSelectedSide}
+          winnerSide={finalDraftResult?.winnerSide}
           onFinish={handleFinishMatch}
           onGameUpdate={setGameState}
         />
