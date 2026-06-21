@@ -203,22 +203,26 @@ export default function PlayerProfileHeroCardV2({
                   <span>{teamName}</span>
                 )}
               </span>
-              <button type="button" onClick={onToggleTransferList} disabled={!onToggleTransferList}
-                className={cn("rounded px-1.5 py-0.5 text-[10px] font-heading font-bold uppercase tracking-wider border transition-colors",
-                  player.transfer_listed
-                    ? "border-red-500/30 bg-red-500/10 text-red-400"
-                    : "border-border text-muted-foreground/60 hover:border-red-500/30 hover:text-red-400"
-                )}>
-                {player.transfer_listed ? t("playerProfile.transferListed") : t("squad.addToTransferList", { defaultValue: "Añadir a transferibles" })}
-              </button>
-              <button type="button" onClick={onToggleLoanList} disabled={!onToggleLoanList}
-                className={cn("rounded px-1.5 py-0.5 text-[10px] font-heading font-bold uppercase tracking-wider border transition-colors",
-                  player.loan_listed
-                    ? "border-blue-500/30 bg-blue-500/10 text-blue-400"
-                    : "border-border text-muted-foreground/60 hover:border-blue-500/30 hover:text-blue-400"
-                )}>
-                {player.loan_listed ? t("playerProfile.loanListed") : t("squad.addToLoanList", { defaultValue: "Añadir a cesión" })}
-              </button>
+              {isOwnClub && (
+                <>
+                  <button type="button" onClick={onToggleTransferList} disabled={!onToggleTransferList}
+                    className={cn("rounded px-1.5 py-0.5 text-[10px] font-heading font-bold uppercase tracking-wider border transition-colors",
+                      player.transfer_listed
+                        ? "border-red-500/30 bg-red-500/10 text-red-400"
+                        : "border-border text-muted-foreground/60 hover:border-red-500/30 hover:text-red-400"
+                    )}>
+                    {player.transfer_listed ? t("playerProfile.transferListed") : t("squad.addToTransferList", { defaultValue: "Añadir a transferibles" })}
+                  </button>
+                  <button type="button" onClick={onToggleLoanList} disabled={!onToggleLoanList}
+                    className={cn("rounded px-1.5 py-0.5 text-[10px] font-heading font-bold uppercase tracking-wider border transition-colors",
+                      player.loan_listed
+                        ? "border-blue-500/30 bg-blue-500/10 text-blue-400"
+                        : "border-border text-muted-foreground/60 hover:border-blue-500/30 hover:text-blue-400"
+                    )}>
+                    {player.loan_listed ? t("playerProfile.loanListed") : t("squad.addToLoanList", { defaultValue: "Añadir a cesión" })}
+                  </button>
+                </>
+              )}
             </div>
 
             {isOwnClub && (
