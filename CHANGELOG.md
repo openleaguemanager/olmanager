@@ -4,38 +4,84 @@ All notable changes to OLManager will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses GPL-3.0 licensing inherited from the OpenFootManager lineage unless otherwise documented.
 
-## [0.3.4] - 2026-06-10
+## [0.3.0] - 2026-06-21
 
 ### Added
 
-- Added clickable staff profiles: staff cards now open a dedicated profile view with attributes, role-based gameplay impact, photo, nationality, contract details and hire/release actions.
-- Added manual and cached OLMDBManager import options: import from a local `.zip` and re-import the last cached export, with import progress reporting and safe staging/rollback.
+- Added UI v2 as the only supported interface, replacing the legacy `src/components`, `src/pages` and `App.tsx` entry points with the new `src/ui-v2` shell, dashboard, pages and shadcn primitives. Thanks @NicoRuedaA, @joselaguilarhz and @aalonsolopez.
+- Added native v2 dashboard tabs for Home, Squad, Players, Tactics, Training, SoloQ, Scrims, Scouting, Transfers, Market, Staff, Finances, Facilities, Youth, Inbox, Competitions, Teams, Meta and Manager workflows. Thanks @NicoRuedaA and @joselaguilarhz.
+- Added keyboard/controller-style navigation across the main menu, league picker, team selection, dashboard sidebar, save list, create-manager form, nationality dropdown, community panel, patch notes and settings tabs. Thanks @NicoRuedaA.
+- Added multi-league and multi-competition foundations: competition manifests, active competition routing, background league simulation, academy leagues, region/tier filtering, split tracking and save/load support for all leagues. Thanks @NicoRuedaA.
+- Added competition browser views with standings, teams, players and all-competition calendar support. Thanks @NicoRuedaA and @joselaguilarhz.
+- Added OLMDBManager-powered data import flows, including native desktop auto-import, manual local `.zip` import, cached re-import, progress reporting and safe staging/rollback. Thanks @joselaguilarhz and @NicoRuedaA.
+- Added clickable staff profiles: staff cards now open a dedicated profile view with attributes, role-based gameplay impact, photo, nationality, contract details and hire/release actions. Thanks @joselaguilarhz.
+- Added web/server foundations: adapter-based API layer, Supabase auth/profile/save persistence, server-side world assembly, WebSocket live match simulation and command parity groundwork. Thanks @NicoRuedaA and @joselaguilarhz.
+- Added Discord Rich Presence integration with OLManager assets and activity states. Thanks @Juan / @TtvNekix.
+- Added in-app bug report ZIP export to Desktop. Thanks @NicoRuedaA.
+- Added a richer message/inbox system with sender metadata, trigger-based templates, high-density media messages and localized variations. Thanks @NicoRuedaA.
+- Added social content foundations: JSON-backed templates, matchup conditions, avatar resolution and league-aware placeholders. Thanks @chasemrs.
+- Added AI team-agent systems for roster stability, renewals, sales, purchases, strategic recruitment, free-agent signings and player-agent satisfaction decisions. Thanks @aalonsolopez.
+- Added an economy ledger, dynamic simulation hooks, monthly financial processing and finance/facilities v2 UI improvements. Thanks @aalonsolopez and @NicoRuedaA.
+- Added deterministic champion systems: initial champion discovery/pools, local champion splash assets, dynamic splash manifests and time-varying meta support. Thanks @NicoRuedaA and @joselaguilarhz.
+- Added real SoloQ rank emblem assets and default staff imagery. Thanks @NicoRuedaA.
+- Added new release-candidate build workflow for artifact generation. Thanks @aalonsolopez.
 
 ### Changed
 
-- Staff are now shown by their esports nickname (e.g. "Zetz", "ZalFIRE"), falling back to the real name when no nickname is available.
-- World (MUNDO) sidebar counters now reflect the real competitive world, excluding seeded youth-academy teams and their generated players so the totals match the imported catalog.
-- Team roster now shows player OVR for every team, not only the user's own team.
-- Added migration v056 introducing a `nickname` column on the staff table; existing saves are backfilled from the imported catalog on load.
+- UI v2 is now the production UI: the old v1 toggle was removed, legacy code survives only under `src/ui-v2/_legacy` for wrappers that still need it, and `src/main.tsx` renders `AppV2` directly. Thanks @NicoRuedaA and @joselaguilarhz.
+- Reworked the main menu into a game-style OLManager experience with champion splash slideshow, community/patch-notes panels, settings tabs, persistent navigation and version display. Thanks @joselaguilarhz.
+- Reorganized shared frontend helpers into `src/lib`, including domain-specific modules for common helpers, dashboard, finance, formatting, home, inbox, players, schedule, scouting, scrims, season, social, squad, staff, teams, training and transfers. Thanks @NicoRuedaA and @joselaguilarhz.
+- Consolidated core game logic into `olm_core`, unified command dispatch and moved academy, scrim, team-talk, time-blocker and OVR logic behind shared core seams. Thanks @NicoRuedaA.
+- Reworked save persistence toward a single-file gzipped JSON format with diagnostics, format-version pruning and safer serialization checks. Thanks @NicoRuedaA.
+- Reworked transfer-market behavior for AI teams, contract expiry, signing policy, player swaps, free agents, academy releases and own-club transfer/loan actions. Thanks @aalonsolopez, @NicoRuedaA, @TtvNekix and @mezxR.
+- Staff are now shown by their esports nickname (e.g. "Zetz", "ZalFIRE"), falling back to the real name when no nickname is available. Thanks @joselaguilarhz.
+- World (MUNDO) sidebar counters now reflect the real competitive world, excluding seeded youth-academy teams and their generated players so the totals match the imported catalog. Thanks @NicoRuedaA.
+- Team roster now shows player OVR for every team, not only the user's own team. Thanks @joselaguilarhz.
+- Added migration v056 introducing a `nickname` column on the staff table; existing saves are backfilled from the imported catalog on load. Thanks @joselaguilarhz.
+- Replaced the financial system's weekly processing model with monthly processing and ledger-backed stabilization. Thanks @NicoRuedaA and @aalonsolopez.
+- Updated data/catalog architecture around competition registries, team/player/staff image fields, competition-scoped repositories and OLMDBManager exports. Thanks @NicoRuedaA and @joselaguilarhz.
+- Removed the football-era injury availability system and other football-specific dead code. Thanks @aalonsolopez, @NicoRuedaA and @joselaguilarhz.
+- Improved the visual design system with zinc/orange v2 tokens, new background atmosphere utilities, page animations, Oswald/Barlow-style heading treatment, progress bars, scrollbars and better player/profile visuals. Thanks @NicoRuedaA and @joselaguilarhz.
+- Migrated native v2 hardcoded strings to i18next and refreshed locale files across supported languages. Thanks @aalonsolopez, @NicoRuedaA, @chasemrs and @mezxR.
+- Updated active world data, competition manifests, rosters, staff, champion assets and splash lists from current OLMDBManager/catalog sources. Thanks @NicoRuedaA and @joselaguilarhz.
 
 ### Fixed
 
-- Imported staff now appear correctly inside active games: fixed `wage: null` (and other null fields) dropping entire staff files during parsing, and the active game's staff are now rehydrated from the imported catalog.
-- The dashboard now refreshes the active game after an import, so newly imported players/teams/staff appear without restarting the app.
+- Fixed production data loading across Tauri installation layouts by resolving resources from executable-relative/resource paths instead of stale development locations. Thanks @NicoRuedaA and @joselaguilarhz.
+- Fixed save compatibility and rehydration issues, including missing competition IDs, stale team assignments, missing teams/players, malformed player exports, null data fields and old incompatible saves. Thanks @NicoRuedaA and @joselaguilarhz.
+- Fixed season and split progression issues: active league resolution, split summaries, playoff scheduling, first-day scrim setup, skip-to-match-day blockers and season preview filtering now respect the user's competition. Thanks @NicoRuedaA and @chasemrs.
+- Fixed board objective scope and map-objective caps so objectives are based on the active league and winnable map totals. Thanks @aalonsolopez.
+- Fixed match result mapping for press conferences and canonical score handling after live simulation/runtime winner resolution. Thanks @NicoRuedaA and @aalonsolopez.
+- Imported staff now appear correctly inside active games: fixed `wage: null` (and other null fields) dropping entire staff files during parsing, and the active game's staff are now rehydrated from the imported catalog. Thanks @joselaguilarhz.
+- The dashboard now refreshes the active game after an import, so newly imported players/teams/staff appear without restarting the app. Thanks @joselaguilarhz and @NicoRuedaA.
 - Fixed background competition schedule generation to use `user_competition_id` and executable-relative paths. Thanks @NicoRuedaA.
 - Replaced the legacy draft result screen with `DraftResultScreenV2` in match simulation. Thanks @NicoRuedaA.
+- Fixed draft and champion UI issues: broken LEC logo fallback, champion splash naming, assistant-coach photos, draft-result crashes, ban icons, champion tile grids and champion-page navigation. Thanks @NicoRuedaA and @joselaguilarhz.
+- Fixed condition and stamina behavior so condition affects the match engine and recovery respects post-training fatigue while reducing match stamina depletion. Thanks @joselaguilarhz and @NicoRuedaA.
+- Fixed player data and display issues, including date-of-birth parsing, natural positions, null defaults, OVR refresh on load, player photos, real-name/IGN swaps, nationality flags and profile attributes without scout reports. Thanks @NicoRuedaA, @joselaguilarhz and @aalonsolopez.
+- Fixed transfer-market table layout, SoloQ tier thresholds, nationality translations, SoloQ badges, action/status column alignment and navigation conflicts in v2 transfer views. Thanks @NicoRuedaA.
+- Fixed UI v2 overflow, old-theme remnants and layout issues across match screens, pre-match setup, live match, Schedule, Youth, Staff, Transfers, Champion grid, Tactics and Home lineup cards. Thanks @NicoRuedaA, @joselaguilarhz and @aalonsolopez.
+- Fixed inbox/message actions, effect toasts, mood-report translations, event action button translations and removed obsolete international call-up/charity-match content. Thanks @chasemrs.
+- Fixed web/server crashes and command gaps around dashboard routing, finance/competitions/training imports, academy persistence, scrim context, stats overview, transfer bids and imported player/photo data. Thanks @NicoRuedaA and @joselaguilarhz.
+- Fixed build, package and release-candidate validation blockers, including Rust package checks, current core-model tests, legacy test mocks, v2 color-token expectations and Tauri/Vite localhost issues. Thanks @aalonsolopez and @chasemrs.
+- Fixed Android/build configuration issues and desktop window/icon configuration problems. Thanks @chasemrs, @NicoRuedaA and @Juan / @TtvNekix.
 
-## [0.3.1-1] - 2026-06-08
+### Chores
 
-### Fixed
+- Removed the failed web implementation from the desktop release path, the legacy HTTP server crate, unused world IO, stale theme/avatar/profile commands, debug tooling and obsolete `world.json` references. Thanks @NicoRuedaA and @joselaguilarhz.
+- Added and maintained Playwright E2E coverage for the main game flow, dashboard loading, tab navigation, advance-time, squad, training, schedule, settings and save/load flows. Thanks @NicoRuedaA.
+- Updated documentation for dashboard architecture, inbox/message architecture, data model, web migration planning, UI v2 handoff, release process and data/attribute references. Thanks @NicoRuedaA, @joselaguilarhz and @aalonsolopez.
+- Cleaned repository state after merge/rebase conflicts, removed dead files and synchronized generated asset manifests, Cargo lockfiles and locale data. Thanks @NicoRuedaA, @joselaguilarhz and @aalonsolopez.
 
-- Rust tests aligned with current core model (package names, `League` literals, `PlayerMatchStatsRecord`).
-- UI v2 review phase: decision/review buttons now correctly show in `ReviewBlock` instead of `ScrimBlock`.
-- Legacy test mocks updated to use `@/` aliases, added missing `initReactI18next` stubs.
-- Color token expectations aligned to v2 (e.g. `text-primary-400` → `text-primary`).
-- Player attributes now visible for outside players even without a scout report.
-- Squad lineup persistence now respects player role matching.
-- PR workflow package targets updated to `olm_core` and `olmanager-server`.
+### Contributors
+
+- Thanks to @NicoRuedaA / Nico Rueda for the UI v2 migration, multi-league architecture, data/model cleanup, desktop release fixes, E2E coverage and many gameplay/UI fixes.
+- Thanks to @joselaguilarhz for OLMDBManager import work, menu/web foundations, data import hardening, champion/market-value improvements and many data/UI fixes.
+- Thanks to @aalonsolopez for AI team/player-agent systems, economy stabilization, release-candidate validation, localization work and core bug fixes.
+- Thanks to @chasemrs for social templates, message/i18n fixes, Android/dev-server fixes and event-content cleanup.
+- Thanks to @Juan / @TtvNekix for Discord Rich Presence work and player release/academy re-signing fixes.
+- Thanks to @mezxR for transfer-market, negotiation and localization contributions.
+- Thanks to @drumst0ck (Jose Sánchez) for expanded esports media commentary variants.
 
 ## [0.2.1] - 2026-05-13
 

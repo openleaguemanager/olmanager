@@ -153,7 +153,7 @@ export function TransfersTabV2({
   const [bidLoading, setBidLoading] = useState(false);
   const [bidResult, setBidResult] = useState<NegotiationResult>(null);
   const [bidFeedback, setBidFeedback] = useState<NegotiationFeedbackPanelData | null>(null);
-  const [, setBidError] = useState<string | null>(null);
+  const [bidError, setBidError] = useState<string | null>(null);
   const [bidProjection, setBidProjection] = useState<
     TransferBidProjectionData["projection"] | null
   >(null);
@@ -241,7 +241,7 @@ export function TransfersTabV2({
 
   const openBidNegotiation = (player: PlayerData) => {
     setBidTarget(player);
-    setBidAmount(String(Math.round(player.market_value * 0.6)));
+    setBidAmount(String(player.team_id ? Math.round(player.market_value * 0.6) : 0));
     setBidDestination("main");
     setBidResult(null);
     setBidFeedback(null);
@@ -273,13 +273,17 @@ export function TransfersTabV2({
     }
   };
 
+  const isFreeAgentBid = bidTarget ? !bidTarget.team_id : false;
+
   const bidFee = (() => {
     const v = Number.parseFloat(bidAmount);
-    return Number.isFinite(v) && v > 0 ? Math.round(v) : null;
+    if (!Number.isFinite(v)) return null;
+    if (isFreeAgentBid) return Math.max(0, Math.round(v));
+    return v > 0 ? Math.round(v) : null;
   })();
 
   useEffect(() => {
-    if (!bidTarget || bidFee === null || bidFee <= 0) {
+    if (!bidTarget || bidFee === null || (!isFreeAgentBid && bidFee <= 0)) {
       setBidProjection(null);
       return;
     }
@@ -288,7 +292,7 @@ export function TransfersTabV2({
       .then((result) => { if (!cancelled) setBidProjection(result.projection ?? null); })
       .catch(() => { if (!cancelled) setBidProjection(null); });
     return () => { cancelled = true; };
-  }, [bidTarget, bidFee, bidDestination]);
+  }, [bidTarget, bidFee, bidDestination, isFreeAgentBid]);
 
   const userPlayersForBid = bidTarget
     ? gameState.players.filter(
@@ -311,8 +315,14 @@ export function TransfersTabV2({
     : null;
 
   const bidSubmitDisabled =
-    bidLoading || bidResult === "accepted" || bidFee === null || bidFee <= 0 ||
-    bidProjection === null || bidProjection.exceeds_transfer_budget || bidProjection.exceeds_finance;
+    bidLoading ||
+    bidResult === "accepted" ||
+    bidFee === null ||
+    (!isFreeAgentBid &&
+      (bidFee <= 0 ||
+        bidProjection === null ||
+        bidProjection.exceeds_transfer_budget ||
+        bidProjection.exceeds_finance));
 
   const handleMakeBid = async () => {
     if (!bidTarget || bidFee === null) return;
@@ -939,8 +949,10 @@ export function TransfersTabV2({
             setBidResult(null);
             setBidProjection(null);
             setBidSelectedPlayerIds([]);
+            setBidError(null);
           }}
           isFreeAgent={!bidTarget.team_id}
+          bidError={bidError}
         />
       )}
       {counterTarget && (

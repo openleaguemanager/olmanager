@@ -47,6 +47,7 @@ interface TransferBidModalProps {
   onSubmit: () => void;
   onClose: () => void;
   isFreeAgent: boolean;
+  bidError?: string | null;
 }
 
 export default function TransferBidModal({
@@ -73,6 +74,7 @@ export default function TransferBidModal({
   onSubmit,
   onClose,
   isFreeAgent,
+  bidError,
 }: TransferBidModalProps) {
   const { t } = useTranslation();
   const lolRole = getLolRoleForPlayer(bidTarget);
@@ -265,6 +267,9 @@ export default function TransferBidModal({
           className="mb-3"
         />
         <TransferNegotiationHistory offer={activeBidOffer} mode="outgoing" />
+        {bidError ? (
+          <p className="text-xs text-red-500 mb-3">{bidError}</p>
+        ) : null}
         {bidResult ? (
           <div
             className={`text-xs font-heading font-bold uppercase tracking-wider mb-3 ${bidResult === "accepted" ? "text-green-500" : bidResult === "rejected" ? "text-red-500" : "text-amber-500"}`}

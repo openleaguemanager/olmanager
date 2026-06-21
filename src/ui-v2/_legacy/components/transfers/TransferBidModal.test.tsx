@@ -228,6 +228,73 @@ describe("TransferBidModal", () => {
     expect(screen.getByText(/Transfer budget/)).toBeInTheDocument();
   });
 
+  it("hides bid amount and projected impact for free agents", () => {
+    render(
+      <TransferBidModal
+        bidTarget={createPlayer({ team_id: null })}
+        teams={[createTeam()]}
+        currentDate="2025-01-15"
+        bidAmount="0"
+        onBidAmountChange={vi.fn()}
+        destination="main"
+        onDestinationChange={vi.fn()}
+        academyTeam={null}
+        myTeam={createTeam()}
+        bidFee={0}
+        bidProjection={createProjection()}
+        bidFeedback={null}
+        activeBidOffer={null}
+        hasExistingOffer={false}
+        bidResult={null}
+        bidLoading={false}
+        bidSubmitDisabled={false}
+        userPlayers={[]}
+        selectedPlayerIds={[]}
+        onSelectedPlayersChange={vi.fn()}
+        isFreeAgent={true}
+        onSubmit={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByLabelText("Bid Amount")).not.toBeInTheDocument();
+    expect(screen.queryByText("Projected impact")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Submit Bid" })).not.toBeDisabled();
+  });
+
+  it("displays a bid error when provided", () => {
+    render(
+      <TransferBidModal
+        bidTarget={createPlayer()}
+        teams={[createTeam(), createTeam({ id: "team-2", name: "Seller FC" })]}
+        currentDate="2025-01-15"
+        bidAmount="1000000"
+        onBidAmountChange={vi.fn()}
+        destination="main"
+        onDestinationChange={vi.fn()}
+        academyTeam={null}
+        myTeam={createTeam()}
+        bidFee={1000000}
+        bidProjection={createProjection()}
+        bidFeedback={null}
+        activeBidOffer={null}
+        hasExistingOffer={false}
+        bidResult={null}
+        bidLoading={false}
+        bidSubmitDisabled={false}
+        userPlayers={[]}
+        selectedPlayerIds={[]}
+        onSelectedPlayersChange={vi.fn()}
+        isFreeAgent={false}
+        onSubmit={vi.fn()}
+        onClose={vi.fn()}
+        bidError="Transfer budget too low"
+      />,
+    );
+
+    expect(screen.getByText("Transfer budget too low")).toBeInTheDocument();
+  });
+
   it("wires input, submit, and close interactions through props", () => {
     const onBidAmountChange = vi.fn();
     const onSubmit = vi.fn();
