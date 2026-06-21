@@ -962,13 +962,13 @@ pub fn process_training(game: &mut Game, weekday_num: u32) {
 
             // Recovery amount: rest days get boosted recovery (like mental reset days)
             let recovery_base: f64 = if !is_training_day {
-                7.0 * plan.bonus.physio_mult * plan.medical_facility_mult
+                9.0 * plan.bonus.physio_mult * plan.medical_facility_mult
             } else {
                 match player_focus {
                     TrainingFocus::MentalResetRecovery => {
                         9.0 * plan.bonus.physio_mult * plan.medical_facility_mult
                     }
-                    _ => 3.0 * plan.bonus.physio_mult * plan.medical_facility_mult,
+                    _ => 4.0 * plan.bonus.physio_mult * plan.medical_facility_mult,
                 }
             };
 
@@ -1412,9 +1412,9 @@ fn recovery_factor_from_morale(morale: u8) -> f64 {
 /// Recovery multiplier from current condition: severely fatigued players recover more slowly.
 fn recovery_factor_from_condition(condition: u8) -> f64 {
     if condition < 30 {
-        0.80
-    } else if condition < 50 {
         0.90
+    } else if condition < 50 {
+        0.95
     } else {
         1.00
     }

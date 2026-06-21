@@ -937,11 +937,9 @@ fn maybe_schedule_playoffs(game: &mut Game) {
         .and_then(|cid| game.competition_configs.get(cid))
         .and_then(|manifest| manifest.schedule.splits.get(league.split_index))
         .map(|s| s.name.as_str());
-    let split = split_name.and_then(schedule::parse_lec_split);
-
-    let Some(split) = split else {
-        return;
-    };
+    let split = split_name
+        .and_then(schedule::parse_lec_split)
+        .unwrap_or(schedule::LecSplit::Summer);
 
     let playoff_fixtures_exist = league
         .fixtures
