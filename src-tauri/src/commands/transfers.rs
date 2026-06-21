@@ -542,20 +542,26 @@ mod tests {
                 .expect("response");
 
         assert_eq!(response.decision, TransferNegotiationDecision::Accepted);
-        assert_eq!(response.game.players[0].team_id.as_deref(), Some("team-1"));
+        assert!(!response.is_terminal);
+        assert_eq!(response.game.players[0].team_id.as_deref(), Some("team-2"));
         assert_eq!(
             response.game.players[0].transfer_offers[0].status,
             TransferOfferStatus::Accepted
         );
+        assert_eq!(
+            response.game.players[0].transfer_offers[0].destination_team_id.as_deref(),
+            Some("team-1")
+        );
 
         let stored_game = state.get_game(|game| game.clone()).expect("stored game");
+        let stored_player = stored_game
+            .players
+            .iter()
+            .find(|player| player.id == "player-2")
+            .expect("stored player");
+        assert_eq!(stored_player.team_id.as_deref(), Some("team-2"));
         assert_eq!(
-            stored_game
-                .players
-                .iter()
-                .find(|player| player.id == "player-2")
-                .and_then(|player| player.team_id.clone())
-                .as_deref(),
+            stored_player.transfer_offers[0].destination_team_id.as_deref(),
             Some("team-1")
         );
     }
@@ -602,8 +608,13 @@ mod tests {
                 .expect("second bid");
 
         assert_eq!(second.decision, TransferNegotiationDecision::Accepted);
+        assert!(!second.is_terminal);
         assert_eq!(second.feedback.round, 2);
-        assert_eq!(second.game.players[0].team_id.as_deref(), Some("team-1"));
+        assert_eq!(second.game.players[0].team_id.as_deref(), Some("team-2"));
+        assert_eq!(
+            second.game.players[0].transfer_offers[0].destination_team_id.as_deref(),
+            Some("team-1")
+        );
     }
 
     #[test]
@@ -616,8 +627,23 @@ mod tests {
                 .expect("response");
 
         assert_eq!(response.decision, TransferNegotiationDecision::Accepted);
-        assert_eq!(response.game.players[0].team_id.as_deref(), Some("team-1"));
-        assert!(!response.game.players[0].transfer_listed);
+        assert!(!response.is_terminal);
+
+        let player = response
+            .game
+            .players
+            .iter()
+            .find(|p| p.id == "player-fa-1")
+            .expect("player should exist");
+        let accepted_offer = player
+            .transfer_offers
+            .iter()
+            .find(|o| o.status == TransferOfferStatus::Accepted)
+            .expect("accepted offer should be created");
+        assert_eq!(
+            accepted_offer.destination_team_id.as_deref(),
+            Some("team-1")
+        );
     }
 
     #[test]
@@ -719,5 +745,4 @@ mod tests {
         assert!(!response.projection.exceeds_finance);
     }
 }
-
 

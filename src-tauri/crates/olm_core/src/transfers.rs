@@ -1215,8 +1215,9 @@ pub fn project_transfer_bid_financial_impact(
         0
     };
 
-    let transfer_budget_after = paying_team.transfer_budget - fee as i64;
-    let finance_after = paying_team.finance - fee as i64;
+    let effective_fee = if player.team_id.is_none() { 0 } else { fee };
+    let transfer_budget_after = paying_team.transfer_budget - effective_fee as i64;
+    let finance_after = paying_team.finance - effective_fee as i64;
 
     Ok(TransferBidFinancialProjection {
         transfer_budget_before: paying_team.transfer_budget,
@@ -1274,11 +1275,13 @@ pub fn make_transfer_bid(
         .find(|t| t.id == user_team_id)
         .ok_or("User team not found")?;
 
-    if (my_team.finance as u64) < fee {
+    let effective_fee = if player.team_id.is_none() { 0 } else { fee };
+
+    if (my_team.finance as u64) < effective_fee {
         return Err("Insufficient funds".into());
     }
 
-    if my_team.transfer_budget < fee as i64 {
+    if my_team.transfer_budget < effective_fee as i64 {
         return Err("Transfer budget too low".into());
     }
 

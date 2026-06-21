@@ -14,7 +14,8 @@ use olm_core::game::Game;
 use olm_core::transfers::{
     TransferDestination, TransferNegotiationDecision, ai_agent_purchase, counter_offer,
     generate_incoming_transfer_offers, get_transfer_history, make_transfer_bid,
-    negotiate_player_wage, release_player_contract, respond_to_offer,
+    negotiate_player_wage, project_transfer_bid_financial_impact, release_player_contract,
+    respond_to_offer,
 };
 
 fn default_attrs() -> PlayerAttributes {
@@ -1694,6 +1695,88 @@ fn make_game_with_free_agents(free_agents: Vec<Player>) -> Game {
     let mut game = Game::new(clock, manager, vec![team], free_agents, vec![], vec![]);
     game.season_context.transfer_window.status = TransferWindowStatus::Open;
     game
+}
+
+fn make_user_game_with_free_agent(free_agent: Player) -> Game {
+    let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 8, 1, 12, 0, 0).unwrap());
+    let mut manager = Manager::new(
+        "manager-1".to_string(),
+        "Jane".to_string(),
+        "Doe".to_string(),
+        "1980-01-01".to_string(),
+        "England".to_string(),
+    );
+    manager.hire("team-1".to_string());
+
+    let mut game = Game::new(
+        clock,
+        manager,
+        vec![make_user_team(500_000, 100_000), make_seller_team(vec![])],
+        vec![free_agent],
+        vec![],
+        vec![],
+    );
+    game.season_context.transfer_window.status = TransferWindowStatus::Open;
+    game
+}
+
+#[test]
+fn free_agent_bid_is_accepted_even_with_low_budget() {
+    let mut free_agent = make_free_agent("fa-low-budget", LolRole::Adc);
+    free_agent.market_value = 2_000_000;
+    let mut game = make_user_game_with_free_agent(free_agent);
+
+    let result = make_transfer_bid(
+        &mut game,
+        "fa-low-budget",
+        1_500_000,
+        TransferDestination::Main,
+        &[],
+    )
+    .expect("free agent bid should be accepted regardless of transfer budget");
+
+    assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+
+    let player = game
+        .players
+        .iter()
+        .find(|p| p.id == "fa-low-budget")
+        .expect("player should exist");
+    assert!(
+        player
+            .transfer_offers
+            .iter()
+            .any(|o| o.from_team_id == "team-1" && o.status == TransferOfferStatus::Accepted),
+        "accepted free-agent offer should be created"
+    );
+    assert_eq!(game.teams[0].finance, 500_000);
+    assert_eq!(game.teams[0].transfer_budget, 100_000);
+}
+
+#[test]
+fn project_free_agent_bid_financial_impact_uses_zero_fee() {
+    let mut free_agent = make_free_agent("fa-zero-fee", LolRole::Adc);
+    free_agent.market_value = 5_000_000;
+    let game = make_user_game_with_free_agent(free_agent);
+
+    let projection = project_transfer_bid_financial_impact(
+        &game,
+        "fa-zero-fee",
+        3_000_000,
+        TransferDestination::Main,
+    )
+    .expect("projection should succeed for free agent");
+
+    assert_eq!(
+        projection.transfer_budget_after, projection.transfer_budget_before,
+        "transfer budget should not be reduced for free agents"
+    );
+    assert_eq!(
+        projection.finance_after, projection.finance_before,
+        "club balance should not be reduced for free agents"
+    );
+    assert!(!projection.exceeds_transfer_budget);
+    assert!(!projection.exceeds_finance);
 }
 
 #[test]
