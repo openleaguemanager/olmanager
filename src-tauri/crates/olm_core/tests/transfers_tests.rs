@@ -12,8 +12,9 @@ use olm_core::domain::stats::LolRole;
 use olm_core::domain::team::{FinancialTransactionKind, Team, TeamKind};
 use olm_core::game::Game;
 use olm_core::transfers::{
-    counter_offer, generate_incoming_transfer_offers, make_transfer_bid, release_player_contract,
-    respond_to_offer, TransferDestination, TransferNegotiationDecision,
+    TransferDestination, TransferNegotiationDecision, ai_agent_purchase, counter_offer,
+    generate_incoming_transfer_offers, get_transfer_history, make_transfer_bid,
+    negotiate_player_wage, release_player_contract, respond_to_offer,
 };
 
 fn default_attrs() -> PlayerAttributes {
@@ -158,6 +159,24 @@ fn make_game_with_player(
     game
 }
 
+fn complete_accepted_transfer(game: &mut Game, player_id: &str) {
+    let offer_id = game
+        .players
+        .iter()
+        .find(|player| player.id == player_id)
+        .and_then(|player| {
+            player
+                .transfer_offers
+                .iter()
+                .find(|offer| offer.status == TransferOfferStatus::Accepted)
+                .map(|offer| offer.id.clone())
+        })
+        .expect("accepted offer should exist");
+
+    negotiate_player_wage(game, player_id, &offer_id, 200_000, 3)
+        .expect("accepted transfer should complete after wage agreement");
+}
+
 #[test]
 fn incoming_transfer_offers_do_not_arrive_when_window_is_closed() {
     let mut player = make_user_player("player-window-closed");
@@ -199,6 +218,23 @@ fn transfer_bid_is_rejected_when_window_is_closed() {
 }
 
 #[test]
+fn over_budget_transfer_bid_is_rejected() {
+    let player = make_player("player-over-budget");
+    let mut game = make_game_with_player(player, vec![], 5_000_000, 500_000);
+
+    let error = make_transfer_bid(
+        &mut game,
+        "player-over-budget",
+        750_000,
+        TransferDestination::Main,
+        &[],
+    )
+    .expect_err("bid above transfer budget should be rejected");
+
+    assert_eq!(error, "Transfer budget too low");
+}
+
+#[test]
 fn expiring_contract_lowers_resistance_to_sale() {
     let mut player = make_player("player-expiring");
     player.contract_end = Some("2026-08-31".to_string());
@@ -215,6 +251,7 @@ fn expiring_contract_lowers_resistance_to_sale() {
     .expect("bid should be evaluated");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-expiring");
     assert_eq!(
         game.players
             .iter()
@@ -265,6 +302,7 @@ fn accepted_transfer_bid_can_assign_player_to_academy_and_charge_parent_club() {
     .expect("academy destination bid should be evaluated");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-academy-destination");
     let player = game
         .players
         .iter()
@@ -363,6 +401,7 @@ fn repeated_bid_advances_transfer_negotiation_round() {
         second_result.decision,
         TransferNegotiationDecision::Accepted
     );
+    complete_accepted_transfer(&mut game, "player-repeat-bid");
     assert_eq!(second_result.feedback.round, 2);
     assert_eq!(
         game.players
@@ -379,8 +418,8 @@ fn stale_outgoing_transfer_negotiation_is_withdrawn_before_new_bid() {
     player.morale = 35;
     player.stats.appearances = 1;
     player.transfer_offers.push(TransferOffer {
-        id: "offer-counter-accept".to_string(),
-        from_team_id: "team-2".to_string(),
+        id: "offer-stale".to_string(),
+        from_team_id: "team-1".to_string(),
         destination_team_id: None,
         fee: 1_000_000,
         wage_offered: 0,
@@ -389,7 +428,7 @@ fn stale_outgoing_transfer_negotiation_is_withdrawn_before_new_bid() {
         suggested_counter_fee: None,
         players_included: vec![],
         status: TransferOfferStatus::Pending,
-        date: "2026-08-01".to_string(),
+        date: "2026-07-01".to_string(),
         wage_negotiation_status: WageNegotiationStatus::NotStarted,
         contract_years_offered: 0,
         suggested_counter_wage: None,
@@ -430,22 +469,58 @@ fn stale_outgoing_transfer_negotiation_is_withdrawn_before_new_bid() {
 }
 
 #[test]
-fn low_transfer_budget_cannot_behave_unrealistically() {
-    let mut player = make_player("player-budget");
-    player.transfer_listed = true;
+fn club_to_club_transfer_records_non_zero_wage_and_realistic_term() {
+    let mut player = make_user_player("player-c2c-terms");
+    player.wage = 100_000;
+    player.contract_end = Some("2028-06-30".to_string());
+    player
+        .transfer_offers
+        .push(make_pending_incoming_offer("offer-c2c-terms", 950_000));
 
-    let mut game = make_game_with_player(player, vec![], 5_000_000, 400_000);
+    let mut game = make_game_with_player(player, vec![], 5_000_000, 2_000_000);
+    game.teams[1].finance = 6_000_000;
+    game.teams[1].transfer_budget = 3_000_000;
 
-    let error = make_transfer_bid(
-        &mut game,
-        "player-budget",
-        900_000,
-        TransferDestination::Main,
-        &[],
-    )
-    .expect_err("bid should be blocked by transfer budget");
+    respond_to_offer(&mut game, "player-c2c-terms", "offer-c2c-terms", true)
+        .expect("accepting a pending offer should execute transfer");
 
-    assert_eq!(error, "Transfer budget too low");
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "player-c2c-terms")
+        .unwrap();
+    assert_eq!(player.team_id.as_deref(), Some("team-2"));
+    assert!(
+        player.wage > 0,
+        "transferred player wage should be non-zero"
+    );
+
+    let entry = get_transfer_history(&game)
+        .into_iter()
+        .find(|entry| entry.player_id == "player-c2c-terms")
+        .expect("history should contain the transfer");
+    assert!(
+        entry.annual_wage > 0,
+        "history annual_wage should be non-zero, got {}",
+        entry.annual_wage
+    );
+    assert!(
+        (1..=5).contains(&entry.contract_years),
+        "history contract_years should be realistic, got {}",
+        entry.contract_years
+    );
+    assert_eq!(
+        player.wage, entry.annual_wage,
+        "player wage must match history annual_wage"
+    );
+    assert!(
+        player
+            .contract_end
+            .as_ref()
+            .is_some_and(|contract_end| contract_end
+                .starts_with(&(2026 + i32::from(entry.contract_years)).to_string())),
+        "player contract_end must match history contract_years"
+    );
 }
 
 #[test]
@@ -485,7 +560,7 @@ fn does_not_duplicate_pending_incoming_offer_from_same_club() {
     player.contract_end = Some("2026-09-01".to_string());
     player.transfer_offers.push(TransferOffer {
         id: "offer-stale".to_string(),
-        from_team_id: "team-1".to_string(),
+        from_team_id: "team-2".to_string(),
         destination_team_id: None,
         fee: 900_000,
         wage_offered: 0,
@@ -494,7 +569,7 @@ fn does_not_duplicate_pending_incoming_offer_from_same_club() {
         suggested_counter_fee: None,
         players_included: vec![],
         status: TransferOfferStatus::Pending,
-        date: "2026-07-15".to_string(),
+        date: "2026-07-25".to_string(),
         wage_negotiation_status: WageNegotiationStatus::NotStarted,
         contract_years_offered: 0,
         suggested_counter_wage: None,
@@ -515,7 +590,7 @@ fn does_not_duplicate_pending_incoming_offer_from_same_club() {
         .unwrap();
 
     assert_eq!(player.transfer_offers.len(), 1);
-    assert_eq!(player.transfer_offers[0].id, "offer-existing");
+    assert_eq!(player.transfer_offers[0].id, "offer-stale");
     assert!(game.messages.is_empty());
 }
 
@@ -740,6 +815,7 @@ fn reasonable_counter_offer_is_accepted_and_executes_transfer() {
     .expect("counter offer should be evaluated");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-counter-accept");
     let player = game
         .players
         .iter()
@@ -981,6 +1057,7 @@ fn accepted_major_transfer_generates_news_article() {
     .expect("major transfer bid should succeed");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-news-major");
     let article = game
         .news
         .iter()
@@ -1012,6 +1089,7 @@ fn smaller_completed_transfer_does_not_generate_news_article() {
     .expect("small transfer bid should succeed");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-news-small");
     assert!(game.news.is_empty());
 }
 
@@ -1044,6 +1122,7 @@ fn completed_transfer_news_is_not_duplicated_when_article_already_exists() {
     .expect("major transfer bid should succeed");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-news-dup");
     assert_eq!(
         game.news
             .iter()
@@ -1069,6 +1148,7 @@ fn academy_sale_replenishes_roster_and_role_coverage() {
     .expect("academy transfer bid should succeed");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-academy-sale");
     assert_eq!(
         game.players
             .iter()
@@ -1148,6 +1228,7 @@ fn academy_sale_routes_fee_to_parent_club_owner() {
     .expect("academy transfer should succeed");
 
     assert_eq!(result.decision, TransferNegotiationDecision::Accepted);
+    complete_accepted_transfer(&mut game, "player-academy-owner");
     let academy_finance_after = game
         .teams
         .iter()
@@ -1395,10 +1476,13 @@ fn release_player_contract_sets_was_released_flag() {
 
     let mut game = make_game_with_player(player, vec![], 10_000_000, 5_000_000);
 
-    let penalty = release_player_contract(&mut game, "release-test-1")
-        .expect("release should succeed");
+    let penalty =
+        release_player_contract(&mut game, "release-test-1").expect("release should succeed");
 
-    assert!(penalty > 0, "release penalty should be > 0 for non-zero wage");
+    assert!(
+        penalty > 0,
+        "release penalty should be > 0 for non-zero wage"
+    );
 
     let released = game
         .players
@@ -1406,13 +1490,25 @@ fn release_player_contract_sets_was_released_flag() {
         .find(|p| p.id == "release-test-1")
         .expect("released player should still be in game");
 
-    assert!(released.was_released, "was_released should be true after release");
-    assert!(released.team_id.is_none(), "team_id should be None after release");
-    assert!(released.contract_end.is_none(), "contract_end should be None after release");
+    assert!(
+        released.was_released,
+        "was_released should be true after release"
+    );
+    assert!(
+        released.team_id.is_none(),
+        "team_id should be None after release"
+    );
+    assert!(
+        released.contract_end.is_none(),
+        "contract_end should be None after release"
+    );
     assert_eq!(released.wage, 0, "wage should be 0 after release");
     assert!(!released.transfer_listed, "should not be transfer listed");
     assert!(!released.loan_listed, "should not be loan listed");
-    assert!(released.transfer_offers.is_empty(), "transfer offers should be cleared");
+    assert!(
+        released.transfer_offers.is_empty(),
+        "transfer offers should be cleared"
+    );
 }
 
 #[test]
@@ -1541,4 +1637,301 @@ fn release_academy_player_without_contract_end_succeeds() {
 
     assert!(released.was_released);
     assert!(released.team_id.is_none());
+}
+
+fn make_ai_team(id: &str) -> Team {
+    let mut team = Team::new(
+        id.to_string(),
+        format!("{} FC", id),
+        id.chars().take(3).collect::<String>().to_uppercase(),
+        "England".to_string(),
+        "London".to_string(),
+        "Arena".to_string(),
+        50_000,
+    );
+    team.finance = 10_000_000;
+    team.transfer_budget = 5_000_000;
+    team.reputation = 50;
+    team
+}
+
+fn make_free_agent(id: &str, role: LolRole) -> Player {
+    let mut player = Player::new(
+        id.to_string(),
+        format!("{}. Free", id),
+        format!("{} Free", id),
+        "2000-01-01".to_string(),
+        "England".to_string(),
+        role,
+        default_attrs(),
+    );
+    player.team_id = None;
+    player.contract_end = None;
+    player.market_value = 500_000;
+    player.wage = 100_000;
+    player.morale = 70;
+    player
+}
+
+fn make_game_with_free_agent(free_agent: Player) -> Game {
+    make_game_with_free_agents(vec![free_agent])
+}
+
+fn make_game_with_free_agents(free_agents: Vec<Player>) -> Game {
+    let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 8, 1, 12, 0, 0).unwrap());
+    let mut manager = Manager::new(
+        "manager-1".to_string(),
+        "Jane".to_string(),
+        "Doe".to_string(),
+        "1980-01-01".to_string(),
+        "England".to_string(),
+    );
+    manager.hire("team-user".to_string());
+
+    let mut team = make_ai_team("team-ai");
+    team.wage_budget = 1_000_000;
+
+    let mut game = Game::new(clock, manager, vec![team], free_agents, vec![], vec![]);
+    game.season_context.transfer_window.status = TransferWindowStatus::Open;
+    game
+}
+
+#[test]
+fn ai_free_agent_signing_records_non_zero_wage_and_term() {
+    let free_agent = make_free_agent("fa-wage-term", LolRole::Adc);
+    let mut game = make_game_with_free_agent(free_agent);
+
+    let signed = ai_agent_purchase(&mut game, "team-ai", "ADC");
+    assert!(signed, "AI should sign the free agent");
+
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "fa-wage-term")
+        .unwrap();
+    assert_eq!(player.team_id.as_deref(), Some("team-ai"));
+    assert!(player.wage > 0, "player wage should be non-zero");
+
+    let history = get_transfer_history(&game);
+    let entry = history
+        .iter()
+        .find(|entry| entry.player_id == "fa-wage-term")
+        .expect("history should contain the free-agent signing");
+    assert!(
+        entry.annual_wage > 0,
+        "history annual_wage should be non-zero, got {}",
+        entry.annual_wage
+    );
+    assert!(
+        (1..=5).contains(&entry.contract_years),
+        "history contract_years should be realistic, got {}",
+        entry.contract_years
+    );
+    assert_eq!(
+        player.wage, entry.annual_wage,
+        "player wage must match history annual_wage"
+    );
+    assert!(
+        player
+            .contract_end
+            .as_ref()
+            .is_some_and(|contract_end| contract_end
+                .starts_with(&(2026 + i32::from(entry.contract_years)).to_string())),
+        "player contract_end must match history contract_years"
+    );
+}
+
+#[test]
+fn ai_free_agent_signing_applies_non_zero_wage_floor_for_new_player() {
+    let mut free_agent = Player::new(
+        "fa-zero-wage".to_string(),
+        "Zero Wage".to_string(),
+        "Zero Wage".to_string(),
+        "2000-01-01".to_string(),
+        "England".to_string(),
+        LolRole::Adc,
+        default_attrs(),
+    );
+    free_agent.team_id = None;
+    free_agent.contract_end = None;
+    free_agent.market_value = 500_000;
+    free_agent.morale = 70;
+
+    let mut game = make_game_with_free_agent(free_agent);
+
+    assert!(ai_agent_purchase(&mut game, "team-ai", "ADC"));
+
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "fa-zero-wage")
+        .unwrap();
+    let entry = get_transfer_history(&game)
+        .into_iter()
+        .find(|entry| entry.player_id == "fa-zero-wage")
+        .unwrap();
+
+    assert!(player.wage > 0, "signed player wage should be non-zero");
+    assert!(
+        entry.annual_wage > 0,
+        "history annual_wage should be non-zero"
+    );
+    assert_eq!(player.wage, entry.annual_wage);
+}
+
+#[test]
+fn ai_free_agent_signing_matches_player_state_to_history() {
+    let free_agent = make_free_agent("fa-state-match", LolRole::Top);
+    let mut game = make_game_with_free_agent(free_agent);
+
+    ai_agent_purchase(&mut game, "team-ai", "TOP");
+
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "fa-state-match")
+        .unwrap();
+    let entry = get_transfer_history(&game)
+        .into_iter()
+        .find(|entry| entry.player_id == "fa-state-match")
+        .unwrap();
+    assert_eq!(player.wage, entry.annual_wage);
+    assert!(entry.contract_years > 0);
+    assert!(
+        player
+            .contract_end
+            .as_ref()
+            .is_some_and(|contract_end| contract_end
+                .starts_with(&(2026 + i32::from(entry.contract_years)).to_string())),
+        "player contract_end must match history contract_years"
+    );
+}
+
+#[test]
+fn ai_agent_purchase_respects_daily_cap() {
+    let free_agents = vec![
+        make_free_agent("fa-cap-1", LolRole::Top),
+        make_free_agent("fa-cap-2", LolRole::Top),
+        make_free_agent("fa-cap-3", LolRole::Top),
+    ];
+    let mut game = make_game_with_free_agents(free_agents);
+
+    assert!(ai_agent_purchase(&mut game, "team-ai", "TOP"));
+    assert!(ai_agent_purchase(&mut game, "team-ai", "TOP"));
+    assert!(
+        !ai_agent_purchase(&mut game, "team-ai", "TOP"),
+        "third same-day purchase should be blocked by daily cap"
+    );
+}
+
+#[test]
+fn rejected_ai_agent_purchase_does_not_consume_daily_cap() {
+    let mut low_impact = make_free_agent("fa-low-impact-cap", LolRole::Top);
+    low_impact.lol_ovr = 60;
+    low_impact.market_value = 100_000;
+    let mut game = make_game_with_free_agent(low_impact);
+
+    game.teams[0].wage_budget = 10_000;
+
+    assert!(
+        !ai_agent_purchase(&mut game, "team-ai", "TOP"),
+        "free agent should be rejected by signing policy"
+    );
+
+    game.teams[0].wage_budget = 10_000_000;
+
+    let mut strong_one = make_free_agent("fa-cap-valid-1", LolRole::Top);
+    strong_one.lol_ovr = 95;
+    strong_one.market_value = 2_000_000;
+    let mut strong_two = make_free_agent("fa-cap-valid-2", LolRole::Top);
+    strong_two.lol_ovr = 94;
+    strong_two.market_value = 1_900_000;
+    game.players.push(strong_one);
+    game.players.push(strong_two);
+
+    assert!(ai_agent_purchase(&mut game, "team-ai", "TOP"));
+    assert!(
+        ai_agent_purchase(&mut game, "team-ai", "TOP"),
+        "two valid signings should remain available after the rejected attempt"
+    );
+}
+
+#[test]
+fn ai_free_agent_signing_respects_reputation_gate_for_tier_one() {
+    let mut free_agent = make_free_agent("fa-low-impact", LolRole::Top);
+    free_agent.lol_ovr = 60;
+    free_agent.market_value = 100_000;
+    let mut game = make_game_with_free_agent(free_agent);
+
+    let mut team = game.teams.remove(0);
+    team.reputation = 1_200;
+    team.competition_id = Some("comp-1".to_string());
+    team.wage_budget = 1_000_000;
+    game.teams.push(team);
+
+    game.leagues.push(olm_core::domain::league::League {
+        id: "league-1".to_string(),
+        name: "League One".to_string(),
+        season: 2026,
+        competition_id: Some("comp-1".to_string()),
+        logo: None,
+        league_kind: olm_core::domain::league::LeagueKind::Main,
+        fixtures: vec![],
+        standings: vec![olm_core::domain::league::StandingEntry::new(
+            "team-ai".to_string(),
+        )],
+        split_index: 0,
+        tier: 1,
+        active: true,
+    });
+
+    // Seed a recent incoming offer on a dummy user-team player so that
+    // generate_incoming_transfer_offers takes the early return path that
+    // invokes simulate_ai_free_agent_signings.
+    let user_player_id = "user-player".to_string();
+    game.players.push({
+        let mut p = Player::new(
+            user_player_id.clone(),
+            "User Player".to_string(),
+            "User Player".to_string(),
+            "2000-01-01".to_string(),
+            "England".to_string(),
+            LolRole::Mid,
+            default_attrs(),
+        );
+        p.team_id = Some("team-user".to_string());
+        p.contract_end = Some("2028-06-30".to_string());
+        p.transfer_offers.push(TransferOffer {
+            id: "offer-1".to_string(),
+            from_team_id: "team-ai".to_string(),
+            destination_team_id: Some("team-user".to_string()),
+            fee: 1_000_000,
+            wage_offered: 100_000,
+            last_manager_fee: None,
+            negotiation_round: 1,
+            suggested_counter_fee: None,
+            players_included: vec![],
+            status: TransferOfferStatus::Pending,
+            date: game.clock.current_date.format("%Y-%m-%d").to_string(),
+            wage_negotiation_status: WageNegotiationStatus::Pending,
+            contract_years_offered: 2,
+            suggested_counter_wage: None,
+            suggested_counter_years: None,
+            wage_negotiation_round: 1,
+        });
+        p
+    });
+
+    generate_incoming_transfer_offers(&mut game);
+
+    let signed = game
+        .players
+        .iter()
+        .find(|p| p.id == "fa-low-impact")
+        .unwrap();
+    assert_ne!(
+        signed.team_id.as_deref(),
+        Some("team-ai"),
+        "tier-1 high-reputation team should reject low-impact free agent"
+    );
 }

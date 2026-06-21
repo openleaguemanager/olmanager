@@ -162,6 +162,9 @@ fn make_game_with_match() -> Game {
             StandingEntry::new("team1".to_string()),
             StandingEntry::new("team2".to_string()),
         ],
+        split_index: 0,
+        tier: 1,
+        active: true,
     };
 
     let mut game = Game::new(clock, manager, vec![team1, team2], players, vec![], vec![]);
@@ -405,7 +408,10 @@ fn process_day_releases_players_with_expired_contracts() {
     let released_player = game.players.iter().find(|p| p.id == "t1_fwd0").unwrap();
     assert_eq!(released_player.team_id, None);
     assert_eq!(released_player.contract_end, None);
-    assert_eq!(released_player.wage, 0);
+    assert!(
+        released_player.wage > 0,
+        "Expired contract should preserve non-zero wage baseline"
+    );
     assert!(
         game.messages
             .iter()
@@ -1384,6 +1390,9 @@ fn make_round_summary_game() -> Game {
             standing_entry("team3", 11, 31, 18, 8),
             standing_entry("team4", 11, 27, 19, 14),
         ],
+        split_index: 0,
+        tier: 1,
+        active: true,
     };
 
     let mut game = Game::new(
@@ -1549,4 +1558,172 @@ fn build_round_summary_ignores_non_competitive_matchday_zero_fixtures() {
     let summary = turn::build_round_summary(&game, 0, &previous_round_standings());
 
     assert!(summary.is_none());
+}
+
+// ---------------------------------------------------------------------------
+// AI transfer daily cap integration
+// ---------------------------------------------------------------------------
+
+fn make_role_player(id: &str, team_id: &str, role: LolRole) -> Player {
+    let attrs = default_attrs();
+    let mut p = Player::new(
+        id.to_string(),
+        id.to_string(),
+        id.to_string(),
+        "2000-01-01".to_string(),
+        "England".to_string(),
+        role,
+        attrs,
+    );
+    p.team_id = Some(team_id.to_string());
+    p.contract_end = Some("2028-06-30".to_string());
+    p.wage = 50_000;
+    p.market_value = 300_000;
+    p
+}
+
+fn make_free_agent_for_cap(id: &str, role: LolRole) -> Player {
+    let mut p = Player::new(
+        id.to_string(),
+        id.to_string(),
+        id.to_string(),
+        "2000-01-01".to_string(),
+        "England".to_string(),
+        role,
+        default_attrs(),
+    );
+    p.team_id = None;
+    p.contract_end = None;
+    p.wage = 40_000;
+    p.market_value = 200_000;
+    p
+}
+
+fn make_cap_game() -> Game {
+    use olm_core::domain::season::TransferWindowStatus;
+
+    let date = Utc.with_ymd_and_hms(2026, 1, 5, 12, 0, 0).unwrap();
+    let clock = GameClock::new(date);
+    let mut manager = Manager::new(
+        "mgr1".to_string(),
+        "Test".to_string(),
+        "Manager".to_string(),
+        "1980-01-01".to_string(),
+        "England".to_string(),
+    );
+    manager.hire("user-team".to_string());
+
+    let mut user_team = make_team("user-team", "User FC");
+    user_team.manager_id = Some("mgr1".to_string());
+
+    let mut ai_team_1 = make_team("ai-1", "AI One");
+    ai_team_1.wage_budget = 2_000_000;
+    ai_team_1.transfer_budget = 2_000_000;
+    ai_team_1.finance = 5_000_000;
+
+    let mut ai_team_2 = make_team("ai-2", "AI Two");
+    ai_team_2.wage_budget = 2_000_000;
+    ai_team_2.transfer_budget = 2_000_000;
+    ai_team_2.finance = 5_000_000;
+
+    let mut players = vec![
+        make_role_player("u-top", "user-team", LolRole::Top),
+        make_role_player("u-jungle", "user-team", LolRole::Jungle),
+        make_role_player("u-mid", "user-team", LolRole::Mid),
+        make_role_player("u-adc", "user-team", LolRole::Adc),
+        make_role_player("u-support", "user-team", LolRole::Support),
+        make_role_player("a1-top", "ai-1", LolRole::Top),
+        make_role_player("a1-jungle", "ai-1", LolRole::Jungle),
+        make_role_player("a2-mid", "ai-2", LolRole::Mid),
+        make_role_player("a2-adc", "ai-2", LolRole::Adc),
+    ];
+
+    let roles = [
+        LolRole::Top,
+        LolRole::Jungle,
+        LolRole::Mid,
+        LolRole::Adc,
+        LolRole::Support,
+    ];
+    for i in 0..20 {
+        let role = roles[i % roles.len()];
+        players.push(make_free_agent_for_cap(&format!("fa-{i}"), role));
+    }
+
+    let today = date.format("%Y-%m-%d").to_string();
+    let league = League {
+        id: "league1".to_string(),
+        name: "Test League".to_string(),
+        season: 1,
+        competition_id: Some("comp-1".to_string()),
+        logo: None,
+        league_kind: LeagueKind::Main,
+        fixtures: vec![
+            Fixture {
+                id: "fix1".to_string(),
+                matchday: 1,
+                date: today.clone(),
+                home_team_id: "user-team".to_string(),
+                away_team_id: "ai-1".to_string(),
+                match_type: MatchType::League,
+                best_of: 1,
+                status: FixtureStatus::Scheduled,
+                result: None,
+            },
+            Fixture {
+                id: "fix2".to_string(),
+                matchday: 1,
+                date: today.clone(),
+                home_team_id: "ai-2".to_string(),
+                away_team_id: "user-team".to_string(),
+                match_type: MatchType::League,
+                best_of: 1,
+                status: FixtureStatus::Scheduled,
+                result: None,
+            },
+        ],
+        standings: vec![
+            StandingEntry::new("user-team".to_string()),
+            StandingEntry::new("ai-1".to_string()),
+            StandingEntry::new("ai-2".to_string()),
+        ],
+        split_index: 0,
+        tier: 2,
+        active: true,
+    };
+
+    let mut game = Game::new(
+        clock,
+        manager,
+        vec![user_team, ai_team_1, ai_team_2],
+        players,
+        vec![],
+        vec![],
+    );
+    game.leagues = vec![league];
+    game.user_competition_id = Some("comp-1".to_string());
+    game.season_context.transfer_window.status = TransferWindowStatus::Open;
+    game
+}
+
+#[test]
+fn process_day_enforces_daily_ai_transfer_cap() {
+    let mut game = make_cap_game();
+
+    for _ in 0..14 {
+        turn::process_day_with_capture(&mut game, &mut |_| {});
+    }
+
+    let mut counts: HashMap<(String, String), usize> = HashMap::new();
+    for entry in game.transfer_history.entries.iter() {
+        let key = (entry.to_team_id.clone(), entry.date.clone());
+        *counts.entry(key).or_insert(0) += 1;
+    }
+
+    for ((team_id, date), count) in counts {
+        assert!(
+            count <= 2,
+            "team {team_id} on {date} exceeded daily cap with {count} transfers"
+        );
+    }
 }

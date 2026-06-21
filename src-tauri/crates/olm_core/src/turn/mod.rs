@@ -1,10 +1,17 @@
-mod news;
+pub(crate) mod news;
 mod post_match;
 mod round_summary;
 
 use crate::board_objectives;
 use crate::champions;
+use crate::contract_wage_policy::ai_transfer_cap_reset_if_new_day;
+use crate::domain::league::{Fixture, FixtureStatus, League, MatchResult, MatchType};
+use crate::domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
+use crate::domain::player::{LolRole as DomainLolRole, Player};
+use crate::domain::stats::StatsState;
+use crate::domain::team::{Team, TeamKind, TeamSeasonRecord};
 use crate::end_of_season;
+use crate::engine::LolRole as EngineLolRole;
 use crate::game::Game;
 use crate::player_events;
 use crate::potential;
@@ -14,12 +21,6 @@ use crate::scouting;
 use crate::training;
 use crate::transfers;
 use chrono::Datelike;
-use crate::domain::league::{Fixture, FixtureStatus, League, MatchResult, MatchType};
-use crate::domain::message::{InboxMessage, MessageCategory, MessageContext, MessagePriority};
-use crate::domain::player::{LolRole as DomainLolRole, Player};
-use crate::domain::stats::StatsState;
-use crate::domain::team::{Team, TeamKind, TeamSeasonRecord};
-use crate::engine::LolRole as EngineLolRole;
 use log::{debug, info};
 use std::collections::{HashMap, HashSet};
 use uuid::Uuid;
@@ -52,10 +53,28 @@ fn snapshot_transfer_listed_player_ids(game: &Game) -> HashSet<String> {
         .collect()
 }
 
+/// Run strategic recruitment for every AI main team before the generic
+/// transfer simulation paths execute. Eligibility (reputation/tier/budget)
+/// is evaluated inside `ai_team_agent::ai_strategic_recruitment`.
+fn run_ai_strategic_recruitment(game: &mut Game) {
+    let team_ids: Vec<String> = game
+        .teams
+        .iter()
+        .filter(|team| team.team_kind == TeamKind::Main && team.manager_id.is_none())
+        .map(|team| team.id.clone())
+        .collect();
+
+    for team_id in team_ids {
+        crate::ai_team_agent::ai_strategic_recruitment(game, &team_id);
+    }
+}
+
 pub fn process_day_with_capture<F>(game: &mut Game, on_capture: &mut F)
 where
     F: FnMut(StatsState),
 {
+    ai_transfer_cap_reset_if_new_day(game);
+
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
 
     let has_match_today = game.active_league().is_some_and(|league| {
@@ -90,6 +109,7 @@ where
     scouting::process_scouting(game);
     transfers::generate_incoming_transfer_offers(game);
     crate::ai_team_agent::process_ai_team_agents(game);
+    run_ai_strategic_recruitment(game);
     let previously_transfer_listed = snapshot_transfer_listed_player_ids(game);
     crate::ai_player_agent::process_ai_player_agents(game);
     crate::ai_team_agent::resolve_conflicts(game, &previously_transfer_listed);
@@ -116,6 +136,7 @@ where
 /// generates matchday news, pre-match messages, and advances the clock by one day.
 pub fn finish_live_match_day(game: &mut Game) {
     let today = game.clock.current_date.format("%Y-%m-%d").to_string();
+    ai_transfer_cap_reset_if_new_day(game);
     info!("[turn] finish_live_match_day: {}", today);
     generate_matchday_news(game, &today);
     maybe_schedule_playoffs(game);
@@ -134,6 +155,7 @@ pub fn finish_live_match_day(game: &mut Game) {
     scouting::process_scouting(game);
     transfers::generate_incoming_transfer_offers(game);
     crate::ai_team_agent::process_ai_team_agents(game);
+    run_ai_strategic_recruitment(game);
     let previously_transfer_listed = snapshot_transfer_listed_player_ids(game);
     crate::ai_player_agent::process_ai_player_agents(game);
     crate::ai_team_agent::resolve_conflicts(game, &previously_transfer_listed);
@@ -158,18 +180,32 @@ pub fn finish_live_match_day(game: &mut Game) {
 // Domain → Engine type conversion
 // ---------------------------------------------------------------------------
 
-fn build_engine_team_from(teams: &[Team], players: &[Player], team_id: &str) -> crate::engine::TeamData {
+fn build_engine_team_from(
+    teams: &[Team],
+    players: &[Player],
+    team_id: &str,
+) -> crate::engine::TeamData {
     let team = teams.iter().find(|t| t.id == team_id);
 
     let (name, draft_strategy) = match team {
         Some(t) => (
             t.name.clone(),
             match t.draft_strategy {
-                crate::domain::team::DraftStrategy::Aggressive => crate::engine::DraftStrategy::Aggressive,
-                crate::domain::team::DraftStrategy::Passive => crate::engine::DraftStrategy::Passive,
-                crate::domain::team::DraftStrategy::Scaling => crate::engine::DraftStrategy::Scaling,
-                crate::domain::team::DraftStrategy::CounterPick => crate::engine::DraftStrategy::CounterPick,
-                crate::domain::team::DraftStrategy::PriorityBans => crate::engine::DraftStrategy::PriorityBans,
+                crate::domain::team::DraftStrategy::Aggressive => {
+                    crate::engine::DraftStrategy::Aggressive
+                }
+                crate::domain::team::DraftStrategy::Passive => {
+                    crate::engine::DraftStrategy::Passive
+                }
+                crate::domain::team::DraftStrategy::Scaling => {
+                    crate::engine::DraftStrategy::Scaling
+                }
+                crate::domain::team::DraftStrategy::CounterPick => {
+                    crate::engine::DraftStrategy::CounterPick
+                }
+                crate::domain::team::DraftStrategy::PriorityBans => {
+                    crate::engine::DraftStrategy::PriorityBans
+                }
                 _ => crate::engine::DraftStrategy::Balanced,
             },
         ),
@@ -628,7 +664,6 @@ fn simulate_background_league(
             *home_wins,
             *away_wins,
         ));
-
     }
 
     for (home_team_id, away_team_id, home_wins, away_wins) in &completed_fixtures {
@@ -1304,9 +1339,7 @@ where
             team_id,
             crate::roster_stability::RosterStabilityReason::PreMatch,
         ) {
-            info!(
-                "[turn] pre-match repair failed for team {team_id}: {e}"
-            );
+            info!("[turn] pre-match repair failed for team {team_id}: {e}");
         }
     }
 
@@ -1526,9 +1559,9 @@ fn simulate_series(
 mod tests {
     use super::*;
     use crate::clock::GameClock;
-    use chrono::{TimeZone, Utc};
     use crate::domain::player::{Player, PlayerAttributes};
     use crate::domain::stats::LolRole;
+    use chrono::{TimeZone, Utc};
 
     fn make_player(id: &str, team_id: &str, overall: u8) -> Player {
         let attrs = PlayerAttributes {
@@ -1628,7 +1661,13 @@ mod tests {
         let season = 2025;
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(&mut game.teams, &mut game.players, league, &today_str, season);
+        simulate_background_league(
+            &mut game.teams,
+            &mut game.players,
+            league,
+            &today_str,
+            season,
+        );
 
         // The fixture should now be Completed with a result
         let fixture = &league.fixtures[0];
@@ -1646,7 +1685,13 @@ mod tests {
         let season = 2025;
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(&mut game.teams, &mut game.players, league, &today_str, season);
+        simulate_background_league(
+            &mut game.teams,
+            &mut game.players,
+            league,
+            &today_str,
+            season,
+        );
 
         // Both teams should have played=1
         let home_entry = league
@@ -1677,13 +1722,7 @@ mod tests {
         let season = 2025;
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(
-            &mut game.teams,
-            &game.players,
-            league,
-            &today_str,
-            season,
-        );
+        simulate_background_league(&mut game.teams, &game.players, league, &today_str, season);
 
         // Both teams should have form entries (W or L)
         let team1 = game.teams.iter().find(|t| t.id == "team1").unwrap();
@@ -1710,13 +1749,7 @@ mod tests {
             .collect();
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(
-            &mut game.teams,
-            &game.players,
-            league,
-            &today_str,
-            season,
-        );
+        simulate_background_league(&mut game.teams, &game.players, league, &today_str, season);
 
         // Player stats should be unchanged
         for (id, before_stats) in &before {
@@ -1740,13 +1773,7 @@ mod tests {
         let before_news = game.news.len();
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(
-            &mut game.teams,
-            &game.players,
-            league,
-            &today_str,
-            season,
-        );
+        simulate_background_league(&mut game.teams, &game.players, league, &today_str, season);
 
         // No messages or news should be generated
         assert_eq!(game.messages.len(), before_msgs);
@@ -1781,13 +1808,7 @@ mod tests {
         }
 
         let league = game.leagues.first_mut().unwrap();
-        simulate_background_league(
-            &mut game.teams,
-            &game.players,
-            league,
-            "2025-06-15",
-            season,
-        );
+        simulate_background_league(&mut game.teams, &game.players, league, "2025-06-15", season);
 
         // Fixture should still be Scheduled
         let fixture = &game.leagues[0].fixtures[0];

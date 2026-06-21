@@ -64,8 +64,7 @@ impl SaveManager {
 
     /// Read only the format version from an .olsave file (first 4 bytes).
     fn read_olsave_version(path: &Path) -> Result<u32, String> {
-        let mut file =
-            fs::File::open(path).map_err(|e| format!("Failed to open: {}", e))?;
+        let mut file = fs::File::open(path).map_err(|e| format!("Failed to open: {}", e))?;
         let mut buf = [0u8; 4];
         file.read_exact(&mut buf)
             .map_err(|e| format!("Failed to read version: {}", e))?;
@@ -88,17 +87,19 @@ impl SaveManager {
         let tmp_path = path.with_extension("olsave.tmp");
 
         // Serialize to JSON, then gzip
-        use flate2::write::GzEncoder;
         use flate2::Compression;
+        use flate2::write::GzEncoder;
         use std::io::Write;
 
         let json = serde_json::to_string(game)
             .map_err(|e| format!("Failed to JSON-serialize game: {e}"))?;
 
         let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
-        encoder.write_all(json.as_bytes())
+        encoder
+            .write_all(json.as_bytes())
             .map_err(|e| format!("Failed to gzip game: {e}"))?;
-        let compressed = encoder.finish()
+        let compressed = encoder
+            .finish()
             .map_err(|e| format!("Failed to finalize gzip: {e}"))?;
 
         let mut file = fs::File::create(&tmp_path)
@@ -116,24 +117,21 @@ impl SaveManager {
             .map_err(|e| format!("Failed to flush: {}", e))?;
 
         // Atomic rename: tmp → target
-        fs::rename(&tmp_path, path)
-            .map_err(|e| format!("Failed to rename temp file: {}", e))?;
+        fs::rename(&tmp_path, path).map_err(|e| format!("Failed to rename temp file: {}", e))?;
 
         Ok(())
     }
 
     /// Read a Game from a .olsave file.
     fn read_olsave(path: &Path) -> Result<Game, String> {
-        let file_size = fs::metadata(path)
-            .map(|m| m.len())
-            .unwrap_or(0);
-        let bytes = fs::read(path)
-            .unwrap_or_default();
+        let file_size = fs::metadata(path).map(|m| m.len()).unwrap_or(0);
+        let bytes = fs::read(path).unwrap_or_default();
 
         if bytes.len() < 4 {
             return Err(format!(
                 "Save file too small: {} bytes (path={:?})",
-                bytes.len(), path
+                bytes.len(),
+                path
             ));
         }
 
@@ -142,7 +140,11 @@ impl SaveManager {
         let version = u32::from_le_bytes(version_bytes);
 
         // Dump first bytes for debugging
-        let hex_preview: Vec<String> = bytes.iter().take(32).map(|b| format!("{:02x}", b)).collect();
+        let hex_preview: Vec<String> = bytes
+            .iter()
+            .take(32)
+            .map(|b| format!("{:02x}", b))
+            .collect();
         let hex_str = hex_preview.join(" ");
 
         if version != FORMAT_VERSION {
@@ -159,11 +161,11 @@ impl SaveManager {
 
             let mut decoder = GzDecoder::new(&bytes[4..]);
             let mut json_str = String::new();
-            decoder.read_to_string(&mut json_str)
+            decoder
+                .read_to_string(&mut json_str)
                 .map_err(|e| format!("Failed to decompress save: {e}"))?;
 
-            serde_json::from_str(&json_str)
-                .map_err(|e| format!("Failed to parse JSON save: {e}"))
+            serde_json::from_str(&json_str).map_err(|e| format!("Failed to parse JSON save: {e}"))
         })() {
             Ok(g) => g,
             Err(e) => {
@@ -183,8 +185,12 @@ impl SaveManager {
         // Self-test: verify JSON roundtrip before writing to disk
         let json = serde_json::to_string(game)
             .map_err(|e| format!("[serde-test] JSON serialize failed: {e}"))?;
-        let back: Game = serde_json::from_str(&json)
-            .map_err(|e| format!("[serde-test] JSON deserialize failed ({}B JSON): {e}", json.len()))?;
+        let back: Game = serde_json::from_str(&json).map_err(|e| {
+            format!(
+                "[serde-test] JSON deserialize failed ({}B JSON): {e}",
+                json.len()
+            )
+        })?;
         if back.clock.current_date != game.clock.current_date {
             return Err("[serde-test] roundtrip mismatch: clock.current_date differs".into());
         }
@@ -252,10 +258,7 @@ impl SaveManager {
             .clone();
 
         let save_path = self.save_path(save_id);
-        info!(
-            "[save_manager] load_game: loading from {:?}",
-            save_path
-        );
+        info!("[save_manager] load_game: loading from {:?}", save_path);
 
         let mut game = Self::read_olsave(&save_path)?;
 
@@ -367,14 +370,16 @@ impl SaveManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::TimeZone;
-    use crate::domain::league::{Fixture, FixtureStatus, League, LeagueKind, MatchType, StandingEntry};
+    use crate::clock::GameClock;
+    use crate::domain::league::{
+        Fixture, FixtureStatus, League, LeagueKind, MatchType, StandingEntry,
+    };
     use crate::domain::manager::Manager;
     use crate::domain::player::{Player, PlayerAttributes};
     use crate::domain::staff::{Staff, StaffAttributes, StaffRole};
     use crate::domain::team::Team;
-    use crate::clock::GameClock;
     use crate::game::BoardObjective;
+    use chrono::TimeZone;
 
     fn sample_game() -> Game {
         let start = Utc.with_ymd_and_hms(2026, 7, 1, 0, 0, 0).unwrap();
@@ -457,6 +462,8 @@ mod tests {
             stats_state: Default::default(),
             competition_configs: std::collections::HashMap::new(),
             transfer_history: Default::default(),
+            ai_transfer_cap_counts: Default::default(),
+            ai_transfer_cap_last_reset_date: None,
         }
     }
 
@@ -781,7 +788,11 @@ mod tests {
 
         let result = SaveManager::read_olsave(&path);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("Unsupported save format version"));
+        assert!(
+            result
+                .unwrap_err()
+                .contains("Unsupported save format version")
+        );
     }
 
     #[test]
@@ -796,13 +807,11 @@ mod tests {
         let path = saves_dir.join("corrupt.olsave");
         let mut f = fs::File::create(&path).unwrap();
         f.write_all(&1u32.to_le_bytes()).unwrap();
-        f.write_all(b"garbage data that is not valid bincode").unwrap();
+        f.write_all(b"garbage data that is not valid bincode")
+            .unwrap();
         drop(f);
 
         let result = SaveManager::read_olsave(&path);
         assert!(result.is_err());
     }
 }
-
-
-

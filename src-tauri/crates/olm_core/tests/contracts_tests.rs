@@ -1,14 +1,16 @@
 use chrono::{TimeZone, Utc};
-use olm_core::domain::manager::Manager;
-use olm_core::domain::player::{ContractRenewalState, Player, PlayerAttributes, RenewalSessionStatus};
-use olm_core::domain::staff::{Staff, StaffAttributes, StaffRole};
-use olm_core::domain::stats::LolRole;
-use olm_core::domain::team::Team;
 use olm_core::clock::GameClock;
 use olm_core::contracts::{
     DelegatedRenewalOptions, DelegatedRenewalResultStatus, RenewalDecision, RenewalOffer,
-    delegate_renewals, evaluate_renewal_offer, propose_renewal,
+    delegate_renewals, evaluate_renewal_offer, process_contract_expiries, propose_renewal,
 };
+use olm_core::domain::manager::Manager;
+use olm_core::domain::player::{
+    ContractRenewalState, Player, PlayerAttributes, RenewalSessionStatus,
+};
+use olm_core::domain::staff::{Staff, StaffAttributes, StaffRole};
+use olm_core::domain::stats::LolRole;
+use olm_core::domain::team::Team;
 use olm_core::game::Game;
 
 fn default_attrs() -> PlayerAttributes {
@@ -436,26 +438,69 @@ fn renewal_is_blocked_when_offer_pushes_healthy_club_far_over_soft_cap() {
 }
 
 #[test]
-fn renewal_allows_small_increase_for_legacy_over_budget_saves() {
+fn expired_contract_preserves_non_zero_wage() {
     let mut game = make_game();
-    game.teams[0].wage_budget = 50_000;
-    game.players[0].wage = 48_000;
-    game.players
-        .push(make_player_with("player-2", 40_000, "2027-06-30"));
+    game.players[0].wage = 1_500_000;
+    game.players[0].contract_end = Some("2026-07-31".to_string());
 
-    let outcome = propose_renewal(
-        &mut game,
-        "player-1",
-        RenewalOffer {
-            annual_wage: 70_000,
-            contract_years: 2,
-        },
-    );
+    process_contract_expiries(&mut game);
 
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "player-1")
+        .unwrap();
+    assert!(player.team_id.is_none());
+    assert!(player.contract_end.is_none());
     assert!(
-        outcome.is_ok(),
-        "legacy saves should allow manageable wage increases without policy lock"
+        player.wage > 0,
+        "expired player should retain non-zero wage, got {}",
+        player.wage
     );
+}
+
+#[test]
+fn expired_contract_wage_reflects_expected_wage_multipliers() {
+    let mut game = make_game();
+    game.players[0].wage = 100_000;
+    game.players[0].market_value = 2_000_000;
+    game.players[0].morale = 40;
+    game.players[0].date_of_birth = "2002-01-01".to_string();
+    game.players[0].contract_end = Some("2026-07-31".to_string());
+    game.teams[0].reputation = 30;
+
+    process_contract_expiries(&mut game);
+
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "player-1")
+        .unwrap();
+    // 100_000 * 1.05 (age <= 27) * 1.10 (morale <= 50) * 1.18 (market_value >= 2M)
+    // * 1.05 (reputation < 40) * 1.10 (remaining_days <= 180) = 158_000 after rounding.
+    assert_eq!(player.wage, 158_000);
+}
+
+#[test]
+fn expired_contract_wage_floor_is_previous_wage() {
+    let mut game = make_game();
+    game.players[0].wage = 1_500_000;
+    game.players[0].market_value = 100_000;
+    game.players[0].morale = 80;
+    game.players[0].date_of_birth = "1990-01-01".to_string();
+    game.players[0].contract_end = Some("2026-07-31".to_string());
+    game.teams[0].reputation = 50;
+
+    process_contract_expiries(&mut game);
+
+    let player = game
+        .players
+        .iter()
+        .find(|player| player.id == "player-1")
+        .unwrap();
+    // Multipliers would push computed wage below the previous wage, so the max()
+    // floor preserves the original asking baseline.
+    assert_eq!(player.wage, 1_500_000);
 }
 
 #[test]

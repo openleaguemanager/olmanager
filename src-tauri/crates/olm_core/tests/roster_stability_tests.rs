@@ -12,6 +12,7 @@ use olm_core::game::Game;
 use olm_core::roster_stability::{
     RepairAction, RosterStabilityReason, evaluate_team, repair_league, repair_team,
 };
+use olm_core::transfers::get_transfer_history;
 
 fn attrs() -> PlayerAttributes {
     PlayerAttributes {
@@ -192,6 +193,7 @@ fn missing_role_prefers_role_fit_free_agent() {
     ];
     players[5].market_value = 100_000;
     let mut game = game_with(players, vec!["top", "jungle", "mid", "adc", "adc2"]);
+    game.teams[0].wage_budget = 1_000_000;
 
     let report = repair_team(&mut game, "ai-team", RosterStabilityReason::PreMatch)
         .expect("free support should repair role gap");
@@ -782,22 +784,22 @@ fn load_migration_repairs_ai_team_with_four_players_and_stale_lineup() {
     );
 
     // Before repair: not match eligible, stale lineup
-    let before =
-        evaluate_team(&game, "ai-team", RosterStabilityReason::LoadMigration)
-            .expect("team should evaluate before repair");
+    let before = evaluate_team(&game, "ai-team", RosterStabilityReason::LoadMigration)
+        .expect("team should evaluate before repair");
     assert!(!before.match_eligible);
-    assert!(before
-        .stale_lineup_ids
-        .contains(&"stale-player-id".to_string()));
+    assert!(
+        before
+            .stale_lineup_ids
+            .contains(&"stale-player-id".to_string())
+    );
 
     // WHEN repair_league runs with LoadMigration reason
     let reports = repair_league(&mut game, RosterStabilityReason::LoadMigration)
         .expect("load migration should repair the league");
 
     // THEN the team is match eligible (5 players, valid lineup)
-    let after =
-        evaluate_team(&game, "ai-team", RosterStabilityReason::LoadMigration)
-            .expect("team should evaluate after repair");
+    let after = evaluate_team(&game, "ai-team", RosterStabilityReason::LoadMigration)
+        .expect("team should evaluate after repair");
     assert!(after.match_eligible);
     assert_eq!(after.eligible_player_count, 5);
     assert!(after.stale_lineup_ids.is_empty());
@@ -863,30 +865,15 @@ fn load_migration_does_not_generate_emergency_players_for_user_team() {
             player("mid", Some("user-team"), LolRole::Mid, Some("2028-06-30")),
             player("adc", Some("user-team"), LolRole::Adc, Some("2028-06-30")),
             // AI team players — only 4, missing support
-            player(
-                "a-top",
-                Some("ai-team"),
-                LolRole::Top,
-                Some("2028-06-30"),
-            ),
+            player("a-top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
             player(
                 "a-jungle",
                 Some("ai-team"),
                 LolRole::Jungle,
                 Some("2028-06-30"),
             ),
-            player(
-                "a-mid",
-                Some("ai-team"),
-                LolRole::Mid,
-                Some("2028-06-30"),
-            ),
-            player(
-                "a-adc",
-                Some("ai-team"),
-                LolRole::Adc,
-                Some("2028-06-30"),
-            ),
+            player("a-mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+            player("a-adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
         ],
         vec![],
         vec![],
@@ -898,9 +885,8 @@ fn load_migration_does_not_generate_emergency_players_for_user_team() {
     game.user_competition_id = Some("competition-1".to_string());
 
     // Verify user team is ineligible before (no repair expected for user teams)
-    let user_before =
-        evaluate_team(&game, "user-team", RosterStabilityReason::LoadMigration)
-            .expect("user team should evaluate");
+    let user_before = evaluate_team(&game, "user-team", RosterStabilityReason::LoadMigration)
+        .expect("user team should evaluate");
     assert!(!user_before.match_eligible);
 
     // WHEN repair_league runs with LoadMigration
@@ -908,9 +894,8 @@ fn load_migration_does_not_generate_emergency_players_for_user_team() {
         .expect("load migration should succeed");
 
     // THEN the AI team is repaired and match eligible
-    let ai_after =
-        evaluate_team(&game, "ai-team", RosterStabilityReason::LoadMigration)
-            .expect("ai-team should evaluate");
+    let ai_after = evaluate_team(&game, "ai-team", RosterStabilityReason::LoadMigration)
+        .expect("ai-team should evaluate");
     assert!(
         ai_after.match_eligible,
         "AI team should be eligible after load migration"
@@ -960,30 +945,15 @@ fn pre_match_repair_fixes_invalid_ai_opponent() {
             player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
             player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
             // opponent (other-ai) is missing support
-            player(
-                "o-top",
-                Some("other-ai"),
-                LolRole::Top,
-                Some("2028-06-30"),
-            ),
+            player("o-top", Some("other-ai"), LolRole::Top, Some("2028-06-30")),
             player(
                 "o-jungle",
                 Some("other-ai"),
                 LolRole::Jungle,
                 Some("2028-06-30"),
             ),
-            player(
-                "o-mid",
-                Some("other-ai"),
-                LolRole::Mid,
-                Some("2028-06-30"),
-            ),
-            player(
-                "o-adc",
-                Some("other-ai"),
-                LolRole::Adc,
-                Some("2028-06-30"),
-            ),
+            player("o-mid", Some("other-ai"), LolRole::Mid, Some("2028-06-30")),
+            player("o-adc", Some("other-ai"), LolRole::Adc, Some("2028-06-30")),
         ],
         vec!["top", "jungle", "mid", "adc", "adc"], // ai-team has adc-duplicate lineup
     );
@@ -1004,9 +974,8 @@ fn pre_match_repair_fixes_invalid_ai_opponent() {
     });
 
     // Before: other-ai is not match eligible (missing support)
-    let other_before =
-        evaluate_team(&game, "other-ai", RosterStabilityReason::PreMatch)
-            .expect("other-ai should evaluate");
+    let other_before = evaluate_team(&game, "other-ai", RosterStabilityReason::PreMatch)
+        .expect("other-ai should evaluate");
     assert!(!other_before.match_eligible);
 
     // WHEN pre-match repair runs on the opponent
@@ -1014,9 +983,8 @@ fn pre_match_repair_fixes_invalid_ai_opponent() {
         .expect("pre-match repair should fix opponent roster");
 
     // THEN the opponent is match eligible
-    let other_after =
-        evaluate_team(&game, "other-ai", RosterStabilityReason::PreMatch)
-            .expect("other-ai should evaluate after repair");
+    let other_after = evaluate_team(&game, "other-ai", RosterStabilityReason::PreMatch)
+        .expect("other-ai should evaluate after repair");
     assert!(
         other_after.match_eligible,
         "opponent should be eligible after pre-match repair"
@@ -1125,30 +1093,15 @@ fn background_simulation_repair_fixes_all_ai_teams() {
             player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
             player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
             // other-ai is missing support
-            player(
-                "o-top",
-                Some("other-ai"),
-                LolRole::Top,
-                Some("2028-06-30"),
-            ),
+            player("o-top", Some("other-ai"), LolRole::Top, Some("2028-06-30")),
             player(
                 "o-jungle",
                 Some("other-ai"),
                 LolRole::Jungle,
                 Some("2028-06-30"),
             ),
-            player(
-                "o-mid",
-                Some("other-ai"),
-                LolRole::Mid,
-                Some("2028-06-30"),
-            ),
-            player(
-                "o-adc",
-                Some("other-ai"),
-                LolRole::Adc,
-                Some("2028-06-30"),
-            ),
+            player("o-mid", Some("other-ai"), LolRole::Mid, Some("2028-06-30")),
+            player("o-adc", Some("other-ai"), LolRole::Adc, Some("2028-06-30")),
         ],
         vec!["top", "jungle", "mid", "adc"],
     );
@@ -1158,24 +1111,32 @@ fn background_simulation_repair_fixes_all_ai_teams() {
         .push(StandingEntry::new("other-ai".to_string()));
 
     // Verify both teams are ineligible before repair
-    let ai_before =
-        evaluate_team(&game, "ai-team", RosterStabilityReason::BackgroundSimulation)
-            .expect("ai-team should evaluate");
+    let ai_before = evaluate_team(
+        &game,
+        "ai-team",
+        RosterStabilityReason::BackgroundSimulation,
+    )
+    .expect("ai-team should evaluate");
     assert!(!ai_before.match_eligible);
-    let other_before =
-        evaluate_team(&game, "other-ai", RosterStabilityReason::BackgroundSimulation)
-            .expect("other-ai should evaluate");
+    let other_before = evaluate_team(
+        &game,
+        "other-ai",
+        RosterStabilityReason::BackgroundSimulation,
+    )
+    .expect("other-ai should evaluate");
     assert!(!other_before.match_eligible);
 
     // WHEN repair_league runs with BackgroundSimulation reason
-    let reports =
-        repair_league(&mut game, RosterStabilityReason::BackgroundSimulation)
-            .expect("background simulation repair should succeed");
+    let reports = repair_league(&mut game, RosterStabilityReason::BackgroundSimulation)
+        .expect("background simulation repair should succeed");
 
     // THEN all AI teams are match eligible
-    let ai_after =
-        evaluate_team(&game, "ai-team", RosterStabilityReason::BackgroundSimulation)
-            .expect("ai-team should evaluate after repair");
+    let ai_after = evaluate_team(
+        &game,
+        "ai-team",
+        RosterStabilityReason::BackgroundSimulation,
+    )
+    .expect("ai-team should evaluate after repair");
     assert!(
         ai_after.match_eligible,
         "ai-team should be eligible after background simulation repair"
@@ -1185,9 +1146,12 @@ fn background_simulation_repair_fixes_all_ai_teams() {
         "ai-team should have 5 eligible players"
     );
 
-    let other_after =
-        evaluate_team(&game, "other-ai", RosterStabilityReason::BackgroundSimulation)
-            .expect("other-ai should evaluate after repair");
+    let other_after = evaluate_team(
+        &game,
+        "other-ai",
+        RosterStabilityReason::BackgroundSimulation,
+    )
+    .expect("other-ai should evaluate after repair");
     assert!(
         other_after.match_eligible,
         "other-ai should be eligible after background simulation repair"
@@ -1205,5 +1169,205 @@ fn background_simulation_repair_fixes_all_ai_teams() {
     assert!(
         reports.iter().any(|r| r.team_id == "other-ai"),
         "other-ai should have a repair report"
+    );
+}
+
+#[test]
+fn repair_assigns_free_agent_with_non_zero_wage_and_term() {
+    let mut players = vec![
+        player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+        player(
+            "jungle",
+            Some("ai-team"),
+            LolRole::Jungle,
+            Some("2028-06-30"),
+        ),
+        player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+        player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player("adc2", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player("free-support", None, LolRole::Support, Some("2028-06-30")),
+    ];
+    players[5].wage = 100_000;
+    players[5].market_value = 2_000_000;
+    players[5].morale = 40;
+    players[5].date_of_birth = "2002-01-01".to_string();
+    let mut game = game_with(players, vec!["top", "jungle", "mid", "adc", "adc2"]);
+    game.teams[0].reputation = 30;
+    game.teams[0].wage_budget = 1_000_000;
+
+    repair_team(&mut game, "ai-team", RosterStabilityReason::PreMatch)
+        .expect("free support should repair role gap");
+
+    let assigned = game
+        .players
+        .iter()
+        .find(|player| player.id == "free-support")
+        .unwrap();
+    assert_eq!(assigned.team_id.as_deref(), Some("ai-team"));
+    // 100_000 * 1.05 (age <= 27) * 1.10 (morale <= 50) * 1.18 (market_value >= 2M)
+    // * 1.05 (reputation < 40) = 144_000 after rounding.
+    assert_eq!(assigned.wage, 144_000);
+    assert!(assigned.contract_end.is_some());
+}
+
+#[test]
+fn repair_assigns_free_agent_with_history_terms_matching_player_state() {
+    let mut players = vec![
+        player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+        player(
+            "jungle",
+            Some("ai-team"),
+            LolRole::Jungle,
+            Some("2028-06-30"),
+        ),
+        player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+        player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player("adc2", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player("free-support", None, LolRole::Support, Some("2028-06-30")),
+    ];
+    players[5].wage = 120_000;
+    players[5].market_value = 600_000;
+    let mut game = game_with(players, vec!["top", "jungle", "mid", "adc", "adc2"]);
+    game.teams[0].wage_budget = 1_000_000;
+
+    repair_team(&mut game, "ai-team", RosterStabilityReason::ContractExpired)
+        .expect("free support should repair role gap");
+
+    let assigned = game
+        .players
+        .iter()
+        .find(|player| player.id == "free-support")
+        .unwrap();
+    let entry = get_transfer_history(&game)
+        .into_iter()
+        .find(|entry| entry.player_id == "free-support")
+        .expect("repair signing should be recorded in transfer history");
+    assert_eq!(
+        assigned.wage, entry.annual_wage,
+        "player wage and history annual_wage must match"
+    );
+    assert!(
+        entry.contract_years > 0,
+        "history contract_years should be realistic, got {}",
+        entry.contract_years
+    );
+    assert!(
+        assigned
+            .contract_end
+            .as_ref()
+            .is_some_and(|contract_end| contract_end
+                .starts_with(&(2026 + i32::from(entry.contract_years)).to_string())),
+        "player contract_end must match history contract_years"
+    );
+}
+
+fn elite_game_with_low_impact_free_agent(reason: RosterStabilityReason) -> (Game, String) {
+    let mut players = vec![
+        player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+        player(
+            "jungle",
+            Some("ai-team"),
+            LolRole::Jungle,
+            Some("2028-06-30"),
+        ),
+        player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+        player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+    ];
+    let mut free_agent = player("free-support", None, LolRole::Support, Some("2028-06-30"));
+    free_agent.wage = 30_000;
+    free_agent.market_value = 100_000;
+    free_agent.lol_ovr = 60;
+    players.push(free_agent);
+
+    let mut game = game_with(players, vec!["top", "jungle", "mid", "adc"]);
+    game.teams[0].reputation = 1_200;
+    game.teams[0].competition_id = Some("competition-1".to_string());
+    game.teams[0].wage_budget = 500_000;
+    game.leagues = vec![League {
+        id: "league-1".to_string(),
+        name: "League One".to_string(),
+        season: 2026,
+        fixtures: vec![Fixture {
+            id: "fixture-1".to_string(),
+            matchday: 1,
+            date: "2026-08-02".to_string(),
+            home_team_id: "ai-team".to_string(),
+            away_team_id: "other-ai".to_string(),
+            match_type: MatchType::League,
+            best_of: 1,
+            status: FixtureStatus::Scheduled,
+            result: None,
+        }],
+        standings: vec![StandingEntry::new("ai-team".to_string())],
+        competition_id: Some("competition-1".to_string()),
+        logo: None,
+        league_kind: LeagueKind::Main,
+        split_index: 0,
+        tier: 1,
+        active: true,
+    }];
+
+    if let RosterStabilityReason::Emergency = reason {
+        // ensure the generated player ID namespace is free so we can tell
+        // whether the free agent was actually assigned vs. a generated fallback
+        game.players
+            .retain(|p| !p.id.starts_with("emergency-ai-team"));
+    }
+
+    (game, "free-support".to_string())
+}
+
+#[test]
+fn emergency_repair_allows_low_impact_free_agent_at_tier_one() {
+    let (mut game, fa_id) = elite_game_with_low_impact_free_agent(RosterStabilityReason::Emergency);
+
+    repair_team(&mut game, "ai-team", RosterStabilityReason::Emergency)
+        .expect("emergency repair should succeed");
+
+    let assigned = game.players.iter().find(|p| p.id == fa_id).unwrap();
+    assert_eq!(assigned.team_id.as_deref(), Some("ai-team"));
+    assert!(assigned.wage > 0);
+    assert!(assigned.contract_end.is_some());
+
+    let entry = get_transfer_history(&game)
+        .into_iter()
+        .find(|entry| entry.player_id == fa_id)
+        .expect("emergency repair signing should appear in history");
+    assert_eq!(entry.annual_wage, assigned.wage);
+    assert!(entry.contract_years > 0);
+    assert!(
+        assigned
+            .contract_end
+            .as_ref()
+            .is_some_and(|contract_end| contract_end
+                .starts_with(&(2026 + i32::from(entry.contract_years)).to_string())),
+        "player contract_end must match history contract_years"
+    );
+}
+
+#[test]
+fn non_emergency_repair_rejects_low_impact_free_agent_at_tier_one() {
+    let (mut game, fa_id) =
+        elite_game_with_low_impact_free_agent(RosterStabilityReason::BackgroundSimulation);
+
+    repair_team(
+        &mut game,
+        "ai-team",
+        RosterStabilityReason::BackgroundSimulation,
+    )
+    .expect("repair should fall back to generated replacement");
+
+    let free_agent = game.players.iter().find(|p| p.id == fa_id).unwrap();
+    assert_ne!(
+        free_agent.team_id.as_deref(),
+        Some("ai-team"),
+        "low-impact free agent should be rejected by non-emergency repair"
+    );
+
+    assert!(
+        game.players.iter().any(|p| {
+            p.team_id.as_deref() == Some("ai-team") && p.natural_position == LolRole::Support
+        }),
+        "a replacement support should still be on the team"
     );
 }

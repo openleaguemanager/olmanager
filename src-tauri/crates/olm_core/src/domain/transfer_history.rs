@@ -61,6 +61,9 @@ pub struct TransferHistoryEntry {
     pub negotiation_rounds: u8,
     #[serde(default)]
     pub included_players: Vec<IncludedPlayerEntry>,
+    /// Optional signing intent/reason used for news tagging.
+    #[serde(default)]
+    pub intent: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

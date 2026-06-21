@@ -3,13 +3,15 @@ use crate::contract_wage_policy::{
     renewal_wage_policy_allows, renewal_wage_policy_error_message,
 };
 use crate::delegated_renewals::delegate_renewals as delegate_renewals_service;
+use crate::domain::message::{InboxMessage, MessageCategory, MessagePriority};
+use crate::domain::negotiation::{NegotiationFeedback, NegotiationMood};
+use crate::domain::player::{
+    ContractRenewalState, Player, RenewalSessionOutcome, RenewalSessionStatus,
+};
+use crate::domain::team::Team;
 use crate::game::Game;
 use crate::roster_stability::{RosterStabilityReason, repair_team};
 use chrono::{Datelike, Months, NaiveDate};
-use crate::domain::message::{InboxMessage, MessageCategory, MessagePriority};
-use crate::domain::negotiation::{NegotiationFeedback, NegotiationMood};
-use crate::domain::player::{ContractRenewalState, Player, RenewalSessionOutcome, RenewalSessionStatus};
-use crate::domain::team::Team;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -481,7 +483,7 @@ pub fn process_contract_expiries(game: &mut Game) {
             let player = &mut game.players[player_index];
             player.team_id = None;
             player.contract_end = None;
-            player.wage = 0;
+            player.wage = expected_wage(player, team, current_date);
             player.transfer_listed = false;
             player.loan_listed = false;
             player.transfer_offers.clear();
@@ -510,7 +512,13 @@ pub fn process_contract_expiries(game: &mut Game) {
 }
 
 pub(crate) fn expected_wage(player: &Player, team: &Team, current_date: NaiveDate) -> u32 {
-    let mut wage = player.wage as f32;
+    let apply_minimum_floor = should_apply_minimum_expected_wage_floor(player, current_date);
+    let starting_wage = if apply_minimum_floor {
+        player.wage.max(minimum_expected_wage_floor(player))
+    } else {
+        player.wage
+    };
+    let mut wage = starting_wage as f32;
     let age = player_age_on(current_date, &player.date_of_birth);
     let remaining_days = remaining_contract_days(player, current_date);
 
@@ -537,7 +545,21 @@ pub(crate) fn expected_wage(player: &Player, team: &Team, current_date: NaiveDat
     }
 
     let rounded = round_up_to_nearest_thousand(wage.ceil() as u32);
-    rounded.max(player.wage)
+    let expected = rounded.max(player.wage);
+    if apply_minimum_floor {
+        expected.max(minimum_expected_wage_floor(player))
+    } else {
+        expected
+    }
+}
+
+fn should_apply_minimum_expected_wage_floor(player: &Player, current_date: NaiveDate) -> bool {
+    player.wage == 0 || player.team_id.is_none() || remaining_contract_days(player, current_date) == 0
+}
+
+fn minimum_expected_wage_floor(player: &Player) -> u32 {
+    let market_value_floor = (player.market_value / 20).min(u64::from(u32::MAX)) as u32;
+    round_up_to_nearest_thousand(market_value_floor.max(25_000))
 }
 
 fn importance_wage_multiplier(player: &Player) -> f32 {
@@ -820,4 +842,3 @@ fn contract_expired_message(
         vec![("player", player_name), ("team", team_name)],
     )
 }
-
