@@ -2849,6 +2849,8 @@
         }
       },
       "fanPetition": {
+        "subject": "Petição da torcida — Identidade de draft",
+        "body": "Um grupo de torcedores do {{team}} organizou uma petição pedindo uma identidade de draft mais clara e uma melhor configuração de objetivos.\n\n\"Queremos planos proativos no Rift, não scaling passivo toda série. Mostrem que o time sabe como quer vencer.\"\n\nMais de 500 assinaturas até agora. Como você responde?",
         "subject0": "Petição da torcida — Drafts mais proativos",
         "subject1": "Petição da torcida — Mais espaço para o Academy",
         "subject2": "Carta aberta — Transparência competitiva",

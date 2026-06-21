@@ -2849,6 +2849,8 @@
         }
       },
       "fanPetition": {
+        "subject": "Fan Petition — Draft Identity",
+        "body": "A group of {{team}} supporters has organized a petition asking for a clearer draft identity and sharper objective setups.\n\n\"We want proactive plans on the Rift, not passive scaling every series. Show us the team knows how it wants to win.\"\n\nOver 500 signatures so far. How do you respond?",
         "subject0": "Fan Petition — More Attacking Football",
         "subject1": "Fan Petition — Give Youth a Chance",
         "subject2": "Fan Open Letter — Transparency",

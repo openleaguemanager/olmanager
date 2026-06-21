@@ -2849,6 +2849,8 @@
         }
       },
       "fanPetition": {
+        "subject": "Taraftar Dilekçesi — Draft kimliği",
+        "body": "Bir grup {{team}} taraftarı, daha net bir draft kimliği ve daha keskin objektif kurulumları isteyen bir dilekçe başlattı.\n\n\"Her seride pasif scaling yerine Rift'te proaktif planlar istiyoruz. Bize takımın nasıl kazanmak istediğini bildiğini gösterin.\"\n\nŞimdiden 500'den fazla imza var. Nasıl yanıt veriyorsunuz?",
         "subject0": "Taraftar Dilekçesi — Daha proaktif draftlar",
         "subject1": "Taraftar Dilekçesi — Akademi yeteneklerine oyun süresi ver",
         "subject2": "Taraftar Açık Mektubu — Rekabetçi şeffaflık",

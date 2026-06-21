@@ -2849,6 +2849,8 @@
         }
       },
       "fanPetition": {
+        "subject": "Pétition des supporters — Identité de draft",
+        "body": "Un groupe de supporters de {{team}} a lancé une pétition demandant une identité de draft plus claire et une meilleure planification des objectifs.\n\n\"On veut des plans proactifs sur la Faille, pas du scaling passif à chaque série. Montrez que l'équipe sait comment elle veut gagner.\"\n\nPlus de 500 signatures déjà. Comment répondez-vous ?",
         "subject0": "Pétition des supporters — Drafts plus proactifs",
         "subject1": "Pétition des supporters — Plus de scène pour l'académie",
         "subject2": "Lettre ouverte — Transparence compétitive",

@@ -2638,6 +2638,8 @@
         }
       },
       "fanPetition": {
+        "subject": "Petizione tifosi — Identità di draft",
+        "body": "Un gruppo di tifosi del {{team}} ha organizzato una petizione chiedendo un'identità di draft più chiara e una migliore pianificazione degli obiettivi.\n\n\"Vogliamo piani proattivi sulla Rift, non scaling passivo ogni serie. Dimostrate che la squadra sa come vuole vincere.\"\n\nOltre 500 firme finora. Come rispondi?",
         "subject0": "Petizione tifosi — più gioco offensivo",
         "subject1": "Petizione tifosi — date spazio ai giovani",
         "subject2": "Lettera aperta dei tifosi — trasparenza",
