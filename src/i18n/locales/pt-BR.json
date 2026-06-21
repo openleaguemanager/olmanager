@@ -2820,10 +2820,8 @@
       "community": {
         "subject0": "Dia Aberto para a Comunidade",
         "subject1": "Sessão de Treino com Jovens",
-        "subject2": "Anúncio de Evento Beneficente",
         "body0": "O {{team}} realizou um dia aberto para a comunidade no centro de treinamento hoje.\n\nOs torcedores puderam conhecer os jogadores e assistir a uma sessão de treino. O clima foi fantástico e fez maravilhas pelo espírito de equipe.",
-        "body1": "Vários jogadores do time principal do {{team}} participaram de uma sessão de treino com jovens em uma escola local.\n\nÓtima PR para o clube, e os jogadores parecem energizados pela experiência.",
-        "body2": "O clube organizou uma iniciativa beneficente em parceria com uma fundação local.\n\nO {{team}} continua construindo laços fortes com a comunidade. A diretoria está satisfeita com a imagem positiva."
+        "body1": "Vários jogadores do time principal do {{team}} participaram de uma sessão de treino com jovens em uma escola local.\n\nÓtima PR para o clube, e os jogadores parecem energizados pela experiência."
       },
       "moodReport": {
         "subject": "Relatório do Vestiário — Humor: {{mood}}",

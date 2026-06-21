@@ -901,14 +901,6 @@ pub(super) fn community_event_message(msg_id: &str, team_name: &str, date: &str)
                 team_name
             ),
         ),
-        (
-            "Charity Match Announcement",
-            format!(
-                "The club has organized a charity initiative in partnership with a local foundation.\n\n\
-                {} continues to build strong ties with the community. The board is pleased with the positive image.",
-                team_name
-            ),
-        ),
     ];
     let idx = rng.random_range(0..events.len());
     let (subject, body) = &events[idx];

@@ -2609,10 +2609,8 @@
       "community": {
         "subject0": "Giornata aperta alla comunità",
         "subject1": "Sessione di coaching giovanile",
-        "subject2": "Annuncio partita di beneficenza",
         "body0": "Oggi il {{team}} ha organizzato una giornata aperta al centro sportivo.\n\nI tifosi hanno potuto incontrare i giocatori e assistere a una sessione di allenamento. L'atmosfera è stata fantastica e ha fatto molto bene allo spirito della squadra.",
-        "body1": "Diversi giocatori della prima squadra del {{team}} hanno partecipato volontariamente a una sessione di allenamento giovanile in una scuola locale.\n\nOttima pubblicità per il club, e i giocatori sembrano energizzati dall'esperienza.",
-        "body2": "Il club ha organizzato un'iniziativa benefica in collaborazione con una fondazione locale.\n\nIl {{team}} continua a costruire forti legami con la comunità. La dirigenza è soddisfatta dell'immagine positiva."
+        "body1": "Diversi giocatori della prima squadra del {{team}} hanno partecipato volontariamente a una sessione di allenamento giovanile in una scuola locale.\n\nOttima pubblicità per il club, e i giocatori sembrano energizzati dall'esperienza."
       },
       "moodReport": {
         "subject": "Rapporto spogliatoio — Umore: {{mood}}",

@@ -2819,10 +2819,8 @@
       "community": {
         "subject0": "Community Open Day",
         "subject1": "Youth Coaching Session",
-        "subject2": "Charity Match Announcement",
         "body0": "{{team}} hosted a community open day at the training ground today.\n\nFans got to meet the players and watch a training session. The atmosphere was fantastic and it's done wonders for team spirit.",
-        "body1": "Several first-team players from {{team}} volunteered for a youth coaching session at a local school.\n\nGreat PR for the club, and the players seem energized by the experience.",
-        "body2": "The club has organized a charity initiative in partnership with a local foundation.\n\n{{team}} continues to build strong ties with the community. The board is pleased with the positive image."
+        "body1": "Several first-team players from {{team}} volunteered for a youth coaching session at a local school.\n\nGreat PR for the club, and the players seem energized by the experience."
       },
       "moodReport": {
         "subject": "Relatório do Balneário — Ânimo: {{mood}}",

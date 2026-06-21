@@ -2820,10 +2820,8 @@
       "community": {
         "subject0": "Topluluk Günü",
         "subject1": "Gençlik Koçluk Seansı",
-        "subject2": "Yardım Maçı Duyurusu",
         "body0": "{{team}} bugün antrenman tesislerinde bir topluluk günü düzenledi.\n\nTaraftarlar oyuncularla tanışma ve bir antrenman seansını izleme fırsatı buldu. Atmosfer harikaydı ve takım ruhu için harikalar yarattı.",
-        "body1": "{{team}} takımından birkaç as oyuncu, yerel bir okulda bir gençlik koçluk seansı için gönüllü oldu.\n\nKulüp için harika bir PR çalışması ve oyuncular da bu deneyimden enerji almış görünüyorlar.",
-        "body2": "Kulüp, yerel bir vakıfla ortaklaşa bir yardım girişimi düzenledi.\n\n{{team}} toplumla güçlü bağlar kurmaya devam ediyor. Yönetim bu olumlu imajdan memnun."
+        "body1": "{{team}} takımından birkaç as oyuncu, yerel bir okulda bir gençlik koçluk seansı için gönüllü oldu.\n\nKulüp için harika bir PR çalışması ve oyuncular da bu deneyimden enerji almış görünüyorlar."
       },
       "moodReport": {
         "subject": "Soyunma Odası Raporu — Moral: {{mood}}",
