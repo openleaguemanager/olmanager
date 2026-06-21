@@ -1,5 +1,6 @@
 use crate::champions::{ChampionMasteryEntry, ChampionPatchState};
 use crate::clock::GameClock;
+use crate::contract_wage_policy::AiTransferCapState;
 use crate::domain::league::League;
 use crate::domain::manager::Manager;
 use crate::domain::message::InboxMessage;
@@ -136,6 +137,13 @@ pub struct Game {
     pub competition_configs: HashMap<String, CompetitionManifest>,
     #[serde(default)]
     pub transfer_history: TransferHistory,
+    /// Per-team daily counters for AI-initiated transfers (strategic/FA/club-to-club
+    /// share one bucket; emergency repairs have a separate bucket).
+    #[serde(default)]
+    pub ai_transfer_cap_counts: HashMap<String, AiTransferCapState>,
+    /// Last in-game date for which `ai_transfer_cap_counts` was reset.
+    #[serde(default)]
+    pub ai_transfer_cap_last_reset_date: Option<String>,
 }
 
 /// Lenient deserializer for `competition_configs`.
@@ -193,6 +201,8 @@ impl Game {
             stats_state: StatsState::default(),
             competition_configs: HashMap::new(),
             transfer_history: TransferHistory::default(),
+            ai_transfer_cap_counts: HashMap::new(),
+            ai_transfer_cap_last_reset_date: None,
         };
         crate::identity_upgrade::upgrade_game_football_identities(&mut game);
         crate::season_context::refresh_game_context(&mut game);
@@ -205,7 +215,11 @@ impl Game {
     pub fn active_league(&self) -> Option<&League> {
         self.user_competition_id
             .as_ref()
-            .and_then(|cid| self.leagues.iter().find(|l| l.competition_id.as_deref() == Some(cid)))
+            .and_then(|cid| {
+                self.leagues
+                    .iter()
+                    .find(|l| l.competition_id.as_deref() == Some(cid))
+            })
             .or_else(|| self.leagues.first())
     }
 
@@ -213,7 +227,11 @@ impl Game {
     pub fn active_league_mut(&mut self) -> Option<&mut League> {
         let cid = self.user_competition_id.clone();
         if let Some(ref cid) = cid {
-            if let Some(pos) = self.leagues.iter().position(|l| l.competition_id.as_deref() == Some(cid)) {
+            if let Some(pos) = self
+                .leagues
+                .iter()
+                .position(|l| l.competition_id.as_deref() == Some(cid))
+            {
                 return self.leagues.get_mut(pos);
             }
         }
@@ -231,8 +249,11 @@ impl Game {
     pub fn active_league_index(&self) -> usize {
         self.user_competition_id
             .as_ref()
-            .and_then(|cid| self.leagues.iter().position(|l| l.competition_id.as_deref() == Some(cid)))
+            .and_then(|cid| {
+                self.leagues
+                    .iter()
+                    .position(|l| l.competition_id.as_deref() == Some(cid))
+            })
             .unwrap_or(0)
     }
 }
-

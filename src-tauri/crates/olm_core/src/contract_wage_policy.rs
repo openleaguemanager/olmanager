@@ -1,11 +1,20 @@
-use crate::contracts::RenewalFinancialProjection;
+use crate::contracts::{RenewalFinancialProjection, expected_contract_years, expected_wage};
+use crate::domain::league::League;
+use crate::domain::player::Player;
+use crate::domain::team::Team;
 use crate::finances::calc_cash_runway_weeks;
 use crate::game::Game;
-use crate::domain::team::Team;
+use serde::{Deserialize, Serialize};
 
 const WAGE_SOFT_CAP_PCT: i64 = 110;
 const LEGACY_OVER_BUDGET_GRACE_PCT: i64 = 3;
 const LEGACY_OVER_BUDGET_GRACE_MIN: i64 = 25_000;
+
+const MAX_AI_TRANSFERS_PER_DAY: u8 = 2;
+const MAX_AI_EMERGENCY_TRANSFERS_PER_DAY: u8 = 1;
+
+const HIGH_REPUTATION_THRESHOLD: u32 = 1_100;
+const MIN_STRATEGIC_ATTRACTIVENESS: i32 = 35;
 
 fn annual_team_wage_bill(game: &Game, team_id: &str) -> i64 {
     let player_wages: i64 = game
@@ -114,3 +123,193 @@ pub fn project_renewal_financial_impact(
     })
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SigningIntent {
+    Emergency,
+    Strategic,
+    Casual,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SigningRejectionReason {
+    None,
+    WageBudgetExceeded,
+    ReputationMismatch,
+    DailyCapReached,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SigningDecision {
+    pub accepted: bool,
+    pub annual_wage: u32,
+    pub contract_years: u8,
+    pub reason: SigningRejectionReason,
+}
+
+impl SigningDecision {
+    fn accepted(annual_wage: u32, contract_years: u8) -> Self {
+        Self {
+            accepted: true,
+            annual_wage,
+            contract_years,
+            reason: SigningRejectionReason::None,
+        }
+    }
+
+    fn rejected(reason: SigningRejectionReason, annual_wage: u32, contract_years: u8) -> Self {
+        Self {
+            accepted: false,
+            annual_wage,
+            contract_years,
+            reason,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum AiTransferKind {
+    Strategic,
+    FreeAgent,
+    ClubToClub,
+    Emergency,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AiTransferCapState {
+    pub strategic_count: u8,
+    pub emergency_count: u8,
+}
+
+/// Resolve a team's competition tier (1..=3).
+/// Prefers `team.competition_id -> game.leagues[].tier`, falling back to
+/// reputation bands when no matching league exists.
+pub fn ai_team_tier(team: &Team, game: &Game) -> u8 {
+    tier_from_competition_id(team, &game.leagues)
+        .unwrap_or_else(|| tier_from_reputation(team.reputation))
+}
+
+fn tier_from_competition_id(team: &Team, leagues: &[League]) -> Option<u8> {
+    let competition_id = team.competition_id.as_deref()?;
+    leagues
+        .iter()
+        .find(|league| league.competition_id.as_deref() == Some(competition_id))
+        .map(|league| league.tier.max(1).min(3))
+}
+
+fn tier_from_reputation(reputation: u32) -> u8 {
+    if reputation >= 1_300 {
+        1
+    } else if reputation >= 1_100 {
+        1
+    } else if reputation >= 800 {
+        2
+    } else {
+        3
+    }
+}
+
+/// Compute a free-agent attractiveness score used by the strategic gating
+/// path. Mirrors the spirit of `transfers::incoming_interest_score` but uses
+/// stable player attributes so the result is deterministic per player.
+pub fn player_attractiveness_score(player: &Player) -> i32 {
+    let mut score = 8;
+
+    if player.market_value >= 1_000_000 {
+        score += 20;
+    } else if player.market_value >= 500_000 {
+        score += 10;
+    }
+
+    if player.lol_ovr >= 80 {
+        score += 15;
+    } else if player.lol_ovr >= 70 {
+        score += 8;
+    }
+
+    score
+}
+
+/// Reputation/tier fit gate for AI signings.
+/// Emergency intent always passes. Strategic intent at high-reputation tier-1
+/// clubs rejects low-impact free agents unless roster validity is at stake.
+pub fn reputation_fit_ok(team: &Team, player: &Player, intent: SigningIntent, game: &Game) -> bool {
+    if matches!(intent, SigningIntent::Emergency | SigningIntent::Casual) {
+        return true;
+    }
+
+    let is_elite_context =
+        team.reputation >= HIGH_REPUTATION_THRESHOLD && ai_team_tier(team, game) == 1;
+    if !is_elite_context {
+        return true;
+    }
+
+    player_attractiveness_score(player) >= MIN_STRATEGIC_ATTRACTIVENESS
+}
+
+/// Shared AI signing policy: computes wage/term and enforces budget + fit gates.
+pub fn ai_signing_policy(
+    game: &Game,
+    team: &Team,
+    player: &Player,
+    intent: SigningIntent,
+) -> SigningDecision {
+    let current_date = game.clock.current_date.date_naive();
+    let annual_wage = expected_wage(player, team, current_date);
+    let contract_years = expected_contract_years(player, current_date) as u8;
+
+    if !reputation_fit_ok(team, player, intent, game) {
+        return SigningDecision::rejected(
+            SigningRejectionReason::ReputationMismatch,
+            annual_wage,
+            contract_years,
+        );
+    }
+
+    if !renewal_wage_policy_allows(game, team, 0, annual_wage) {
+        return SigningDecision::rejected(
+            SigningRejectionReason::WageBudgetExceeded,
+            annual_wage,
+            contract_years,
+        );
+    }
+
+    SigningDecision::accepted(annual_wage, contract_years)
+}
+
+/// Attempt to consume one slot from the per-team daily transfer cap.
+/// Returns `true` if the slot was available.
+pub fn ai_transfer_cap_try_consume(game: &mut Game, team_id: &str, kind: AiTransferKind) -> bool {
+    let state = game
+        .ai_transfer_cap_counts
+        .entry(team_id.to_string())
+        .or_default();
+
+    let allowed = match kind {
+        AiTransferKind::Emergency => state.emergency_count < MAX_AI_EMERGENCY_TRANSFERS_PER_DAY,
+        _ => state.strategic_count < MAX_AI_TRANSFERS_PER_DAY,
+    };
+
+    if !allowed {
+        return false;
+    }
+
+    match kind {
+        AiTransferKind::Emergency => state.emergency_count += 1,
+        _ => state.strategic_count += 1,
+    }
+
+    true
+}
+
+/// Reset per-team transfer counters when the in-game date advances.
+pub fn ai_transfer_cap_reset_if_new_day(game: &mut Game) {
+    let current_date = game.clock.current_date.format("%Y-%m-%d").to_string();
+    if game.ai_transfer_cap_last_reset_date.as_deref() == Some(&current_date) {
+        return;
+    }
+    game.ai_transfer_cap_counts.clear();
+    game.ai_transfer_cap_last_reset_date = Some(current_date);
+}

@@ -1,8 +1,8 @@
+use crate::domain::league::{Fixture, FixtureStatus, League, StandingEntry};
 use crate::game::Game;
 use crate::messages;
 use crate::news;
 use chrono::Datelike;
-use crate::domain::league::{Fixture, FixtureStatus, League, StandingEntry};
 use std::collections::HashMap;
 
 fn completed_fixtures_for_day<'a>(league: &'a League, today: &str) -> Vec<&'a Fixture> {
@@ -423,27 +423,73 @@ pub(super) fn generate_ai_transfer_news(game: &mut Game) {
         params.insert("team".to_string(), team_name);
         params.insert("years".to_string(), entry.contract_years.to_string());
         params.insert("wage".to_string(), entry.annual_wage.to_string());
+        if let Some(ref intent) = entry.intent {
+            params.insert("intent".to_string(), intent.clone());
+        }
 
-        let article =
-            crate::domain::news::NewsArticle::new(
-                article_id,
-                String::new(),
-                String::new(),
-                String::new(),
-                date,
-                crate::domain::news::NewsCategory::TransferRumour,
-            )
-            .with_i18n(
-                "be.news.freeAgentSigned.headline",
-                "be.news.freeAgentSigned.body",
-                "be.source.leagueChronicle",
-                params,
-            )
-            .with_teams(vec![entry.to_team_id.clone()])
-            .with_players(vec![entry.player_id.clone()]);
+        let article = crate::domain::news::NewsArticle::new(
+            article_id,
+            String::new(),
+            String::new(),
+            String::new(),
+            date,
+            crate::domain::news::NewsCategory::TransferRumour,
+        )
+        .with_i18n(
+            "be.news.freeAgentSigned.headline",
+            "be.news.freeAgentSigned.body",
+            "be.source.leagueChronicle",
+            params,
+        )
+        .with_teams(vec![entry.to_team_id.clone()])
+        .with_players(vec![entry.player_id.clone()]);
 
         game.news.push(article);
     }
+}
+
+/// Generate a news article when an elite team strategically passes on a free agent
+/// because their impact does not meet the club's recruitment threshold.
+pub(crate) fn generate_strategic_rejection_news(game: &mut Game, team_id: &str, player_id: &str) {
+    let article_id = format!(
+        "ai_strategic_rejected_{}_{}",
+        team_id,
+        game.clock.current_date.format("%Y-%m-%d")
+    );
+    if game.news.iter().any(|n| n.id == article_id) {
+        return;
+    }
+
+    let player_name = player_match_name_or_id(game, player_id);
+    let team_name = team_name(game, team_id);
+    let date = game.clock.current_date.to_rfc3339();
+
+    let mut params = HashMap::new();
+    params.insert("player".to_string(), player_name.clone());
+    params.insert("team".to_string(), team_name.clone());
+    params.insert("intent".to_string(), "strategic".to_string());
+    params.insert("outcome".to_string(), "rejected".to_string());
+
+    let article = crate::domain::news::NewsArticle::new(
+        article_id,
+        format!("{team_name} pass on {player_name}"),
+        format!(
+            "{team_name} ended their strategic review of {player_name} without making an offer."
+        ),
+        "League Chronicle".to_string(),
+        date,
+        crate::domain::news::NewsCategory::TransferRumour,
+    )
+    .with_i18n(
+        "be.news.strategicRejection.headline",
+        "be.news.strategicRejection.body",
+        "be.source.leagueChronicle",
+        params,
+    )
+    .with_teams(vec![team_id.to_string()])
+    .with_players(vec![player_id.to_string()]);
+
+    game.news.push(article);
 }
 
 #[cfg(test)]
@@ -453,19 +499,19 @@ mod tests {
         generate_pre_match_messages, generate_weekly_digest_news,
     };
     use crate::clock::GameClock;
-    use crate::game::Game;
-    use chrono::{TimeZone, Utc};
     use crate::domain::league::{
-        Fixture, MatchType, FixtureStatus, League, MatchResult, StandingEntry,
+        Fixture, FixtureStatus, League, MatchResult, MatchType, StandingEntry,
     };
     use crate::domain::manager::Manager;
     use crate::domain::message::{MessageCategory, MessagePriority};
     use crate::domain::news::NewsCategory;
     use crate::domain::player::{LolRole, Player, PlayerAttributes};
     use crate::domain::team::Team;
+    use crate::domain::transfer_history::TransferHistoryEntry;
     use crate::engine::{KillDetail, MatchReport, MatchReportEndReason, Side, TeamStats};
-        use crate::domain::transfer_history::TransferHistoryEntry;
-        use std::collections::HashMap;
+    use crate::game::Game;
+    use chrono::{TimeZone, Utc};
+    use std::collections::HashMap;
 
     fn make_team(id: &str, name: &str) -> Team {
         Team::new(
@@ -1064,6 +1110,7 @@ mod tests {
         from_team_id: &str,
         to_team_id: &str,
         is_user_involved: bool,
+        intent: Option<&str>,
     ) -> TransferHistoryEntry {
         TransferHistoryEntry {
             id: id.to_string(),
@@ -1086,15 +1133,16 @@ mod tests {
             initial_offer_fee: None,
             negotiation_rounds: 0,
             included_players: vec![],
+            intent: intent.map(str::to_string),
         }
     }
 
     #[test]
     fn generate_ai_transfer_news_creates_article_for_ai_free_agent_signing() {
         let mut game = make_game("2025-08-12", FixtureStatus::Completed);
-        game.transfer_history.entries.push(make_transfer_entry(
-            "th1", "p1", "", "team2", false,
-        ));
+        game.transfer_history
+            .entries
+            .push(make_transfer_entry("th1", "p1", "", "team2", false, None));
         // Add a player and team for name resolution
         game.players.push(make_player("p1", "Alice", "team2"));
         game.teams.push(make_team("team2", "Beta FC"));
@@ -1119,16 +1167,16 @@ mod tests {
         );
         assert_eq!(article.team_ids, vec!["team2".to_string()]);
         assert_eq!(article.player_ids, vec!["p1".to_string()]);
-        assert_eq!(article.i18n_params.get("player"), Some(&"Alice".to_string()));
+        assert_eq!(
+            article.i18n_params.get("player"),
+            Some(&"Alice".to_string())
+        );
         assert_eq!(
             article.i18n_params.get("team"),
             Some(&"Beta FC".to_string())
         );
         assert_eq!(article.i18n_params.get("years"), Some(&"2".to_string()));
-        assert_eq!(
-            article.i18n_params.get("wage"),
-            Some(&"50000".to_string())
-        );
+        assert_eq!(article.i18n_params.get("wage"), Some(&"50000".to_string()));
     }
 
     #[test]
@@ -1136,7 +1184,7 @@ mod tests {
         let mut game = make_game("2025-08-12", FixtureStatus::Completed);
         game.transfer_history
             .entries
-            .push(make_transfer_entry("th1", "p1", "", "team1", true));
+            .push(make_transfer_entry("th1", "p1", "", "team1", true, None));
 
         game.players.push(make_player("p1", "Alice", "team1"));
 
@@ -1149,7 +1197,7 @@ mod tests {
     fn generate_ai_transfer_news_skips_club_to_club_transfer() {
         let mut game = make_game("2025-08-12", FixtureStatus::Completed);
         game.transfer_history.entries.push(make_transfer_entry(
-            "th1", "p1", "team3", "team2", false,
+            "th1", "p1", "team3", "team2", false, None,
         ));
 
         game.players.push(make_player("p1", "Alice", "team2"));
@@ -1162,9 +1210,9 @@ mod tests {
     #[test]
     fn generate_ai_transfer_news_deduplicates_on_repeat_call() {
         let mut game = make_game("2025-08-12", FixtureStatus::Completed);
-        game.transfer_history.entries.push(make_transfer_entry(
-            "th1", "p1", "", "team2", false,
-        ));
+        game.transfer_history
+            .entries
+            .push(make_transfer_entry("th1", "p1", "", "team2", false, None));
         game.players.push(make_player("p1", "Alice", "team2"));
         game.teams.push(make_team("team2", "Beta FC"));
 
@@ -1177,15 +1225,15 @@ mod tests {
     #[test]
     fn generate_ai_transfer_news_handles_multiple_signings() {
         let mut game = make_game("2025-08-12", FixtureStatus::Completed);
-        game.transfer_history.entries.push(make_transfer_entry(
-            "th1", "p1", "", "team2", false,
-        ));
-        game.transfer_history.entries.push(make_transfer_entry(
-            "th2", "p2", "", "team3", false,
-        ));
-        game.transfer_history.entries.push(make_transfer_entry(
-            "th3", "p3", "", "team2", false,
-        ));
+        game.transfer_history
+            .entries
+            .push(make_transfer_entry("th1", "p1", "", "team2", false, None));
+        game.transfer_history
+            .entries
+            .push(make_transfer_entry("th2", "p2", "", "team3", false, None));
+        game.transfer_history
+            .entries
+            .push(make_transfer_entry("th3", "p3", "", "team2", false, None));
         game.players.push(make_player("p1", "Alice", "team2"));
         game.players.push(make_player("p2", "Bob", "team3"));
         game.players.push(make_player("p3", "Carol", "team2"));
@@ -1201,6 +1249,3 @@ mod tests {
         assert!(ids.iter().any(|id| id.starts_with("ai_fa_signed_p3_")));
     }
 }
-
-
-

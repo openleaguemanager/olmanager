@@ -1,8 +1,12 @@
+use crate::contract_wage_policy::{
+    AiTransferKind, SigningIntent, ai_signing_policy, ai_transfer_cap_try_consume,
+};
 use crate::domain::player::{Player, PlayerAttributes};
 use crate::domain::season::TransferWindowStatus;
 use crate::domain::stats::LolRole;
 use crate::domain::team::TeamKind;
 use crate::game::Game;
+use crate::transfers::record_transfer;
 use chrono::{Datelike, NaiveDate};
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -34,6 +38,7 @@ pub enum RosterStabilityReason {
     PreMatch,
     BackgroundSimulation,
     LoadMigration,
+    Emergency,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -296,7 +301,7 @@ fn fill_missing_roles(
             .copied()
             .unwrap_or_else(|| first_uncovered_extra_role(game, team_id));
 
-        if let Some(player_id) = assign_free_agent(game, team_id, role) {
+        if let Some(player_id) = assign_free_agent(game, team_id, role, reason) {
             actions.push(RepairAction::AssignedFreeAgent { player_id, role });
         } else {
             let player_id = available_generated_player_id(game, team_id, reason, role)
@@ -309,7 +314,12 @@ fn fill_missing_roles(
     Ok(())
 }
 
-fn assign_free_agent(game: &mut Game, team_id: &str, role: LolRole) -> Option<String> {
+fn assign_free_agent(
+    game: &mut Game,
+    team_id: &str,
+    role: LolRole,
+    reason: RosterStabilityReason,
+) -> Option<String> {
     let current_date = current_date(game);
     let index = game
         .players
@@ -322,11 +332,76 @@ fn assign_free_agent(game: &mut Game, team_id: &str, role: LolRole) -> Option<St
         })
         .min_by(|(_, left), (_, right)| left.id.cmp(&right.id))
         .map(|(index, _)| index)?;
-    let contract_end = renewed_contract_end(game);
+
+    let team = game
+        .teams
+        .iter()
+        .find(|team| team.id == team_id)
+        .expect("repair team must exist")
+        .clone();
+
+    let intent = repair_signing_intent(reason);
+    let decision = ai_signing_policy(game, &team, &game.players[index], intent);
+    if !decision.accepted {
+        return None;
+    }
+
+    let cap_kind = if is_emergency_repair(reason) {
+        AiTransferKind::Emergency
+    } else {
+        AiTransferKind::Strategic
+    };
+    if !ai_transfer_cap_try_consume(game, team_id, cap_kind) {
+        return None;
+    }
+
+    let contract_end = contract_end_for_years(game, decision.contract_years);
     let player = &mut game.players[index];
+    let player_id = player.id.clone();
     player.team_id = Some(team_id.to_string());
     player.contract_end = Some(contract_end);
-    Some(player.id.clone())
+    player.wage = decision.annual_wage;
+
+    let intent = if is_emergency_repair(reason) {
+        Some("emergency")
+    } else {
+        None
+    };
+    record_transfer(
+        game,
+        &player_id,
+        "",
+        team_id,
+        0,
+        decision.annual_wage,
+        decision.contract_years,
+        false,
+        false,
+        false,
+        None,
+        0,
+        &[],
+        intent,
+    );
+
+    Some(player_id)
+}
+
+fn is_emergency_repair(reason: RosterStabilityReason) -> bool {
+    matches!(
+        reason,
+        RosterStabilityReason::Emergency
+            | RosterStabilityReason::ContractExpired
+            | RosterStabilityReason::TransferOut
+    )
+}
+
+fn repair_signing_intent(reason: RosterStabilityReason) -> SigningIntent {
+    if is_emergency_repair(reason) {
+        SigningIntent::Emergency
+    } else {
+        SigningIntent::Strategic
+    }
 }
 
 fn actions_require_transfer_window_exception(actions: &[RepairAction]) -> bool {
@@ -562,6 +637,15 @@ fn renewed_contract_end(game: &Game) -> String {
     format!("{}-{}", current.year() + 1, RENEWED_CONTRACT_END_MONTH_DAY)
 }
 
+fn contract_end_for_years(game: &Game, contract_years: u8) -> String {
+    let current = current_date(game);
+    format!(
+        "{}-{}",
+        current.year() + i32::from(contract_years.max(1)),
+        RENEWED_CONTRACT_END_MONTH_DAY
+    )
+}
+
 fn current_date(game: &Game) -> NaiveDate {
     game.clock.get_date().date_naive()
 }
@@ -588,6 +672,7 @@ fn reason_slug(reason: RosterStabilityReason) -> &'static str {
         RosterStabilityReason::PreMatch => "prematch",
         RosterStabilityReason::BackgroundSimulation => "background-simulation",
         RosterStabilityReason::LoadMigration => "load-migration",
+        RosterStabilityReason::Emergency => "emergency",
     }
 }
 

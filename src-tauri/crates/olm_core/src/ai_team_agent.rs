@@ -1,4 +1,8 @@
+use crate::contract_wage_policy::{
+    AiTransferKind, SigningIntent, ai_signing_policy, ai_team_tier, ai_transfer_cap_try_consume,
+};
 use crate::domain::player::{Player, PlayerTrait};
+use crate::domain::season::TransferWindowStatus;
 use crate::domain::team::Team;
 use crate::game::Game;
 use chrono::{Datelike, NaiveDate};
@@ -104,7 +108,9 @@ pub fn trait_bonus(traits: &[PlayerTrait]) -> f64 {
             | PlayerTrait::ShotCaller
             | PlayerTrait::IceCold
             | PlayerTrait::Visionary => bonus += 0.2,
-            PlayerTrait::TeamPlayer | PlayerTrait::Sentinel | PlayerTrait::Workhorse => bonus += 0.1,
+            PlayerTrait::TeamPlayer | PlayerTrait::Sentinel | PlayerTrait::Workhorse => {
+                bonus += 0.1
+            }
             _ => {}
         }
     }
@@ -250,7 +256,12 @@ pub fn assess_roster(team: &Team, players: &[Player], today: NaiveDate) -> Roste
 
 /// Evaluate which players on a team should get renewal offers.
 /// Sets `player.morale_core.renewal_state` for eligible players.
-pub fn evaluate_renewals(team: &Team, players: &mut [Player], report: &RosterReport, today: NaiveDate) {
+pub fn evaluate_renewals(
+    team: &Team,
+    players: &mut [Player],
+    report: &RosterReport,
+    today: NaiveDate,
+) {
     use crate::domain::player::{ContractRenewalState, RenewalSessionStatus};
 
     let soft_cap_wage = (team.wage_budget as f64 * WAGE_SOFT_CAP_MULTIPLIER) as i64;
@@ -514,9 +525,7 @@ fn select_ai_teams_for_today(game: &Game) -> Vec<String> {
     let ai_teams: Vec<&Team> = game
         .teams
         .iter()
-        .filter(|t| {
-            t.team_kind == crate::domain::team::TeamKind::Main && t.manager_id.is_none()
-        })
+        .filter(|t| t.team_kind == crate::domain::team::TeamKind::Main && t.manager_id.is_none())
         .collect();
 
     if ai_teams.is_empty() {
@@ -581,6 +590,153 @@ pub fn process_ai_team_agents(game: &mut Game) {
 }
 
 // ---------------------------------------------------------------------------
+// Strategic recruitment — high-reputation tier-1 clubs pursue upgrades
+// ---------------------------------------------------------------------------
+
+const STRATEGIC_REPUTATION_THRESHOLD: u32 = 1_100;
+
+/// Evaluate contracted players from other clubs as upgrades for elite teams.
+/// Falls back to high-impact free agents if no club-to-club target is found.
+/// Respects the shared signing policy and the daily AI transfer cap.
+pub fn ai_strategic_recruitment(game: &mut Game, team_id: &str) {
+    let transfer_open = matches!(
+        game.season_context.transfer_window.status,
+        TransferWindowStatus::Open | TransferWindowStatus::DeadlineDay
+    );
+    if !transfer_open {
+        return;
+    }
+
+    let Some(team) = game.teams.iter().find(|t| t.id == team_id).cloned() else {
+        return;
+    };
+    if team.team_kind != crate::domain::team::TeamKind::Main || team.manager_id.is_some() {
+        return;
+    }
+    if team.reputation < STRATEGIC_REPUTATION_THRESHOLD {
+        return;
+    }
+    if ai_team_tier(&team, game) != 1 {
+        return;
+    }
+    if team.transfer_budget <= 0 || team.finance <= 0 {
+        return;
+    }
+
+    let current_date = game.clock.current_date.date_naive();
+    let budget_cap = team.transfer_budget.min(team.finance);
+    let preferred_role = crate::transfers::ai_team_priority_role(game, team_id);
+    let user_team_id = game.manager.team_id.as_deref();
+
+    // Club-to-club upgrade path: target the team's weakest role on another club.
+    let club_candidate = {
+        let candidates: Vec<(String, String, u64)> = game
+            .players
+            .iter()
+            .filter_map(|player| {
+                let seller_id = player.team_id.as_deref()?;
+                if seller_id == team_id {
+                    return None;
+                }
+                // Do not poach the user-managed team without a negotiated offer.
+                if user_team_id == Some(seller_id) {
+                    return None;
+                }
+                let seller_team = game.teams.iter().find(|t| t.id == seller_id)?;
+                if seller_team.team_kind != crate::domain::team::TeamKind::Main {
+                    return None;
+                }
+                if crate::transfers::lol_role_to_string(&player.natural_position) != preferred_role
+                {
+                    return None;
+                }
+                if let Some(date_str) = &player.can_be_transferred_until {
+                    if let Ok(date) = NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+                        if date >= current_date {
+                            return None;
+                        }
+                    }
+                }
+                let fee =
+                    crate::transfers::suggested_incoming_fee(current_date, player, &team, team_id);
+                if fee == 0 || (fee as i64) > budget_cap {
+                    return None;
+                }
+                let decision = ai_signing_policy(game, &team, player, SigningIntent::Strategic);
+                if !decision.accepted {
+                    return None;
+                }
+                Some((player.id.clone(), seller_id.to_string(), fee))
+            })
+            .collect();
+
+        candidates
+            .into_iter()
+            .map(|(player_id, seller_id, fee)| {
+                let market_value = game
+                    .players
+                    .iter()
+                    .find(|p| p.id == player_id)
+                    .map(|p| p.market_value)
+                    .unwrap_or(0);
+                (player_id, seller_id, fee, market_value)
+            })
+            .max_by_key(|(_, _, _, market_value)| *market_value)
+    };
+
+    if let Some((player_id, seller_id, fee, _)) = club_candidate {
+        if ai_transfer_cap_try_consume(game, team_id, AiTransferKind::ClubToClub) {
+            let _ = crate::transfers::execute_transfer(
+                game, &player_id, team_id, &seller_id, fee, true,
+            );
+        }
+        return;
+    }
+
+    // Free-agent fallback: sign a high-impact free agent for the weak role.
+    let mut fa_candidate: Option<(String, u64, u64)> = None;
+    let mut rejected_candidate: Option<(String, u64)> = None;
+    for p in game
+        .players
+        .iter()
+        .filter(|p| p.team_id.is_none())
+        .filter(|p| crate::transfers::lol_role_to_string(&p.natural_position) == preferred_role)
+    {
+        let fee = (p.market_value as i64).max(25_000) / 5;
+        if fee <= 0 || fee > budget_cap {
+            continue;
+        }
+        let decision = ai_signing_policy(game, &team, p, SigningIntent::Strategic);
+        if decision.accepted {
+            let current_best = fa_candidate.as_ref().map(|(_, _, mv)| *mv).unwrap_or(0);
+            if p.market_value > current_best {
+                fa_candidate = Some((p.id.clone(), fee as u64, p.market_value));
+            }
+        } else if matches!(
+            decision.reason,
+            crate::contract_wage_policy::SigningRejectionReason::ReputationMismatch
+        ) {
+            let current_best = rejected_candidate.as_ref().map(|(_, mv)| *mv).unwrap_or(0);
+            if p.market_value > current_best {
+                rejected_candidate = Some((p.id.clone(), p.market_value));
+            }
+        }
+    }
+
+    if let Some((player_id, fee, _)) = fa_candidate {
+        if ai_transfer_cap_try_consume(game, team_id, AiTransferKind::Strategic) {
+            let _ = crate::transfers::execute_free_agent_signing(game, &player_id, team_id, fee);
+        }
+        return;
+    }
+
+    // Tag a strategic rejection in news if no high-impact fallback was found.
+    if let Some((player_id, _)) = rejected_candidate {
+        crate::turn::news::generate_strategic_rejection_news(game, team_id, &player_id);
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Conflict resolution — Team Agent overrides Player Agent
 // ---------------------------------------------------------------------------
 
@@ -609,7 +765,9 @@ pub fn resolve_conflicts(game: &mut Game, previously_transfer_listed: &HashSet<S
     let mut role_depth: HashMap<(String, LolRole), u32> = HashMap::new();
     for p in players {
         if let Some(ref tid) = p.team_id {
-            *role_depth.entry((tid.clone(), p.natural_position)).or_insert(0) += 1;
+            *role_depth
+                .entry((tid.clone(), p.natural_position))
+                .or_insert(0) += 1;
         }
     }
 
@@ -631,7 +789,10 @@ pub fn resolve_conflicts(game: &mut Game, previously_transfer_listed: &HashSet<S
             continue; // expired contract → free agent
         }
 
-        let team = match teams.iter().find(|t| player.team_id.as_deref() == Some(&t.id)) {
+        let team = match teams
+            .iter()
+            .find(|t| player.team_id.as_deref() == Some(&t.id))
+        {
             Some(t) => t,
             None => continue,
         };
@@ -677,10 +838,8 @@ mod tests {
     use super::*;
     use crate::clock::GameClock;
     use crate::domain::manager::Manager;
-    use crate::domain::player::{
-        LolRole, Player, PlayerAttributes, PlayerSeasonStats,
-    };
     use crate::domain::player::RenewalSessionStatus;
+    use crate::domain::player::{LolRole, Player, PlayerAttributes, PlayerSeasonStats};
     use crate::domain::team::Team;
     use chrono::{TimeZone, Utc};
 
@@ -818,32 +977,44 @@ mod tests {
     fn test_retention_score_high_performer() {
         let team = make_team("t1", "Test Team");
         let player = make_player(
-            "p1", "Star", "t1", LolRole::Mid,
-            95,   // lol_ovr
-            8.5,  // avg_rating
-            60_000, // wage
+            "p1",
+            "Star",
+            "t1",
+            LolRole::Mid,
+            95,                 // lol_ovr
+            8.5,                // avg_rating
+            60_000,             // wage
             Some("2027-06-15"), // contract_end
-            "2002-01-01", // age ~24
+            "2002-01-01",       // age ~24
             vec![PlayerTrait::HyperCarry],
         );
         let score = retention_score(&player, &team, test_date());
-        assert!(score > 0.7, "retention_score should be high for star, got {score}");
+        assert!(
+            score > 0.7,
+            "retention_score should be high for star, got {score}"
+        );
     }
 
     #[test]
     fn test_retention_score_low_performer() {
         let team = make_team("t1", "Test Team");
         let player = make_player(
-            "p2", "Bust", "t1", LolRole::Top,
-            55,   // low lol_ovr
-            5.0,  // low avg_rating
-            80_000, // overpaid
+            "p2",
+            "Bust",
+            "t1",
+            LolRole::Top,
+            55,                 // low lol_ovr
+            5.0,                // low avg_rating
+            80_000,             // overpaid
             Some("2026-09-15"), // contract ending soon
-            "1995-01-01", // age ~31
+            "1995-01-01",       // age ~31
             vec![],
         );
         let score = retention_score(&player, &team, test_date());
-        assert!(score < 0.5, "retention_score should be low for bust, got {score}");
+        assert!(
+            score < 0.5,
+            "retention_score should be low for bust, got {score}"
+        );
     }
 
     // Phase 1 — assess_roster
@@ -852,8 +1023,16 @@ mod tests {
     fn test_assess_roster_basic() {
         let team = make_team("t1", "Test Team");
         let player = make_player(
-            "p1", "Star", "t1", LolRole::Mid,
-            90, 8.0, 60_000, Some("2027-06-15"), "2002-01-01", vec![],
+            "p1",
+            "Star",
+            "t1",
+            LolRole::Mid,
+            90,
+            8.0,
+            60_000,
+            Some("2027-06-15"),
+            "2002-01-01",
+            vec![],
         );
         let report = assess_roster(&team, &[player], test_date());
         assert_eq!(*report.role_depth.get(&LolRole::Mid).unwrap(), 1);
@@ -873,8 +1052,30 @@ mod tests {
     fn test_assess_roster_role_gaps_identified() {
         let team = make_team("t1", "Test Team");
         let players = vec![
-            make_player("p1", "Top", "t1", LolRole::Top, 80, 7.0, 50_000, Some("2027-06-15"), "2002-01-01", vec![]),
-            make_player("p2", "Mid", "t1", LolRole::Mid, 85, 7.5, 55_000, Some("2027-06-15"), "2002-01-01", vec![]),
+            make_player(
+                "p1",
+                "Top",
+                "t1",
+                LolRole::Top,
+                80,
+                7.0,
+                50_000,
+                Some("2027-06-15"),
+                "2002-01-01",
+                vec![],
+            ),
+            make_player(
+                "p2",
+                "Mid",
+                "t1",
+                LolRole::Mid,
+                85,
+                7.5,
+                55_000,
+                Some("2027-06-15"),
+                "2002-01-01",
+                vec![],
+            ),
         ];
         let report = assess_roster(&team, &players, test_date());
         assert!(report.role_gaps.contains(&LolRole::Jungle));
@@ -890,15 +1091,18 @@ mod tests {
     fn test_evaluate_renewals_high_performer_gets_offer() {
         let team = make_team("t1", "Test Team");
         let today = test_date();
-        let mut players = vec![
-            make_player(
-                "p1", "Star", "t1", LolRole::Mid,
-                85, 8.0, 50_000,
-                Some("2026-09-15"), // < 6 months
-                "2002-01-01",
-                vec![],
-            ),
-        ];
+        let mut players = vec![make_player(
+            "p1",
+            "Star",
+            "t1",
+            LolRole::Mid,
+            85,
+            8.0,
+            50_000,
+            Some("2026-09-15"), // < 6 months
+            "2002-01-01",
+            vec![],
+        )];
         let report = assess_roster(&team, &players, today);
         evaluate_renewals(&team, &mut players, &report, today);
 
@@ -913,15 +1117,18 @@ mod tests {
     fn test_evaluate_renewals_skip_underperformer() {
         let team = make_team("t1", "Test Team");
         let today = test_date();
-        let mut players = vec![
-            make_player(
-                "p2", "Bust", "t1", LolRole::Top,
-                55, 5.0, 50_000,
-                Some("2026-09-15"),
-                "1995-01-01",
-                vec![],
-            ),
-        ];
+        let mut players = vec![make_player(
+            "p2",
+            "Bust",
+            "t1",
+            LolRole::Top,
+            55,
+            5.0,
+            50_000,
+            Some("2026-09-15"),
+            "1995-01-01",
+            vec![],
+        )];
         let report = assess_roster(&team, &players, today);
         evaluate_renewals(&team, &mut players, &report, today);
 
@@ -936,15 +1143,18 @@ mod tests {
         let mut team = make_team("t1", "Poor Team");
         team.wage_budget = 50_000; // tight budget
         let today = test_date();
-        let mut players = vec![
-            make_player(
-                "p1", "Star", "t1", LolRole::Mid,
-                85, 8.0, 90_000, // already expensive
-                Some("2026-09-15"),
-                "2002-01-01",
-                vec![PlayerTrait::HyperCarry],
-            ),
-        ];
+        let mut players = vec![make_player(
+            "p1",
+            "Star",
+            "t1",
+            LolRole::Mid,
+            85,
+            8.0,
+            90_000, // already expensive
+            Some("2026-09-15"),
+            "2002-01-01",
+            vec![PlayerTrait::HyperCarry],
+        )];
         // Override lol_ovr since assess_roster reads it directly (no Game::new refresh here)
         players[0].lol_ovr = 85;
 
@@ -954,7 +1164,10 @@ mod tests {
         // Soft cap = 50_000 * 1.10 = 55_000, projected = 90_000 * 1.10 = 99_000 > 55_000
         let state = &players[0].morale_core.renewal_state;
         let is_open = matches!(state, Some(s) if s.status == RenewalSessionStatus::Open);
-        assert!(!is_open, "renewal should be skipped when budget is exhausted");
+        assert!(
+            !is_open,
+            "renewal should be skipped when budget is exhausted"
+        );
     }
 
     #[test]
@@ -963,16 +1176,26 @@ mod tests {
         let today = test_date();
         let mut players = vec![
             make_player(
-                "p1", "Star", "t1", LolRole::Mid,
-                85, 8.0, 50_000,
+                "p1",
+                "Star",
+                "t1",
+                LolRole::Mid,
+                85,
+                8.0,
+                50_000,
                 Some("2026-09-15"),
                 "2002-01-01",
                 vec![],
             ),
             // Duplicate same player ID to test deadlock guard
             make_player(
-                "p1", "Star Clone", "t1", LolRole::Mid,
-                85, 8.0, 50_000,
+                "p1",
+                "Star Clone",
+                "t1",
+                LolRole::Mid,
+                85,
+                8.0,
+                50_000,
                 Some("2026-09-15"),
                 "2002-01-01",
                 vec![],
@@ -1005,16 +1228,27 @@ mod tests {
 
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
         let mut team = make_team("ai_team", "AI Team");
         team.team_kind = TeamKind::Main;
         team.manager_id = None; // AI team
 
         let player = make_player(
-            "p1", "Star", "ai_team", LolRole::Mid,
-            85, 8.0, 50_000, Some("2026-09-15"), "2002-01-01", vec![],
+            "p1",
+            "Star",
+            "ai_team",
+            LolRole::Mid,
+            85,
+            8.0,
+            50_000,
+            Some("2026-09-15"),
+            "2002-01-01",
+            vec![],
         );
         let mut game = Game::new(clock, manager, vec![team], vec![player], vec![], vec![]);
         // Game::new refreshes lol_ovr from attributes — override to test high performer logic
@@ -1035,8 +1269,11 @@ mod tests {
 
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
         let mut team = make_team("ai_team", "AI Team");
         team.team_kind = TeamKind::Main;
@@ -1049,17 +1286,20 @@ mod tests {
 
     #[test]
     fn test_process_ai_team_agents_full_integration() {
+        use crate::clock::GameClock;
+        use crate::domain::manager::Manager;
         use crate::domain::player::LolRole;
         use crate::domain::season::TransferWindowStatus;
         use crate::domain::team::TeamKind;
-        use crate::clock::GameClock;
-        use crate::domain::manager::Manager;
         use chrono::{TimeZone, Utc};
 
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
         // AI team with budget + a role gap (no Support)
@@ -1070,12 +1310,67 @@ mod tests {
         team.wage_budget = 500_000;
 
         let base_players = vec![
-            make_player("p1", "Top", "ai_team", LolRole::Top, 80, 7.0, 40_000, Some("2027-06-15"), "2000-01-01", vec![]),
-            make_player("p2", "Jg", "ai_team", LolRole::Jungle, 75, 6.8, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
-            make_player("p3", "Mid", "ai_team", LolRole::Mid, 85, 8.5, 50_000, Some("2026-09-15"), "2002-01-01", vec![]), // high performer, short contract
-            make_player("p4", "Adc", "ai_team", LolRole::Adc, 78, 7.2, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player(
+                "p1",
+                "Top",
+                "ai_team",
+                LolRole::Top,
+                80,
+                7.0,
+                40_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
+            make_player(
+                "p2",
+                "Jg",
+                "ai_team",
+                LolRole::Jungle,
+                75,
+                6.8,
+                45_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
+            make_player(
+                "p3",
+                "Mid",
+                "ai_team",
+                LolRole::Mid,
+                85,
+                8.5,
+                50_000,
+                Some("2026-09-15"),
+                "2002-01-01",
+                vec![],
+            ), // high performer, short contract
+            make_player(
+                "p4",
+                "Adc",
+                "ai_team",
+                LolRole::Adc,
+                78,
+                7.2,
+                45_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
             // Expendable veteran on high wage who should get transfer_listed
-            make_player("p5", "Vet", "ai_team", LolRole::Top, 60, 5.5, 120_000, Some("2028-06-15"), "1995-01-01", vec![]),
+            make_player(
+                "p5",
+                "Vet",
+                "ai_team",
+                LolRole::Top,
+                60,
+                5.5,
+                120_000,
+                Some("2028-06-15"),
+                "1995-01-01",
+                vec![],
+            ),
         ];
 
         let mut game = Game::new(clock, manager, vec![team], base_players, vec![], vec![]);
@@ -1083,8 +1378,16 @@ mod tests {
 
         // Add a free agent Support
         let mut fa = make_player(
-            "fa1", "FreeSupp", "none", LolRole::Support,
-            70, 6.5, 30_000, None, "2001-01-01", vec![],
+            "fa1",
+            "FreeSupp",
+            "none",
+            LolRole::Support,
+            70,
+            6.5,
+            30_000,
+            None,
+            "2001-01-01",
+            vec![],
         );
         fa.market_value = 100_000;
         fa.team_id = None;
@@ -1132,8 +1435,16 @@ mod tests {
     fn test_compute_deadweight_score_high_ovr_low_wage() {
         let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
         let player = make_player(
-            "p1", "Star", "t1", LolRole::Mid,
-            99, 8.0, 50_000, Some("2028-06-15"), "2000-01-01", vec![],
+            "p1",
+            "Star",
+            "t1",
+            LolRole::Mid,
+            99,
+            8.0,
+            50_000,
+            Some("2028-06-15"),
+            "2000-01-01",
+            vec![],
         );
         let score = compute_deadweight_score(&player, today);
         assert!(
@@ -1146,8 +1457,16 @@ mod tests {
     fn test_compute_deadweight_score_low_ovr_high_wage() {
         let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
         let player = make_player(
-            "p2", "Bust", "t1", LolRole::Top,
-            40, 5.0, 200_000, Some("2026-09-15"), "1995-01-01", vec![],
+            "p2",
+            "Bust",
+            "t1",
+            LolRole::Top,
+            40,
+            5.0,
+            200_000,
+            Some("2026-09-15"),
+            "1995-01-01",
+            vec![],
         );
         let score = compute_deadweight_score(&player, today);
         assert!(
@@ -1160,8 +1479,16 @@ mod tests {
     fn test_compute_deadweight_score_no_contract() {
         let today = NaiveDate::from_ymd_opt(2026, 6, 15).unwrap();
         let player = make_player(
-            "p3", "Expiring", "t1", LolRole::Support,
-            60, 6.0, 80_000, None, "1998-01-01", vec![],
+            "p3",
+            "Expiring",
+            "t1",
+            LolRole::Support,
+            60,
+            6.0,
+            80_000,
+            None,
+            "1998-01-01",
+            vec![],
         );
         let score = compute_deadweight_score(&player, today);
         assert!(
@@ -1197,16 +1524,26 @@ mod tests {
         // Player: age 30 (>28), avg_rating 5.5 (<6.5), contract until 2028 (>12 months)
         let mut players = vec![
             make_player(
-                "p1", "Veteran", "t1", LolRole::Top,
-                65, 5.5, 120_000, // top wage
+                "p1",
+                "Veteran",
+                "t1",
+                LolRole::Top,
+                65,
+                5.5,
+                120_000,            // top wage
                 Some("2028-06-15"), // >12 months
-                "1996-01-01", // age 30
+                "1996-01-01",       // age 30
                 vec![],
             ),
             // Second player, lower wage, so p1 is top 25%
             make_player(
-                "p2", "Youngster", "t1", LolRole::Mid,
-                80, 7.5, 30_000,
+                "p2",
+                "Youngster",
+                "t1",
+                LolRole::Mid,
+                80,
+                7.5,
+                30_000,
                 Some("2027-06-15"),
                 "2002-01-01",
                 vec![],
@@ -1235,15 +1572,18 @@ mod tests {
         let team = make_team("t1", "Test Team");
         let today = test_date();
 
-        let mut players = vec![
-            make_player(
-                "p1", "RecentSigning", "t1", LolRole::Jungle,
-                70, 6.0, 100_000,
-                Some("2028-06-15"),
-                "1995-01-01", // age 31
-                vec![],
-            ),
-        ];
+        let mut players = vec![make_player(
+            "p1",
+            "RecentSigning",
+            "t1",
+            LolRole::Jungle,
+            70,
+            6.0,
+            100_000,
+            Some("2028-06-15"),
+            "1995-01-01", // age 31
+            vec![],
+        )];
         players[0].lol_ovr = 70;
         // Protected from transfer until future date
         players[0].can_be_transferred_until = Some("2026-12-01".to_string());
@@ -1264,18 +1604,21 @@ mod tests {
     fn test_evaluate_purchases_initiates_when_budget_and_gap_exist() {
         // Integration-level: set up a team with budget + role gap + free agent
         // and verify a purchase happens through the transfers module.
+        use crate::clock::GameClock;
+        use crate::domain::manager::Manager;
         use crate::domain::player::LolRole;
         use crate::domain::season::TransferWindowStatus;
         use crate::domain::team::TeamKind;
-        use crate::clock::GameClock;
-        use crate::domain::manager::Manager;
         use chrono::{TimeZone, Utc};
 
         let today = test_date();
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
         let mut team = make_team("t1", "Test Team");
@@ -1286,10 +1629,54 @@ mod tests {
 
         // Team has 4 roles — no Support → gap
         let base_players = vec![
-            make_player("p1", "Top", "t1", LolRole::Top, 80, 7.0, 40_000, Some("2027-06-15"), "2000-01-01", vec![]),
-            make_player("p2", "Jg", "t1", LolRole::Jungle, 75, 6.8, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
-            make_player("p3", "Mid", "t1", LolRole::Mid, 85, 7.5, 50_000, Some("2027-06-15"), "2000-01-01", vec![]),
-            make_player("p4", "Adc", "t1", LolRole::Adc, 78, 7.2, 45_000, Some("2027-06-15"), "2000-01-01", vec![]),
+            make_player(
+                "p1",
+                "Top",
+                "t1",
+                LolRole::Top,
+                80,
+                7.0,
+                40_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
+            make_player(
+                "p2",
+                "Jg",
+                "t1",
+                LolRole::Jungle,
+                75,
+                6.8,
+                45_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
+            make_player(
+                "p3",
+                "Mid",
+                "t1",
+                LolRole::Mid,
+                85,
+                7.5,
+                50_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
+            make_player(
+                "p4",
+                "Adc",
+                "t1",
+                LolRole::Adc,
+                78,
+                7.2,
+                45_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
         ];
 
         let mut game = Game::new(clock, manager, vec![team], base_players, vec![], vec![]);
@@ -1297,9 +1684,16 @@ mod tests {
 
         // Add a free agent Support with low market_value to guarantee purchase
         let mut fa = make_player(
-            "fa1", "FreeSupp", "none", LolRole::Support,
-            70, 6.5, 30_000,
-            None, "2001-01-01", vec![],
+            "fa1",
+            "FreeSupp",
+            "none",
+            LolRole::Support,
+            70,
+            6.5,
+            30_000,
+            None,
+            "2001-01-01",
+            vec![],
         );
         fa.market_value = 100_000;
         fa.team_id = None;
@@ -1320,9 +1714,12 @@ mod tests {
         evaluate_purchases("t1", &mut game, &report);
 
         // After purchase, team should have exactly one Support player
-        let support_count = game.players
+        let support_count = game
+            .players
             .iter()
-            .filter(|p| p.team_id.as_deref() == Some("t1") && p.natural_position == LolRole::Support)
+            .filter(|p| {
+                p.team_id.as_deref() == Some("t1") && p.natural_position == LolRole::Support
+            })
             .count();
         assert_eq!(
             support_count, 1,
@@ -1332,26 +1729,38 @@ mod tests {
 
     #[test]
     fn test_evaluate_purchases_no_budget_no_purchase_attempts() {
-        use crate::domain::season::TransferWindowStatus;
-        use crate::domain::team::TeamKind;
         use crate::clock::GameClock;
         use crate::domain::manager::Manager;
+        use crate::domain::season::TransferWindowStatus;
+        use crate::domain::team::TeamKind;
         use chrono::{TimeZone, Utc};
 
         let today = test_date();
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
         let mut team = make_team("t1", "Broke Team");
         team.team_kind = TeamKind::Main;
         team.transfer_budget = 0; // zero budget
 
-        let players = vec![
-            make_player("p1", "OnlyPlayer", "t1", LolRole::Top, 70, 6.5, 30_000, Some("2027-06-15"), "2000-01-01", vec![]),
-        ];
+        let players = vec![make_player(
+            "p1",
+            "OnlyPlayer",
+            "t1",
+            LolRole::Top,
+            70,
+            6.5,
+            30_000,
+            Some("2027-06-15"),
+            "2000-01-01",
+            vec![],
+        )];
 
         let mut game = Game::new(clock, manager, vec![team], players, vec![], vec![]);
         game.season_context.transfer_window.status = TransferWindowStatus::Open;
@@ -1367,7 +1776,10 @@ mod tests {
         // No panic = function handled zero budget gracefully
         // The game state should be unchanged
         assert_eq!(
-            game.players.iter().filter(|p| p.team_id.as_deref() == Some("t1")).count(),
+            game.players
+                .iter()
+                .filter(|p| p.team_id.as_deref() == Some("t1"))
+                .count(),
             1,
             "no new players should be added with zero budget"
         );
@@ -1382,15 +1794,25 @@ mod tests {
         // should be processed; the duplicate should be skipped.
         let mut players = vec![
             make_player(
-                "p1", "Star", "t1", LolRole::Top,
-                60, 6.0, 120_000,
+                "p1",
+                "Star",
+                "t1",
+                LolRole::Top,
+                60,
+                6.0,
+                120_000,
                 Some("2028-06-15"),
                 "1995-01-01", // age 31, >28
                 vec![],
             ),
             make_player(
-                "p1", "Clone", "t1", LolRole::Top,
-                60, 6.0, 120_000,
+                "p1",
+                "Clone",
+                "t1",
+                LolRole::Top,
+                60,
+                6.0,
+                120_000,
                 Some("2028-06-15"),
                 "1995-01-01",
                 vec![],
@@ -1402,7 +1824,10 @@ mod tests {
         evaluate_sales(&team, &mut players, today);
 
         // First occurrence should be processed
-        assert!(players[0].transfer_listed, "first occurrence should be evaluated");
+        assert!(
+            players[0].transfer_listed,
+            "first occurrence should be evaluated"
+        );
         // Duplicate should be skipped (deadlock guard)
         assert!(!players[1].transfer_listed, "duplicate should be skipped");
     }
@@ -1412,15 +1837,18 @@ mod tests {
         let team = make_team("t1", "Test Team");
         let today = test_date();
 
-        let mut players = vec![
-            make_player(
-                "p1", "InjuredStar", "t1", LolRole::Adc,
-                75, 6.0, 100_000,
-                Some("2028-06-15"),
-                "1995-01-01", // age 31
-                vec![],
-            ),
-        ];
+        let mut players = vec![make_player(
+            "p1",
+            "InjuredStar",
+            "t1",
+            LolRole::Adc,
+            75,
+            6.0,
+            100_000,
+            Some("2028-06-15"),
+            "1995-01-01", // age 31
+            vec![],
+        )];
         players[0].lol_ovr = 75;
         players[0].condition = 30; // injured/poor form
 
@@ -1436,19 +1864,19 @@ mod tests {
     // Phase 4: Conflict resolution (PR4)
     // -----------------------------------------------------------------------
 
-    fn make_full_game_for_conflict(
-        players: Vec<Player>,
-        ai_team_ids: Vec<&str>,
-    ) -> Game {
-        use crate::domain::team::TeamKind;
+    fn make_full_game_for_conflict(players: Vec<Player>, ai_team_ids: Vec<&str>) -> Game {
         use crate::clock::GameClock;
         use crate::domain::manager::Manager;
+        use crate::domain::team::TeamKind;
         use chrono::{TimeZone, Utc};
 
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
         let mut teams: Vec<Team> = ai_team_ids
@@ -1484,10 +1912,16 @@ mod tests {
         // Team Agent should override → reset transfer_listed
         let mut game = make_full_game_for_conflict(
             vec![make_player(
-                "p1", "Star", "ai_default", LolRole::Mid,
-                95, 8.5, 60_000, // high ovr, high rating
+                "p1",
+                "Star",
+                "ai_default",
+                LolRole::Mid,
+                95,
+                8.5,
+                60_000,             // high ovr, high rating
                 Some("2028-06-15"), // long contract
-                "2002-01-01", vec![PlayerTrait::HyperCarry],
+                "2002-01-01",
+                vec![PlayerTrait::HyperCarry],
             )],
             vec!["ai_default"],
         );
@@ -1512,10 +1946,16 @@ mod tests {
     fn test_resolve_conflicts_does_not_clear_human_managed_team_listing() {
         let mut game = make_full_game_for_conflict(
             vec![make_player(
-                "p_human", "HumanStar", "human_team", LolRole::Mid,
-                95, 8.5, 60_000,
+                "p_human",
+                "HumanStar",
+                "human_team",
+                LolRole::Mid,
+                95,
+                8.5,
+                60_000,
                 Some("2028-06-15"),
-                "2002-01-01", vec![PlayerTrait::HyperCarry],
+                "2002-01-01",
+                vec![PlayerTrait::HyperCarry],
             )],
             vec!["human_team"],
         );
@@ -1537,20 +1977,31 @@ mod tests {
     fn test_resolve_conflicts_does_not_clear_preexisting_transfer_listing() {
         let mut game = make_full_game_for_conflict(
             vec![make_player(
-                "p_preexisting", "PreListedStar", "ai_default", LolRole::Mid,
-                95, 8.5, 60_000,
+                "p_preexisting",
+                "PreListedStar",
+                "ai_default",
+                LolRole::Mid,
+                95,
+                8.5,
+                60_000,
                 Some("2028-06-15"),
-                "2002-01-01", vec![PlayerTrait::HyperCarry],
+                "2002-01-01",
+                vec![PlayerTrait::HyperCarry],
             )],
             vec!["ai_default"],
         );
         game.players[0].transfer_listed = true;
         game.players[0].lol_ovr = 95;
 
-        let previously_transfer_listed = std::collections::HashSet::from(["p_preexisting".to_string()]);
+        let previously_transfer_listed =
+            std::collections::HashSet::from(["p_preexisting".to_string()]);
         resolve_conflicts(&mut game, &previously_transfer_listed);
 
-        let player = game.players.iter().find(|p| p.id == "p_preexisting").unwrap();
+        let player = game
+            .players
+            .iter()
+            .find(|p| p.id == "p_preexisting")
+            .unwrap();
         assert!(
             player.transfer_listed,
             "pre-existing or Team-Agent-created listings must remain listed"
@@ -1563,10 +2014,16 @@ mod tests {
         // Team Agent should NOT override → transfer_listed stays true
         let mut game = make_full_game_for_conflict(
             vec![make_player(
-                "p2", "Bust", "ai_default", LolRole::Top,
-                45, 4.0, 100_000, // low ovr, low rating, overpaid
+                "p2",
+                "Bust",
+                "ai_default",
+                LolRole::Top,
+                45,
+                4.0,
+                100_000,            // low ovr, low rating, overpaid
                 Some("2026-09-15"), // short contract
-                "1995-01-01", vec![], // old, no traits
+                "1995-01-01",
+                vec![], // old, no traits
             )],
             vec!["ai_default"],
         );
@@ -1591,10 +2048,16 @@ mod tests {
         let mut game = make_full_game_for_conflict(
             vec![{
                 let mut p = make_player(
-                    "p3", "FreeAgent", "ai_default", LolRole::Jungle,
-                    80, 7.0, 50_000,
+                    "p3",
+                    "FreeAgent",
+                    "ai_default",
+                    LolRole::Jungle,
+                    80,
+                    7.0,
+                    50_000,
                     None, // no contract
-                    "2000-01-01", vec![],
+                    "2000-01-01",
+                    vec![],
                 );
                 p.team_id = Some("ai_default".to_string());
                 p
@@ -1620,10 +2083,16 @@ mod tests {
         // Player with expired contract (end <= today) → free agent, not overridden
         let mut game = make_full_game_for_conflict(
             vec![make_player(
-                "p4", "Expired", "ai_default", LolRole::Support,
-                80, 7.0, 50_000,
+                "p4",
+                "Expired",
+                "ai_default",
+                LolRole::Support,
+                80,
+                7.0,
+                50_000,
                 Some("2025-06-15"), // expired before test date
-                "2000-01-01", vec![],
+                "2000-01-01",
+                vec![],
             )],
             vec!["ai_default"],
         );
@@ -1648,23 +2117,41 @@ mod tests {
         let mut game = make_full_game_for_conflict(
             vec![
                 make_player(
-                    "p5", "OnlySupport", "ai_default", LolRole::Support,
-                    70, 6.5, 40_000,
+                    "p5",
+                    "OnlySupport",
+                    "ai_default",
+                    LolRole::Support,
+                    70,
+                    6.5,
+                    40_000,
                     Some("2028-06-15"), // long contract > 12 months
-                    "2000-01-01", vec![],
+                    "2000-01-01",
+                    vec![],
                 ),
                 // Other roles
                 make_player(
-                    "p6", "Top", "ai_default", LolRole::Top,
-                    75, 7.0, 45_000,
+                    "p6",
+                    "Top",
+                    "ai_default",
+                    LolRole::Top,
+                    75,
+                    7.0,
+                    45_000,
                     Some("2028-06-15"),
-                    "2000-01-01", vec![],
+                    "2000-01-01",
+                    vec![],
                 ),
                 make_player(
-                    "p7", "Jungle", "ai_default", LolRole::Jungle,
-                    75, 7.0, 45_000,
+                    "p7",
+                    "Jungle",
+                    "ai_default",
+                    LolRole::Jungle,
+                    75,
+                    7.0,
+                    45_000,
                     Some("2028-06-15"),
-                    "2000-01-01", vec![],
+                    "2000-01-01",
+                    vec![],
                 ),
             ],
             vec!["ai_default"],
@@ -1700,16 +2187,28 @@ mod tests {
         let mut game = make_full_game_for_conflict(
             vec![
                 make_player(
-                    "p8", "TempOnlySupport", "ai_default", LolRole::Support,
-                    70, 6.5, 40_000,
+                    "p8",
+                    "TempOnlySupport",
+                    "ai_default",
+                    LolRole::Support,
+                    70,
+                    6.5,
+                    40_000,
                     Some("2026-12-01"), // only ~5 months from test date
-                    "2000-01-01", vec![],
+                    "2000-01-01",
+                    vec![],
                 ),
                 make_player(
-                    "p9", "Top", "ai_default", LolRole::Top,
-                    75, 7.0, 45_000,
+                    "p9",
+                    "Top",
+                    "ai_default",
+                    LolRole::Top,
+                    75,
+                    7.0,
+                    45_000,
                     Some("2028-06-15"),
-                    "2000-01-01", vec![],
+                    "2000-01-01",
+                    vec![],
                 ),
             ],
             vec!["ai_default"],
@@ -1750,19 +2249,33 @@ mod tests {
 
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
-        let roles = [LolRole::Top, LolRole::Jungle, LolRole::Mid, LolRole::Adc, LolRole::Support];
+        let roles = [
+            LolRole::Top,
+            LolRole::Jungle,
+            LolRole::Mid,
+            LolRole::Adc,
+            LolRole::Support,
+        ];
         let mut teams = Vec::with_capacity(num_teams);
         let mut players = Vec::with_capacity(num_teams * players_per_team);
 
         for ti in 0..num_teams {
             let tid = format!("ai_team_{ti}");
             let mut team = Team::new(
-                tid.clone(), format!("AI Team {ti}"), format!("AT{ti}"),
-                "DE".to_string(), "Berlin".to_string(), "Arena".to_string(), 10_000,
+                tid.clone(),
+                format!("AI Team {ti}"),
+                format!("AT{ti}"),
+                "DE".to_string(),
+                "Berlin".to_string(),
+                "Arena".to_string(),
+                10_000,
             );
             team.team_kind = TeamKind::Main;
             team.manager_id = None;
@@ -1774,13 +2287,20 @@ mod tests {
                 let role = roles[pi % 5];
                 let pid = format!("p_{tid}_{pi}");
                 let mut p = make_player(
-                    &pid, &format!("Player {tid} {pi}"), &tid, role,
-                    (70 + (pi as u8 * 3) % 25), // varied OVR 70-92
+                    &pid,
+                    &format!("Player {tid} {pi}"),
+                    &tid,
+                    role,
+                    (70 + (pi as u8 * 3) % 25),       // varied OVR 70-92
                     6.5 + (pi as f32 * 0.3).min(2.5), // varied rating 6.5-8.5
-                    40_000 + (pi as u32 * 10_000), // varied wage
-                    Some("2028-06-15"), // standard 2-year contract
+                    40_000 + (pi as u32 * 10_000),    // varied wage
+                    Some("2028-06-15"),               // standard 2-year contract
                     "2000-01-01",
-                    if pi == 0 { vec![PlayerTrait::HyperCarry] } else { vec![] },
+                    if pi == 0 {
+                        vec![PlayerTrait::HyperCarry]
+                    } else {
+                        vec![]
+                    },
                 );
                 p.condition = 80; // healthy
                 p.market_value = 100_000 + (pi as u64 * 50_000);
@@ -1813,31 +2333,41 @@ mod tests {
                 assert!(
                     team.wage_budget >= 0,
                     "Team {} wage_budget went negative on day {}",
-                    team.name, day
+                    team.name,
+                    day
                 );
                 assert!(
                     team.transfer_budget >= 0,
                     "Team {} transfer_budget went negative on day {}",
-                    team.name, day
+                    team.name,
+                    day
                 );
             }
 
             // Invariant I-01: minimum 5 players per team (roster_stability safety net)
             for team in &game.teams {
-                let count = game.players
+                let count = game
+                    .players
                     .iter()
                     .filter(|p| p.team_id.as_deref() == Some(&team.id))
                     .count();
                 assert!(
                     count >= 5,
                     "Team {} has only {count} players on day {} (below minimum)",
-                    team.name, day
+                    team.name,
+                    day
                 );
             }
         }
 
         // Verify at least 25 days elapsed (should be 30 + initial offset)
-        let day_of_year = game.clock.current_date.format("%j").to_string().parse::<u32>().unwrap_or(0);
+        let day_of_year = game
+            .clock
+            .current_date
+            .format("%j")
+            .to_string()
+            .parse::<u32>()
+            .unwrap_or(0);
         // Started June 15 (day 166), after 30 days = day ~196
         assert!(
             day_of_year >= 190,
@@ -1850,16 +2380,19 @@ mod tests {
         // Spec 2.2: Player requests transfer (low satisfaction),
         // Team Agent rejects due to no depth (only player at role), player stays
         // Use a single AI team with 4 players — one Support only
-        use crate::domain::player::LolRole;
-        use crate::domain::team::TeamKind;
         use crate::clock::GameClock;
         use crate::domain::manager::Manager;
+        use crate::domain::player::LolRole;
+        use crate::domain::team::TeamKind;
         use chrono::{TimeZone, Utc};
 
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
         let mut team = make_team("reject_team", "Reject Team");
@@ -1869,26 +2402,48 @@ mod tests {
         team.transfer_budget = 200_000;
 
         // 4 players: Top, Jungle, Mid, Support (only Support — critical depth)
-        let roles = [LolRole::Top, LolRole::Jungle, LolRole::Mid, LolRole::Support];
-        let mut base_players: Vec<Player> = roles.iter().enumerate().map(|(i, &role)| {
-            let pid = format!("p_role_{i}");
-            let mut p = make_player(
-                &pid, &format!("RolePlayer{i}"), "reject_team", role,
-                75, 7.0, 40_000,
-                Some("2028-06-15"), // long contract
-                "2000-01-01", vec![],
-            );
-            p.morale = 60;
-            p.morale_core.manager_trust = 55;
-            p.market_value = 200_000;
-            p
-        }).collect();
+        let roles = [
+            LolRole::Top,
+            LolRole::Jungle,
+            LolRole::Mid,
+            LolRole::Support,
+        ];
+        let mut base_players: Vec<Player> = roles
+            .iter()
+            .enumerate()
+            .map(|(i, &role)| {
+                let pid = format!("p_role_{i}");
+                let mut p = make_player(
+                    &pid,
+                    &format!("RolePlayer{i}"),
+                    "reject_team",
+                    role,
+                    75,
+                    7.0,
+                    40_000,
+                    Some("2028-06-15"), // long contract
+                    "2000-01-01",
+                    vec![],
+                );
+                p.morale = 60;
+                p.morale_core.manager_trust = 55;
+                p.market_value = 200_000;
+                p
+            })
+            .collect();
 
         // Add a 5th player at Top (so only Support has depth 1)
         let mut extra_top = make_player(
-            "p_extra_top", "ExtraTop", "reject_team", LolRole::Top,
-            70, 6.5, 35_000,
-            Some("2028-06-15"), "2000-01-01", vec![],
+            "p_extra_top",
+            "ExtraTop",
+            "reject_team",
+            LolRole::Top,
+            70,
+            6.5,
+            35_000,
+            Some("2028-06-15"),
+            "2000-01-01",
+            vec![],
         );
         extra_top.market_value = 150_000;
         base_players.push(extra_top);
@@ -1896,14 +2451,19 @@ mod tests {
         let mut game = Game::new(clock, manager, vec![team], base_players, vec![], vec![]);
         // Fix lol_ovr
         for p in &mut game.players {
-            if p.lol_ovr == 0 || p.lol_ovr < 30 { p.lol_ovr = 75; }
+            if p.lol_ovr == 0 || p.lol_ovr < 30 {
+                p.lol_ovr = 75;
+            }
         }
 
         // Run the full agent pipeline (Team Agent → Player Agent → resolve_conflicts)
         // The Support player (only one at role) might be unhappy due to setup.
         // We manually ensure the Support player has low morale to trigger Player Agent transfer request.
-        let support = game.players.iter_mut()
-            .find(|p| p.natural_position == LolRole::Support).unwrap();
+        let support = game
+            .players
+            .iter_mut()
+            .find(|p| p.natural_position == LolRole::Support)
+            .unwrap();
         support.morale = 20;
         support.morale_core.manager_trust = 15;
         support.wage = 20_000; // underpaid → triggers transfer request
@@ -1911,15 +2471,19 @@ mod tests {
         // Now run agents. Snapshot after Team Agent so conflict resolution only
         // clears transfer requests that Player Agent created in this cycle.
         crate::ai_team_agent::process_ai_team_agents(&mut game);
-        let previously_transfer_listed: std::collections::HashSet<String> = game.players
+        let previously_transfer_listed: std::collections::HashSet<String> = game
+            .players
             .iter()
             .filter(|p| p.transfer_listed)
             .map(|p| p.id.clone())
             .collect();
         crate::ai_player_agent::process_ai_player_agents(&mut game);
 
-        let support_after_player_agent = game.players.iter()
-            .find(|p| p.natural_position == LolRole::Support).unwrap();
+        let support_after_player_agent = game
+            .players
+            .iter()
+            .find(|p| p.natural_position == LolRole::Support)
+            .unwrap();
         assert!(
             support_after_player_agent.transfer_listed,
             "precondition: Player Agent should request a transfer before conflict resolution"
@@ -1928,8 +2492,11 @@ mod tests {
         crate::ai_team_agent::resolve_conflicts(&mut game, &previously_transfer_listed);
 
         // Support player should NOT be transfer_listed (critical depth overrides)
-        let support_after = game.players.iter()
-            .find(|p| p.natural_position == LolRole::Support).unwrap();
+        let support_after = game
+            .players
+            .iter()
+            .find(|p| p.natural_position == LolRole::Support)
+            .unwrap();
         assert!(
             !support_after.transfer_listed,
             "Support player must stay (critical depth — Team Agent overrides transfer request)"
@@ -1950,7 +2517,8 @@ mod tests {
 
             // I-01: Never below 5 players per team
             for team in &game.teams {
-                let count = game.players
+                let count = game
+                    .players
                     .iter()
                     .filter(|p| p.team_id.as_deref() == Some(&team.id))
                     .count();
@@ -1966,12 +2534,14 @@ mod tests {
                 assert!(
                     team.wage_budget >= 0,
                     "I-02 violated: Team {} wage_budget is {}",
-                    team.name, team.wage_budget
+                    team.name,
+                    team.wage_budget
                 );
                 assert!(
                     team.transfer_budget >= 0,
                     "I-02 violated: Team {} transfer_budget is {}",
-                    team.name, team.transfer_budget
+                    team.name,
+                    team.transfer_budget
                 );
             }
 
@@ -1982,9 +2552,9 @@ mod tests {
 
     #[test]
     fn test_determinism_identical_state_identical_decisions() {
-        use crate::domain::season::TransferWindowStatus;
         use crate::clock::GameClock;
         use crate::domain::manager::Manager;
+        use crate::domain::season::TransferWindowStatus;
         use crate::domain::team::TeamKind;
         use chrono::{TimeZone, Utc};
 
@@ -1992,8 +2562,11 @@ mod tests {
         // Build game manually for precise control
         let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
         let manager = Manager::new(
-            "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-            "1980-01-01".to_string(), "GB".to_string(),
+            "mgr1".to_string(),
+            "Test".to_string(),
+            "Manager".to_string(),
+            "1980-01-01".to_string(),
+            "GB".to_string(),
         );
 
         let mut team = make_team("det_team", "Determinism Team");
@@ -2003,26 +2576,84 @@ mod tests {
         team.transfer_budget = 200_000;
 
         let players = vec![
-            make_player("p1", "Star", "det_team", LolRole::Mid, 90, 8.5, 60_000, Some("2027-06-15"), "2002-01-01", vec![PlayerTrait::HyperCarry]),
-            make_player("p2", "Mediocre", "det_team", LolRole::Top, 70, 6.5, 40_000, Some("2027-06-15"), "2000-01-01", vec![]),
-            make_player("p3", "Vet", "det_team", LolRole::Jungle, 60, 5.5, 120_000, Some("2028-06-15"), "1995-01-01", vec![]),
-            make_player("p4", "Young", "det_team", LolRole::Adc, 80, 7.5, 30_000, Some("2028-06-15"), "2003-01-01", vec![]),
-            make_player("p5", "Supp", "det_team", LolRole::Support, 75, 7.0, 45_000, Some("2027-06-15"), "2001-01-01", vec![]),
+            make_player(
+                "p1",
+                "Star",
+                "det_team",
+                LolRole::Mid,
+                90,
+                8.5,
+                60_000,
+                Some("2027-06-15"),
+                "2002-01-01",
+                vec![PlayerTrait::HyperCarry],
+            ),
+            make_player(
+                "p2",
+                "Mediocre",
+                "det_team",
+                LolRole::Top,
+                70,
+                6.5,
+                40_000,
+                Some("2027-06-15"),
+                "2000-01-01",
+                vec![],
+            ),
+            make_player(
+                "p3",
+                "Vet",
+                "det_team",
+                LolRole::Jungle,
+                60,
+                5.5,
+                120_000,
+                Some("2028-06-15"),
+                "1995-01-01",
+                vec![],
+            ),
+            make_player(
+                "p4",
+                "Young",
+                "det_team",
+                LolRole::Adc,
+                80,
+                7.5,
+                30_000,
+                Some("2028-06-15"),
+                "2003-01-01",
+                vec![],
+            ),
+            make_player(
+                "p5",
+                "Supp",
+                "det_team",
+                LolRole::Support,
+                75,
+                7.0,
+                45_000,
+                Some("2027-06-15"),
+                "2001-01-01",
+                vec![],
+            ),
         ];
 
         // Build game state once, then snapshot
-        fn build_det_game(
-            team: Team, players: Vec<Player>,
-        ) -> Game {
+        fn build_det_game(team: Team, players: Vec<Player>) -> Game {
             let clock = GameClock::new(Utc.with_ymd_and_hms(2026, 6, 15, 12, 0, 0).unwrap());
             let manager = Manager::new(
-                "mgr1".to_string(), "Test".to_string(), "Manager".to_string(),
-                "1980-01-01".to_string(), "GB".to_string(),
+                "mgr1".to_string(),
+                "Test".to_string(),
+                "Manager".to_string(),
+                "1980-01-01".to_string(),
+                "GB".to_string(),
             );
             let mut g = Game::new(clock, manager, vec![team], players, vec![], vec![]);
             g.season_context.transfer_window.status = TransferWindowStatus::Open;
             for p in &mut g.players {
-                if p.lol_ovr == 0 || p.lol_ovr < 30 { p.lol_ovr = 70; }
+                if p.lol_ovr == 0 || p.lol_ovr < 30 {
+                    p.lol_ovr = 70;
+                }
             }
             g
         }
@@ -2037,14 +2668,25 @@ mod tests {
         game1.players[4].lol_ovr = 75;
 
         // Snapshot player state
-        let snapshot1: Vec<(String, bool, Option<String>)> = game1.players
+        let snapshot1: Vec<(String, bool, Option<String>)> = game1
+            .players
             .iter()
-            .map(|p| (p.id.clone(), p.transfer_listed, p.morale_core.renewal_state.as_ref().map(|s| format!("{:?}", s.status))))
+            .map(|p| {
+                (
+                    p.id.clone(),
+                    p.transfer_listed,
+                    p.morale_core
+                        .renewal_state
+                        .as_ref()
+                        .map(|s| format!("{:?}", s.status)),
+                )
+            })
             .collect();
 
         // ... run agents
         crate::ai_team_agent::process_ai_team_agents(&mut game1);
-        let previously_transfer_listed1: std::collections::HashSet<String> = game1.players
+        let previously_transfer_listed1: std::collections::HashSet<String> = game1
+            .players
             .iter()
             .filter(|p| p.transfer_listed)
             .map(|p| p.id.clone())
@@ -2052,9 +2694,19 @@ mod tests {
         crate::ai_player_agent::process_ai_player_agents(&mut game1);
         crate::ai_team_agent::resolve_conflicts(&mut game1, &previously_transfer_listed1);
 
-        let result1: Vec<(String, bool, Option<String>)> = game1.players
+        let result1: Vec<(String, bool, Option<String>)> = game1
+            .players
             .iter()
-            .map(|p| (p.id.clone(), p.transfer_listed, p.morale_core.renewal_state.as_ref().map(|s| format!("{:?}", s.status))))
+            .map(|p| {
+                (
+                    p.id.clone(),
+                    p.transfer_listed,
+                    p.morale_core
+                        .renewal_state
+                        .as_ref()
+                        .map(|s| format!("{:?}", s.status)),
+                )
+            })
             .collect();
 
         // Run 2 — identical setup
@@ -2066,7 +2718,8 @@ mod tests {
         game2.players[4].lol_ovr = 75;
 
         crate::ai_team_agent::process_ai_team_agents(&mut game2);
-        let previously_transfer_listed2: std::collections::HashSet<String> = game2.players
+        let previously_transfer_listed2: std::collections::HashSet<String> = game2
+            .players
             .iter()
             .filter(|p| p.transfer_listed)
             .map(|p| p.id.clone())
@@ -2074,9 +2727,19 @@ mod tests {
         crate::ai_player_agent::process_ai_player_agents(&mut game2);
         crate::ai_team_agent::resolve_conflicts(&mut game2, &previously_transfer_listed2);
 
-        let result2: Vec<(String, bool, Option<String>)> = game2.players
+        let result2: Vec<(String, bool, Option<String>)> = game2
+            .players
             .iter()
-            .map(|p| (p.id.clone(), p.transfer_listed, p.morale_core.renewal_state.as_ref().map(|s| format!("{:?}", s.status))))
+            .map(|p| {
+                (
+                    p.id.clone(),
+                    p.transfer_listed,
+                    p.morale_core
+                        .renewal_state
+                        .as_ref()
+                        .map(|s| format!("{:?}", s.status)),
+                )
+            })
             .collect();
 
         // Compare — must be identical
