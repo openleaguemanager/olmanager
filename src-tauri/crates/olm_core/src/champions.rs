@@ -523,10 +523,65 @@ fn upsert_mastery(game: &mut Game, player_id: &str, champion_id: &str, value: u8
     });
 }
 
-pub fn bootstrap_seed_masteries(_game: &mut Game) {
-    // Champion mastery seeding from legacy files is disabled.
-    // Mastery starts empty and accumulates during gameplay.
-    // Existing masteries from saves (Flow C) are preserved.
+pub fn bootstrap_seed_masteries(game: &mut Game) {
+    // Preserve existing masteries from saves (Flow C).
+    if !game.champion_masteries.is_empty() {
+        return;
+    }
+
+    let catalog = champion_catalog();
+
+    // Group champion IDs by role from the static catalog.
+    // The catalog returns (champion_id, role) pairs, one per role per champ.
+    let mut by_role: HashMap<&str, Vec<&str>> = HashMap::new();
+    for (champion_id, role) in catalog.iter() {
+        by_role.entry(role.as_str()).or_default().push(champion_id.as_str());
+    }
+
+    // Collect (player_id, role_str) upfront to avoid borrowing conflicts.
+    let player_roles: Vec<(String, String)> = game
+        .players
+        .iter()
+        .filter_map(|p| {
+            let role = match p.natural_position {
+                crate::domain::player::LolRole::Top => "Top",
+                crate::domain::player::LolRole::Jungle => "Jungle",
+                crate::domain::player::LolRole::Mid => "Mid",
+                crate::domain::player::LolRole::Adc => "ADC",
+                crate::domain::player::LolRole::Support => "Support",
+                crate::domain::player::LolRole::Unknown => return None,
+            };
+            Some((p.id.clone(), role.to_string()))
+        })
+        .collect();
+
+    for (player_id, role_str) in &player_roles {
+        let Some(champions) = by_role.get(role_str.as_str()) else {
+            continue;
+        };
+        if champions.is_empty() {
+            continue;
+        }
+
+        // Deterministic count: 4-6 champions per player.
+        let count_seed = format!("{}_{}", player_id, "seed_count");
+        let count = 4 + (hash_text(&count_seed) as usize % 3.min(champions.len().saturating_sub(4)));
+        let count = count.min(champions.len());
+
+        // Sort champions deterministically using a hash seeded by player_id.
+        let mut sorted: Vec<&&str> = champions.iter().collect();
+        sorted.sort_by(|a, b| {
+            let ha = hash_text(&format!("{}_{}", player_id, a));
+            let hb = hash_text(&format!("{}_{}", player_id, b));
+            ha.cmp(&hb)
+        });
+
+        for champion_id in sorted.iter().take(count) {
+            let mastery_seed = format!("{}_{}_mastery", player_id, champion_id);
+            let mastery = 40 + (hash_text(&mastery_seed) as u8 % 41); // 40..80
+            upsert_mastery(game, player_id, champion_id, mastery);
+        }
+    }
 }
 
 pub(crate) fn ensure_patch_seed(state: &mut ChampionPatchState) {
