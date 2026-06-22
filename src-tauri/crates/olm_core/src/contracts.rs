@@ -833,12 +833,13 @@ fn contract_expired_message(
                 "{} has left {} after their contract expired. The player is now a free agent.",
                 player_name, team_name
             ),
-            "Director of Football".to_string(),
+            "General Manager".to_string(),
             date.to_string(),
         )
         .with_category(MessageCategory::Contract)
-        .with_priority(MessagePriority::Urgent),
-        "director_of_football",
+        .with_priority(MessagePriority::Urgent)
+        .with_sender_i18n("be.sender.generalManager", "be.role.generalManager"),
+        "general_manager",
         vec![("player", player_name), ("team", team_name)],
     )
 }
