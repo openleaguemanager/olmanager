@@ -10,6 +10,26 @@ document.addEventListener("contextmenu", (event) => {
   event.preventDefault();
 });
 
+// Global fallback for broken images: if any <img> fails to load and isn't
+// already the fallback, swap to the default player photo. Prevents the
+// "broken image" placeholder in production when photos aren't available
+// (e.g. before the first data import, or for missing photo files).
+const FALLBACK_IMG = "/default/defaultplayer.webp";
+document.addEventListener(
+  "error",
+  (event) => {
+    const img = event.target;
+    if (
+      img instanceof HTMLImageElement &&
+      !img.src.endsWith(FALLBACK_IMG) &&
+      !img.src.endsWith("defaultstaff.webp")
+    ) {
+      img.src = FALLBACK_IMG;
+    }
+  },
+  true, // capture phase — fires before the event bubbles to component handlers
+);
+
 function Boot() {
   const [ready, setReady] = useState(false);
   useEffect(() => {
