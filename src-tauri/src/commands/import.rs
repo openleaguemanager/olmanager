@@ -165,7 +165,22 @@ pub fn resolve_public_asset(app_handle: &tauri::AppHandle, rel: &str) -> Option<
         }
     }
 
-    // 2. Bundled frontend asset embedded in the production build (Vite copies
+    // 2. Bundled resources (tauri.conf.json → bundle.resources). Tauri
+    //    extracts these at build time; check both the direct path and the
+    //    `_up_`-prefixed variant (produced when the resource glob starts with
+    //    `../`). This covers player photos and any other public/ assets.
+    if let Ok(resource_dir) = app_handle.path().resource_dir() {
+        for candidate in &[
+            resource_dir.join("public").join(&safe),
+            resource_dir.join("_up_").join("public").join(&safe),
+        ] {
+            if let Ok(bytes) = std::fs::read(candidate) {
+                return Some((bytes, mime_for(&safe)));
+            }
+        }
+    }
+
+    // 3. Bundled frontend asset embedded in the production build (Vite copies
     //    `public/` to the dist root). Try both key spellings to be safe.
     let key = safe.to_string_lossy().replace('\\', "/");
     let resolver = app_handle.asset_resolver();
@@ -181,7 +196,7 @@ pub fn resolve_public_asset(app_handle: &tauri::AppHandle, rel: &str) -> Option<
         return Some((asset.bytes, mime));
     }
 
-    // 3. Dev mode: assets aren't embedded (served by Vite), so read the
+    // 4. Dev mode: assets aren't embedded (served by Vite), so read the
     //    frontend `public/` dir from disk. cwd is `src-tauri/` under `tauri dev`.
     if let Ok(cwd) = std::env::current_dir() {
         for candidate in [
