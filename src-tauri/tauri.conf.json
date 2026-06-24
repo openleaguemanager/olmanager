@@ -4,9 +4,9 @@
   "version": "0.3.0",
   "identifier": "com.openleaguemanager.olmanager",
   "build": {
-    "beforeDevCommand": "node scripts/sync-data.mjs && npm run dev",
+    "beforeDevCommand": "npm run dev",
     "devUrl": "http://127.0.0.1:1420",
-    "beforeBuildCommand": "npm run build && node scripts/sync-data.mjs",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -30,7 +30,6 @@
     "createUpdaterArtifacts": true,
     "resources": [
       "databases/world.json",
-      "../data/**/*",
       "../public/**/*",
       "../assets/simulation/*.json",
       "../assets/draft/*.json"
