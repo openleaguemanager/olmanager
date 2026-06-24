@@ -16,6 +16,8 @@ use std::io::Read;
 use std::path::{Component, Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
+use flate2::read::GzDecoder;
+
 use log::info;
 use olm_core::domain::player::Player;
 use olm_core::domain::staff::Staff;
@@ -308,7 +310,13 @@ pub async fn import_cached_export(
 ) -> Result<ImportSummary, String> {
     let path = import_cache_path(&app_handle)?;
     info!("[cmd] import_cached_export: path={}", path.display());
-    emit_progress(&app_handle, "reading", "Leyendo ultimo ZIP guardado...", 0, None);
+    emit_progress(
+        &app_handle,
+        "reading",
+        "Leyendo ultimo ZIP guardado...",
+        0,
+        None,
+    );
     let import_app_handle = app_handle.clone();
     let summary = tauri::async_runtime::spawn_blocking(move || {
         let bytes = std::fs::read(&path)
@@ -559,6 +567,154 @@ fn import_zip(
     Ok(summary)
 }
 
+fn import_tar_gz_safely(
+    bytes: &[u8],
+    app_handle: &tauri::AppHandle,
+) -> Result<ImportSummary, String> {
+    let app_dir = app_data_dir(app_handle)?;
+    let staging_root = app_dir.join(format!(".import-staging-{}", timestamp_millis()));
+    let staging_data = staging_root.join("data");
+    let staging_public = staging_root.join("public");
+
+    let mut summary = match import_tar_gz(bytes, &staging_data, &staging_public, app_handle)
+        .and_then(|summary| {
+            validate_import_summary(&summary)?;
+            Ok(summary)
+        }) {
+        Ok(summary) => summary,
+        Err(err) => {
+            let _ = std::fs::remove_dir_all(&staging_root);
+            return Err(err);
+        }
+    };
+
+    emit_progress(
+        app_handle,
+        "installing",
+        "Validado. Activando nuevos datos...",
+        0,
+        None,
+    );
+    install_staged_import(&app_dir, &staging_root)?;
+
+    let data_dir = app_dir.join("data");
+    let public_dir = app_dir.join("public");
+    let skipped = summary.skipped;
+    summary = catalog_summary(&data_dir, &public_dir);
+    summary.skipped = skipped;
+
+    emit_progress(
+        app_handle,
+        "done",
+        "Importacion completada.",
+        summary.data_files + summary.photo_files,
+        Some(summary.data_files + summary.photo_files),
+    );
+    Ok(summary)
+}
+
+fn import_tar_gz(
+    bytes: &[u8],
+    data_dir: &Path,
+    public_dir: &Path,
+    app_handle: &tauri::AppHandle,
+) -> Result<ImportSummary, String> {
+    import_tar_gz_with_emit(bytes, data_dir, public_dir, |progress| {
+        let _ = app_handle.emit(IMPORT_PROGRESS_EVENT, progress);
+    })
+}
+
+fn import_tar_gz_with_emit(
+    bytes: &[u8],
+    data_dir: &Path,
+    public_dir: &Path,
+    mut emit: impl FnMut(ImportProgress),
+) -> Result<ImportSummary, String> {
+    let total = {
+        let gz = GzDecoder::new(std::io::Cursor::new(bytes));
+        let mut archive = tar::Archive::new(gz);
+        archive
+            .entries()
+            .map_err(|e| format!("read tar: {e}"))?
+            .count()
+    };
+
+    let gz = GzDecoder::new(std::io::Cursor::new(bytes));
+    let mut archive = tar::Archive::new(gz);
+    let mut summary = ImportSummary::default();
+    for (i, entry) in archive
+        .entries()
+        .map_err(|e| format!("read tar: {e}"))?
+        .enumerate()
+    {
+        let mut entry = entry.map_err(|e| format!("tar entry {i}: {e}"))?;
+        let entry_type = entry.header().entry_type();
+        if entry_type.is_dir() || entry_type.is_symlink() {
+            continue;
+        }
+
+        let raw = entry
+            .path()
+            .map_err(|e| format!("tar entry path: {e}"))?
+            .to_string_lossy()
+            .to_string();
+        let stripped = match strip_tar_prefix(&raw) {
+            Some(stripped) => stripped,
+            None => {
+                summary.skipped += 1;
+                continue;
+            }
+        };
+
+        let Some(dest) = destination_for(stripped, data_dir, public_dir) else {
+            summary.skipped += 1;
+            continue;
+        };
+
+        if let Some(parent) = dest.parent() {
+            std::fs::create_dir_all(parent).map_err(|e| format!("mkdir {parent:?}: {e}"))?;
+        }
+        let mut buf = Vec::new();
+        entry
+            .read_to_end(&mut buf)
+            .map_err(|e| format!("read {stripped}: {e}"))?;
+        std::fs::write(&dest, &buf).map_err(|e| format!("write {dest:?}: {e}"))?;
+
+        if stripped.starts_with("data/") {
+            summary.data_files += 1;
+            add_entity_counts(&mut summary, stripped, &buf);
+        } else {
+            summary.photo_files += 1;
+        }
+
+        if i == 0 || i + 1 == total || i % 25 == 0 {
+            emit(ImportProgress {
+                phase: "extracting",
+                message: format!("Extrayendo {} de {} archivos...", i + 1, total),
+                processed: i + 1,
+                total: Some(total),
+            });
+        }
+    }
+
+    Ok(summary)
+}
+
+/// Strip GitHub's `<repo>-<branch>/` tarball prefix generically.
+fn strip_tar_prefix(raw: &str) -> Option<&str> {
+    match raw.find('/') {
+        Some(idx) => {
+            let stripped = &raw[idx + 1..];
+            if stripped.is_empty() {
+                None
+            } else {
+                Some(stripped)
+            }
+        }
+        None => None,
+    }
+}
+
 fn timestamp_millis() -> u128 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -644,7 +800,10 @@ fn collect_staff_from_shards(app_handle: &tauri::AppHandle) -> Vec<Staff> {
     };
     let staffs_dir = data_base.join("staffs");
     let Ok(entries) = std::fs::read_dir(&staffs_dir) else {
-        log::debug!("[import] staffs dir unavailable during rehydrate: {:?}", staffs_dir);
+        log::debug!(
+            "[import] staffs dir unavailable during rehydrate: {:?}",
+            staffs_dir
+        );
         return Vec::new();
     };
 
@@ -676,10 +835,7 @@ fn collect_staff_from_shards(app_handle: &tauri::AppHandle) -> Vec<Staff> {
             let prefix = format!("{cid}-");
             for member in &mut members {
                 if let Some(team_id) = member.team_id.clone() {
-                    if team_id != "fa"
-                        && team_id != "freeagent"
-                        && !team_id.starts_with(&prefix)
-                    {
+                    if team_id != "fa" && team_id != "freeagent" && !team_id.starts_with(&prefix) {
                         member.team_id = Some(format!("{prefix}{team_id}"));
                     }
                 }
@@ -827,8 +983,11 @@ fn collect_runtime_teams(app_handle: &tauri::AppHandle) -> Vec<Team> {
 /// missing players (e.g. roster slots added to the source data after the save
 /// was generated) are backfilled.
 fn merge_missing_players(game: &mut Game, imported_players: Vec<Player>) -> usize {
-    let mut existing_ids: HashSet<String> =
-        game.players.iter().map(|player| player.id.clone()).collect();
+    let mut existing_ids: HashSet<String> = game
+        .players
+        .iter()
+        .map(|player| player.id.clone())
+        .collect();
     let before = game.players.len();
     for player in imported_players {
         if existing_ids.insert(player.id.clone()) {
@@ -889,8 +1048,7 @@ fn reassign_stale_player_teams(game: &mut Game, imported_players: &[Player]) -> 
 /// Append catalog teams whose id is absent from the save. Existing teams are
 /// never mutated — only teams missing entirely from the save are backfilled.
 fn merge_missing_teams(game: &mut Game, imported_teams: Vec<Team>) -> usize {
-    let mut existing_ids: HashSet<String> =
-        game.teams.iter().map(|team| team.id.clone()).collect();
+    let mut existing_ids: HashSet<String> = game.teams.iter().map(|team| team.id.clone()).collect();
     let before = game.teams.len();
     for team in imported_teams {
         if existing_ids.insert(team.id.clone()) {
@@ -950,7 +1108,10 @@ impl RehydrateCounts {
 ///
 /// Existing entities are otherwise never mutated, so saves generated before a
 /// data update pick up new roster slots and team moves without losing progress.
-pub fn rehydrate_game_from_catalog(app_handle: &tauri::AppHandle, game: &mut Game) -> RehydrateCounts {
+pub fn rehydrate_game_from_catalog(
+    app_handle: &tauri::AppHandle,
+    game: &mut Game,
+) -> RehydrateCounts {
     let teams = merge_missing_teams(game, collect_runtime_teams(app_handle));
 
     let catalog_players = collect_runtime_players(app_handle);
@@ -1252,4 +1413,177 @@ fn walk_files(root: &Path, out: &mut Vec<PathBuf>) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use flate2::Compression;
+    use flate2::write::GzEncoder;
+    use std::io::Write;
+
+    #[test]
+    fn strip_tar_prefix_removes_first_component() {
+        assert_eq!(
+            strip_tar_prefix("olmanager-data-main/data/players.json"),
+            Some("data/players.json")
+        );
+    }
+
+    #[test]
+    fn strip_tar_prefix_accepts_other_branch_names() {
+        assert_eq!(
+            strip_tar_prefix("olmanager-data-master/public/player-photos/p1.webp"),
+            Some("public/player-photos/p1.webp")
+        );
+    }
+
+    #[test]
+    fn strip_tar_prefix_returns_none_for_top_level_file() {
+        assert_eq!(strip_tar_prefix("README.md"), None);
+    }
+
+    #[test]
+    fn import_tar_gz_extracts_data_and_public_files() -> Result<(), String> {
+        let tmp = std::env::temp_dir().join(format!("olm-import-test-{}", timestamp_millis()));
+        let data_dir = tmp.join("data");
+        let public_dir = tmp.join("public");
+        let source_dir = tmp.join("source");
+        std::fs::create_dir_all(&data_dir).map_err(|e| format!("mkdir data: {e}"))?;
+        std::fs::create_dir_all(&public_dir).map_err(|e| format!("mkdir public: {e}"))?;
+
+        let players = source_dir.join("data/players/test_players.json");
+        std::fs::create_dir_all(players.parent().unwrap())
+            .map_err(|e| format!("mkdir players: {e}"))?;
+        std::fs::write(&players, r#"{"players":[{"id":"p1","full_name":"Alice"}]}"#)
+            .map_err(|e| format!("write players: {e}"))?;
+
+        let photo = source_dir.join("public/player-photos/p1.webp");
+        std::fs::create_dir_all(photo.parent().unwrap())
+            .map_err(|e| format!("mkdir photo dir: {e}"))?;
+        std::fs::write(&photo, b"photo").map_err(|e| format!("write photo: {e}"))?;
+
+        let player_bytes = std::fs::read(&players).map_err(|e| format!("read players: {e}"))?;
+        let photo_bytes = std::fs::read(&photo).map_err(|e| format!("read photo: {e}"))?;
+
+        let mut builder = tar::Builder::new(Vec::new());
+        let mut header = tar::Header::new_gnu();
+        header.set_size(player_bytes.len() as u64);
+        header.set_cksum();
+        builder
+            .append_data(
+                &mut header,
+                "olmanager-data-main/data/players/test_players.json",
+                player_bytes.as_slice(),
+            )
+            .map_err(|e| format!("append players: {e}"))?;
+        let mut header = tar::Header::new_gnu();
+        header.set_size(photo_bytes.len() as u64);
+        header.set_cksum();
+        builder
+            .append_data(
+                &mut header,
+                "olmanager-data-main/public/player-photos/p1.webp",
+                photo_bytes.as_slice(),
+            )
+            .map_err(|e| format!("append photo: {e}"))?;
+        let tar_bytes = builder
+            .into_inner()
+            .map_err(|e| format!("finish tar: {e}"))?;
+
+        let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+        encoder
+            .write_all(&tar_bytes)
+            .map_err(|e| format!("gzip: {e}"))?;
+        let bytes = encoder.finish().map_err(|e| format!("gzip finish: {e}"))?;
+
+        let mut progress = Vec::new();
+        let summary =
+            import_tar_gz_with_emit(&bytes, &data_dir, &public_dir, |p| progress.push(p))?;
+
+        assert_eq!(summary.data_files, 1, "expected one data file");
+        assert_eq!(summary.photo_files, 1, "expected one photo file");
+        assert_eq!(summary.player_count, 1, "expected one player counted");
+        assert!(
+            data_dir.join("players/test_players.json").is_file(),
+            "data file should be extracted"
+        );
+        assert!(
+            public_dir.join("player-photos/p1.webp").is_file(),
+            "photo file should be extracted"
+        );
+        assert!(!progress.is_empty(), "progress events should be emitted");
+
+        let _ = std::fs::remove_dir_all(&tmp);
+        Ok(())
+    }
+
+    #[test]
+    fn import_tar_gz_skips_unwanted_entries() -> Result<(), String> {
+        let tmp = std::env::temp_dir().join(format!("olm-import-skip-test-{}", timestamp_millis()));
+        let data_dir = tmp.join("data");
+        let public_dir = tmp.join("public");
+        std::fs::create_dir_all(&data_dir).map_err(|e| format!("mkdir data: {e}"))?;
+        std::fs::create_dir_all(&public_dir).map_err(|e| format!("mkdir public: {e}"))?;
+
+        let players = tmp.join("source/data/players/test_players.json");
+        std::fs::create_dir_all(players.parent().unwrap())
+            .map_err(|e| format!("mkdir players: {e}"))?;
+        std::fs::write(&players, r#"{"players":[{"id":"p1","full_name":"Alice"}]}"#)
+            .map_err(|e| format!("write players: {e}"))?;
+
+        let mut builder = tar::Builder::new(Vec::new());
+        let mut header = tar::Header::new_gnu();
+        header.set_size(1);
+        header.set_cksum();
+        builder
+            .append_data(
+                &mut header,
+                "olmanager-data-main/README.md",
+                b"x".as_slice(),
+            )
+            .map_err(|e| format!("append readme: {e}"))?;
+        let mut header = tar::Header::new_gnu();
+        header.set_size(1);
+        header.set_cksum();
+        builder
+            .append_data(
+                &mut header,
+                "olmanager-data-main/ignored/secret.txt",
+                b"x".as_slice(),
+            )
+            .map_err(|e| format!("append ignored: {e}"))?;
+        let player_bytes = std::fs::read(&players).map_err(|e| format!("read players: {e}"))?;
+        let mut header = tar::Header::new_gnu();
+        header.set_size(player_bytes.len() as u64);
+        header.set_cksum();
+        builder
+            .append_data(
+                &mut header,
+                "olmanager-data-main/data/players/test_players.json",
+                player_bytes.as_slice(),
+            )
+            .map_err(|e| format!("append players: {e}"))?;
+        let tar_bytes = builder
+            .into_inner()
+            .map_err(|e| format!("finish tar: {e}"))?;
+
+        let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+        encoder
+            .write_all(&tar_bytes)
+            .map_err(|e| format!("gzip: {e}"))?;
+        let bytes = encoder.finish().map_err(|e| format!("gzip finish: {e}"))?;
+
+        let summary = import_tar_gz_with_emit(&bytes, &data_dir, &public_dir, |_| {})?;
+
+        assert_eq!(summary.data_files, 1, "expected one data file");
+        assert_eq!(summary.player_count, 1, "expected one player counted");
+        assert_eq!(
+            summary.skipped, 2,
+            "expected README and ignored file to be skipped"
+        );
+
+        let _ = std::fs::remove_dir_all(&tmp);
+        Ok(())
+    }
 }
