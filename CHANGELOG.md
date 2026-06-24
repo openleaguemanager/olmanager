@@ -4,7 +4,33 @@ All notable changes to OLManager will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses GPL-3.0 licensing inherited from the OpenFootManager lineage unless otherwise documented.
 
-## [0.3.0] - 2026-06-21
+## [0.3.1] - 2026-06-24
+
+### Added
+
+- Added GitHub tarball data import, replacing the deprecated OLMDBManager external platform. The game now downloads game data directly from `OpenLeagueManager/olmanager-data` via `codeload.github.com` (no auth, no rate limits). Thanks @aalonsolopez.
+- Added bundled game data as an offline fallback. A fresh install works without internet on first run, and the online import provides updates when available. Data is resolved through a 7-tier path chain (dev, bundled resource, imported). Thanks @aalonsolopez.
+- Added global image error fallback: any broken player or staff photo is replaced with the default placeholder instead of showing the browser's broken-image icon. Thanks @aalonsolopez.
+
+### Changed
+
+- Moved the `data/` directory to a git submodule pointing to `github.com/OpenLeagueManager/olmanager-data`, decoupling game data versioning from the application codebase. Thanks @aalonsolopez.
+- Switched the auto-import pipeline from OLMDBManager ZIP downloads to GitHub tarball extraction using `tar` + `flate2` crates, with 6 passing Rust unit tests. Thanks @aalonsolopez.
+- Simplified bundled-resource path resolution: removed the Tauri `_up_` prefix hack in favor of direct `resource_dir/data` paths, fixing Android compatibility without affecting desktop builds. Thanks @aalonsolopez.
+- Updated all CI workflows (build, PR, release) to clone submodules automatically via `submodules: true` in 10 checkout steps across 3 pipelines. Thanks @aalonsolopez.
+- Separated auto-import and manual-ZIP cache paths to prevent format corruption: auto-import writes to `olmanager_export.tar.gz`, manual ZIP import writes to `olmanager_export.zip`. Thanks @aalonsolopez.
+
+### Fixed
+
+- Fixed player photos showing as broken images in production builds: the asset resolver now checks bundled `resource_dir` paths, making the 2193 committed player photos available without requiring an online import. Thanks @aalonsolopez. (#352)
+- Fixed Android builds failing to find game data on fresh installs by using direct `resource_dir/data` paths instead of the Tauri `_up_` prefix, which did not resolve correctly on Android. Thanks @aalonsolopez.
+- Fixed economy i18n texts that inherited weekly terminology from the football-era prototype: contract wages now display as annual (`€/yr`, `€/año`, `€/ano`, `€/an`, `€/Jahr`, `€/anno`, `€/yl`), sponsor deals use one-time payments, and the runway indicator correctly shows months in all 8 supported languages. Thanks @aalonsolopez.
+- Fixed football-era "training ground" / "campo de entrenamiento" references in sponsor messages, replaced with esports-appropriate "club banners" / "carteles del club" across all languages. Thanks @aalonsolopez.
+- Fixed German `weeklyTotal` label incorrectly showing "Wöchentliche Gesamt" instead of "Jährliche Gesamt". Thanks @aalonsolopez.
+
+### Contributors
+
+- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, and image fallback improvements in this release.
 
 ### Added
 
