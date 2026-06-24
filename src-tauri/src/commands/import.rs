@@ -1,15 +1,15 @@
-//! Desktop port of the web server's OLMDBManager auto-import.
+//! Desktop auto-import from the public GitHub `olmanager-data` repository.
 //!
-//! The web build pulls the public OLMDBManager export from a server endpoint;
-//! the desktop build has no server, so this module downloads and extracts the
-//! same export bundle directly into writable app-data directories:
+//! The desktop build has no bundled data directory, so this module downloads a
+//! `tar.gz` archive directly from `codeload.github.com` and extracts it into
+//! writable app-data directories:
 //!
 //!   <app_data>/data/**     ← modular competition/team/player/staff JSON
 //!   <app_data>/public/**   ← player-photos / teams-icons / staff-photos / ...
 //!
-//! The competition loaders (see `commands::competitions`) prefer `<app_data>/data`
-//! over the bundled read-only `data/`, and the `olm-asset://` protocol
-//! (see `lib.rs`) serves imported photos with a fallback to bundled assets.
+//! The competition loaders (see `commands::competitions`) read from
+//! `<app_data>/data`, and the `olm-asset://` protocol (see `lib.rs`) serves
+//! imported photos with a fallback to bundled assets.
 
 use std::collections::HashSet;
 use std::io::Read;
@@ -35,7 +35,8 @@ use crate::SaveManagerState;
 
 /// Default public OLMDBManager export endpoint. Overridable at runtime via the
 /// `OLM_IMPORT_SOURCE` env var.
-const DEFAULT_IMPORT_SOURCE: &str = "https://olmdatabase.nicorueda.dev/api/olm/export";
+const DEFAULT_IMPORT_SOURCE: &str =
+    "https://codeload.github.com/OpenLeagueManager/olmanager-data/tar.gz/refs/heads/main";
 const IMPORT_DOWNLOAD_TIMEOUT: Duration = Duration::from_secs(15 * 60);
 const IMPORT_CONNECT_TIMEOUT: Duration = Duration::from_secs(20);
 const IMPORT_RESPONSE_TIMEOUT: Duration = Duration::from_secs(45);
@@ -137,7 +138,7 @@ fn import_cache_dir(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
 }
 
 fn import_cache_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
-    Ok(import_cache_dir(app_handle)?.join("olmanager_export.zip"))
+    Ok(import_cache_dir(app_handle)?.join("olmanager_export.tar.gz"))
 }
 
 fn app_data_dir(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
@@ -234,7 +235,7 @@ pub async fn auto_import_database(
     emit_progress(
         &app_handle,
         "downloading",
-        "Conectando con OLMDBManager...",
+        "Conectando con GitHub...",
         0,
         None,
     );
@@ -248,11 +249,11 @@ pub async fn auto_import_database(
     );
     let import_app_handle = app_handle.clone();
     let summary = tauri::async_runtime::spawn_blocking(move || {
-        let summary = import_zip_safely(&bytes, &import_app_handle)?;
+        let summary = import_tar_gz_safely(&bytes, &import_app_handle)?;
         emit_progress(
             &import_app_handle,
             "caching",
-            "Guardando ZIP para futuros imports...",
+            "Guardando tar.gz para futuros imports...",
             0,
             None,
         );
@@ -313,15 +314,15 @@ pub async fn import_cached_export(
     emit_progress(
         &app_handle,
         "reading",
-        "Leyendo ultimo ZIP guardado...",
+        "Leyendo ultimo tar.gz guardado...",
         0,
         None,
     );
     let import_app_handle = app_handle.clone();
     let summary = tauri::async_runtime::spawn_blocking(move || {
         let bytes = std::fs::read(&path)
-            .map_err(|e| format!("No hay ZIP guardado para reimportar: {e}"))?;
-        import_zip_safely(&bytes, &import_app_handle)
+            .map_err(|e| format!("No hay tar.gz guardado para reimportar: {e}"))?;
+        import_tar_gz_safely(&bytes, &import_app_handle)
     })
     .await
     .map_err(|e| format!("import task panicked: {e}"))??;
@@ -383,8 +384,8 @@ fn emit_progress(
 fn write_import_cache(app_handle: &tauri::AppHandle, bytes: &[u8]) -> Result<(), String> {
     let cache_dir = import_cache_dir(app_handle)?;
     std::fs::create_dir_all(&cache_dir).map_err(|e| format!("mkdir {cache_dir:?}: {e}"))?;
-    let path = cache_dir.join("olmanager_export.zip");
-    let tmp_path = cache_dir.join(format!("olmanager_export.zip.tmp-{}", timestamp_millis()));
+    let path = cache_dir.join("olmanager_export.tar.gz");
+    let tmp_path = cache_dir.join(format!("olmanager_export.tar.gz.tmp-{}", timestamp_millis()));
     std::fs::write(&tmp_path, bytes).map_err(|e| format!("write {tmp_path:?}: {e}"))?;
     if path.exists() {
         std::fs::remove_file(&path).map_err(|e| format!("replace cache {path:?}: {e}"))?;
@@ -404,7 +405,7 @@ async fn download_export(url: &str, app_handle: &tauri::AppHandle) -> Result<Vec
         .await
         .map_err(|_| {
             format!(
-                "OLMDBManager no empezo a responder en {} segundos. Prueba de nuevo o importa un ZIP local.",
+                "GitHub no empezo a responder en {} segundos. Prueba de nuevo o importa un ZIP local.",
                 IMPORT_RESPONSE_TIMEOUT.as_secs()
             )
         })?
@@ -426,7 +427,7 @@ async fn download_export(url: &str, app_handle: &tauri::AppHandle) -> Result<Vec
     emit_progress(
         app_handle,
         "downloading",
-        "Descargando export de OLMDBManager...",
+        "Descargando tarball de GitHub...",
         0,
         total,
     );
@@ -724,11 +725,12 @@ fn timestamp_millis() -> u128 {
 
 fn validate_import_summary(summary: &ImportSummary) -> Result<(), String> {
     if summary.data_files == 0 {
-        return Err("El ZIP no contiene archivos data/ importables.".to_string());
+        return Err("El paquete no contiene archivos data/ importables.".to_string());
     }
     if summary.player_count == 0 || summary.team_count == 0 {
         return Err(
-            "El ZIP no parece una exportacion valida: faltan jugadores o equipos.".to_string(),
+            "El paquete no parece una exportacion valida: faltan jugadores o equipos."
+                .to_string(),
         );
     }
     Ok(())
