@@ -22,24 +22,6 @@ fn resolve_competitions_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
         // Project-local data takes precedence during development.
         Some(cwd.join("..").join("data").join("competitions")),
         Some(cwd.join("data").join("competitions")),
-        // Tauri rewrites the leading `..` of bundled resource globs (e.g.
-        // `../data/...`) into a literal `_up_` directory under the resource dir,
-        // so the installed data lives at `<resource_dir>/_up_/data/...`.
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("_up_").join("data").join("competitions")),
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .and_then(|dir| dir.parent().map(|p| p.join("data").join("competitions"))),
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("data").join("competitions")),
         // Imported OLMDBManager data (writable app-data dir) — last resort
         // so stale cached copies don't shadow project changes during dev.
         app_handle
@@ -71,24 +53,6 @@ pub fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
         Some(cwd.join("..").join("data")),
         Some(cwd.join("data")),
         Some(cwd.join("src-tauri").join("data")),
-        // Tauri rewrites the leading `..` of bundled resource globs (e.g.
-        // `../data/...`) into a literal `_up_` directory under the resource dir,
-        // so the installed data lives at `<resource_dir>/_up_/data/...`.
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("_up_").join("data")),
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .and_then(|dir| dir.parent().map(|p| p.join("data"))),
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("data")),
         // Imported OLMDBManager data (writable app-data dir) — last resort
         // so stale cached copies don't shadow project changes during dev.
         app_handle
