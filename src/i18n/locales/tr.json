@@ -1311,7 +1311,7 @@
     "annualSponsorIncome": "Yıllık Sponsor Geliri",
     "projectedAnnualNet": "Öngörülen Yıllık Net",
     "cashRunway": "Nakit Gidişatı",
-    "runwayMonths": "Mevcut hızda {{count}} hafta",
+    "runwayMonths": "Mevcut hızda {{count}} ay",
     "runwayStable": "Mevcut hızda stabil",
     "wagePressure": "Maaş Baskısı",
     "wageBudgetUsed": "Maaş bütçesinin %{{percent}} kadarı kullanıldı",
@@ -2788,7 +2788,7 @@
       },
       "sponsor": {
         "subject": "Sponsorluk Teklifi — {{sponsor}}",
-        "body": "İyi haberler koç! {{sponsor}}, {{team}} takımına sponsor olmakla ilgilendiğini belirtti.\n\nAntrenman tesislerindeki reklam alanı karşılığında önümüzdeki 12 hafta boyunca haftalık €{{amount}} ödeme teklif ediyorlar.\n\nBu makul bir anlaşma gibi görünüyor, ancak karar sizin.",
+        "body": "İyi haberler koç! {{sponsor}}, {{team}} takımına sponsor olmakla ilgilendiğini belirtti.\n\nAntrenman tesislerindeki reklam alanı karşılığında gelecek split için tek seferlik €{{amount}} ödeme teklif ediyorlar.\n\nBu makul bir anlaşma gibi görünüyor, ancak karar sizin.",
         "options": {
           "accept": {
             "label": "Anlaşmayı kabul et",
@@ -2913,16 +2913,16 @@
         "subject": "Asistan Raporu — Sözleşme Yenilemeleri",
         "body": "Koç, {{team}}'deki yenileme listemizin üzerinden geçtim. {{successes}} tamamlandı, {{stalled}} beklemede, {{failures}} başarısız.",
         "case": {
-          "successful": "Tamamlandı: {{player}} €{{wage}}/hf maaşla {{years}} yıla anlaştı.",
+          "successful": "Tamamlandı: {{player}} €{{wage}}/yl maaşla {{years}} yıla anlaştı.",
           "stalled": "Hala zor: {{player}} — {{detail}}",
           "failed": "Başarısız: {{player}} — {{detail}}"
         },
         "notes": {
           "managerBlocked": "Bana sözleşme görüşmelerine henüz başlamamamı söylemiştiniz.",
           "completed": "Sizin devreye girmenize gerek kalmadan işi bitirdim.",
-          "beyondLimits": "Onların kampı {{years}} yıl için haftalık €{{wage}} civarında bir şey istiyor, bu da yetki sınırlarımı aşıyor.",
+          "beyondLimits": "Onların kampı {{years}} yıl için yıllık €{{wage}} civarında bir şey istiyor, bu da yetki sınırlarımı aşıyor.",
           "boardWagePolicy": "Yönetimin maaş politikası bu yenilemeyi engelliyor. yıllık maaşları €{{budget}} civarında tutun.",
-          "prefersManager": "Beni dinlerlerdi ama hala {{years}} yıl için haftalık €{{wage}} civarında istiyorlar ve doğrudan sizden duymayı tercih ediyorlar.",
+          "prefersManager": "Beni dinlerlerdi ama hala {{years}} yıl için yıllık €{{wage}} civarında istiyorlar ve doğrudan sizden duymayı tercih ediyorlar.",
           "relationshipBlocked": "Mevcut ilişkiler ve sözleşme durumu altında benim aracılığımı istemiyorlar."
         }
       },

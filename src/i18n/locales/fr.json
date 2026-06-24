@@ -2788,7 +2788,7 @@
       },
       "sponsor": {
         "subject": "Sponsorship Offer — {{sponsor}}",
-        "body": "Bonne nouvelle, boss ! {{sponsor}} a manifesté son intérêt pour devenir sponsor de {{team}}.\n\nIls proposent un paiement hebdomadaire de €{{amount}} sur les 12 prochaines semaines en échange d'un espace publicitaire au centre d'entraînement.\n\nCela semble être un accord raisonnable, mais la décision vous appartient.",
+        "body": "Bonne nouvelle, boss ! {{sponsor}} a manifesté son intérêt pour devenir sponsor de {{team}}.\n\nIls proposent un paiement unique de €{{amount}} pour le prochain split en échange d'un espace publicitaire au centre d'entraînement.\n\nCela semble être un accord raisonnable, mais la décision vous appartient.",
         "options": {
           "accept": {
             "label": "Accepter l'accord",
@@ -2913,16 +2913,16 @@
         "subject": "Rapport de l'adjoint — Renouvellements",
         "body": "Coach, j'ai passé en revue notre liste de renouvellements à {{team}}. {{successes}} conclus, {{stalled}} encore en attente, {{failures}} échoués.",
         "case": {
-          "successful": "Conclu : {{player}} a accepté {{years}} an(s) à €{{wage}}/semaine.",
+          "successful": "Conclu : {{player}} a accepté {{years}} an(s) à €{{wage}}/an.",
           "stalled": "Toujours compliqué : {{player}} — {{detail}}",
           "failed": "Échec : {{player}} — {{detail}}"
         },
         "notes": {
           "managerBlocked": "Tu m'as dit de ne pas rouvrir les discussions contractuelles pour l'instant.",
           "completed": "J'ai pu régler ce dossier sans que tu aies besoin d'intervenir.",
-          "beyondLimits": "Le clan du joueur veut environ €{{wage}}/semaine pour {{years}} ans, au-delà des limites de délégation.",
+          "beyondLimits": "Le clan du joueur veut environ €{{wage}}/an pour {{years}} ans, au-delà des limites de délégation.",
           "boardWagePolicy": "La politique salariale du conseil bloque ce renouvellement. Maintiens la masse salariale annuelle près de €{{budget}} pendant la phase de redressement.",
-          "prefersManager": "Ils écouteraient, mais demandent encore environ €{{wage}}/semaine pour {{years}} ans et préfèrent parler directement avec toi.",
+          "prefersManager": "Ils écouteraient, mais demandent encore environ €{{wage}}/an pour {{years}} ans et préfèrent parler directement avec toi.",
           "relationshipBlocked": "Ils ne sont pas prêts à s'engager par mon intermédiaire dans le contexte relationnel et contractuel actuel."
         }
       },

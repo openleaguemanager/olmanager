@@ -1255,7 +1255,7 @@
     "overview": "Finanzübersicht",
     "wageBill": "Gehaltsliste",
     "annualTotal": "Jährliche Gesamt",
-    "weeklyTotal": "Wöchentliche Gesamt",
+    "weeklyTotal": "Jährliche Gesamt",
     "budget": "Budget",
     "underBudget": "Im Budget",
     "overBudget": "Über dem Budget!",
@@ -2788,7 +2788,7 @@
       },
       "sponsor": {
         "subject": "Sponsorship Offer — {{sponsor}}",
-        "body": "Gute Nachrichten, Boss! {{sponsor}} hat Interesse bekundet, Sponsor von {{team}} zu werden.\n\nSie bieten in den nächsten 12 Wochen eine wöchentliche Zahlung von €{{amount}} im Austausch für Werbefläche am Trainingsgelände an.\n\nDas scheint ein vernünftiger Deal zu sein, aber die Entscheidung liegt bei dir.",
+        "body": "Gute Nachrichten, Boss! {{sponsor}} hat Interesse bekundet, Sponsor von {{team}} zu werden.\n\nSie bieten eine einmalige Zahlung von €{{amount}} für den kommenden Split im Austausch für Werbefläche am Trainingsgelände an.\n\nDas scheint ein vernünftiger Deal zu sein, aber die Entscheidung liegt bei dir.",
         "options": {
           "accept": {
             "label": "Angebot annehmen",
@@ -2913,16 +2913,16 @@
         "subject": "Assistentenbericht — Vertragsverlängerungen",
         "body": "Boss, ich habe unsere Verlängerungsliste bei {{team}} durchgearbeitet. {{successes}} abgeschlossen, {{stalled}} noch offen, {{failures}} gescheitert.",
         "case": {
-          "successful": "Abgeschlossen: {{player}} hat {{years}} Jahr(e) zu €{{wage}}/Woche akzeptiert.",
+          "successful": "Abgeschlossen: {{player}} hat {{years}} Jahr(e) zu €{{wage}}/Jahr akzeptiert.",
           "stalled": "Weiter schwierig: {{player}} — {{detail}}",
           "failed": "Gescheitert: {{player}} — {{detail}}"
         },
         "notes": {
           "managerBlocked": "Du hast mir gesagt, ich soll die Vertragsgespräche noch nicht wieder aufnehmen.",
           "completed": "Ich konnte das ohne dein Eingreifen abschließen.",
-          "beyondLimits": "Die Spielerseite will etwa €{{wage}}/Woche für {{years}} Jahre, das liegt außerhalb der Delegationsgrenzen.",
+          "beyondLimits": "Die Spielerseite will etwa €{{wage}}/Jahr für {{years}} Jahre, das liegt außerhalb der Delegationsgrenzen.",
           "boardWagePolicy": "Die Gehaltspolitik des Vorstands blockiert diese Verlängerung. Halte die Jahreslöhne während der Erholung nahe bei €{{budget}}.",
-          "prefersManager": "Sie würden zuhören, wollen aber noch etwa €{{wage}}/Woche für {{years}} Jahre und bevorzugen ein Gespräch direkt mit dir.",
+          "prefersManager": "Sie würden zuhören, wollen aber noch etwa €{{wage}}/Jahr für {{years}} Jahre und bevorzugen ein Gespräch direkt mit dir.",
           "relationshipBlocked": "Unter der aktuellen Beziehung und Vertragssituation wollen sie sich über mich nicht festlegen."
         }
       },
