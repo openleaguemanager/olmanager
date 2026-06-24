@@ -141,6 +141,10 @@ fn import_cache_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     Ok(import_cache_dir(app_handle)?.join("olmanager_export.tar.gz"))
 }
 
+fn import_zip_cache_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
+    Ok(import_cache_dir(app_handle)?.join("olmanager_export.zip"))
+}
+
 fn app_data_dir(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     app_handle
         .path()
@@ -291,7 +295,7 @@ pub async fn import_export_zip(
     let summary = tauri::async_runtime::spawn_blocking(move || {
         let bytes = std::fs::read(&path).map_err(|e| format!("read {path}: {e}"))?;
         let summary = import_zip_safely(&bytes, &import_app_handle)?;
-        write_import_cache(&import_app_handle, &bytes)?;
+        write_import_zip_cache(&import_app_handle, &bytes)?;
         Ok::<ImportSummary, String>(summary)
     })
     .await
@@ -382,10 +386,23 @@ fn emit_progress(
 }
 
 fn write_import_cache(app_handle: &tauri::AppHandle, bytes: &[u8]) -> Result<(), String> {
-    let cache_dir = import_cache_dir(app_handle)?;
+    write_import_cache_to(import_cache_path(app_handle)?, bytes)
+}
+
+fn write_import_zip_cache(app_handle: &tauri::AppHandle, bytes: &[u8]) -> Result<(), String> {
+    write_import_cache_to(import_zip_cache_path(app_handle)?, bytes)
+}
+
+fn write_import_cache_to(path: PathBuf, bytes: &[u8]) -> Result<(), String> {
+    let cache_dir = path
+        .parent()
+        .ok_or_else(|| format!("cache path has no parent: {path:?}"))?;
     std::fs::create_dir_all(&cache_dir).map_err(|e| format!("mkdir {cache_dir:?}: {e}"))?;
-    let path = cache_dir.join("olmanager_export.tar.gz");
-    let tmp_path = cache_dir.join(format!("olmanager_export.tar.gz.tmp-{}", timestamp_millis()));
+    let file_name = path
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_else(|| "import-cache".to_string());
+    let tmp_path = cache_dir.join(format!("{file_name}.tmp-{}", timestamp_millis()));
     std::fs::write(&tmp_path, bytes).map_err(|e| format!("write {tmp_path:?}: {e}"))?;
     if path.exists() {
         std::fs::remove_file(&path).map_err(|e| format!("replace cache {path:?}: {e}"))?;
@@ -1583,6 +1600,30 @@ mod tests {
         assert_eq!(
             summary.skipped, 2,
             "expected README and ignored file to be skipped"
+        );
+
+        let _ = std::fs::remove_dir_all(&tmp);
+        Ok(())
+    }
+
+    #[test]
+    fn write_import_cache_to_writes_to_given_path() -> Result<(), String> {
+        let tmp = std::env::temp_dir().join(format!("olm-cache-test-{}", timestamp_millis()));
+        std::fs::create_dir_all(&tmp).map_err(|e| format!("mkdir tmp: {e}"))?;
+        let path = tmp.join("olmanager_export.zip");
+
+        write_import_cache_to(path.clone(), b"zip bytes")?;
+
+        assert!(path.is_file(), "cache file should exist at requested path");
+        assert_eq!(
+            std::fs::read(&path).map_err(|e| format!("read cache: {e}"))?,
+            b"zip bytes"
+        );
+
+        write_import_cache_to(path.clone(), b"updated bytes")?;
+        assert_eq!(
+            std::fs::read(&path).map_err(|e| format!("read updated cache: {e}"))?,
+            b"updated bytes"
         );
 
         let _ = std::fs::remove_dir_all(&tmp);
