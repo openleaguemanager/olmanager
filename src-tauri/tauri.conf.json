@@ -30,7 +30,7 @@
     "createUpdaterArtifacts": true,
     "resources": [
       "databases/world.json",
-      "../data/**/*",
+      "data/**/*",
       "../public/**/*",
       "../assets/simulation/*.json",
       "../assets/draft/*.json"

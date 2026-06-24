@@ -22,20 +22,9 @@ fn resolve_competitions_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
         // Project-local data takes precedence during development.
         Some(cwd.join("..").join("data").join("competitions")),
         Some(cwd.join("data").join("competitions")),
-        // Bundled resource — Tauri rewrites relative parent paths (e.g.
-        // `../data/...`) into a literal `_up_` directory under the resource dir,
-        // so the installed data lives at `<resource_dir>/_up_/data/...`.
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("_up_").join("data").join("competitions")),
-        // Alternative bundled-resource resolution paths.
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .and_then(|dir| dir.parent().map(|p| p.join("data").join("competitions"))),
+        // Bundled resource — sync-data.mjs copies data/ → src-tauri/data/
+        // during build, and "data/**/*" in tauri.conf.json bundles it
+        // directly (no _up_ prefix) so it works on Android too.
         app_handle
             .path()
             .resource_dir()
@@ -72,20 +61,9 @@ pub fn resolve_data_base(app_handle: &tauri::AppHandle) -> Option<PathBuf> {
         Some(cwd.join("..").join("data")),
         Some(cwd.join("data")),
         Some(cwd.join("src-tauri").join("data")),
-        // Bundled resource — Tauri rewrites relative parent paths (e.g.
-        // `../data/...`) into a literal `_up_` directory under the resource dir,
-        // so the installed data lives at `<resource_dir>/_up_/data/...`.
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .map(|dir| dir.join("_up_").join("data")),
-        // Alternative bundled-resource resolution paths.
-        app_handle
-            .path()
-            .resource_dir()
-            .ok()
-            .and_then(|dir| dir.parent().map(|p| p.join("data"))),
+        // Bundled resource — sync-data.mjs copies data/ → src-tauri/data/
+        // during build, and "data/**/*" in tauri.conf.json bundles it
+        // directly (no _up_ prefix) so it works on Android too.
         app_handle
             .path()
             .resource_dir()
