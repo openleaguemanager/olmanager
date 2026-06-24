@@ -2933,7 +2933,7 @@
       },
       "sponsor": {
         "subject": "Sponsorship Offer — {{sponsor}}",
-        "body": "Buenas noticias, míster: {{sponsor}} ha mostrado interés en convertirse en patrocinador de {{team}}.\n\nOfrecen un pago único de €{{amount}} por el próximo split a cambio de espacio publicitario en el campo de entrenamiento.\n\nParece un acuerdo razonable, pero la decisión es tuya.",
+        "body": "Buenas noticias, míster: {{sponsor}} ha mostrado interés en convertirse en patrocinador de {{team}}.\n\nOfrecen un pago único de €{{amount}} por el próximo split a cambio de espacio publicitario en los carteles del club.\n\nParece un acuerdo razonable, pero la decisión es tuya.",
         "options": {
           "accept": {
             "label": "Aceptar el acuerdo",

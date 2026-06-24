@@ -2594,7 +2594,7 @@
       },
       "sponsor": {
         "subject": "Offerta di sponsorizzazione — {{sponsor}}",
-        "body": "Buone notizie, mister! {{sponsor}} ha espresso interesse a diventare sponsor del {{team}}.\n\nOffre un pagamento una tantum di €{{amount}} per lo split in arrivo in cambio di spazio pubblicitario al centro sportivo.\n\nSembra un buon accordo, ma la decisione spetta a te.",
+        "body": "Buone notizie, mister! {{sponsor}} ha espresso interesse a diventare sponsor del {{team}}.\n\nOffre un pagamento una tantum di €{{amount}} per lo split in arrivo in cambio di spazio pubblicitario sui cartelli del club.\n\nSembra un buon accordo, ma la decisione spetta a te.",
         "options": {
           "accept": {
             "label": "Accetta l'accordo",

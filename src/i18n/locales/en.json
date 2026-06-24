@@ -2967,7 +2967,7 @@
       },
       "sponsor": {
         "subject": "Sponsorship Offer — {{sponsor}}",
-        "body": "Good news, boss! {{sponsor}} has expressed interest in becoming a sponsor of {{team}}.\n\nThey are offering a one-time payment of €{{amount}} for the upcoming split in exchange for advertising space at the training ground.\n\nThis seems like a reasonable deal, but it is your call.",
+        "body": "Good news, boss! {{sponsor}} has expressed interest in becoming a sponsor of {{team}}.\n\nThey are offering a one-time payment of €{{amount}} for the upcoming split in exchange for advertising space on the club's banners.\n\nThis seems like a reasonable deal, but it is your call.",
         "options": {
           "accept": {
             "label": "Accept the deal",

@@ -2788,7 +2788,7 @@
       },
       "sponsor": {
         "subject": "Sponsorluk Teklifi — {{sponsor}}",
-        "body": "İyi haberler koç! {{sponsor}}, {{team}} takımına sponsor olmakla ilgilendiğini belirtti.\n\nAntrenman tesislerindeki reklam alanı karşılığında gelecek split için tek seferlik €{{amount}} ödeme teklif ediyorlar.\n\nBu makul bir anlaşma gibi görünüyor, ancak karar sizin.",
+        "body": "İyi haberler koç! {{sponsor}}, {{team}} takımına sponsor olmakla ilgilendiğini belirtti.\n\nkulübün afişlerindeki reklam alanı karşılığında gelecek split için tek seferlik €{{amount}} ödeme teklif ediyorlar.\n\nBu makul bir anlaşma gibi görünüyor, ancak karar sizin.",
         "options": {
           "accept": {
             "label": "Anlaşmayı kabul et",
