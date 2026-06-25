@@ -29,6 +29,15 @@ const EMERGENCY_PLAYER_MARKET_VALUE: u64 = 250_000;
 const RENEWED_CONTRACT_END_MONTH_DAY: &str = "11-30";
 const MAX_GENERATED_PLAYER_ID_COLLISIONS: usize = 16;
 
+const GENERATED_FIRST_NAMES: &[&str] = &[
+    "Alex", "Sam", "Noah", "Leo", "Max", "Ethan", "Lucas", "Mason", "Logan", "Ryan", "Dylan",
+    "Tyler", "Jordan", "Casey", "Riley", "Quinn", "Avery", "Skyler", "Parker", "Cameron",
+];
+const GENERATED_LAST_NAMES: &[&str] = &[
+    "Kerr", "Voss", "Pike", "Vance", "Sloan", "Reed", "Flynn", "Nash", "Hayes", "Banks", "Cole",
+    "Dunn", "Grant", "Hale", "Meyer", "Page", "Stark", "Wells", "Blake", "Hunter",
+];
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RosterStabilityReason {
     ContractExpired,
@@ -281,6 +290,21 @@ fn renew_needed_current_players(game: &mut Game, team_id: &str, actions: &mut Ve
     }
 }
 
+/// Fill each missing role using the tightest realistic repair route available.
+///
+/// Repair priority per role:
+/// 1. Renew an existing team player whose contract expired (handled before this loop).
+/// 2. Sign an eligible free agent who matches the role and passes the AI signing policy.
+/// 3. Acquire from another club. **This step is intentionally not implemented.**
+///    The codebase does have a direct AI club-to-club path elsewhere
+///    (`simulate_ai_club_to_club_transfers -> execute_transfer`), but emergency roster
+///    repair deliberately does not invoke it inline. Club-to-club transfers are a
+///    separate strategic flow with market, window, budget, and seller-impact semantics;
+///    running them here would blur that flow with this narrow invariant safety seam.
+///    Therefore, when the free-agent pool is exhausted, the deterministic fallback in
+///    step 4 remains the final safety net.
+/// 4. Generate a deterministic last-resort fallback player. Internal emergency IDs and
+///    audit actions are preserved; display names are plausible rather than "Emergency ...".
 fn fill_missing_roles(
     game: &mut Game,
     team_id: &str,
@@ -321,7 +345,23 @@ fn assign_free_agent(
     reason: RosterStabilityReason,
 ) -> Option<String> {
     let current_date = current_date(game);
-    let index = game
+    let team = game
+        .teams
+        .iter()
+        .find(|team| team.id == team_id)
+        .expect("repair team must exist")
+        .clone();
+
+    let signing_intent = repair_signing_intent(reason);
+    let cap_kind = if is_emergency_repair(reason) {
+        AiTransferKind::Emergency
+    } else {
+        AiTransferKind::Strategic
+    };
+
+    // Collect matching free agents in deterministic order and try each one.
+    // Cap consumption and transfer recording only happen for the selected candidate.
+    let mut candidates: Vec<(String, usize)> = game
         .players
         .iter()
         .enumerate()
@@ -330,61 +370,55 @@ fn assign_free_agent(
         .filter(|(_, player)| {
             player.contract_end.is_none() || has_current_contract(player, current_date)
         })
-        .min_by(|(_, left), (_, right)| left.id.cmp(&right.id))
-        .map(|(index, _)| index)?;
+        .map(|(index, player)| (player.id.clone(), index))
+        .collect();
+    candidates.sort();
 
-    let team = game
-        .teams
-        .iter()
-        .find(|team| team.id == team_id)
-        .expect("repair team must exist")
-        .clone();
+    for (_, index) in candidates {
+        let decision = {
+            let player = &game.players[index];
+            ai_signing_policy(game, &team, player, signing_intent)
+        };
+        if !decision.accepted {
+            continue;
+        }
+        if !ai_transfer_cap_try_consume(game, team_id, cap_kind) {
+            continue;
+        }
 
-    let intent = repair_signing_intent(reason);
-    let decision = ai_signing_policy(game, &team, &game.players[index], intent);
-    if !decision.accepted {
-        return None;
+        let contract_end = contract_end_for_years(game, decision.contract_years);
+        let player_id = game.players[index].id.clone();
+        let player = &mut game.players[index];
+        player.team_id = Some(team_id.to_string());
+        player.contract_end = Some(contract_end);
+        player.wage = decision.annual_wage;
+
+        let transfer_intent = if is_emergency_repair(reason) {
+            Some("emergency")
+        } else {
+            None
+        };
+        record_transfer(
+            game,
+            &player_id,
+            "",
+            team_id,
+            0,
+            decision.annual_wage,
+            decision.contract_years,
+            false,
+            false,
+            false,
+            None,
+            0,
+            &[],
+            transfer_intent,
+        );
+
+        return Some(player_id);
     }
 
-    let cap_kind = if is_emergency_repair(reason) {
-        AiTransferKind::Emergency
-    } else {
-        AiTransferKind::Strategic
-    };
-    if !ai_transfer_cap_try_consume(game, team_id, cap_kind) {
-        return None;
-    }
-
-    let contract_end = contract_end_for_years(game, decision.contract_years);
-    let player = &mut game.players[index];
-    let player_id = player.id.clone();
-    player.team_id = Some(team_id.to_string());
-    player.contract_end = Some(contract_end);
-    player.wage = decision.annual_wage;
-
-    let intent = if is_emergency_repair(reason) {
-        Some("emergency")
-    } else {
-        None
-    };
-    record_transfer(
-        game,
-        &player_id,
-        "",
-        team_id,
-        0,
-        decision.annual_wage,
-        decision.contract_years,
-        false,
-        false,
-        false,
-        None,
-        0,
-        &[],
-        intent,
-    );
-
-    Some(player_id)
+    None
 }
 
 fn is_emergency_repair(reason: RosterStabilityReason) -> bool {
@@ -557,11 +591,26 @@ fn is_schedulable_ai_main_team(game: &Game, team_id: &str) -> bool {
     })
 }
 
+/// Deterministic, plausible display name for a generated roster-repair fallback.
+///
+/// Keeps the internal emergency IDs and audit actions intact while avoiding the
+/// ugly "Emergency TOP/MID/..." placeholders that surface in the UI.
+fn generated_player_name(player_id: &str) -> (String, String) {
+    let hash = player_id.bytes().fold(0u32, |acc, byte| {
+        acc.wrapping_mul(31).wrapping_add(u32::from(byte))
+    });
+    let first = GENERATED_FIRST_NAMES[(hash as usize) % GENERATED_FIRST_NAMES.len()];
+    let last = GENERATED_LAST_NAMES[((hash >> 8) as usize) % GENERATED_LAST_NAMES.len()];
+    let full_name = format!("{first} {last}");
+    (full_name.clone(), full_name)
+}
+
 fn generated_player(player_id: &str, team_id: &str, role: LolRole, game: &Game) -> Player {
+    let (match_name, full_name) = generated_player_name(player_id);
     let mut player = Player::new(
         player_id.to_string(),
-        format!("Emergency {}", role_slug(role).to_uppercase()),
-        format!("Emergency {} Replacement", role_slug(role).to_uppercase()),
+        match_name,
+        full_name,
         EMERGENCY_PLAYER_BIRTH_DATE.to_string(),
         EMERGENCY_PLAYER_NATIONALITY.to_string(),
         role,

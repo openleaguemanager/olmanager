@@ -430,6 +430,280 @@ fn generated_replacement_wrong_role_collision_uses_next_deterministic_id() {
 }
 
 #[test]
+fn generated_replacement_uses_plausible_name_not_emergency_placeholder() {
+    let mut game = game_with(
+        vec![
+            player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+            player(
+                "jungle",
+                Some("ai-team"),
+                LolRole::Jungle,
+                Some("2028-06-30"),
+            ),
+            player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+            player(
+                "support",
+                Some("ai-team"),
+                LolRole::Support,
+                Some("2028-06-30"),
+            ),
+        ],
+        vec!["top", "jungle", "mid", "support"],
+    );
+
+    let report = repair_team(&mut game, "ai-team", RosterStabilityReason::PreMatch)
+        .expect("generated ADC should repair free-agent starvation");
+
+    let generated = game
+        .players
+        .iter()
+        .find(|player| {
+            player.team_id.as_deref() == Some("ai-team")
+                && player.natural_position == LolRole::Adc
+                && player.id.starts_with("emergency-")
+        })
+        .expect("generated replacement should exist");
+
+    assert!(
+        !generated.full_name.starts_with("Emergency "),
+        "full_name should not be an emergency placeholder, got {}",
+        generated.full_name
+    );
+    assert!(
+        !generated.match_name.starts_with("Emergency "),
+        "match_name should not be an emergency placeholder, got {}",
+        generated.match_name
+    );
+    assert!(
+        report.actions.iter().any(|action| matches!(
+            action,
+            RepairAction::GeneratedReplacement {
+                role: LolRole::Adc,
+                ..
+            }
+        )),
+        "repair should report a generated ADC replacement"
+    );
+}
+
+#[test]
+fn eligible_free_agent_precludes_generated_replacement() {
+    let mut players = vec![
+        player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+        player(
+            "jungle",
+            Some("ai-team"),
+            LolRole::Jungle,
+            Some("2028-06-30"),
+        ),
+        player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+        player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player("adc2", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player("free-support", None, LolRole::Support, Some("2028-06-30")),
+    ];
+    players[5].market_value = 100_000;
+    let mut game = game_with(players, vec!["top", "jungle", "mid", "adc", "adc2"]);
+    game.teams[0].wage_budget = 1_000_000;
+
+    let report = repair_team(&mut game, "ai-team", RosterStabilityReason::PreMatch)
+        .expect("free support should repair role gap without generating a player");
+
+    assert!(
+        report.actions.iter().any(|action| matches!(
+            action,
+            RepairAction::AssignedFreeAgent { player_id, role: LolRole::Support } if player_id == "free-support"
+        )),
+        "repair should assign the eligible free agent"
+    );
+    assert!(
+        !report
+            .actions
+            .iter()
+            .any(|action| matches!(action, RepairAction::GeneratedReplacement { .. })),
+        "no generated replacement should occur when an eligible free agent is available"
+    );
+    assert!(
+        !game
+            .players
+            .iter()
+            .any(|player| player.team_id.as_deref() == Some("ai-team")
+                && player.natural_position == LolRole::Support
+                && player.id.starts_with("emergency-")),
+        "no emergency support player should be created"
+    );
+}
+
+#[test]
+fn rejected_free_agent_does_not_block_later_eligible_free_agent() {
+    // ai-team is missing support. Two free-agent supports exist in deterministic
+    // order. The first is too expensive for the wage policy, the second is
+    // affordable. The repair must exhaust the realistic options and sign the
+    // later eligible candidate instead of generating a fallback.
+    //
+    // Use Emergency (cap = 1) so that if a rejected candidate incorrectly
+    // consumed a transfer slot, the later eligible free agent would be blocked
+    // and the test would fail. PreMatch (cap = 2) was too weak: an erroneous
+    // consume of one slot would still leave room for the second signing.
+    let mut players = vec![
+        player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+        player(
+            "jungle",
+            Some("ai-team"),
+            LolRole::Jungle,
+            Some("2028-06-30"),
+        ),
+        player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+        player("adc", Some("ai-team"), LolRole::Adc, Some("2028-06-30")),
+        player(
+            "a-expensive-support",
+            None,
+            LolRole::Support,
+            Some("2028-06-30"),
+        ),
+        player(
+            "b-affordable-support",
+            None,
+            LolRole::Support,
+            Some("2028-06-30"),
+        ),
+    ];
+    players[4].market_value = 3_000_000;
+    players[5].market_value = 100_000;
+    let mut game = game_with(players, vec!["top", "jungle", "mid", "adc"]);
+    game.teams[0].wage_budget = 300_000;
+
+    let report = repair_team(&mut game, "ai-team", RosterStabilityReason::Emergency)
+        .expect("later eligible free agent should repair role gap");
+
+    assert_eq!(
+        game.players
+            .iter()
+            .find(|player| player.id == "b-affordable-support")
+            .unwrap()
+            .team_id
+            .as_deref(),
+        Some("ai-team"),
+        "the eligible later free agent should be assigned"
+    );
+    assert!(
+        game.players
+            .iter()
+            .find(|player| player.id == "a-expensive-support")
+            .unwrap()
+            .team_id
+            .is_none(),
+        "the rejected earlier free agent should remain unsigned"
+    );
+    assert!(
+        report.actions.iter().any(|action| matches!(
+            action,
+            RepairAction::AssignedFreeAgent { player_id, role: LolRole::Support }
+                if player_id == "b-affordable-support"
+        )),
+        "repair should report assigning the eligible free agent"
+    );
+    assert!(
+        !report
+            .actions
+            .iter()
+            .any(|action| matches!(action, RepairAction::GeneratedReplacement { .. })),
+        "no generated replacement should occur when a later eligible free agent exists"
+    );
+    assert!(
+        !game
+            .players
+            .iter()
+            .any(|player| player.team_id.as_deref() == Some("ai-team")
+                && player.natural_position == LolRole::Support
+                && player.id.starts_with("emergency-")),
+        "no emergency support player should be created"
+    );
+    assert_eq!(
+        game.ai_transfer_cap_counts
+            .get("ai-team")
+            .map(|state| state.emergency_count)
+            .unwrap_or(0),
+        1,
+        "only the successful signing should consume the emergency cap; rejected candidates must not"
+    );
+}
+
+#[test]
+fn generated_fallback_used_when_no_safe_real_acquisition_exists() {
+    // ai-team is missing ADC. No free agents exist, and the only ADC in the league
+    // belongs to other-ai. Emergency roster repair deliberately does not invoke the
+    // strategic AI club-to-club flow inline, so a deterministic generated fallback
+    // must be used instead of poaching the opponent.
+    let mut game = game_with(
+        vec![
+            player("top", Some("ai-team"), LolRole::Top, Some("2028-06-30")),
+            player(
+                "jungle",
+                Some("ai-team"),
+                LolRole::Jungle,
+                Some("2028-06-30"),
+            ),
+            player("mid", Some("ai-team"), LolRole::Mid, Some("2028-06-30")),
+            player(
+                "support",
+                Some("ai-team"),
+                LolRole::Support,
+                Some("2028-06-30"),
+            ),
+            // other-ai has a full roster; its only ADC must not be poached.
+            player("o-top", Some("other-ai"), LolRole::Top, Some("2028-06-30")),
+            player(
+                "o-jungle",
+                Some("other-ai"),
+                LolRole::Jungle,
+                Some("2028-06-30"),
+            ),
+            player("o-mid", Some("other-ai"), LolRole::Mid, Some("2028-06-30")),
+            player("o-adc", Some("other-ai"), LolRole::Adc, Some("2028-06-30")),
+            player(
+                "o-support",
+                Some("other-ai"),
+                LolRole::Support,
+                Some("2028-06-30"),
+            ),
+        ],
+        vec!["top", "jungle", "mid", "support"],
+    );
+    game.season_context.transfer_window.status = TransferWindowStatus::Closed;
+
+    let report = repair_team(&mut game, "ai-team", RosterStabilityReason::PreMatch)
+        .expect("generated ADC should repair the roster without unsafe poaching");
+
+    assert!(
+        report.actions.iter().any(|action| matches!(
+            action,
+            RepairAction::GeneratedReplacement {
+                role: LolRole::Adc,
+                ..
+            }
+        )),
+        "repair should generate an ADC replacement"
+    );
+    assert!(
+        !report
+            .actions
+            .iter()
+            .any(|action| matches!(action, RepairAction::AssignedFreeAgent { .. })),
+        "no free agent should be assigned when none exists"
+    );
+    let o_adc = game
+        .players
+        .iter()
+        .find(|player| player.id == "o-adc")
+        .expect("other-ai's ADC should still exist");
+    assert_eq!(
+        o_adc.team_id.as_deref(),
+        Some("other-ai"),
+        "other-ai's only ADC must not be poached during emergency repair"
+    );
+}
+
+#[test]
 fn duplicate_lineup_ids_are_not_match_eligible_until_reconciled() {
     let mut game = game_with(
         full_roster("ai-team"),
