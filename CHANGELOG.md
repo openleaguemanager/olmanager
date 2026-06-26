@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed economy i18n texts that inherited weekly terminology from the football-era prototype: contract wages now display as annual (`€/yr`, `€/año`, `€/ano`, `€/an`, `€/Jahr`, `€/anno`, `€/yl`), sponsor deals use one-time payments, and the runway indicator correctly shows months in all 8 supported languages. Thanks @aalonsolopez.
 - Fixed football-era "training ground" / "campo de entrenamiento" references in sponsor messages, replaced with esports-appropriate "club banners" / "carteles del club" across all languages. Thanks @aalonsolopez.
 - Fixed German `weeklyTotal` label incorrectly showing "Wöchentliche Gesamt" instead of "Jährliche Gesamt". Thanks @aalonsolopez.
+- Fixed academy acquired inbox message always displaying in Spanish regardless of the active language; the message now uses proper i18n keys with localized text across all 8 supported languages. Thanks @aalonsolopez.
 - Fixed missing filter options for player search in multiple languages, restoring the filter UI labels across all supported locales. Thanks @aalonsolopez.
 - Fixed generated player names falling back to emergency placeholders in roster generation by using plausible names when the catalog has no direct match. Thanks @aalonsolopez.
 - Fixed multi-league system known issues (#306): removed dead standalone playoff generators superseded by the incremental scheduler, hardened competition-ID extraction to handle dashed IDs (e.g. `emea-masters-g2`) via manifest-aware longest-prefix matching, added safe clearing and re-derivation of legacy or unknown competition references during save load and refresh so stale saves do not silently break active-league resolution, and made background-season history recording idempotent to prevent duplicate entries when a competition manifest is missing. Thanks @aalonsolopez.
@@ -38,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Contributors
 
-- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, image fallback improvements, roster generation fixes, player-search localization, multi-league cleanup, competition-reference hardening, background-season history deduplication, bot-lane path routing fix, facilities serialization cleanup, and full test-suite stabilization in this release.
+- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, image fallback improvements, roster generation fixes, player-search localization, multi-league cleanup, competition-reference hardening, background-season history deduplication, bot-lane path routing fix, facilities serialization cleanup, academy acquired message internationalization, and full test-suite stabilization in this release.
 
 ## [0.3.0] - 2026-06-21
 
