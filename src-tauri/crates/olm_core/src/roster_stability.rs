@@ -367,6 +367,7 @@ fn assign_free_agent(
         .enumerate()
         .filter(|(_, player)| player.team_id.is_none())
         .filter(|(_, player)| player.natural_position == role)
+        .filter(|(_, player)| !player.was_released)
         .filter(|(_, player)| {
             player.contract_end.is_none() || has_current_contract(player, current_date)
         })

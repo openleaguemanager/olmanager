@@ -82,7 +82,7 @@ fn bench_happy_and_contract_conversations_preserve_actions_without_football_fram
     }
 
     let bench_options = match &bench.actions[0].action_type {
-        domain::message::ActionType::ChooseOption { options } => options,
+        olm_core::domain::message::ActionType::ChooseOption { options } => options,
         other => panic!("expected choice options, got {other:?}"),
     };
     assert_eq!(bench_options[0].id, "explain");

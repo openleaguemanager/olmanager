@@ -32,8 +32,9 @@ pub struct TeamSelectionData {
 // Local helpers that stay in the Tauri layer
 // ---------------------------------------------------------------------------
 
-/// Extract competition ID from a scoped team ID like "lec-g2" → "lec".
-use olm_core::competitions::competition_id_from_team_id;
+use olm_core::competitions::{
+    competition_id_from_team_id_known, sanitize_competition_references,
+};
 
 /// Assemble teams, players, and staff from modular competition data files.
 /// Used by Flow C: the game was created lightweight (empty teams/players),
@@ -262,11 +263,24 @@ pub async fn select_team(
 
     // Detect flow: if game has no teams, this is Flow C (modular assembly)
     eprintln!("[select_team] teams.is_empty={}, staff.len={}", game.teams.is_empty(), game.staff.len());
+
+    // Non-legacy competition manifests are required for both Flow C assembly and
+    // schedule generation; scan them once up front.
+    let all_manifests = crate::commands::competitions::scan_competitions(&app_handle);
+    let known_competition_ids: Vec<String> = all_manifests
+        .iter()
+        .filter(|m| !m.legacy)
+        .map(|m| m.id.clone())
+        .collect();
+    if known_competition_ids.is_empty() {
+        return Err("No active competition manifests available; cannot select a team safely".to_string());
+    }
+
     if game.teams.is_empty() {
         info!("[cmd] select_team: empty game state — assembling from modular data");
 
         // Extract competition ID from team ID (e.g. "lec-g2" → "lec")
-        let competition_id = competition_id_from_team_id(&team_id)
+        let competition_id = competition_id_from_team_id_known(&team_id, &known_competition_ids)
             .ok_or_else(|| format!("Invalid team ID format '{}': missing competition prefix", team_id))?;
 
         // Assemble teams, players, staff from modular data
@@ -332,8 +346,7 @@ pub async fn select_team(
 
     // Generate schedules for ALL competitions
     let season_year = game.clock.current_date.year();
-    let user_cid = competition_id_from_team_id(&team_id);
-    let all_manifests = crate::commands::competitions::scan_competitions(&app_handle);
+    let user_cid = competition_id_from_team_id_known(&team_id, &known_competition_ids);
     let mut all_leagues: Vec<olm_core::domain::league::League> = Vec::new();
 
     for manifest in all_manifests.iter().filter(|m| !m.legacy) {
@@ -402,7 +415,9 @@ pub async fn select_team(
         all_leagues.push(league);
     }
 
-    // Populate competition_configs from all manifests for bg season cycling
+    // Populate competition_configs from all manifests for bg season cycling.
+    // Clear first so this set always reflects the current non-legacy manifests.
+    game.competition_configs.clear();
     for manifest in all_manifests.iter().filter(|m| !m.legacy) {
         game.competition_configs
             .insert(manifest.id.clone(), (*manifest).clone());
@@ -614,12 +629,31 @@ pub async fn load_game(
     // before the ScheduleConfig -> CompetitionManifest migration lose their
     // legacy-shaped entries during lenient deserialization; rebuilding here
     // (as new-game setup does) keeps the config set correct and complete.
-    for manifest in crate::commands::competitions::scan_competitions(&app_handle)
+    // Clear first so stale keys from older saves do not survive.
+    let scanned_manifests: Vec<_> = crate::commands::competitions::scan_competitions(&app_handle)
         .into_iter()
         .filter(|manifest| !manifest.legacy)
-    {
-        game.competition_configs
-            .insert(manifest.id.clone(), manifest);
+        .collect();
+    let known_competition_ids: Vec<String> = scanned_manifests
+        .iter()
+        .map(|manifest| manifest.id.clone())
+        .collect();
+    if !known_competition_ids.is_empty() {
+        game.competition_configs.clear();
+        for manifest in &scanned_manifests {
+            game.competition_configs
+                .insert(manifest.id.clone(), manifest.clone());
+        }
+
+        // Clear any legacy/unknown competition references so loading a save does
+        // not silently point active-league resolution at missing data. Use the
+        // freshly scanned manifests as the source of truth so stale config keys
+        // from older saves cannot survive as valid references.
+        sanitize_competition_references(&mut game, &known_competition_ids);
+    } else {
+        warn!(
+            "[cmd] load_game: no current competition manifests found; preserving saved competition configs and references"
+        );
     }
 
     // Bootstrap champion state so the Champions tab has data
@@ -695,6 +729,20 @@ pub async fn get_active_game(
         game.teams.len(),
         game.staff.len()
     );
+
+    // Refresh can happen after manifests changed on disk; sanitize competition
+    // references so the active game does not silently point at removed leagues.
+    let known_competition_ids: Vec<String> =
+        crate::commands::competitions::scan_competitions(&app_handle)
+            .into_iter()
+            .filter(|m| !m.legacy)
+            .map(|m| m.id)
+            .collect();
+    let sanitized = sanitize_competition_references(&mut game, &known_competition_ids);
+    if rehydrated.total() > 0 || sanitized {
+        state.set_game(game.clone());
+    }
+
     log::info!("[cmd] get_active_game: bootstrapping champion state...");
     olm_core::champions::bootstrap_champion_state(&mut game);
     // Refresh lol_ovr for all players (it's stored as 0 in the save DB)

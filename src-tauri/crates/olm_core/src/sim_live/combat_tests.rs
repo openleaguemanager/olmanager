@@ -346,7 +346,7 @@ fn global_ultimate_requires_team_vision() {
         extra: HashMap::new(),
     };
 
-    let mut caster = test_champion("jgl-blue", "blue", "JGL", "mid", Vec2 { x: 0.40, y: 0.40 });
+    let mut caster = test_champion("mid-blue", "blue", "MID", "mid", Vec2 { x: 0.40, y: 0.40 });
     caster.level = 8;
     caster.ultimate = Some(RuntimeUltimateSlot {
         archetype: "global".to_string(),
@@ -402,7 +402,8 @@ fn pick_combat_target_without_entities_returns_none() {
 
 #[test]
 fn objective_assist_prioritizes_objective_over_farm_lock() {
-    let adc = test_champion("adc-blue", "blue", "ADC", "bot", Vec2 { x: 0.62, y: 0.73 });
+    let mut adc = test_champion("adc-blue", "blue", "ADC", "bot", Vec2 { x: 0.62, y: 0.73 });
+    adc.state = "objective".to_string();
     let jungler = test_champion("jgl-blue", "blue", "JGL", "bot", Vec2 { x: 0.64, y: 0.71 });
     let mut enemy = test_champion("mid-red", "red", "MID", "mid", Vec2 { x: 0.82, y: 0.70 });
     enemy.attack_damage = 1.0;

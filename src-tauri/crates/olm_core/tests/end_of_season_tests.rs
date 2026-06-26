@@ -8,8 +8,12 @@ use olm_core::domain::message::MessageCategory;
 use olm_core::domain::player::{Player, PlayerAttributes, PlayerSeasonStats};
 use olm_core::domain::stats::LolRole;
 use olm_core::domain::team::{FinancialTransactionKind, Team, TeamKind};
-use olm_core::end_of_season::{is_season_complete, process_end_of_season};
+use olm_core::end_of_season::{
+    is_season_complete, process_background_seasons, process_end_of_season, process_end_of_split,
+};
 use olm_core::game::{BoardObjective, Game, ObjectiveType};
+use olm_core::generator::definitions::{CompetitionManifest, ScheduleConfig, SeasonStart, SplitConfig};
+use std::collections::HashMap;
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -150,6 +154,7 @@ fn make_completed_season_game() -> Game {
         split_index: 0,
         fixtures,
         standings,
+        ..Default::default()
     };
 
     let mut game = Game::new(
@@ -164,9 +169,63 @@ fn make_completed_season_game() -> Game {
     game
 }
 
+fn make_completed_background_league(id: &str, competition_id: Option<&str>, season: u32) -> League {
+    League {
+        id: id.to_string(),
+        name: "Background League".to_string(),
+        logo: None,
+        season,
+        competition_id: competition_id.map(str::to_string),
+        league_kind: LeagueKind::Main,
+        split_index: 0,
+        fixtures: vec![
+            make_completed_fixture(&format!("{}-f1", id), "team1", "team2", 2, 1),
+            make_completed_fixture(&format!("{}-f2", id), "team2", "team1", 0, 1),
+        ],
+        standings: vec![
+            make_standing("team1", 2, 0, 3, 1),
+            make_standing("team2", 0, 2, 1, 3),
+        ],
+        ..Default::default()
+    }
+}
+
 // ---------------------------------------------------------------------------
 // is_season_complete
 // ---------------------------------------------------------------------------
+
+fn make_test_manifest() -> CompetitionManifest {
+    CompetitionManifest {
+        id: "test-league".to_string(),
+        name: "Test League".to_string(),
+        full_name: None,
+        region: "EU".to_string(),
+        country: None,
+        tier: None,
+        logo: None,
+        schedule: ScheduleConfig {
+            format: "single_round_robin".to_string(),
+            team_count: 2,
+            splits: vec![SplitConfig {
+                name: "Spring".to_string(),
+                season_start: SeasonStart { month: 8, day: 1 },
+                superweek_offsets: vec![],
+                best_of: 1,
+                playoffs: None,
+            }],
+            preseason_friendlies: 0,
+        },
+        teams_file: "teams.json".to_string(),
+        players_file: "players.json".to_string(),
+        staff_file: None,
+        championships_file: None,
+        erls: vec![],
+        reputation: None,
+        nearby_country_codes: vec![],
+        legacy: false,
+        active: true,
+    }
+}
 
 #[test]
 fn season_complete_when_all_fixtures_completed() {
@@ -257,6 +316,40 @@ fn season_not_complete_with_truncated_completed_fixture_list() {
         !is_season_complete(&game),
         "A truncated fixture list must not count as a completed season"
     );
+}
+
+// ---------------------------------------------------------------------------
+// process_background_seasons — stale manifest compatibility
+// ---------------------------------------------------------------------------
+
+#[test]
+fn background_league_with_missing_manifest_records_history_without_regeneration() {
+    let mut game = make_completed_season_game();
+    game.leagues.push(make_completed_background_league(
+        "stale-bg",
+        Some("removed-competition"),
+        2026,
+    ));
+
+    let manifests = HashMap::new();
+    process_background_seasons(&mut game, &manifests);
+    process_background_seasons(&mut game, &manifests);
+
+    let team1 = game.teams.iter().find(|team| team.id == "team1").unwrap();
+    assert_eq!(team1.history.len(), 1);
+    assert_eq!(team1.history[0].season, 2026);
+    assert_eq!(team1.history[0].league_position, 1);
+
+    let background_league = game
+        .leagues
+        .iter()
+        .find(|league| league.id == "stale-bg")
+        .expect("background league should remain present");
+    assert_eq!(background_league.season, 2026);
+    assert_eq!(background_league.competition_id.as_deref(), Some("removed-competition"));
+    assert!(background_league.fixtures.iter().all(|fixture| {
+        fixture.status == FixtureStatus::Completed
+    }));
 }
 
 // ---------------------------------------------------------------------------
@@ -474,7 +567,11 @@ fn manager_career_history_entry_updated_on_second_season() {
 #[test]
 fn new_league_generated() {
     let mut game = make_completed_season_game();
+    let manifest = make_test_manifest();
+    game.leagues[0].competition_id = Some(manifest.id.clone());
+
     process_end_of_season(&mut game);
+    process_end_of_split(&mut game, &manifest);
 
     let league = game.leagues.first().unwrap();
     assert_eq!(league.season, 2, "Should be season 2");
@@ -1248,14 +1345,13 @@ fn replenish_depleted_rosters_excludes_was_released_players() {
     let date = Utc.with_ymd_and_hms(2026, 6, 1, 12, 0, 0).unwrap();
     let clock = GameClock::new(date);
 
-    let mut manager = Manager::new(
+    let manager = Manager::new(
         "mgr-wr".to_string(),
         "Test".to_string(),
         "Manager".to_string(),
         "1980-01-01".to_string(),
         "England".to_string(),
     );
-    manager.hire("team1".to_string());
 
     fn make_free_agent(id: &str, was_released: bool) -> Player {
         let attrs = PlayerAttributes {
@@ -1284,10 +1380,10 @@ fn replenish_depleted_rosters_excludes_was_released_players() {
     // team1 only has 2 players — needs 3 more
     let mut p1 = make_player("p-existing-1", "Existing1", "team1", LolRole::Top);
     p1.contract_end = Some("2027-06-30".to_string());
-    p1.wage = 100_000;
+    p1.wage = 30_000;
     let mut p2 = make_player("p-existing-2", "Existing2", "team1", LolRole::Jungle);
     p2.contract_end = Some("2027-06-30".to_string());
-    p2.wage = 100_000;
+    p2.wage = 30_000;
 
     // team2 has 5 players — won't need free agents
     let mut team2_players = Vec::new();
@@ -1308,9 +1404,12 @@ fn replenish_depleted_rosters_excludes_was_released_players() {
     players.extend(team2_players);
     players.push(make_free_agent("fa-released", true));
     players.push(make_free_agent("fa-available-1", false));
-    players.push(make_free_agent("fa-available-2", false));
+    let mut fa2 = make_free_agent("fa-available-2", false);
+    fa2.natural_position = LolRole::Support;
+    players.push(fa2);
 
-    let team1 = make_team("team1", "Needy FC");
+    let mut team1 = make_team("team1", "Needy FC");
+    team1.finance = 10_000_000;
     let team2 = make_team("team2", "Full FC");
 
     let mut game = Game::new(
@@ -1341,6 +1440,7 @@ fn replenish_depleted_rosters_excludes_was_released_players() {
         split_index: 0,
         fixtures,
         standings,
+        ..Default::default()
     }];
 
     process_end_of_season(&mut game);

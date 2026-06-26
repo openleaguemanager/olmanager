@@ -846,23 +846,20 @@ pub enum FacilityType {
 pub struct Facilities {
     #[serde(default = "default_main_hub_level")]
     pub main_hub_level: u8,
-    #[serde(default)]
     pub training: u8,
-    #[serde(default)]
     pub medical: u8,
-    #[serde(default)]
     pub scouting: u8,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub scrims_room_level: Option<u8>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub analysis_room_level: Option<u8>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub bootcamp_area_level: Option<u8>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub recovery_suite_level: Option<u8>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub content_studio_level: Option<u8>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub scouting_lab_level: Option<u8>,
 }
 
@@ -1196,7 +1193,12 @@ mod facility_compatibility_tests {
         assert_eq!(hub.modules[5].level, 1);
         assert_eq!(
             serde_json::to_value(&facilities).unwrap(),
-            serde_json::json!({ "training": 4, "medical": 1, "scouting": 1 }),
+            serde_json::json!({
+                "main_hub_level": 1,
+                "training": 4,
+                "medical": 1,
+                "scouting": 1,
+            }),
         );
     }
 

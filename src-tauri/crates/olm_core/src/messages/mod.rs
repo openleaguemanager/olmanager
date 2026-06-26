@@ -120,7 +120,7 @@ pub fn welcome_message(team_name: &str, team_id: &str, date: &str, lang: &str) -
     let (subject, body) = &variations[idx];
 
     InboxMessage::new(
-        "welcome_1".to_string(),
+        format!("welcome_{}", team_id),
         subject.clone(),
         body.clone(),
         "Board of Directors".to_string(),
@@ -203,7 +203,7 @@ pub fn season_schedule_message(league_name: &str, season_start: &str, date: &str
         &format!("be.msg.schedule.body{}", idx),
         params(&[("league", league_name), ("start", season_start)]),
     )
-    .with_sender_i18n("be.sender.leagueOffice", "be.role.match_typeSecretary")
+    .with_sender_i18n("be.sender.leagueOffice", "be.role.competitionSecretary")
 }
 
 pub fn staff_advice_message(team_name: &str, team_id: &str, date: &str) -> InboxMessage {

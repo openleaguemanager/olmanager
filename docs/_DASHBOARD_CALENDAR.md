@@ -21,8 +21,7 @@ Rust backend (schedule.rs)
   │   └─ → generate_single_round_league*()
   │
   ├─ generate_preseason_friendlies()      (matchday=0, weeks before start)
-  ├─ generate_winter_playoffs()           (top 8, double elim)
-  └─ generate_spring_summer_playoffs()    (top 6, double elim)
+  └─ build_playoff_round_fixtures()       (incremental playoffs in turn/mod.rs)
         │
         ▼
   League.fixtures[] = Vec<Fixture>
@@ -58,7 +57,7 @@ Rust backend (schedule.rs)
 | `Friendly` | `generate_preseason_friendlies()` | 0 |
 | `PreseasonTournament` | `generate_schedule_from_config()` | 0 |
 | `League` | `generate_single_round_league*()` | 1..n |
-| `Playoffs` | `generate_winter/spring_summer_playoffs()` | n+1.. |
+| `Playoffs` | `build_playoff_round_fixtures()` (incremental) | n+1.. |
 
 Each `Fixture` has:
 
@@ -101,7 +100,9 @@ shorter gaps).
 
 - **Winter**: top 8, double elimination bracket
 - **Spring/Summer**: top 6, double elimination bracket
-- Generated via `generate_winter_playoffs()` / `generate_spring_summer_playoffs()`
+- Generated incrementally via `build_playoff_round_fixtures()` in `turn/mod.rs` when a
+  split completes; the old standalone `generate_winter_playoffs()` /
+  `generate_spring_summer_playoffs()` generators were removed.
 
 ### Preseason friendlies
 

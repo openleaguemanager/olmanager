@@ -27,10 +27,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed economy i18n texts that inherited weekly terminology from the football-era prototype: contract wages now display as annual (`€/yr`, `€/año`, `€/ano`, `€/an`, `€/Jahr`, `€/anno`, `€/yl`), sponsor deals use one-time payments, and the runway indicator correctly shows months in all 8 supported languages. Thanks @aalonsolopez.
 - Fixed football-era "training ground" / "campo de entrenamiento" references in sponsor messages, replaced with esports-appropriate "club banners" / "carteles del club" across all languages. Thanks @aalonsolopez.
 - Fixed German `weeklyTotal` label incorrectly showing "Wöchentliche Gesamt" instead of "Jährliche Gesamt". Thanks @aalonsolopez.
+- Fixed missing filter options for player search in multiple languages, restoring the filter UI labels across all supported locales. Thanks @aalonsolopez.
+- Fixed generated player names falling back to emergency placeholders in roster generation by using plausible names when the catalog has no direct match. Thanks @aalonsolopez.
+- Fixed issue #306 multi-league cleanup: removed dead standalone playoff generators, hardened `competition_id_from_team_id` against dashed competition/team IDs with manifest-aware prefix matching, and added safe clearing/derivation of legacy/unknown competition references during save load and refresh. Thanks @aalonsolopez.
+- Fixed empty/failed competition scans destructively clearing all competition references: `sanitize_competition_references` now no-ops when no known competition ids are available. Thanks @aalonsolopez.
+- Fixed stale `competition_configs` surviving save load: both `load_game` and `select_team` now clear the map before inserting current non-legacy manifests. Thanks @aalonsolopez.
+- Fixed stale `cargo test -p olm_core` integration tests by updating `League`/`InboxMessage` initializers, correcting `ofm_core`/`domain::` module paths, and aligning contract/facility test expectations. Thanks @aalonsolopez.
+- Fixed bot lane path routing in the live simulator so minions and champions no longer cross the closed wall near the dragon pit. Thanks @aalonsolopez.
+- Fixed delegated-renewal frontend tests/fixtures to expect annual wage suffixes (`/yr`, `/ano`) instead of weekly. Thanks @aalonsolopez.
 
 ### Contributors
 
-- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, and image fallback improvements in this release.
+- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, image fallback improvements, roster generation fixes, and player-search localization in this release.
+
+## [0.3.0] - 2026-06-21
 
 ### Added
 

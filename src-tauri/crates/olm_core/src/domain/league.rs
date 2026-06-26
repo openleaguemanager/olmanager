@@ -11,7 +11,7 @@ pub enum LeagueKind {
     Academy,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct League {
     pub id: String,
     pub name: String,

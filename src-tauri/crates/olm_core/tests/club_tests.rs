@@ -45,7 +45,7 @@ fn upgrade_facility_deducts_funds_and_increments_level() {
 
     let cost = club::upgrade_facility(&mut game.teams[0], FacilityType::Medical, "2025-06-16").unwrap();
 
-    assert_eq!(cost, 250_000);
+    assert_eq!(cost, 500_000);
     assert_eq!(game.teams[0].finance, initial_finance - cost);
     assert_eq!(game.teams[0].season_expenses, cost);
     assert_eq!(game.teams[0].financial_ledger.len(), 1);
@@ -85,7 +85,7 @@ fn expand_main_facility_hub_deducts_funds_and_unlocks_next_module_level() {
 
     let cost = club::expand_main_facility_hub(&mut game.teams[0], "2025-06-16").unwrap();
 
-    assert_eq!(cost, 500_000);
+    assert_eq!(cost, 1_000_000);
     assert_eq!(game.teams[0].finance, initial_finance - cost);
     assert_eq!(game.teams[0].season_expenses, cost);
     assert_eq!(game.teams[0].financial_ledger.len(), 1);
@@ -119,7 +119,7 @@ fn legacy_facility_upgrade_entry_point_expands_the_hub_cap_safely() {
 
     let cost = club::upgrade_facility(&mut game.teams[0], FacilityType::Scouting, "2025-06-16").unwrap();
 
-    assert_eq!(cost, 250_000);
+    assert_eq!(cost, 500_000);
     assert_eq!(game.teams[0].facilities.as_main_facility_hub().level, 2);
     assert_eq!(game.teams[0].facilities.scouting, 2);
 }

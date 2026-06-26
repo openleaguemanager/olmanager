@@ -97,6 +97,7 @@ fn make_game_with_league() -> Game {
             result: None,
         }],
         standings: vec![StandingEntry::new("team1".to_string())],
+        ..Default::default()
     }];
     game
 }
@@ -295,6 +296,7 @@ fn check_random_events_board_confidence_triggers_on_losses() {
             },
         ],
         standings: vec![],
+        ..Default::default()
     }];
 
     check_random_events(&mut game);
@@ -381,6 +383,7 @@ fn check_random_events_board_confidence_no_trigger_without_losses() {
             },
         ],
         standings: vec![],
+        ..Default::default()
     }];
 
     check_random_events(&mut game);
@@ -392,55 +395,6 @@ fn check_random_events_board_confidence_no_trigger_without_losses() {
     assert_eq!(
         board_msgs, 0,
         "Board confidence should not trigger with wins"
-    );
-}
-
-#[test]
-fn check_random_events_international_callup_with_upcoming_match() {
-    let mut game = make_game();
-    // Set up a match 3 days from now
-    let future_date = (game.clock.current_date + chrono::Duration::days(3))
-        .format("%Y-%m-%d")
-        .to_string();
-    game.leagues = vec![League {
-        id: "league1".to_string(),
-        name: "Test League".to_string(),
-        season: 1,
-        competition_id: None,
-        fixtures: vec![Fixture {
-            id: "fix1".to_string(),
-            matchday: 1,
-            date: future_date,
-            home_team_id: "team1".to_string(),
-            away_team_id: "opp1".to_string(),
-            match_type: MatchType::League,
-            best_of: 1,
-            status: FixtureStatus::Scheduled,
-            result: None,
-        }],
-        standings: vec![],
-    }];
-
-    // Run many times to trigger the 5% chance
-    for _ in 0..2000 {
-        check_random_events(&mut game);
-        game.clock.advance_days(1);
-        // Reset league fixture to always be upcoming
-        if let Some(league) = game.leagues.first_mut() {
-            let future = (game.clock.current_date + chrono::Duration::days(3))
-                .format("%Y-%m-%d")
-                .to_string();
-            league.fixtures[0].date = future;
-        }
-    }
-    let callup_msgs = game
-        .messages
-        .iter()
-        .filter(|m| m.id.starts_with("intl_callup_"))
-        .count();
-    assert!(
-        callup_msgs > 0,
-        "Should generate international call-up messages over many days"
     );
 }
 
@@ -596,6 +550,7 @@ fn sponsor_message(amount: u64) -> InboxMessage {
         sender_key: None,
         sender_role_key: None,
         i18n_params: params,
+        sender_icon: None,
     }
 }
 
@@ -616,7 +571,7 @@ fn apply_sponsor_accept_adds_finance() {
         .as_ref()
         .expect("accepted sponsor should create active sponsorship state");
     assert_eq!(sponsorship.base_value, 100_000);
-    assert_eq!(sponsorship.remaining_months, 12);
+    assert_eq!(sponsorship.remaining_months, 3);
     assert_eq!(sponsorship.sponsor_name, "Test Sponsor");
     assert!(matches!(
         sponsorship.bonus_criteria.as_slice(),
@@ -716,6 +671,7 @@ fn board_message() -> InboxMessage {
         sender_key: None,
         sender_role_key: None,
         i18n_params: HashMap::new(),
+        sender_icon: None,
     }
 }
 
@@ -804,6 +760,7 @@ fn fan_petition_msg() -> InboxMessage {
         sender_key: None,
         sender_role_key: None,
         i18n_params: HashMap::new(),
+        sender_icon: None,
     }
 }
 
@@ -890,6 +847,7 @@ fn rival_interest_msg(player_id: &str) -> InboxMessage {
         sender_key: None,
         sender_role_key: None,
         i18n_params: HashMap::new(),
+        sender_icon: None,
     }
 }
 

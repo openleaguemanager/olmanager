@@ -1533,7 +1533,7 @@ fn apply_patch(game: &mut Game) {
             ("nerfed", &nerfed_list),
         ]),
     )
-    .with_sender_i18n("be.sender.leagueOffice", "be.role.match_typeSecretary");
+    .with_sender_i18n("be.sender.leagueOffice", "be.role.competitionSecretary");
 
     game.messages.push(msg);
 }

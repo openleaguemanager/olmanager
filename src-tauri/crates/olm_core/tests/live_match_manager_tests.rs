@@ -146,6 +146,7 @@ fn make_game_with_fixture() -> Game {
             StandingEntry::new("team1".to_string()),
             StandingEntry::new("team2".to_string()),
         ],
+        ..Default::default()
     };
 
     let mut game = Game::new(clock, manager, vec![team1, team2], players, vec![], vec![]);
@@ -178,7 +179,7 @@ fn create_live_match_succeeds() {
 fn create_live_match_user_side_home() {
     let game = make_game_with_fixture();
     let session = live_match_manager::create_live_match(&game, 0, MatchMode::Live, false).unwrap();
-    assert_eq!(session.user_side, Some(engine::Side::Home));
+    assert_eq!(session.user_side, Some(olm_core::engine::Side::Home));
 }
 
 #[test]
@@ -186,7 +187,7 @@ fn create_live_match_user_side_away() {
     let mut game = make_game_with_fixture();
     game.manager.team_id = Some("team2".to_string());
     let session = live_match_manager::create_live_match(&game, 0, MatchMode::Live, false).unwrap();
-    assert_eq!(session.user_side, Some(engine::Side::Away));
+    assert_eq!(session.user_side, Some(olm_core::engine::Side::Away));
 }
 
 #[test]

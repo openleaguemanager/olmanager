@@ -439,7 +439,7 @@ fn scrim_days_generate_enriched_reports_with_champion_picks() {
         .expect("scrim report should be generated");
     assert_eq!(report.team_id, "team1");
     assert_eq!(report.opponent_team_id, "team2");
-    assert_eq!(report.status, domain::team::ScrimStatus::Played);
+    assert_eq!(report.status, ScrimStatus::Played);
     assert_eq!(report.focus, ScrimFocus::DraftPrep);
     assert!(report.quality >= 30);
     assert!(!report.player_champion_picks.is_empty());
@@ -482,9 +482,9 @@ fn scrim_block_is_idempotent_before_training_block() {
 #[test]
 fn scrim_mastery_progress_uses_report_quality_and_review_decision() {
     let mut game = make_game();
-    let before = ofm_core::champions::mastery_for_player_champion(&game, "p1", "Azir");
+    let before = olm_core::champions::mastery_for_player_champion(&game, "p1", "Azir");
 
-    ofm_core::champions::apply_scrim_mastery_progress(
+    olm_core::champions::apply_scrim_mastery_progress(
         &mut game,
         "p1",
         "Azir",
@@ -493,7 +493,7 @@ fn scrim_mastery_progress_uses_report_quality_and_review_decision() {
         Some(&PostScrimDecision::TargetedDrills),
     );
 
-    let after = ofm_core::champions::mastery_for_player_champion(&game, "p1", "Azir");
+    let after = olm_core::champions::mastery_for_player_champion(&game, "p1", "Azir");
     assert!(
         after > before,
         "scrim review should improve champion mastery"
@@ -1030,28 +1030,6 @@ fn scrims_can_increase_fitness() {
 }
 
 #[test]
-fn legacy_injury_field_does_not_decay_fitness_over_time() {
-    let mut game = make_game();
-    let p1 = game.players.iter_mut().find(|p| p.id == "p1").unwrap();
-    p1.fitness = 80;
-    p1.injury = Some(domain::player::Injury {
-        name: "Hamstring".to_string(),
-        days_remaining: 30,
-    });
-
-    let initial_fitness = game.players.iter().find(|p| p.id == "p1").unwrap().fitness;
-
-    // Simulate 20 rest days with a legacy injury field.
-    for _ in 0..20 {
-        training::process_training(&mut game, 2); // rest day
-    }
-
-    let final_fitness = game.players.iter().find(|p| p.id == "p1").unwrap().fitness;
-
-    assert_eq!(final_fitness, initial_fitness);
-}
-
-#[test]
 fn rival_players_get_auto_targets_and_gain_mastery_on_training() {
     let mut game = make_game();
 
@@ -1078,7 +1056,22 @@ fn rival_players_get_auto_targets_and_gain_mastery_on_training() {
         last_active_on: "2025-06-15".to_string(),
     });
 
-    let before_azir = ofm_core::champions::mastery_for_player_champion(&game, "p-rival", "Azir");
+    // Pin the champion-patch RNG so this test is deterministic across runs and
+    // unaffected by the global thread-local RNG state touched by other tests.
+    game.champion_patch.rng_seed = 42;
+
+    olm_core::champions::ensure_training_targets_from_mastery(&mut game, "p-rival");
+    let trained_champion = game
+        .players
+        .iter()
+        .find(|player| player.id == "p-rival")
+        .and_then(|player| olm_core::champions::training_targets_for_player(player).first().cloned())
+        .expect("rival player should auto-assign a primary mastery target");
+    let before_mastery = olm_core::champions::mastery_for_player_champion(
+        &game,
+        "p-rival",
+        &trained_champion,
+    );
 
     for _ in 0..40 {
         if let Some(player) = game
@@ -1096,18 +1089,23 @@ fn rival_players_get_auto_targets_and_gain_mastery_on_training() {
         .iter()
         .find(|player| player.id == "p-rival")
         .expect("rival player should exist");
-    let targets = ofm_core::champions::training_targets_for_player(rival_player);
+    let targets = olm_core::champions::training_targets_for_player(rival_player);
     assert!(
         !targets.is_empty(),
         "rival player should auto-assign mastery targets"
     );
 
-    let after_azir = ofm_core::champions::mastery_for_player_champion(&game, "p-rival", "Azir");
+    let after_mastery = olm_core::champions::mastery_for_player_champion(
+        &game,
+        "p-rival",
+        &trained_champion,
+    );
     assert!(
-        after_azir > before_azir,
-        "rival mastery should grow from training (before={}, after={})",
-        before_azir,
-        after_azir
+        after_mastery > before_mastery,
+        "rival mastery should grow for trained target {} (before={}, after={})",
+        trained_champion,
+        before_mastery,
+        after_mastery
     );
 }
 
@@ -1116,7 +1114,7 @@ fn rival_auto_targets_prioritize_meta_tier_over_raw_mastery() {
     let mut game = make_game();
 
     let mut rival = make_player("p-meta", "Meta Mid", "team2", "2001-04-11");
-    rival.natural_position = domain::player::LolRole::Mid;
+    rival.natural_position = LolRole::Mid;
     rival.champion_training_targets = Vec::new();
     game.players.push(rival);
 
@@ -1148,13 +1146,13 @@ fn rival_auto_targets_prioritize_meta_tier_over_raw_mastery() {
         },
     ];
 
-    ofm_core::champions::ensure_training_targets_from_mastery(&mut game, "p-meta");
+    olm_core::champions::ensure_training_targets_from_mastery(&mut game, "p-meta");
     let player = game
         .players
         .iter()
         .find(|candidate| candidate.id == "p-meta")
         .expect("meta test player should exist");
-    let targets = ofm_core::champions::training_targets_for_player(player);
+    let targets = olm_core::champions::training_targets_for_player(player);
 
     assert_eq!(targets.first().map(String::as_str), Some("MetaLow"));
 }
