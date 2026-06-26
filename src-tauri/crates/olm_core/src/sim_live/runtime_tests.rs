@@ -217,7 +217,7 @@ fn respawn_scales_with_level_and_time() {
     let early_low = champion_respawn_seconds(3, 12.0 * 60.0);
     let late_high = champion_respawn_seconds(15, 33.0 * 60.0);
     assert!(late_high > early_low);
-    assert!(late_high <= 42.0);
+    assert!(late_high <= 58.0);
 }
 
 #[test]

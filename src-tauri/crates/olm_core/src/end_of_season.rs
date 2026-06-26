@@ -201,25 +201,34 @@ pub fn process_background_seasons(game: &mut Game, manifests: &HashMap<String, C
             .map(|entry| entry.team_id.clone())
             .collect();
 
-        // Determine if this split wraps the season (last split → new year)
+        // Determine if this split wraps the season (last split → new year).
+        // Leagues without a known manifest are treated as end-of-season so that
+        // completed background leagues still record history even when their
+        // config has been removed or their competition_id is not resolvable.
         let is_end_of_season = competition_id
             .as_ref()
-            .and_then(|cid| manifests.get(cid))
-            .is_some_and(|manifest| game.leagues[i].split_index + 1 >= manifest.schedule.splits.len());
+            .map(|cid| match manifests.get(cid) {
+                Some(manifest) => game.leagues[i].split_index + 1 >= manifest.schedule.splits.len(),
+                None => true,
+            })
+            .unwrap_or(true);
 
         if is_end_of_season {
             // Record TeamSeasonRecord for each team (no prize money, no messages)
             for (idx, standing) in final_standings.iter().enumerate() {
                 if let Some(team) = game.teams.iter_mut().find(|t| t.id == standing.team_id) {
-                    team.history.push(TeamSeasonRecord {
-                        season,
-                        league_position: (idx + 1) as u32,
-                        played: standing.played,
-                        won: standing.won,
-                        lost: standing.lost,
-                        kills_for: standing.maps_won,
-                        kills_against: standing.maps_lost,
-                    });
+                    let already_recorded = team.history.iter().any(|record| record.season == season);
+                    if !already_recorded {
+                        team.history.push(TeamSeasonRecord {
+                            season,
+                            league_position: (idx + 1) as u32,
+                            played: standing.played,
+                            won: standing.won,
+                            lost: standing.lost,
+                            kills_for: standing.maps_won,
+                            kills_against: standing.maps_lost,
+                        });
+                    }
                     team.form.clear();
                 }
             }
@@ -694,30 +703,32 @@ fn process_end_of_season_inner(
     }
 
     let sched_msg_id = format!("new_season_{}", next_season_num);
-    let mut sched_params = std::collections::HashMap::new();
-    sched_params.insert("season".to_string(), next_season_num.to_string());
-    let sched_msg = InboxMessage::new(
-        sched_msg_id,
-        format!("Season {} — New Schedule Released", next_season_num),
-        format!(
-            "The schedule for Season {} has been released! The new campaign kicks off in 4 weeks.\n\n\
-            Use this break to assess your squad, make any necessary changes, and prepare for the challenges ahead.\n\n\
-            Good luck!",
-            next_season_num
-        ),
-        "League Office".to_string(),
-        last_fixture_date,
-    )
-    .with_category(MessageCategory::LeagueInfo)
-    .with_priority(MessagePriority::Normal)
-    .with_sender_role("Competition Secretary")
-    .with_i18n(
-        "be.msg.newSeasonSchedule.subject",
-        "be.msg.newSeasonSchedule.body",
-        sched_params,
-    )
-    .with_sender_i18n("be.sender.leagueOffice", "be.role.match_typeSecretary");
-    game.messages.push(sched_msg);
+    if !existing_ids.contains(&sched_msg_id) {
+        let mut sched_params = std::collections::HashMap::new();
+        sched_params.insert("season".to_string(), next_season_num.to_string());
+        let sched_msg = InboxMessage::new(
+            sched_msg_id,
+            format!("Season {} — New Schedule Released", next_season_num),
+            format!(
+                "The schedule for Season {} has been released! The new campaign kicks off in 4 weeks.\n\n\
+                Use this break to assess your squad, make any necessary changes, and prepare for the challenges ahead.\n\n\
+                Good luck!",
+                next_season_num
+            ),
+            "League Office".to_string(),
+            last_fixture_date,
+        )
+        .with_category(MessageCategory::LeagueInfo)
+        .with_priority(MessagePriority::Normal)
+        .with_sender_role("Competition Secretary")
+        .with_i18n(
+            "be.msg.newSeasonSchedule.subject",
+            "be.msg.newSeasonSchedule.body",
+            sched_params,
+        )
+        .with_sender_i18n("be.sender.leagueOffice", "be.role.competitionSecretary");
+        game.messages.push(sched_msg);
+    }
 
     crate::season_context::refresh_game_context(game);
 

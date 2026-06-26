@@ -371,7 +371,7 @@ pub(super) const LANE_PATH_MID_BLUE: [Vec2; 7] = [
     Vec2 { x: 0.89, y: 0.12 },
 ];
 
-pub(super) const LANE_PATH_BOT_BLUE: [Vec2; 14] = [
+pub(super) const LANE_PATH_BOT_BLUE: [Vec2; 13] = [
     Vec2 { x: 0.12, y: 0.88 },
     Vec2 { x: 0.24, y: 0.89 },
     Vec2 { x: 0.36, y: 0.9 },
@@ -379,8 +379,7 @@ pub(super) const LANE_PATH_BOT_BLUE: [Vec2; 14] = [
     Vec2 { x: 0.62, y: 0.909 },
     Vec2 { x: 0.72, y: 0.912 },
     Vec2 { x: 0.84, y: 0.86 },
-    Vec2 { x: 0.872, y: 0.80 },
-    Vec2 { x: 0.894, y: 0.73 },
+    Vec2 { x: 0.91, y: 0.80 },
     Vec2 { x: 0.908, y: 0.65 },
     Vec2 { x: 0.916, y: 0.57 },
     Vec2 { x: 0.918, y: 0.48 },

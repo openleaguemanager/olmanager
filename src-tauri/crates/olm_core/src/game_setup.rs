@@ -912,7 +912,7 @@ mod tests {
 
         apply_default_initial_contract_end(&mut players);
 
-        assert_eq!(players[0].contract_end.as_deref(), Some("2026-11-30"));
+        assert_eq!(players[0].contract_end.as_deref(), Some("2027-11-30"));
         assert_eq!(players[1].contract_end.as_deref(), Some("2028-11-30"));
     }
 

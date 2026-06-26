@@ -920,11 +920,6 @@ export default function LolMatchLive({ gameState, snapshot, blueTeamId, champion
     setRunning(true);
   };
 
-  const requestSkipFromZero = () => {
-    if (isSkipping) return;
-    setSkipWarningOpen(true);
-  };
-
   const handleSkipMatch = async () => {
     if (isSkipping) return;
 

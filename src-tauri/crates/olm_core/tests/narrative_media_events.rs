@@ -95,7 +95,7 @@ fn fan_petition_uses_lol_supporter_campaign_copy_and_preserves_response_options(
     );
 
     let options = match &message.actions[0].action_type {
-        domain::message::ActionType::ChooseOption { options } => options,
+        olm_core::domain::message::ActionType::ChooseOption { options } => options,
         other => panic!("expected fan petition choice options, got {other:?}"),
     };
     assert_eq!(options[0].id, "listen_fans");

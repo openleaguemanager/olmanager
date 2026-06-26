@@ -1111,6 +1111,7 @@ fn home_match_generates_income() {
             }),
         }],
         standings: vec![StandingEntry::new("team1".to_string())],
+        ..Default::default()
     };
     game.leagues = vec![league];
 
@@ -1174,6 +1175,7 @@ fn away_match_no_income() {
             }),
         }],
         standings: vec![StandingEntry::new("team1".to_string())],
+        ..Default::default()
     };
     game.leagues = vec![league];
 

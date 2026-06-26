@@ -2016,18 +2016,6 @@ export default function ChampionDraft({
   ]);
 
   // ---------------------------------------------------------------------------
-  // Coach resolution (must be before assistantCoachTips useMemo)
-  // ---------------------------------------------------------------------------
-  const assistantCoach = gameState?.staff.find(
-    (staff) => staff.team_id === userTeamId && staff.role === "AssistantManager",
-  );
-  const coachName =
-    assistantCoach && (assistantCoach.first_name || assistantCoach.last_name)
-      ? `${assistantCoach.first_name ?? ""} ${assistantCoach.last_name ?? ""}`.trim()
-      : t("match.draft.assistantCoach");
-  const coachImage = assistantCoach?.profile_image_url ?? ASSISTANT_COACH_PLACEHOLDER;
-
-  // ---------------------------------------------------------------------------
   // Dynamic Draft Tips - Assistant Coach & Player Suggestions
   // ---------------------------------------------------------------------------
   const assistantCoachTips = useMemo<DraftAdviceTip[]>(() => {

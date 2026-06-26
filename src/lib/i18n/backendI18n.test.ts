@@ -358,10 +358,10 @@ describe("resolveMessage", () => {
         "Chefe, revisei nossa lista de renovações no Lisbon Sporting. 4 concluídas, 2 ainda pendentes e 1 falhas.",
       );
       expect(result.body).toContain(
-        "Concluída: Claes aceitou 1 ano(s) por €5000/semana.",
+        "Concluída: Claes aceitou 1 ano(s) por €5000/ano.",
       );
       expect(result.body).toContain(
-        "Continua difícil: Vieira — O estafe deles quer cerca de €25000/semana por 3 anos, acima dos limites da delegação.",
+        "Continua difícil: Vieira — O estafe deles quer cerca de €25000/ano por 3 anos, acima dos limites da delegação.",
       );
       expect(result.body).toContain(
         "Falhou: Fernandes — Você me disse para ainda não reabrir as conversas contratuais.",

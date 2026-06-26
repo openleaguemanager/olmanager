@@ -1,7 +1,8 @@
 use crate::domain::player::Player;
 use crate::domain::staff::Staff;
 use crate::domain::team::Team;
-use log::info;
+use crate::game::Game;
+use log::{info, warn};
 use std::collections::HashMap;
 use std::path::Path;
 
@@ -296,11 +297,125 @@ pub fn build_league_selection(data_base: &Path) -> LeagueSelectionData {
 }
 
 
-/// Extract competition ID from a scoped team ID like \"lec-g2\" → \"lec\".
-pub fn competition_id_from_team_id(team_id: &str) -> Option<&str> {
+/// Extract competition ID from a scoped team ID like `"lec-g2"` → `"lec"`.
+///
+/// Team IDs in OLManager are scoped as `{competition_id}-{team_local_id}`.
+/// Because competition IDs may themselves contain `-` (e.g. `"emea-masters"`),
+/// this helper returns the longest known competition prefix. The returned
+/// prefix is guaranteed to be a known id.
+///
+/// Returns `None` when `team_id` has no dash, the prefix is empty, or no known
+/// id matches.
+pub fn competition_id_from_team_id_known<'a>(
+    team_id: &'a str,
+    known_competition_ids: &'a [String],
+) -> Option<&'a str> {
+    if team_id.is_empty() || known_competition_ids.is_empty() {
+        return None;
+    }
+    // Longest-prefix match so competition ids that contain dashes
+    // (e.g. "emea-masters") are handled correctly.
+    let mut best: Option<&str> = None;
+    for cid in known_competition_ids {
+        let prefix = format!("{}-", cid);
+        if team_id.starts_with(&prefix) {
+            if best.map_or(true, |b| cid.len() > b.len()) {
+                best = Some(cid.as_str());
+            }
+        }
+    }
+    best
+}
+
+/// Extract competition ID from a scoped team ID without validating it against
+/// a known-id list. Returns the substring before the first dash.
+///
+/// Returns `None` when `team_id` has no dash or the prefix is empty.
+pub fn competition_id_from_team_id_unchecked(team_id: &str) -> Option<&str> {
+    if team_id.is_empty() {
+        return None;
+    }
     let dash_pos = team_id.find('-')?;
     let prefix = &team_id[..dash_pos];
     if prefix.is_empty() { None } else { Some(prefix) }
+}
+
+/// Backwards-compatible dispatcher. Prefer `competition_id_from_team_id_known`
+/// or `competition_id_from_team_id_unchecked` for new code.
+pub fn competition_id_from_team_id<'a>(
+    team_id: &'a str,
+    known_competition_ids: Option<&'a [String]>,
+) -> Option<&'a str> {
+    match known_competition_ids {
+        Some(known) => competition_id_from_team_id_known(team_id, known),
+        None => competition_id_from_team_id_unchecked(team_id),
+    }
+}
+
+/// Clear `user_competition_id` and any team `competition_id` that do not
+/// correspond to a known, non-legacy competition. After clearing, attempt to
+/// re-derive `user_competition_id` from the manager team's id so the active
+/// league resolution does not silently fall back to an unrelated league.
+///
+/// This is the minimum safe compatibility behavior for saves created when
+/// legacy competition ids were still valid: invalid references are dropped
+/// rather than left pointing at missing data.
+pub fn sanitize_competition_references(game: &mut Game, known_competition_ids: &[String]) -> bool {
+    // An empty known-id set means the competitions directory could not be
+    // scanned or no manifests are present. Treat that as "cannot validate"
+    // rather than "everything invalid" to avoid destructively clearing refs.
+    if known_competition_ids.is_empty() {
+        info!("[competitions] sanitize skipped: no known competition ids available");
+        return false;
+    }
+
+    let mut changed = false;
+
+    if let Some(ref cid) = game.user_competition_id {
+        if !known_competition_ids.contains(cid) {
+            warn!(
+                "[competitions] clearing invalid user_competition_id '{}'",
+                cid
+            );
+            game.user_competition_id = None;
+            changed = true;
+        }
+    }
+
+    for team in game.teams.iter_mut() {
+        if let Some(ref cid) = team.competition_id {
+            if !known_competition_ids.contains(cid) {
+                warn!(
+                    "[competitions] clearing invalid competition_id '{}' for team '{}'",
+                    cid, team.id
+                );
+                team.competition_id = None;
+                changed = true;
+            }
+        }
+    }
+
+    // Try to restore user_competition_id from the manager team id, which is
+    // scoped as `{competition_id}-{team_local_id}` and is stable even when the
+    // team's persisted competition_id was invalid.
+    if game.user_competition_id.is_none() {
+        if let Some(manager_team) = game
+            .teams
+            .iter()
+            .find(|t| t.manager_id.as_deref() == Some(&game.manager.id))
+        {
+            if let Some(cid) = competition_id_from_team_id_known(&manager_team.id, known_competition_ids) {
+                info!(
+                    "[competitions] derived user_competition_id '{}' from manager team '{}'",
+                    cid, manager_team.id
+                );
+                game.user_competition_id = Some(cid.to_string());
+                changed = true;
+            }
+        }
+    }
+
+    changed
 }
 
 #[cfg(test)]
@@ -385,5 +500,263 @@ mod tests {
 
         assert_eq!(loaded.len(), 1);
         assert_eq!(loaded[0].first_name, "Ada");
+    }
+
+    #[test]
+    fn competition_id_from_team_id_extracts_prefix() {
+        assert_eq!(
+            competition_id_from_team_id("lec-g2", None),
+            Some("lec")
+        );
+        assert_eq!(
+            competition_id_from_team_id("lec-team-name", None),
+            Some("lec")
+        );
+        assert_eq!(competition_id_from_team_id("g2", None), None);
+        assert_eq!(competition_id_from_team_id("-g2", None), None);
+        assert_eq!(competition_id_from_team_id("", None), None);
+    }
+
+    #[test]
+    fn competition_id_from_team_id_prefers_longest_known_prefix() {
+        let known = vec!["lec".to_string(), "emea-masters".to_string()];
+        assert_eq!(
+            competition_id_from_team_id("lec-g2", Some(&known)),
+            Some("lec")
+        );
+        assert_eq!(
+            competition_id_from_team_id("emea-masters-g2", Some(&known)),
+            Some("emea-masters")
+        );
+        // Unknown prefix returns None when known ids are supplied.
+        assert_eq!(
+            competition_id_from_team_id("lcs-g2", Some(&known)),
+            None
+        );
+    }
+
+    #[test]
+    fn sanitize_competition_references_clears_invalid_ids_and_derives_from_team_id() {
+        let mut game = Game::new(
+            crate::clock::GameClock::new(chrono::Utc::now()),
+            crate::domain::manager::Manager::new(
+                "mgr-1".to_string(),
+                "John".to_string(),
+                "Smith".to_string(),
+                "1990-01-01".to_string(),
+                "GB".to_string(),
+            ),
+            vec![
+                {
+                    let mut t = Team::new(
+                        "lec-g2".to_string(),
+                        "G2".to_string(),
+                        "G2".to_string(),
+                        "DE".to_string(),
+                        "Berlin".to_string(),
+                        "Arena".to_string(),
+                        1000,
+                    );
+                    t.manager_id = Some("mgr-1".to_string());
+                    t.competition_id = Some("legacy-league".to_string());
+                    t
+                },
+                Team::new(
+                    "lec-fnc".to_string(),
+                    "Fnatic".to_string(),
+                    "FNC".to_string(),
+                    "GB".to_string(),
+                    "London".to_string(),
+                    "Arena".to_string(),
+                    1000,
+                ),
+            ],
+            vec![],
+            vec![],
+            vec![],
+        );
+        game.user_competition_id = Some("legacy-league".to_string());
+
+        let known = vec!["lec".to_string()];
+        let changed = sanitize_competition_references(&mut game, &known);
+
+        assert!(changed);
+        assert_eq!(game.user_competition_id, Some("lec".to_string()));
+        let g2 = game.teams.iter().find(|t| t.id == "lec-g2").unwrap();
+        assert_eq!(g2.competition_id, None);
+        let fnc = game.teams.iter().find(|t| t.id == "lec-fnc").unwrap();
+        assert_eq!(fnc.competition_id, None);
+    }
+
+    #[test]
+    fn sanitize_competition_references_preserves_valid_references() {
+        let mut game = Game::new(
+            crate::clock::GameClock::new(chrono::Utc::now()),
+            crate::domain::manager::Manager::new(
+                "mgr-1".to_string(),
+                "John".to_string(),
+                "Smith".to_string(),
+                "1990-01-01".to_string(),
+                "GB".to_string(),
+            ),
+            vec![
+                {
+                    let mut t = Team::new(
+                        "lec-g2".to_string(),
+                        "G2".to_string(),
+                        "G2".to_string(),
+                        "DE".to_string(),
+                        "Berlin".to_string(),
+                        "Arena".to_string(),
+                        1000,
+                    );
+                    t.manager_id = Some("mgr-1".to_string());
+                    t.competition_id = Some("lec".to_string());
+                    t
+                },
+                {
+                    let mut t = Team::new(
+                        "emea-masters-g2".to_string(),
+                        "G2".to_string(),
+                        "G2".to_string(),
+                        "DE".to_string(),
+                        "Berlin".to_string(),
+                        "Arena".to_string(),
+                        1000,
+                    );
+                    t.competition_id = Some("emea-masters".to_string());
+                    t
+                },
+            ],
+            vec![],
+            vec![],
+            vec![],
+        );
+        game.user_competition_id = Some("lec".to_string());
+
+        let known = vec!["lec".to_string(), "emea-masters".to_string()];
+        let changed = sanitize_competition_references(&mut game, &known);
+
+        assert!(!changed);
+        assert_eq!(game.user_competition_id, Some("lec".to_string()));
+        let g2 = game.teams.iter().find(|t| t.id == "lec-g2").unwrap();
+        assert_eq!(g2.competition_id, Some("lec".to_string()));
+        let emea_g2 = game
+            .teams
+            .iter()
+            .find(|t| t.id == "emea-masters-g2")
+            .unwrap();
+        assert_eq!(emea_g2.competition_id, Some("emea-masters".to_string()));
+    }
+
+    #[test]
+    fn sanitize_competition_references_handles_stale_and_legacy_refs() {
+        let mut game = Game::new(
+            crate::clock::GameClock::new(chrono::Utc::now()),
+            crate::domain::manager::Manager::new(
+                "mgr-1".to_string(),
+                "John".to_string(),
+                "Smith".to_string(),
+                "1990-01-01".to_string(),
+                "GB".to_string(),
+            ),
+            vec![
+                {
+                    let mut t = Team::new(
+                        "lec-g2".to_string(),
+                        "G2".to_string(),
+                        "G2".to_string(),
+                        "DE".to_string(),
+                        "Berlin".to_string(),
+                        "Arena".to_string(),
+                        1000,
+                    );
+                    t.manager_id = Some("mgr-1".to_string());
+                    t.competition_id = Some("old-worlds".to_string());
+                    t
+                },
+                {
+                    let mut t = Team::new(
+                        "legacy-g2".to_string(),
+                        "G2".to_string(),
+                        "G2".to_string(),
+                        "DE".to_string(),
+                        "Berlin".to_string(),
+                        "Arena".to_string(),
+                        1000,
+                    );
+                    t.competition_id = Some("legacy".to_string());
+                    t
+                },
+            ],
+            vec![],
+            vec![],
+            vec![],
+        );
+        game.user_competition_id = Some("legacy-league".to_string());
+
+        let known = vec!["lec".to_string()];
+        let changed = sanitize_competition_references(&mut game, &known);
+
+        assert!(changed);
+        // Restored from the manager team id.
+        assert_eq!(game.user_competition_id, Some("lec".to_string()));
+        let lec_g2 = game.teams.iter().find(|t| t.id == "lec-g2").unwrap();
+        assert_eq!(lec_g2.competition_id, None);
+        let legacy_g2 = game
+            .teams
+            .iter()
+            .find(|t| t.id == "legacy-g2")
+            .unwrap();
+        assert_eq!(legacy_g2.competition_id, None);
+    }
+
+    #[test]
+    fn sanitize_competition_references_no_ops_when_known_ids_empty() {
+        let mut game = Game::new(
+            crate::clock::GameClock::new(chrono::Utc::now()),
+            crate::domain::manager::Manager::new(
+                "mgr-1".to_string(),
+                "John".to_string(),
+                "Smith".to_string(),
+                "1990-01-01".to_string(),
+                "GB".to_string(),
+            ),
+            vec![{
+                let mut t = Team::new(
+                    "lec-g2".to_string(),
+                    "G2".to_string(),
+                    "G2".to_string(),
+                    "DE".to_string(),
+                    "Berlin".to_string(),
+                    "Arena".to_string(),
+                    1000,
+                );
+                t.competition_id = Some("lec".to_string());
+                t
+            }],
+            vec![],
+            vec![],
+            vec![],
+        );
+        game.user_competition_id = Some("lec".to_string());
+
+        let known: Vec<String> = vec![];
+        let changed = sanitize_competition_references(&mut game, &known);
+
+        assert!(!changed);
+        assert_eq!(game.user_competition_id, Some("lec".to_string()));
+        assert_eq!(
+            game.teams[0].competition_id,
+            Some("lec".to_string())
+        );
+    }
+
+    #[test]
+    fn competition_id_from_team_id_known_returns_none_for_empty_known_list() {
+        assert_eq!(
+            competition_id_from_team_id_known("lec-g2", &[]),
+            None
+        );
     }
 }

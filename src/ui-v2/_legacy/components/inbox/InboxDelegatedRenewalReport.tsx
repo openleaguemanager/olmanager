@@ -34,7 +34,7 @@ export default function InboxDelegatedRenewalReport({
             renewalCase.status === "successful"
               ? resolveBackendText(
                   "be.msg.delegatedRenewals.case.successful",
-                  `Completed: ${renewalCase.player_name} agreed to ${String(renewalCase.agreed_years ?? 0)} year(s) on €${String(renewalCase.agreed_wage ?? 0)}/wk.`,
+                  `Completed: ${renewalCase.player_name} agreed to ${String(renewalCase.agreed_years ?? 0)} year(s) on €${String(renewalCase.agreed_wage ?? 0)}/yr.`,
                   {
                     player: renewalCase.player_name,
                     years: String(renewalCase.agreed_years ?? 0),
