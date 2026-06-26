@@ -4,7 +4,7 @@ All notable changes to OLManager will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses GPL-3.0 licensing inherited from the OpenFootManager lineage unless otherwise documented.
 
-## [0.3.1] - 2026-06-24
+## [0.3.1] - 2026-06-26
 
 ### Added
 
@@ -29,16 +29,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed German `weeklyTotal` label incorrectly showing "Wöchentliche Gesamt" instead of "Jährliche Gesamt". Thanks @aalonsolopez.
 - Fixed missing filter options for player search in multiple languages, restoring the filter UI labels across all supported locales. Thanks @aalonsolopez.
 - Fixed generated player names falling back to emergency placeholders in roster generation by using plausible names when the catalog has no direct match. Thanks @aalonsolopez.
-- Fixed issue #306 multi-league cleanup: removed dead standalone playoff generators, hardened `competition_id_from_team_id` against dashed competition/team IDs with manifest-aware prefix matching, and added safe clearing/derivation of legacy/unknown competition references during save load and refresh. Thanks @aalonsolopez.
-- Fixed empty/failed competition scans destructively clearing all competition references: `sanitize_competition_references` now no-ops when no known competition ids are available. Thanks @aalonsolopez.
-- Fixed stale `competition_configs` surviving save load: both `load_game` and `select_team` now clear the map before inserting current non-legacy manifests. Thanks @aalonsolopez.
-- Fixed stale `cargo test -p olm_core` integration tests by updating `League`/`InboxMessage` initializers, correcting `ofm_core`/`domain::` module paths, and aligning contract/facility test expectations. Thanks @aalonsolopez.
-- Fixed bot lane path routing in the live simulator so minions and champions no longer cross the closed wall near the dragon pit. Thanks @aalonsolopez.
-- Fixed delegated-renewal frontend tests/fixtures to expect annual wage suffixes (`/yr`, `/ano`) instead of weekly. Thanks @aalonsolopez.
+- Fixed multi-league system known issues (#306): removed dead standalone playoff generators superseded by the incremental scheduler, hardened competition-ID extraction to handle dashed IDs (e.g. `emea-masters-g2`) via manifest-aware longest-prefix matching, added safe clearing and re-derivation of legacy or unknown competition references during save load and refresh so stale saves do not silently break active-league resolution, and made background-season history recording idempotent to prevent duplicate entries when a competition manifest is missing. Thanks @aalonsolopez.
+- Fixed empty or failed competition-manifest scans now preserving saved competition configs and references instead of destructively clearing them, preventing data loss on transient resource or packaging failures. Thanks @aalonsolopez.
+- Fixed bot lane path routing in the live simulator so minions and champions no longer cross the closed wall near the dragon pit; the path now correctly routes east of the wall polygon instead of clipping through it diagonally. Thanks @aalonsolopez.
+- Fixed stale integration test expectations across the Rust test suite (contract end dates, facility upgrade costs, sponsorship terms, league/schedule fixtures, and module-path references) so the full `cargo test -p olm_core` suite is green for the release. Thanks @aalonsolopez.
+- Fixed stale frontend test fixtures for delegated-renewal wage suffixes to expect annual terminology (`/yr`, `/ano`) instead of the removed weekly suffixes. Thanks @aalonsolopez.
+- Fixed `Facilities` struct serialization to omit unused optional module levels from save files, producing cleaner output while remaining fully backward-compatible with legacy saves via struct-level serde defaults. Thanks @aalonsolopez.
 
 ### Contributors
 
-- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, image fallback improvements, roster generation fixes, and player-search localization in this release.
+- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, image fallback improvements, roster generation fixes, player-search localization, multi-league cleanup, competition-reference hardening, background-season history deduplication, bot-lane path routing fix, facilities serialization cleanup, and full test-suite stabilization in this release.
 
 ## [0.3.0] - 2026-06-21
 
