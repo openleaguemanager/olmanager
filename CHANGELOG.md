@@ -37,9 +37,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed stale frontend test fixtures for delegated-renewal wage suffixes to expect annual terminology (`/yr`, `/ano`) instead of the removed weekly suffixes. Thanks @aalonsolopez.
 - Fixed `Facilities` struct serialization to omit unused optional module levels from save files, producing cleaner output while remaining fully backward-compatible with legacy saves via struct-level serde defaults. Thanks @aalonsolopez.
 
-### Contributors
-
-- Thanks to @aalonsolopez for the data infrastructure migration, GitHub import system, cross-platform fixes, i18n corrections, image fallback improvements, roster generation fixes, player-search localization, multi-league cleanup, competition-reference hardening, background-season history deduplication, bot-lane path routing fix, facilities serialization cleanup, academy acquired message internationalization, and full test-suite stabilization in this release.
 
 ## [0.3.0] - 2026-06-21
 
