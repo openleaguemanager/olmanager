@@ -264,20 +264,29 @@ pub fn academy_metadata(option: &AcademyAcquisitionOption, acquired_at: String, 
 /// Push an inbox message notifying the manager about a completed academy acquisition.
 pub fn push_academy_acquired_message(game: &mut Game, parent: &Team, academy_name: &str, cost: i64) {
     let date = game.clock.current_date.format("%Y-%m-%d").to_string();
+    let params = HashMap::from([
+        ("team".to_string(), parent.name.clone()),
+        ("academy".to_string(), academy_name.to_string()),
+        ("cost".to_string(), cost.to_string()),
+    ]);
     let msg = InboxMessage::new(
         format!("academy-acquired-{}-{}", parent.id, academy_name.to_lowercase().replace(' ', "-")),
-        format!("Academia financiada: {}", academy_name),
-        format!("La operacion se completo con exito. {} ahora tiene una academia vinculada ({}) por un costo de €{}.", parent.name, academy_name, cost),
-        "Direccion Deportiva".to_string(),
+        format!("Academy funded: {}", academy_name),
+        format!(
+            "The operation completed successfully. {} now has an affiliated academy ({}) at a cost of €{}.",
+            parent.name, academy_name, cost
+        ),
+        "Sporting Director".to_string(),
         date,
     )
     .with_category(MessageCategory::Finance)
     .with_priority(MessagePriority::High)
-    .with_sender_role("Director Deportivo")
     .with_context(MessageContext {
         team_id: Some(parent.id.clone()),
         ..Default::default()
-    });
+    })
+    .with_i18n("be.msg.academyAcquired.subject", "be.msg.academyAcquired.body", params)
+    .with_sender_i18n("be.sender.sportingDirector", "be.role.sportingDirector");
     game.messages.push(msg);
 }
 

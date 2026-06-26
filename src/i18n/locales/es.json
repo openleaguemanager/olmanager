@@ -2664,6 +2664,7 @@
       "commercialDirector": "Director Comercial",
       "communityManager": "Responsable de Comunidad",
       "directorOfFootball": "Director Deportivo",
+      "sportingDirector": "Director Deportivo",
       "intlLiaison": "Enlace Internacional",
       "player": "Jugador",
       "pressOfficer": "Jefe de Prensa",
@@ -2690,6 +2691,7 @@
       "commercialDirector": "Director Comercial",
       "communityManager": "Responsable de Comunidad",
       "directorOfFootball": "Director Deportivo",
+      "sportingDirector": "Director Deportivo",
       "intlLiaison": "Enlace Internacional",
       "player": "Jugador",
       "scout": "Ojeador",
@@ -3157,6 +3159,10 @@
         "subject": "Reporte semanal de academia: {{academy}}",
         "body": "Resumen semanal de academia:\n- Jugadores activos: {{activePlayers}}\n- OVR promedio: {{avgOvr}}\n- Talentos altos (>= 80): {{highPotential}}\n- Destacados: {{highlights}}\n- Posición ERL actual: #{{position}} de {{total}}\n- Tabla rápida: {{tablePreview}}",
         "bodyWithPromotion": "Resumen semanal de academia:\n- Jugadores activos: {{activePlayers}}\n- OVR promedio: {{avgOvr}}\n- Talentos altos (>= 80): {{highPotential}}\n- Destacados: {{highlights}}\n- Posición ERL actual: #{{position}} de {{total}}\n- Tabla rápida: {{tablePreview}}\n\nRecomendación: {{promotionCount}} jugador(es) listos para promoción -> {{promotionList}}."
+      },
+      "academyAcquired": {
+        "subject": "Academia financiada: {{academy}}",
+        "body": "La operación se ha completado con éxito. {{team}} ahora tiene una academia vinculada ({{academy}}) por un costo de €{{cost}}."
       },
       "esportmaniacos": {
         "positive": {

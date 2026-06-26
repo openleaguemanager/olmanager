@@ -2519,6 +2519,7 @@
       "commercialDirector": "Ticari Direktör",
       "communityManager": "Topluluk Yöneticisi",
       "directorOfFootball": "Espor Direktörü",
+      "sportingDirector": "Sportif Direktör",
       "intlLiaison": "Uluslararası İlişkiler",
       "player": "Oyuncu",
       "pressOfficer": "Basın Sorumlusu",
@@ -2540,6 +2541,7 @@
       "commercialDirector": "Ticari Direktör",
       "communityManager": "Topluluk Yöneticisi",
       "directorOfFootball": "Espor Direktörü",
+      "sportingDirector": "Sportif Direktör",
       "intlLiaison": "Uluslararası İlişkiler",
       "player": "Oyuncu",
       "scout": "Gözlemci",
@@ -3012,6 +3014,10 @@
         "subject": "Akademi haftalık raporu: {{academy}}",
         "body": "Akademi haftalık özeti:\n- Aktif oyuncular: {{activePlayers}}\n- Ortalama OVR: {{avgOvr}}\n- Yüksek potansiyelli yetenekler (>= 80): {{highPotential}}\n- Önemli anlar: {{highlights}}\n- Mevcut ERL sırası: {{total}} takım içinde #{{position}}.\n- Hızlı tablo: {{tablePreview}}",
         "bodyWithPromotion": "Akademi haftalık özeti:\n- Aktif oyuncular: {{activePlayers}}\n- Ortalama OVR: {{avgOvr}}\n- Yüksek potansiyelli yetenekler (>= 80): {{highPotential}}\n- Önemli anlar: {{highlights}}\n- Mevcut ERL sırası: {{total}} takım içinde #{{position}}.\n- Hızlı tablo: {{tablePreview}}\n\nÖneri: {{promotionCount}} oyuncu as takıma çıkmaya hazır -> {{promotionList}}."
+      },
+      "academyAcquired": {
+        "subject": "Akademi finanse edildi: {{academy}}",
+        "body": "Operasyon başarıyla tamamlandı. {{team}} artık €{{cost}} maliyetle bağlı bir akademiye ({{academy}}) sahip."
       },
       "esportmaniacos": {
         "positive": {
